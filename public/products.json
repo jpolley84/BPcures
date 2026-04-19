@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "updated_at": "2026-04-19T16:16:21.484075+00:00",
+  "products": [
+    {
+      "slug": "blood-pressure-cures",
+      "title": "Blood Pressure Cures \u2014 The 10-Day Nurse's Reset",
+      "subtitle": "The Full Stack Protocol from a 20-Year ICU/ER RN Turned Naturopath",
+      "price_usd": 12.99,
+      "pain_cluster": "",
+      "stripe_payment_link": "https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02",
+      "gumroad_url": "https://shahidizvi.gumroad.com/l/ekqnd",
+      "cover_image": "/products/blood-pressure-cures/cover.png",
+      "tags": [
+        "blood pressure",
+        "hypertension",
+        "natural remedies",
+        "10-day challenge",
+        "BP reset",
+        "heart health",
+        "nurse protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "blood-pressure__10-day-bp-reset-challenge-complete",
+      "title": "10 Day Bp Reset Challenge Complete",
+      "subtitle": "A clinical education resource by Joel Polley RN",
+      "price_usd": 17.0,
+      "pain_cluster": "blood-pressure",
+      "stripe_payment_link": "https://buy.stripe.com/dRm7sL8k3a1UfDR8VrfnO03",
+      "gumroad_url": null,
+      "cover_image": "/products/blood-pressure__10-day-bp-reset-challenge-complete/cover.png",
+      "tags": [
+        "blood-pressure",
+        "natural health",
+        "Joel Polley",
+        "BraveWorks RN",
+        "nursing protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "blood-pressure__bp-reset-graduation",
+      "title": "Bp Reset Graduation",
+      "subtitle": "A clinical education resource by Joel Polley RN",
+      "price_usd": 17.0,
+      "pain_cluster": "blood-pressure",
+      "stripe_payment_link": "https://buy.stripe.com/00w4gz1VF6PI1N1fjPfnO04",
+      "gumroad_url": null,
+      "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
+      "tags": [
+        "blood-pressure",
+        "natural health",
+        "Joel Polley",
+        "BraveWorks RN",
+        "nursing protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "blood-pressure__full-stack-bp-activation",
+      "title": "Full Stack Bp Activation",
+      "subtitle": "A clinical education resource by Joel Polley RN",
+      "price_usd": 17.0,
+      "pain_cluster": "blood-pressure",
+      "stripe_payment_link": "https://buy.stripe.com/dRm3cv7fZca22R51sZfnO05",
+      "gumroad_url": null,
+      "cover_image": "/products/blood-pressure__full-stack-bp-activation/cover.png",
+      "tags": [
+        "blood-pressure",
+        "natural health",
+        "Joel Polley",
+        "BraveWorks RN",
+        "nursing protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "cortisol-challenge-kit",
+      "title": "The 10-Day Cortisol Cure",
+      "subtitle": "A Clinical Protocol to Reset Stress Hormones and Restore Blood Pressure, Sleep & Weight",
+      "price_usd": 27.0,
+      "pain_cluster": "",
+      "stripe_payment_link": "https://buy.stripe.com/bJe7sLdEnca2crF4FbfnO06",
+      "gumroad_url": "https://shahidizvi.gumroad.com/l/xvamb",
+      "cover_image": "/products/cortisol-challenge-kit/cover.png",
+      "tags": [
+        "cortisol",
+        "stress hormones",
+        "adrenal fatigue",
+        "sleep reset",
+        "blood pressure",
+        "10-day challenge",
+        "hormone balance",
+        "natural remedies"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "cortisol-stress__the-cortisol-healing-blueprint",
+      "title": "The Cortisol Healing Blueprint",
+      "subtitle": "A clinical education resource by Joel Polley RN",
+      "price_usd": 27.0,
+      "pain_cluster": "cortisol-stress",
+      "stripe_payment_link": "https://buy.stripe.com/eVq14nasb5LE1N10oVfnO07",
+      "gumroad_url": null,
+      "cover_image": null,
+      "tags": [
+        "cortisol-stress",
+        "natural health",
+        "Joel Polley",
+        "BraveWorks RN",
+        "nursing protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "cortisol-stress__the-cortisol-movement-protocol",
+      "title": "The Cortisol Movement Protocol",
+      "subtitle": "A clinical education resource by Joel Polley RN",
+      "price_usd": 27.0,
+      "pain_cluster": "cortisol-stress",
+      "stripe_payment_link": "https://buy.stripe.com/bJe9ATbwfca2ezN4FbfnO08",
+      "gumroad_url": null,
+      "cover_image": null,
+      "tags": [
+        "cortisol-stress",
+        "natural health",
+        "Joel Polley",
+        "BraveWorks RN",
+        "nursing protocol"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    },
+    {
+      "slug": "diabetes-reversal-kit",
+      "title": "The 10-Day Blood Sugar Reset",
+      "subtitle": "A Clinical Protocol for Glucose, A1C, and the Drivers Your Doctor Never Tests For",
+      "price_usd": 27.0,
+      "pain_cluster": "",
+      "stripe_payment_link": "https://buy.stripe.com/9B6bJ11VFca2bnBdbHfnO09",
+      "gumroad_url": "https://shahidizvi.gumroad.com/l/qujbe",
+      "cover_image": "/products/diabetes-reversal-kit/cover.png",
+      "tags": [
+        "blood sugar",
+        "diabetes prevention",
+        "insulin resistance",
+        "glucose reset",
+        "metabolic health",
+        "10-day challenge",
+        "A1C",
+        "natural remedies"
+      ],
+      "updated_at": "2026-04-19T16:16:21.484075+00:00"
+    }
+  ]
+}
