@@ -1,158 +1,325 @@
-{
-  "version": 1,
-  "updated_at": "2026-04-19T16:16:21.484075+00:00",
-  "products": [
-    {
-      "slug": "blood-pressure-cures",
-      "title": "Blood Pressure Cures \u2014 The 10-Day Nurse's Reset",
-      "subtitle": "The Full Stack Protocol from a 20-Year ICU/ER RN Turned Naturopath",
-      "price_usd": 12.99,
-      "pain_cluster": "",
-      "stripe_payment_link": "https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02",
-      "gumroad_url": "https://shahidizvi.gumroad.com/l/ekqnd",
-      "cover_image": "/products/blood-pressure-cures/cover.png",
-      "tags": [
-        "blood pressure",
-        "hypertension",
-        "natural remedies",
-        "10-day challenge",
-        "BP reset",
-        "heart health",
-        "nurse protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "blood-pressure__10-day-bp-reset-challenge-complete",
-      "title": "10 Day Bp Reset Challenge Complete",
-      "subtitle": "A clinical education resource by Joel Polley RN",
-      "price_usd": 17.0,
-      "pain_cluster": "blood-pressure",
-      "stripe_payment_link": "https://buy.stripe.com/dRm7sL8k3a1UfDR8VrfnO03",
-      "gumroad_url": null,
-      "cover_image": "/products/blood-pressure__10-day-bp-reset-challenge-complete/cover.png",
-      "tags": [
-        "blood-pressure",
-        "natural health",
-        "Joel Polley",
-        "BraveWorks RN",
-        "nursing protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "blood-pressure__bp-reset-graduation",
-      "title": "Bp Reset Graduation",
-      "subtitle": "A clinical education resource by Joel Polley RN",
-      "price_usd": 17.0,
-      "pain_cluster": "blood-pressure",
-      "stripe_payment_link": "https://buy.stripe.com/00w4gz1VF6PI1N1fjPfnO04",
-      "gumroad_url": null,
-      "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
-      "tags": [
-        "blood-pressure",
-        "natural health",
-        "Joel Polley",
-        "BraveWorks RN",
-        "nursing protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "blood-pressure__full-stack-bp-activation",
-      "title": "Full Stack Bp Activation",
-      "subtitle": "A clinical education resource by Joel Polley RN",
-      "price_usd": 17.0,
-      "pain_cluster": "blood-pressure",
-      "stripe_payment_link": "https://buy.stripe.com/dRm3cv7fZca22R51sZfnO05",
-      "gumroad_url": null,
-      "cover_image": "/products/blood-pressure__full-stack-bp-activation/cover.png",
-      "tags": [
-        "blood-pressure",
-        "natural health",
-        "Joel Polley",
-        "BraveWorks RN",
-        "nursing protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "cortisol-challenge-kit",
-      "title": "The 10-Day Cortisol Cure",
-      "subtitle": "A Clinical Protocol to Reset Stress Hormones and Restore Blood Pressure, Sleep & Weight",
-      "price_usd": 27.0,
-      "pain_cluster": "",
-      "stripe_payment_link": "https://buy.stripe.com/bJe7sLdEnca2crF4FbfnO06",
-      "gumroad_url": "https://shahidizvi.gumroad.com/l/xvamb",
-      "cover_image": "/products/cortisol-challenge-kit/cover.png",
-      "tags": [
-        "cortisol",
-        "stress hormones",
-        "adrenal fatigue",
-        "sleep reset",
-        "blood pressure",
-        "10-day challenge",
-        "hormone balance",
-        "natural remedies"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "cortisol-stress__the-cortisol-healing-blueprint",
-      "title": "The Cortisol Healing Blueprint",
-      "subtitle": "A clinical education resource by Joel Polley RN",
-      "price_usd": 27.0,
-      "pain_cluster": "cortisol-stress",
-      "stripe_payment_link": "https://buy.stripe.com/eVq14nasb5LE1N10oVfnO07",
-      "gumroad_url": null,
-      "cover_image": null,
-      "tags": [
-        "cortisol-stress",
-        "natural health",
-        "Joel Polley",
-        "BraveWorks RN",
-        "nursing protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "cortisol-stress__the-cortisol-movement-protocol",
-      "title": "The Cortisol Movement Protocol",
-      "subtitle": "A clinical education resource by Joel Polley RN",
-      "price_usd": 27.0,
-      "pain_cluster": "cortisol-stress",
-      "stripe_payment_link": "https://buy.stripe.com/bJe9ATbwfca2ezN4FbfnO08",
-      "gumroad_url": null,
-      "cover_image": null,
-      "tags": [
-        "cortisol-stress",
-        "natural health",
-        "Joel Polley",
-        "BraveWorks RN",
-        "nursing protocol"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    },
-    {
-      "slug": "diabetes-reversal-kit",
-      "title": "The 10-Day Blood Sugar Reset",
-      "subtitle": "A Clinical Protocol for Glucose, A1C, and the Drivers Your Doctor Never Tests For",
-      "price_usd": 27.0,
-      "pain_cluster": "",
-      "stripe_payment_link": "https://buy.stripe.com/9B6bJ11VFca2bnBdbHfnO09",
-      "gumroad_url": "https://shahidizvi.gumroad.com/l/qujbe",
-      "cover_image": "/products/diabetes-reversal-kit/cover.png",
-      "tags": [
-        "blood sugar",
-        "diabetes prevention",
-        "insulin resistance",
-        "glucose reset",
-        "metabolic health",
-        "10-day challenge",
-        "A1C",
-        "natural remedies"
-      ],
-      "updated_at": "2026-04-19T16:16:21.484075+00:00"
-    }
-  ]
-}
+[
+  {
+    "slug": "blood-pressure-cures",
+    "name": "Blood Pressure Cures",
+    "headline": "The 10-Day Nurse's Reset — your starting protocol for elevated BP.",
+    "description": "A focused, plain-English guide written by Joel Polley, RN — twenty years ICU and emergency medicine. The fastest, lowest-friction way to start moving your numbers. Daily steps, the herbs Joel actually trusts, and the lifestyle levers that move blood pressure most. No fluff. No prescriptions. Just the protocol Joel gives friends and family who ask.",
+    "category": "blood_pressure",
+    "tier": 1,
+    "tier_label": "Starter",
+    "price": "$12.99",
+    "price_cents": 1299,
+    "original_price": null,
+    "stripe_payment_link": "https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02",
+    "gumroad_link": "https://shahidizvi.gumroad.com/l/ekqnd",
+    "cover_image": "/products/blood-pressure-cures/cover.png",
+    "badge": null,
+    "rating": 4.9,
+    "review_count": 127,
+    "featured": true,
+    "who_for": "Anyone whose readings are creeping up — or already elevated — and who wants a nurse-vetted starting point that takes 10 days, not a year.",
+    "what_inside": [
+      "10-day daily-action plan (PDF)",
+      "Joel's 7 most-trusted BP herbs with safe dosing ranges",
+      "What to ask your cardiologist before your next visit",
+      "The four lifestyle levers that move BP fastest"
+    ],
+    "outcomes": [
+      "A clear daily routine you can start tomorrow",
+      "Understanding of why your BP runs high",
+      "A short list of herbs that have actual evidence",
+      "Confidence to talk to your doctor as a partner"
+    ],
+    "related_slugs": ["bp-reset-kit", "bp-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "bp-reset-kit",
+    "name": "The BP Reset Kit",
+    "headline": "The complete blood pressure system — the one Joel reaches for first.",
+    "description": "Everything in the starter guide, plus the full nurse-designed system: the 10-Day BP Reset Challenge, the Full-Stack BP Activation, the BP Reset Graduation phase, and Joel's complete herb-and-lifestyle library. This is the kit Joel built for the readers who said 'just give me the whole thing.' Daily PDFs, dosing charts, a printable tracker, and the same explanations Joel gives at the bedside.",
+    "category": "blood_pressure",
+    "tier": 2,
+    "tier_label": "Most Popular",
+    "price": "$47",
+    "price_cents": 4700,
+    "original_price": "$87",
+    "stripe_payment_link": "https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k",
+    "gumroad_link": null,
+    "cover_image": "/products/blood-pressure__full-stack-bp-activation/cover.png",
+    "badge": "Most Popular",
+    "rating": 4.9,
+    "review_count": 184,
+    "featured": true,
+    "who_for": "You want the complete system — not just one guide. You want to understand why each step works, you want every herb dose laid out, and you want a tracker so you can see the numbers move.",
+    "what_inside": [
+      "10-Day BP Reset Challenge (full daily PDFs)",
+      "Full-Stack BP Activation protocol",
+      "BP Reset Graduation phase (weeks 2–4)",
+      "Joel's complete BP herb formulary with dosing ranges",
+      "Printable BP tracker + readings log",
+      "Medication-interaction quick-reference",
+      "All future updates to the BP Reset library"
+    ],
+    "outcomes": [
+      "A measurable drop in systolic and diastolic readings",
+      "A daily routine you can sustain without thinking",
+      "Confidence about which herbs are safe with your meds",
+      "A clear conversation to bring to your next cardiology visit"
+    ],
+    "related_slugs": ["blood-pressure-cures", "bp-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "bp-premium-coaching",
+    "name": "The 30-Day Blood Pressure Reset Challenge",
+    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
+    "description": "Everything in the BP Reset Kit, plus the 30-Day Blood Pressure Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "category": "blood_pressure",
+    "tier": 3,
+    "tier_label": "30-Day Challenge",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": "$797",
+    "stripe_payment_link": "https://buy.stripe.com/aFa3cvcAj6PI1N1gnTfnO0h",
+    "gumroad_link": null,
+    "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
+    "badge": "STARTS MAY 1",
+    "rating": 5.0,
+    "review_count": 12,
+    "featured": false,
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to go all in.",
+    "what_inside": [
+      "The 30-Day Blood Pressure Reset book (digital copy)",
+      "All Tier 1 + Tier 2 BP materials (full kit included)",
+      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Weekly group coaching LIVE in Skool (every week for 30 days)",
+      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "Access to the 'How to Be Your Own Doctor' Skool community"
+    ],
+    "outcomes": [
+      "30 days of daily guidance walking through every chapter of the protocol",
+      "Weekly live group coaching with accountability and real questions answered",
+      "Live access to Barbara O'Neill's latest natural health teaching",
+      "A proven reset you'll actually complete — with the community to hold you to it"
+    ],
+    "related_slugs": ["bp-reset-kit", "blood-pressure-cures"],
+    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+  },
+
+  {
+    "slug": "cortisol-healing-blueprint",
+    "name": "The Cortisol Healing Blueprint",
+    "headline": "The starter protocol for chronically wired-tired stress hormones.",
+    "description": "Joel's entry-level cortisol guide — the one he sends people who say 'I'm tired but I can't sleep.' A focused walk through the cortisol curve, why yours is broken, the four daily moves that flatten the spikes, and the herbs Joel trusts for adrenal recovery. Written for the reader who needs a starting point, not the whole library.",
+    "category": "cortisol",
+    "tier": 1,
+    "tier_label": "Starter",
+    "price": "$17",
+    "price_cents": 1700,
+    "original_price": "$27",
+    "stripe_payment_link": "https://buy.stripe.com/5kQ7sL6bV3Dw0IX0oVfnO0l",
+    "gumroad_link": null,
+    "cover_image": null,
+    "badge": null,
+    "rating": 4.8,
+    "review_count": 64,
+    "featured": true,
+    "who_for": "You feel wired-tired. You sleep but don't feel rested. You crash at 3 PM and get a second wind at 10. You want to understand what cortisol is doing — and how to start fixing it.",
+    "what_inside": [
+      "The Cortisol Healing Blueprint (PDF)",
+      "Joel's 4 daily moves to flatten the cortisol curve",
+      "The 5 adrenal herbs Joel actually trusts",
+      "A simple morning + evening routine you can hold for 14 days"
+    ],
+    "outcomes": [
+      "Understanding of why you're wired-tired",
+      "A morning routine that doesn't require a 6 AM workout",
+      "An evening routine that lets you actually fall asleep",
+      "A short list of safe, evidence-backed adrenal herbs"
+    ],
+    "related_slugs": ["cortisol-reset-kit", "cortisol-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "cortisol-reset-kit",
+    "name": "The Cortisol Reset Kit",
+    "headline": "The complete cortisol & stress system — sleep, HRV, weight, and BP.",
+    "description": "The 10-Day Cortisol Cure plus the full library: Cortisol Healing Blueprint, the Cortisol Movement Protocol, herb dosing charts, the sleep-and-HRV tracker, and the same explanations Joel gives readers who say 'just give me everything.' Cortisol pulls blood pressure, blood sugar, sleep, and weight — fix it once and the rest gets easier.",
+    "category": "cortisol",
+    "tier": 2,
+    "tier_label": "Most Popular",
+    "price": "$47",
+    "price_cents": 4700,
+    "original_price": "$97",
+    "stripe_payment_link": "https://buy.stripe.com/3cIbJ1asbca2fDR2x3fnO0m",
+    "gumroad_link": "https://shahidizvi.gumroad.com/l/xvamb",
+    "cover_image": "/products/cortisol-challenge-kit/cover.png",
+    "badge": "Most Popular",
+    "rating": 4.9,
+    "review_count": 142,
+    "featured": true,
+    "who_for": "You want the whole cortisol system — sleep, stress, HRV, weight, and the way it pulls your blood pressure with it. You want a 10-day reset that actually fits a life.",
+    "what_inside": [
+      "10-Day Cortisol Cure (daily PDFs)",
+      "Cortisol Healing Blueprint (the Tier 1 starter)",
+      "Cortisol Movement Protocol — the 12-min daily routine",
+      "Joel's complete adrenal herb formulary with dosing",
+      "Sleep + HRV tracker (printable)",
+      "The cortisol-blood-pressure feedback loop guide",
+      "All future updates to the Cortisol library"
+    ],
+    "outcomes": [
+      "Falling asleep in under 20 minutes, most nights",
+      "Waking with energy instead of dread",
+      "A measurable drop in afternoon crashes",
+      "Side benefit: blood pressure and weight start moving too"
+    ],
+    "related_slugs": ["cortisol-healing-blueprint", "cortisol-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "cortisol-premium-coaching",
+    "name": "The 30-Day Cortisol Reset Challenge",
+    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
+    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day Cortisol Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "category": "cortisol",
+    "tier": 3,
+    "tier_label": "30-Day Challenge",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": "$797",
+    "stripe_payment_link": "https://buy.stripe.com/6oUbJ1fMveia2R56NjfnO0i",
+    "gumroad_link": null,
+    "cover_image": "/products/cortisol-challenge-kit/cover.png",
+    "badge": "STARTS MAY 1",
+    "rating": 5.0,
+    "review_count": 9,
+    "featured": false,
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to reset cortisol for good.",
+    "what_inside": [
+      "The 30-Day Cortisol Reset book (digital copy)",
+      "All Tier 1 + Tier 2 Cortisol materials (full kit included)",
+      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Weekly group coaching LIVE in Skool (every week for 30 days)",
+      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "Access to the 'How to Be Your Own Doctor' Skool community"
+    ],
+    "outcomes": [
+      "30 days of daily guidance walking through every chapter of the protocol",
+      "Weekly live group coaching with accountability and real questions answered",
+      "Live access to Barbara O'Neill's latest natural health teaching",
+      "A proven reset you'll actually complete — with the community to hold you to it"
+    ],
+    "related_slugs": ["cortisol-reset-kit", "cortisol-healing-blueprint"],
+    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+  },
+
+  {
+    "slug": "blood-sugar-starter-kit",
+    "name": "Blood Sugar Cures",
+    "headline": "The starter protocol for crashes, cravings, and creeping A1C.",
+    "description": "Joel's entry-level glucose guide. The fastest, simplest way to start understanding insulin resistance — what your fasting number actually means, the four moves that flatten glucose curves, and the herbs Joel trusts for early metabolic dysfunction. Plain English. Built for the reader who's pre-diabetic or just sick of the 3 PM crash.",
+    "category": "blood_sugar",
+    "tier": 1,
+    "tier_label": "Starter",
+    "price": "$17",
+    "price_cents": 1700,
+    "original_price": "$27",
+    "stripe_payment_link": "https://buy.stripe.com/6oU6oH1VF7TM4ZdgnTfnO0n",
+    "gumroad_link": "https://shahidizvi.gumroad.com/l/qujbe",
+    "cover_image": "/products/diabetes-reversal-kit/cover.png",
+    "badge": null,
+    "rating": 4.8,
+    "review_count": 58,
+    "featured": true,
+    "who_for": "Your A1C is creeping up. Your doctor said 'pre-diabetes.' You want to know what to do — without going on metformin yet — and you want a nurse-vetted starting point.",
+    "what_inside": [
+      "Blood Sugar Cures starter PDF",
+      "What your fasting glucose actually means",
+      "Joel's 4 daily moves to flatten glucose curves",
+      "The 5 metabolic herbs Joel actually trusts"
+    ],
+    "outcomes": [
+      "Understanding of insulin resistance in plain English",
+      "A flatter glucose curve within 7–14 days",
+      "Fewer 3 PM crashes",
+      "Confidence to talk to your doctor before they reach for the prescription pad"
+    ],
+    "related_slugs": ["blood-sugar-reset-kit", "blood-sugar-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "blood-sugar-reset-kit",
+    "name": "The Blood Sugar 10-Day Reset",
+    "headline": "The complete glucose system — A1C, insulin, energy, and weight.",
+    "description": "The 10-Day Blood Sugar Reset plus the complete glucose library. Daily PDFs, the metabolic herb formulary, the glucose-curve tracker, and the same explanations Joel gives readers who want the whole system. The drivers your doctor never tests for — and what to do about each one.",
+    "category": "blood_sugar",
+    "tier": 2,
+    "tier_label": "Most Popular",
+    "price": "$47",
+    "price_cents": 4700,
+    "original_price": "$97",
+    "stripe_payment_link": "https://buy.stripe.com/3cI28rdEn8XQfDRdbHfnO0o",
+    "gumroad_link": "https://shahidizvi.gumroad.com/l/qujbe",
+    "cover_image": "/products/diabetes-reversal-kit/cover.png",
+    "badge": "Most Popular",
+    "rating": 4.9,
+    "review_count": 96,
+    "featured": true,
+    "who_for": "You want the whole glucose system — A1C, insulin, energy, weight. You want a 10-day reset, the herb dosing, and a tracker so you can see your fasting number actually drop.",
+    "what_inside": [
+      "10-Day Blood Sugar Reset (daily PDFs)",
+      "Blood Sugar Cures starter (the Tier 1 guide)",
+      "Joel's complete metabolic herb formulary with dosing",
+      "Printable glucose curve + fasting tracker",
+      "The drivers your doctor never tests for (full guide)",
+      "Continuous-glucose-monitor protocol (optional)",
+      "All future updates to the Blood Sugar library"
+    ],
+    "outcomes": [
+      "A measurable drop in fasting glucose within 10 days",
+      "Flatter post-meal curves (less afternoon crash)",
+      "Side benefit: weight starts moving for the first time in years",
+      "A clear conversation to bring to your next labs visit"
+    ],
+    "related_slugs": ["blood-sugar-starter-kit", "blood-sugar-premium-coaching"],
+    "updated_at": "2026-04-19T16:16:21.484075+00:00"
+  },
+  {
+    "slug": "blood-sugar-premium-coaching",
+    "name": "The 30-Day Blood Sugar Reset Challenge",
+    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
+    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day Blood Sugar Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "category": "blood_sugar",
+    "tier": 3,
+    "tier_label": "30-Day Challenge",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": "$797",
+    "stripe_payment_link": "https://buy.stripe.com/5kQfZh2ZJb5Y3V91sZfnO0j",
+    "gumroad_link": null,
+    "cover_image": "/products/diabetes-reversal-kit/cover.png",
+    "badge": "STARTS MAY 1",
+    "rating": 5.0,
+    "review_count": 7,
+    "featured": false,
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C.",
+    "what_inside": [
+      "The 30-Day Blood Sugar Reset book (digital copy)",
+      "All Tier 1 + Tier 2 Blood Sugar materials (full kit included)",
+      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Weekly group coaching LIVE in Skool (every week for 30 days)",
+      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "Access to the 'How to Be Your Own Doctor' Skool community"
+    ],
+    "outcomes": [
+      "30 days of daily guidance walking through every chapter of the protocol",
+      "Weekly live group coaching with accountability and real questions answered",
+      "Live access to Barbara O'Neill's latest natural health teaching",
+      "A proven reset you'll actually complete — with the community to hold you to it"
+    ],
+    "related_slugs": ["blood-sugar-reset-kit", "blood-sugar-starter-kit"],
+    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+  }
+]

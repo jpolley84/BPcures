@@ -1,69 +1,76 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Download, FileText, ArrowLeft } from 'lucide-react';
 
 const files = [
-  { name: 'Master Blood Pressure Document', desc: 'Complete protocol with daily checklists and tracking sheets', file: 'master-bp-document.pdf' },
-  { name: 'Top 10 Herbs Deep Dive', desc: 'Dosing, timing, and what to look for on the label', file: 'top-10-herbs.pdf' },
-  { name: '10-Day Blood Pressure Reset Challenge', desc: 'Step-by-step daily plan with meal ideas', file: '10-day-reset-challenge.pdf' },
-  { name: 'Cook For Life Cookbook', desc: '50+ heart-healthy recipes using common ingredients', file: 'cook-for-life-cookbook.pdf' },
-  { name: 'White Coat Syndrome Guide', desc: 'How to get accurate readings at home and at the doctor', file: 'white-coat-syndrome-guide.pdf' },
-  { name: 'BONUS: Overmedicated Boomers Book', desc: 'The full book on prescription overload', file: 'overmedicated-boomers.pdf' },
+  { name: 'Master Blood Pressure Document', desc: 'Complete protocol with daily checklists and tracking sheets.', file: 'master-bp-document.pdf' },
+  { name: 'Top 10 Herbs Deep Dive', desc: 'Dosing, timing, and what to look for on the label.', file: 'top-10-herbs.pdf' },
+  { name: '10-Day Blood Pressure Reset Challenge', desc: 'Step-by-step daily plan with meal ideas.', file: '10-day-reset-challenge.pdf' },
+  { name: 'Cook For Life Cookbook', desc: '50+ heart-healthy recipes using common ingredients.', file: 'cook-for-life-cookbook.pdf' },
+  { name: 'White Coat Syndrome Guide', desc: 'How to get accurate readings at home and at the doctor.', file: 'white-coat-syndrome-guide.pdf' },
+  { name: 'Bonus · Overmedicated Boomers', desc: 'The complete book on prescription overload.', file: 'overmedicated-boomers.pdf' },
 ];
 
-const DownloadsPage = () => {
+export default function DownloadsPage() {
   return (
-    <div className="min-h-screen bg-white py-16 px-4">
-      <div className="max-w-[640px] mx-auto">
-        <div className="text-center mb-12" style={{ animation: 'fadeInUp 0.7s ease-out' }}>
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-4" style={{ color: 'var(--navy)', letterSpacing: '-0.03em' }}>
-            Your Downloads
-          </h1>
-          <p style={{ color: 'var(--dark-gray)' }}>
-            Access all your purchased digital files below.
-          </p>
-        </div>
+    <main style={{ minHeight: '100vh', background: 'var(--paper)', paddingBlock: 'clamp(3rem, 6vw, 5rem)' }}>
+      <div className="shell-tight">
+        <Link to="/" style={{
+          display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+          fontSize: '0.82rem', color: 'var(--muted)',
+          letterSpacing: '0.06em', marginBottom: '2rem',
+        }}>
+          <ArrowLeft size={14} /> Home
+        </Link>
 
-        <div className="space-y-4 mb-12">
-          {files.map((file, index) => (
-            <div
-              key={index}
-              className="download-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-              style={{ animation: `fadeInUp 0.5s ease-out ${index * 80}ms both` }}
+        <span className="kicker kicker-dot">Your library</span>
+        <h1 className="display-l" style={{ margin: '1rem 0 1rem' }}>Your downloads.</h1>
+        <p className="lede" style={{ marginBottom: 'clamp(2.5rem, 4vw, 3.5rem)' }}>
+          Every file you've purchased — ready to download, instantly. Click any item to save it to your device.
+        </p>
+
+        <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '3rem' }}>
+          {files.map((f, i) => (
+            <motion.div
+              key={f.file}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr auto',
+                gap: '1.25rem',
+                alignItems: 'center',
+                padding: '1.25rem 1.5rem',
+                background: 'var(--cream)',
+                border: '1px solid var(--line)',
+                borderRadius: 16,
+              }}
             >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
-                  <FileText style={{ color: 'var(--purple)' }} size={20} />
+              <div style={{
+                width: 44, height: 44,
+                display: 'grid', placeItems: 'center',
+                borderRadius: 12,
+                background: 'var(--paper-warm)',
+                border: '1px solid var(--line)',
+              }}>
+                <FileText size={18} style={{ color: 'var(--sage-deep)' }} />
+              </div>
+              <div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.08rem', fontWeight: 500, lineHeight: 1.25 }}>
+                  {f.name}
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-0.5" style={{ color: 'var(--navy)', fontSize: '16px' }}>{file.name}</h3>
-                  <p className="text-[13px]" style={{ color: 'var(--muted-gray)' }}>{file.desc}</p>
+                <div style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem' }}>
+                  {f.desc}
                 </div>
               </div>
-              <a
-                href={`/downloads/${file.file}`}
-                download
-                className="flex items-center justify-center gap-2 font-semibold px-5 py-2.5 rounded-xl transition-all w-full sm:w-auto flex-shrink-0 hover:shadow-md active:scale-[0.97] no-underline gradient-purple-btn"
-                style={{ color: 'white', fontSize: '14px' }}
-              >
-                <Download size={16} />
-                <span>Download</span>
+              <a href={`/downloads/${f.file}`} download className="btn btn-ink btn-sm">
+                <Download size={14} /> PDF
               </a>
-            </div>
+            </motion.div>
           ))}
         </div>
-
-        <div className="text-center">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-2 font-medium hover:underline transition-all no-underline"
-            style={{ color: 'var(--muted-gray)' }}
-          >
-            <ArrowLeft size={16} /> Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </main>
   );
-};
-
-export default DownloadsPage;
+}
