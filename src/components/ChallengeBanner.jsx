@@ -17,26 +17,24 @@ export default function ChallengeBanner() {
     setError('');
 
     try {
-      const response = await fetch('https://api.convertkit.com/v3/subscribers', {
+      const response = await fetch('/api/challenge-signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email_address: email,
-          api_key: import.meta.env.VITE_CONVERTKIT_API_KEY,
-        }),
+        body: JSON.stringify({ email }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to sign up');
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to sign up');
       }
 
       setSubmitted(true);
       setEmail('');
     } catch (err) {
       setError('Unable to sign up. Please try again.');
-      console.error('Convertkit signup error:', err);
+      console.error('Challenge signup error:', err);
     } finally {
       setLoading(false);
     }
@@ -105,7 +103,7 @@ export default function ChallengeBanner() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  You're in. Check your inbox May 1st.
+                  You're in! Check your inbox — your welcome email is on its way.
                 </motion.div>
               )}
 
