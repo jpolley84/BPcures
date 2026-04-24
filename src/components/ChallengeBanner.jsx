@@ -23,9 +23,8 @@ export default function ChallengeBanner() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email,
+          email_address: email,
           api_key: import.meta.env.VITE_CONVERTKIT_API_KEY,
-          tags: ['30-day-challenge'],
         }),
       });
 

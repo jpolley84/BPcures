@@ -104,7 +104,7 @@ export default function BlogPostPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             style={{ fontSize: '1.08rem', lineHeight: 1.7, maxWidth: '66ch' }}
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: post.body || post.content }}
           />
 
           <div style={{
