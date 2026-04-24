@@ -9,7 +9,6 @@ import QuizPage from './pages/QuizPage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import LearnPage from './pages/LearnPage';
-import LibraryPage from './pages/LibraryPage';
 import BlogPostPage from './pages/BlogPostPage';
 import UpsellPage from './pages/UpsellPage';
 import SuccessPage from './pages/SuccessPage';
@@ -46,8 +45,6 @@ function App() {
         <Route path="/shop/:slug" element={<StoreLayout><ProductDetailPage /></StoreLayout>} />
         <Route path="/learn" element={<StoreLayout><LearnPage /></StoreLayout>} />
         <Route path="/learn/:slug" element={<StoreLayout><BlogPostPage /></StoreLayout>} />
-        <Route path="/library" element={<StoreLayout><LibraryPage /></StoreLayout>} />
-        <Route path="/library/:slug" element={<StoreLayout><ProductDetailPage /></StoreLayout>} />
 
         {/* Legacy blog routes — redirect to /learn */}
         <Route path="/blog" element={<Navigate to="/learn" replace />} />
