@@ -15,8 +15,8 @@ const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
 const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
 const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 
-const VIP_STRIPE_LINK = process.env.CHALLENGE_VIP_STRIPE_LINK || '#';
-const PREMIUM_STRIPE_LINK = process.env.CHALLENGE_PREMIUM_STRIPE_LINK || '#';
+const VIP_STRIPE_LINK = process.env.CHALLENGE_VIP_STRIPE_LINK || 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w';
+const PREMIUM_STRIPE_LINK = process.env.CHALLENGE_PREMIUM_STRIPE_LINK || 'https://buy.stripe.com/9B6eVd6bVb5Y1N11sZfnO0x';
 
 async function mailchimpUpsert(email) {
   if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
