@@ -48,7 +48,6 @@ export const TIER_CONFIG = {
 
 // Map Stripe amount_total (cents) → tier
 const AMOUNT_TO_TIER = {
-  1299: 1,
   1700: 1,
   4700: 2,
   29700: 3,

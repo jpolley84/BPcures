@@ -10,7 +10,7 @@ import {
   urgencyWindow,
 } from '../utils/productLoader';
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 // Each option carries a `score` (0–3) that contributes to a 1–10 risk score.
 const QUESTIONS = [
@@ -57,6 +57,17 @@ const QUESTIONS = [
       { value: 'starting', label: "Just starting research", desc: "You want nurse-level guidance from the start.", score: 0 },
     ],
   },
+  {
+    id: 'age',
+    question: "What's your age range?",
+    subtitle: "Helps Joel calibrate herb dosing and lifestyle fit.",
+    options: [
+      { value: 'under_40', label: 'Under 40', desc: 'Getting ahead of it early.', score: 0 },
+      { value: '40_49', label: '40–49', desc: 'Noticing changes. Smart to act now.', score: 0 },
+      { value: '50_59', label: '50–59', desc: 'The decade most people get serious.', score: 1 },
+      { value: '60_plus', label: '60+', desc: 'Experience on your side. Protocols matter more.', score: 1 },
+    ],
+  },
 ];
 
 const CONCERN_COPY = {
@@ -74,7 +85,7 @@ function computeRiskScore(answers) {
     const opt = q.options.find(o => o.value === ansVal);
     if (opt) raw += opt.score;
   }
-  // Max raw across questions: 3+3+3+2 = 11 -> normalize to 1..10
+  // Max raw across questions: 2+3+3+2+1 = 11 -> normalize to 1..10
   const normalized = Math.round((raw / 11) * 9) + 1;
   return Math.max(1, Math.min(10, normalized));
 }
@@ -231,6 +242,7 @@ function QuizModule({ products }) {
           name: name.trim(),
           category: concern,
           riskScore,
+          answers,
         }),
       }).catch(() => null);
     } finally {
@@ -391,7 +403,11 @@ function QuizModule({ products }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>{concernCopy.score_label} Score</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
-                    Joel matched you with a nurse-designed starter protocol.
+                    {answers.medication === 'want_off'
+                      ? 'Joel matched you with a protocol designed for people reducing medication.'
+                      : answers.medication === 'on_meds'
+                      ? 'Joel matched you with a protocol that complements your current prescriptions.'
+                      : 'Joel matched you with a prevention-first starter protocol.'}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
@@ -406,7 +422,12 @@ function QuizModule({ products }) {
                 </em> protocol is ready.
               </h2>
               <p className="quiz-subtitle" style={{ marginBottom: '1.25rem' }}>
-                Based on your answers, here's where to start.
+                {answers.medication === 'want_off'
+                  ? "You told us you're on medication and want to reduce your dependence. This protocol was designed for exactly that — nurse-vetted, designed to complement your doctor's plan."
+                  : answers.medication === 'on_meds'
+                  ? "You're on medication and want natural support alongside it. This protocol is built to complement — never replace — what your doctor prescribed."
+                  : "You're getting ahead of it naturally. This protocol gives you the nurse-designed foundation to stay that way."
+                }
               </p>
 
               {recommended ? (
