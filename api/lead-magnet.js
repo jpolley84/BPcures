@@ -375,7 +375,7 @@ export default async function handler(req, res) {
 
   try {
     await getResend().emails.send({
-      from: 'Joel Polley, RN <braveworksrn@gmail.com>',
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: email.trim(),
       replyTo: 'braveworksrn@gmail.com',
       subject: cat.subject_a,

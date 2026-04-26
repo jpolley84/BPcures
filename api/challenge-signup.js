@@ -82,7 +82,7 @@ function renderWelcomeEmail() {
           You're in. The 30-Day Reset starts May 1.
         </h1>
         <p style="font-size:15px;line-height:1.6;color:#3A3A3A;margin:0 0 16px;">
-          For the next 30 days, you'll get a daily email from me with one actionable protocol step. Blood pressure, cortisol, blood sugar, weight — we address the root, not the symptom.
+          For the next 30 days, you'll get a daily email from me with one actionable protocol step. High blood pressure, runaway cortisol, stubborn blood sugar, weight that won't move, high cholesterol — we stop chasing symptoms and address what's actually driving them.
         </p>
         <p style="font-size:15px;line-height:1.6;color:#3A3A3A;margin:0 0 20px;">
           This is free. No credit card. No catch. Just the protocol I'd give family.
@@ -124,7 +124,7 @@ function renderWelcomeEmail() {
             </td>
             <td style="padding-bottom:14px;">
               <div style="font-size:15px;font-weight:600;color:#2C3E50;margin-bottom:3px;">Week 2: The Protocol</div>
-              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Introduce the evidence-backed herbal and lifestyle protocol — precise steps, daily.</div>
+              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Introduce the NEWSTART protocol — herbs, whole foods, and lifestyle changes that target multiple conditions at once.</div>
             </td>
           </tr>
           <tr>
@@ -172,7 +172,7 @@ function renderWelcomeEmail() {
             </p>
             <ul style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85);padding-left:18px;margin:0 0 16px;">
               <li style="margin:4px 0;">Weekly live group coaching — Mondays at 10pm EST</li>
-              <li style="margin:4px 0;">The complete BP Reset book (digital)</li>
+              <li style="margin:4px 0;">The Full Body Reset book (digital)</li>
               <li style="margin:4px 0;">Direct Q&amp;A with Joel during live sessions</li>
             </ul>
             <a href="${VIP_STRIPE_LINK}" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
@@ -254,7 +254,7 @@ export default async function handler(req, res) {
   try {
     const html = renderWelcomeEmail();
     await getResend().emails.send({
-      from: 'Joel Polley, RN <braveworksrn@gmail.com>',
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
       subject: "You're in — 30-Day Reset starts May 1",

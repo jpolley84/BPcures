@@ -1,25 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, ArrowRight, CalendarDays } from 'lucide-react';
-import { fetchProducts, getProductBySlug } from '../utils/productLoader';
-
-const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+import { Check } from 'lucide-react';
 
 export default function SuccessPage() {
-  const [params] = useSearchParams();
-  const slug = params.get('slug');
-  const [product, setProduct] = useState(null);
-
-  useEffect(() => {
-    if (!slug) return;
-    fetchProducts().then(products => {
-      setProduct(getProductBySlug(products, slug));
-    });
-  }, [slug]);
-
-  const isCoaching = product?.tier === 3;
-
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'grid', placeItems: 'center', padding: '3rem 1.5rem' }}>
       <motion.div
@@ -49,60 +32,17 @@ export default function SuccessPage() {
           Thank you, <em className="ital-display" style={{ color: 'var(--clay)' }}>truly.</em>
         </h1>
 
-        {isCoaching ? (
-          <>
-            <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 2rem', maxWidth: '52ch' }}>
-              Your receipt is on its way. Before you do anything else — join the Skool community. The 30-Day Challenge kicks off May 1.
-            </p>
-            <div style={{
-              padding: '1.5rem',
-              border: '1px solid var(--sage)',
-              background: 'var(--sage-soft)',
-              borderRadius: 16,
-              marginBottom: '2rem',
-              textAlign: 'left',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', color: 'var(--sage-deep)' }}>
-                <CalendarDays size={18} />
-                <strong style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem' }}>Next step: join the Skool community</strong>
-              </div>
-              <p style={{ color: 'var(--ink-soft)', fontSize: '0.95rem', margin: '0 0 1rem', lineHeight: 1.55 }}>
-                The 30-Day Challenge starts May 1. Join the "How to Be Your Own Doctor" Skool community now to get oriented — weekly live group coaching begins on day one.
-              </p>
-              <a
-                href={SKOOL_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-ink btn-lg"
-                style={{ width: '100%', justifyContent: 'center' }}
-              >
-                Join the Skool Community <ArrowRight size={16} className="arrow" />
-              </a>
-            </div>
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/downloads" className="btn btn-ghost btn-lg">
-                View downloads
-              </Link>
-              <Link to="/" className="btn btn-ghost btn-lg">
-                Return home
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 2.5rem', maxWidth: '52ch' }}>
-              Your receipt is on its way to your inbox. Your downloads are ready now — everything arrives instantly, nothing ships.
-            </p>
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/downloads" className="btn btn-ink btn-lg">
-                View downloads <ArrowRight size={16} className="arrow" />
-              </Link>
-              <Link to="/" className="btn btn-ghost btn-lg">
-                Return home
-              </Link>
-            </div>
-          </>
-        )}
+        <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 1.5rem', maxWidth: '52ch' }}>
+          Your protocol kit is on its way to your inbox. Check your email — everything you need is inside, including your downloads and next steps.
+        </p>
+
+        <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2.5rem', maxWidth: '44ch' }}>
+          Don't see it? Check your spam or promotions folder. It comes from Joel Polley, RN.
+        </p>
+
+        <Link to="/" className="btn btn-ghost btn-lg">
+          Return home
+        </Link>
       </motion.div>
     </main>
   );

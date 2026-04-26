@@ -22,9 +22,9 @@ export const TIER_CONFIG = {
     subject: 'Your Blood Pressure Cures guide — downloads inside',
     downloads: [DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
-    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
-    upgradeLabel: 'The BP Reset Kit ($47)',
-    upgradeDesc: 'The complete system: full 10-day challenge, herb formulary with dosing, and a printable tracker.',
+    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
+    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
+    upgradeDesc: 'Get all three of Joel\'s books for $27 (normally $77 separately). Blood Pressure Cures — the full edition with herb protocols, dosing charts, and the 10-day reset plan. The Overmedicated Boomer — why your prescriptions may be working against you, and what to ask your doctor. Be There in 30 — Joel\'s 30-day wellness guide: daily actions, meal frameworks, and the mindset shifts that make it stick.',
   },
   2: {
     product: 'The BP Reset Kit',
@@ -49,6 +49,7 @@ export const TIER_CONFIG = {
 // Map Stripe amount_total (cents) → tier
 const AMOUNT_TO_TIER = {
   1299: 1,
+  1700: 1,
   4700: 2,
   29700: 3,
 };

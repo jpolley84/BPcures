@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+// Link removed — single-page funnel, no internal navigation needed
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowRight, ArrowUpRight, Check, ExternalLink, Star, Quote, Phone, AlertCircle, Users,
+  ArrowRight, ArrowUpRight, Check, Star, Quote, AlertCircle,
 } from 'lucide-react';
-import ProductCard from '../components/ProductCard';
 import {
   fetchProducts,
-  getFeaturedProducts,
   recommendForScore,
   urgencyWindow,
 } from '../utils/productLoader';
@@ -91,17 +89,13 @@ export default function QuizPage() {
   const [products, setProducts] = useState([]);
   useEffect(() => { fetchProducts().then(setProducts); }, []);
 
-  const featured = useMemo(() => getFeaturedProducts(products).slice(0, 4), [products]);
-
   return (
     <>
       <Hero products={products} />
       <RotatingConcerns />
-      <FeaturedProtocols products={featured} />
       <NursesNote />
       <HowItWorks />
       <Testimonials />
-      <LearnStrip />
       <FinalCTA />
     </>
   );
@@ -217,10 +211,8 @@ function QuizModule({ products }) {
     if (step > 0) setStep(s => s - 1);
   }
 
-  // Risk score + tier recommendation (computed here so submitEmail can send them)
   const concern = answers.concern === 'all' ? 'blood_pressure' : (answers.concern ?? 'blood_pressure');
   const riskScore = useMemo(() => computeRiskScore(answers), [answers]);
-  const tier = tierForScore(riskScore);
 
   async function submitEmail(e) {
     e.preventDefault();
@@ -246,9 +238,10 @@ function QuizModule({ products }) {
       setPhase('results');
     }
   }
+  // Always recommend the tier-1 starter ($17) regardless of score
   const recommended = useMemo(
-    () => recommendForScore(products, concern, riskScore),
-    [products, concern, riskScore]
+    () => recommendForScore(products, concern, 1),
+    [products, concern]
   );
   const urgency = urgencyWindow(riskScore);
   const concernCopy = CONCERN_COPY[answers.concern] ?? CONCERN_COPY.blood_pressure;
@@ -398,9 +391,7 @@ function QuizModule({ products }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>{concernCopy.score_label} Score</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
-                    {riskScore <= 3 && 'Mild — early-stage. The starter is enough.'}
-                    {riskScore > 3 && riskScore <= 6 && 'Moderate — the complete kit is the right call.'}
-                    {riskScore > 6 && 'Elevated — premium tier with coaching is recommended.'}
+                    Joel matched you with a nurse-designed starter protocol.
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
@@ -415,21 +406,21 @@ function QuizModule({ products }) {
                 </em> protocol is ready.
               </h2>
               <p className="quiz-subtitle" style={{ marginBottom: '1.25rem' }}>
-                Joel matched you to <strong>Level {tier}</strong> based on your answers.
+                Based on your answers, here's where to start.
               </p>
 
               {recommended ? (
                 <div style={{
                   position: 'relative',
                   padding: '1.5rem',
-                  background: tier === 3 ? 'var(--sage-deep)' : tier === 2 ? 'var(--paper-warm)' : 'var(--cream)',
-                  color: tier === 3 ? 'var(--cream)' : 'var(--ink)',
-                  border: `${tier === 2 ? 2 : 1}px solid ${tier === 3 ? 'var(--sage-deep)' : 'var(--ink)'}`,
+                  background: 'var(--cream)',
+                  color: 'var(--ink)',
+                  border: '1px solid var(--ink)',
                   borderRadius: 18,
                   marginBottom: '1rem',
                 }}>
                   <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.7, fontWeight: 500, marginBottom: '0.5rem' }}>
-                    Recommended · Level 0{tier} · {recommended.tier_label}
+                    Recommended · Your Starter Protocol
                   </div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.5rem', lineHeight: 1.15, marginBottom: '0.5rem', fontWeight: 500 }}>
                     {recommended.name}
@@ -437,45 +428,6 @@ function QuizModule({ products }) {
                   <p style={{ fontSize: '0.92rem', lineHeight: 1.5, opacity: 0.85, margin: '0 0 1rem' }}>
                     {recommended.headline}
                   </p>
-                  {tier === 3 && (
-                    <div style={{
-                      background: 'rgba(251,248,241,0.12)',
-                      border: '1px solid rgba(251,248,241,0.28)',
-                      borderRadius: 12,
-                      padding: '0.9rem 1rem',
-                      marginBottom: '1rem',
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem', marginBottom: '0.5rem' }}>
-                        <Star size={13} fill="currentColor" stroke="none" style={{ color: 'var(--clay-soft)', flexShrink: 0, marginTop: '0.1rem' }} />
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.8rem', lineHeight: 1.35, color: 'var(--cream)' }}>
-                            BONUS: FREE Virtual Ticket to Barbara O'Neill LIVE
-                          </div>
-                          <div style={{ fontSize: '0.74rem', opacity: 0.8, marginTop: '0.15rem', color: 'var(--cream)' }}>
-                            $297 value INCLUDED · June 24–25, 2026
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', paddingTop: '0.45rem', borderTop: '1px solid rgba(251,248,241,0.15)' }}>
-                        <a
-                          href="https://everydaynurse.com/event-virtual"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.72rem', color: 'var(--clay-soft)', textDecoration: 'underline', textUnderlineOffset: '2px' }}
-                        >
-                          Event details <ExternalLink size={10} />
-                        </a>
-                        <a
-                          href="https://www.skool.com/how-to-be-your-own-doctor-8010/about"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.72rem', color: 'rgba(251,248,241,0.65)', textDecoration: 'underline', textUnderlineOffset: '2px' }}
-                        >
-                          <Users size={10} /> Join community on Skool
-                        </a>
-                      </div>
-                    </div>
-                  )}
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '1rem' }}>
                     <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1 }}>
                       {recommended.price}
@@ -492,25 +444,16 @@ function QuizModule({ products }) {
                     target="_top"
                     rel="noopener"
                     style={{
-                      background: tier === 3 ? 'var(--clay)' : 'var(--ink)',
+                      background: 'var(--ink)',
                       color: 'var(--cream)',
                       width: '100%',
                     }}
                   >
-                    {tier === 3 ? 'Join the 30-Day Challenge — Starts May 1' : tier === 2 ? 'Get the complete kit' : 'Start with the guide'}
+                    Get your protocol
                     <ArrowRight size={16} className="arrow" />
                   </a>
                 </div>
               ) : null}
-
-              <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'space-between', flexWrap: 'wrap', marginTop: '1rem' }}>
-                <Link to={`/shop?category=${concern}`} className="btn-link">
-                  Compare all 3 levels →
-                </Link>
-                <Link to="/shop" className="btn-link" style={{ color: 'var(--muted)' }}>
-                  Other categories →
-                </Link>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -572,38 +515,6 @@ function RotatingConcerns() {
 }
 
 /* ------------------------------------------------------------------
-   Featured protocols
-   ------------------------------------------------------------------ */
-
-function FeaturedProtocols({ products }) {
-  return (
-    <section className="section surface-paper">
-      <div className="shell">
-        <header style={{ marginBottom: 'clamp(2rem, 4vw, 3.5rem)' }}>
-          <div className="section-label">
-            <span className="num">01 · Apothecary</span>
-            <span className="line" />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '2rem', alignItems: 'end' }}>
-            <h2 className="display-m" style={{ maxWidth: '18ch', margin: 0 }}>
-              Protocols that don't feel like <em className="ital-display" style={{ color: 'var(--clay)' }}>homework.</em>
-            </h2>
-            <Link to="/shop" className="btn btn-ghost" style={{ alignSelf: 'end' }}>
-              View all
-              <ArrowUpRight size={16} className="arrow" />
-            </Link>
-          </div>
-        </header>
-
-        <div className="product-grid">
-          {products.map(p => <ProductCard key={p.slug} product={p} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------
    Nurse's note — editorial bio block with pull quote
    ------------------------------------------------------------------ */
 
@@ -645,10 +556,10 @@ function NursesNote() {
               No cures. No hype. Educational content only. But written by someone who's been in
               the room.
             </p>
-            <Link to="/learn" className="btn btn-ink">
-              Read the journal
+            <a href="#top" className="btn btn-ink" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+              Take the assessment
               <ArrowUpRight size={16} className="arrow" />
-            </Link>
+            </a>
           </div>
 
           <div>
@@ -813,31 +724,6 @@ function Testimonials() {
 }
 
 /* ------------------------------------------------------------------
-   Learn strip — prominent link to Journal
-   ------------------------------------------------------------------ */
-
-function LearnStrip() {
-  return (
-    <section className="section-tight surface-paper">
-      <div className="shell">
-        <div className="section-label">
-          <span className="num">05 · The Journal</span>
-          <span className="line" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '2rem', alignItems: 'end' }}>
-          <h2 className="display-m" style={{ margin: 0, maxWidth: '20ch' }}>
-            Plain-English essays. No clickbait. No cures.
-          </h2>
-          <Link to="/learn" className="btn btn-ink">
-            Read the journal <ArrowUpRight size={16} className="arrow" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------
    Final CTA
    ------------------------------------------------------------------ */
 
@@ -850,15 +736,12 @@ function FinalCTA() {
           Four questions. Your <em className="ital-display" style={{ color: 'var(--clay)' }}>first move.</em>
         </h2>
         <p className="lede" style={{ margin: '0 auto 2rem' }}>
-          It really does take ninety seconds. And you can always come back to the apothecary.
+          It really does take ninety seconds. Four questions, then your protocol.
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <a href="#top" className="btn btn-ink btn-lg" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             Take the assessment <ArrowRight size={16} className="arrow" />
           </a>
-          <Link to="/shop" className="btn btn-ghost btn-lg">
-            Browse the apothecary
-          </Link>
         </div>
       </div>
     </section>

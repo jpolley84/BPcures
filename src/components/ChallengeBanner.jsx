@@ -70,9 +70,9 @@ export default function ChallengeBanner() {
               </h2>
 
               <p className="challenge-banner-sub">
-                Blood pressure. Cortisol. Blood sugar. Weight.
-                One nurse-designed protocol &mdash; delivered to your inbox daily.
-                Free downloads. DIY at your own pace. No credit card.
+                High BP. High cortisol. High blood sugar. Stubborn weight. High cholesterol.
+                One root-cause protocol targeting all of them &mdash; delivered to your inbox daily.
+                Free. No credit card. No catch.
               </p>
 
               {!submitted ? (
