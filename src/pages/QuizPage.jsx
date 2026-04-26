@@ -77,6 +77,78 @@ const CONCERN_COPY = {
   all: { label: 'Whole system', ital: 'systems', score_label: 'Whole-System Risk' },
 };
 
+// Tips shown on the results page — 3 per category, each with a desire-creating hook
+const RESULT_TIPS = {
+  blood_pressure: [
+    {
+      title: 'Your sodium intake is likely double what your body can handle',
+      body: 'Most people consume 3,400mg of sodium daily without realizing it. Even a two-week reduction moves systolic readings in most people — it\'s the fastest single lever you have.',
+      hook: 'The full protocol shows you exactly which foods to swap and which herb amplifies the effect.',
+    },
+    {
+      title: 'Evening walks are moving numbers faster than morning ones',
+      body: 'Not for weight loss — for vasodilation. Twenty minutes after dinner drops systolic pressure more consistently than any other single habit change Joel tracks.',
+      hook: 'Day 3 of the protocol adds the walking timing that moves diastolic numbers too.',
+    },
+    {
+      title: 'Poor sleep is silently raising your blood pressure every night',
+      body: 'Less than 7 hours elevates cortisol, which raises blood pressure. Fix the sleep and every other lever works better — this one compounds everything.',
+      hook: 'The protocol includes Joel\'s herb-based sleep stack that patients say works by night two.',
+    },
+  ],
+  cortisol: [
+    {
+      title: 'Your evening screen time is keeping cortisol elevated past midnight',
+      body: 'Blue light suppresses melatonin and locks cortisol into overdrive. A single 60-minute wind-down window changes your morning cortisol curve faster than any supplement.',
+      hook: 'The protocol gives you Joel\'s exact evening routine — the one he built for nurses working night shifts.',
+    },
+    {
+      title: 'Skipping meals is triggering stress responses you can\'t feel',
+      body: 'Your adrenals respond to low blood sugar like a threat. Protein, fat, and fiber every 4 hours keeps the cortisol curve flat — most people feel the difference within a week.',
+      hook: 'The cookbook and meal timing guide inside the kit make this automatic — no willpower required.',
+    },
+    {
+      title: 'Your breathing pattern is wired for fight-or-flight',
+      body: 'Slow diaphragmatic breathing activates the vagus nerve, which directly lowers cortisol. Five minutes once a day shifts your baseline within two weeks.',
+      hook: 'The protocol includes a printable 5-minute breathwork card you can keep on your nightstand.',
+    },
+  ],
+  blood_sugar: [
+    {
+      title: 'The order you eat your food matters more than what you eat',
+      body: 'Starting a meal with vegetables or fiber slows glucose absorption and flattens the post-meal spike by 20–30%. Most people have never been told this.',
+      hook: 'The protocol maps out exactly what to eat first, second, and third — meal by meal for 10 days.',
+    },
+    {
+      title: 'A 10-minute walk after eating is more powerful than most medications',
+      body: 'A short walk after meals drives glucose into muscle cells without needing extra insulin. Even a slow stroll counts — it\'s the most consistent intervention Joel has tracked.',
+      hook: 'The daily tracker inside the kit shows you exactly when to walk and how to measure the difference.',
+    },
+    {
+      title: 'Dehydration is raising your blood sugar without you knowing',
+      body: 'When you\'re dehydrated, your blood sugar concentrates. Consistent water intake keeps your baseline lower and your kidneys filtering properly.',
+      hook: 'The protocol includes Joel\'s hydration formula calibrated to your body weight and activity level.',
+    },
+  ],
+  all: [
+    {
+      title: 'These three systems are pulling each other in a loop',
+      body: 'High cortisol raises blood sugar. High blood sugar raises blood pressure. Poor sleep raises cortisol. Most people treat one and wonder why the others won\'t budge.',
+      hook: 'Joel\'s protocol addresses all three systems in sequence — starting with the one that unlocks the others.',
+    },
+    {
+      title: 'Your meal timing might be the single biggest hidden driver',
+      body: 'Skipping meals spikes cortisol and blood sugar simultaneously. Eating the wrong foods first amplifies the damage. Small timing shifts create outsized results.',
+      hook: 'The cookbook and daily plan inside the kit restructure your meals without changing your grocery list.',
+    },
+    {
+      title: 'Evening habits are compounding the damage while you sleep',
+      body: 'Screens, late meals, and disrupted sleep create a cascade that raises all three markers overnight. Fix the evening and the mornings start changing within days.',
+      hook: 'The 10-day protocol rebuilds your evening routine one step at a time — most people feel it by day three.',
+    },
+  ],
+};
+
 // Compute a 1–10 risk score from the answers.
 function computeRiskScore(answers) {
   let raw = 0;
@@ -338,7 +410,7 @@ function QuizModule({ products }) {
                 Where should Joel send your protocol?
               </h2>
               <p className="quiz-subtitle">
-                Two or three nurse-designed options, hand-matched to your answers. You'll also receive the Cook For Life cookbook — free.
+                Your personalized protocol, hand-matched to your answers — plus the Cook For Life plant-based cookbook, free.
               </p>
 
               <form onSubmit={submitEmail} style={{ display: 'grid', gap: '0.65rem' }}>
@@ -417,48 +489,140 @@ function QuizModule({ products }) {
               </div>
 
               <h2 className="display-s" style={{ marginBottom: '0.5rem' }}>
-                {name ? `${name}, your` : 'Your'} <em className="ital-display" style={{ color: 'var(--clay)' }}>
+                {name ? `${name}, here's` : 'Here\'s'} what's driving your <em className="ital-display" style={{ color: 'var(--clay)' }}>
                   {concernCopy.ital}
-                </em> protocol is ready.
+                </em> — and how to fix it.
               </h2>
-              <p className="quiz-subtitle" style={{ marginBottom: '1.25rem' }}>
-                {answers.medication === 'want_off'
-                  ? "You told us you're on medication and want to reduce your dependence. This protocol was designed for exactly that — nurse-vetted, designed to complement your doctor's plan."
-                  : answers.medication === 'on_meds'
-                  ? "You're on medication and want natural support alongside it. This protocol is built to complement — never replace — what your doctor prescribed."
-                  : "You're getting ahead of it naturally. This protocol gives you the nurse-designed foundation to stay that way."
-                }
+
+              {/* Epiphany Bridge — break the false belief before tips */}
+              <p style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0.5rem 0 0.25rem', fontStyle: 'italic' }}>
+                In twenty years of ICU and emergency nursing, Joel noticed something his training never explained —
+                the patients who improved fastest weren't the ones on the most medications.
+                They were the ones who understood what was actually driving their numbers.
               </p>
 
-              {recommended ? (
+              {/* 3 Tips — each creates desire for the full protocol */}
+              <div style={{ margin: '1.25rem 0', display: 'grid', gap: '0.75rem' }}>
+                {(RESULT_TIPS[answers.concern] || RESULT_TIPS.blood_pressure).map((tip, i) => (
+                  <div key={i} style={{
+                    display: 'flex', gap: '0.85rem',
+                    padding: '1rem 1.15rem',
+                    background: 'var(--paper-warm)',
+                    border: '1px solid var(--line)',
+                    borderRadius: 14,
+                  }}>
+                    <div style={{
+                      width: 30, height: 30, flexShrink: 0, borderRadius: '50%',
+                      background: 'var(--sage)', color: 'var(--cream)',
+                      display: 'grid', placeItems: 'center',
+                      fontFamily: 'Fraunces, serif', fontSize: '0.85rem', fontWeight: 600,
+                    }}>{i + 1}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1rem', fontWeight: 500, lineHeight: 1.25, marginBottom: '0.3rem', color: 'var(--ink)' }}>
+                        {tip.title}
+                      </div>
+                      <p style={{ fontSize: '0.85rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: 0 }}>
+                        {tip.body}
+                      </p>
+                      <p style={{ fontSize: '0.8rem', lineHeight: 1.4, color: 'var(--clay)', margin: '0.4rem 0 0', fontWeight: 500, fontStyle: 'italic' }}>
+                        {tip.hook}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Identity nudge — Hardy */}
+              <p style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', margin: '0 0 1rem', fontWeight: 500 }}>
+                People who score {riskScore}/10 and take action in the first 48 hours see the fastest results.
+              </p>
+
+              {/* Buy button FIRST — above the stack */}
+              {recommended && (
+                <a
+                  href={recommended.stripe_payment_link}
+                  className="btn btn-lg"
+                  target="_top"
+                  rel="noopener"
+                  style={{
+                    background: 'var(--clay)',
+                    color: 'var(--cream)',
+                    width: '100%',
+                    marginBottom: '1.25rem',
+                    fontSize: '1.05rem',
+                    padding: '1rem',
+                  }}
+                >
+                  Start lowering your numbers today — {recommended.price}
+                  <ArrowRight size={16} className="arrow" />
+                </a>
+              )}
+
+              {/* Vacation-style offer stack — sell the feeling */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'var(--cream)',
+                border: '1px solid var(--ink)',
+                borderRadius: 18,
+                marginBottom: '1rem',
+              }}>
+                <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.55, fontWeight: 500, marginBottom: '0.75rem' }}>
+                  What 1,200+ readers already have
+                </div>
+                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', lineHeight: 1.2, marginBottom: '0.75rem', fontWeight: 500 }}>
+                  Imagine waking up and your numbers are just… <em style={{ color: 'var(--clay)' }}>normal.</em>
+                </h3>
+                <p style={{ fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 1.25rem' }}>
+                  No dread before the cuff goes on. No arguing with your doctor about another pill.
+                  Just a morning where you feel rested, your head is clear, and the numbers say what you already feel — you're getting better.
+                </p>
+
+                <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  {[
+                    { icon: '📋', label: 'The full 10-day nurse-designed protocol', sub: 'Daily steps, herb dosing, and the "why" behind each one — so you actually stick with it.' },
+                    { icon: '🌿', label: 'Joel\'s complete herb formulary', sub: 'The exact herbs, doses, and timing Joel gives family. No guesswork.' },
+                    { icon: '📊', label: 'Printable tracker + readings log', sub: 'Watch your numbers move. Most people see it within the first week.' },
+                    { icon: '🍽️', label: 'Cook For Life — plant-based cookbook', sub: '45 recipes built around the foods that lower your numbers, not fight them.' },
+                    { icon: '👥', label: 'Free Skool community access', sub: 'Join "How to Be Your Own Doctor" — ask Joel anything, connect with people on the same path.' },
+                    { icon: '🗓️', label: 'Free 30-Day Challenge enrollment', sub: 'Daily protocol emails for 30 days. You\'re automatically signed up — nothing extra to do.' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>{item.label}</div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--muted)', lineHeight: 1.4, marginTop: '0.1rem' }}>{item.sub}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Price anchor — Kennedy */}
+                <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
+                  A single naturopath visit runs $150–300. A month of prescriptions with co-pays runs more. This is $17 — launch pricing while Joel builds 1,000 case studies.
+                </p>
+
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                  <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
+                    $17
+                  </span>
+                  <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>$197 value</span>
+                </div>
+
+                {/* Guarantee — Hormozi + Kennedy */}
                 <div style={{
-                  position: 'relative',
-                  padding: '1.5rem',
-                  background: 'var(--cream)',
-                  color: 'var(--ink)',
-                  border: '1px solid var(--ink)',
-                  borderRadius: 18,
-                  marginBottom: '1rem',
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(74, 103, 65, 0.08)',
+                  border: '1px solid var(--sage)',
+                  borderRadius: 10,
+                  marginBottom: '0.75rem',
                 }}>
-                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.7, fontWeight: 500, marginBottom: '0.5rem' }}>
-                    Recommended · Your Starter Protocol
-                  </div>
-                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.5rem', lineHeight: 1.15, marginBottom: '0.5rem', fontWeight: 500 }}>
-                    {recommended.name}
-                  </div>
-                  <p style={{ fontSize: '0.92rem', lineHeight: 1.5, opacity: 0.85, margin: '0 0 1rem' }}>
-                    {recommended.headline}
+                  <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
+                    Joel's guarantee: Complete the 30-day challenge. If you haven't eliminated at least one prescription with your doctor's blessing, Joel refunds every penny. No hoops. No fine print.
                   </p>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '1rem' }}>
-                    <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1 }}>
-                      {recommended.price}
-                    </span>
-                    {recommended.original_price && (
-                      <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>
-                        {recommended.original_price}
-                      </span>
-                    )}
-                  </div>
+                </div>
+
+                {/* Buy button SECOND — below the stack */}
+                {recommended && (
                   <a
                     href={recommended.stripe_payment_link}
                     className="btn btn-lg"
@@ -470,11 +634,14 @@ function QuizModule({ products }) {
                       width: '100%',
                     }}
                   >
-                    Get your protocol
+                    Start my protocol today
                     <ArrowRight size={16} className="arrow" />
                   </a>
-                </div>
-              ) : null}
+                )}
+                <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
+                  Instant delivery · 30-day challenge included · Community access included
+                </p>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -627,7 +794,7 @@ function HowItWorks() {
     {
       n: '01',
       t: 'Take the assessment',
-      d: 'Four short questions. Ninety seconds. No account required.',
+      d: 'Five short questions. Ninety seconds. No account required.',
     },
     {
       n: '02',
@@ -749,22 +916,95 @@ function Testimonials() {
    ------------------------------------------------------------------ */
 
 function FinalCTA() {
+  const [chalEmail, setChalEmail] = useState('');
+  const [chalName, setChalName] = useState('');
+  const [chalSent, setChalSent] = useState(false);
+  const [chalLoading, setChalLoading] = useState(false);
+
+  async function joinChallenge(e) {
+    e.preventDefault();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(chalEmail)) return;
+    setChalLoading(true);
+    try {
+      await fetch('/api/lead-magnet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: chalEmail.trim(),
+          name: chalName.trim(),
+          category: 'blood_pressure',
+          riskScore: 0,
+          answers: {},
+          tags: ['30-day-challenge', 'footer-signup'],
+        }),
+      }).catch(() => null);
+    } finally {
+      setChalLoading(false);
+      setChalSent(true);
+    }
+  }
+
   return (
     <section className="section surface-warm">
       <div className="shell-tight" style={{ textAlign: 'center' }}>
-        <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>Start here</span>
-        <h2 className="display-l" style={{ margin: '1.25rem auto 1.5rem', maxWidth: '16ch' }}>
-          Four questions. Your <em className="ital-display" style={{ color: 'var(--clay)' }}>first move.</em>
+        <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>Free · No purchase required</span>
+        <h2 className="display-l" style={{ margin: '1.25rem auto 1.5rem', maxWidth: '20ch' }}>
+          30 days from now, imagine reading your numbers and <em className="ital-display" style={{ color: 'var(--clay)' }}>smiling.</em>
         </h2>
-        <p className="lede" style={{ margin: '0 auto 2rem' }}>
-          It really does take ninety seconds. Four questions, then your protocol.
+        <p className="lede" style={{ margin: '0 auto 1.5rem', maxWidth: '42ch' }}>
+          The free 30-Day Protocol Challenge. One email a day. Joel walks you through herbs, meals, timing, and the "why" behind each move.
         </p>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <a href="#top" className="btn btn-ink btn-lg" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            Take the assessment <ArrowRight size={16} className="arrow" />
-          </a>
-        </div>
+
+        {chalSent ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
+              padding: '1rem 1.5rem', background: 'var(--sage)', color: 'var(--cream)',
+              borderRadius: 14, fontFamily: 'Fraunces, serif', fontSize: '1.05rem',
+            }}
+          >
+            <Check size={18} /> You're in. Check your inbox for Day 1.
+          </motion.div>
+        ) : (
+          <form onSubmit={joinChallenge} style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: '0.6rem', maxWidth: 400, margin: '0 auto',
+          }}>
+            <input
+              type="text"
+              placeholder="First name (optional)"
+              value={chalName}
+              onChange={e => setChalName(e.target.value)}
+              style={{ ...inputStyleFooter, width: '100%' }}
+            />
+            <input
+              type="email"
+              required
+              placeholder="Email address"
+              value={chalEmail}
+              onChange={e => setChalEmail(e.target.value)}
+              style={{ ...inputStyleFooter, width: '100%' }}
+            />
+            <button type="submit" className="btn btn-ink btn-lg" disabled={chalLoading} style={{ width: '100%', marginTop: '0.25rem' }}>
+              {chalLoading ? 'Joining…' : 'Start the 30-day challenge'}
+              <ArrowRight size={16} className="arrow" />
+            </button>
+            <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.25rem' }}>
+              Educational content only · No spam · Unsubscribe anytime
+            </p>
+          </form>
+        )}
       </div>
     </section>
   );
 }
+
+const inputStyleFooter = {
+  padding: '0.95rem 1.1rem',
+  border: '1px solid var(--line)',
+  borderRadius: 12,
+  background: 'var(--paper)',
+  fontSize: '0.95rem',
+};

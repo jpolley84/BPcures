@@ -29,15 +29,19 @@ export default function SuccessPage() {
         <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>Order complete</span>
 
         <h1 className="display-l" style={{ margin: '1.5rem 0 1rem' }}>
-          Thank you, <em className="ital-display" style={{ color: 'var(--clay)' }}>truly.</em>
+          You just did something <em className="ital-display" style={{ color: 'var(--clay)' }}>most people never do.</em>
         </h1>
 
-        <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 1.5rem', maxWidth: '52ch' }}>
-          Your protocol kit is on its way to your inbox. Check your email — everything you need is inside, including your downloads and next steps.
+        <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 1rem', maxWidth: '52ch' }}>
+          You took your health into your own hands. That matters more than any single herb or protocol.
+        </p>
+
+        <p style={{ color: 'var(--ink-soft)', fontSize: '0.92rem', margin: '0 auto 1.5rem', maxWidth: '48ch' }}>
+          Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email — everything you need is inside.
         </p>
 
         <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2.5rem', maxWidth: '44ch' }}>
-          Don't see it? Check your spam or promotions folder. It comes from Joel Polley, RN.
+          Don't see it? Check your spam or promotions folder. It comes from Joel Polley, RN — add braveworksrn@gmail.com to your contacts.
         </p>
 
         <Link to="/" className="btn btn-ghost btn-lg">

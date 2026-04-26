@@ -145,7 +145,7 @@ function normalizeCategory(c) {
 }
 
 // Subscribe or update subscriber in Mailchimp audience — non-blocking, never throws.
-async function mailchimpUpsert({ email, name, category, riskScore, tier, answers }) {
+async function mailchimpUpsert({ email, name, category, riskScore, tier, answers, extraTags }) {
   if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
   const [, dc] = MAILCHIMP_API_KEY.split('-');
   if (!dc) return { ok: false, reason: 'bad_dc' };
@@ -192,6 +192,12 @@ async function mailchimpUpsert({ email, name, category, riskScore, tier, answers
     if (a.medication) tags.push({ name: `meds-${a.medication}`, status: 'active' });
     // Tag by age range
     if (a.age) tags.push({ name: `age-${a.age}`, status: 'active' });
+    // Extra tags from the request (e.g. footer challenge signup)
+    if (Array.isArray(extraTags)) {
+      for (const t of extraTags) {
+        if (typeof t === 'string' && t.trim()) tags.push({ name: t.trim(), status: 'active' });
+      }
+    }
     await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`, {
       method: 'POST',
       headers: { Authorization: auth, 'Content-Type': 'application/json' },
@@ -364,7 +370,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, name, category: rawCategory, riskScore, answers } = req.body || {};
+  const { email, name, category: rawCategory, riskScore, answers, tags: extraTags } = req.body || {};
 
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Valid email is required' });
@@ -396,7 +402,7 @@ export default async function handler(req, res) {
   }
 
   // Fire-and-forget Mailchimp upsert — don't block response on it.
-  mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {} }).catch(() => {});
+  mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags }).catch(() => {});
 
   return res.status(200).json({ success: true, category, tier });
 }
