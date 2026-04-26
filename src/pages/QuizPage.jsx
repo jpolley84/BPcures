@@ -927,9 +927,7 @@ function FinalCTA() {
           Take the assessment
           <ArrowUpRight size={16} className="arrow" />
         </a>
-        )}
       </div>
     </section>
   );
 }
-
