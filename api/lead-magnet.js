@@ -401,8 +401,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Failed to send email' });
   }
 
-  // Fire-and-forget Mailchimp upsert — don't block response on it.
-  mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags }).catch(() => {});
+  // Await Mailchimp upsert so it completes before the serverless function freezes.
+  const mc = await mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
+  if (!mc.ok) console.warn('mailchimp upsert incomplete', mc.reason || mc.status || 'unknown');
 
   return res.status(200).json({ success: true, category, tier });
 }
