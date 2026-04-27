@@ -242,10 +242,10 @@ function HeroCopy() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        Your doctor added another pill. Your numbers barely moved.
-        What if the answer isn't more medication — it's what 20 years of ICU nursing
-        actually taught Joel about blood pressure, cortisol, and blood sugar?
-        Take the 90-second assessment.
+        Another pill added. Numbers barely moved. You dread the cuff
+        every visit and nobody's explaining why it isn't working.
+        What if next Monday the reading is 124/78 — and you didn't add
+        a single prescription to get there? Take the 90-second assessment.
       </motion.p>
 
       <motion.div
@@ -484,7 +484,7 @@ function QuizModule({ products }) {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
-                    At this score, every week you wait makes the next change harder. Recommend acting <strong>{urgency.label}</strong>.
+                    Every week you wait, those numbers keep creeping — and so does the chance of another prescription. People who score {riskScore}/10 and act <strong>{urgency.label}</strong> are usually the ones writing Joel back.
                   </div>
                 </div>
               </div>
@@ -535,7 +535,7 @@ function QuizModule({ products }) {
 
               {/* Identity nudge — Hardy */}
               <p style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', margin: '0 0 1rem', fontWeight: 500 }}>
-                The version of you with normal readings would start today. People who score {riskScore}/10 and act in the first 48 hours see the fastest results.
+                Right now you're guessing — adding pills, avoiding the cuff, hoping the next reading isn't worse. A week from now you could be the person who actually knows what's driving the number, and watching it drop. That shift starts here.
               </p>
 
               {/* Buy button FIRST — above the stack */}
@@ -554,7 +554,7 @@ function QuizModule({ products }) {
                     padding: '1rem',
                   }}
                 >
-                  Start lowering your numbers today — {recommended.price}
+                  Stop guessing, start moving — {recommended.price}
                   <ArrowRight size={16} className="arrow" />
                 </a>
               )}
@@ -635,7 +635,7 @@ function QuizModule({ products }) {
                       width: '100%',
                     }}
                   >
-                    Start my protocol today
+                    Leave the worry behind — get Joel's protocol
                     <ArrowRight size={16} className="arrow" />
                   </a>
                 )}
@@ -917,10 +917,10 @@ function FinalCTA() {
       <div className="shell-tight" style={{ textAlign: 'center' }}>
         <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>90 seconds · No account required</span>
         <h2 className="display-l" style={{ margin: '1.25rem auto 1.5rem', maxWidth: '20ch' }}>
-          Your numbers won't change until <em className="ital-display" style={{ color: 'var(--clay)' }}>you do.</em>
+          You've dreaded the cuff long <em className="ital-display" style={{ color: 'var(--clay)' }}>enough.</em>
         </h2>
         <p className="lede" style={{ margin: '0 auto 1.5rem', maxWidth: '42ch' }}>
-          Take the assessment. Get a nurse-matched protocol. See your first numbers move within a week.
+          Another month of the same pills, the same readings, the same knot in your stomach before every appointment — or ninety seconds from now, a nurse-built plan and your first real step away from all of it.
         </p>
 
         <a href="#top" className="btn btn-ink btn-lg" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ display: 'inline-flex' }}>
