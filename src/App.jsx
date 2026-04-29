@@ -5,6 +5,7 @@ import ChallengeBanner from './components/ChallengeBanner';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizPage from './pages/QuizPage';
+import ChallengePage from './pages/ChallengePage';
 import SuccessPage from './pages/SuccessPage';
 import DownloadsPage from './pages/DownloadsPage';
 
@@ -29,6 +30,9 @@ function App() {
       <Routes>
         {/* Single-page funnel: quiz → email → results → checkout */}
         <Route path="/" element={<SiteLayout><QuizPage /></SiteLayout>} />
+
+        {/* Challenge sales page — standalone (no banner/nav clutter) */}
+        <Route path="/challenge" element={<ChallengePage />} />
 
         {/* Old routes → redirect to quiz */}
         <Route path="/shop" element={<Navigate to="/" replace />} />
