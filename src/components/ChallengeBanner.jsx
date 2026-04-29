@@ -5,6 +5,7 @@ import { X, ArrowRight, Mail } from 'lucide-react';
 export default function ChallengeBanner() {
   const [dismissed, setDismissed] = useState(false);
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,10 +20,8 @@ export default function ChallengeBanner() {
     try {
       const response = await fetch('/api/challenge-signup', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name }),
       });
 
       if (!response.ok) {
@@ -32,6 +31,7 @@ export default function ChallengeBanner() {
 
       setSubmitted(true);
       setEmail('');
+      setName('');
     } catch (err) {
       setError('Unable to sign up. Please try again.');
       console.error('Challenge signup error:', err);
@@ -62,21 +62,28 @@ export default function ChallengeBanner() {
             <div className="challenge-banner-content">
               <div className="challenge-banner-badge">
                 <span className="challenge-banner-pulse" />
-                FREE &middot; STARTS MAY 1
+                FREE 30-DAY CHALLENGE &middot; STARTS MAY 1
               </div>
 
               <h2 className="challenge-banner-headline">
-                The 30-Day Reset Challenge
+                The Pressure Triangle
               </h2>
 
               <p className="challenge-banner-sub">
-                High BP. High cortisol. High blood sugar. Stubborn weight. High cholesterol.
-                One root-cause protocol targeting all of them &mdash; delivered to your inbox daily.
-                Free. No credit card. No catch.
+                Blood pressure. Cortisol. Blood sugar. They're not three problems &mdash; they're three corners of the same loop.
+                One email a day. One protocol. One body. No card. No upsell wall.
               </p>
 
               {!submitted ? (
                 <form className="challenge-banner-form" onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    placeholder="First name"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    className="challenge-banner-input"
+                    style={{ flex: '0 0 auto', maxWidth: '160px' }}
+                  />
                   <div className="challenge-banner-input-wrap">
                     <Mail size={16} className="challenge-banner-input-icon" />
                     <input
@@ -93,7 +100,7 @@ export default function ChallengeBanner() {
                     className="challenge-banner-cta"
                     disabled={loading}
                   >
-                    {loading ? 'Joining...' : 'Join Free'}
+                    {loading ? 'Joining...' : 'Join the Challenge'}
                     {!loading && <ArrowRight size={16} />}
                   </button>
                 </form>
@@ -103,7 +110,7 @@ export default function ChallengeBanner() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  You're in! Check your inbox — your welcome email is on its way.
+                  You're in! Friday 8 AM EST &mdash; watch your inbox.
                 </motion.div>
               )}
 
@@ -118,7 +125,7 @@ export default function ChallengeBanner() {
               )}
 
               <p className="challenge-banner-proof">
-                Designed by Joel Polley, RN &mdash; 20 years ICU &amp; Emergency Medicine
+                Joel Polley, RN &mdash; 20 years ICU &amp; Emergency &middot; Free. No card required.
               </p>
             </div>
           </div>

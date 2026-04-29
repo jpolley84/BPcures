@@ -10,15 +10,10 @@ function getResend() {
   return _resend;
 }
 
-const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
 const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
-const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 
-const VIP_STRIPE_LINK = process.env.CHALLENGE_VIP_STRIPE_LINK || 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w';
-const PREMIUM_STRIPE_LINK = process.env.CHALLENGE_PREMIUM_STRIPE_LINK || 'https://buy.stripe.com/9B6eVd6bVb5Y1N11sZfnO0x';
-
-async function mailchimpUpsert(email) {
+async function mailchimpUpsert(email, name) {
   if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
   const [, dc] = MAILCHIMP_API_KEY.split('-');
   if (!dc) return { ok: false, reason: 'bad_dc' };
@@ -34,7 +29,10 @@ async function mailchimpUpsert(email) {
       body: JSON.stringify({
         email_address: email,
         status_if_new: 'subscribed',
-        merge_fields: { CATEGORY: '30-day-challenge' },
+        merge_fields: {
+          FNAME: name || '',
+          CATEGORY: '30-day-challenge',
+        },
       }),
     });
 
@@ -51,7 +49,7 @@ async function mailchimpUpsert(email) {
       body: JSON.stringify({
         tags: [
           { name: '30-day-challenge', status: 'active' },
-          { name: 'challenge-free', status: 'active' },
+          { name: 'pressure-triangle', status: 'active' },
         ],
       }),
     });
@@ -63,166 +61,98 @@ async function mailchimpUpsert(email) {
   }
 }
 
-function renderWelcomeEmail() {
+function renderAnnouncementEmail(firstName) {
+  const name = (firstName || '').trim() || 'Friend';
+
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#FBF8F1;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;">
   <tr><td align="center" style="padding:32px 16px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:18px;border:1px solid rgba(0,0,0,0.06);">
 
-      <!-- Header -->
       <tr><td style="padding:32px 28px 8px;">
         <div style="font-family:Georgia,serif;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;">BraveWorks RN</div>
         <div style="font-size:12px;color:#7A7A7A;margin-top:4px;">Joel Polley, RN &middot; Twenty years ICU &amp; emergency</div>
       </td></tr>
 
-      <!-- Welcome -->
-      <tr><td style="padding:18px 28px 0;">
-        <h1 style="font-family:Georgia,serif;font-size:26px;line-height:1.25;color:#2C3E50;margin:8px 0 14px;font-weight:500;">
-          You're in. The 30-Day Reset starts May 1.
-        </h1>
-        <p style="font-size:15px;line-height:1.6;color:#3A3A3A;margin:0 0 16px;">
-          For the next 30 days, you'll get a daily email from me with one actionable protocol step. High blood pressure, runaway cortisol, stubborn blood sugar, weight that won't move, high cholesterol — we stop chasing symptoms and address what's actually driving them.
+      <tr><td style="padding:24px 28px 0;">
+        <p style="font-family:Georgia,serif;font-size:18px;line-height:1.55;color:#2C3E50;margin:0 0 18px;">
+          Hey ${name},
         </p>
-        <p style="font-size:15px;line-height:1.6;color:#3A3A3A;margin:0 0 20px;">
-          This is free. No credit card. No catch. Just the protocol I'd give family.
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          I&#8217;ve been quiet for a few weeks. Here&#8217;s why.
         </p>
-      </td></tr>
-
-      <!-- Step 1: Join the Community -->
-      <tr><td style="padding:0 28px 10px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F1E8;border-radius:14px;">
-          <tr><td style="padding:22px 22px;">
-            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6C3483;margin-bottom:8px;">Step 1 &middot; Join the community</div>
-            <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:6px;">Get inside the Skool group</div>
-            <p style="font-size:14px;line-height:1.55;color:#3A3A3A;margin:0 0 14px;">
-              This is where you'll connect with other people doing the reset alongside you. Ask questions, share wins, get support. No lonely journey.
-            </p>
-            <a href="${SKOOL_URL}" style="display:inline-block;background:#6C3483;color:#FFFFFF;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
-              Join the Skool Community
-            </a>
-          </td></tr>
-        </table>
-      </td></tr>
-
-      <!-- What's coming -->
-      <tr><td style="padding:12px 28px 6px;">
-        <h2 style="font-family:Georgia,serif;font-size:20px;color:#2C3E50;margin:0 0 12px;font-weight:500;">What to expect</h2>
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td style="width:34px;vertical-align:top;padding-top:2px;">
-              <div style="width:26px;height:26px;background:#6C3483;border-radius:50%;color:#fff;font-weight:700;font-size:13px;text-align:center;line-height:26px;">1</div>
-            </td>
-            <td style="padding-bottom:14px;">
-              <div style="font-size:15px;font-weight:600;color:#2C3E50;margin-bottom:3px;">Week 1: Baseline &amp; Awareness</div>
-              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Track your patterns, identify your triggers, get a personalized assessment.</div>
-            </td>
-          </tr>
-          <tr>
-            <td style="width:34px;vertical-align:top;padding-top:2px;">
-              <div style="width:26px;height:26px;background:#6C3483;border-radius:50%;color:#fff;font-weight:700;font-size:13px;text-align:center;line-height:26px;">2</div>
-            </td>
-            <td style="padding-bottom:14px;">
-              <div style="font-size:15px;font-weight:600;color:#2C3E50;margin-bottom:3px;">Week 2: The Protocol</div>
-              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Introduce the NEWSTART protocol — herbs, whole foods, and lifestyle changes that target multiple conditions at once.</div>
-            </td>
-          </tr>
-          <tr>
-            <td style="width:34px;vertical-align:top;padding-top:2px;">
-              <div style="width:26px;height:26px;background:#6C3483;border-radius:50%;color:#fff;font-weight:700;font-size:13px;text-align:center;line-height:26px;">3</div>
-            </td>
-            <td style="padding-bottom:14px;">
-              <div style="font-size:15px;font-weight:600;color:#2C3E50;margin-bottom:3px;">Week 3: Lifestyle Integration</div>
-              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Sleep, stress resilience, movement — the behaviors that make the protocol stick.</div>
-            </td>
-          </tr>
-          <tr>
-            <td style="width:34px;vertical-align:top;padding-top:2px;">
-              <div style="width:26px;height:26px;background:#6C3483;border-radius:50%;color:#fff;font-weight:700;font-size:13px;text-align:center;line-height:26px;">4</div>
-            </td>
-            <td>
-              <div style="font-size:15px;font-weight:600;color:#2C3E50;margin-bottom:3px;">Week 4: Doctor Conversation</div>
-              <div style="font-size:13px;line-height:1.55;color:#5A5A5A;">Armed with your data and protocol, have a different conversation with your doctor.</div>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-
-      <!-- Divider -->
-      <tr><td style="padding:10px 28px;">
-        <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:0;" />
-      </td></tr>
-
-      <!-- Upgrade Options -->
-      <tr><td style="padding:10px 28px 4px;">
-        <h2 style="font-family:Georgia,serif;font-size:20px;color:#2C3E50;margin:0 0 6px;font-weight:500;">Want more? Upgrade anytime.</h2>
-        <p style="font-size:14px;line-height:1.55;color:#5A5A5A;margin:0 0 14px;">
-          The daily emails and community are yours free. If you want live coaching and extras, two options:
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          I built something. Thirty days. One email a day. One protocol. One body. It&#8217;s free.
+        </p>
+        <p style="font-family:Georgia,serif;font-size:17px;font-weight:600;color:#2C3E50;margin:0 0 18px;">
+          Doors open Friday at 8 AM EST.
+        </p>
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          For the last six months I&#8217;ve been watching the same conversation play out &#8212; in my DMs, in the Skool community, in every clinic I&#8217;ve ever worked. Women in their 40s, 50s and 60s on five medications, with blood sugar climbing, cortisol stuck on high, weight that won&#8217;t budge, and a doctor who won&#8217;t have the conversation they need to have.
+        </p>
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          I kept thinking these were four problems.
+        </p>
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          They&#8217;re not.
+        </p>
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 18px;">
+          They&#8217;re three corners of the same loop. I&#8217;m calling it <strong>The Pressure Triangle</strong>. Friday I&#8217;m walking you through how to break it in 30 days.
         </p>
       </td></tr>
 
-      <!-- VIP $97 -->
-      <tr><td style="padding:0 20px 10px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#2C3E50;border-radius:14px;">
-          <tr><td style="padding:22px 24px;">
-            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">VIP &middot; $97</div>
-            <div style="font-family:Georgia,serif;font-size:21px;color:#FFFFFF;margin-bottom:6px;font-weight:500;">Live Coaching + The Book</div>
-            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0 0 10px;">
-              Everything free, plus:
-            </p>
-            <ul style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85);padding-left:18px;margin:0 0 16px;">
-              <li style="margin:4px 0;">Weekly live group coaching — Mondays at 10pm EST</li>
-              <li style="margin:4px 0;">The Full Body Reset book (digital)</li>
-              <li style="margin:4px 0;">Direct Q&amp;A with Joel during live sessions</li>
-            </ul>
-            <a href="${VIP_STRIPE_LINK}" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
-              Upgrade to VIP — $97
-            </a>
-          </td></tr>
-        </table>
+      <tr><td style="padding:0 28px;">
+        <div style="background:#F5F1E8;border-radius:14px;padding:22px 24px;margin-bottom:20px;">
+          <p style="font-size:14px;line-height:1.7;color:#2C3E50;margin:0;">
+            &#8594; The challenge itself is <strong>free</strong>. No card. No upsell wall. Go to <a href="https://bpquiz.com" style="color:#B85A36;font-weight:600;">BPQuiz.com</a> and sign up. You&#8217;re in.<br/><br/>
+            &#8594; For people who want the full experience &#8212; the book, the live coaching, the deeper room &#8212; two upgrade paths open Friday. One has a <strong>hard cap on seats</strong>.<br/><br/>
+            &#8594; Three women I&#8217;ll tell you about across the 30 days &#8212; Dorothy, Marcus, Neveah &#8212; are why I built this.
+          </p>
+        </div>
       </td></tr>
 
-      <!-- Premium $297 -->
-      <tr><td style="padding:0 20px 10px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#6C3483;border-radius:14px;">
-          <tr><td style="padding:22px 24px;">
-            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Premium &middot; $297</div>
-            <div style="font-family:Georgia,serif;font-size:21px;color:#FFFFFF;margin-bottom:6px;font-weight:500;">Live Coaching + Barbara O'Neill Virtual Ticket</div>
-            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0 0 10px;">
-              Everything VIP, plus:
-            </p>
-            <ul style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.85);padding-left:18px;margin:0 0 16px;">
-              <li style="margin:4px 0;">Virtual ticket to Barbara O'Neill LIVE wellness session</li>
-              <li style="margin:4px 0;">All VIP benefits (coaching + book)</li>
-            </ul>
-            <div style="display:inline-block;background:rgba(255,255,255,0.12);padding:8px 14px;border-radius:8px;margin-bottom:14px;">
-              <span style="font-size:12px;color:rgba(255,255,255,0.9);">Barbara O'Neill tickets sell for $297+ alone — you get coaching and the book included.</span>
-            </div>
-            <br/>
-            <a href="${PREMIUM_STRIPE_LINK}" style="display:inline-block;background:#FFFFFF;color:#6C3483;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
-              Go Premium — $297
-            </a>
-          </td></tr>
-        </table>
-      </td></tr>
-
-      <!-- Closing -->
-      <tr><td style="padding:14px 28px 24px;">
-        <p style="font-size:14px;color:#3A3A3A;line-height:1.55;margin:0 0 10px;">
-          No rush on the upgrade — you can do it anytime during the 30 days. The free challenge starts May 1 either way.
+      <tr><td style="padding:0 28px 20px;">
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
+          Tomorrow I&#8217;ll send you the full picture. Pricing. What&#8217;s inside. Why the cap exists.
         </p>
-        <p style="font-size:14px;color:#3A3A3A;line-height:1.55;margin:0 0 14px;">
-          See you in the community.<br/>— Joel
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 20px;">
+          For tonight, sticky-note your laptop:
+        </p>
+
+        <div style="background:#2E3A30;border-radius:14px;padding:24px;text-align:center;margin-bottom:20px;">
+          <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:#FBF8F1;letter-spacing:0.04em;">
+            FRIDAY 8 AM. WATCH INBOX.
+          </div>
+        </div>
+
+        <p style="font-family:Georgia,serif;font-size:14px;font-style:italic;color:#7A7061;margin:0 0 18px;">
+          Genetics writes the recipe. Lifestyle bakes the cake. Be your own doctor.
+        </p>
+
+        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 6px;">
+          &#8212; Joel
+        </p>
+        <p style="font-size:13px;color:#7A7A7A;margin:0 0 20px;">
+          Joel Polley, RN &nbsp;|&nbsp; BraveWorks RN<br/>
+          TikTok: <a href="https://tiktok.com/@braveworksrn" style="color:#B85A36;">@braveworksrn</a>
+        </p>
+
+        <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0 0 18px;">
+          <strong>P.S.</strong> &#8212; If you&#8217;ve been waiting for me to put it all together &#8212; this is it.
+        </p>
+
+        <p style="font-family:Georgia,serif;font-size:13px;font-style:italic;color:#7A7061;line-height:1.6;margin:0;">
+          &#8220;For I know the plans I have for you, declares the Lord &#8212; plans to prosper you, not to harm you, plans to give you hope and a future.&#8221; &#8212; Jeremiah 29:11
         </p>
       </td></tr>
 
-      <!-- Footer -->
       <tr><td style="padding:0 28px 28px;">
         <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:20px 0;" />
         <p style="font-size:11px;color:#9A9A9A;line-height:1.5;margin:0;">
-          BraveWorks RN &middot; Joel Polley, RN &middot; Naturopathic practitioner &middot; <a href="${SITE_URL}" style="color:#9A9A9A;">${SITE_URL.replace(/^https?:\/\//, '')}</a>
-          <br/>Educational content only. Not medical advice. Always complement — never replace — care from your physician.
-          <br/>You received this because you signed up for the 30-Day Reset Challenge.
+          BraveWorks RN &middot; Joel Polley, RN &middot; Naturopathic practitioner &middot; <a href="https://bpquiz.com" style="color:#9A9A9A;">bpquiz.com</a>
+          <br/>Educational content only. Not medical advice. Always complement &#8212; never replace &#8212; care from your physician.
+          <br/>You received this because you signed up for the 30-Day Pressure Triangle Challenge.
         </p>
       </td></tr>
 
@@ -237,7 +167,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email } = req.body || {};
+  const { email, name } = req.body || {};
 
   if (!email || !email.includes('@')) {
     return res.status(400).json({ error: 'Valid email is required' });
@@ -245,19 +175,19 @@ export default async function handler(req, res) {
 
   const trimmedEmail = email.trim().toLowerCase();
 
-  // 1. Add to Mailchimp (fire-and-forget)
-  mailchimpUpsert(trimmedEmail).catch((err) =>
+  // 1. Add to Mailchimp with challenge tags (fire-and-forget)
+  mailchimpUpsert(trimmedEmail, name).catch((err) =>
     console.error('challenge-signup: mailchimp failed', err.message)
   );
 
-  // 2. Send welcome email via Resend
+  // 2. Send announcement email via Resend
   try {
-    const html = renderWelcomeEmail();
+    const html = renderAnnouncementEmail(name);
     await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
-      subject: "You're in — 30-Day Reset starts May 1",
+      subject: "I built something. Doors open Friday.",
       html,
     });
   } catch (err) {

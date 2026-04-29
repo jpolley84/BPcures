@@ -1,6 +1,7 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ExitIntentPopup from './components/ExitIntentPopup';
+import ChallengeBanner from './components/ChallengeBanner';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizPage from './pages/QuizPage';
@@ -10,6 +11,7 @@ import DownloadsPage from './pages/DownloadsPage';
 function SiteLayout({ children }) {
   return (
     <>
+      <ChallengeBanner />
       <header className="store-header">
         <Navbar />
       </header>
