@@ -14,10 +14,12 @@ export default function LauncherPage() {
   return (
     <div style={{ background: 'var(--paper)' }}>
       <HeroSection />
+      <EpiphanyBridge />
       <ProblemSection />
       <ImagineSection />
       <WhatYouGet />
       <ReplaceSection />
+      <NotForYou />
       <TierSection />
       <GuaranteeSection />
       <FAQSection />
@@ -49,7 +51,7 @@ function HeroSection() {
           </h1>
 
           <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.82)', margin: '0 0 1.75rem', maxWidth: '54ch' }}>
-            Your entire health coaching business — website, email automation, payment processing, AI content engine, and a 24/7 team that builds what you describe — installed in one setup. By the nurse who built it for himself first.
+            Your entire health coaching business — installed in one conversation. By the ICU nurse who built it for himself first, and believes your clients are waiting for you to show up.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
@@ -85,6 +87,39 @@ function HeroSection() {
 }
 
 /* ================================================================
+   EPIPHANY BRIDGE — Joel's origin story (Brunson + Myron)
+   ================================================================ */
+function EpiphanyBridge() {
+  return (
+    <section style={{ padding: 'clamp(3rem, 6vw, 5rem) 0', borderBottom: '1px solid var(--line)' }}>
+      <div className="shell" style={{ maxWidth: 720 }}>
+        <motion.div {...fade}>
+          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>Why I built this</span>
+          <h2 className="display-s" style={{ margin: '0 0 1.5rem' }}>
+            20 years in the ICU taught me one thing.
+          </h2>
+
+          <div style={{ fontSize: 'var(--step-0)', lineHeight: 1.75, color: 'var(--ink-soft)', display: 'grid', gap: '1.25rem' }}>
+            <p style={{ margin: 0 }}>
+              I spent two decades watching the same story repeat: patient comes in, blood pressure through the roof, doctor adjusts the meds, patient goes home, nothing changes. I knew — because I'd seen it thousands of times — that the answer wasn't another prescription. It was what they ate, how they moved, what they believed about their own body.
+            </p>
+            <p style={{ margin: 0 }}>
+              So I left. Built BraveWorks RN. Started making TikToks about herbs and blood pressure from my kitchen. Within months, the emails flooded in — nurses, naturopaths, health coaches — all saying the same thing: <em style={{ color: 'var(--clay)' }}>"I know what you know. I just can't get anyone to listen."</em>
+            </p>
+            <p style={{ margin: 0 }}>
+              They didn't have a knowledge problem. They had a delivery problem. So I built them a delivery system — the same one running BraveWorks right now. The quiz funnel, the email engine, the AI content team, the Stripe checkout, all of it. And I realized: if I can install this once, I can install it again.
+            </p>
+            <p style={{ margin: 0, fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', color: 'var(--ink)', fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
+              That's what this page is. Not a course. Not a template. A <strong style={{ color: 'var(--clay)' }}>functioning business</strong> — installed, wired, and generating content before you hang up the setup call.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
    PROBLEM — Why most health coaches fail
    ================================================================ */
 function ProblemSection() {
@@ -92,7 +127,6 @@ function ProblemSection() {
     <section style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
       <div className="shell" style={{ maxWidth: 780 }}>
         <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The real problem</span>
           <h2 className="display-m" style={{ margin: '0 0 1.5rem', maxWidth: '24ch' }}>
             You don't have a knowledge problem. You have a <em className="ital-display" style={{ color: 'var(--clay)' }}>delivery</em> problem.
           </h2>
@@ -184,18 +218,23 @@ function ImagineSection() {
    WHAT YOU GET — Full stack inventory
    ================================================================ */
 function WhatYouGet() {
-  const items = [
-    { icon: <Globe size={20} />, title: 'Custom Quiz Funnel Website', desc: 'Your brand. Your niche quiz. Mobile-optimized, sub-2-second load. Free hosting on Vercel — the same infrastructure Netflix uses. When you want something changed, you tell Dispatch and it\'s live in 90 seconds.', value: '$8,000–15,000' },
-    { icon: <Mail size={20} />, title: 'Email Automation System', desc: 'Instant welcome emails on signup. Marketing broadcasts. AI monitors open rates, click rates, and unsubscribes — rewrites underperforming copy automatically. No dashboard to learn. No drag-and-drop editor to fight with.', value: '$3,000–5,000' },
-    { icon: <Layers size={20} />, title: 'Stripe Tiered Checkout', desc: 'Free tier, mid-tier, premium tier — whatever your offer structure is. Payment links, pre-launch pricing, seat caps, order bumps. All configured. All live.', value: '$1,500–3,000' },
-    { icon: <MessageSquare size={20} />, title: 'AI Command Center (Dispatch)', desc: 'Claude Opus 4 powering every agent. You open a conversation and say what you need — content, emails, site changes, analytics, strategy. It learns your voice. It works 24/7. It gets better the more you use it.', value: 'Priceless' },
-    { icon: <PenTool size={20} />, title: 'Content Engine', desc: 'TikTok scripts, YouTube scripts, email copy, social captions, hashtags — all generated in YOUR voice from your brand profile. The AI knows which health claims get flagged and rewrites around them before you post.', value: '$3,000–5,000/mo' },
-    { icon: <BarChart3 size={20} />, title: 'AI A/B Testing & Auto-Optimization', desc: 'Dispatch splits your email audience, tests subject lines and copy variants, picks winners, and swaps them in — while you sleep. The same thing a $8,000/month agency does, except it happens automatically.', value: '$2,000/mo' },
-    { icon: <BookOpen size={20} />, title: 'Your Book, Published on Amazon', desc: 'The intake agent interviews you across 7–10 sessions. The book-builder creates a full KDP-ready manuscript in your voice, on your niche. Live on Amazon within 60 days. You walk away a published author.', value: '$7,000–15,000' },
-    { icon: <Zap size={20} />, title: '90-Day Content Runway', desc: '30 TikTok scripts. 30 email teachings. 15 YouTube outlines. A complete 30-day challenge sequence. Your social media calendar for 90 days — done before Day 1. All in your voice. Ready to record and send.', value: '$4,500' },
-    { icon: <Users size={20} />, title: 'Client Intake Assessment Quiz', desc: 'Not just lead capture. A scored assessment that profiles your client\'s health situation, recommends the right program, and sends personalized results. Clinical-grade feel. Your clients think you have a 10-person team.', value: '$3,000–5,000' },
-    { icon: <Smartphone size={20} />, title: 'Social Media Intelligence', desc: 'Dispatch scans your TikTok and YouTube, identifies top performers, reverse-engineers why they worked, and generates new content in the same pattern. Watches your niche for trending topics before your competitors see them.', value: '$2,500/mo' },
-    { icon: <Shield size={20} />, title: '$17 Digital Product in Your Funnel', desc: 'Your quiz immediately upsells a $17 digital product tailored to your niche — a starter guide, protocol, or toolkit. Wired into Stripe. Converts quiz-takers into buyers from Day 1. Your first revenue while they\'re still on the page.', value: '$2,000–3,000' },
+  /* CORE DELIVERABLES */
+  const core = [
+    { icon: <Globe size={20} />, title: 'A website that converts strangers into subscribers while you sleep', desc: 'Your brand. Your niche quiz. Mobile-optimized, sub-2-second load. Free hosting forever. When you want something changed, you say it out loud and it\'s live in 90 seconds. No Wix. No ClickFunnels. No developer invoices.', value: '$12,000' },
+    { icon: <Mail size={20} />, title: 'A marketing team that writes, sends, and improves your emails without you logging in', desc: 'Welcome sequences on signup. Broadcast campaigns. The AI monitors open rates and rewrites underperforming copy automatically. No dashboard to learn. No drag-and-drop editor to fight with.', value: '$4,000' },
+    { icon: <Layers size={20} />, title: 'A checkout system that collects money while you\'re with clients', desc: 'Tiered pricing, payment links, pre-launch pricing, seat caps, order bumps. All configured. All live. Stripe handles the money — you handle the healing.', value: '$2,500' },
+    { icon: <MessageSquare size={20} />, title: 'A 24/7 team that builds what you describe — in plain English', desc: 'Claude Opus 4 powering every agent. You open a conversation and say what you need — content, emails, site changes, analytics, strategy. It learns your voice. It gets better the more you use it. Like a $10K/month marketing director who never sleeps.', value: '$8,000/mo' },
+    { icon: <PenTool size={20} />, title: 'Content that sounds like you — written faster than you can think it', desc: 'TikTok scripts, YouTube scripts, email copy, social captions, hashtags — all in YOUR voice from your brand profile. The AI knows which health claims get flagged and rewrites around them before you post.', value: '$4,000/mo' },
+  ];
+
+  /* BONUSES — Hormozi stack effect */
+  const bonuses = [
+    { icon: <BookOpen size={20} />, title: 'BONUS: Your book, published on Amazon', desc: 'The intake agent interviews you across 7–10 sessions. A full KDP-ready manuscript in your voice, on your niche. Live on Amazon within 60 days. You walk away a published author with a lead magnet that never expires.', value: '$11,000' },
+    { icon: <Zap size={20} />, title: 'BONUS: 90-day content runway — done before Day 1', desc: '30 TikTok scripts. 30 email teachings. 15 YouTube outlines. A complete 30-day challenge sequence. Three months of content loaded and ready to fire. All in your voice.', value: '$4,500' },
+    { icon: <Users size={20} />, title: 'BONUS: Client intake assessment that makes you look like a 10-person clinic', desc: 'A scored assessment that profiles your client\'s health situation, recommends the right program, and sends personalized results. Clinical-grade feel. Automated.', value: '$4,000' },
+    { icon: <BarChart3 size={20} />, title: 'BONUS: AI A/B testing that optimizes while you sleep', desc: 'Dispatch splits your audience, tests subject lines and copy variants, picks winners, and swaps them in automatically. The same thing a $8,000/month agency does.', value: '$2,000/mo' },
+    { icon: <Smartphone size={20} />, title: 'BONUS: Social media intelligence that finds trends before your competitors', desc: 'Scans your TikTok and YouTube, identifies top performers, reverse-engineers why they worked, and generates new content in the same pattern.', value: '$2,500/mo' },
+    { icon: <Shield size={20} />, title: 'BONUS: $17 digital product already in your funnel', desc: 'Your quiz immediately upsells a $17 digital product tailored to your niche. Wired into Stripe. Converts quiz-takers into buyers from Day 1. Your first revenue while they\'re still on the page.', value: '$2,500' },
   ];
 
   return (
@@ -204,15 +243,16 @@ function WhatYouGet() {
         <motion.div {...fade}>
           <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>What gets installed</span>
           <h2 className="display-m" style={{ margin: '0 0 0.75rem' }}>
-            Everything. <em className="ital-display" style={{ color: 'var(--clay)' }}>Wired.</em>
+            11 systems. One setup call. <em className="ital-display" style={{ color: 'var(--clay)' }}>Live by Friday.</em>
           </h2>
           <p className="lede" style={{ margin: '0 0 2.5rem' }}>
-            Not templates. Not tutorials. A functioning business — installed, connected, and generating content before you hang up the setup call.
+            Not templates. Not tutorials. A functioning business — installed, connected, and generating content before you hang up the call.
           </p>
         </motion.div>
 
+        {/* CORE */}
         <div style={{ display: 'grid', gap: '0' }}>
-          {items.map((item, i) => (
+          {core.map((item, i) => (
             <motion.div key={i} {...stagger(i)} style={{ display: 'grid', gridTemplateColumns: '2.5rem 1fr auto', gap: '1rem', alignItems: 'start', padding: '1.25rem 0', borderTop: '1px solid var(--line)' }}>
               <div style={{ color: 'var(--sage)', paddingTop: '0.15rem' }}>{item.icon}</div>
               <div>
@@ -222,12 +262,42 @@ function WhatYouGet() {
               <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.7rem', color: 'var(--muted)', letterSpacing: '0.06em', whiteSpace: 'nowrap', paddingTop: '0.2rem' }}>{item.value}</div>
             </motion.div>
           ))}
-          <div style={{ borderTop: '1px solid var(--line)', paddingTop: '1.25rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', fontWeight: 500, color: 'var(--ink)' }}>Total replacement value</span>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 500, color: 'var(--clay)', letterSpacing: '-0.02em' }}>$85,000+</span>
+        </div>
+
+        {/* BONUS STACK — Hormozi progressive reveal */}
+        <motion.div {...fade} style={{ marginTop: '2.5rem' }}>
+          <div style={{ background: 'var(--paper-warm)', borderRadius: 16, padding: 'clamp(1.5rem, 3vw, 2rem)', border: '1px solid var(--line)' }}>
+            <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', fontWeight: 400, color: 'var(--ink)', margin: '0 0 0.25rem', fontVariationSettings: '"SOFT" 60' }}>
+              But I'm not stopping there.
+            </p>
+            <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 1.5rem', lineHeight: 1.6 }}>
+              Every founding cohort member also gets these — included at no extra charge:
+            </p>
+
+            <div style={{ display: 'grid', gap: '0' }}>
+              {bonuses.map((item, i) => (
+                <motion.div key={i} {...stagger(i)} style={{ display: 'grid', gridTemplateColumns: '2.5rem 1fr auto', gap: '1rem', alignItems: 'start', padding: '1.25rem 0', borderTop: '1px solid var(--line)' }}>
+                  <div style={{ color: 'var(--clay)', paddingTop: '0.15rem' }}>{item.icon}</div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--ink)', marginBottom: '0.25rem' }}>{item.title}</div>
+                    <div style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--ink-soft)' }}>{item.desc}</div>
+                  </div>
+                  <div style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.7rem', color: 'var(--muted)', letterSpacing: '0.06em', whiteSpace: 'nowrap', paddingTop: '0.2rem' }}>{item.value}</div>
+                </motion.div>
+              ))}
             </div>
           </div>
+        </motion.div>
+
+        {/* TOTAL */}
+        <div style={{ borderTop: '2px solid var(--ink)', paddingTop: '1.25rem', marginTop: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', fontWeight: 500, color: 'var(--ink)' }}>Total replacement value</span>
+            <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 500, color: 'var(--clay)', letterSpacing: '-0.02em' }}>$143,000+</span>
+          </div>
+          <p style={{ fontSize: '0.82rem', color: 'var(--muted)', margin: '0.5rem 0 0', lineHeight: 1.5 }}>
+            Based on hiring a developer, copywriter, social media manager, email strategist, marketing director, and book ghostwriter at market rates.
+          </p>
         </div>
       </div>
     </section>
@@ -275,6 +345,43 @@ function ReplaceSection() {
 }
 
 /* ================================================================
+   NOT FOR YOU — Hormozi disqualification + Myron conviction
+   ================================================================ */
+function NotForYou() {
+  return (
+    <section style={{ padding: 'clamp(2.5rem, 5vw, 4rem) 0' }}>
+      <div className="shell" style={{ maxWidth: 700 }}>
+        <motion.div {...fade}>
+          <h2 className="display-s" style={{ margin: '0 0 1.5rem' }}>
+            This is <em className="ital-display" style={{ color: 'var(--clay)' }}>not</em> for everyone.
+          </h2>
+
+          <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '2rem' }}>
+            {[
+              "You haven't finished your certification yet. Finish that first — this will be here.",
+              "You're looking for a $99 course with worksheets. This is a done-for-you installation, not an education product.",
+              "You're not willing to show up and record content. The AI writes it — you still have to be the face.",
+              "You want to 'think about it' for six months. The founding cohort has 10 spots. They won't wait.",
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'start', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                <span style={{ color: 'var(--clay)', fontWeight: 700, fontSize: '1rem', flexShrink: 0, marginTop: '0.05rem' }}>✕</span>
+                <span style={{ color: 'var(--ink-soft)' }}>{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ background: 'var(--sage-deep)', borderRadius: 16, padding: 'clamp(1.5rem, 3vw, 2rem)', color: 'var(--cream)' }}>
+            <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', lineHeight: 1.5, margin: 0, fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
+              I believe every health coach who has the knowledge to help people deserves a system that matches their calling. I built this because I watched too many nurses and practitioners give up — not because they couldn't help people, but because they couldn't figure out Mailchimp. <strong style={{ color: 'var(--clay-soft)' }}>That ends here.</strong>
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
    TIERS — Three pricing options
    ================================================================ */
 function TierSection() {
@@ -284,10 +391,10 @@ function TierSection() {
         <motion.div {...fade} style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <span className="kicker kicker-dot" style={{ marginBottom: '1rem', justifyContent: 'center' }}>Choose your tier</span>
           <h2 className="display-m" style={{ margin: '0 0 0.75rem' }}>
-            Three paths. <em className="ital-display" style={{ color: 'var(--clay)' }}>One destination.</em>
+            Pick the math. <em className="ital-display" style={{ color: 'var(--clay)' }}>The machine is the same.</em>
           </h2>
           <p className="lede" style={{ margin: '0 auto', textAlign: 'center' }}>
-            A business that works while you sleep.
+            Founding cohort pricing — I'm building my first 10 success stories. When I have them, this goes to full price.
           </p>
         </motion.div>
 
@@ -366,7 +473,7 @@ function TierSection() {
             <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginBottom: '1.25rem' }}>+ 10% of gross revenue for 12 months</p>
 
             <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', lineHeight: 1.5, marginBottom: '1.5rem' }}>
-              Same full install. Lower upfront. I only win big if you win big. Aligned incentives.
+              Same full install. Lower upfront. I have skin in the game — I only profit if your practice does. Aligned incentives.
             </p>
 
             <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.75rem' }}>
@@ -376,7 +483,7 @@ function TierSection() {
                 'Joel has skin in the game — 10% rev share',
                 'Monthly revenue check-ins for 12 months',
                 'Same "First Client" guarantee',
-                'Revenue share caps at $15,000 total',
+                'Revenue share capped at a fair ceiling — details on call',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '0.6rem', alignItems: 'start', fontSize: '0.88rem', lineHeight: 1.5 }}>
                   <Check size={16} style={{ color: 'var(--sage)', marginTop: '0.15rem', flexShrink: 0 }} />
@@ -431,11 +538,11 @@ function GuaranteeSection() {
           </h2>
 
           <p style={{ fontSize: 'var(--step-0)', lineHeight: 1.7, color: 'rgba(251,248,241,0.8)', marginBottom: '1.25rem' }}>
-            Your first paying client within 60 days of launch — or I personally work with you until it happens. No time limit. No extra charge. I don't stop until your system produces revenue.
+            Your first paying client — at least $500 in collected revenue — within 60 days of launch. If it doesn't happen, I personally work with you until it does. No time limit. No extra charge. And if after 90 days you still haven't landed that first client, I refund your setup fee in full and you keep everything installed.
           </p>
 
           <p style={{ fontSize: 'var(--step-0)', lineHeight: 1.7, color: 'rgba(251,248,241,0.8)', marginBottom: '1.5rem' }}>
-            I take all the risk because I've already done this — on my own business, with my own money. The system is running right now. I'm not teaching theory. I'm installing a proven machine.
+            I take all the risk because I've already done this — on my own business, with my own money. BraveWorks RN is running this exact system right now. I'm not teaching theory. I'm installing a machine I built and use every single day.
           </p>
 
           <div style={{ background: 'rgba(251,248,241,0.06)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(251,248,241,0.08)', display: 'inline-block' }}>
@@ -478,7 +585,7 @@ function FAQSection() {
     },
     {
       q: "What's the revenue share option?",
-      a: "Same full installation as the Practice Launcher — lower upfront ($4,997 instead of $9,997), plus 10% of your gross revenue for 12 months, capped at $15,000 total. I only win big if you win big. It's for coaches who believe in the system but want to ease the upfront investment."
+      a: "Same full installation as the Practice Launcher — lower upfront ($4,997 instead of $9,997), plus 10% of your gross revenue for 12 months with a fair cap. I only profit if your practice does. It's for coaches who believe in the system but want to ease the upfront investment. We cover the specifics on the application call."
     },
     {
       q: "Do I need my own content already?",
@@ -526,14 +633,26 @@ function FinalCTA() {
             The version of you who has a <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)', fontVariationSettings: '"SOFT" 100' }}>waitlist</em> doesn't know Mailchimp.
           </h2>
 
-          <p style={{ fontSize: 'var(--step-0)', lineHeight: 1.65, color: 'rgba(247,243,236,0.7)', margin: '0 auto 2rem', maxWidth: '48ch' }}>
-            She has a team. It just happens to fit inside one conversation. Five slots this month. When they fill, this page closes.
+          <p style={{ fontSize: 'var(--step-0)', lineHeight: 1.65, color: 'rgba(247,243,236,0.7)', margin: '0 auto 1.5rem', maxWidth: '48ch' }}>
+            She has a team. It just happens to fit inside one conversation.
+          </p>
+
+          {/* Brunson stack recap */}
+          <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(247,243,236,0.5)', margin: '0 auto 2rem', maxWidth: '52ch' }}>
+            Remember — you're getting the quiz funnel, the email engine, the AI command center, tiered checkout, a content engine in your voice, your book on Amazon, 90 days of pre-built content, a client intake assessment, A/B testing, social intelligence, and a $17 product already in your funnel. Over $143,000 in replacement value. Starting at $2,997.
           </p>
 
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
             <a href="#tiers" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1.05rem 2rem', borderRadius: 12, background: 'var(--clay)', color: 'var(--cream)', fontWeight: 600, fontSize: '1rem', textDecoration: 'none' }}>
               Choose your tier <ArrowRight size={16} />
             </a>
+          </div>
+
+          {/* Kennedy P.S. */}
+          <div style={{ textAlign: 'left', background: 'rgba(247,243,236,0.04)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(247,243,236,0.08)', marginBottom: '2rem' }}>
+            <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'rgba(247,243,236,0.6)', margin: 0 }}>
+              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — The founding cohort has 10 total spots. When they fill, the price goes to $14,997 and the "First Client" guarantee changes. If you're reading this, a slot is still open. <a href="#tiers" style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Claim yours now.</a>
+            </p>
           </div>
 
           <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '0.92rem', color: 'rgba(247,243,236,0.4)', lineHeight: 1.6, margin: 0, fontVariationSettings: '"SOFT" 100' }}>
