@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizPage from './pages/QuizPage';
 import ChallengePage from './pages/ChallengePage';
+import LauncherPage from './pages/LauncherPage';
 import SuccessPage from './pages/SuccessPage';
 import DownloadsPage from './pages/DownloadsPage';
 
@@ -33,6 +34,9 @@ function App() {
 
         {/* Challenge sales page — standalone (no banner/nav clutter) */}
         <Route path="/challenge" element={<ChallengePage />} />
+
+        {/* Practice Launcher — health coach offer (standalone) */}
+        <Route path="/launcher" element={<LauncherPage />} />
 
         {/* Old routes → redirect to quiz */}
         <Route path="/shop" element={<Navigate to="/" replace />} />
