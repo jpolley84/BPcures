@@ -15,6 +15,7 @@ export default function LauncherPage() {
     <div style={{ background: 'var(--paper)' }}>
       <HeroSection />
       <EpiphanyBridge />
+      <ProofSection />
       <ProblemSection />
       <ImagineSection />
       <WhatYouGet />
@@ -40,7 +41,7 @@ function HeroSection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              5 slots per month · Founding Cohort Open
+              Applications close May 15 · Founding Cohort — 10 spots
             </span>
           </div>
 
@@ -113,6 +114,49 @@ function EpiphanyBridge() {
               That's what this page is. Not a course. Not a template. A <strong style={{ color: 'var(--clay)' }}>functioning business</strong> — installed, wired, and generating content before you hang up the setup call.
             </p>
           </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
+   PROOF — Kennedy 10x proof rule (real numbers from BraveWorks)
+   ================================================================ */
+function ProofSection() {
+  const stats = [
+    { num: '1,751', label: 'email subscribers from a quiz funnel — the same one we install for you' },
+    { num: '84', label: 'paying customers in the first 5 weeks — all from organic content' },
+    { num: '21', label: 'automated email campaigns running right now — written and optimized by AI' },
+    { num: '$0', label: 'spent on ads. Every subscriber came from TikTok content the AI helped create.' },
+  ];
+
+  return (
+    <section style={{ background: 'var(--paper-warm)', padding: 'clamp(2.5rem, 5vw, 4rem) 0' }}>
+      <div className="shell" style={{ maxWidth: 780 }}>
+        <motion.div {...fade}>
+          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>This isn't theory — it's running right now</span>
+          <h2 className="display-s" style={{ margin: '0 0 0.5rem' }}>
+            BraveWorks RN. <em className="ital-display" style={{ color: 'var(--clay)' }}>Same system. Live numbers.</em>
+          </h2>
+          <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 2rem', lineHeight: 1.6 }}>
+            These are real numbers from my own business — BPQuiz.com — running the exact system you're about to get installed.
+          </p>
+        </motion.div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1rem' }}>
+          {stats.map((s, i) => (
+            <motion.div key={i} {...stagger(i)} style={{ background: 'var(--cream)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid var(--line)' }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 500, letterSpacing: '-0.02em', color: 'var(--clay)', lineHeight: 1.1, marginBottom: '0.4rem' }}>{s.num}</div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', lineHeight: 1.5 }}>{s.label}</div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div {...fade} style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+          <a href="https://bpquiz.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.82rem', color: 'var(--sage)', textDecoration: 'underline', textUnderlineOffset: '0.2em' }}>
+            See the live site at BPQuiz.com →
+          </a>
         </motion.div>
       </div>
     </section>
@@ -437,7 +481,7 @@ function TierSection() {
               <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-3)', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.1 }}>$9,997</span>
               <span style={{ fontSize: '0.82rem', color: 'rgba(251,248,241,0.45)', textDecoration: 'line-through' }}>$14,997</span>
             </div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--clay-soft)', marginBottom: '1.25rem' }}>Founding cohort price — 10 spots total</p>
+            <p style={{ fontSize: '0.78rem', color: 'var(--clay-soft)', marginBottom: '1.25rem' }}>Founding cohort — applications close May 15</p>
 
             <p style={{ fontSize: '0.88rem', color: 'rgba(251,248,241,0.7)', lineHeight: 1.5, marginBottom: '1.5rem' }}>
               Everything installed. Book published. Content loaded. First client guaranteed.
@@ -651,7 +695,7 @@ function FinalCTA() {
           {/* Kennedy P.S. */}
           <div style={{ textAlign: 'left', background: 'rgba(247,243,236,0.04)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(247,243,236,0.08)', marginBottom: '2rem' }}>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'rgba(247,243,236,0.6)', margin: 0 }}>
-              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — The founding cohort has 10 total spots. When they fill, the price goes to $14,997 and the "First Client" guarantee changes. If you're reading this, a slot is still open. <a href="#tiers" style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Claim yours now.</a>
+              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 10 spots in the founding cohort. If you're reading this, one is still open. <a href="#tiers" style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Claim yours now.</a>
             </p>
           </div>
 
