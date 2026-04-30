@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-04-30T02:08:53-05:00",
+    "type": "deploy",
+    "description": "Deploy 0386374: ops heartbeat: crons, deploy · 16 24h events"
+  },
+  {
     "ts": "2026-04-30T01:53:51-05:00",
     "type": "deploy",
     "description": "Deploy ba43fa0: ops heartbeat: crons, deploy · 15 24h events"
@@ -73,10 +78,5 @@
     "ts": "2026-04-29T02:49:29-05:00",
     "type": "deploy",
     "description": "Deploy d5db2b4: Expert panel audit: 10 priority fixes for Practice Launcher"
-  },
-  {
-    "ts": "2026-04-29T02:22:04-05:00",
-    "type": "deploy",
-    "description": "Deploy 3c25d3d: Add Practice Launcher sales page at /launcher — three-tier health coach offer"
   }
 ]
