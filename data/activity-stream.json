@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-04-30T02:53:51-05:00",
+    "type": "deploy",
+    "description": "Deploy 7a703b3: ops heartbeat: crons, deploy · 18 24h events"
+  },
+  {
     "ts": "2026-04-30T02:38:51-05:00",
     "type": "deploy",
     "description": "Deploy a51decd: ops heartbeat: crons, deploy · 18 24h events"
@@ -83,10 +88,5 @@
     "ts": "2026-04-29T21:17:07-05:00",
     "type": "deploy",
     "description": "Deploy 2a113d4: Reframe Launcher proof: time-to-$500 (mirrors the guarantee)"
-  },
-  {
-    "ts": "2026-04-29T03:03:18-05:00",
-    "type": "deploy",
-    "description": "Deploy ae249c5: Add proof section (live Stripe stats) + May 15 hard deadline"
   }
 ]
