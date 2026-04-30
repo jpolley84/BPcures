@@ -5,7 +5,7 @@ import { ArrowRight, Check, MessageSquare, Globe, Mail, BarChart3, BookOpen, Zap
 const STARTER_LINK = '#starter-apply';
 const LAUNCHER_LINK = '#launcher-apply';
 const REVENUE_LINK = '#revenue-apply';
-const CALENDLY_LINK = 'https://calendly.com/braveworksrn/practice-launcher';
+const CALENDLY_LINK = 'https://calendly.com/braveworksrn/60min';
 
 const fade = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } };
 const stagger = (i) => ({ ...fade, transition: { ...fade.transition, delay: i * 0.1 } });
@@ -125,10 +125,10 @@ function EpiphanyBridge() {
    ================================================================ */
 function ProofSection() {
   const stats = [
-    { num: '1,751', label: 'email subscribers from a quiz funnel — the same one we install for you' },
-    { num: '84', label: 'paying customers in the first 5 weeks — all from organic content' },
-    { num: '21', label: 'automated email campaigns running right now — written and optimized by AI' },
-    { num: '$0', label: 'spent on ads. Every subscriber came from TikTok content the AI helped create.' },
+    { num: '16 days', label: '$0 → $500 in collected revenue. That\'s the guarantee on this page — pre-tested on the founder.' },
+    { num: '83', label: 'paying customers in 5 weeks — every one from organic content, zero ad spend.' },
+    { num: '1,751', label: 'email subscribers built from a quiz funnel — the same one I install for you.' },
+    { num: '21', label: 'automated email campaigns running right now — written and optimized by AI.' },
   ];
 
   return (
@@ -140,7 +140,7 @@ function ProofSection() {
             BraveWorks RN. <em className="ital-display" style={{ color: 'var(--clay)' }}>Same system. Live numbers.</em>
           </h2>
           <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 2rem', lineHeight: 1.6 }}>
-            These are real numbers from my own business — BPQuiz.com — running the exact system you're about to get installed.
+            These are real numbers from my own business — BPQuiz.com. The $500 first-client guarantee on this page? It took my system <strong>16 days</strong> to do that for me. I'm offering you the same engine. Live data, pulled from Stripe on April 29, 2026.
           </p>
         </motion.div>
 
