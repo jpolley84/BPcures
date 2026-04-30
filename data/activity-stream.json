@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-04-30T01:53:51-05:00",
+    "type": "deploy",
+    "description": "Deploy ba43fa0: ops heartbeat: crons, deploy · 15 24h events"
+  },
+  {
     "ts": "2026-04-30T01:40:18-05:00",
     "type": "deploy",
     "description": "Deploy 553980b: Ops dashboard: passcode-gated /ops + /api/ops-state + 15-min heartbeat"
