@@ -1,0 +1,67 @@
+[
+  {
+    "ts": "2026-04-30T01:06:50-05:00",
+    "type": "deploy",
+    "description": "Deploy 22a7bbd: Live proof refresh: 83→84 customers, $1,521.96→$1,538.96, 1,751→1,883 subs"
+  },
+  {
+    "ts": "2026-04-30T06:06:17.417Z",
+    "type": "stripe",
+    "description": "Stripe: +1 new paid customer (now 84, $1,538.96)"
+  },
+  {
+    "ts": "2026-04-30T06:06:01.482Z",
+    "type": "stripe",
+    "description": "Stripe: +1 new paid customer (now 84, $1,538.96)"
+  },
+  {
+    "ts": "2026-04-30T00:58:17-05:00",
+    "type": "deploy",
+    "description": "Deploy b665495: Founding Member #0: free pilot install + application surface"
+  },
+  {
+    "ts": "2026-04-30T00:46:26-05:00",
+    "type": "deploy",
+    "description": "Deploy 0a28c94: Hero rewrite + bounce-webhook handler"
+  },
+  {
+    "ts": "2026-04-30T00:39:48-05:00",
+    "type": "deploy",
+    "description": "Deploy a241fcb: Cohort 10 → 5 spots + author authority in Epiphany Bridge"
+  },
+  {
+    "ts": "2026-04-29T23:54:30-05:00",
+    "type": "deploy",
+    "description": "Deploy 5af9bde: Quiz v2: 5-dimension scoring (revenue / audience / infra / investment / alignment)"
+  },
+  {
+    "ts": "2026-04-29T23:14:17-05:00",
+    "type": "deploy",
+    "description": "Deploy dd59a90: Launcher quiz research: Groq primary, Anthropic fallback"
+  },
+  {
+    "ts": "2026-04-29T22:22:06-05:00",
+    "type": "deploy",
+    "description": "Deploy 9ba2165: Practice Launcher: vacation framing + diagnostic quiz funnel"
+  },
+  {
+    "ts": "2026-04-29T21:17:07-05:00",
+    "type": "deploy",
+    "description": "Deploy 2a113d4: Reframe Launcher proof: time-to-$500 (mirrors the guarantee)"
+  },
+  {
+    "ts": "2026-04-29T03:03:18-05:00",
+    "type": "deploy",
+    "description": "Deploy ae249c5: Add proof section (live Stripe stats) + May 15 hard deadline"
+  },
+  {
+    "ts": "2026-04-29T02:49:29-05:00",
+    "type": "deploy",
+    "description": "Deploy d5db2b4: Expert panel audit: 10 priority fixes for Practice Launcher"
+  },
+  {
+    "ts": "2026-04-29T02:22:04-05:00",
+    "type": "deploy",
+    "description": "Deploy 3c25d3d: Add Practice Launcher sales page at /launcher — three-tier health coach offer"
+  }
+]

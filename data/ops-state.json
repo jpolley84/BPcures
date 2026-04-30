@@ -1,0 +1,110 @@
+{
+  "refreshedAt": "2026-04-30T06:39:54.722Z",
+  "crons": [
+    {
+      "id": "launcher-deep-research",
+      "schedule": "Hourly · top of hour",
+      "cron": "0 * * * *",
+      "enabled": true,
+      "desc": "Quiz takers → deep audit emails",
+      "lastRun": "2026-04-30T05:12:37.213Z",
+      "statusState": "green",
+      "recentCycles": []
+    },
+    {
+      "id": "coach-outreach-personalized",
+      "schedule": "Daily 9 AM",
+      "cron": "0 9 * * *",
+      "enabled": true,
+      "desc": "Cold outreach (5/day)",
+      "lastRun": "2026-04-30T05:12:47.967Z",
+      "statusState": "green",
+      "recentCycles": []
+    },
+    {
+      "id": "lead-replenishment",
+      "schedule": "Sunday 6 AM",
+      "cron": "0 6 * * 0",
+      "enabled": true,
+      "desc": "Refresh GOLD lead pool",
+      "lastRun": "2026-04-30T06:09:46.619Z",
+      "statusState": "green",
+      "recentCycles": []
+    },
+    {
+      "id": "stripe-refresh-weekly",
+      "schedule": "Sunday 6 AM",
+      "cron": "0 6 * * 0",
+      "enabled": true,
+      "desc": "Update site proof block",
+      "lastRun": "2026-04-30T06:06:25.299Z",
+      "statusState": "green",
+      "recentCycles": []
+    },
+    {
+      "id": "client-install",
+      "schedule": "On-demand",
+      "cron": "on-demand",
+      "enabled": true,
+      "desc": "Productize per closed client",
+      "lastRun": "2026-04-30T06:09:50.521Z",
+      "statusState": "green",
+      "recentCycles": []
+    },
+    {
+      "id": "ops-heartbeat",
+      "schedule": "Every 15 min",
+      "cron": "*/15 * * * *",
+      "enabled": false,
+      "desc": "Refresh ops dashboard",
+      "lastRun": "2026-04-30T06:38:13.512Z",
+      "statusState": "red",
+      "recentCycles": [
+        {
+          "ts": "2026-04-30T06:38:13.512Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"initial write\"]"
+        }
+      ]
+    },
+    {
+      "id": "alpha",
+      "schedule": "Every 15 min",
+      "cron": "*/15 * * * *",
+      "enabled": true,
+      "desc": "TikTok+IG comment replier (Chrome)",
+      "lastRun": "2026-04-24T19:19:02.852Z",
+      "statusState": "yellow",
+      "recentCycles": []
+    }
+  ],
+  "pool": {
+    "poolTotal": 47,
+    "goldRemaining": 36,
+    "daysAtCurrentBurn": 7,
+    "totalSentEver": 25
+  },
+  "funnel": {
+    "coldSendsToday": 0,
+    "quizSubmissionsToday": 0,
+    "auditsSentToday": 0,
+    "callsBookedToday": 0,
+    "fm0AppsToday": 0
+  },
+  "deploy": {
+    "latestSha": "22a7bbd",
+    "latestCommitMessage": "Live proof refresh: 83→84 customers, $1,521.96→$1,538.96, 1,751→1,883 subs",
+    "latestCommitDate": "2026-04-30T01:06:50-05:00",
+    "vercelState": "READY"
+  },
+  "joelQueue": [
+    "Keep Microsoft Edge open with BOTH TikTok AND Instagram tabs logged in as @braveworksrn — Alpha uses Edge exclusively (Claude-in-Chrome extension installed in Edge). Both TikTok and IG tabs must be open in Edge. Instagram has been EDGE_UNAVAILABLE intermittently. Open instagram.com/braveworksrn in a second Edge tab and leave both open in the background. Also ensure the Claude in Chrome extension in Edge has site access set to \"On all sites.\"",
+    "Add lead-magnet env vars in Vercel dashboard — `bpquiz-site` project → Settings → Environment Variables → add `RESEND_API_KEY=[REDACTED]`, `MAILCHIMP_API_KEY=[REDACTED]`, `MAILCHIMP_LIST_ID=1550e2956c`, `VITE_SITE_URL=https://bpquiz.com`, **`STRIPE_WEBHOOK_SECRET=<from Stripe dashboard → Webhooks>`**. Then redeploy. Without these, quiz emails won't send and purchase confirmations return 500 (4 buyers today may not have received their kits).",
+    "Verify Resend sender `braveworksrn@gmail.com` is authorized — Resend requires the `from:` address to be a verified domain or single-sender. Log into resend.com and check Domains. If `gmail.com` isn't authorized for your account, either (a) add + verify a BraveWorks domain like `mail.bpquiz.com` and change `from:` in `bpquiz-site/api/lead-magnet.js`, or (b) verify `braveworksrn@gmail.com` as a single sender. Quiz will return 500 on submit until this is done.",
+    "RECURRING EDGE STALL (12 times in 7 days, escalating) — fix Edge startup settings so Alpha never goes dark: Alpha has now been dark since 2026-04-25 16:15 UTC (~12h as of this commander run). At ~90-150 missed replies per stall × 12 stalls = ~1,080-1,800 replies lost in 7 days. With Beta sending Day-5 Hormozi closes today and pulling only $34 in revenue (vs $300-800 projected), the fleet is starving for top-of-funnel signal that only Alpha generates. One-time fix: open Edge → Settings (⋯ menu) → \"On startup\" → select **\"Continue where you left off\"** — this reopens TikTok Studio and IG tabs automatically on system restart. Also: Edge Settings → System → make sure **\"Continue running background apps when Edge is closed\"** is CHECKED (on). After adjusting, leave Edge open now. NOTE: Commander also fixed the TikTok Studio reply selector (UI had changed) — once Edge is open, Alpha should resume posting immediately."
+  ],
+  "replies": {
+    "count": 0,
+    "recent": [],
+    "note": "marketing-inbox source not yet wired"
+  }
+}
