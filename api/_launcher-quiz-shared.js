@@ -1,8 +1,11 @@
 /* ================================================================
-   Server-side mirror of utils/launcherQuiz.js
+   Server-side mirror of utils/launcherQuiz.js (v2 — 5-dim scoring)
    Vercel serverless functions can't import Vite-aliased frontend
    modules, so we duplicate the small amount of logic the API
-   endpoints need. Keep this in sync with src/utils/launcherQuiz.js.
+   endpoints need.
+
+   IF YOU CHANGE SCORING HERE, UPDATE src/utils/launcherQuiz.js TO
+   MATCH. Future refactor: extract to a single shared spec.
    ================================================================ */
 
 export const TIER_DETAILS = {
@@ -33,12 +36,12 @@ export const QUESTIONS = [
     type: 'choice',
     question: 'Current monthly revenue',
     options: [
-      { value: 'r0', label: '$0', dims: { revenue: 0 } },
-      { value: 'r0_500', label: '$0–500', dims: { revenue: 1 } },
-      { value: 'r500_2k', label: '$500–2K', dims: { revenue: 2 } },
-      { value: 'r2k_5k', label: '$2K–5K', dims: { revenue: 4 } },
-      { value: 'r5k_15k', label: '$5K–15K', dims: { revenue: 6 } },
-      { value: 'r15k_plus', label: '$15K+', dims: { revenue: 8 } },
+      { value: 'r0', label: '$0', dims: { revenue: 0, investment: 0 } },
+      { value: 'r0_500', label: '$0–500', dims: { revenue: 1, investment: 1 } },
+      { value: 'r500_2k', label: '$500–2K', dims: { revenue: 2, investment: 2 } },
+      { value: 'r2k_5k', label: '$2K–5K', dims: { revenue: 4, investment: 3 } },
+      { value: 'r5k_15k', label: '$5K–15K', dims: { revenue: 6, investment: 4 } },
+      { value: 'r15k_plus', label: '$15K+', dims: { revenue: 8, investment: 5 } },
     ],
   },
   {
@@ -65,18 +68,6 @@ export const QUESTIONS = [
     ],
   },
   {
-    id: 'cadence',
-    type: 'choice',
-    question: 'Content cadence',
-    options: [
-      { value: 'c_daily', label: 'Daily', dims: { audience: 2, infra: 1 } },
-      { value: 'c_few_week', label: 'Few times a week', dims: { audience: 1, infra: 1 } },
-      { value: 'c_weekly', label: 'Weekly', dims: { audience: 1, infra: 0 } },
-      { value: 'c_sporadic', label: 'Sporadic', dims: { audience: 0, infra: 0 } },
-      { value: 'c_none', label: 'Don\'t post yet', dims: { audience: 0, infra: 0 } },
-    ],
-  },
-  {
     id: 'blocker',
     type: 'choice',
     question: 'Biggest blocker',
@@ -90,48 +81,122 @@ export const QUESTIONS = [
     ],
   },
   {
-    id: 'stack',
+    id: 'investment_history',
     type: 'choice',
-    question: 'Current tech stack',
+    question: 'Past 24-mo investment in coaching/mastermind/consulting',
     options: [
-      { value: 's_custom', label: 'Custom site', dims: { infra: 1 } },
-      { value: 's_clickfunnels', label: 'ClickFunnels / Kajabi', dims: { infra: 2 } },
-      { value: 's_squarespace', label: 'Squarespace / Wix', dims: { infra: 2 } },
-      { value: 's_social', label: 'Just social', dims: { infra: 3 } },
-      { value: 's_nothing', label: 'Nothing yet', dims: { infra: 3 } },
+      { value: 'i_under_500', label: '$0–500', dims: { investment: 0 } },
+      { value: 'i_500_2k', label: '$500–2K', dims: { investment: 2 } },
+      { value: 'i_2k_5k', label: '$2K–5K', dims: { investment: 4 } },
+      { value: 'i_5k_15k', label: '$5K–15K', dims: { investment: 7 } },
+      { value: 'i_15k_plus', label: '$15K+', dims: { investment: 10 } },
+    ],
+  },
+  {
+    id: 'liquidity',
+    type: 'choice',
+    question: 'Decision-speed / liquidity',
+    options: [
+      { value: 'l_week', label: 'Within a week', dims: { investment: 8 } },
+      { value: 'l_month', label: 'Within a month', dims: { investment: 6 } },
+      { value: 'l_3_months', label: 'Within 3 months', dims: { investment: 3 } },
+      { value: 'l_payment_plan', label: 'Need a payment plan', dims: { investment: 2 } },
+      { value: 'l_not_now', label: 'Couldn\'t right now', dims: { investment: 0 } },
+    ],
+  },
+  {
+    id: 'approach',
+    type: 'multi',
+    question: 'Approach to healing (multi-select up to 2)',
+    maxSelect: 2,
+    options: [
+      { value: 'ap_functional', label: 'Functional', dims: { alignment: 2 } },
+      { value: 'ap_naturopathic', label: 'Naturopathic', dims: { alignment: 4 } },
+      { value: 'ap_integrative', label: 'Integrative', dims: { alignment: 3 } },
+      { value: 'ap_holistic', label: 'Holistic', dims: { alignment: 3 } },
+      { value: 'ap_faith', label: 'Faith-based', dims: { alignment: 5 } },
+      { value: 'ap_clinical', label: 'Clinical', dims: { alignment: 1 } },
+      { value: 'ap_spiritual', label: 'Spiritual', dims: { alignment: 2 } },
+      { value: 'ap_conventional', label: 'Conventional', dims: { alignment: 0 } },
+      { value: 'ap_other', label: 'Other / mix', dims: { alignment: 1 } },
+    ],
+  },
+  {
+    id: 'ai_comfort',
+    type: 'choice',
+    question: 'Comfort with AI in workflow',
+    options: [
+      { value: 'ai_daily', label: 'Use AI daily, want more', dims: { alignment: 5, infra: 1 } },
+      { value: 'ai_tried', label: 'Tried but not in flow', dims: { alignment: 4, infra: 1 } },
+      { value: 'ai_curious', label: 'Curious, haven\'t started', dims: { alignment: 3 } },
+      { value: 'ai_hesitant', label: 'Hesitant about AI', dims: { alignment: 1 } },
+      { value: 'ai_wrong', label: 'Feels wrong for my work', dims: { alignment: 0 } },
     ],
   },
 ];
 
+const DIM_KEYS = ['revenue', 'audience', 'infra', 'investment', 'alignment'];
+const WEIGHTS = { revenue: 2.2, audience: 1.8, infra: 2.2, investment: 2.2, alignment: 1.6 };
+
 export function scoreAnswers(answers) {
-  const dims = { revenue: 0, audience: 0, infra: 0 };
+  const dims = { revenue: 0, audience: 0, infra: 0, investment: 0, alignment: 0 };
+
   for (const q of QUESTIONS) {
     const value = answers[q.id];
     if (!value) continue;
-    const opt = q.options.find((o) => o.value === value);
-    if (!opt || !opt.dims) continue;
-    for (const k of Object.keys(opt.dims)) {
-      dims[k] = (dims[k] || 0) + opt.dims[k];
+
+    if (q.type === 'choice') {
+      const opt = q.options.find((o) => o.value === value);
+      if (!opt || !opt.dims) continue;
+      for (const k of Object.keys(opt.dims)) {
+        dims[k] = (dims[k] || 0) + opt.dims[k];
+      }
+    } else if (q.type === 'multi') {
+      const vals = Array.isArray(value)
+        ? value
+        : String(value).split(',').map((s) => s.trim()).filter(Boolean);
+      for (const v of vals) {
+        const opt = q.options.find((o) => o.value === v);
+        if (!opt || !opt.dims) continue;
+        for (const k of Object.keys(opt.dims)) {
+          dims[k] = (dims[k] || 0) + opt.dims[k];
+        }
+      }
     }
   }
+
   const cap = (v) => Math.max(0, Math.min(10, v));
-  const revenue = cap(dims.revenue);
-  const audience = cap(dims.audience);
-  const infra = cap(dims.infra);
-  const composite = Math.round(revenue * 4 + audience * 3 + infra * 3);
-  return { revenue, audience, infra, composite };
+  const out = {};
+  for (const k of DIM_KEYS) out[k] = cap(dims[k]);
+
+  const composite = Math.round(
+    out.revenue * WEIGHTS.revenue +
+      out.audience * WEIGHTS.audience +
+      out.infra * WEIGHTS.infra +
+      out.investment * WEIGHTS.investment +
+      out.alignment * WEIGHTS.alignment
+  );
+
+  return { ...out, composite };
 }
 
 export function tierForScore(score, answers) {
-  const { revenue, audience, composite } = score;
+  const { revenue, audience, composite, investment, alignment } = score;
+
+  if (alignment <= 3) return 'none';
+  if (composite < 40) return 'none';
+
   const noCert = answers.cert === 'none' || answers.cert === 'in_progress';
   const noAudience = audience <= 1;
   const noRevenue = revenue <= 1;
-  const noUrgency = !answers.why_now || answers.why_now.trim().length < 10;
+  const noUrgency = !answers.why_now || String(answers.why_now).trim().length < 10;
   if (noCert && noAudience && noRevenue && noUrgency) return 'none';
-  if (revenue <= 4 && audience >= 5) return 'revshare';
-  if (revenue >= 5 && audience >= 3 && composite < 60) return 'starter';
-  if (revenue >= 4 && answers.blocker === 'b_tech') return 'starter';
+
+  if (revenue <= 4 && audience >= 5 && investment <= 4) return 'revshare';
+  if (composite >= 60 && investment <= 4) return 'starter';
+  if (revenue >= 5 && audience >= 3 && composite < 60 && investment <= 6) return 'starter';
+  if (revenue >= 4 && answers.blocker === 'b_tech' && investment <= 6) return 'starter';
+
   return 'launcher';
 }
 
@@ -156,7 +221,7 @@ export function encodeSlugPayload(payload) {
     a: payload.answers || {},
     t: payload.tierKey,
     s: payload.score,
-    v: 1,
+    v: 2,
   };
   return Buffer.from(JSON.stringify(safe), 'utf8')
     .toString('base64')
@@ -164,6 +229,8 @@ export function encodeSlugPayload(payload) {
     .replace(/\//g, '_')
     .replace(/=+$/, '');
 }
+
+const ZERO_SCORE = { revenue: 0, audience: 0, infra: 0, investment: 0, alignment: 0, composite: 0 };
 
 export function decodeSlugPayload(blob) {
   try {
@@ -176,7 +243,8 @@ export function decodeSlugPayload(blob) {
       handle: obj.h || '',
       answers: obj.a || {},
       tierKey: obj.t || 'launcher',
-      score: obj.s || { revenue: 0, audience: 0, infra: 0, composite: 0 },
+      // Backward-compat: v1 slugs only had revenue/audience/infra.
+      score: { ...ZERO_SCORE, ...(obj.s || {}) },
     };
   } catch (err) {
     return null;

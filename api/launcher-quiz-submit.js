@@ -30,17 +30,71 @@ function safeText(v, max = 500) {
 function findOptionLabel(qid, value) {
   const q = QUESTIONS.find((x) => x.id === qid);
   if (!q) return value;
+  // Multi-select: comma-separated string of values
+  if (q.type === 'multi') {
+    const vals = Array.isArray(value)
+      ? value
+      : String(value || '').split(',').map((s) => s.trim()).filter(Boolean);
+    return vals
+      .map((v) => {
+        const opt = q.options.find((o) => o.value === v);
+        return opt ? opt.label : v;
+      })
+      .join(', ');
+  }
   const opt = q.options.find((o) => o.value === value);
   return opt ? opt.label : value;
 }
 
-async function addContactToResendAudience({ email, name, tierKey }) {
+function bandFromInvestment(investmentDim) {
+  // investment dimension is 0-10
+  if (investmentDim >= 9) return 'high_15k_plus';
+  if (investmentDim >= 7) return 'mid_5k_15k';
+  if (investmentDim >= 4) return 'starter_2k_5k';
+  if (investmentDim >= 2) return 'low_500_2k';
+  return 'pre_invest';
+}
+
+function alignmentSignals(answers) {
+  // Read approach (multi) + ai_comfort to produce a compact signals string
+  const approachVals = String(answers.approach || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const ai = answers.ai_comfort || '';
+  const tags = [];
+  if (approachVals.includes('ap_faith')) tags.push('faith');
+  if (approachVals.includes('ap_naturopathic')) tags.push('naturopathic');
+  if (approachVals.includes('ap_holistic')) tags.push('holistic');
+  if (approachVals.includes('ap_integrative')) tags.push('integrative');
+  if (approachVals.includes('ap_functional')) tags.push('functional');
+  if (approachVals.includes('ap_spiritual')) tags.push('spiritual');
+  if (approachVals.includes('ap_clinical')) tags.push('clinical');
+  if (approachVals.includes('ap_conventional')) tags.push('conventional');
+  if (ai === 'ai_daily') tags.push('ai_daily');
+  else if (ai === 'ai_tried') tags.push('ai_tried');
+  else if (ai === 'ai_curious') tags.push('ai_curious');
+  else if (ai === 'ai_hesitant') tags.push('ai_hesitant');
+  else if (ai === 'ai_wrong') tags.push('ai_wrong');
+  return tags.join(',');
+}
+
+async function addContactToResendAudience({
+  email,
+  name,
+  tierKey,
+  investmentBand,
+  alignmentTags,
+  compositeScore,
+}) {
   if (!process.env.RESEND_API_KEY) return { ok: false, reason: 'no_key' };
 
   const [firstName, ...rest] = (name || '').trim().split(/\s+/);
   const lastName = rest.join(' ');
 
   try {
+    // Resend's standard audience contact API only supports email/first_name/
+    // last_name/unsubscribed. Custom-field support is not stable across
+    // versions, so we don't send arbitrary fields here — they get logged in
+    // the Joel notification email instead. If Resend exposes contact metadata
+    // in a future version we can plumb investmentBand / alignmentTags through.
     const res = await fetch(
       `https://api.resend.com/audiences/${RESEND_LAUNCHER_AUDIENCE_ID}/contacts`,
       {
@@ -60,16 +114,31 @@ async function addContactToResendAudience({ email, name, tierKey }) {
 
     if (!res.ok) {
       const text = await res.text().catch(() => '');
-      return { ok: false, status: res.status, body: text.slice(0, 200), tierKey };
+      return {
+        ok: false,
+        status: res.status,
+        body: text.slice(0, 200),
+        tierKey,
+        investmentBand,
+        alignmentTags,
+        compositeScore,
+      };
     }
     const data = await res.json().catch(() => ({}));
-    return { ok: true, contactId: data?.id, tierKey };
+    return {
+      ok: true,
+      contactId: data?.id,
+      tierKey,
+      investmentBand,
+      alignmentTags,
+      compositeScore,
+    };
   } catch (err) {
     return { ok: false, reason: err.message };
   }
 }
 
-function renderJoelNotification({ name, email, handle, answers, tier, score }) {
+function renderJoelNotification({ name, email, handle, answers, tier, score, investmentBand, alignmentTags }) {
   const tierName = tier?.name || 'Unknown';
 
   const rows = [
@@ -81,13 +150,19 @@ function renderJoelNotification({ name, email, handle, answers, tier, score }) {
     ['Revenue dim', score.revenue],
     ['Audience dim', score.audience],
     ['Infra dim', score.infra],
+    ['Investment dim', score.investment],
+    ['Alignment dim', score.alignment],
+    ['Investment band', investmentBand],
+    ['Alignment signals', alignmentTags || '(none)'],
     ['Cert', findOptionLabel('cert', answers.cert)],
     ['Monthly revenue', findOptionLabel('revenue', answers.revenue)],
     ['Audience size', findOptionLabel('audience', answers.audience)],
     ['Niche specificity', findOptionLabel('niche', answers.niche)],
-    ['Content cadence', findOptionLabel('cadence', answers.cadence)],
     ['Biggest blocker', findOptionLabel('blocker', answers.blocker)],
-    ['Tech stack', findOptionLabel('stack', answers.stack)],
+    ['Investment history (24mo)', findOptionLabel('investment_history', answers.investment_history)],
+    ['Liquidity / decision speed', findOptionLabel('liquidity', answers.liquidity)],
+    ['Approach to healing', findOptionLabel('approach', answers.approach)],
+    ['AI comfort', findOptionLabel('ai_comfort', answers.ai_comfort)],
     ['Why now', answers.why_now || '(not provided)'],
   ];
 
@@ -104,9 +179,9 @@ function renderJoelNotification({ name, email, handle, answers, tier, score }) {
   <tr><td align="center" style="padding:24px 16px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#FFFFFF;border-radius:16px;border:1px solid #E8E1D1;">
       <tr><td style="padding:24px 24px 8px;">
-        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#B85A36;font-weight:600;">Practice Launcher Quiz</div>
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#B85A36;font-weight:600;">Practice Launcher Quiz · v2 (5-dim)</div>
         <h1 style="font-family:Georgia,serif;font-size:22px;line-height:1.25;margin:8px 0 0;color:#121110;">${escapeHtml(name || '(no name)')} · ${escapeHtml(tierName)}</h1>
-        <p style="font-size:13px;color:#7A7061;margin:6px 0 0;">Score: ${score.composite}/100</p>
+        <p style="font-size:13px;color:#7A7061;margin:6px 0 0;">Score: ${score.composite}/100 · Investment: ${score.investment}/10 · Alignment: ${score.alignment}/10</p>
       </td></tr>
       <tr><td style="padding:8px 24px 24px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
@@ -155,9 +230,9 @@ export default async function handler(req, res) {
     }
   }
 
-  // Required choice questions present
-  const requiredChoices = QUESTIONS.map((q) => q.id);
-  for (const id of requiredChoices) {
+  // Required choice/multi questions present
+  const requiredIds = QUESTIONS.map((q) => q.id);
+  for (const id of requiredIds) {
     if (!cleanAnswers[id]) {
       return res.status(400).json({ error: `Missing answer: ${id}` });
     }
@@ -167,9 +242,18 @@ export default async function handler(req, res) {
   const tierKey = tierForScore(score, cleanAnswers);
   const tier = TIER_DETAILS[tierKey];
   const slug = buildSlug({ email, name, handle, answers: cleanAnswers, tierKey, score });
+  const investmentBand = bandFromInvestment(score.investment);
+  const alignmentTags = alignmentSignals(cleanAnswers);
 
   // Fire-and-forget Resend audience add — don't block the user
-  addContactToResendAudience({ email, name, tierKey }).catch(() => {});
+  addContactToResendAudience({
+    email,
+    name,
+    tierKey,
+    investmentBand,
+    alignmentTags,
+    compositeScore: score.composite,
+  }).catch(() => {});
 
   // Joel notification email
   try {
@@ -180,12 +264,14 @@ export default async function handler(req, res) {
       answers: cleanAnswers,
       tier,
       score,
+      investmentBand,
+      alignmentTags,
     });
     await getResend().emails.send({
       from: 'Practice Launcher Quiz <quiz@bpquiz.com>',
       to: NOTIFY_EMAIL,
       replyTo: email,
-      subject: `[Practice Launcher Quiz] ${name} / ${tier?.name || tierKey} — score ${score.composite}/100`,
+      subject: `[Practice Launcher Quiz] ${name} / ${tier?.name || tierKey} — score ${score.composite}/100 · inv ${score.investment} · align ${score.alignment}`,
       html,
     });
   } catch (err) {

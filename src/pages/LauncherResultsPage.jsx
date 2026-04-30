@@ -836,12 +836,15 @@ function OtherTiers({ tierKeys }) {
    ---------------------------------------------------------------- */
 
 function scoreInterpretation(score, tierKey) {
-  const { composite } = score;
+  const { composite, alignment } = score;
   if (tierKey === 'none') {
+    if (alignment <= 3) {
+      return 'The diagnostic suggests a values gap more than a fit gap. Practice Launcher is faith-leaning, naturopathic-aligned, and AI-forward — that\'s not a fit for everyone, and that\'s okay.';
+    }
     return 'You\'re earlier in the journey — and that\'s genuinely fine. The diagnostic shows a foundation gap, not a fit gap. Let\'s talk about what to build first.';
   }
   if (composite >= 75) {
-    return 'You\'re built to scale. The certification, audience, and revenue motion are all here — what\'s missing is the infrastructure underneath them.';
+    return 'You\'re built to scale. The certification, audience, revenue motion, and investment readiness are all here — what\'s missing is the infrastructure underneath them.';
   }
   if (composite >= 55) {
     return 'You\'re at the inflection point. The foundation is real, the audience is real, the next move is the system that captures what you\'re already building.';
@@ -854,9 +857,18 @@ function scoreInterpretation(score, tierKey) {
 
 function diagnosticParagraphs(answers, score, tierKey, name) {
   const lines = [];
-  const { revenue, audience, infra } = score;
+  const { revenue, audience, infra, investment, alignment } = score;
 
   if (tierKey === 'none') {
+    if (alignment <= 3) {
+      lines.push(
+        `${name ? name + ', ' : ''}I want to be honest with you: Practice Launcher is built around a specific worldview. It's faith-leaning, naturopathic-aligned, and AI-forward — meaning my system uses AI to scale content, replies, and email A/B testing. Your answers tell me that's probably not the shape of work you want.`
+      );
+      lines.push(
+        `That's not a problem with you, and it's not a soft no — it's a real one. I'd rather you know up front than spend $9,997 on a system that doesn't match how you practice. The free resources at BPQuiz.com are still yours to use, and there are great Practice Launcher-style installs for conventional, evidence-only practices that aren't this one.`
+      );
+      return lines;
+    }
     lines.push(
       `Your answers tell me you're at the very start of the path${name ? ', ' + name : ''}. That's not a flaw — it's a fact. Most of the people I talk to about Practice Launcher already have certification, an audience that knows them, and a few clients on the books. The system installs on top of those. Without them, the install has nothing to fill.`
     );
@@ -904,6 +916,28 @@ function diagnosticParagraphs(answers, score, tierKey, name) {
   } else if (infra >= 3) {
     lines.push(
       `Your current stack has bones. Some pieces stay (Stripe, your domain, your existing email list), some get retired (drag-and-drop builders that fight you), and the new layer goes on top — a plain-English command system that talks to all of it.`
+    );
+  }
+
+  // Investment readiness — only mention when it matters (red/yellow)
+  if (investment <= 4 && tierKey === 'starter') {
+    lines.push(
+      `On investment readiness: your answers tell me the full Practice Launcher install isn't where the cash flow is right now, and I respect that more than I respect bravado. The Starter Kit gets you the same wiring at a fraction of the upfront — same first-client guarantee, same funnel, same Stripe — and you bring the content motion you've already built.`
+    );
+  } else if (investment <= 4 && tierKey === 'revshare') {
+    lines.push(
+      `On investment readiness: dropping $9,997 today isn't where the cash flow is — but the audience is. That's exactly the shape Revenue Share was built for. Lower upfront, I take 10% of gross for 12 months, and I only profit if your practice does. Skin in the game on both sides.`
+    );
+  } else if (investment >= 7 && tierKey === 'launcher') {
+    lines.push(
+      `The investment readiness signal is strong — you've put real money behind your business before, and you can move quickly when the right opportunity shows up. That tells me Practice Launcher is the right tier, not the conservative one. We can move at the speed your practice actually needs.`
+    );
+  }
+
+  // Values alignment — call out when it's a clear positive signal
+  if (alignment >= 7 && tierKey !== 'none') {
+    lines.push(
+      `One more thing — your answers on approach and AI comfort tell me we're aligned on the foundational stuff. That matters. Practice Launcher isn't a generic install; it's built on a specific way of seeing health and a specific way of using AI. When the worldview matches, the install runs faster and the content sounds like you instead of fighting you.`
     );
   }
 

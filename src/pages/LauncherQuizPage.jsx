@@ -32,6 +32,11 @@ export default function LauncherQuizPage() {
   const canAdvance = useMemo(() => {
     if (!q) return false;
     if (q.type === 'choice') return Boolean(answers[q.id]);
+    if (q.type === 'multi') {
+      const v = answers[q.id];
+      const arr = Array.isArray(v) ? v : [];
+      return arr.length > 0;
+    }
     if (q.type === 'text') {
       return q.optional ? true : Boolean((whyNow || '').trim().length > 0);
     }
@@ -49,6 +54,24 @@ export default function LauncherQuizPage() {
     setTimeout(() => {
       if (step < TOTAL_STEPS - 1) setStep((s) => s + 1);
     }, 240);
+  }
+
+  function toggleMulti(value) {
+    if (!q) return;
+    const max = q.maxSelect || 2;
+    setAnswers((prev) => {
+      const cur = Array.isArray(prev[q.id]) ? prev[q.id] : [];
+      let next;
+      if (cur.includes(value)) {
+        next = cur.filter((v) => v !== value);
+      } else if (cur.length >= max) {
+        // Replace the oldest selection — gentle UX
+        next = [...cur.slice(1), value];
+      } else {
+        next = [...cur, value];
+      }
+      return { ...prev, [q.id]: next };
+    });
   }
 
   function next() {
@@ -72,8 +95,14 @@ export default function LauncherQuizPage() {
     setSubmitting(true);
     setError('');
     try {
+      // Normalize multi-select arrays into comma-separated strings for transport
+      const normAnswers = {};
+      for (const k of Object.keys(answers)) {
+        const v = answers[k];
+        normAnswers[k] = Array.isArray(v) ? v.join(',') : v;
+      }
       const finalAnswers = {
-        ...answers,
+        ...normAnswers,
         why_now: (whyNow || '').trim(),
       };
 
@@ -166,6 +195,14 @@ export default function LauncherQuizPage() {
                   <ChoiceList q={q} selected={answers[q.id]} onChoose={chooseChoice} />
                 )}
 
+                {q.type === 'multi' && (
+                  <MultiList
+                    q={q}
+                    selected={Array.isArray(answers[q.id]) ? answers[q.id] : []}
+                    onToggle={toggleMulti}
+                  />
+                )}
+
                 {q.type === 'text' && (
                   <textarea
                     value={whyNow}
@@ -234,7 +271,7 @@ export default function LauncherQuizPage() {
           </motion.div>
 
           <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.78rem', color: muted, lineHeight: 1.5 }}>
-            10 questions. 3 minutes. No spam, no autoplay video, no scroll trap.
+            10 questions across 5 dimensions. 4 minutes. No spam, no autoplay video, no scroll trap.
           </p>
         </div>
       </main>
@@ -286,6 +323,73 @@ export default function LauncherQuizPage() {
                 {isSelected && (
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: cream }} />
                 )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  function MultiList({ q, selected, onToggle }) {
+    const max = q.maxSelect || 2;
+    return (
+      <div style={{ display: 'grid', gap: '0.6rem' }}>
+        <p
+          style={{
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '0.65rem',
+            color: muted,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            margin: '0 0 0.25rem',
+          }}
+        >
+          {selected.length} of {max} selected
+        </p>
+        {q.options.map((opt) => {
+          const isSelected = selected.includes(opt.value);
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onToggle(opt.value)}
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr auto',
+                alignItems: 'center',
+                gap: '1rem',
+                padding: '1rem 1.1rem',
+                background: isSelected ? sageSoft : 'var(--paper)',
+                border: `1px solid ${isSelected ? sageDeep : line}`,
+                borderRadius: 14,
+                cursor: 'pointer',
+                textAlign: 'left',
+                transition: 'border-color 0.3s, background 0.3s, transform 0.3s',
+              }}
+            >
+              <div>
+                <span style={{ fontWeight: 500, fontSize: '0.98rem', color: ink, display: 'block', marginBottom: '0.15rem' }}>
+                  {opt.label}
+                </span>
+                <span style={{ fontSize: '0.82rem', color: muted, lineHeight: 1.45 }}>{opt.desc}</span>
+              </div>
+              <span
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: 6,
+                  background: isSelected ? sageDeep : cream,
+                  border: `1px solid ${isSelected ? sageDeep : line}`,
+                  display: 'grid',
+                  placeItems: 'center',
+                  flexShrink: 0,
+                  fontSize: '0.82rem',
+                  color: cream,
+                  fontWeight: 600,
+                }}
+              >
+                {isSelected ? '✓' : ''}
               </span>
             </button>
           );
