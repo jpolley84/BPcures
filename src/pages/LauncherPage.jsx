@@ -2,8 +2,17 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, ChevronRight } from 'lucide-react';
+import proofData from '../data/launcher-proof.json';
 
 const QUIZ_LINK = '/launcher/quiz';
+const PROOF = {
+  daysToFirst500: proofData.daysToFirst500.value,
+  paidCustomers: proofData.paidCustomers.value,
+  totalRevenue: proofData.totalRevenue.value,
+  emailSubscribers: proofData.emailSubscribers.value,
+  campaignsRunning: proofData.campaignsRunning.value,
+  dataAsOfDate: proofData.dataAsOfDate.value,
+};
 
 const fade = {
   initial: { opacity: 0, y: 20 },
@@ -45,7 +54,7 @@ function HeroSection() {
           </div>
 
           <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-5)', fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.03em', margin: '0 0 1.5rem', fontVariationSettings: '"SOFT" 50, "opsz" 120' }}>
-            $500 in 16 days.
+            $500 in {PROOF.daysToFirst500}.
             <br />
             <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)', fontVariationSettings: '"SOFT" 100, "opsz" 120' }}>By talking to my business.</em>
           </h1>
@@ -189,10 +198,10 @@ function FoundingMemberZeroSection() {
    ================================================================ */
 function ProofSection() {
   const stats = [
-    { num: '16 days', label: '$0 → $500 in collected revenue. That\'s the guarantee on this page — pre-tested on the founder.' },
-    { num: '83', label: 'paying customers in 5 weeks — every one from organic content, zero ad spend.' },
-    { num: '1,751', label: 'email subscribers built from a quiz funnel — the same one I install for you.' },
-    { num: '21', label: 'automated email campaigns running right now — written and optimized by AI.' },
+    { num: PROOF.daysToFirst500, label: '$0 → $500 in collected revenue. That\'s the guarantee on this page — pre-tested on the founder.' },
+    { num: PROOF.paidCustomers, label: 'paying customers — every one from organic content, zero ad spend.' },
+    { num: PROOF.emailSubscribers, label: 'email subscribers built from a quiz funnel — the same one I install for you.' },
+    { num: PROOF.campaignsRunning, label: 'automated email campaigns running right now — written and optimized by AI.' },
   ];
 
   return (
@@ -204,7 +213,7 @@ function ProofSection() {
             BraveWorks RN. <em className="ital-display" style={{ color: 'var(--clay)' }}>Same system. Live numbers.</em>
           </h2>
           <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 2rem', lineHeight: 1.6 }}>
-            These are real numbers from my own business — BPQuiz.com. The $500 first-client guarantee on this page? It took my system <strong>16 days</strong> to do that for me. I'm offering you the same engine. Live data, pulled from Stripe on April 29, 2026.
+            These are real numbers from my own business &mdash; BPQuiz.com. The $500 first-client guarantee on this page? It took my system <strong>{PROOF.daysToFirst500}</strong> to do that for me. I'm offering you the same engine. Live data, pulled from Stripe on {PROOF.dataAsOfDate}.
           </p>
         </motion.div>
 

@@ -1,0 +1,34 @@
+{
+  "_comment": "Refreshable proof stats for /launcher. Updated weekly by tools/stripe-refresh.js (Sunday 6 AM cron). Static fields are marked. Hand-edit static fields with care.",
+  "daysToFirst500": {
+    "value": "16 days",
+    "static": true,
+    "_note": "Historical: $0 → $500 happened Mar 25 → Apr 10 2026. Doesn't change."
+  },
+  "paidCustomers": {
+    "value": "84",
+    "static": false,
+    "_note": "Total successful charges. Refreshed from Stripe weekly."
+  },
+  "totalRevenue": {
+    "value": "$1,538.96",
+    "static": false,
+    "_note": "Sum of successful, non-refunded charges. Refreshed from Stripe weekly."
+  },
+  "emailSubscribers": {
+    "value": "1,883",
+    "static": false,
+    "_note": "Mailchimp list 1550e2956c member count. Refreshed weekly."
+  },
+  "campaignsRunning": {
+    "value": "20",
+    "static": false,
+    "_note": "Mailchimp campaigns + automations. Refreshed weekly."
+  },
+  "dataAsOfDate": {
+    "value": "April 30, 2026",
+    "static": false,
+    "_note": "Date of most recent refresh. Auto-set by the cron."
+  },
+  "lastRefreshedAt": "2026-04-30T06:06:17.417Z"
+}
