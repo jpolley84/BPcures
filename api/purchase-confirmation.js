@@ -2,10 +2,16 @@ import { Resend } from 'resend';
 import Stripe from 'stripe';
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
-const FROM_ADDRESS = 'Joel Polley, RN <braveworksrn@gmail.com>';
+// Resend requires a verified sender domain. gmail.com is NOT verified —
+// bpquiz.com IS. Replies still route to braveworksrn@gmail.com via REPLY_TO.
+const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
 const DOWNLOADS = {
+  bp_kit_zip: {
+    label: 'The BP Reset Kit — 8 PDFs (zip)',
+    file: 'bp-reset-kit.zip',
+  },
   bp_day1: {
     label: 'The 10-Day BP Reset — Day 1 &amp; Full Challenge',
     file: 'bp-reset-day1-and-beyond.pdf',
@@ -14,6 +20,13 @@ const DOWNLOADS = {
     label: 'Cook For Life — Plant-Based Cookbook',
     file: 'cook-for-life-cookbook.pdf',
   },
+  // VIP-specific placeholder. Joel: drop the actual BP Reset Book PDF at
+  // bpquiz-site/public/downloads/bp-reset-book.pdf and this row goes live
+  // automatically. No code change needed.
+  vip_book: {
+    label: 'The BP Reset Book (digital — complete deep-dive guide)',
+    file: 'bp-reset-book.pdf',
+  },
 };
 
 const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
@@ -21,38 +34,56 @@ const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 export const TIER_CONFIG = {
   1: {
     product: 'Blood Pressure Cures — Starter Protocol Kit',
-    subject: 'You\'re in — your protocol kit + 30-day challenge start now',
-    downloads: [DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    subject: 'You\'re in — your BP Reset Kit + 30-day challenge bonuses inside',
+    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
     upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
     upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
     upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures (full edition) and The Overmedicated Boomer. Normally $47 for Be There in 30 alone — this is a one-time offer for all three.',
+    upgradeCta: 'Add all 3 books for $27 →',
   },
   2: {
     product: 'The BP Reset Kit',
     subject: 'Your BP Reset Kit is ready — all downloads inside',
-    downloads: [DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
-    upgradeUrl: 'https://buy.stripe.com/aFa3cvcAj6PI1N1gnTfnO0h',
-    upgradeLabel: 'Premium BP Protocol + 30-Day Challenge ($297)',
-    upgradeDesc: 'Barbara O\'Neill LIVE event ticket + weekly group coaching for 30 days + daily emails + Skool community access.',
+    includesChallenge: true,
+    upgradeUrl: 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w',
+    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + BP Reset Book ($97)',
+    upgradeDesc: 'Add the digital BP Reset Book deep-dive plus weekly LIVE group coaching with Joel — Mondays at 10pm EST. Direct Q&A and replays of every session.',
+    upgradeCta: 'Upgrade to VIP for $97 →',
+  },
+  vip: {
+    product: '30-Day Reset Challenge — VIP',
+    subject: 'You\'re in, VIP — your kit + Mondays 10pm EST coaching schedule inside',
+    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.vip_book, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    includesCoaching: true,
+    includesChallenge: true,
+    coachingFlavor: 'vip', // distinguishes from Premium tier 3
+    upgradeUrl: 'https://buy.stripe.com/9B6eVd6bVb5Y1N11sZfnO0x',
+    upgradeLabel: 'Upgrade to Premium — add Barbara O\'Neill LIVE event ($200 more)',
+    upgradeDesc: 'Premium adds a virtual ticket to Barbara O\'Neill\'s LIVE wellness event (June 24-25, 2026) plus her natural healing protocols. Joel personally buys your ticket within 48 hours.',
+    upgradeCta: 'Upgrade to Premium for $297 →',
   },
   3: {
     product: 'Premium Protocol + 30-Day Challenge',
     subject: 'Your 30-Day Challenge is confirmed — Barbara O\'Neill LIVE + group coaching + downloads inside',
-    downloads: [DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.vip_book, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: true,
+    includesChallenge: true,
+    coachingFlavor: 'premium',
     upgradeUrl: null,
     upgradeLabel: null,
     upgradeDesc: null,
   },
 };
 
-// Map Stripe amount_total (cents) → tier
-const AMOUNT_TO_TIER = {
+// Map Stripe amount_total (cents) → tier key
+export const AMOUNT_TO_TIER = {
   1700: 1,
   4700: 2,
+  9700: 'vip',
   29700: 3,
 };
 
@@ -119,7 +150,46 @@ export function renderPurchaseEmail({ name, tier }) {
     </td></tr>
   ` : '';
 
-  const coachingBlock = config.includesCoaching ? `
+  // Coaching block content varies by tier flavor:
+  //   'vip'      → weekly group coaching only (Mondays 10pm EST)
+  //   'premium'  → Barbara O'Neill LIVE + group coaching
+  let coachingBlock = '';
+  if (config.includesCoaching && config.coachingFlavor === 'vip') {
+    coachingBlock = `
+    <tr><td style="padding:6px 28px 18px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#6C3483;border-radius:14px;">
+        <tr><td style="padding:28px 24px;">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:20px;">Your VIP Coaching</div>
+
+          <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px;">Live Group Coaching</div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Mondays at 10pm EST — every week of the challenge</div>
+            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0;">
+              Bring your numbers, your medications list, your questions. Joel walks you through the protocol live and answers anything in real time. The Zoom link arrives in a separate email before each call.
+            </p>
+          </div>
+
+          <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px;">Direct Q&amp;A</div>
+            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0;">
+              Submit questions in advance or ask live during the calls. Every question gets answered.
+            </p>
+          </div>
+
+          <div>
+            <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px;">Replays — Yours to Keep</div>
+            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0;">
+              Can't make a session live? The replay link arrives in your inbox within 24 hours.
+            </p>
+          </div>
+
+        </td></tr>
+      </table>
+    </td></tr>
+    `;
+  } else if (config.includesCoaching) {
+    // Default = Premium tier 3
+    coachingBlock = `
     <tr><td style="padding:6px 28px 18px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#6C3483;border-radius:14px;">
         <tr><td style="padding:28px 24px;">
@@ -147,7 +217,8 @@ export function renderPurchaseEmail({ name, tier }) {
         </td></tr>
       </table>
     </td></tr>
-  ` : '';
+    `;
+  }
 
   const upgradeBlock = config.upgradeUrl ? `
     <tr><td style="padding:6px 28px 18px;">
@@ -156,7 +227,7 @@ export function renderPurchaseEmail({ name, tier }) {
         <div style="font-size:14px;font-weight:600;color:#2C3E50;margin-bottom:4px;">${config.upgradeLabel}</div>
         <div style="font-size:13px;line-height:1.5;color:#5A5A5A;margin-bottom:10px;">${config.upgradeDesc}</div>
         <a href="${config.upgradeUrl}" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
-          Add all 3 books for $27 &rarr;
+          ${config.upgradeCta || 'Upgrade now →'}
         </a>
       </div>
     </td></tr>
@@ -186,6 +257,8 @@ export function renderPurchaseEmail({ name, tier }) {
         <p style="font-size:14px;line-height:1.6;color:#5A5A5A;margin:0 0 12px;">
           ${tier === 3
             ? 'You\'re in the 30-Day Challenge — here\'s everything you have. Your Barbara O\'Neill LIVE ticket confirmation arrives within 48 hours. Your downloads are ready whenever you are.'
+            : tier === 'vip'
+            ? 'You\'re VIP. Your kit is ready below. You\'re automatically enrolled in the 30-Day Protocol Challenge AND the weekly Monday group coaching calls. The Zoom link arrives in a separate email before each session.'
             : tier === 1
             ? 'Your protocol kit is ready below. You\'re also automatically enrolled in the 30-Day Protocol Challenge — daily emails start tomorrow. And your Skool community access is live right now.'
             : 'Your downloads are ready. Start with Day 1 — it\'s the easiest one, and most people feel it within 72 hours.'

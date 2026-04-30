@@ -25,6 +25,12 @@
 import { Resend } from 'resend';
 import Stripe from 'stripe';
 
+import {
+  sendPurchaseConfirmation,
+  AMOUNT_TO_TIER,
+  TIER_CONFIG,
+} from './purchase-confirmation.js';
+
 const FROM_CUSTOMER = 'Joel Polley, RN <joel@bpquiz.com>';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 const REPLY_TO_CUSTOMER = 'brave.works.marketing@gmail.com';
@@ -352,10 +358,32 @@ async function processCheckoutCompleted(event) {
   // Resolve tier_slug from the line items → product metadata.
   const tierSlug = await resolveTierSlug(stripe, session.id);
   if (!tierSlug) {
-    // Not a Practice Launcher purchase — purchase-confirmation.js handles
-    // the BP Reset / Starter Kit / Premium Protocol tiers.
-    console.log('stripe-webhook: non-launcher session, ignoring', session.id, 'amount', amountCents);
-    return { action: 'skipped', reason: 'not_launcher' };
+    // Not a Practice Launcher purchase. Fall through to the kit / VIP /
+    // Premium tier handler in purchase-confirmation.js, keyed off
+    // session.amount_total. This is the single delivery rail for all
+    // non-launcher purchases — keeps us on one webhook + one secret.
+    const kitTier = AMOUNT_TO_TIER[amountCents];
+    if (!kitTier) {
+      console.log('stripe-webhook: unrecognized amount, ignoring', session.id, 'amount', amountCents);
+      return { action: 'skipped', reason: 'amount_not_mapped', amount: amountCents };
+    }
+    try {
+      await sendPurchaseConfirmation({
+        email: customerEmail,
+        name: customerName,
+        tier: kitTier,
+      });
+      console.log(`stripe-webhook: kit confirmation sent → ${customerEmail} [tier=${kitTier}, amount=${amountCents}]`);
+      return {
+        action: 'kit_confirmation_sent',
+        tier: kitTier,
+        product: TIER_CONFIG[kitTier]?.product,
+        customer_email: customerEmail,
+      };
+    } catch (err) {
+      console.error('stripe-webhook: kit confirmation failed', err.message);
+      return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
+    }
   }
 
   // Derive a kebab-case client slug. Append a 4-char hash if the name was
