@@ -11,6 +11,7 @@ import LauncherQuizPage from './pages/LauncherQuizPage';
 import LauncherResultsPage from './pages/LauncherResultsPage';
 import SuccessPage from './pages/SuccessPage';
 import DownloadsPage from './pages/DownloadsPage';
+import OpsDashboardPage from './pages/OpsDashboardPage';
 
 function SiteLayout({ children }) {
   return (
@@ -54,6 +55,9 @@ function App() {
         {/* Post-purchase — standalone (no nav/footer) */}
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/downloads" element={<DownloadsPage />} />
+
+        {/* Operations dashboard — passcode-gated, standalone */}
+        <Route path="/ops" element={<OpsDashboardPage />} />
       </Routes>
     </Router>
   );
