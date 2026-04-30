@@ -1,5 +1,5 @@
 {
-  "refreshedAt": "2026-04-30T13:53:56.071Z",
+  "refreshedAt": "2026-04-30T14:22:05.538Z",
   "crons": [
     {
       "id": "launcher-deep-research",
@@ -19,7 +19,16 @@
       "desc": "Cold outreach (5/day)",
       "lastRun": "2026-04-30T05:12:47.967Z",
       "statusState": "green",
-      "recentCycles": []
+      "recentCycles": [
+        {
+          "ts": null,
+          "summary": "cycle_at=2026-04-30T14:21:02.254801+00:00 · scanned=5 · sent=3"
+        },
+        {
+          "ts": null,
+          "summary": "cycle_at=2026-04-30T14:20:11.093859+00:00 · scanned=5 · sent=0"
+        }
+      ]
     },
     {
       "id": "lead-replenishment",
@@ -57,9 +66,13 @@
       "cron": "*/15 * * * *",
       "enabled": true,
       "desc": "Refresh ops dashboard",
-      "lastRun": "2026-04-30T13:38:54.938Z",
+      "lastRun": "2026-04-30T13:53:56.071Z",
       "statusState": "green",
       "recentCycles": [
+        {
+          "ts": "2026-04-30T13:53:56.071Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
+        },
         {
           "ts": "2026-04-30T13:38:54.938Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
@@ -74,10 +87,6 @@
         },
         {
           "ts": "2026-04-30T12:53:53.953Z",
-          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
-        },
-        {
-          "ts": "2026-04-30T12:38:54.781Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
         }
       ]
@@ -100,16 +109,16 @@
     "totalSentEver": 48
   },
   "funnel": {
-    "coldSendsToday": 0,
+    "coldSendsToday": 3,
     "quizSubmissionsToday": 0,
     "auditsSentToday": 0,
     "callsBookedToday": 0,
     "fm0AppsToday": 0
   },
   "deploy": {
-    "latestSha": "cf2ab37",
-    "latestCommitMessage": "ops heartbeat: crons, deploy · 40 24h events",
-    "latestCommitDate": "2026-04-30T08:38:55-05:00",
+    "latestSha": "abfe302",
+    "latestCommitMessage": "ops heartbeat: crons, deploy · 41 24h events",
+    "latestCommitDate": "2026-04-30T08:53:56-05:00",
     "vercelState": "READY"
   },
   "joelQueue": [

@@ -1,5 +1,25 @@
 [
   {
+    "ts": "2026-04-30T14:21:01.710745+00:00",
+    "type": "cold-send",
+    "description": "Cold email sent → Jeannet@JeannetSacks.com"
+  },
+  {
+    "ts": "2026-04-30T14:21:00.752519+00:00",
+    "type": "cold-send",
+    "description": "Cold email sent → lori@yourbirthgodsway.com"
+  },
+  {
+    "ts": "2026-04-30T14:20:59.952303+00:00",
+    "type": "cold-send",
+    "description": "Cold email sent → michelle@healthcoachpower.com"
+  },
+  {
+    "ts": "2026-04-30T08:53:56-05:00",
+    "type": "deploy",
+    "description": "Deploy abfe302: ops heartbeat: crons, deploy · 41 24h events"
+  },
+  {
     "ts": "2026-04-30T08:38:55-05:00",
     "type": "deploy",
     "description": "Deploy cf2ab37: ops heartbeat: crons, deploy · 40 24h events"
