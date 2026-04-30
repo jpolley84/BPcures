@@ -1,5 +1,15 @@
 [
   {
+    "ts": "2026-04-30T02:32:09-05:00",
+    "type": "deploy",
+    "description": "Deploy 7ce05e0: stripe-webhook: read STRIPE_LAUNCHER_WEBHOOK_SECRET instead of shared secret"
+  },
+  {
+    "ts": "2026-04-30T02:23:51-05:00",
+    "type": "deploy",
+    "description": "Deploy c5b3953: ops heartbeat: crons, deploy · 16 24h events"
+  },
+  {
     "ts": "2026-04-30T02:08:53-05:00",
     "type": "deploy",
     "description": "Deploy 0386374: ops heartbeat: crons, deploy · 16 24h events"
