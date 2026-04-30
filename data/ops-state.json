@@ -1,5 +1,5 @@
 {
-  "refreshedAt": "2026-04-30T12:53:53.953Z",
+  "refreshedAt": "2026-04-30T13:13:04.835Z",
   "crons": [
     {
       "id": "launcher-deep-research",
@@ -57,9 +57,13 @@
       "cron": "*/15 * * * *",
       "enabled": true,
       "desc": "Refresh ops dashboard",
-      "lastRun": "2026-04-30T12:38:54.781Z",
+      "lastRun": "2026-04-30T12:53:53.953Z",
       "statusState": "green",
       "recentCycles": [
+        {
+          "ts": "2026-04-30T12:53:53.953Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
+        },
         {
           "ts": "2026-04-30T12:38:54.781Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
@@ -74,10 +78,6 @@
         },
         {
           "ts": "2026-04-30T11:53:54.281Z",
-          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
-        },
-        {
-          "ts": "2026-04-30T11:38:55.017Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
         }
       ]
@@ -95,9 +95,9 @@
   ],
   "pool": {
     "poolTotal": 47,
-    "goldRemaining": 36,
-    "daysAtCurrentBurn": 7,
-    "totalSentEver": 25
+    "goldRemaining": 21,
+    "daysAtCurrentBurn": 4,
+    "totalSentEver": 48
   },
   "funnel": {
     "coldSendsToday": 0,
@@ -107,9 +107,9 @@
     "fm0AppsToday": 0
   },
   "deploy": {
-    "latestSha": "4de7218",
-    "latestCommitMessage": "ops heartbeat: crons, deploy · 36 24h events",
-    "latestCommitDate": "2026-04-30T07:38:55-05:00",
+    "latestSha": "84df626",
+    "latestCommitMessage": "ops heartbeat: crons, deploy · 37 24h events",
+    "latestCommitDate": "2026-04-30T07:53:54-05:00",
     "vercelState": "READY"
   },
   "joelQueue": [
