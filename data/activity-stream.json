@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-04-30T07:14:03-05:00",
+    "type": "deploy",
+    "description": "Deploy 0797972: ops heartbeat: crons, deploy · 34 24h events"
+  },
+  {
     "ts": "2026-04-30T06:53:54-05:00",
     "type": "deploy",
     "description": "Deploy b05318b: ops heartbeat: crons, deploy · 33 24h events"
