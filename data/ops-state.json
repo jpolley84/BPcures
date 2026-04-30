@@ -1,5 +1,5 @@
 {
-  "refreshedAt": "2026-04-30T06:39:54.722Z",
+  "refreshedAt": "2026-04-30T06:53:51.617Z",
   "crons": [
     {
       "id": "launcher-deep-research",
@@ -55,11 +55,15 @@
       "id": "ops-heartbeat",
       "schedule": "Every 15 min",
       "cron": "*/15 * * * *",
-      "enabled": false,
+      "enabled": true,
       "desc": "Refresh ops dashboard",
-      "lastRun": "2026-04-30T06:38:13.512Z",
-      "statusState": "red",
+      "lastRun": "2026-04-30T06:39:54.722Z",
+      "statusState": "green",
       "recentCycles": [
+        {
+          "ts": "2026-04-30T06:39:54.722Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"initial write\"]"
+        },
         {
           "ts": "2026-04-30T06:38:13.512Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"initial write\"]"
@@ -91,9 +95,9 @@
     "fm0AppsToday": 0
   },
   "deploy": {
-    "latestSha": "22a7bbd",
-    "latestCommitMessage": "Live proof refresh: 83→84 customers, $1,521.96→$1,538.96, 1,751→1,883 subs",
-    "latestCommitDate": "2026-04-30T01:06:50-05:00",
+    "latestSha": "553980b",
+    "latestCommitMessage": "Ops dashboard: passcode-gated /ops + /api/ops-state + 15-min heartbeat",
+    "latestCommitDate": "2026-04-30T01:40:18-05:00",
     "vercelState": "READY"
   },
   "joelQueue": [
