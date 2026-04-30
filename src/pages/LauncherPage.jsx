@@ -19,6 +19,7 @@ export default function LauncherPage() {
       <HeroSection />
       <EpiphanyBridge />
       <VacationSection />
+      <FoundingMemberZeroSection />
       <ProofSection />
       <ConvictionSection />
       <ShortFAQ />
@@ -127,6 +128,55 @@ function VacationSection() {
 
           <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'flex-start' }}>
             <PrimaryQuizCTA />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ================================================================
+   FOUNDING MEMBER #0 — One free Tier 2 install in exchange for
+   being the public case study. Closes May 7, 2026.
+   ================================================================ */
+function FoundingMemberZeroSection() {
+  return (
+    <section style={{ background: 'var(--paper-warm)', padding: 'clamp(3.5rem, 7vw, 6rem) 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+      <div className="shell" style={{ maxWidth: 720 }}>
+        <motion.div {...fade}>
+          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>One spot. Apply by May 7.</span>
+          <h2 className="display-m" style={{ margin: '0 0 0.6rem' }}>
+            <em className="ital-display" style={{ color: 'var(--clay)' }}>Founding Member #0.</em>
+          </h2>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', lineHeight: 1.45, color: 'var(--ink)', margin: '0 0 2rem', fontVariationSettings: '"SOFT" 70, "opsz" 72', maxWidth: '52ch' }}>
+            One coach. The full install, free. In exchange for being the case study.
+          </p>
+
+          <div style={{ fontSize: 'var(--step-0)', lineHeight: 1.8, color: 'var(--ink-soft)', display: 'grid', gap: '1.5rem' }}>
+            <p style={{ margin: 0 }}>
+              The Practice Launcher isn't proven yet — not in someone else's business. The only numbers it's earned are mine. So I'm picking one coach to install it for at no cost.
+            </p>
+            <p style={{ margin: 0 }}>
+              They get the full <strong style={{ color: 'var(--ink)' }}>$9,997 stack</strong> — custom site, email engine, AI command center, book, content runway, all of it. In exchange: weekly progress published publicly. Full transparency on their Stripe numbers. A Day-60 interview I can use forever. Permission to put their name and face on the proof block of this page when they win.
+            </p>
+            <p style={{ margin: 0 }}>
+              Apply by <strong style={{ color: 'var(--ink)' }}>May 7, 2026.</strong> I pick one. The diagnostic has a checkbox. If you have an audience (any size), if you're willing to be the proof, if your work and mine line up — apply.
+            </p>
+          </div>
+
+          <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'flex-start' }}>
+            <Link
+              to={`${QUIZ_LINK}?fm0=1`}
+              className="btn btn-clay btn-lg"
+              style={{
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              Apply for Founding Member #0 <ArrowRight size={16} className="arrow" />
+            </Link>
           </div>
         </motion.div>
       </div>
@@ -289,7 +339,7 @@ function FinalCTA() {
           {/* P.S. */}
           <div style={{ textAlign: 'left', background: 'rgba(247,243,236,0.04)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(247,243,236,0.08)', marginBottom: '2rem' }}>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'rgba(247,243,236,0.6)', margin: 0 }}>
-              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 5 spots in the founding cohort. If you're reading this, one is still open. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
+              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 5 spots in the founding cohort. If you're reading this, one is still open. And there's one Founding Member #0 spot — full install, free, in exchange for being the case study. Closes May 7. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
             </p>
           </div>
 

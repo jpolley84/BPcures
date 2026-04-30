@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { QUESTIONS } from '../utils/launcherQuiz';
@@ -16,6 +16,7 @@ const clay = 'var(--clay)';
 
 export default function LauncherQuizPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -23,8 +24,16 @@ export default function LauncherQuizPage() {
   const [email, setEmail] = useState('');
   const [handle, setHandle] = useState('');
   const [whyNow, setWhyNow] = useState('');
+  const [applyFm0, setApplyFm0] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // Pre-check FM#0 if landed from /launcher with ?fm0=1
+  useEffect(() => {
+    if (searchParams.get('fm0') === '1') {
+      setApplyFm0(true);
+    }
+  }, [searchParams]);
 
   const q = QUESTIONS[step];
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
@@ -104,6 +113,7 @@ export default function LauncherQuizPage() {
       const finalAnswers = {
         ...normAnswers,
         why_now: (whyNow || '').trim(),
+        apply_fm0: applyFm0 ? 'true' : 'false',
       };
 
       const res = await fetch('/api/launcher-quiz-submit', {
@@ -113,6 +123,7 @@ export default function LauncherQuizPage() {
           name: name.trim(),
           email: email.trim(),
           handle: handle.trim(),
+          apply_fm0: applyFm0,
           answers: finalAnswers,
         }),
       });
@@ -250,6 +261,8 @@ export default function LauncherQuizPage() {
                     <p style={{ fontSize: '0.78rem', color: muted, margin: '0.25rem 0 0', lineHeight: 1.5 }}>
                       I'll personally look at your work before recommending a tier — this is the input that shapes everything I tell you on the next page.
                     </p>
+
+                    <Fm0Checkbox checked={applyFm0} onToggle={() => setApplyFm0((v) => !v)} />
                   </div>
                 )}
 
@@ -397,6 +410,73 @@ export default function LauncherQuizPage() {
       </div>
     );
   }
+}
+
+/* ----------------------------------------------------------------
+   Founding Member #0 checkbox — styled to match the multi-select
+   options (sage-soft when active, sage-deep border, square check).
+   ---------------------------------------------------------------- */
+function Fm0Checkbox({ checked, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={checked}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr',
+        alignItems: 'flex-start',
+        gap: '0.85rem',
+        padding: '1rem 1.1rem',
+        background: checked ? sageSoft : 'var(--paper)',
+        border: `1px solid ${checked ? sageDeep : line}`,
+        borderRadius: 14,
+        cursor: 'pointer',
+        textAlign: 'left',
+        transition: 'border-color 0.3s, background 0.3s',
+        width: '100%',
+        marginTop: '0.5rem',
+      }}
+    >
+      <span
+        style={{
+          width: 22,
+          height: 22,
+          borderRadius: 6,
+          background: checked ? sageDeep : cream,
+          border: `1px solid ${checked ? sageDeep : line}`,
+          display: 'grid',
+          placeItems: 'center',
+          flexShrink: 0,
+          fontSize: '0.82rem',
+          color: cream,
+          fontWeight: 600,
+          marginTop: '0.15rem',
+        }}
+      >
+        {checked ? '✓' : ''}
+      </span>
+      <div>
+        <span
+          style={{
+            fontFamily: 'Fraunces, serif',
+            fontWeight: 500,
+            fontSize: '1rem',
+            color: ink,
+            display: 'block',
+            marginBottom: '0.3rem',
+            letterSpacing: '-0.01em',
+            fontVariationSettings: '"SOFT" 60, "opsz" 72',
+          }}
+        >
+          Apply to be Founding Member #0
+        </span>
+        <span style={{ fontSize: '0.82rem', color: muted, lineHeight: 1.55, display: 'block' }}>
+          One free Tier 2 install ($9,997 value) in exchange for being the case study. Joel picks one applicant by May 7. Audience size doesn't matter — alignment and willingness to publish results does.
+        </span>
+      </div>
+    </button>
+  );
 }
 
 function TopBar({ step, progress }) {

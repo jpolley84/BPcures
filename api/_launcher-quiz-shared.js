@@ -221,6 +221,7 @@ export function encodeSlugPayload(payload) {
     a: payload.answers || {},
     t: payload.tierKey,
     s: payload.score,
+    f: Boolean(payload.applyFm0),
     v: 2,
   };
   return Buffer.from(JSON.stringify(safe), 'utf8')
@@ -245,16 +246,18 @@ export function decodeSlugPayload(blob) {
       tierKey: obj.t || 'launcher',
       // Backward-compat: v1 slugs only had revenue/audience/infra.
       score: { ...ZERO_SCORE, ...(obj.s || {}) },
+      // Backward-compat: pre-FM#0 slugs default to false.
+      applyFm0: Boolean(obj.f),
     };
   } catch (err) {
     return null;
   }
 }
 
-export function buildSlug({ email, name, handle, answers, tierKey, score }) {
+export function buildSlug({ email, name, handle, answers, tierKey, score, applyFm0 }) {
   const ts = Date.now();
   const shortHash = makeShortHash(email, ts);
-  const blob = encodeSlugPayload({ name, handle, answers, tierKey, score });
+  const blob = encodeSlugPayload({ name, handle, answers, tierKey, score, applyFm0 });
   return `${shortHash}.${blob}`;
 }
 

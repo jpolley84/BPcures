@@ -138,7 +138,7 @@ async function addContactToResendAudience({
   }
 }
 
-function renderJoelNotification({ name, email, handle, answers, tier, score, investmentBand, alignmentTags }) {
+function renderJoelNotification({ name, email, handle, answers, tier, score, investmentBand, alignmentTags, applyFm0 }) {
   const tierName = tier?.name || 'Unknown';
 
   const rows = [
@@ -154,6 +154,7 @@ function renderJoelNotification({ name, email, handle, answers, tier, score, inv
     ['Alignment dim', score.alignment],
     ['Investment band', investmentBand],
     ['Alignment signals', alignmentTags || '(none)'],
+    ['FM#0 applicant', applyFm0 ? 'YES — review for case study fit' : 'no'],
     ['Cert', findOptionLabel('cert', answers.cert)],
     ['Monthly revenue', findOptionLabel('revenue', answers.revenue)],
     ['Audience size', findOptionLabel('audience', answers.audience)],
@@ -173,16 +174,33 @@ function renderJoelNotification({ name, email, handle, answers, tier, score, inv
     )
     .join('');
 
+  // FM#0 prominent block — only when applicable
+  const fm0Block = applyFm0
+    ? `
+      <tr><td style="padding:8px 24px 16px;">
+        <div style="background:#FFF5EE;border:2px solid #B85A36;border-radius:12px;padding:18px 20px;">
+          <div style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:#B85A36;letter-spacing:0.04em;margin:0 0 8px;">=== FOUNDING MEMBER #0 APPLICATION ===</div>
+          <div style="font-size:14px;color:#121110;line-height:1.6;">
+            This applicant has applied for the free pilot install.<br/>
+            Review for: existing audience, values alignment, willingness to publish.<br/>
+            Decide by May 7, 2026.
+          </div>
+          <div style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:#B85A36;letter-spacing:0.04em;margin:8px 0 0;">=======================================</div>
+        </div>
+      </td></tr>`
+    : '';
+
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#FBF8F1;font-family:Georgia,serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;">
   <tr><td align="center" style="padding:24px 16px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#FFFFFF;border-radius:16px;border:1px solid #E8E1D1;">
       <tr><td style="padding:24px 24px 8px;">
-        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#B85A36;font-weight:600;">Practice Launcher Quiz · v2 (5-dim)</div>
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#B85A36;font-weight:600;">Practice Launcher Quiz · v2 (5-dim)${applyFm0 ? ' · FM#0 APPLICANT' : ''}</div>
         <h1 style="font-family:Georgia,serif;font-size:22px;line-height:1.25;margin:8px 0 0;color:#121110;">${escapeHtml(name || '(no name)')} · ${escapeHtml(tierName)}</h1>
         <p style="font-size:13px;color:#7A7061;margin:6px 0 0;">Score: ${score.composite}/100 · Investment: ${score.investment}/10 · Alignment: ${score.alignment}/10</p>
       </td></tr>
+      ${fm0Block}
       <tr><td style="padding:8px 24px 24px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
           ${tableRows}
@@ -221,14 +239,26 @@ export default async function handler(req, res) {
   if (!handle) return res.status(400).json({ error: 'A website or social handle is required' });
   if (!answers) return res.status(400).json({ error: 'Quiz answers are required' });
 
+  // Founding Member #0 applicant flag — accept top-level boolean OR
+  // nested answers.apply_fm0 (string 'true'/'false' or boolean) for resilience.
+  const applyFm0 =
+    body.apply_fm0 === true ||
+    body.apply_fm0 === 'true' ||
+    answers.apply_fm0 === true ||
+    answers.apply_fm0 === 'true';
+
   // Sanitize answers — only keep known keys
-  const allowedQuestionIds = new Set(QUESTIONS.map((q) => q.id).concat(['why_now']));
+  const allowedQuestionIds = new Set(
+    QUESTIONS.map((q) => q.id).concat(['why_now', 'apply_fm0'])
+  );
   const cleanAnswers = {};
   for (const k of Object.keys(answers)) {
     if (allowedQuestionIds.has(k)) {
       cleanAnswers[k] = safeText(answers[k], 1500);
     }
   }
+  // Ensure the FM#0 flag persists into cleanAnswers regardless of source.
+  cleanAnswers.apply_fm0 = applyFm0 ? 'true' : 'false';
 
   // Required choice/multi questions present
   const requiredIds = QUESTIONS.map((q) => q.id);
@@ -241,7 +271,7 @@ export default async function handler(req, res) {
   const score = scoreAnswers(cleanAnswers);
   const tierKey = tierForScore(score, cleanAnswers);
   const tier = TIER_DETAILS[tierKey];
-  const slug = buildSlug({ email, name, handle, answers: cleanAnswers, tierKey, score });
+  const slug = buildSlug({ email, name, handle, answers: cleanAnswers, tierKey, score, applyFm0 });
   const investmentBand = bandFromInvestment(score.investment);
   const alignmentTags = alignmentSignals(cleanAnswers);
 
@@ -266,12 +296,16 @@ export default async function handler(req, res) {
       score,
       investmentBand,
       alignmentTags,
+      applyFm0,
     });
+    const fm0Flag = applyFm0 ? '[FM#0 APPLICANT] ' : '';
     await getResend().emails.send({
       from: 'Practice Launcher Quiz <quiz@bpquiz.com>',
       to: NOTIFY_EMAIL,
       replyTo: email,
-      subject: `[Practice Launcher Quiz] ${name} / ${tier?.name || tierKey} — score ${score.composite}/100 · inv ${score.investment} · align ${score.alignment}`,
+      subject: applyFm0
+        ? `[Practice Launcher Quiz] ${fm0Flag}${name} / ${tier?.name || tierKey} — score ${score.composite}/100`
+        : `[Practice Launcher Quiz] ${name} / ${tier?.name || tierKey} — score ${score.composite}/100 · inv ${score.investment} · align ${score.alignment}`,
       html,
     });
   } catch (err) {
@@ -283,5 +317,6 @@ export default async function handler(req, res) {
     tierKey,
     tierName: tier?.name || tierKey,
     score,
+    applyFm0,
   });
 }

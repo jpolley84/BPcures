@@ -405,7 +405,7 @@ function base64UrlToUtf8(b64) {
 }
 
 export function encodeSlugPayload(payload) {
-  // payload: { name, handle, answers, tierKey, score }
+  // payload: { name, handle, answers, tierKey, score, applyFm0 }
   // No email here.
   const safe = {
     n: (payload.name || '').slice(0, 80),
@@ -413,6 +413,7 @@ export function encodeSlugPayload(payload) {
     a: payload.answers || {},
     t: payload.tierKey,
     s: payload.score,
+    f: Boolean(payload.applyFm0),
     v: 2,
   };
   return utf8ToBase64Url(JSON.stringify(safe));
@@ -432,6 +433,8 @@ export function decodeSlugPayload(blob) {
       // Backward-compat: v1 slugs only had revenue/audience/infra. Default
       // missing dims to 0 so old links still decode without crashing.
       score: { ...ZERO_SCORE, ...(obj.s || {}) },
+      // Backward-compat: pre-FM#0 slugs default to false.
+      applyFm0: Boolean(obj.f),
     };
   } catch {
     return null;
