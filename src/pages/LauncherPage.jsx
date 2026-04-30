@@ -44,13 +44,13 @@ function HeroSection() {
           </div>
 
           <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-5)', fontWeight: 400, lineHeight: 1.02, letterSpacing: '-0.03em', margin: '0 0 1.5rem', fontVariationSettings: '"SOFT" 50, "opsz" 120' }}>
-            Talk to your business.
+            $500 in 16 days.
             <br />
-            <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)', fontVariationSettings: '"SOFT" 100, "opsz" 120' }}>Watch it listen.</em>
+            <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)', fontVariationSettings: '"SOFT" 100, "opsz" 120' }}>By talking to my business.</em>
           </h1>
 
-          <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.82)', margin: '0 0 1.75rem', maxWidth: '54ch' }}>
-            Imagine her. The version of you with a real practice — the one who stopped fighting Mailchimp and started serving the people on her waitlist. By the ICU nurse who built it for himself first.
+          <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.82)', margin: '0 0 1.75rem', maxWidth: '56ch' }}>
+            ICU nurse who left the bedside. Built BraveWorks RN by talking to my own system instead of building it. I'll install the same engine in your practice &mdash; 72 hours, in your voice, with your products.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
