@@ -1,5 +1,5 @@
 {
-  "refreshedAt": "2026-04-30T07:38:51.039Z",
+  "refreshedAt": "2026-04-30T07:53:51.696Z",
   "crons": [
     {
       "id": "launcher-deep-research",
@@ -57,9 +57,13 @@
       "cron": "*/15 * * * *",
       "enabled": true,
       "desc": "Refresh ops dashboard",
-      "lastRun": "2026-04-30T07:23:51.637Z",
+      "lastRun": "2026-04-30T07:38:51.039Z",
       "statusState": "green",
       "recentCycles": [
+        {
+          "ts": "2026-04-30T07:38:51.039Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
+        },
         {
           "ts": "2026-04-30T07:23:51.637Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
@@ -74,10 +78,6 @@
         },
         {
           "ts": "2026-04-30T06:39:54.722Z",
-          "summary": "state_changed=true · activity_changed=true · changes=[\"initial write\"]"
-        },
-        {
-          "ts": "2026-04-30T06:38:13.512Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"initial write\"]"
         }
       ]
@@ -107,9 +107,9 @@
     "fm0AppsToday": 0
   },
   "deploy": {
-    "latestSha": "7ce05e0",
-    "latestCommitMessage": "stripe-webhook: read STRIPE_LAUNCHER_WEBHOOK_SECRET instead of shared secret",
-    "latestCommitDate": "2026-04-30T02:32:09-05:00",
+    "latestSha": "a51decd",
+    "latestCommitMessage": "ops heartbeat: crons, deploy · 18 24h events",
+    "latestCommitDate": "2026-04-30T02:38:51-05:00",
     "vercelState": "READY"
   },
   "joelQueue": [

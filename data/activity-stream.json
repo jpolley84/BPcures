@@ -1,5 +1,10 @@
 [
   {
+    "ts": "2026-04-30T02:38:51-05:00",
+    "type": "deploy",
+    "description": "Deploy a51decd: ops heartbeat: crons, deploy · 18 24h events"
+  },
+  {
     "ts": "2026-04-30T02:32:09-05:00",
     "type": "deploy",
     "description": "Deploy 7ce05e0: stripe-webhook: read STRIPE_LAUNCHER_WEBHOOK_SECRET instead of shared secret"
@@ -83,10 +88,5 @@
     "ts": "2026-04-29T03:03:18-05:00",
     "type": "deploy",
     "description": "Deploy ae249c5: Add proof section (live Stripe stats) + May 15 hard deadline"
-  },
-  {
-    "ts": "2026-04-29T02:49:29-05:00",
-    "type": "deploy",
-    "description": "Deploy d5db2b4: Expert panel audit: 10 priority fixes for Practice Launcher"
   }
 ]
