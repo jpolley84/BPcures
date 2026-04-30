@@ -39,7 +39,7 @@ function HeroSection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              Founding Cohort closes May 15 — 10 spots
+              Founding Cohort closes May 15 — 5 spots
             </span>
           </div>
 
@@ -88,7 +88,7 @@ function EpiphanyBridge() {
               So I left. Built BraveWorks RN. Started making TikToks about herbs and blood pressure from my kitchen. Within months, the emails flooded in — nurses, naturopaths, health coaches — all saying the same thing: <em style={{ color: 'var(--clay)' }}>"I know what you know. I just can't get anyone to listen."</em>
             </p>
             <p style={{ margin: 0 }}>
-              They didn't have a knowledge problem. They had a delivery problem. So I built them a delivery system — the same one running BraveWorks right now. The quiz funnel, the email engine, the AI content team, the Stripe checkout, all of it. And I realized: if I can install this once, I can install it again.
+              They didn't have a knowledge problem. They had a delivery problem. So I built them a delivery system &mdash; the same one running BraveWorks right now. The quiz funnel, the email engine, the AI content team, the Stripe checkout, all of it. The same engine I used to ship <strong style={{ color: 'var(--ink)' }}>8 paid digital products on Gumroad and a Wellness Guide on Amazon</strong> &mdash; books, reset programs, protocols &mdash; all written by talking to my system. And I realized: if I can install this once, I can install it again.
             </p>
             <p style={{ margin: 0, fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', color: 'var(--ink)', fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
               That's what this page is. Not a course. Not a template. A <strong style={{ color: 'var(--clay)' }}>functioning business</strong> — installed, wired, and generating content before you hang up the setup call.
@@ -198,7 +198,7 @@ function ConvictionSection() {
                 Founding cohort closes May 15, 2026
               </div>
               <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: '0.25rem 0 0', lineHeight: 1.5 }}>
-                10 spots. After this, the price rises and the first-client guarantee changes. The diagnostic shows you which tier fits.
+                5 spots. After this, the price rises and the first-client guarantee changes. The diagnostic shows you which tier fits.
               </p>
             </div>
           </div>
@@ -289,7 +289,7 @@ function FinalCTA() {
           {/* P.S. */}
           <div style={{ textAlign: 'left', background: 'rgba(247,243,236,0.04)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(247,243,236,0.08)', marginBottom: '2rem' }}>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'rgba(247,243,236,0.6)', margin: 0 }}>
-              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 10 spots in the founding cohort. If you're reading this, one is still open. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
+              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 5 spots in the founding cohort. If you're reading this, one is still open. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
             </p>
           </div>
 
