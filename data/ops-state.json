@@ -1,5 +1,5 @@
 {
-  "refreshedAt": "2026-04-30T08:08:51.779Z",
+  "refreshedAt": "2026-04-30T08:23:52.014Z",
   "crons": [
     {
       "id": "launcher-deep-research",
@@ -57,9 +57,13 @@
       "cron": "*/15 * * * *",
       "enabled": true,
       "desc": "Refresh ops dashboard",
-      "lastRun": "2026-04-30T07:53:51.696Z",
+      "lastRun": "2026-04-30T08:08:51.779Z",
       "statusState": "green",
       "recentCycles": [
+        {
+          "ts": "2026-04-30T08:08:51.779Z",
+          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
+        },
         {
           "ts": "2026-04-30T07:53:51.696Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
@@ -74,10 +78,6 @@
         },
         {
           "ts": "2026-04-30T07:08:53.537Z",
-          "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
-        },
-        {
-          "ts": "2026-04-30T06:53:51.617Z",
           "summary": "state_changed=true · activity_changed=true · changes=[\"crons\",\"deploy\"]"
         }
       ]
@@ -107,9 +107,9 @@
     "fm0AppsToday": 0
   },
   "deploy": {
-    "latestSha": "7a703b3",
+    "latestSha": "6bff50d",
     "latestCommitMessage": "ops heartbeat: crons, deploy · 18 24h events",
-    "latestCommitDate": "2026-04-30T02:53:51-05:00",
+    "latestCommitDate": "2026-04-30T03:08:52-05:00",
     "vercelState": "READY"
   },
   "joelQueue": [
