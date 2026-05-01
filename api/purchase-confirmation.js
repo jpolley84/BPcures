@@ -118,7 +118,8 @@ export const AMOUNT_TO_TIER = {
   2200: 1,   // Blood Sugar Balance Starter Kit
   2700: 1,   // Complete BraveWorks Bundle — All 3 Books
   3700: 1,   // Arsenal flash / single-product upsell tier
-  4700: 2,   // The BP Reset Kit
+  3000: 2,   // The BP Reset Kit — $30 post-purchase upsell from $17 starter
+  4700: 2,   // The BP Reset Kit (retail)
   9700: 'vip',
   29700: 3,  // Premium (legacy $297 — kept for any in-flight buyers)
   39700: 3,  // Premium (current $397 price — live link plink_1TS8YtHseZnO3rRZQq1Pnkd4)
