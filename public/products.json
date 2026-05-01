@@ -30,7 +30,10 @@
       "A short list of herbs that have actual evidence",
       "Confidence to talk to your doctor as a partner"
     ],
-    "related_slugs": ["bp-reset-kit", "bp-premium-coaching"],
+    "related_slugs": [
+      "bp-reset-kit",
+      "bp-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
@@ -67,21 +70,24 @@
       "Confidence about which herbs are safe with your meds",
       "A clear conversation to bring to your next cardiology visit"
     ],
-    "related_slugs": ["blood-pressure-cures", "bp-premium-coaching"],
+    "related_slugs": [
+      "blood-pressure-cures",
+      "bp-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
     "slug": "bp-premium-coaching",
     "name": "The 30-Day Blood Pressure Reset Challenge",
-    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
-    "description": "Everything in the BP Reset Kit, plus the 30-Day Blood Pressure Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
+    "description": "Everything in the BP Reset Kit, plus the 30-Day Blood Pressure Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
     "category": "blood_pressure",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$297",
-    "price_cents": 29700,
-    "original_price": "$797",
-    "stripe_payment_link": "https://buy.stripe.com/aFa3cvcAj6PI1N1gnTfnO0h",
+    "price": "$397",
+    "price_cents": 39700,
+    "original_price": "$1,662",
+    "stripe_payment_link": "https://bpquiz.com/challenge",
     "gumroad_link": null,
     "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
     "badge": "STARTS MAY 1",
@@ -94,19 +100,21 @@
       "All Tier 1 + Tier 2 BP materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Live access to Barbara O'Neill's latest natural health teaching",
+      "RestoreHER virtual event access (June 24-25, 2026)",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
-    "related_slugs": ["bp-reset-kit", "blood-pressure-cures"],
+    "related_slugs": [
+      "bp-reset-kit",
+      "blood-pressure-cures"
+    ],
     "updated_at": "2026-04-20T00:00:00.000000+00:00"
   },
-
   {
     "slug": "cortisol-healing-blueprint",
     "name": "The Cortisol Healing Blueprint",
@@ -138,7 +146,10 @@
       "An evening routine that lets you actually fall asleep",
       "A short list of safe, evidence-backed adrenal herbs"
     ],
-    "related_slugs": ["cortisol-reset-kit", "cortisol-premium-coaching"],
+    "related_slugs": [
+      "cortisol-reset-kit",
+      "cortisol-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
@@ -175,21 +186,24 @@
       "A measurable drop in afternoon crashes",
       "Side benefit: blood pressure and weight start moving too"
     ],
-    "related_slugs": ["cortisol-healing-blueprint", "cortisol-premium-coaching"],
+    "related_slugs": [
+      "cortisol-healing-blueprint",
+      "cortisol-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
     "slug": "cortisol-premium-coaching",
     "name": "The 30-Day Cortisol Reset Challenge",
-    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
-    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day Cortisol Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
+    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day Cortisol Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
     "category": "cortisol",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$297",
-    "price_cents": 29700,
-    "original_price": "$797",
-    "stripe_payment_link": "https://buy.stripe.com/6oUbJ1fMveia2R56NjfnO0i",
+    "price": "$397",
+    "price_cents": 39700,
+    "original_price": "$1,662",
+    "stripe_payment_link": "https://bpquiz.com/challenge",
     "gumroad_link": null,
     "cover_image": "/products/cortisol-challenge-kit/cover.png",
     "badge": "STARTS MAY 1",
@@ -202,19 +216,21 @@
       "All Tier 1 + Tier 2 Cortisol materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Live access to Barbara O'Neill's latest natural health teaching",
+      "RestoreHER virtual event access (June 24-25, 2026)",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
-    "related_slugs": ["cortisol-reset-kit", "cortisol-healing-blueprint"],
+    "related_slugs": [
+      "cortisol-reset-kit",
+      "cortisol-healing-blueprint"
+    ],
     "updated_at": "2026-04-20T00:00:00.000000+00:00"
   },
-
   {
     "slug": "blood-sugar-starter-kit",
     "name": "Blood Sugar Cures",
@@ -246,7 +262,10 @@
       "Fewer 3 PM crashes",
       "Confidence to talk to your doctor before they reach for the prescription pad"
     ],
-    "related_slugs": ["blood-sugar-reset-kit", "blood-sugar-premium-coaching"],
+    "related_slugs": [
+      "blood-sugar-reset-kit",
+      "blood-sugar-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
@@ -283,21 +302,24 @@
       "Side benefit: weight starts moving for the first time in years",
       "A clear conversation to bring to your next labs visit"
     ],
-    "related_slugs": ["blood-sugar-starter-kit", "blood-sugar-premium-coaching"],
+    "related_slugs": [
+      "blood-sugar-starter-kit",
+      "blood-sugar-premium-coaching"
+    ],
     "updated_at": "2026-04-19T16:16:21.484075+00:00"
   },
   {
     "slug": "blood-sugar-premium-coaching",
     "name": "The 30-Day Blood Sugar Reset Challenge",
-    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, and your FREE Barbara O'Neill LIVE ticket — starts May 1.",
-    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day Blood Sugar Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the Barbara O'Neill LIVE event on June 24–25, 2026 ($297 value), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
+    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day Blood Sugar Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
     "category": "blood_sugar",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$297",
-    "price_cents": 29700,
-    "original_price": "$797",
-    "stripe_payment_link": "https://buy.stripe.com/5kQfZh2ZJb5Y3V91sZfnO0j",
+    "price": "$397",
+    "price_cents": 39700,
+    "original_price": "$1,662",
+    "stripe_payment_link": "https://bpquiz.com/challenge",
     "gumroad_link": null,
     "cover_image": "/products/diabetes-reversal-kit/cover.png",
     "badge": "STARTS MAY 1",
@@ -310,16 +332,19 @@
       "All Tier 1 + Tier 2 Blood Sugar materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "FREE Virtual Ticket to Barbara O'Neill LIVE (June 24–25, 2026) — $297 value",
+      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Live access to Barbara O'Neill's latest natural health teaching",
+      "RestoreHER virtual event access (June 24-25, 2026)",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
-    "related_slugs": ["blood-sugar-reset-kit", "blood-sugar-starter-kit"],
+    "related_slugs": [
+      "blood-sugar-reset-kit",
+      "blood-sugar-starter-kit"
+    ],
     "updated_at": "2026-04-20T00:00:00.000000+00:00"
   }
 ]
