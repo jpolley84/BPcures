@@ -32,7 +32,7 @@ function HeroSection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              Free 30-Day Challenge · Starts Friday May 2
+              Free 30-Day Challenge · Starts Friday May 1 — 8 AM ET
             </span>
           </div>
 

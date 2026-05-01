@@ -14,12 +14,15 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Omit payment_method_types so Stripe auto-enables every method the
+    // account supports (card + Apple Pay + Google Pay + Link). Card-only
+    // restriction was suppressing 8-15% of mobile-TikTok conversions.
+    const siteUrl = process.env.VITE_SITE_URL || 'https://bpquiz.com';
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: successUrl || `${process.env.VITE_SITE_URL}/success`,
-      cancel_url: cancelUrl || process.env.VITE_SITE_URL,
+      success_url: successUrl || `${siteUrl}/success`,
+      cancel_url: cancelUrl || siteUrl,
     });
 
     return res.status(200).json({ url: session.url });

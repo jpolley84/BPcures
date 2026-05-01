@@ -137,7 +137,7 @@ export default function UpsellBpResetKitPage() {
               color: '#744210',
               lineHeight: 1.5,
             }}>
-              <strong>Same triple guarantee.</strong> Complete the 30 days. If your numbers haven&rsquo;t moved, refund + keep the books + free RestoreHER ticket.
+              <strong>Same triple guarantee.</strong> Complete the 30 days. If your numbers haven&rsquo;t moved, full refund and keep the books. No hoops, no fine print.
             </div>
 
             {error && (

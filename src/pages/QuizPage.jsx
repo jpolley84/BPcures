@@ -323,10 +323,11 @@ function QuizModule({ products }) {
       setPhase('results');
     }
   }
-  // Always recommend the tier-1 starter ($17) regardless of score
+  // Recommend tier based on the buyer's risk score so high-intent prospects
+  // see the right rung of the ladder (was hardcoded to tier 1 — capped AOV).
   const recommended = useMemo(
-    () => recommendForScore(products, concern, 1),
-    [products, concern]
+    () => recommendForScore(products, concern, riskScore),
+    [products, concern, riskScore]
   );
   const urgency = urgencyWindow(riskScore);
   const concernCopy = CONCERN_COPY[answers.concern] ?? CONCERN_COPY.blood_pressure;
