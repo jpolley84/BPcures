@@ -112,8 +112,10 @@ export const TIER_CONFIG = {
 // '1-blood-sugar' by inspecting the line item product name before
 // calling sendPurchaseConfirmation.
 export const AMOUNT_TO_TIER = {
-  1200: 1,   // BE YOUR OWN DOCTOR / Blood Pressure Cure book
-  1299: 1,   // Blood Pressure Cures — 10-Day Nurse's Reset (alt price)
+  // $12 entry tier removed 2026-05-01 — Joel killed the $12 offer; only
+  // option for first quiz upsell is $17 starter. Stripe payment links at
+  // $12 also deactivated (Overmedicated Boomers, Top 10 Herbs Deep Dive).
+  1299: 1,   // Blood Pressure Cures — 10-Day Nurse's Reset (alt price, kept)
   1700: 1,   // Standard $17 starter (BP / Cortisol / Blood Sugar)
   2200: 1,   // Blood Sugar Balance Starter Kit
   2700: 1,   // Complete BraveWorks Bundle — All 3 Books
