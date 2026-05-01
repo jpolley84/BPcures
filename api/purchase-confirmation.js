@@ -77,8 +77,8 @@ export const TIER_CONFIG = {
     includesCoaching: false,
     includesChallenge: true,
     upgradeUrl: 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w',
-    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + BP Reset Book ($97)',
-    upgradeDesc: 'Add the digital BP Reset Book deep-dive plus weekly LIVE group coaching with Joel — Mondays at 10pm EST. Direct Q&A and replays of every session.',
+    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + the full BP Reset Book ($97)',
+    upgradeDesc: 'VIP enrollment for THIS cohort closes Friday May 14 at midnight. After that the next cohort opens June 1 at $147. Total value $777. Your price (this cohort only) $97. Triple guarantee.',
     upgradeCta: 'Upgrade to VIP for $97 →',
   },
   vip: {
@@ -89,8 +89,8 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     coachingFlavor: 'vip', // distinguishes from Premium tier 3
     upgradeUrl: 'https://buy.stripe.com/aFa14n2ZJ7TM63h8VrfnO0G',
-    upgradeLabel: 'Upgrade to Premium — add the RestoreHER virtual ticket + personal Loom review ($300 more)',
-    upgradeDesc: 'Premium adds your RestoreHER virtual event ticket plus a personal Loom video review where Joel walks through YOUR numbers and YOUR protocol on camera. 50 seats only.',
+    upgradeLabel: 'Upgrade to Premium — add 5 bonuses worth $1,385 ($300 more)',
+    upgradeDesc: 'Premium adds: (1) RestoreHER virtual event ticket June 24-25 — Joel buys it for you within 48h ($297 value), (2) Personal Loom protocol review — Joel walks through YOUR numbers on camera ($497 value), (3) The 90-Day Doctor Conversation Pack ($197), (4) Family Protocol Add-On ($97), (5) Lifetime "How to Be Your Own Doctor" Skool Premium tier ($297). 50 seats only. When they\'re gone they\'re gone.',
     upgradeCta: 'Upgrade to Premium for $397 →',
   },
   3: {

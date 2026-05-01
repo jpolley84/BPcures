@@ -342,6 +342,61 @@ async function readRawBody(req) {
   });
 }
 
+// ─── Mailchimp buyer tagging ──────────────────────────────────────────
+// Adds Purchased + tier-{n}-buyer tags after a kit/VIP/Premium purchase
+// so segmentation works for post-purchase automation + suppression of
+// entry-offer broadcasts to existing buyers.
+import crypto from 'node:crypto';
+
+async function tagBuyerInMailchimp({ email, tier, amountCents }) {
+  const apiKey = process.env.MAILCHIMP_API_KEY;
+  if (!apiKey) {
+    console.warn('tagBuyerInMailchimp: MAILCHIMP_API_KEY not set, skipping');
+    return;
+  }
+  const listId = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
+  const dc = apiKey.split('-').pop();
+  const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
+  const subscriberHash = crypto
+    .createHash('md5')
+    .update(email.trim().toLowerCase())
+    .digest('hex');
+  const auth = `Basic ${Buffer.from(`anystring:${apiKey}`).toString('base64')}`;
+
+  // Tier name normalization for the tier-buyer tag
+  const tierName = String(tier).replace(/[^a-z0-9-]/gi, '').toLowerCase() || 'unknown';
+
+  const tags = [
+    { name: 'Purchased', status: 'active' },
+    { name: `tier-${tierName}-buyer`, status: 'active' },
+  ];
+
+  // Upsert the member first so they exist (status: subscribed if not present)
+  await fetch(`${baseUrl}/lists/${listId}/members/${subscriberHash}`, {
+    method: 'PUT',
+    headers: { Authorization: auth, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email_address: email.trim(),
+      status_if_new: 'subscribed',
+    }),
+  }).catch((err) => console.warn('tagBuyerInMailchimp: upsert error', err.message));
+
+  // Apply tags
+  const r = await fetch(
+    `${baseUrl}/lists/${listId}/members/${subscriberHash}/tags`,
+    {
+      method: 'POST',
+      headers: { Authorization: auth, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tags }),
+    }
+  );
+  if (!r.ok) {
+    const text = await r.text();
+    throw new Error(`mailchimp tag ${r.status}: ${text.slice(0, 200)}`);
+  }
+  console.log(`tagBuyerInMailchimp: tagged ${email} as Purchased + tier-${tierName}-buyer`);
+}
+
 // ─── Per-event workflow ───────────────────────────────────────────────
 async function processCheckoutCompleted(event) {
   const stripe = getStripe();
@@ -400,16 +455,32 @@ async function processCheckoutCompleted(event) {
         tier: kitTier,
       });
       console.log(`stripe-webhook: kit confirmation sent → ${customerEmail} [tier=${kitTier}, amount=${amountCents}]`);
-      return {
-        action: 'kit_confirmation_sent',
-        tier: kitTier,
-        product: TIER_CONFIG[kitTier]?.product,
-        customer_email: customerEmail,
-      };
     } catch (err) {
       console.error('stripe-webhook: kit confirmation failed', err.message);
       return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
     }
+
+    // Tag the buyer in Mailchimp so post-purchase automations can fire
+    // and existing entry-offer broadcasts can suppress them. Tags applied:
+    //   - Purchased       (universal buyer marker)
+    //   - tier-{n}-buyer  (segmentation for upsells)
+    // Failure here is logged but doesn't block — the email already sent.
+    try {
+      await tagBuyerInMailchimp({
+        email: customerEmail,
+        tier: kitTier,
+        amountCents,
+      });
+    } catch (err) {
+      console.error('stripe-webhook: mailchimp tag failed', err.message);
+    }
+
+    return {
+      action: 'kit_confirmation_sent',
+      tier: kitTier,
+      product: TIER_CONFIG[kitTier]?.product,
+      customer_email: customerEmail,
+    };
   }
 
   // Derive a kebab-case client slug. Append a 4-char hash if the name was
