@@ -365,6 +365,40 @@ function renderEmail({ name, category, tier, tiers }) {
 </body></html>`;
 }
 
+// Check Mailchimp for a recent lead-magnet send to this address.
+// Returns true if the member exists, has the bpquiz-taker tag, and
+// last_changed is within the dedupe window (default 5 min). This blocks
+// the rapid quiz-retake pattern where one user submits the form 3+ times
+// in a few minutes and triggers 3 identical Resend sends.
+async function recentLeadMagnetSend({ email, windowMinutes = 5 }) {
+  if (!MAILCHIMP_API_KEY) return false; // can't check, default to send
+  try {
+    const dc = MAILCHIMP_API_KEY.split('-').pop();
+    const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
+    const subscriberHash = crypto
+      .createHash('md5')
+      .update(email.trim().toLowerCase())
+      .digest('hex');
+    const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}`, {
+      headers: {
+        Authorization: `Basic ${Buffer.from(`anystring:${MAILCHIMP_API_KEY}`).toString('base64')}`,
+      },
+    });
+    if (r.status !== 200) return false; // 404 = first time, ok to send
+    const member = await r.json();
+    const tags = (member.tags || []).map((t) => t.name);
+    // Must have bpquiz-taker tag (means we've sent before)
+    if (!tags.includes('bpquiz-taker')) return false;
+    // last_changed within window?
+    const lastChanged = member.last_changed ? new Date(member.last_changed).getTime() : 0;
+    const cutoff = Date.now() - windowMinutes * 60 * 1000;
+    return lastChanged > cutoff;
+  } catch (err) {
+    console.error('lead-magnet: dedupe check failed (defaulting to send)', err.message);
+    return false;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -385,25 +419,34 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Product lookup failed' });
   }
 
-  const cat = CATEGORIES[category];
-  const html = renderEmail({ name, category, tier, tiers });
+  // Dedupe: skip the Resend send if this email got a lead magnet in the
+  // last 5 minutes. We still run the Mailchimp upsert so updated quiz
+  // answers / tier / category get recorded.
+  const isDuplicate = await recentLeadMagnetSend({ email: email.trim() });
 
-  try {
-    await getResend().emails.send({
-      from: 'Joel Polley, RN <joel@bpquiz.com>',
-      to: email.trim(),
-      replyTo: 'braveworksrn@gmail.com',
-      subject: cat.subject_a,
-      html,
-    });
-  } catch (err) {
-    console.error('lead-magnet: resend failed', err.message);
-    return res.status(500).json({ error: 'Failed to send email' });
+  const cat = CATEGORIES[category];
+
+  if (!isDuplicate) {
+    const html = renderEmail({ name, category, tier, tiers });
+    try {
+      await getResend().emails.send({
+        from: 'Joel Polley, RN <joel@bpquiz.com>',
+        to: email.trim(),
+        replyTo: 'braveworksrn@gmail.com',
+        subject: cat.subject_a,
+        html,
+      });
+    } catch (err) {
+      console.error('lead-magnet: resend failed', err.message);
+      return res.status(500).json({ error: 'Failed to send email' });
+    }
+  } else {
+    console.log(`lead-magnet: dedupe skipped duplicate send to ${email.trim()} (within 5min window)`);
   }
 
-  // Await Mailchimp upsert so it completes before the serverless function freezes.
+  // Always upsert to Mailchimp — keeps tags + answers fresh even on dupes.
   const mc = await mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
   if (!mc.ok) console.warn('mailchimp upsert incomplete', mc.reason || mc.status || 'unknown');
 
-  return res.status(200).json({ success: true, category, tier });
+  return res.status(200).json({ success: true, category, tier, deduped: isDuplicate });
 }
