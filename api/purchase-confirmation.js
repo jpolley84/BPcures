@@ -16,13 +16,18 @@ const DOWNLOADS = {
     label: 'The 10-Day BP Reset — Day 1 &amp; Full Challenge',
     file: 'bp-reset-day1-and-beyond.pdf',
   },
+  cortisol_challenge: {
+    label: 'The 10-Day Cortisol Cure — Full Protocol',
+    file: 'cortisol-cure-10-day.pdf',
+  },
+  blood_sugar_challenge: {
+    label: 'The 10-Day Blood Sugar Reset — Full Protocol',
+    file: 'blood-sugar-reset-10-day.pdf',
+  },
   cookbook: {
     label: 'Cook For Life — Plant-Based Cookbook',
     file: 'cook-for-life-cookbook.pdf',
   },
-  // VIP-specific placeholder. Joel: drop the actual BP Reset Book PDF at
-  // bpquiz-site/public/downloads/bp-reset-book.pdf and this row goes live
-  // automatically. No code change needed.
   vip_book: {
     label: 'The BP Reset Book (digital — complete deep-dive guide)',
     file: 'bp-reset-book.pdf',
@@ -41,6 +46,28 @@ export const TIER_CONFIG = {
     upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
     upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
     upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures (full edition) and The Overmedicated Boomer. Normally $47 for Be There in 30 alone — this is a one-time offer for all three.',
+    upgradeCta: 'Add all 3 books for $27 →',
+  },
+  '1-cortisol': {
+    product: 'The Cortisol Healing Blueprint — Starter Kit',
+    subject: 'You\'re in — your 10-Day Cortisol Cure + 30-day challenge bonuses inside',
+    downloads: [DOWNLOADS.cortisol_challenge, DOWNLOADS.cookbook],
+    includesCoaching: false,
+    includesChallenge: true,
+    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
+    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
+    upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
+    upgradeCta: 'Add all 3 books for $27 →',
+  },
+  '1-blood-sugar': {
+    product: 'Blood Sugar Cures — Starter Kit',
+    subject: 'You\'re in — your 10-Day Blood Sugar Reset + 30-day challenge bonuses inside',
+    downloads: [DOWNLOADS.blood_sugar_challenge, DOWNLOADS.cookbook],
+    includesCoaching: false,
+    includesChallenge: true,
+    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
+    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
+    upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
     upgradeCta: 'Add all 3 books for $27 →',
   },
   2: {
@@ -80,9 +107,18 @@ export const TIER_CONFIG = {
 };
 
 // Map Stripe amount_total (cents) → tier key
+// Note: tier=1 is the default starter-tier email (BP-flavored). The
+// stripe-webhook.js handler refines tier=1 to '1-cortisol' or
+// '1-blood-sugar' by inspecting the line item product name before
+// calling sendPurchaseConfirmation.
 export const AMOUNT_TO_TIER = {
-  1700: 1,
-  4700: 2,
+  1200: 1,   // BE YOUR OWN DOCTOR / Blood Pressure Cure book
+  1299: 1,   // Blood Pressure Cures — 10-Day Nurse's Reset (alt price)
+  1700: 1,   // Standard $17 starter (BP / Cortisol / Blood Sugar)
+  2200: 1,   // Blood Sugar Balance Starter Kit
+  2700: 1,   // Complete BraveWorks Bundle — All 3 Books
+  3700: 1,   // Arsenal flash / single-product upsell tier
+  4700: 2,   // The BP Reset Kit
   9700: 'vip',
   29700: 3,
 };

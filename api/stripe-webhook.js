@@ -362,11 +362,37 @@ async function processCheckoutCompleted(event) {
     // Premium tier handler in purchase-confirmation.js, keyed off
     // session.amount_total. This is the single delivery rail for all
     // non-launcher purchases — keeps us on one webhook + one secret.
-    const kitTier = AMOUNT_TO_TIER[amountCents];
+    let kitTier = AMOUNT_TO_TIER[amountCents];
     if (!kitTier) {
       console.log('stripe-webhook: unrecognized amount, ignoring', session.id, 'amount', amountCents);
       return { action: 'skipped', reason: 'amount_not_mapped', amount: amountCents };
     }
+
+    // Refine tier=1 (the catch-all starter tier) to a category-specific
+    // variant based on the actual product name. This routes Cortisol
+    // Healing Blueprint buyers to the cortisol email, Blood Sugar Cures
+    // buyers to the blood-sugar email, etc. BP is the default fallback.
+    if (kitTier === 1) {
+      try {
+        const items = await stripe.checkout.sessions.listLineItems(session.id, {
+          limit: 5,
+          expand: ['data.price.product'],
+        });
+        const names = (items.data || [])
+          .map((i) => {
+            const p = i.price?.product;
+            return typeof p === 'object' ? (p.name || '') : '';
+          })
+          .join(' ')
+          .toLowerCase();
+        if (names.includes('cortisol')) kitTier = '1-cortisol';
+        else if (names.includes('blood sugar') || names.includes('glucose') || names.includes('diabetes')) kitTier = '1-blood-sugar';
+        // else: leave as tier=1 (BP default)
+      } catch (err) {
+        console.error('stripe-webhook: category-resolve failed (defaulting to BP)', err.message);
+      }
+    }
+
     try {
       await sendPurchaseConfirmation({
         email: customerEmail,
