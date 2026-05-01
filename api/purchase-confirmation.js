@@ -88,10 +88,10 @@ export const TIER_CONFIG = {
     includesCoaching: true,
     includesChallenge: true,
     coachingFlavor: 'vip', // distinguishes from Premium tier 3
-    upgradeUrl: 'https://buy.stripe.com/9B6eVd6bVb5Y1N11sZfnO0x',
-    upgradeLabel: 'Upgrade to Premium — add Barbara O\'Neill LIVE event ($200 more)',
-    upgradeDesc: 'Premium adds a virtual ticket to Barbara O\'Neill\'s LIVE wellness event (June 24-25, 2026) plus her natural healing protocols. Joel personally buys your ticket within 48 hours.',
-    upgradeCta: 'Upgrade to Premium for $297 →',
+    upgradeUrl: 'https://buy.stripe.com/aFa14n2ZJ7TM63h8VrfnO0G',
+    upgradeLabel: 'Upgrade to Premium — add the RestoreHER virtual ticket + personal Loom review ($300 more)',
+    upgradeDesc: 'Premium adds your RestoreHER virtual event ticket plus a personal Loom video review where Joel walks through YOUR numbers and YOUR protocol on camera. 50 seats only.',
+    upgradeCta: 'Upgrade to Premium for $397 →',
   },
   3: {
     product: 'Premium Protocol + 30-Day Challenge',
@@ -120,7 +120,8 @@ export const AMOUNT_TO_TIER = {
   3700: 1,   // Arsenal flash / single-product upsell tier
   4700: 2,   // The BP Reset Kit
   9700: 'vip',
-  29700: 3,
+  29700: 3,  // Premium (legacy $297 — kept for any in-flight buyers)
+  39700: 3,  // Premium (current $397 price — live link plink_1TS8YtHseZnO3rRZQq1Pnkd4)
 };
 
 let _resend = null;
