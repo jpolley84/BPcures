@@ -7,15 +7,17 @@ import {
 import {
   fetchProducts,
   recommendForScore,
+  downsellForConcern,
   urgencyWindow,
 } from '../utils/productLoader';
 
-// Stripe LIVE price IDs for the optional order bump on the BP $17 starter.
-// When the buyer ticks the bump checkbox we send both prices to /api/checkout
-// (instead of using the recommended product's static stripe_payment_link).
-// Total amount becomes $29 → webhook recognizes 2900 → '1+pt-stack' tier.
-const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17
-const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12
+// Stripe LIVE price IDs.
+// Strategy 2026-05-03: front-of-funnel is the $47 BP Reset Kit. The $17 starter
+// is the downsell ("if $47 isn't right today, start with the 10-Day Reset").
+// Order bump combines $47 + $12 = $59 → webhook recognizes 5900 → '2+pt-stack'.
+const BP_KIT_PRICE_ID = 'price_1TNznSHseZnO3rRZspcGhjdy';     // The BP Reset Kit $47 (primary)
+const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17 (downsell)
+const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12 (bump)
 
 const TOTAL_STEPS = 5;
 
@@ -308,10 +310,10 @@ function QuizModule({ products }) {
   }
 
   // Buy-button click handler. If the bump checkbox is unchecked we let the
-  // anchor's default href behavior fire (links to recommended.stripe_payment_link).
-  // If checked, we intercept and POST to /api/checkout with both the BP starter
-  // price and the $12 Pressure Triangle Stack add-on, then redirect to the
-  // returned Stripe Checkout session URL.
+  // anchor's default href behavior fire (links to recommended.stripe_payment_link
+  // — the $47 BP Reset Kit). If checked, we intercept and POST to /api/checkout
+  // with both the $47 Kit and the $12 Pressure Triangle Stack add-on, then
+  // redirect to the returned Stripe Checkout session URL ($59 total).
   async function handleBuyClick(e) {
     if (!addBump) return; // unchecked → let the default <a href> work
     e.preventDefault();
@@ -322,7 +324,7 @@ function QuizModule({ products }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId: BP_STARTER_PRICE_ID,
+          priceId: BP_KIT_PRICE_ID,
           addOnPriceId: PT_STACK_PRICE_ID,
         }),
       });
@@ -369,11 +371,17 @@ function QuizModule({ products }) {
       setPhase('results');
     }
   }
-  // Recommend tier based on the buyer's risk score so high-intent prospects
-  // see the right rung of the ladder (was hardcoded to tier 1 — capped AOV).
+  // Recommend the $47 BP Reset Kit as the primary CTA. The $17 Cures starter
+  // is rendered below as a downsell ("if $47 isn't right today, start with the
+  // 10-Day Reset"). Front-of-funnel was previously the $17 — moved up to lift
+  // AOV (Hormozi: put people on the right rung at the start).
   const recommended = useMemo(
     () => recommendForScore(products, concern, riskScore),
     [products, concern, riskScore]
+  );
+  const downsell = useMemo(
+    () => downsellForConcern(products, concern),
+    [products, concern]
   );
   const urgency = urgencyWindow(riskScore);
   const concernCopy = CONCERN_COPY[answers.concern] ?? CONCERN_COPY.blood_pressure;
@@ -585,8 +593,8 @@ function QuizModule({ products }) {
                 Right now you're guessing — adding pills, avoiding the cuff, hoping the next reading isn't worse. A week from now you could be the person who actually knows what's driving the number, and watching it drop. That shift starts here.
               </p>
 
-              {/* Order bump: BP tier-1 buyers only */}
-              {recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
+              {/* Order bump: BP tier-2 buyers (the $47 Reset Kit, now front-of-funnel). */}
+              {recommended && concern === 'blood_pressure' && recommended.tier === 2 && (
                 <div
                   onClick={() => setAddBump(v => !v)}
                   role="checkbox"
@@ -617,10 +625,10 @@ function QuizModule({ products }) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.25rem' }}>
-                      Add the Pressure Triangle Stack — 4 bonus books for +$12
+                      Complete the Pressure Triangle — add the Stack for +$12
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
-                      The Overmedicated Boomer + Cook For Life Cookbook + 10-Day Cortisol Cure + 10-Day Blood Sugar Reset. Normally $87. One-time add-on with your kit.
+                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Kit — the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on.
                     </div>
                   </div>
                 </div>
@@ -648,7 +656,7 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Get the protocol + Stack — $29 <ArrowRight size={16} className="arrow" /></>
+                      ? <>Get the protocol + Stack — $59 <ArrowRight size={16} className="arrow" /></>
                       : <>Stop guessing, start moving — {recommended.price} <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
@@ -736,7 +744,7 @@ function QuizModule({ products }) {
                     {bumpLoading
                       ? 'Loading checkout…'
                       : addBump
-                        ? <>Leave the worry behind — get protocol + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                        ? <>Leave the worry behind — get protocol + Stack ($59) <ArrowRight size={16} className="arrow" /></>
                         : <>Leave the worry behind — get Joel's protocol <ArrowRight size={16} className="arrow" /></>
                     }
                   </a>
@@ -745,6 +753,36 @@ function QuizModule({ products }) {
                   Instant delivery · 30-day challenge included · Community access included
                 </p>
               </div>
+
+              {/* Downsell — for buyers not ready for the $47 Kit. Tier 1 starter at $17. */}
+              {downsell && downsell.slug !== recommended?.slug && (
+                <div style={{
+                  marginTop: '0.5rem',
+                  padding: '0.85rem 1rem',
+                  background: 'transparent',
+                  border: '1px dashed var(--line)',
+                  borderRadius: 12,
+                  textAlign: 'center',
+                }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.35rem', lineHeight: 1.5 }}>
+                    Not ready for the full Kit today?
+                  </p>
+                  <a
+                    href={downsell.stripe_payment_link}
+                    target="_top"
+                    rel="noopener"
+                    style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--ink)',
+                      fontWeight: 600,
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '3px',
+                    }}
+                  >
+                    Start with {downsell.name} — {downsell.price} →
+                  </a>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

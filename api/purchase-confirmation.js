@@ -105,6 +105,27 @@ export const TIER_CONFIG = {
     upgradeDesc: 'VIP enrollment for THIS cohort closes Friday May 14 at midnight. After that the next cohort opens June 1 at $147. Total value $777. Your price (this cohort only) $97. Triple guarantee.',
     upgradeCta: 'Upgrade to VIP for $97 →',
   },
+  // Order-bump tier: $47 BP Reset Kit + $12 Pressure Triangle Stack = $59 session.
+  // Delivers the full Kit PLUS the two NEW protocols the bump adds (Cortisol Cure
+  // + Blood Sugar Reset). Boomers + Cookbook are already inside the kit zip,
+  // so no duplication.
+  '2+pt-stack': {
+    product: 'BP Reset Kit + Pressure Triangle Stack',
+    subject: 'Your BP Reset Kit + the full Pressure Triangle Stack inside',
+    downloads: [
+      DOWNLOADS.bp_kit_zip,
+      DOWNLOADS.bp_day1,
+      DOWNLOADS.cookbook,
+      DOWNLOADS.cortisol_challenge,
+      DOWNLOADS.blood_sugar_challenge,
+    ],
+    includesCoaching: false,
+    includesChallenge: true,
+    upgradeUrl: 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w',
+    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + the full BP Reset Book ($97)',
+    upgradeDesc: 'You have the Kit + every Pressure Triangle protocol. The next Cohort kicks off in 2 weeks — VIP adds 4 weeks of Monday 10pm ET coaching where Joel walks through your numbers live. 50 seats / cohort.',
+    upgradeCta: 'Upgrade to VIP for $97 →',
+  },
   vip: {
     product: '30-Day Reset Challenge — VIP',
     subject: 'You\'re in, VIP — your kit + Mondays 10pm EST coaching schedule inside',
@@ -149,6 +170,9 @@ export const AMOUNT_TO_TIER = {
   // Delivers BP starter content PLUS 4 bonus books (Boomers, Cookbook, Cortisol Cure, Blood Sugar Reset).
   2900: '1+pt-stack',
   3000: 2,   // The BP Reset Kit — $30 post-purchase upsell from $17 starter
+  // Order bump from quiz: $47 BP Reset Kit + $12 Pressure Triangle Stack = 5900.
+  // Front-of-funnel as of 2026-05-03 — kit is now the primary recommended product.
+  5900: '2+pt-stack',
   4700: 2,   // The BP Reset Kit (retail)
   9700: 'vip',
   29700: 3,  // Premium (legacy $297 — kept for any in-flight buyers)

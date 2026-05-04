@@ -68,11 +68,25 @@ export function getTierLadder(products) {
   return ladder;
 }
 
-// Recommend a tier for a quiz concern + score.
-// Score is 1–10. Returns the matching product (or null).
-export function recommendForScore(products, concern, score) {
-  const tier = score <= 3 ? 1 : score <= 6 ? 2 : 3;
-  return products.find(p => p.category === concern && p.tier === tier) ?? null;
+// Recommend a product for a quiz concern.
+// Strategy update 2026-05-03: front-of-funnel is ALWAYS Tier 2 (the $47 Kit).
+// Score is kept in the UI for psychological commitment but no longer drives
+// product tier — putting people on the right rung at the start (Hormozi).
+// The Tier 1 ($17) starter is shown as a downsell beneath the primary CTA;
+// see downsellForConcern. The Tier 3 ($397) is removed from front-of-funnel
+// and only re-pitched in the post-purchase drip on Day 14 / Day 28.
+// The `score` arg is preserved for API compatibility but unused.
+export function recommendForScore(products, concern, _score) {
+  const tier2 = products.find(p => p.category === concern && p.tier === 2);
+  if (tier2) return tier2;
+  // Fallback: if no Tier 2 exists for this category, return Tier 1.
+  return products.find(p => p.category === concern && p.tier === 1) ?? null;
+}
+
+// The Tier 1 starter shown as the "if $47 isn't right today" downsell
+// beneath the primary CTA on the quiz result page.
+export function downsellForConcern(products, concern) {
+  return products.find(p => p.category === concern && p.tier === 1) ?? null;
 }
 
 // Backwards compatibility for QuizPage: pick the Tier 2 product as the
