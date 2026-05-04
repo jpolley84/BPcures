@@ -10,6 +10,13 @@ import {
   urgencyWindow,
 } from '../utils/productLoader';
 
+// Stripe LIVE price IDs for the optional order bump on the BP $17 starter.
+// When the buyer ticks the bump checkbox we send both prices to /api/checkout
+// (instead of using the recommended product's static stripe_payment_link).
+// Total amount becomes $29 → webhook recognizes 2900 → '1+pt-stack' tier.
+const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17
+const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12
+
 const TOTAL_STEPS = 5;
 
 // Each option carries a `score` (0–3) that contributes to a 1–10 risk score.
@@ -277,6 +284,11 @@ function QuizModule({ products }) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Order-bump state: $12 Pressure Triangle Stack add-on (BP tier-1 buyers only).
+  // When true, the buy buttons hit /api/checkout with both price IDs instead
+  // of following the recommended product's static stripe_payment_link.
+  const [addBump, setAddBump] = useState(false);
+  const [bumpLoading, setBumpLoading] = useState(false);
 
   const q = QUESTIONS[step];
   const answered = answers[q?.id];
@@ -293,6 +305,40 @@ function QuizModule({ products }) {
 
   function back() {
     if (step > 0) setStep(s => s - 1);
+  }
+
+  // Buy-button click handler. If the bump checkbox is unchecked we let the
+  // anchor's default href behavior fire (links to recommended.stripe_payment_link).
+  // If checked, we intercept and POST to /api/checkout with both the BP starter
+  // price and the $12 Pressure Triangle Stack add-on, then redirect to the
+  // returned Stripe Checkout session URL.
+  async function handleBuyClick(e) {
+    if (!addBump) return; // unchecked → let the default <a href> work
+    e.preventDefault();
+    if (bumpLoading) return;
+    setBumpLoading(true);
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: BP_STARTER_PRICE_ID,
+          addOnPriceId: PT_STACK_PRICE_ID,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('Bump checkout failed:', data.error);
+        alert('Sorry — checkout failed. Try unchecking the bonus stack and retrying, or refresh the page.');
+        setBumpLoading(false);
+      }
+    } catch (err) {
+      console.error('Bump checkout error:', err);
+      alert('Sorry — checkout error. Try unchecking the bonus stack and retrying, or refresh the page.');
+      setBumpLoading(false);
+    }
   }
 
   const concern = answers.concern === 'all' ? 'blood_pressure' : (answers.concern ?? 'blood_pressure');
@@ -539,13 +585,55 @@ function QuizModule({ products }) {
                 Right now you're guessing — adding pills, avoiding the cuff, hoping the next reading isn't worse. A week from now you could be the person who actually knows what's driving the number, and watching it drop. That shift starts here.
               </p>
 
+              {/* Order bump: BP tier-1 buyers only */}
+              {recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
+                <div
+                  onClick={() => setAddBump(v => !v)}
+                  role="checkbox"
+                  aria-checked={addBump}
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setAddBump(v => !v); } }}
+                  style={{
+                    display: 'flex', gap: '0.85rem', alignItems: 'flex-start',
+                    padding: '1rem 1.15rem',
+                    marginBottom: '1.25rem',
+                    background: addBump ? 'rgba(184, 90, 54, 0.08)' : 'var(--paper-warm)',
+                    border: addBump ? '2px solid var(--clay)' : '2px solid var(--line)',
+                    borderRadius: 14,
+                    cursor: 'pointer',
+                    transition: 'background 0.15s, border 0.15s',
+                  }}
+                >
+                  <div style={{
+                    width: 22, height: 22, flexShrink: 0, marginTop: '0.1rem',
+                    borderRadius: 4,
+                    border: '2px solid var(--clay)',
+                    background: addBump ? 'var(--clay)' : 'transparent',
+                    display: 'grid', placeItems: 'center',
+                    color: 'var(--cream)', fontSize: '0.9rem', fontWeight: 700,
+                    lineHeight: 1,
+                  }}>
+                    {addBump ? '✓' : ''}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.25rem' }}>
+                      Add the Pressure Triangle Stack — 4 bonus books for +$12
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
+                      The Overmedicated Boomer + Cook For Life Cookbook + 10-Day Cortisol Cure + 10-Day Blood Sugar Reset. Normally $87. One-time add-on with your kit.
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Buy button FIRST — above the stack */}
               {recommended && (
                 <a
                   href={recommended.stripe_payment_link}
                   className="btn btn-lg"
-                  target="_top"
+                  target={addBump ? undefined : "_top"}
                   rel="noopener"
+                  onClick={handleBuyClick}
                   style={{
                     background: 'var(--clay)',
                     color: 'var(--cream)',
@@ -553,10 +641,16 @@ function QuizModule({ products }) {
                     marginBottom: '1.25rem',
                     fontSize: '1.05rem',
                     padding: '1rem',
+                    pointerEvents: bumpLoading ? 'none' : 'auto',
+                    opacity: bumpLoading ? 0.7 : 1,
                   }}
                 >
-                  Stop guessing, start moving — {recommended.price}
-                  <ArrowRight size={16} className="arrow" />
+                  {bumpLoading
+                    ? 'Loading checkout…'
+                    : addBump
+                      ? <>Get the protocol + Stack — $29 <ArrowRight size={16} className="arrow" /></>
+                      : <>Stop guessing, start moving — {recommended.price} <ArrowRight size={16} className="arrow" /></>
+                  }
                 </a>
               )}
 
@@ -628,16 +722,23 @@ function QuizModule({ products }) {
                   <a
                     href={recommended.stripe_payment_link}
                     className="btn btn-lg"
-                    target="_top"
+                    target={addBump ? undefined : "_top"}
                     rel="noopener"
+                    onClick={handleBuyClick}
                     style={{
                       background: 'var(--ink)',
                       color: 'var(--cream)',
                       width: '100%',
+                      pointerEvents: bumpLoading ? 'none' : 'auto',
+                      opacity: bumpLoading ? 0.7 : 1,
                     }}
                   >
-                    Leave the worry behind — get Joel's protocol
-                    <ArrowRight size={16} className="arrow" />
+                    {bumpLoading
+                      ? 'Loading checkout…'
+                      : addBump
+                        ? <>Leave the worry behind — get protocol + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                        : <>Leave the worry behind — get Joel's protocol <ArrowRight size={16} className="arrow" /></>
+                    }
                   </a>
                 )}
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>

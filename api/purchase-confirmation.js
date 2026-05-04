@@ -28,6 +28,10 @@ const DOWNLOADS = {
     label: 'Cook For Life — Plant-Based Cookbook',
     file: 'cook-for-life-cookbook.pdf',
   },
+  overmedicated_boomers: {
+    label: 'The Overmedicated Boomer — getting off the meds',
+    file: 'overmedicated-boomers.pdf',
+  },
   vip_book: {
     label: 'The BP Reset Book (digital — complete deep-dive guide)',
     file: 'bp-reset-book.pdf',
@@ -69,6 +73,26 @@ export const TIER_CONFIG = {
     upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
     upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
     upgradeCta: 'Add all 3 books for $27 →',
+  },
+  // Order-bump tier: $17 BP starter + $12 Pressure Triangle Stack add-on.
+  // Combined session amount = 2900. Delivers BP starter PDF + 4 bonus books
+  // (Boomers, Cookbook, 10-Day Cortisol Cure, 10-Day Blood Sugar Reset).
+  '1+pt-stack': {
+    product: 'Blood Pressure Cures + Pressure Triangle Stack',
+    subject: 'You\'re in — your BP kit + Pressure Triangle Stack (4 bonus books) inside',
+    downloads: [
+      DOWNLOADS.bp_day1,
+      DOWNLOADS.overmedicated_boomers,
+      DOWNLOADS.cookbook,
+      DOWNLOADS.cortisol_challenge,
+      DOWNLOADS.blood_sugar_challenge,
+    ],
+    includesCoaching: false,
+    includesChallenge: true,
+    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
+    upgradeLabel: 'Upgrade to The BP Reset Kit ($47) — the complete clinical system',
+    upgradeDesc: 'You have the starter and the bonus library. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
+    upgradeCta: 'Upgrade to BP Reset Kit ($47) →',
   },
   2: {
     product: 'The BP Reset Kit',
@@ -120,6 +144,10 @@ export const AMOUNT_TO_TIER = {
   2200: 1,   // Blood Sugar Balance Starter Kit
   2700: 1,   // Complete BraveWorks Bundle — All 3 Books
   3700: 1,   // Arsenal flash / single-product upsell tier
+  // Order bump: $17 BP starter + $12 Pressure Triangle Stack add-on.
+  // Both line items in one Stripe Checkout Session → amount_total = 2900.
+  // Delivers BP starter content PLUS 4 bonus books (Boomers, Cookbook, Cortisol Cure, Blood Sugar Reset).
+  2900: '1+pt-stack',
   3000: 2,   // The BP Reset Kit — $30 post-purchase upsell from $17 starter
   4700: 2,   // The BP Reset Kit (retail)
   9700: 'vip',
