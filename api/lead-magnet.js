@@ -2,6 +2,13 @@ import { Resend } from 'resend';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { signUnsubToken } from './unsubscribe.js';
+
+// Local alias for the imported helper (keeps the call-site readable + matches
+// the convention used in this file).
+function signUnsubTokenInline(email) {
+  return signUnsubToken({ email });
+}
 
 let _resend = null;
 function getResend() {
@@ -428,6 +435,11 @@ export default async function handler(req, res) {
 
   if (!isDuplicate) {
     const html = renderEmail({ name, category, tier, tiers });
+    // RFC 8058 one-click unsubscribe via /api/unsubscribe (CAN-SPAM compliance).
+    // The token is HMAC-signed so addresses can't be forged. Token format
+    // matches signUnsubToken in api/unsubscribe.js.
+    const unsubToken = signUnsubTokenInline(email.trim().toLowerCase());
+    const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
     try {
       await getResend().emails.send({
         from: 'Joel Polley, RN <joel@bpquiz.com>',
@@ -435,6 +447,10 @@ export default async function handler(req, res) {
         replyTo: 'braveworksrn@gmail.com',
         subject: cat.subject_a,
         html,
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
       });
     } catch (err) {
       console.error('lead-magnet: resend failed', err.message);

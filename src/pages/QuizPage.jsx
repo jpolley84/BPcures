@@ -700,16 +700,19 @@ function QuizModule({ products }) {
                   ))}
                 </div>
 
-                {/* Price anchor — Kennedy */}
+                {/* Price anchor — Kennedy. Driven by `recommended.price` so the
+                    quote stays in sync if pricing shifts again. */}
                 <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
-                  A single naturopath visit runs $150–300. A month of prescriptions with co-pays runs more. This is $17 — launch pricing while Joel builds 1,000 case studies.
+                  A single naturopath visit runs $150–300. A month of prescriptions with co-pays runs more. This is {recommended?.price ?? '$47'} — the complete clinical kit, one-time price.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
-                    $17
+                    {recommended?.price ?? '$47'}
                   </span>
-                  <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>$197 value</span>
+                  {recommended?.original_price && (
+                    <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>{recommended.original_price} value</span>
+                  )}
                 </div>
 
                 {/* Guarantee — Hormozi + Kennedy */}

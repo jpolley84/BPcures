@@ -36,8 +36,12 @@ function App() {
         {/* Single-page funnel: quiz → email → results → checkout */}
         <Route path="/" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
-        {/* Challenge sales page — standalone (no banner/nav clutter) */}
-        <Route path="/challenge" element={<ChallengePage />} />
+        {/* Challenge sales page — pulled from public funnel 2026-05-03 per
+            audit Section 10. $397 Premium had $0 sales in 30+ days; testing
+            "kill it for 30 days" (Hormozi prescription). Redirect to home
+            until June 2; revisit then. The Stripe payment_link stays active
+            for direct-link buyers from email upsells. */}
+        <Route path="/challenge" element={<Navigate to="/" replace />} />
 
         {/* Practice Launcher — three-stage funnel (standalone, no SiteLayout) */}
         <Route path="/launcher" element={<LauncherPage />} />
