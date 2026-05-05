@@ -69,24 +69,33 @@ export function getTierLadder(products) {
 }
 
 // Recommend a product for a quiz concern.
-// Strategy update 2026-05-03: front-of-funnel is ALWAYS Tier 2 (the $47 Kit).
-// Score is kept in the UI for psychological commitment but no longer drives
-// product tier — putting people on the right rung at the start (Hormozi).
-// The Tier 1 ($17) starter is shown as a downsell beneath the primary CTA;
-// see downsellForConcern. The Tier 3 ($397) is removed from front-of-funnel
-// and only re-pitched in the post-purchase drip on Day 14 / Day 28.
-// The `score` arg is preserved for API compatibility but unused.
+// Strategy update 2026-05-05: REVERTED to Tier 1 ($17) front-of-funnel.
+// Sales data showed the $47 default cut volume by ~40% with negligible AOV
+// lift on cold TikTok traffic — 75% of buyers still hit the $17 downsell
+// link even when $47 was the headline. Cold traffic needs an easy yes; the
+// $47 Kit is now repositioned as an inline upsell (see upsellForConcern)
+// and as a post-purchase OTO. Score is preserved for psychological commit
+// but does not drive tier.
 export function recommendForScore(products, concern, _score) {
-  const tier2 = products.find(p => p.category === concern && p.tier === 2);
-  if (tier2) return tier2;
-  // Fallback: if no Tier 2 exists for this category, return Tier 1.
-  return products.find(p => p.category === concern && p.tier === 1) ?? null;
+  const tier1 = products.find(p => p.category === concern && p.tier === 1);
+  if (tier1) return tier1;
+  // Fallback if no Tier 1 exists for this category, return Tier 2.
+  return products.find(p => p.category === concern && p.tier === 2) ?? null;
 }
 
-// The Tier 1 starter shown as the "if $47 isn't right today" downsell
-// beneath the primary CTA on the quiz result page.
+// The Tier 2 ($47) Kit shown as an upsell beneath the primary $17 CTA on
+// the quiz result page ("Want the complete Kit? Upgrade to $47 →").
+export function upsellForConcern(products, concern) {
+  return products.find(p => p.category === concern && p.tier === 2) ?? null;
+}
+
+// Backward-compat alias. Older builds imported `downsellForConcern` to fetch
+// the Tier 1 starter. After the 2026-05-05 revert, Tier 1 IS the primary
+// recommendation, so this returns Tier 2 — i.e. the upsell offer. Kept as
+// an alias so existing imports don't break; new code should use
+// upsellForConcern for clarity.
 export function downsellForConcern(products, concern) {
-  return products.find(p => p.category === concern && p.tier === 1) ?? null;
+  return upsellForConcern(products, concern);
 }
 
 // Backwards compatibility for QuizPage: pick the Tier 2 product as the

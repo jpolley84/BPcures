@@ -7,16 +7,16 @@ import {
 import {
   fetchProducts,
   recommendForScore,
-  downsellForConcern,
+  upsellForConcern,
   urgencyWindow,
 } from '../utils/productLoader';
 
-// Stripe LIVE price IDs.
-// Strategy 2026-05-03: front-of-funnel is the $47 BP Reset Kit. The $17 starter
-// is the downsell ("if $47 isn't right today, start with the 10-Day Reset").
-// Order bump combines $47 + $12 = $59 → webhook recognizes 5900 → '2+pt-stack'.
-const BP_KIT_PRICE_ID = 'price_1TNznSHseZnO3rRZspcGhjdy';     // The BP Reset Kit $47 (primary)
-const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17 (downsell)
+// Stripe LIVE price IDs (2026-05-05 revert).
+// Strategy: $17 BP Starter is the FRONT offer (cold-traffic-friendly easy yes).
+// $47 BP Reset Kit is shown as an upsell row below the offer stack via its
+// own `stripe_payment_link` from products.json — no price ID needed here.
+// $12 Pressure Triangle Stack is the order bump on $17 buyers ($17 + $12 = $29).
+const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17 (primary)
 const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12 (bump)
 
 const TOTAL_STEPS = 5;
@@ -311,9 +311,9 @@ function QuizModule({ products }) {
 
   // Buy-button click handler. If the bump checkbox is unchecked we let the
   // anchor's default href behavior fire (links to recommended.stripe_payment_link
-  // — the $47 BP Reset Kit). If checked, we intercept and POST to /api/checkout
-  // with both the $47 Kit and the $12 Pressure Triangle Stack add-on, then
-  // redirect to the returned Stripe Checkout session URL ($59 total).
+  // — the $17 BP Starter). If checked, we intercept and POST to /api/checkout
+  // with both the $17 Starter and the $12 Pressure Triangle Stack add-on,
+  // then redirect to the returned Stripe Checkout session URL ($29 total).
   async function handleBuyClick(e) {
     if (!addBump) return; // unchecked → let the default <a href> work
     e.preventDefault();
@@ -324,7 +324,7 @@ function QuizModule({ products }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId: BP_KIT_PRICE_ID,
+          priceId: BP_STARTER_PRICE_ID,
           addOnPriceId: PT_STACK_PRICE_ID,
         }),
       });
@@ -371,16 +371,16 @@ function QuizModule({ products }) {
       setPhase('results');
     }
   }
-  // Recommend the $47 BP Reset Kit as the primary CTA. The $17 Cures starter
-  // is rendered below as a downsell ("if $47 isn't right today, start with the
-  // 10-Day Reset"). Front-of-funnel was previously the $17 — moved up to lift
-  // AOV (Hormozi: put people on the right rung at the start).
+  // Recommend the $17 BP Starter as the primary CTA (cold-traffic friendly).
+  // The $47 BP Reset Kit is shown beneath as an upsell ("Want the complete
+  // Kit? Upgrade for $47"). Reverted from $47-front 2026-05-05 after sales
+  // data showed −40% volume / −35% revenue with negligible AOV lift.
   const recommended = useMemo(
     () => recommendForScore(products, concern, riskScore),
     [products, concern, riskScore]
   );
-  const downsell = useMemo(
-    () => downsellForConcern(products, concern),
+  const upsell = useMemo(
+    () => upsellForConcern(products, concern),
     [products, concern]
   );
   const urgency = urgencyWindow(riskScore);
@@ -593,8 +593,8 @@ function QuizModule({ products }) {
                 Right now you're guessing — adding pills, avoiding the cuff, hoping the next reading isn't worse. A week from now you could be the person who actually knows what's driving the number, and watching it drop. That shift starts here.
               </p>
 
-              {/* Order bump: BP tier-2 buyers (the $47 Reset Kit, now front-of-funnel). */}
-              {recommended && concern === 'blood_pressure' && recommended.tier === 2 && (
+              {/* Order bump: BP Tier 1 buyers (the $17 Starter, now front-of-funnel). */}
+              {recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
                 <div
                   onClick={() => setAddBump(v => !v)}
                   role="checkbox"
@@ -628,7 +628,7 @@ function QuizModule({ products }) {
                       Complete the Pressure Triangle — add the Stack for +$12
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
-                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Kit — the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on.
+                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Starter — the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on at checkout.
                     </div>
                   </div>
                 </div>
@@ -656,7 +656,7 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Get the protocol + Stack — $59 <ArrowRight size={16} className="arrow" /></>
+                      ? <>Get the protocol + Stack — $29 <ArrowRight size={16} className="arrow" /></>
                       : <>Stop guessing, start moving — {recommended.price} <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
@@ -683,10 +683,10 @@ function QuizModule({ products }) {
 
                 <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   {[
-                    { icon: '📋', label: 'The full 10-day nurse-designed protocol', sub: 'Daily steps, herb dosing, and the "why" behind each one — so you actually stick with it.' },
-                    { icon: '🌿', label: 'Joel\'s complete herb formulary', sub: 'The exact herbs, doses, and timing Joel gives family. No guesswork.' },
-                    { icon: '📊', label: 'Printable tracker + readings log', sub: 'Watch your numbers move. Most people see it within the first week.' },
-                    { icon: '🍽️', label: 'Cook For Life — plant-based cookbook', sub: '45 recipes built around the foods that lower your numbers, not fight them.' },
+                    { icon: '📋', label: 'The 10-day nurse-designed protocol', sub: 'Daily steps, herb dosing, and the "why" behind each one — so you actually stick with it.' },
+                    { icon: '🌿', label: 'Joel\'s 7 most-trusted BP herbs with safe dosing', sub: 'The herbs Joel reaches for first, the dose ranges he uses, and what to avoid stacking with your meds.' },
+                    { icon: '🩺', label: 'What to ask your cardiologist before your next visit', sub: 'The questions that make your doctor a partner instead of a gatekeeper.' },
+                    { icon: '🍽️', label: 'Cook For Life — plant-based cookbook (bonus)', sub: '45 recipes built around the foods that lower your numbers, not fight them.' },
                     { icon: '👥', label: 'Free Skool community access', sub: 'Join "How to Be Your Own Doctor" — ask Joel anything, connect with people on the same path.' },
                     { icon: '🗓️', label: 'Free 30-Day Challenge enrollment', sub: 'Daily protocol emails for 30 days. You\'re automatically signed up — nothing extra to do.' },
                   ].map((item, i) => (
@@ -703,12 +703,12 @@ function QuizModule({ products }) {
                 {/* Price anchor — Kennedy. Driven by `recommended.price` so the
                     quote stays in sync if pricing shifts again. */}
                 <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
-                  A single naturopath visit runs $150–300. A month of prescriptions with co-pays runs more. This is {recommended?.price ?? '$47'} — the complete clinical kit, one-time price.
+                  A single naturopath visit runs $150–300. A month of prescriptions with co-pays runs more. This is {recommended?.price ?? '$17'} — Joel's nurse-designed starter protocol, one-time price.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
-                    {recommended?.price ?? '$47'}
+                    {recommended?.price ?? '$17'}
                   </span>
                   {recommended?.original_price && (
                     <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>{recommended.original_price} value</span>
@@ -747,7 +747,7 @@ function QuizModule({ products }) {
                     {bumpLoading
                       ? 'Loading checkout…'
                       : addBump
-                        ? <>Leave the worry behind — get protocol + Stack ($59) <ArrowRight size={16} className="arrow" /></>
+                        ? <>Leave the worry behind — get protocol + Stack ($29) <ArrowRight size={16} className="arrow" /></>
                         : <>Leave the worry behind — get Joel's protocol <ArrowRight size={16} className="arrow" /></>
                     }
                   </a>
@@ -757,32 +757,38 @@ function QuizModule({ products }) {
                 </p>
               </div>
 
-              {/* Downsell — for buyers not ready for the $47 Kit. Tier 1 starter at $17. */}
-              {downsell && downsell.slug !== recommended?.slug && (
+              {/* Upsell — for buyers who want the complete BP Reset Kit (Tier 2, $47). */}
+              {upsell && upsell.slug !== recommended?.slug && (
                 <div style={{
                   marginTop: '0.5rem',
-                  padding: '0.85rem 1rem',
-                  background: 'transparent',
-                  border: '1px dashed var(--line)',
+                  padding: '1rem 1.15rem',
+                  background: 'var(--paper-warm)',
+                  border: '2px solid var(--ink)',
                   borderRadius: 12,
-                  textAlign: 'center',
+                  textAlign: 'left',
                 }}>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', margin: '0 0 0.35rem', lineHeight: 1.5 }}>
-                    Not ready for the full Kit today?
+                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.4rem' }}>
+                    Want the complete system?
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: '0 0 0.6rem', lineHeight: 1.5 }}>
+                    Skip the Starter and go straight to the full <strong>{upsell.name}</strong> — the 10-Day Reset Challenge, Full-Stack BP Activation, Graduation phase, complete herb formulary, and tracker. The same system Joel reaches for first.
                   </p>
                   <a
-                    href={downsell.stripe_payment_link}
+                    href={upsell.stripe_payment_link}
                     target="_top"
                     rel="noopener"
                     style={{
-                      fontSize: '0.85rem',
-                      color: 'var(--ink)',
+                      display: 'inline-block',
+                      fontSize: '0.88rem',
+                      color: 'var(--cream)',
+                      background: 'var(--ink)',
                       fontWeight: 600,
-                      textDecoration: 'underline',
-                      textUnderlineOffset: '3px',
+                      textDecoration: 'none',
+                      padding: '0.6rem 1rem',
+                      borderRadius: 8,
                     }}
                   >
-                    Start with {downsell.name} — {downsell.price} →
+                    Upgrade to the {upsell.name} — {upsell.price} →
                   </a>
                 </div>
               )}
