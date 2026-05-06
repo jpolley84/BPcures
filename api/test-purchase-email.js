@@ -8,7 +8,8 @@ export default async function handler(req, res) {
   }
 
   const params = req.method === 'GET' ? req.query : (req.body || {});
-  const { tier: rawTier, email: rawEmail, name } = params;
+  const { tier: rawTier, email: rawEmail, name, apology } = params;
+  const apologyMode = apology === true || apology === 'true' || apology === 1 || apology === '1';
 
   // Accept numeric tiers (1/2/3) AND the string tier keys ('vip', '1+pt-stack',
   // '2+pt-stack') so we can resend the VIP welcome to buyers whose webhook
@@ -34,6 +35,7 @@ export default async function handler(req, res) {
       email,
       name: name || 'Joel',
       tier,
+      apologyMode,
     });
 
     return res.status(200).json({
@@ -41,7 +43,10 @@ export default async function handler(req, res) {
       tier,
       product: TIER_CONFIG[tier].product,
       sentTo: email,
-      subject: TIER_CONFIG[tier].subject,
+      subject: apologyMode
+        ? `Sorry — here's your kit (plus the full Pressure Triangle Stack as my apology)`
+        : TIER_CONFIG[tier].subject,
+      apologyMode,
     });
   } catch (err) {
     console.error('test-purchase-email failed:', err.message);

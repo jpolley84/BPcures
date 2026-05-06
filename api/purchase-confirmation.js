@@ -202,11 +202,29 @@ function renderDownloadRow(d) {
   `;
 }
 
-export function renderPurchaseEmail({ name, tier }) {
+export function renderPurchaseEmail({ name, tier, apologyMode }) {
   const config = TIER_CONFIG[tier];
   const firstName = (name || '').trim().split(/\s+/)[0] || '';
   const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
   const downloadRows = config.downloads.map(renderDownloadRow).join('');
+
+  // Apology banner — set when this is a backfill resend for a buyer whose
+  // original webhook silently dropped the welcome email. We acknowledge
+  // the delay and frame the upgrade (full BP Reset Kit + Pressure Triangle
+  // Stack) as a make-good, not a bonus.
+  const apologyBanner = apologyMode ? `
+    <tr><td style="padding:18px 28px 0;">
+      <div style="background:#FEF2EC;border:2px solid #B85A36;border-radius:12px;padding:16px 18px;">
+        <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B85A36;font-weight:700;margin-bottom:8px;">My apology</div>
+        <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0 0 8px;">
+          Your purchase confirmation didn't deliver when it should have. That's on me. Our system had a glitch and the welcome email went into the void instead of your inbox.
+        </p>
+        <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0;">
+          To make it right: I've upgraded everyone affected to the <strong>full BP Reset Kit + Pressure Triangle Stack</strong> — 5 PDFs total — at no extra cost. Everything is below.
+        </p>
+      </div>
+    </td></tr>
+  ` : '';
 
   const challengeBlock = config.includesChallenge ? `
     <tr><td style="padding:6px 28px 18px;">
@@ -336,6 +354,8 @@ export function renderPurchaseEmail({ name, tier }) {
         <div style="font-size:12px;color:#7A7A7A;margin-top:4px;">Joel Polley, RN · Twenty years ICU &amp; emergency</div>
       </td></tr>
 
+      ${apologyBanner}
+
       <tr><td style="padding:18px 28px 16px;">
         <div style="display:inline-block;background:#F0FFF4;border:1px solid #68D391;border-radius:8px;padding:6px 14px;font-size:13px;color:#276749;font-weight:600;margin-bottom:16px;">
           ✓ Purchase confirmed
@@ -401,15 +421,20 @@ export function renderPurchaseEmail({ name, tier }) {
 </body></html>`;
 }
 
-export async function sendPurchaseConfirmation({ email, name, tier }) {
+export async function sendPurchaseConfirmation({ email, name, tier, apologyMode }) {
   const config = TIER_CONFIG[tier];
   if (!config) throw new Error(`Unknown tier: ${tier}`);
-  const html = renderPurchaseEmail({ name, tier });
+  const html = renderPurchaseEmail({ name, tier, apologyMode });
+  // When apologyMode is set, override the subject so the buyer sees the
+  // make-good framing immediately instead of a generic "you're in" line.
+  const subject = apologyMode
+    ? `Sorry — here's your kit (plus the full Pressure Triangle Stack as my apology)`
+    : config.subject;
   await getResend().emails.send({
     from: FROM_ADDRESS,
     to: email.trim(),
     replyTo: REPLY_TO,
-    subject: config.subject,
+    subject,
     html,
   });
 }
