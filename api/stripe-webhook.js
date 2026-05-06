@@ -342,59 +342,33 @@ async function readRawBody(req) {
   });
 }
 
-// ─── Mailchimp buyer tagging ──────────────────────────────────────────
+// ─── beehiiv buyer tagging ────────────────────────────────────────────
 // Adds Purchased + tier-{n}-buyer tags after a kit/VIP/Premium purchase
 // so segmentation works for post-purchase automation + suppression of
-// entry-offer broadcasts to existing buyers.
-import crypto from 'node:crypto';
+// entry-offer broadcasts to existing buyers. Replaces tagBuyerInMailchimp
+// as of the 2026-05-06 cutover.
+import { tagByEmail as beehiivTagByEmail, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
 
-async function tagBuyerInMailchimp({ email, tier, amountCents }) {
-  const apiKey = process.env.MAILCHIMP_API_KEY;
-  if (!apiKey) {
-    console.warn('tagBuyerInMailchimp: MAILCHIMP_API_KEY not set, skipping');
+async function tagBuyerOnList({ email, tier, amountCents }) {
+  if (!BEEHIIV_AVAILABLE) {
+    console.warn('tagBuyerOnList: BEEHIIV_API_KEY/BEEHIIV_PUB_ID not set, skipping');
     return;
   }
-  const listId = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
-  const dc = apiKey.split('-').pop();
-  const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
-  const subscriberHash = crypto
-    .createHash('md5')
-    .update(email.trim().toLowerCase())
-    .digest('hex');
-  const auth = `Basic ${Buffer.from(`anystring:${apiKey}`).toString('base64')}`;
-
   // Tier name normalization for the tier-buyer tag
   const tierName = String(tier).replace(/[^a-z0-9-]/gi, '').toLowerCase() || 'unknown';
 
-  const tags = [
-    { name: 'Purchased', status: 'active' },
-    { name: `tier-${tierName}-buyer`, status: 'active' },
-  ];
+  const tags = ['Purchased', `tier-${tierName}-buyer`];
 
-  // Upsert the member first so they exist (status: subscribed if not present)
-  await fetch(`${baseUrl}/lists/${listId}/members/${subscriberHash}`, {
-    method: 'PUT',
-    headers: { Authorization: auth, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email_address: email.trim(),
-      status_if_new: 'subscribed',
-    }),
-  }).catch((err) => console.warn('tagBuyerInMailchimp: upsert error', err.message));
-
-  // Apply tags
-  const r = await fetch(
-    `${baseUrl}/lists/${listId}/members/${subscriberHash}/tags`,
-    {
-      method: 'POST',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags }),
-    }
-  );
-  if (!r.ok) {
-    const text = await r.text();
-    throw new Error(`mailchimp tag ${r.status}: ${text.slice(0, 200)}`);
-  }
-  console.log(`tagBuyerInMailchimp: tagged ${email} as Purchased + tier-${tierName}-buyer`);
+  await beehiivTagByEmail({
+    email: email.trim(),
+    tags,
+    customFields: {
+      LAST_PURCHASE_AMOUNT: amountCents ? String(amountCents / 100) : '',
+      LAST_PURCHASE_TIER: tierName,
+    },
+    utmSource: 'stripe_purchase',
+  });
+  console.log(`tagBuyerOnList (beehiiv): tagged ${email} as Purchased + tier-${tierName}-buyer`);
 }
 
 // ─── Joel-alert helper ────────────────────────────────────────────────
@@ -582,33 +556,34 @@ curl -X POST https://bpquiz.com/api/test-purchase-email \\
       return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
     }
 
-    // Tag the buyer in Mailchimp so post-purchase automations can fire
+    // Tag the buyer in beehiiv so post-purchase automations can fire
     // and existing entry-offer broadcasts can suppress them. Tags applied:
     //   - Purchased       (universal buyer marker)
     //   - tier-{n}-buyer  (segmentation for upsells)
     // Failure here is logged AND alerted (we now know from the 4/30-5/4
     // backfill that ~93% of buyers were missing this tag because failures
     // were silent — never again).
+    // Switched from Mailchimp to beehiiv 2026-05-06.
     let mcTagged = false;
     try {
-      await tagBuyerInMailchimp({
+      await tagBuyerOnList({
         email: customerEmail,
         tier: kitTier,
         amountCents,
       });
       mcTagged = true;
     } catch (err) {
-      console.error('stripe-webhook: mailchimp tag failed', err.message);
+      console.error('stripe-webhook: beehiiv tag failed', err.message);
       await alertJoel({
-        subject: `Mailchimp tag-on-buy FAILED for ${customerEmail} (tier=${kitTier})`,
-        text: `Welcome email DID send. But the Mailchimp Purchased + tier-${kitTier}-buyer tag failed.
+        subject: `beehiiv tag-on-buy FAILED for ${customerEmail} (tier=${kitTier})`,
+        text: `Welcome email DID send. But the beehiiv Purchased + tier-${kitTier}-buyer tag failed.
 
 Customer:   ${customerName || '(no name)'} <${customerEmail}>
 Tier:       ${kitTier}
 Session:    ${session.id}
 Error:      ${err.message}
 
-Without the tag, this buyer will keep receiving entry-offer broadcasts and won't be enrolled in upsell automations. Tag manually in Mailchimp Audience > Tags.`,
+Without the tag, this buyer will keep receiving entry-offer broadcasts and won't be enrolled in upsell automations. Tag manually in beehiiv > Subscribers.`,
       });
     }
 

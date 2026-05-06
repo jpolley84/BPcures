@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { signUnsubToken } from './unsubscribe.js';
+import { upsertSubscriber as beehiivUpsert, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
 
 // Local alias for the imported helper (keeps the call-site readable + matches
 // the convention used in this file).
@@ -151,8 +152,63 @@ function normalizeCategory(c) {
   return 'blood_pressure';
 }
 
-// Subscribe or update subscriber in Mailchimp audience — non-blocking, never throws.
-async function mailchimpUpsert({ email, name, category, riskScore, tier, answers, extraTags }) {
+// Subscribe or update subscriber in beehiiv — primary list as of 2026-05-06
+// cutover from Mailchimp. Non-blocking, never throws (returns ok:false on error).
+//
+// Custom field mapping:
+//   FNAME       <- name
+//   CONCERN     <- category (blood_pressure / cortisol / blood_sugar)
+//   RISK_SCORE  <- riskScore (1-10)
+//   JOIN_SOURCE <- bpquiz_quiz
+//
+// Tags applied (matches the prior MC tag taxonomy so segments port cleanly):
+//   bpquiz-taker, category-{x}, tier-{n}, meds-{x}, age-{y}, plus extraTags.
+async function listUpsert({ email, name, category, riskScore, tier, answers, extraTags }) {
+  if (!BEEHIIV_AVAILABLE) {
+    console.warn('lead-magnet: BEEHIIV_API_KEY/BEEHIIV_PUB_ID not set, skipping list write');
+    return { ok: false, reason: 'no_beehiiv_config' };
+  }
+  const a = answers || {};
+  const tags = [
+    'bpquiz-taker',
+    `category-${category}`,
+    `tier-${tier}`,
+  ];
+  if (a.medication) tags.push(`meds-${a.medication}`);
+  if (a.age) tags.push(`age-${a.age}`);
+  if (a.duration) tags.push(`duration-${a.duration}`);
+  if (a.barrier) tags.push(`barrier-${a.barrier}`);
+  if (Array.isArray(extraTags)) {
+    for (const t of extraTags) {
+      if (typeof t === 'string' && t.trim()) tags.push(t.trim());
+    }
+  }
+  try {
+    await beehiivUpsert({
+      email: email.trim(),
+      customFields: {
+        FNAME: name || '',
+        CONCERN: category,
+        RISK_SCORE: riskScore || '',
+        JOIN_SOURCE: 'bpquiz_quiz',
+      },
+      tags,
+      utmSource: 'bpquiz_quiz',
+      utmMedium: 'lead_magnet',
+      sendWelcomeEmail: false, // we send the kit email ourselves via Resend
+    });
+    return { ok: true };
+  } catch (err) {
+    console.error('lead-magnet: beehiiv upsert error', err.message);
+    return { ok: false, reason: err.message };
+  }
+}
+
+// Legacy Mailchimp upsert — preserved for reference / fast revert in case
+// the beehiiv migration needs to be rolled back. Not called from the
+// handler anymore (replaced by listUpsert above as of 2026-05-06).
+// eslint-disable-next-line no-unused-vars
+async function mailchimpUpsert_DEPRECATED({ email, name, category, riskScore, tier, answers, extraTags }) {
   if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
   const [, dc] = MAILCHIMP_API_KEY.split('-');
   if (!dc) return { ok: false, reason: 'bad_dc' };
@@ -460,9 +516,10 @@ export default async function handler(req, res) {
     console.log(`lead-magnet: dedupe skipped duplicate send to ${email.trim()} (within 5min window)`);
   }
 
-  // Always upsert to Mailchimp — keeps tags + answers fresh even on dupes.
-  const mc = await mailchimpUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
-  if (!mc.ok) console.warn('mailchimp upsert incomplete', mc.reason || mc.status || 'unknown');
+  // Always upsert to beehiiv — keeps tags + answers fresh even on dupes.
+  // (Replaced Mailchimp 2026-05-06; see listUpsert above for taxonomy.)
+  const list = await listUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
+  if (!list.ok) console.warn('lead-magnet: list upsert incomplete', list.reason || 'unknown');
 
   return res.status(200).json({ success: true, category, tier, deduped: isDuplicate });
 }
