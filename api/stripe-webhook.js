@@ -397,6 +397,55 @@ async function tagBuyerInMailchimp({ email, tier, amountCents }) {
   console.log(`tagBuyerInMailchimp: tagged ${email} as Purchased + tier-${tierName}-buyer`);
 }
 
+// ─── Joel-alert helper ────────────────────────────────────────────────
+// Email Joel when the webhook can't deliver. These send to the same Gmail
+// inbox the dashboard reads, so heartbeats/ops UI surface them too.
+// Failure to send the alert itself is swallowed (don't recurse).
+async function alertJoel({ subject, text, html }) {
+  try {
+    const resend = getResend();
+    await resend.emails.send({
+      from: FROM_INTERNAL,
+      to: JOEL_NOTIFY,
+      subject: `[ALERT] ${subject}`,
+      text,
+      html: html || `<pre style="font-family:Menlo,monospace;font-size:13px;white-space:pre-wrap;">${text.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[c])}</pre>`,
+    });
+  } catch (alertErr) {
+    console.error('stripe-webhook: failed to send Joel alert', alertErr.message);
+  }
+}
+
+// Audit-trail queue email — same pattern Launcher closes use, now extended
+// to kit/VIP/Premium purchases so the ops dashboard can surface every
+// successful delivery (and grep finds gaps fast).
+async function emitStripeEvent({ kind, sessionId, amountCents, email, name, tier, status, errorMsg }) {
+  try {
+    const resend = getResend();
+    const payload = {
+      ts: new Date().toISOString(),
+      type: 'kit_purchase',
+      kind, // 'delivered' | 'failed' | 'unmapped'
+      status,
+      amount_cents: amountCents,
+      customer_email: email,
+      customer_name: name || null,
+      tier: tier || null,
+      stripe_session_id: sessionId,
+      error: errorMsg || null,
+    };
+    const body = `BEGIN_STRIPE_EVENT\n${JSON.stringify(payload, null, 2)}\nEND_STRIPE_EVENT`;
+    await resend.emails.send({
+      from: FROM_INTERNAL,
+      to: STRIPE_EVENTS_INBOX,
+      subject: `[stripe-event] ${kind} ${formatAmount(amountCents)} ${email}`,
+      text: body,
+    });
+  } catch (err) {
+    console.error('stripe-webhook: emitStripeEvent failed', err.message);
+  }
+}
+
 // ─── Per-event workflow ───────────────────────────────────────────────
 async function processCheckoutCompleted(event) {
   const stripe = getStripe();
@@ -407,6 +456,19 @@ async function processCheckoutCompleted(event) {
 
   if (!customerEmail) {
     console.error('stripe-webhook: no customer_details.email on session', session.id);
+    await alertJoel({
+      subject: `Stripe checkout had no customer email (${formatAmount(amountCents)})`,
+      text: `A Stripe checkout.session.completed event arrived with no customer_details.email.
+
+Session ID: ${session.id}
+Amount:     ${formatAmount(amountCents)}
+
+The customer paid but we can't email them. Look up the session in the Stripe dashboard, find their email, and resend the welcome via:
+
+curl -X POST https://bpquiz.com/api/test-purchase-email \\
+  -H "Content-Type: application/json" \\
+  -d '{"tier":"<tier>","email":"<email>","name":"<name>"}'`,
+    });
     return { action: 'skipped', reason: 'no_email' };
   }
 
@@ -420,6 +482,35 @@ async function processCheckoutCompleted(event) {
     let kitTier = AMOUNT_TO_TIER[amountCents];
     if (!kitTier) {
       console.log('stripe-webhook: unrecognized amount, ignoring', session.id, 'amount', amountCents);
+      // Loud alert — silent skip is what missed Dora's $97 VIP on 4/30 before
+      // the VIP tier was wired into AMOUNT_TO_TIER. Joel must see this so
+      // he can manually deliver + add the mapping.
+      await alertJoel({
+        subject: `Unmapped Stripe amount: ${formatAmount(amountCents)} from ${customerEmail}`,
+        text: `A customer paid ${formatAmount(amountCents)} but the webhook does NOT have a tier mapping for that amount. They got NO welcome email.
+
+Customer:   ${customerName || '(no name)'} <${customerEmail}>
+Amount:     ${formatAmount(amountCents)} (${amountCents} cents)
+Session ID: ${session.id}
+
+To deliver manually, pick the right tier from api/purchase-confirmation.js and run:
+
+curl -X POST https://bpquiz.com/api/test-purchase-email \\
+  -H "Content-Type: application/json" \\
+  -d '{"tier":"<tier>","email":"${customerEmail}","name":"${(customerName || '').replace(/"/g, '\\"')}"}'
+
+To prevent recurrence: add ${amountCents} to AMOUNT_TO_TIER in api/purchase-confirmation.js, then push.`,
+      });
+      await emitStripeEvent({
+        kind: 'unmapped',
+        sessionId: session.id,
+        amountCents,
+        email: customerEmail,
+        name: customerName,
+        tier: null,
+        status: 'no_delivery',
+        errorMsg: 'amount_not_mapped',
+      });
       return { action: 'skipped', reason: 'amount_not_mapped', amount: amountCents };
     }
 
@@ -448,15 +539,46 @@ async function processCheckoutCompleted(event) {
       }
     }
 
+    let emailSent = false;
+    let emailError = null;
     try {
       await sendPurchaseConfirmation({
         email: customerEmail,
         name: customerName,
         tier: kitTier,
       });
+      emailSent = true;
       console.log(`stripe-webhook: kit confirmation sent → ${customerEmail} [tier=${kitTier}, amount=${amountCents}]`);
     } catch (err) {
+      emailError = err.message;
       console.error('stripe-webhook: kit confirmation failed', err.message);
+      // Loud alert — customer paid but didn't get their kit. Joel must act.
+      await alertJoel({
+        subject: `Kit-email send FAILED for ${customerEmail} (${formatAmount(amountCents)})`,
+        text: `The customer paid ${formatAmount(amountCents)} but the welcome email send to Resend failed.
+
+Customer:   ${customerName || '(no name)'} <${customerEmail}>
+Tier:       ${kitTier}
+Product:    ${TIER_CONFIG[kitTier]?.product || '(no config)'}
+Session:    ${session.id}
+Error:      ${err.message}
+
+Resend the welcome via:
+
+curl -X POST https://bpquiz.com/api/test-purchase-email \\
+  -H "Content-Type: application/json" \\
+  -d '{"tier":"${kitTier}","email":"${customerEmail}","name":"${(customerName || '').replace(/"/g, '\\"')}"}'`,
+      });
+      await emitStripeEvent({
+        kind: 'failed',
+        sessionId: session.id,
+        amountCents,
+        email: customerEmail,
+        name: customerName,
+        tier: kitTier,
+        status: 'send_error',
+        errorMsg: err.message,
+      });
       return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
     }
 
@@ -464,22 +586,51 @@ async function processCheckoutCompleted(event) {
     // and existing entry-offer broadcasts can suppress them. Tags applied:
     //   - Purchased       (universal buyer marker)
     //   - tier-{n}-buyer  (segmentation for upsells)
-    // Failure here is logged but doesn't block — the email already sent.
+    // Failure here is logged AND alerted (we now know from the 4/30-5/4
+    // backfill that ~93% of buyers were missing this tag because failures
+    // were silent — never again).
+    let mcTagged = false;
     try {
       await tagBuyerInMailchimp({
         email: customerEmail,
         tier: kitTier,
         amountCents,
       });
+      mcTagged = true;
     } catch (err) {
       console.error('stripe-webhook: mailchimp tag failed', err.message);
+      await alertJoel({
+        subject: `Mailchimp tag-on-buy FAILED for ${customerEmail} (tier=${kitTier})`,
+        text: `Welcome email DID send. But the Mailchimp Purchased + tier-${kitTier}-buyer tag failed.
+
+Customer:   ${customerName || '(no name)'} <${customerEmail}>
+Tier:       ${kitTier}
+Session:    ${session.id}
+Error:      ${err.message}
+
+Without the tag, this buyer will keep receiving entry-offer broadcasts and won't be enrolled in upsell automations. Tag manually in Mailchimp Audience > Tags.`,
+      });
     }
+
+    // Audit trail — every successful kit/VIP/Premium delivery hits the
+    // stripe-events inbox. Ops dashboard greps this for completion stats
+    // and Joel can spot gaps by date range without API calls.
+    await emitStripeEvent({
+      kind: 'delivered',
+      sessionId: session.id,
+      amountCents,
+      email: customerEmail,
+      name: customerName,
+      tier: kitTier,
+      status: mcTagged ? 'email_sent_tag_ok' : 'email_sent_tag_missing',
+    });
 
     return {
       action: 'kit_confirmation_sent',
       tier: kitTier,
       product: TIER_CONFIG[kitTier]?.product,
       customer_email: customerEmail,
+      mc_tagged: mcTagged,
     };
   }
 
