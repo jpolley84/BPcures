@@ -14,7 +14,9 @@ export default function ChallengePage() {
       <TriangleExplainer />
       <FreeTier />
       <VIPTier />
-      <PremiumTier />
+      {/* PremiumTier hidden 2026-05-05 — Premium $397 paused.
+          Component preserved for fast restore when we re-test that tier. */}
+      {/* <PremiumTier /> */}
       <GuaranteeSection />
       <WhyThisPrice />
       <FinalCTA />
@@ -49,7 +51,7 @@ function HeroSection() {
               Join Free <ArrowRight size={16} />
             </a>
             <a href="#vip" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, border: '1px solid rgba(251,248,241,0.25)', color: 'var(--cream)', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              See VIP & Premium <ArrowRight size={14} />
+              See VIP details <ArrowRight size={14} />
             </a>
           </div>
 
@@ -393,7 +395,7 @@ function WhyThisPrice() {
         <motion.div {...fade}>
           <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The reasoning</span>
           <h2 className="display-s" style={{ margin: '0 0 1.5rem' }}>
-            Why $97? Why $397?
+            Why $97?
           </h2>
 
           <div style={{ display: 'grid', gap: '1.25rem', color: 'var(--ink-soft)', lineHeight: 1.65 }}>
@@ -401,10 +403,10 @@ function WhyThisPrice() {
               <strong style={{ color: 'var(--ink)' }}>VIP is $97</strong> because that's roughly what one month of BP medication costs the average person. I priced it to be a wash on month one — and an investment for the rest of your life.
             </p>
             <p style={{ margin: 0 }}>
-              <strong style={{ color: 'var(--ink)' }}>Premium is $397</strong> because past that price point, we're competing with $2,500 functional medicine packages — and frankly, this protocol works better than most of them.
+              <strong style={{ color: 'var(--ink)' }}>It includes everything in the Kit</strong> — the 10-Day Reset Challenge, the Full-Stack BP Activation, the Graduation phase, the complete herb formulary — plus weekly Monday 10pm ET group coaching for 4 weeks where I walk through your numbers live.
             </p>
             <p style={{ margin: 0 }}>
-              <strong style={{ color: 'var(--ink)' }}>Pre-launch pricing exists</strong> because you read every email I sent for the last year. You earned the discount. Friday at 8 AM the prices go up because that's fair to everyone else.
+              <strong style={{ color: 'var(--ink)' }}>Cohort pricing exists</strong> because the Monday calls only run for 4 weeks per cohort. After this cohort closes, the next opens at $147. Every cohort is hard-capped at 50 seats so the calls stay personal.
             </p>
           </div>
         </motion.div>
@@ -424,7 +426,7 @@ function FinalCTA() {
           </h2>
 
           <p style={{ color: 'rgba(251,248,241,0.7)', fontSize: '1rem', lineHeight: 1.6, margin: '0 auto 2rem', maxWidth: '44ch' }}>
-            After Friday 8 AM, public pricing applies. After 50 Premium seats are gone, the personal Loom is gone with them.
+            VIP enrollment for THIS cohort closes Friday May 14 at midnight. After that the next cohort opens at $147. 50 seats max — the calls stay personal because the room stays small.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -433,9 +435,6 @@ function FinalCTA() {
             </a>
             <a href={VIP_LINK} target="_top" rel="noopener" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, background: 'var(--clay)', color: 'var(--cream)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
               VIP — $97 <ArrowRight size={14} />
-            </a>
-            <a href={PREMIUM_LINK} target="_top" rel="noopener" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, background: '#FFFFFF', color: 'var(--sage-deep)', textDecoration: 'none', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-              Premium — $397 <ArrowRight size={14} />
             </a>
           </div>
 

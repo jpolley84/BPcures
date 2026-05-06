@@ -792,6 +792,38 @@ function QuizModule({ products }) {
                   </a>
                 </div>
               )}
+
+              {/* VIP upgrade row — Monday 10pm ET group coaching, capped 50 seats. */}
+              <div style={{
+                marginTop: '0.6rem',
+                padding: '1rem 1.15rem',
+                background: 'var(--sage-deep)',
+                color: 'var(--cream)',
+                borderRadius: 12,
+                textAlign: 'left',
+              }}>
+                <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay-soft)', fontWeight: 700, marginBottom: '0.4rem' }}>
+                  Want me on the call with you?
+                </div>
+                <p style={{ fontSize: '0.85rem', color: 'rgba(251,248,241,0.85)', margin: '0 0 0.6rem', lineHeight: 1.5 }}>
+                  <strong style={{ color: 'var(--cream)' }}>VIP — $97</strong> includes everything in the Kit plus 4 weeks of <strong style={{ color: 'var(--cream)' }}>Monday 10pm ET group coaching</strong> where I walk through your numbers live. Hard cap: 50 seats per cohort. Next cohort opens at $147.
+                </p>
+                <a
+                  href="/challenge"
+                  style={{
+                    display: 'inline-block',
+                    fontSize: '0.88rem',
+                    color: 'var(--sage-deep)',
+                    background: 'var(--cream)',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    padding: '0.6rem 1rem',
+                    borderRadius: 8,
+                  }}
+                >
+                  See VIP details — $97 →
+                </a>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

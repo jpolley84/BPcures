@@ -10,12 +10,20 @@ export default async function handler(req, res) {
   const params = req.method === 'GET' ? req.query : (req.body || {});
   const { tier: rawTier, email: rawEmail, name } = params;
 
-  const tier = parseInt(rawTier, 10);
-  if (!tier || ![1, 2, 3].includes(tier)) {
+  // Accept numeric tiers (1/2/3) AND the string tier keys ('vip', '1+pt-stack',
+  // '2+pt-stack') so we can resend the VIP welcome to buyers whose webhook
+  // missed delivery.
+  let tier;
+  const numTier = parseInt(rawTier, 10);
+  if (numTier && [1, 2, 3].includes(numTier)) {
+    tier = numTier;
+  } else if (typeof rawTier === 'string' && TIER_CONFIG[rawTier]) {
+    tier = rawTier;
+  } else {
     return res.status(400).json({
-      error: 'tier parameter required (1, 2, or 3)',
-      usage: 'POST /api/test-purchase-email with { "tier": 1, "email": "you@example.com" }',
-      validTiers: Object.entries(TIER_CONFIG).map(([t, c]) => ({ tier: Number(t), product: c.product })),
+      error: 'tier parameter required (1, 2, 3, or a string key like "vip")',
+      usage: 'POST /api/test-purchase-email with { "tier": "vip", "email": "you@example.com" }',
+      validTiers: Object.keys(TIER_CONFIG).map((t) => ({ tier: t, product: TIER_CONFIG[t].product })),
     });
   }
 
