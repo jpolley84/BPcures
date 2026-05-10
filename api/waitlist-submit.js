@@ -90,16 +90,45 @@ function buildApplicantEmail(app) {
 </body></html>`;
 }
 
+async function readJsonBody(req) {
+  // Try Vercel's auto-parsed body first
+  if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) return req.body;
+  if (req.body && typeof req.body === 'string') {
+    try { return JSON.parse(req.body); } catch { return null; }
+  }
+  // Fall back to reading the raw stream — happens when Vercel doesn't auto-parse
+  try {
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    const raw = Buffer.concat(chunks).toString('utf-8');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function handler(req, res) {
+  // Wrap the whole handler so any unexpected error returns clean JSON
+  // (otherwise Vercel returns a generic 500 HTML page that the React form
+  // can't display).
+  try {
+    return await handleApplication(req, res);
+  } catch (err) {
+    console.error('waitlist-submit unhandled error:', err?.stack || err?.message || err);
+    if (!res.headersSent) {
+      return res.status(500).json({ ok: false, error: 'Server error. Try again or email braveworksrn@gmail.com directly.' });
+    }
+  }
+}
+
+async function handleApplication(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
 
-  let app;
-  try {
-    app = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-  } catch {
-    return res.status(400).json({ ok: false, error: 'Invalid JSON' });
+  const app = await readJsonBody(req);
+  if (!app || typeof app !== 'object') {
+    return res.status(400).json({ ok: false, error: 'Empty or invalid request body — must be JSON.' });
   }
 
   // Required-field validation
