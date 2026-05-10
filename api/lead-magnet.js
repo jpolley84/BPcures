@@ -2,6 +2,7 @@ import { Resend } from 'resend';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
 import { upsertSubscriber as beehiivUpsert, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
 
@@ -462,9 +463,50 @@ async function recentLeadMagnetSend({ email, windowMinutes = 5 }) {
   }
 }
 
+// Per-IP rate limit. The lead-magnet endpoint sends an email to whatever
+// address the request supplies, so without throttling a single attacker can
+// spam thousands of inboxes (Resend abuse + sender-reputation burn). 10 sends
+// per IP per hour is generous for legitimate household / shared-network usage
+// — most users hit the form once, retake the quiz once, and stop.
+async function checkRateLimit(ip) {
+  if (!process.env.KV_REST_API_URL || !ip) return { ok: true };
+  try {
+    const key = `lm-rl:${ip}`;
+    const count = (await kv.get(key)) || 0;
+    if (count >= 10) {
+      return { ok: false, count };
+    }
+    // Increment with 1-hour TTL. First write also sets the TTL.
+    if (count === 0) {
+      await kv.set(key, 1, { ex: 3600 });
+    } else {
+      await kv.incr(key);
+    }
+    return { ok: true, count: count + 1 };
+  } catch (err) {
+    // Don't block legitimate users on KV outage.
+    console.warn('lead-magnet: rate-limit check failed (allowing):', err.message);
+    return { ok: true };
+  }
+}
+
+function getClientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return String(xff).split(',')[0].trim();
+  return req.headers['x-real-ip'] || req.socket?.remoteAddress || '';
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate-limit FIRST so we don't let attackers exhaust Resend or burn sender rep.
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(ip);
+  if (!rl.ok) {
+    console.warn(`lead-magnet: rate-limited ip=${ip} count=${rl.count}`);
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   const { email, name, category: rawCategory, riskScore, answers, tags: extraTags } = req.body || {};

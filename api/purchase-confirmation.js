@@ -47,10 +47,14 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
-    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
-    upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures (full edition) and The Overmedicated Boomer. Normally $47 for Be There in 30 alone — this is a one-time offer for all three.',
-    upgradeCta: 'Add all 3 books for $27 →',
+    // 2026-05-10 funnel-fix: was pointing to deactivated plink
+    // 9B63cv8k3b5Y63h8VrfnO0z (Complete Book Bundle $27 — pulled from Stripe in
+    // last week's streamline pass). Repointed to the canonical $47 BP Reset
+    // Kit (cNieVdeIrca2fDR1sZfnO0k) — same category, the natural ladder rung.
+    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
+    upgradeLabel: 'Upgrade to The BP Reset Kit ($47) — the complete clinical system',
+    upgradeDesc: 'You have the starter. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
+    upgradeCta: 'Upgrade to BP Reset Kit ($47) →',
   },
   '1-cortisol': {
     product: 'The Cortisol Healing Blueprint — Starter Kit',
@@ -58,10 +62,13 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.cortisol_challenge, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
-    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
-    upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
-    upgradeCta: 'Add all 3 books for $27 →',
+    // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
+    // the canonical $47 Cortisol Reset Kit (3cIbJ1asbca2fDR2x3fnO0m) — same
+    // category, the natural ladder rung.
+    upgradeUrl: 'https://buy.stripe.com/3cIbJ1asbca2fDR2x3fnO0m',
+    upgradeLabel: 'Upgrade to The Cortisol Reset Kit ($47) — the complete clinical system',
+    upgradeDesc: 'You have the starter. The full Cortisol Reset Kit adds Joel\'s complete cortisol protocol PDFs (adrenal-recovery guide, herb-and-supplement stack, sleep-and-stress reset, daily tracker). One-time price.',
+    upgradeCta: 'Upgrade to Cortisol Reset Kit ($47) →',
   },
   '1-blood-sugar': {
     product: 'Blood Sugar Cures — Starter Kit',
@@ -69,10 +76,12 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.blood_sugar_challenge, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/9B63cv8k3b5Y63h8VrfnO0z',
-    upgradeLabel: 'BraveWorks Complete Book Bundle — All 3 Books ($27)',
-    upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
-    upgradeCta: 'Add all 3 books for $27 →',
+    // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
+    // the canonical $47 Blood Sugar Reset Kit (3cI28rdEn8XQfDRdbHfnO0o).
+    upgradeUrl: 'https://buy.stripe.com/3cI28rdEn8XQfDRdbHfnO0o',
+    upgradeLabel: 'Upgrade to The Blood Sugar Reset Kit ($47) — the complete clinical system',
+    upgradeDesc: 'You have the starter. The full Blood Sugar Reset Kit adds Joel\'s complete glucose-control protocol PDFs (insulin-resistance guide, herb-and-supplement stack, meal-timing plan, glucose tracker). One-time price.',
+    upgradeCta: 'Upgrade to Blood Sugar Reset Kit ($47) →',
   },
   // DEPRECATED 2026-05-09 streamline pass: the $12 Pressure Triangle Stack
   // bump was retired (panel: pre-checkout decision-points hurt conversion).

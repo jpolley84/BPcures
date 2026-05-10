@@ -14,6 +14,7 @@ import UpsellBpResetKitPage from './pages/UpsellBpResetKitPage';
 import DownloadsPage from './pages/DownloadsPage';
 import OpsDashboardPage from './pages/OpsDashboardPage';
 import WaitlistApplicationPage from './pages/WaitlistApplicationPage';
+import IntakeFormPage from './pages/IntakeFormPage';
 
 function SiteLayout({ children }) {
   return (
@@ -68,6 +69,10 @@ function App() {
 
         {/* Operations dashboard — passcode-gated, standalone */}
         <Route path="/ops" element={<OpsDashboardPage />} />
+
+        {/* DFY client voice-intake — token-gated, standalone (no nav/footer).
+            Each client gets a unique URL like /intake/karen-bush?token=... */}
+        <Route path="/intake/:clientSlug" element={<IntakeFormPage />} />
       </Routes>
     </Router>
   );

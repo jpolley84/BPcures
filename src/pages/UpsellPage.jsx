@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 
-const STRIPE_BOOK_PRICE_ID = import.meta.env.VITE_STRIPE_BOOK_PRICE_ID;
+// 2026-05-10 funnel-fix: was reading import.meta.env.VITE_STRIPE_BOOK_PRICE_ID
+// — that env var was never set in Vercel, so /api/checkout was being POSTed
+// with priceId:undefined and silently failing for every $17 buyer landing
+// here post-purchase. Hardcoded to the active $9.99 "Overmedicated Boomers"
+// price (prod_UMTZORMvHXAr5B) — same model UpsellBpResetKitPage.jsx uses for
+// its OTO. Copy updated from "$9" → "$9.99" to match Stripe.
+const STRIPE_BOOK_PRICE_ID = 'price_1TOd1tHseZnO3rRZDoLqnhmu';
 
 export default function UpsellPage() {
   const [processing, setProcessing] = useState(false);
@@ -62,7 +68,7 @@ export default function UpsellPage() {
             </h1>
             <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 2.5rem', maxWidth: '54ch' }}>
               Overmedicated Boomers — the complete book on prescription overload, written for the generation nobody warned.
-              Add it to your order for <strong style={{ color: 'var(--ink)' }}>$9 today only</strong> (normally $24.99).
+              Add it to your order for <strong style={{ color: 'var(--ink)' }}>$9.99 today only</strong> (normally $24.99).
             </p>
 
             <div style={{
@@ -94,7 +100,7 @@ export default function UpsellPage() {
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button onClick={addBook} disabled={processing} className="btn btn-ink btn-lg">
-                {processing ? 'Processing…' : 'Yes — add the book for $9'}
+                {processing ? 'Processing…' : 'Yes — add the book for $9.99'}
                 <ArrowRight size={16} className="arrow" />
               </button>
               <Link to="/success" className="btn btn-ghost btn-lg">

@@ -13,22 +13,126 @@
 // Failure mode is graceful: any individual API failure logs and returns 200 so Resend stops retrying.
 // Worst case: a bounced contact stays in the audience and gets one more cold send before the next bounce.
 //
-// TODO: when RESEND_WEBHOOK_SECRET is set, verify the Svix signature on incoming requests
-// (current state: accepts unsigned webhooks. Risk is low because the only action is "unsubscribe a contact",
-// not data exposure — but a malicious actor could spam-suppress contacts. Worth tightening once Joel sets the secret.)
+// 2026-05-10 hardened: when RESEND_WEBHOOK_SECRET is set we verify the Svix
+// signature before doing anything. Resend's secret format is `whsec_<base64>`;
+// the signature header is `svix-signature: v1,<b64sig> [v1,<b64sig>...]`.
+// Until Joel sets the secret in Vercel env we accept unsigned (with a warning
+// log) so the existing webhook keeps flowing — no silent failure on the day
+// of activation.
+
+import crypto from 'node:crypto';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || '';
 const AUDIENCE_ID = process.env.RESEND_LAUNCHER_AUDIENCE_ID || 'ad46af78-a3b5-467f-8006-f56eeee26841';
 const ALERT_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
 
 const SUPPRESS_EVENTS = new Set(['email.bounced', 'email.complained']);
+
+// Disable Vercel's automatic body parsing so we can read the raw body for
+// signature verification. The Svix signature is computed over the exact bytes
+// the sender transmitted; re-serialized JSON won't match.
+export const config = {
+  api: { bodyParser: false },
+};
+
+async function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
+// Verify the Svix signature on a Resend webhook delivery. Returns true if the
+// signature is valid, false otherwise. Reject window is 5 minutes — older
+// timestamps are treated as replay attempts even if the HMAC matches.
+function verifySvixSignature({ rawBody, headers, secret }) {
+  if (!secret) return null; // no secret configured — caller decides
+  const id = headers['svix-id'];
+  const ts = headers['svix-timestamp'];
+  const sigHeader = headers['svix-signature'];
+  if (!id || !ts || !sigHeader) return false;
+
+  // Replay window: reject if the timestamp is more than 5 minutes off.
+  const tsMs = Number(ts) * 1000;
+  if (!Number.isFinite(tsMs) || Math.abs(Date.now() - tsMs) > 5 * 60 * 1000) {
+    return false;
+  }
+
+  // Secret format: `whsec_<base64>`. Strip the prefix and decode.
+  const secretBytes = Buffer.from(
+    secret.startsWith('whsec_') ? secret.slice(6) : secret,
+    'base64'
+  );
+
+  const signedPayload = `${id}.${ts}.${rawBody.toString('utf8')}`;
+  const expected = crypto
+    .createHmac('sha256', secretBytes)
+    .update(signedPayload)
+    .digest('base64');
+
+  // Header may contain multiple signatures, space-separated, each prefixed
+  // with version. Check for any match.
+  const candidates = sigHeader
+    .split(' ')
+    .map((s) => s.trim())
+    .filter((s) => s.startsWith('v1,'))
+    .map((s) => s.slice(3));
+
+  for (const c of candidates) {
+    // Constant-time compare — both buffers must be the same length or the
+    // comparison throws, so guard against length mismatch first.
+    if (c.length === expected.length) {
+      try {
+        if (crypto.timingSafeEqual(Buffer.from(c), Buffer.from(expected))) {
+          return true;
+        }
+      } catch { /* length mismatch — already guarded but be safe */ }
+    }
+  }
+  return false;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const event = req.body;
+  // Read raw body (we disabled the auto-parser).
+  let rawBody;
+  try {
+    rawBody = await readRawBody(req);
+  } catch (err) {
+    console.error('[resend-bounce] body read error:', err.message);
+    return res.status(400).json({ error: 'Could not read body' });
+  }
+
+  // Verify signature when secret is configured. If verification returns null
+  // (no secret), warn but continue — keeps the webhook flowing through the
+  // setup window. Returns false (signature mismatch / replay) → reject.
+  const verified = verifySvixSignature({
+    rawBody,
+    headers: req.headers,
+    secret: RESEND_WEBHOOK_SECRET,
+  });
+  if (verified === false) {
+    console.warn('[resend-bounce] signature verification FAILED — rejecting');
+    return res.status(401).json({ error: 'Invalid signature' });
+  }
+  if (verified === null) {
+    console.warn('[resend-bounce] RESEND_WEBHOOK_SECRET not set — accepting unsigned (set the secret in Vercel env to harden)');
+  }
+
+  // Parse the now-verified body.
+  let event;
+  try {
+    event = JSON.parse(rawBody.toString('utf8'));
+  } catch {
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
+
   if (!event || !event.type) {
     return res.status(400).json({ error: 'Invalid event payload' });
   }
