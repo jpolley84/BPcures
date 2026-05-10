@@ -593,8 +593,12 @@ function QuizModule({ products }) {
                 Right now you're guessing — adding pills, avoiding the cuff, hoping the next reading isn't worse. A week from now you could be the person who actually knows what's driving the number, and watching it drop. That shift starts here.
               </p>
 
-              {/* Order bump: BP Tier 1 buyers (the $17 Starter, now front-of-funnel). */}
-              {recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
+              {/* Order bump: DISABLED 2026-05-09 streamline pass. Panel consensus
+                  was that the pre-checkout decision-point was hurting conversion
+                  (each decision = ~30% drop) and the post-checkout $30 OTO
+                  catches the same upsell intent at lower friction. Code kept for
+                  fast revert; flip the leading `false &&` to re-enable. */}
+              {false && recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
                 <div
                   onClick={() => setAddBump(v => !v)}
                   role="checkbox"

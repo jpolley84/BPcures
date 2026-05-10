@@ -74,11 +74,13 @@ export const TIER_CONFIG = {
     upgradeDesc: 'Add "Be There in 30" — the 30-day companion guide that walks beside the challenge emails, day by day. Plus Blood Pressure Cures and The Overmedicated Boomer.',
     upgradeCta: 'Add all 3 books for $27 →',
   },
-  // Order-bump tier: $17 BP starter + $12 Pressure Triangle Stack add-on.
-  // Combined session amount = 2900. Delivers BP starter PDF + 4 bonus books
-  // (Boomers, Cookbook, 10-Day Cortisol Cure, 10-Day Blood Sugar Reset).
+  // DEPRECATED 2026-05-09 streamline pass: the $12 Pressure Triangle Stack
+  // bump was retired (panel: pre-checkout decision-points hurt conversion).
+  // Kept in TIER_CONFIG so any in-flight $29 charge from before the cut
+  // still delivers properly. No new sales should hit this — frontend
+  // checkbox is hidden in QuizPage.jsx.
   '1+pt-stack': {
-    product: 'Blood Pressure Cures + Pressure Triangle Stack',
+    product: 'Blood Pressure Cures + Pressure Triangle Stack (legacy bump)',
     subject: 'You\'re in — your BP kit + Pressure Triangle Stack (4 bonus books) inside',
     downloads: [
       DOWNLOADS.bp_day1,
@@ -108,10 +110,8 @@ export const TIER_CONFIG = {
     upgradeDesc: 'Adds the full BraveWorks bonus stack (every cortisol and blood sugar protocol PDF), 30 days of daily email walkthrough, AND access to the "How to Be Your Own Doctor" Skool community with weekly group coaching. Same triple guarantee. One-time price.',
     upgradeCta: 'Upgrade to BP Triangle Challenge ($97) →',
   },
-  // Order-bump tier: $47 BP Reset Kit + $12 Pressure Triangle Stack = $59 session.
-  // Delivers the full Kit PLUS the two NEW protocols the bump adds (Cortisol Cure
-  // + Blood Sugar Reset). Boomers + Cookbook are already inside the kit zip,
-  // so no duplication.
+  // DEPRECATED 2026-05-09 streamline pass — same reason as 1+pt-stack.
+  // Kept for in-flight buyers; no new sales possible.
   '2+pt-stack': {
     product: 'BP Reset Kit + Pressure Triangle Stack',
     subject: 'Your BP Reset Kit + the full Pressure Triangle Stack inside',
@@ -183,31 +183,32 @@ export const TIER_CONFIG = {
 };
 
 // Map Stripe amount_total (cents) → tier key
-// Note: tier=1 is the default starter-tier email (BP-flavored). The
-// stripe-webhook.js handler refines tier=1 to '1-cortisol' or
-// '1-blood-sugar' by inspecting the line item product name before
-// calling sendPurchaseConfirmation.
+//
+// 2026-05-09 STREAMLINE PASS: cut from 11 amount entries to 5 active tiers
+// per panel consensus (each additional offer = ~30% conversion drop per
+// Kennedy; future-self version of this op has 5 SKUs not 11 per Hardy).
+//
+// Active ladder: $17 → $30 OTO → $47 → $97 → $1,297 (application).
+// Legacy entries kept ONLY for in-flight buyers; no frontend path.
+//
+// tier=1 is the default starter (BP-flavored). stripe-webhook.js refines
+// to '1-cortisol' / '1-blood-sugar' by inspecting line item product name.
 export const AMOUNT_TO_TIER = {
-  // $12 entry tier removed 2026-05-01 — Joel killed the $12 offer; only
-  // option for first quiz upsell is $17 starter. Stripe payment links at
-  // $12 also deactivated (Overmedicated Boomers, Top 10 Herbs Deep Dive).
-  1299: 1,   // Blood Pressure Cures — 10-Day Nurse's Reset (alt price, kept)
-  1700: 1,   // Standard $17 starter (BP / Cortisol / Blood Sugar)
-  2200: 1,   // Blood Sugar Balance Starter Kit
-  2700: 1,   // Complete BraveWorks Bundle — All 3 Books
-  3700: 1,   // Arsenal flash / single-product upsell tier
-  // Order bump: $17 BP starter + $12 Pressure Triangle Stack add-on.
-  // Both line items in one Stripe Checkout Session → amount_total = 2900.
-  // Delivers BP starter content PLUS 4 bonus books (Boomers, Cookbook, Cortisol Cure, Blood Sugar Reset).
-  2900: '1+pt-stack',
-  3000: 2,   // The BP Reset Kit — $30 post-purchase upsell from $17 starter
-  // Order bump from quiz: $47 BP Reset Kit + $12 Pressure Triangle Stack = 5900.
-  // Front-of-funnel as of 2026-05-03 — kit is now the primary recommended product.
-  5900: '2+pt-stack',
-  4700: 2,   // The BP Reset Kit (retail)
-  9700: 'vip',
-  29700: 3,  // Premium (legacy $297 — kept for any in-flight buyers)
-  39700: 3,  // Premium (current $397 price — live link plink_1TS8YtHseZnO3rRZQq1Pnkd4)
+  // ── Active tiers (canonical) ────────────────────────────────────────
+  1700: 1,        // $17 starter (BP / Cortisol / Blood Sugar)
+  3000: 2,        // $30 BP Reset Kit OTO (post-checkout upgrade from $17)
+  4700: 2,        // $47 BP Reset Kit (standalone)
+  9700: 'vip',    // $97 BP Triangle Challenge + Skool (canonical post-restructure)
+
+  // ── Legacy / in-flight only (no active payment links) ───────────────
+  // Kept so any webhook replay against historical charges still delivers.
+  // Frontend has no path to these; buyer can only land here via a saved
+  // link from before the 2026-05-09 cleanup.
+  1299: 1,           // BP Cures alt price (deactivated)
+  2900: '1+pt-stack', // $17 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
+  5900: '2+pt-stack', // $47 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
+  29700: 3,          // $297 legacy Premium (deactivated)
+  39700: 3,          // $397 legacy Premium (deactivated 2026-05-09 Phase A.2)
 };
 
 let _resend = null;
