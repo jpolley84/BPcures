@@ -73,6 +73,7 @@ export default function Footer() {
               <li><Link to="/shop?category=cortisol">Cortisol &amp; stress</Link></li>
               <li><Link to="/shop?category=blood_sugar">Blood sugar</Link></li>
               <li><Link to="/learn">Journal</Link></li>
+              <li><Link to="/1on1">Work 1:1 with Joel</Link></li>
             </ul>
           </div>
 
