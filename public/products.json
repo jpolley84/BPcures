@@ -78,42 +78,42 @@
   },
   {
     "slug": "bp-premium-coaching",
-    "name": "The 30-Day Blood Pressure Reset Challenge",
-    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
-    "description": "Everything in the BP Reset Kit, plus the 30-Day Blood Pressure Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "name": "The 30-Day BP Triangle Challenge",
+    "headline": "The complete BP system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the BP Reset Kit, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every Cortisol and Blood Sugar kit included so you can address all three pillars of blood pressure: vascular, cortisol, and blood sugar). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "blood_pressure",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$397",
-    "price_cents": 39700,
-    "original_price": "$1,662",
-    "stripe_payment_link": "https://bpquiz.com/challenge",
+    "price": "$97",
+    "price_cents": 9700,
+    "original_price": "$497",
+    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
     "gumroad_link": null,
     "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
-    "badge": "STARTS MAY 1",
-    "rating": 5.0,
+    "badge": "BP Triangle",
+    "rating": 5,
     "review_count": 12,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to go all in.",
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to address all three pillars of BP at once.",
     "what_inside": [
-      "The 30-Day Blood Pressure Reset book (digital copy)",
+      "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 BP materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
+      "Full BraveWorks bonus stack — every Cortisol and Blood Sugar kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "RestoreHER virtual event access (June 24-25, 2026)",
+      "Full BP Triangle approach — vascular, cortisol, and blood sugar pillars covered",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
     "related_slugs": [
       "bp-reset-kit",
       "blood-pressure-cures"
     ],
-    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+    "updated_at": "2026-05-09T22:00:00.000000+00:00"
   },
   {
     "slug": "cortisol-healing-blueprint",
@@ -194,42 +194,42 @@
   },
   {
     "slug": "cortisol-premium-coaching",
-    "name": "The 30-Day Cortisol Reset Challenge",
-    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
-    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day Cortisol Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "name": "The 30-Day BP Triangle Challenge — Cortisol Focus",
+    "headline": "The complete Cortisol system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Blood Sugar kit included so you can address all three pillars: vascular, cortisol, and blood sugar). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "cortisol",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$397",
-    "price_cents": 39700,
-    "original_price": "$1,662",
-    "stripe_payment_link": "https://bpquiz.com/challenge",
+    "price": "$97",
+    "price_cents": 9700,
+    "original_price": "$497",
+    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
     "gumroad_link": null,
     "cover_image": "/products/cortisol-challenge-kit/cover.png",
-    "badge": "STARTS MAY 1",
-    "rating": 5.0,
+    "badge": "BP Triangle",
+    "rating": 5,
     "review_count": 9,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to reset cortisol for good.",
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to fix cortisol AND the two pillars it pulls along with it.",
     "what_inside": [
-      "The 30-Day Cortisol Reset book (digital copy)",
+      "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 Cortisol materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
+      "Full BraveWorks bonus stack — every BP and Blood Sugar kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "RestoreHER virtual event access (June 24-25, 2026)",
+      "Full BP Triangle approach — vascular, cortisol, and blood sugar pillars covered",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
     "related_slugs": [
       "cortisol-reset-kit",
       "cortisol-healing-blueprint"
     ],
-    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+    "updated_at": "2026-05-09T22:00:00.000000+00:00"
   },
   {
     "slug": "blood-sugar-starter-kit",
@@ -310,41 +310,41 @@
   },
   {
     "slug": "blood-sugar-premium-coaching",
-    "name": "The 30-Day Blood Sugar Reset Challenge",
-    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, and your RestoreHER virtual ticket — starts May 1.",
-    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day Blood Sugar Reset book (digital copy), daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community every week, a FREE Virtual Ticket to the RestoreHER virtual event on June 24–25, 2026 ($297 value (covered by your $397)), and full access to the 'How to Be Your Own Doctor' Skool community. This is a cohort-based challenge with group coaching. Starts May 1, 2026.",
+    "name": "The 30-Day BP Triangle Challenge — Blood Sugar Focus",
+    "headline": "The complete Blood Sugar system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Cortisol kit included so you can address all three pillars: vascular, cortisol, and blood sugar). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "blood_sugar",
     "tier": 3,
     "tier_label": "30-Day Challenge",
-    "price": "$397",
-    "price_cents": 39700,
-    "original_price": "$1,662",
-    "stripe_payment_link": "https://bpquiz.com/challenge",
+    "price": "$97",
+    "price_cents": 9700,
+    "original_price": "$497",
+    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
     "gumroad_link": null,
     "cover_image": "/products/diabetes-reversal-kit/cover.png",
-    "badge": "STARTS MAY 1",
-    "rating": 5.0,
+    "badge": "BP Triangle",
+    "rating": 5,
     "review_count": 7,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, a live event with one of the most respected natural health voices in the world, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C.",
+    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C while also addressing the BP and cortisol that drive it.",
     "what_inside": [
-      "The 30-Day Blood Sugar Reset book (digital copy)",
+      "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 Blood Sugar materials (full kit included)",
       "Daily emails for 30 days — one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "RestoreHER Virtual Ticket (June 24–25, 2026) — $297 value (covered by your $397)",
+      "Full BraveWorks bonus stack — every BP and Cortisol kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "RestoreHER virtual event access (June 24-25, 2026)",
+      "Full BP Triangle approach — vascular, cortisol, and blood sugar pillars covered",
       "A proven reset you'll actually complete — with the community to hold you to it"
     ],
     "related_slugs": [
       "blood-sugar-reset-kit",
       "blood-sugar-starter-kit"
     ],
-    "updated_at": "2026-04-20T00:00:00.000000+00:00"
+    "updated_at": "2026-05-09T22:00:00.000000+00:00"
   }
 ]
