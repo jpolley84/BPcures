@@ -1,20 +1,20 @@
 // 1:1 BP Triangle Premium waitlist application — POST handler.
 //
-// Persists to Vercel KV at `waitlist:1on1:{ISO}:{emailHash}` with 1-year TTL,
-// emails Joel the full application body via Resend, and sends the applicant
-// a soft auto-confirm. No payment is collected here — the path is intake →
-// screen → call → invoice.
+// Emails Joel the full application body via Resend and sends the applicant
+// a soft auto-confirm. The email to Joel IS the primary record — replies
+// route to applicant via reply_to so Joel can respond directly. No payment
+// is collected here; the path is intake → screen → call → invoice.
 //
-// Env vars required (already set for the live drip engine):
-//   RESEND_API_KEY        — Resend API key
-//   KV_REST_API_URL,
-//   KV_REST_API_TOKEN     — Vercel KV (Upstash) credentials
+// Env vars required:
+//   RESEND_API_KEY — Resend API key (already set for the live drip engine)
 //
-// Replies route to braveworksrn@gmail.com via the Resend reply_to header so
-// Joel can answer applicants directly from his inbox.
+// Note: an earlier version persisted to Vercel KV at `waitlist:1on1:{...}`
+// for queryable indexing, but the @vercel/kv import was triggering
+// ERR_MODULE_NOT_FOUND in production despite being identical to the working
+// drip-cron import. Removed for now — KV indexing can be reintroduced
+// later if/when application volume warrants a dashboard view.
 
 import { Resend } from 'resend';
-import { kv } from '@vercel/kv';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
@@ -27,15 +27,6 @@ function escapeHtml(s) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-}
-
-function emailHashSafe(email) {
-  // Cheap deterministic-ish suffix that's URL-safe; avoids collisions when
-  // someone resubmits within the same second. Not a security boundary.
-  const e = String(email).toLowerCase().trim();
-  let h = 0;
-  for (let i = 0; i < e.length; i++) h = ((h << 5) - h + e.charCodeAt(i)) | 0;
-  return Math.abs(h).toString(36);
 }
 
 function buildJoelEmail(app) {
@@ -144,64 +135,34 @@ async function handleApplication(req, res) {
     return res.status(400).json({ ok: false, error: 'Select at least one item under "what you have tried"' });
   }
 
-  // Add server-side timestamp + IP marker (best-effort)
+  // Add server-side timestamp
   const submittedAt = new Date().toISOString();
   app.submittedAt = submittedAt;
-  const ipHeader = req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'] || '';
-  app._meta = { ip: String(ipHeader).split(',')[0].trim().slice(0, 64), userAgent: String(req.headers?.['user-agent'] || '').slice(0, 256) };
-
-  // Persist to KV (1-year TTL)
-  const kvKey = `waitlist:1on1:${submittedAt}:${emailHashSafe(app.email)}`;
-  let kvOk = false;
-  try {
-    await kv.set(kvKey, app, { ex: 60 * 60 * 24 * 365 });
-    // Also append email to an index so Joel can list applications
-    await kv.lpush('waitlist:1on1:index', kvKey);
-    kvOk = true;
-  } catch (e) {
-    console.error('KV write failed:', e?.message || e);
-    // Continue — email notification is the primary record
-  }
 
   // Send notification + auto-confirm
-  let resendOk = false;
-  let resendError = null;
-  try {
-    if (!process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY missing');
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
-    // Notification to Joel
-    await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: NOTIFY_TO,
-      reply_to: app.email,
-      subject: `[1:1 APPLICATION] ${app.firstName} ${app.lastName} — BP Triangle`,
-      html: buildJoelEmail(app),
-    });
-
-    // Auto-confirm to applicant
-    await resend.emails.send({
-      from: FROM_ADDRESS,
-      to: app.email,
-      reply_to: REPLY_TO,
-      subject: 'Got your 1:1 application — Joel',
-      html: buildApplicantEmail(app),
-    });
-    resendOk = true;
-  } catch (e) {
-    console.error('Resend failed:', e?.message || e);
-    resendError = e?.message || 'email send failed';
-    // Still return ok if KV succeeded — Joel can fish out the application from KV later
-    if (!kvOk) {
-      return res.status(500).json({ ok: false, error: 'Could not save your application. Try again or email braveworksrn@gmail.com directly.' });
-    }
+  if (!process.env.RESEND_API_KEY) {
+    return res.status(500).json({ ok: false, error: 'Email service not configured. Email braveworksrn@gmail.com directly.' });
   }
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-  return res.status(200).json({
-    ok: true,
-    kvOk,
-    resendOk,
-    resendError,
-    kvKey: kvOk ? kvKey : null,
+  // Notification to Joel — this is the primary record.
+  // reply_to set to applicant so Joel can respond directly from his inbox.
+  await resend.emails.send({
+    from: FROM_ADDRESS,
+    to: NOTIFY_TO,
+    reply_to: app.email,
+    subject: `[1:1 APPLICATION] ${app.firstName} ${app.lastName} — BP Triangle`,
+    html: buildJoelEmail(app),
   });
+
+  // Auto-confirm to applicant
+  await resend.emails.send({
+    from: FROM_ADDRESS,
+    to: app.email,
+    reply_to: REPLY_TO,
+    subject: 'Got your 1:1 application — Joel',
+    html: buildApplicantEmail(app),
+  });
+
+  return res.status(200).json({ ok: true, submittedAt });
 }
