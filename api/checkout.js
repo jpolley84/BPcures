@@ -7,9 +7,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Vercel's auto body parser sets req.body to undefined when the body isn't
+  // valid JSON. Destructuring undefined throws before the try/catch below
+  // could catch it, so the response was empty (no status, no body) and the
+  // caller silently bounced. Guard the destructure and surface a real 400.
+  if (!req.body || typeof req.body !== 'object') {
+    return res.status(400).json({ error: 'Invalid request body — expected JSON' });
+  }
+
   const { priceId, addOnPriceId, successUrl, cancelUrl } = req.body;
 
-  if (!priceId) {
+  if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'Missing priceId' });
   }
 

@@ -470,9 +470,27 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
 </body></html>`;
 }
 
+// Cheap RFC-5322-ish address shape check. Catches the common breakage:
+// Stripe webhook customer_details with email='' or email=null, or a session
+// where billing_details.email arrives as a leading-space whitespace string.
+// Resend silently rejects those — buyer never gets the email and we never
+// see an error. Better to throw loud so the webhook's try/catch logs it.
+function looksLikeValidEmail(s) {
+  if (typeof s !== 'string') return false;
+  const trimmed = s.trim();
+  if (trimmed.length < 5 || trimmed.length > 254) return false;
+  // Single @, at least one char each side, at least one dot in the domain.
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
+
 export async function sendPurchaseConfirmation({ email, name, tier, apologyMode }) {
   const config = TIER_CONFIG[tier];
   if (!config) throw new Error(`Unknown tier: ${tier}`);
+  if (!looksLikeValidEmail(email)) {
+    // Throw loud — webhook handler logs + alerts, so Joel knows a buyer
+    // didn't get their kit and can manually deliver.
+    throw new Error(`sendPurchaseConfirmation: invalid email shape: ${JSON.stringify(email)}`);
+  }
   const html = renderPurchaseEmail({ name, tier, apologyMode });
   // When apologyMode is set, override the subject so the buyer sees the
   // make-good framing immediately instead of a generic "you're in" line.
