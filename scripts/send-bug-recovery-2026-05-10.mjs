@@ -40,13 +40,17 @@ import { Resend } from 'resend';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
-const COHORT_PATH = path.join(PROJECT_ROOT, '.claude/recovery_cohort.jsonl');
+// 2026-05-10 expansion: per Joel, broaden recovery to ALL-TIME cohort.
+// All bpquiz_quiz subscribers, suppressed against 132 paid customers since
+// April launch. ~3,346 emails. Switched from SORRY30 (100-cap, 7d) to SORRY
+// (1000-cap, 14d) to handle the volume.
+const COHORT_PATH = path.join(PROJECT_ROOT, '.claude/recovery_cohort_all.jsonl');
 const PREVIEW_DIR = path.join(REPO_ROOT, 'tmp/recovery-2026-05-10');
 
 const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 const TEST_TO = 'brave.works.marketing@gmail.com';
-const PROMO_CODE = 'SORRY30';
+const PROMO_CODE = 'SORRY';
 
 // Per-concern copy + recommended product link.
 // All Stripe links verified ACTIVE 2026-05-10. Promo code SORRY30 enabled
@@ -55,21 +59,21 @@ const CONCERN_CONFIG = {
   blood_pressure: {
     label: 'BP Reset Kit',
     productPrice: '$17',
-    productHref: 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A?prefilled_promo_code=SORRY30',
+    productHref: 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A?prefilled_promo_code=SORRY',
     pillarLine:
       'You came in for blood pressure. The kit is the same one Joel reaches for first — Day-1 protocol, his trusted herbs, and what to ask the cardiologist.',
   },
   cortisol: {
     label: 'Cortisol Healing Blueprint',
     productPrice: '$17',
-    productHref: 'https://buy.stripe.com/5kQ7sL6bV3Dw0IX0oVfnO0l?prefilled_promo_code=SORRY30',
+    productHref: 'https://buy.stripe.com/5kQ7sL6bV3Dw0IX0oVfnO0l?prefilled_promo_code=SORRY',
     pillarLine:
       'You came in for cortisol — the wired-tired pattern. The starter walks the cortisol curve, the four daily moves that flatten it, and the herbs Joel actually trusts for adrenal recovery.',
   },
   blood_sugar: {
     label: 'Blood Sugar Cures',
     productPrice: '$17',
-    productHref: 'https://buy.stripe.com/6oU6oH1VF7TM4ZdgnTfnO0n?prefilled_promo_code=SORRY30',
+    productHref: 'https://buy.stripe.com/6oU6oH1VF7TM4ZdgnTfnO0n?prefilled_promo_code=SORRY',
     pillarLine:
       'You came in for blood sugar — A1C creep, crashes, cravings. The starter explains what your fasting number actually means and the four moves that flatten the glucose curve fastest.',
   },
@@ -83,7 +87,7 @@ function renderEmail({ fname, concern }) {
   const cfg = pickConfig(concern);
   const greeting = fname ? `Hey ${fname},` : 'Hey,';
 
-  const subject = "My checkout was broken yesterday — let me make it right";
+  const subject = "I owe you an apology — the BPQuiz site has been buggy";
 
   const html = `
 <!doctype html>
@@ -96,7 +100,11 @@ function renderEmail({ fname, concern }) {
           <h1 style="font-family:'Fraunces',Georgia,serif;font-size:26px;line-height:1.2;font-weight:500;margin:0 0 18px 0;color:#2C3E50;">${greeting}</h1>
 
           <p style="margin:0 0 16px 0;font-size:16px;">
-            You took the assessment yesterday. If you tried to grab the kit and the page froze on you — that's on me. There was a bug in the quiz that left the screen blank after the first question. I'm sorry. It's fixed now.
+            You took the assessment at BPQuiz.com sometime in the last few weeks, and the site let you down. Pages froze. Buy buttons didn't go anywhere. The quiz went blank after the first question. I'm sorry.
+          </p>
+
+          <p style="margin:0 0 16px 0;font-size:16px;">
+            I just shipped a round of fixes this morning — quiz works, checkout works, every link goes where it should. If you walked away thinking BraveWorks was sketchy or just not for you, that's on the broken site, not the protocol.
           </p>
 
           <p style="margin:0 0 16px 0;font-size:16px;">
@@ -104,7 +112,7 @@ function renderEmail({ fname, concern }) {
           </p>
 
           <p style="margin:0 0 22px 0;font-size:16px;">
-            To make up for the runaround: <strong>30% off</strong> — code <strong style="background:#FFF3D6;padding:2px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">${PROMO_CODE}</strong>. Auto-applied at the link below. Expires in 7 days.
+            To make up for the runaround: <strong>30% off</strong> — code <strong style="background:#FFF3D6;padding:2px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">${PROMO_CODE}</strong>. Auto-applied at the link below. Good for 14 days.
           </p>
 
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;">
@@ -116,7 +124,7 @@ function renderEmail({ fname, concern }) {
           </table>
 
           <p style="margin:0 0 16px 0;font-size:15px;color:#5A4A3A;">
-            If you'd already moved on, no hard feelings — the next email won't mention this again. Either way, thanks for taking the assessment. The protocol works whether or not the buy button does.
+            If you'd already moved on, no hard feelings — this is a one-time apology, not a new email cadence. Either way, thanks for giving the assessment a shot. The protocol works whether or not the site does.
           </p>
 
           <p style="margin:24px 0 6px 0;font-size:16px;">
@@ -128,7 +136,7 @@ function renderEmail({ fname, concern }) {
         </td></tr>
         <tr><td style="padding:18px 36px 26px 36px;border-top:1px solid #EAE3D5;">
           <p style="margin:0;font-size:11px;color:#8B7355;line-height:1.5;">
-            You're getting this because you took the BPQuiz assessment and we owe you a working checkout. Educational content only — nothing on this site is medical advice. Reply to this email with any questions.
+            You're getting this because you took the BPQuiz assessment and we owe you a working site. Educational content only — nothing here is medical advice. Reply to this email with any questions.
           </p>
         </td></tr>
       </table>
