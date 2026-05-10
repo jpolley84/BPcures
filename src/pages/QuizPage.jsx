@@ -406,15 +406,17 @@ function QuizModule({ products }) {
       </div>
 
       <div className="quiz-frame">
-        <AnimatePresence mode="wait">
-          {phase === 'quiz' && (
-            <motion.div
-              key={`q-${step}`}
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -24 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
+        {/* HOTFIX 2026-05-10: AnimatePresence + motion.div was getting stuck
+            in initial state ({opacity:0, x:24}) on step transitions, leaving
+            the quiz card invisible and stale. Customers landed on Stripe
+            checkout but bounced because the quiz had silently broken — 25
+            open/unpaid sessions in 24h, zero paid. Replaced motion wrappers
+            with plain divs so the quiz always renders. We lose the slide-in
+            animation; we gain a working funnel. Revisit framer-motion +
+            React 19 compatibility separately. */}
+        <div>
+          {phase === 'quiz' && q && (
+            <div key={`q-${step}`}>
               <h2 className="quiz-question">{q.question}</h2>
               <p className="quiz-subtitle">{q.subtitle}</p>
 
@@ -450,17 +452,11 @@ function QuizModule({ products }) {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {phase === 'email' && (
-            <motion.div
-              key="email"
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -24 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
+            <div key="email">
               <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>One last step</span>
               <h2 className="quiz-question">
                 Where should Joel send your protocol?
@@ -494,16 +490,11 @@ function QuizModule({ products }) {
                   Educational content only · No spam · Unsubscribe anytime
                 </p>
               </form>
-            </motion.div>
+            </div>
           )}
 
           {phase === 'results' && (
-            <motion.div
-              key="results"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            >
+            <div key="results">
               <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>Your assessment · Complete</span>
 
               {/* Risk score gauge */}
@@ -828,9 +819,9 @@ function QuizModule({ products }) {
                   See VIP details — $97 →
                 </a>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </motion.div>
   );
