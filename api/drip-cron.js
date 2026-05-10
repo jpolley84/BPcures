@@ -26,6 +26,10 @@ import { Resend } from 'resend';
 import crypto from 'node:crypto';
 import { renderEmail, DAYS } from './_drip-emails.js';
 
+// 3,392 records × ~50ms KV.get + ~485 eligible × ~150ms (Resend + rate-limit
+// + KV.set) = budget about 4 minutes worst case. Pro plan max is 300s.
+export const config = { maxDuration: 300 };
+
 const SECRET = process.env.DRIP_OPT_IN_SECRET || process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
 const DRY_RUN = process.env.DRIP_DRY_RUN === '1';
 const RATE_LIMIT_DELAY_MS = 100; // Resend free tier = 10 req/s; 100ms between sends is safe
@@ -69,90 +73,90 @@ export default async function handler(req, res) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Iterate KV. We use SCAN to handle large lists without OOM.
+  // Pull the full key set at once. We tried kv.scan() but Upstash's cursor
+  // returns 0 prematurely (terminates iteration after the first 200 records
+  // when total is 3,392). kv.keys('drip:*') is fine at this scale and avoids
+  // the cursor bug — it's a single network call returning the full list.
   const summary = { scanned: 0, sent: 0, skipped: 0, complete: 0, errors: 0, byDay: {} };
   const errors = [];
-  let cursor = 0;
-  do {
-    const [nextCursor, keys] = await kv.scan(cursor, { match: 'drip:*', count: 200 });
-    cursor = Number(nextCursor);
+  const allKeys = await kv.keys('drip:*');
+  console.log(`drip-cron: scanning ${allKeys.length} subscriber keys`);
 
-    for (const key of keys) {
-      summary.scanned++;
-      try {
-        const sub = await kv.get(key);
-        if (!sub) continue;
-        if (sub.unsubscribed || sub.paused || sub.complete) {
-          summary.skipped++;
-          continue;
-        }
-
-        const day = computeDay(sub.enrolledAt);
-        if (day == null || day < 1) {
-          summary.skipped++;
-          continue;
-        }
-
-        // Day 8+ requires opt-in flag.
-        if (day > FINAL_ONBOARDING_DAY && !sub.optedIn) {
-          summary.skipped++;
-          continue;
-        }
-
-        // Past Day 30 → mark complete.
-        if (day > 30) {
-          await kv.set(key, { ...sub, complete: true });
-          summary.complete++;
-          continue;
-        }
-
-        // Days 8+ — only fire if a content entry exists in the DAYS map.
-        // (Day 8 added 2026-05-09 with the 1:1 application CTA. Days 9-30
-        // are still placeholder; will be filled in as the back-half drip is
-        // authored.)
-        if (!DAYS[day]) {
-          summary.skipped++;
-          continue;
-        }
-
-        // Don't double-send: lastSentDay tracks the highest day already delivered.
-        if (sub.lastSentDay && sub.lastSentDay >= day) {
-          summary.skipped++;
-          continue;
-        }
-
-        // Render the email.
-        const ctx = {
-          email: sub.email,
-          firstName: sub.firstName,
-          optInToken: day === 7 ? signOptInToken(sub.email) : undefined,
-        };
-        const payload = renderEmail(day, ctx);
-
-        if (DRY_RUN) {
-          console.log(`[DRY] would send Day ${day} to ${sub.email} — subject: ${payload.subject}`);
-        } else {
-          await resend.emails.send({ ...payload, to: sub.email });
-        }
-
-        await kv.set(key, {
-          ...sub,
-          lastSentDay: day,
-          lastSentAt: new Date().toISOString(),
-        });
-
-        summary.sent++;
-        summary.byDay[day] = (summary.byDay[day] || 0) + 1;
-
-        // Rate-limit: Resend free tier is 10 req/s.
-        await new Promise((r) => setTimeout(r, RATE_LIMIT_DELAY_MS));
-      } catch (err) {
-        summary.errors++;
-        errors.push({ key, message: err.message });
-        console.error(`drip-cron error for ${key}:`, err.message);
+  for (const key of allKeys) {
+    summary.scanned++;
+    try {
+      const sub = await kv.get(key);
+      if (!sub) continue;
+      if (sub.unsubscribed || sub.paused || sub.complete) {
+        summary.skipped++;
+        continue;
       }
+
+      const day = computeDay(sub.enrolledAt);
+      if (day == null || day < 1) {
+        summary.skipped++;
+        continue;
+      }
+
+      // Day 8+ requires opt-in flag.
+      if (day > FINAL_ONBOARDING_DAY && !sub.optedIn) {
+        summary.skipped++;
+        continue;
+      }
+
+      // Past Day 30 → mark complete.
+      if (day > 30) {
+        await kv.set(key, { ...sub, complete: true });
+        summary.complete++;
+        continue;
+      }
+
+      // Days 8+ — only fire if a content entry exists in the DAYS map.
+      // (Day 8 added 2026-05-09 with the 1:1 application CTA. Days 9-30
+      // are still placeholder; will be filled in as the back-half drip is
+      // authored.)
+      if (!DAYS[day]) {
+        summary.skipped++;
+        continue;
+      }
+
+      // Don't double-send: lastSentDay tracks the highest day already delivered.
+      if (sub.lastSentDay && sub.lastSentDay >= day) {
+        summary.skipped++;
+        continue;
+      }
+
+      // Render the email.
+      const ctx = {
+        email: sub.email,
+        firstName: sub.firstName,
+        optInToken: day === 7 ? signOptInToken(sub.email) : undefined,
+      };
+      const payload = renderEmail(day, ctx);
+
+      if (DRY_RUN) {
+        console.log(`[DRY] would send Day ${day} to ${sub.email} — subject: ${payload.subject}`);
+      } else {
+        await resend.emails.send({ ...payload, to: sub.email });
+      }
+
+      await kv.set(key, {
+        ...sub,
+        lastSentDay: day,
+        lastSentAt: new Date().toISOString(),
+      });
+
+      summary.sent++;
+      summary.byDay[day] = (summary.byDay[day] || 0) + 1;
+
+      // Rate-limit: Resend free tier is 10 req/s.
+      await new Promise((r) => setTimeout(r, RATE_LIMIT_DELAY_MS));
+    } catch (err) {
+      summary.errors++;
+      errors.push({ key, message: err.message });
+      console.error(`drip-cron error for ${key}:`, err.message);
     }
-  } while (cursor !== 0);
+  }
 
   console.log('drip-cron summary:', JSON.stringify(summary));
   return res.status(200).json({
