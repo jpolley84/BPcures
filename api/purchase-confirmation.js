@@ -100,10 +100,13 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w',
-    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + the full BP Reset Book ($97)',
-    upgradeDesc: 'VIP enrollment for THIS cohort closes Friday May 14 at midnight. After that the next cohort opens June 1 at $147. Total value $777. Your price (this cohort only) $97. Triple guarantee.',
-    upgradeCta: 'Upgrade to VIP for $97 →',
+    // 2026-05-09 reprice: $97 tier is now the 30-Day BP Triangle Challenge
+    // + Skool, replacing the prior VIP-only flavor. Link points to new
+    // canonical $97 plink_1TVOTWHseZnO3rRZIiqWNlXa.
+    upgradeUrl: 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H',
+    upgradeLabel: 'Upgrade to the 30-Day BP Triangle Challenge ($97)',
+    upgradeDesc: 'Adds the full BraveWorks bonus stack (every cortisol and blood sugar protocol PDF), 30 days of daily email walkthrough, AND access to the "How to Be Your Own Doctor" Skool community with weekly group coaching. Same triple guarantee. One-time price.',
+    upgradeCta: 'Upgrade to BP Triangle Challenge ($97) →',
   },
   // Order-bump tier: $47 BP Reset Kit + $12 Pressure Triangle Stack = $59 session.
   // Delivers the full Kit PLUS the two NEW protocols the bump adds (Cortisol Cure
@@ -121,33 +124,61 @@ export const TIER_CONFIG = {
     ],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w',
-    upgradeLabel: 'Upgrade to VIP — add weekly group coaching + the full BP Reset Book ($97)',
-    upgradeDesc: 'You have the Kit + every Pressure Triangle protocol. The next Cohort kicks off in 2 weeks — VIP adds 4 weeks of Monday 10pm ET coaching where Joel walks through your numbers live. 50 seats / cohort.',
-    upgradeCta: 'Upgrade to VIP for $97 →',
+    // 2026-05-09 reprice: $97 tier = BP Triangle Challenge + Skool.
+    upgradeUrl: 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H',
+    upgradeLabel: 'Upgrade to the 30-Day BP Triangle Challenge ($97)',
+    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The $97 Challenge layer adds 30 days of daily email walkthrough + the "How to Be Your Own Doctor" Skool community + weekly group coaching in Skool. Same triple guarantee.',
+    upgradeCta: 'Upgrade to BP Triangle Challenge ($97) →',
   },
+  // 2026-05-09 RESTRUCTURE: vip slot ($97 = 9700) is now the canonical
+  // "30-Day BP Triangle Challenge + Skool" tier. Replaces the prior
+  // standalone VIP product. Delivers the FULL BraveWorks bonus stack
+  // (every BP/cortisol/BS PDF) + Skool access + weekly group coaching.
+  // Upgrade path: $1,297 1:1 application at /1on1 (Apply, no direct buy).
   vip: {
-    product: '30-Day Reset Challenge — VIP',
-    subject: 'You\'re in, VIP — your kit + Mondays 10pm EST coaching schedule inside',
-    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.vip_book, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    product: '30-Day BP Triangle Challenge + Skool',
+    subject: 'You\'re in — your BP Triangle Challenge + full bonus stack inside',
+    downloads: [
+      DOWNLOADS.bp_kit_zip,
+      DOWNLOADS.vip_book,
+      DOWNLOADS.bp_day1,
+      DOWNLOADS.cookbook,
+      DOWNLOADS.cortisol_challenge,
+      DOWNLOADS.blood_sugar_challenge,
+      DOWNLOADS.overmedicated_boomers,
+    ],
     includesCoaching: true,
     includesChallenge: true,
-    coachingFlavor: 'vip', // distinguishes from Premium tier 3
-    upgradeUrl: 'https://buy.stripe.com/aFa14n2ZJ7TM63h8VrfnO0G',
-    upgradeLabel: 'Upgrade to Premium — add 5 bonuses worth $1,385 ($300 more)',
-    upgradeDesc: 'Premium adds: (1) RestoreHER virtual event ticket June 24-25 — Joel buys it for you within 48h ($297 value), (2) Personal Loom protocol review — Joel walks through YOUR numbers on camera ($497 value), (3) The 90-Day Doctor Conversation Pack ($197), (4) Family Protocol Add-On ($97), (5) Lifetime "How to Be Your Own Doctor" Skool Premium tier ($297). 50 seats only. When they\'re gone they\'re gone.',
-    upgradeCta: 'Upgrade to Premium for $397 →',
+    coachingFlavor: 'vip', // routes to Skool community copy in email body
+    upgradeUrl: `${SITE_URL}/1on1`,
+    upgradeLabel: 'Want 1:1 with Joel? Apply for the BP Triangle Premium ($1,297, application-gated)',
+    upgradeDesc: 'For people on 4+ medications who need direct deprescribing support — 90 days of 1:1 work with Joel, weekly check-ins, full medication picture review, plan designed with your prescriber. Application-gated; Joel reads each one personally.',
+    upgradeCta: 'Apply for 1:1 with Joel →',
   },
+  // DEPRECATED 2026-05-09: $397 / $297 Premium tiers retired in funnel
+  // restructure (canonical-ladder.md). Stripe links deactivated. Kept in
+  // TIER_CONFIG only for historical webhook replay against legacy charges.
+  // No new sales should hit this — if AMOUNT_TO_TIER 29700/39700 fires,
+  // it's an in-flight buyer who pre-paid before deactivation.
   3: {
-    product: 'Premium Protocol + 30-Day Challenge',
-    subject: 'Your 30-Day Challenge is confirmed — Barbara O\'Neill LIVE + group coaching + downloads inside',
-    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.vip_book, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    product: 'Premium Protocol + 30-Day Challenge (legacy)',
+    subject: 'Your 30-Day Challenge is confirmed — downloads + bonus stack inside',
+    downloads: [
+      DOWNLOADS.bp_kit_zip,
+      DOWNLOADS.vip_book,
+      DOWNLOADS.bp_day1,
+      DOWNLOADS.cookbook,
+      DOWNLOADS.cortisol_challenge,
+      DOWNLOADS.blood_sugar_challenge,
+      DOWNLOADS.overmedicated_boomers,
+    ],
     includesCoaching: true,
     includesChallenge: true,
     coachingFlavor: 'premium',
-    upgradeUrl: null,
-    upgradeLabel: null,
-    upgradeDesc: null,
+    upgradeUrl: `${SITE_URL}/1on1`,
+    upgradeLabel: 'Want 1:1 with Joel? Apply for the BP Triangle Premium 1:1',
+    upgradeDesc: 'Application-gated 90-day 1:1 program. $1,297 single-pay. Apply at bpquiz.com/1on1.',
+    upgradeCta: 'Apply for 1:1 →',
   },
 };
 
@@ -368,9 +399,9 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
         </p>
         <p style="font-size:14px;line-height:1.6;color:#5A5A5A;margin:0 0 12px;">
           ${tier === 3
-            ? 'You\'re in the 30-Day Challenge — here\'s everything you have. Your Barbara O\'Neill LIVE ticket confirmation arrives within 48 hours. Your downloads are ready whenever you are.'
+            ? 'You\'re in the 30-Day Challenge — here\'s your full BraveWorks library. The 30-day daily email walk-through starts tomorrow, and your Skool community access is live now. Weekly group coaching happens in Skool — schedule posted there.'
             : tier === 'vip'
-            ? 'You\'re VIP. Your kit is ready below. You\'re automatically enrolled in the 30-Day Protocol Challenge AND the weekly Monday group coaching calls. The Zoom link arrives in a separate email before each session.'
+            ? 'You\'re in. Your BP Triangle Challenge starts now. Your downloads below are the FULL BraveWorks bonus stack — BP, cortisol, AND blood sugar protocols. The 30-day daily email walk-through begins tomorrow. Your "How to Be Your Own Doctor" Skool community access is live right now — weekly group coaching is posted in Skool.'
             : tier === 1
             ? 'Your protocol kit is ready below. You\'re also automatically enrolled in the 30-Day Protocol Challenge — daily emails start tomorrow. And your Skool community access is live right now.'
             : 'Your downloads are ready. Start with Day 1 — it\'s the easiest one, and most people feel it within 72 hours.'
