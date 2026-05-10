@@ -147,9 +147,14 @@ export const TIER_CONFIG = {
       DOWNLOADS.blood_sugar_challenge,
       DOWNLOADS.overmedicated_boomers,
     ],
-    includesCoaching: true,
+    // Coaching for $97 BP Triangle Challenge happens entirely in Skool —
+    // the challengeBlock above contains a 2-step Skool join + DM-Joel-
+    // for-VIP-access flow. No separate Mondays-Zoom coaching panel; that
+    // was the prior VIP product. Setting includesCoaching:false to skip
+    // the redundant coaching block.
+    includesCoaching: false,
     includesChallenge: true,
-    coachingFlavor: 'vip', // routes to Skool community copy in email body
+    coachingFlavor: 'vip',
     upgradeUrl: `${SITE_URL}/1on1`,
     upgradeLabel: 'Want 1:1 with Joel? Apply for the BP Triangle Premium ($1,297, application-gated)',
     upgradeDesc: 'For people on 4+ medications who need direct deprescribing support — 90 days of 1:1 work with Joel, weekly check-ins, full medication picture review, plan designed with your prescriber. Application-gated; Joel reads each one personally.',
@@ -272,13 +277,16 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
           </div>
 
           <div>
-            <div style="font-family:Georgia,serif;font-size:18px;color:#FFFFFF;margin-bottom:6px;font-weight:500;">Your Skool community is live</div>
-            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0 0 10px;">
-              Join "How to Be Your Own Doctor" — ask Joel anything, post your progress, and connect with people on the same path.
+            <div style="font-family:Georgia,serif;font-size:18px;color:#FFFFFF;margin-bottom:10px;font-weight:500;">Your Skool community access — 2 steps</div>
+            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0 0 12px;">
+              <strong style="color:#FFFFFF;">Step 1.</strong> Join &ldquo;How to Be Your Own Doctor&rdquo; — Joel&rsquo;s free Skool community. Ask anything, post progress, and connect with people on the same path.
             </p>
             <a href="${SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#4A6741;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
               Join the Skool community &rarr;
             </a>
+            <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:16px 0 0;border-top:1px solid rgba(255,255,255,0.18);padding-top:14px;">
+              <strong style="color:#FFFFFF;">Step 2.</strong> Once you&rsquo;re in, send Joel a DM inside Skool. He grants <strong style="color:#FFFFFF;">VIP coaching access</strong> personally to BP Triangle Challenge buyers — that&rsquo;s where the weekly group coaching happens.
+            </p>
           </div>
 
           <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.15);">
