@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check, Star, Shield, Clock, Users, Mail, Play, BookOpen, Video, MessageCircle, Zap } from 'lucide-react';
 
-const VIP_LINK = 'https://buy.stripe.com/14A28r0RBgqi77l0oVfnO0w';
-const PREMIUM_LINK = 'https://buy.stripe.com/3cI5kDdEn1voajx6NjfnO0B';
+// 2026-05-10: both prior links ($397 VIP + $397 Premium) were deactivated in
+// the Phase A Stripe cleanup — clicks were 404'ing. Repoint to the active
+// $97 BP Triangle Challenge so the /challenge page stops bleeding clicks.
+const VIP_LINK = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
+const PREMIUM_LINK = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
 
 const fade = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } };
 
