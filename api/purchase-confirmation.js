@@ -520,7 +520,14 @@ export default async function handler(req, res) {
     const session = event.data.object;
     const email = session.customer_details?.email;
     const name = session.customer_details?.name;
-    const tier = AMOUNT_TO_TIER[session.amount_total];
+
+    // 2026-05-10 fix: route by amount_subtotal (pre-discount) so promotion-code
+    // buyers still hit the right tier. Previously used amount_total which is
+    // post-discount — SORRY30 / JOEL25 redeemers would pay but the webhook
+    // would silently drop them (no kit email, no bonus PDFs). Fall back to
+    // amount_total for sessions where amount_subtotal isn't populated.
+    const routeAmount = session.amount_subtotal ?? session.amount_total;
+    const tier = AMOUNT_TO_TIER[routeAmount];
 
     if (!email) {
       console.error('No customer email in session', session.id);
@@ -529,7 +536,7 @@ export default async function handler(req, res) {
 
     if (!tier) {
       // Amount doesn't match a known tier — not a BraveWorks product or different amount
-      console.log('purchase-confirmation: no tier match for amount_total', session.amount_total, 'session', session.id);
+      console.log('purchase-confirmation: no tier match for routeAmount', routeAmount, '(subtotal=' + session.amount_subtotal + ', total=' + session.amount_total + ')', 'session', session.id);
       return res.status(200).json({ received: true });
     }
 

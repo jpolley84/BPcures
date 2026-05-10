@@ -427,7 +427,13 @@ async function processCheckoutCompleted(event) {
   const session = event.data.object;
   const customerEmail = session.customer_details?.email;
   const customerName = session.customer_details?.name;
-  const amountCents = session.amount_total;
+  // 2026-05-10: route by amount_subtotal (pre-discount) so promotion-code
+  // buyers still resolve to the right tier. amount_total is post-discount —
+  // a SORRY30 buyer on $17 sends amount_total=1190 which maps to no tier and
+  // the buyer pays but gets nothing. Subtotal stays at the canonical pre-
+  // discount amount (1700 / 4700 / 9700 etc.) which IS in AMOUNT_TO_TIER.
+  // Fall back to amount_total only if subtotal is missing.
+  const amountCents = session.amount_subtotal ?? session.amount_total;
 
   if (!customerEmail) {
     console.error('stripe-webhook: no customer_details.email on session', session.id);
