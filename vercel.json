@@ -2,5 +2,15 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!assets|downloads|headshot|favicon).*)", "destination": "/index.html" }
+  ],
+  "crons": [
+    {
+      "path": "/api/drip-cron",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/postiz-cron",
+      "schedule": "0 13 * * *"
+    }
   ]
 }

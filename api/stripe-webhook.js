@@ -24,6 +24,7 @@
 
 import { Resend } from 'resend';
 import Stripe from 'stripe';
+import { kv } from '@vercel/kv';
 
 import {
   sendPurchaseConfirmation,
@@ -720,6 +721,27 @@ export default async function handler(req, res) {
   // other types with 200 so Stripe doesn't retry.
   if (event.type !== 'checkout.session.completed') {
     return res.status(200).json({ ok: true, ignored: event.type });
+  }
+
+  // Idempotency check — Stripe may retry a webhook (network blips, our 5xx
+  // response, dashboard "Resend" clicks). Stripe event IDs are unique per
+  // delivery, so we record each handled ID with a 24-hour TTL in KV. Same ID
+  // arriving twice → we return 200 immediately without resending the kit email.
+  // This is what was burning sender reputation: jessalady@gmail.com and
+  // dqualls1117@yahoo.com each got Day 1 emails twice within 3 minutes.
+  try {
+    const kvKey = `stripe-evt:${event.id}`;
+    const seen = await kv.get(kvKey);
+    if (seen) {
+      console.log(`stripe-webhook: duplicate event ${event.id} — already processed at ${seen.processedAt}, skipping`);
+      return res.status(200).json({ ok: true, deduplicated: true, eventId: event.id, originalProcessedAt: seen.processedAt });
+    }
+    // Set FIRST (before processing) so concurrent retries don't race past us.
+    await kv.set(kvKey, { processedAt: new Date().toISOString() }, { ex: 86400 });
+  } catch (err) {
+    // KV failure shouldn't block — log and continue. We'd rather risk a rare
+    // duplicate send than fail the webhook entirely (which Stripe would retry).
+    console.warn('stripe-webhook: KV idempotency check failed (continuing):', err.message);
   }
 
   try {
