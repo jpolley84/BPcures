@@ -13,6 +13,7 @@ import SuccessPage from './pages/SuccessPage';
 import UpsellBpResetKitPage from './pages/UpsellBpResetKitPage';
 import DownloadsPage from './pages/DownloadsPage';
 import OpsDashboardPage from './pages/OpsDashboardPage';
+import WaitlistApplicationPage from './pages/WaitlistApplicationPage';
 
 function SiteLayout({ children }) {
   return (
@@ -60,6 +61,10 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/upsell-bp-reset-kit" element={<UpsellBpResetKitPage />} />
         <Route path="/downloads" element={<DownloadsPage />} />
+
+        {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}
+        <Route path="/1on1" element={<WaitlistApplicationPage />} />
+        <Route path="/apply" element={<Navigate to="/1on1" replace />} />
 
         {/* Operations dashboard — passcode-gated, standalone */}
         <Route path="/ops" element={<OpsDashboardPage />} />
