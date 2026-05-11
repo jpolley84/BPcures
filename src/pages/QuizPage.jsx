@@ -212,9 +212,13 @@ function Hero({ products }) {
           <QuizModule products={products} />
         </div>
 
-        {/* Pulse line — decorative ECG SVG */}
+        {/* 2026-05-10: Replaced decorative PulseLine ECG with the BP Triangle.
+            Chris Do panel note — Triangle is the most ownable visual we have,
+            and it was previously buried on /challenge. Now it lives above-fold
+            on the landing page, reinforcing the hero headline. PulseLine
+            component preserved at the bottom of this file in case we restore. */}
         <div style={{ marginTop: 'clamp(3rem, 6vw, 5rem)' }}>
-          <PulseLine />
+          <TriangleVisual />
         </div>
       </div>
     </section>
@@ -856,7 +860,91 @@ const inputStyle = {
 };
 
 /* ------------------------------------------------------------------
-   Pulse line — decorative ECG SVG (animates on load)
+   Triangle visual — the BP Triangle Method™ above-fold marker
+   ------------------------------------------------------------------ */
+
+function TriangleVisual() {
+  return (
+    <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
+      <svg
+        viewBox="0 0 600 320"
+        style={{ width: '100%', maxWidth: 520, height: 'auto', display: 'block', margin: '0 auto' }}
+        aria-label="The BP Triangle — pressure, stress, sugar"
+      >
+        {/* Three sides of the triangle */}
+        <motion.line
+          x1="300" y1="55" x2="90" y2="245"
+          stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <motion.line
+          x1="300" y1="55" x2="510" y2="245"
+          stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+        />
+        <motion.line
+          x1="90" y1="245" x2="510" y2="245"
+          stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        {/* Three corner dots */}
+        <motion.circle cx="300" cy="55" r="7" fill="var(--ink)"
+          initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }} />
+        <motion.circle cx="90" cy="245" r="7" fill="var(--ink)"
+          initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.65, ease: [0.22, 1, 0.36, 1] }} />
+        <motion.circle cx="510" cy="245" r="7" fill="var(--ink)"
+          initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.8, ease: [0.22, 1, 0.36, 1] }} />
+
+        {/* Corner labels — Fraunces serif italics for editorial feel */}
+        <motion.text
+          x="300" y="35" textAnchor="middle"
+          style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
+          initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.55 }}
+        >Pressure</motion.text>
+        <motion.text
+          x="62" y="280" textAnchor="middle"
+          style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
+          initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >Stress</motion.text>
+        <motion.text
+          x="540" y="280" textAnchor="middle"
+          style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
+          initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.85 }}
+        >Sugar</motion.text>
+
+        {/* Center caption inside the triangle */}
+        <motion.text
+          x="300" y="175" textAnchor="middle"
+          style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', fill: 'var(--muted)', fontWeight: 500 }}
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 1.1 }}
+        >One Loop</motion.text>
+      </svg>
+      <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', fontStyle: 'italic', marginTop: '1rem', maxWidth: 480, marginLeft: 'auto', marginRight: 'auto' }}>
+        3 corners feed each other. Calm one and the other two follow.
+      </p>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Pulse line — decorative ECG SVG (preserved for future use)
    ------------------------------------------------------------------ */
 
 function PulseLine() {
@@ -981,44 +1069,51 @@ function NursesNote() {
    ------------------------------------------------------------------ */
 
 function HowItWorks() {
-  // Rebuilt 2026-05-10: HowItWorks is now The Path to BP Freedom — the
-  // consumer-facing 9-phase arc from the BP Triangle Method™ brand bible.
-  // Soft verbs, no negatives, concrete week-by-week pacing.
-  const steps = [
-    { n: '01', t: 'Believe', d: 'Your Triangle is real. So is your way out.' },
-    { n: '02', t: 'Notice', d: 'Three corners. Three stories. Yours mapped on day one.' },
-    { n: '03', t: 'Lighten', d: 'Soft swaps. Kind cuts. The 3-food trade.' },
-    { n: '04', t: 'Nourish', d: "Joel's plate. Joel's herbs. Joel's water rule." },
-    { n: '05', t: 'Steady', d: 'The numbers start coming down. Week 2 to week 4.' },
-    { n: '06', t: 'Talk', d: 'Bring your doctor your data. The 9-line script.' },
-    { n: '07', t: 'Pills down', d: "With your doctor's blessing. Gentle, slow, safe." },
-    { n: '08', t: 'Herbs down', d: 'Your body holds steady on its own now.' },
-    { n: '09', t: 'Free', d: 'Bottle in the drawer. Cuff in the closet. Life back.' },
+  // 2026-05-10 v2: Joel said the 9-step Path felt like too much for the
+  // landing page. Stick to Triangle on the site; full Path lives in the
+  // email drip. This section now teaches the Triangle — three corners,
+  // what each one does, what calms it — in 4th-grade plain words.
+  const corners = [
+    {
+      n: '01',
+      t: 'Pressure',
+      d: 'The number on the cuff. Calmed by water, the walk, hibiscus tea, and the right form of magnesium.',
+    },
+    {
+      n: '02',
+      t: 'Stress',
+      d: 'The wired-tired hum. Calmed by morning sunlight, hours before midnight, and 25 things to be grateful for.',
+    },
+    {
+      n: '03',
+      t: 'Sugar',
+      d: 'The spike and crash that pulls the cuff up. Calmed by two real meals, no snacks between, and a 10-minute walk after each.',
+    },
   ];
 
   return (
     <section className="section surface-paper">
       <div className="shell">
         <div className="section-label">
-          <span className="num">03 · The Path</span>
+          <span className="num">03 · The Triangle</span>
           <span className="line" />
         </div>
         <h2 className="display-m" style={{ maxWidth: '20ch', margin: '0 0 1rem' }}>
-          The Path to BP <em className="ital-display" style={{ color: 'var(--clay)' }}>Freedom.</em>
+          Three corners. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
         </h2>
         <p className="lede" style={{ maxWidth: '52ch', margin: '0 0 clamp(2.5rem, 5vw, 4rem)' }}>
-          Nine steps. Six months. One Triangle. The same road 1,247 women are walking right now.
+          Your blood pressure leans on two other corners. Calm all three at once and your numbers come home. 1,247 women are on the path right now.
         </p>
 
         <ul className="ruled-list">
-          {steps.map(s => (
-            <li key={s.n}>
-              <span className="num">{s.n}</span>
+          {corners.map(c => (
+            <li key={c.n}>
+              <span className="num">{c.n}</span>
               <div>
                 <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 500, margin: '0 0 0.35rem', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                  {s.t}
+                  {c.t}
                 </h3>
-                <p style={{ color: 'var(--muted)', margin: 0, maxWidth: '56ch' }}>{s.d}</p>
+                <p style={{ color: 'var(--muted)', margin: 0, maxWidth: '56ch' }}>{c.d}</p>
               </div>
             </li>
           ))}
