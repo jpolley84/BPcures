@@ -37,24 +37,24 @@ function HeroSection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              Free 30-Day Challenge · Starts Friday May 1 — 8 AM ET
+              The BP Triangle Method™ · By Joel Polley, RN
             </span>
           </div>
 
           <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-5)', fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.03em', margin: '0 0 1.25rem', fontVariationSettings: '"SOFT" 50, "opsz" 120' }}>
-            The Pressure <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)' }}>Triangle</em>
+            The BP <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)' }}>Triangle.</em>
           </h1>
 
           <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.8)', margin: '0 0 2rem', maxWidth: '52ch' }}>
-            Blood pressure. Cortisol. Blood sugar. They're not three problems — they're three corners of the same loop. Break the loop in 30 days.
+            Pressure. Stress. Sugar. Three corners. One loop. Calm the loop and your numbers come home — your doctor signs off — the pill bottle goes in the drawer. 30 days starts your shift. The path runs 6 months to free.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <a href="#free" className="btn btn-lg" style={{ background: 'var(--clay)', color: 'var(--cream)', padding: '0.95rem 1.5rem', borderRadius: 12, fontWeight: 600, fontSize: '1rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              Join Free <ArrowRight size={16} />
+              Send my free map <ArrowRight size={16} />
             </a>
             <a href="#vip" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, border: '1px solid rgba(251,248,241,0.25)', color: 'var(--cream)', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              See VIP details <ArrowRight size={14} />
+              Walk it with Joel <ArrowRight size={14} />
             </a>
           </div>
 
@@ -74,32 +74,32 @@ function TriangleExplainer() {
     <section id="triangle" style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
       <div className="shell" style={{ maxWidth: 800 }}>
         <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The science</span>
+          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The Triangle</span>
           <h2 className="display-m" style={{ margin: '0 0 1.5rem', maxWidth: '20ch' }}>
-            Why one-thing fixes <em className="ital-display" style={{ color: 'var(--clay)' }}>don't work.</em>
+            Three corners. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
           </h2>
 
           <div style={{ display: 'grid', gap: '1.25rem', marginBottom: '2rem' }}>
             <TriangleCorner
               icon="🔺"
-              title="Cortisol"
-              text="Tightens your vessels and holds onto sodium. Your body thinks it's in danger — 24/7."
+              title="Stress"
+              text="Your stress hormone tightens your vessels and holds on to sodium. Your body acts like it is in danger all day long."
             />
             <TriangleCorner
               icon="🔺"
-              title="Blood Sugar"
-              text="Inflames your artery walls and triggers more cortisol. The spike-crash cycle never stops."
+              title="Sugar"
+              text="Spikes inflame your artery walls and feed your stress hormone. The spike-crash loop runs all day."
             />
             <TriangleCorner
               icon="🔺"
-              title="Blood Pressure"
-              text="Damages your endothelium and kills nitric oxide production — which makes the first two worse."
+              title="Pressure"
+              text="High pressure thins your vessel lining, which makes the other two corners worse the next day."
             />
           </div>
 
           <div style={{ background: 'var(--paper-warm)', borderRadius: 16, padding: 'clamp(1.5rem, 3vw, 2rem)', border: '1px solid var(--line)' }}>
             <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', lineHeight: 1.5, margin: 0, color: 'var(--ink)', fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
-              Each corner feeds the next two. You can't pull on one corner of a triangle without the other two pulling back. <strong style={{ color: 'var(--clay)' }}>For 30 days, we're breaking the loop.</strong>
+              Each corner feeds the next two. Pull on one and the other two pull back. <strong style={{ color: 'var(--clay)' }}>30 days softens all three at once.</strong>
             </p>
           </div>
         </motion.div>
@@ -146,15 +146,15 @@ function FreeTier() {
         <motion.div {...fade}>
           <div style={{ background: 'var(--cream)', borderRadius: 20, border: '2px solid var(--line)', padding: 'clamp(1.75rem, 4vw, 2.5rem)', position: 'relative' }}>
             <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--sage)', fontWeight: 600, marginBottom: '0.75rem' }}>
-              🆓 The Free Challenge
+              🆓 The Free 30-Day Map
             </div>
 
             <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-3)', fontWeight: 400, lineHeight: 1.15, margin: '0 0 1rem', letterSpacing: '-0.02em' }}>
-              30 days. 30 emails. The full protocol.
+              30 days. 30 short emails. The full map.
             </h3>
 
             <p style={{ color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 1.5rem', maxWidth: '52ch' }}>
-              The same protocol I use with the ICU patients I've watched walk in on five medications and walk out on two — sometimes one. No card. No upsell wall. Just enroll.
+              The same map Joel hands his own family — the one he has watched ICU patients walk in on 5 pills and walk out on 2, sometimes 1. Free. One short email at 6 AM, for 30 mornings.
             </p>
 
             {status === 'done' ? (
@@ -170,13 +170,13 @@ function FreeTier() {
                 <input type="text" placeholder="First name" value={name} onChange={e => setName(e.target.value)} style={{ padding: '0.85rem 1rem', border: '1px solid var(--line)', borderRadius: 10, background: 'var(--paper)', fontSize: '0.95rem', flex: '0 0 140px' }} />
                 <input type="email" required placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.85rem 1rem', border: '1px solid var(--line)', borderRadius: 10, background: 'var(--paper)', fontSize: '0.95rem', flex: '1 1 200px', minWidth: 0 }} />
                 <button type="submit" disabled={status === 'sending'} style={{ padding: '0.85rem 1.5rem', background: 'var(--sage)', color: 'var(--cream)', borderRadius: 10, fontWeight: 600, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', border: 'none', cursor: 'pointer' }}>
-                  {status === 'sending' ? 'Joining…' : 'Join Free'} <ArrowRight size={16} />
+                  {status === 'sending' ? 'Sending…' : 'Send my map'} <ArrowRight size={16} />
                 </button>
               </form>
             )}
 
             <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '0.75rem' }}>
-              Free. No card required. Unsubscribe anytime.
+              Free. Unsubscribe anytime.
             </p>
           </div>
         </motion.div>
@@ -194,7 +194,7 @@ function VIPTier() {
           <div style={{ background: 'var(--ink)', borderRadius: 22, padding: 'clamp(2rem, 4vw, 3rem)', color: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
 
             <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--clay-soft)', fontWeight: 600, marginBottom: '0.75rem' }}>
-              ⭐ VIP · Pre-Launch Pricing
+              ⭐ The 30-Day Live Map · Pre-Launch Price
             </div>
 
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
@@ -204,23 +204,23 @@ function VIPTier() {
             </div>
 
             <p style={{ fontSize: '0.88rem', color: 'rgba(251,248,241,0.5)', marginBottom: '1.5rem' }}>
-              $3.23/day for 30 days. Less than your prescription co-pay.
+              $3.23 a day for 30 days. Less than one pill co-pay.
             </p>
 
             <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 400, lineHeight: 1.2, margin: '0 0 0.5rem', fontVariationSettings: '"SOFT" 60, "opsz" 72' }}>
-              For the women who want the deeper room.
+              For the woman who wants Joel on the call.
             </h3>
             <p style={{ color: 'rgba(251,248,241,0.75)', lineHeight: 1.6, margin: '0 0 1.75rem' }}>
-              Everything in the free challenge, plus live coaching with Joel every Monday.
+              Everything in the free map, plus Joel live with you every Monday. 50 seats per cohort.
             </p>
 
             <div style={{ display: 'grid', gap: '0.85rem', marginBottom: '2rem' }}>
               <FeatureRow icon={<BookOpen size={16} />} text="The full Be There in 30 book — 560 pages, every chapter expanded" />
               <FeatureRow icon={<BookOpen size={16} />} text="3 supporting books: BP Cure + Overmedicated Boomer + Cook For Life" />
-              <FeatureRow icon={<Play size={16} />} text="Mondays at 10 PM EST live with Joel — coaching, troubleshooting, your questions answered" />
+              <FeatureRow icon={<Play size={16} />} text="Mondays 10 PM ET live with Joel — your numbers, your questions, his eyes on the data" />
               <FeatureRow icon={<Video size={16} />} text="Lifetime replays of every call" />
-              <FeatureRow icon={<Users size={16} />} text="Skool VIP room — where the women who finished before you share what worked" />
-              <FeatureRow icon={<Zap size={16} />} text="4 fast-action bonuses: 7-Day BP Drop Protocol, Pressure Triangle Tracker, Joel's Stall Cheat Sheet, 30-Day Future Self Journal" />
+              <FeatureRow icon={<Users size={16} />} text="The Skool room — where the women already ahead share what worked" />
+              <FeatureRow icon={<Zap size={16} />} text="4 fast-start bonuses: 7-Day BP Drop Map · Triangle Tracker · Joel's Stall Cheat Sheet · 30-Day Future Self Journal" />
             </div>
 
             <div style={{ background: 'rgba(251,248,241,0.06)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.75rem', border: '1px solid rgba(251,248,241,0.1)' }}>
@@ -231,11 +231,11 @@ function VIPTier() {
             </div>
 
             <a href={VIP_LINK} target="_top" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--clay)', color: 'var(--cream)', padding: '1rem 2rem', borderRadius: 12, fontWeight: 700, fontSize: '1.05rem', textDecoration: 'none', transition: 'transform 0.15s' }}>
-              Lock in VIP — $97 <ArrowRight size={16} />
+              Yes — Joel on Mondays ($97) <ArrowRight size={16} />
             </a>
 
             <p style={{ fontSize: '0.78rem', color: 'rgba(251,248,241,0.4)', marginTop: '0.75rem' }}>
-              Pre-launch price. Jumps to $147 Friday at 8 AM EST.
+              Pre-launch price. Next cohort opens at $147 on Friday 8 AM ET.
             </p>
           </div>
         </motion.div>
