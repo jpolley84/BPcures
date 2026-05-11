@@ -1,8 +1,8 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
-import ExitIntentPopup from './components/ExitIntentPopup';
-// ChallengeBanner — pulled from header 2026-05-10 at Joel's request. Component
-// preserved in src/components/ChallengeBanner.jsx if we want it back later.
+// ExitIntentPopup (free-cookbook lead-magnet) — pulled 2026-05-11 at Joel's
+// request. Component preserved in src/components/ExitIntentPopup.jsx if we
+// want it back. ChallengeBanner — also pulled (2026-05-10).
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizPage from './pages/QuizPage';
@@ -33,7 +33,6 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <ExitIntentPopup />
       <Routes>
         {/* Single-page funnel: quiz → email → results → checkout */}
         <Route path="/" element={<SiteLayout><QuizPage /></SiteLayout>} />

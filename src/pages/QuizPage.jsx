@@ -707,7 +707,6 @@ function QuizModule({ products }) {
                     { icon: '🩺', label: 'The 9-line doctor-visit script — word for word', sub: 'Most doctors say yes to step one before you finish the page.' },
                     { icon: '🍽️', label: 'Cook For Life — 45 plant-rich meals (bonus)', sub: 'Built around the 7 foods that quiet all three corners. Joel\'s grandmother\'s bean soup is page 22.' },
                     { icon: '👥', label: 'The Skool community — 1,247 women already walking', sub: 'Search "day 4" and read what is coming for you.' },
-                    { icon: '🗓️', label: 'The free 30-Day Map — one short email at 6 AM, for 30 mornings', sub: 'By morning 30 you will know your Triangle better than your doctor does.' },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
@@ -771,25 +770,49 @@ function QuizModule({ products }) {
                   </a>
                 )}
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
-                  Inbox in 60 seconds · 30-Day Map included · Skool community included
+                  Inbox in 60 seconds · Skool community included · One-time. No subscription.
                 </p>
               </div>
 
-              {/* Upsell — for buyers who want the complete BP Reset Kit (Tier 2, $47). */}
+              {/* Tier-2 upsell — only the $47 BP Reset Kit appears here. The
+                  $97 cohort offer was pulled from this page 2026-05-11 at
+                  Joel's request; it now surfaces in the post-purchase email
+                  instead. Two clean options on-page: $17 starter or $47
+                  complete kit. */}
               {upsell && upsell.slug !== recommended?.slug && (
                 <div style={{
                   marginTop: '0.5rem',
-                  padding: '1rem 1.15rem',
+                  padding: '1.15rem 1.15rem',
                   background: 'var(--paper-warm)',
                   border: '2px solid var(--ink)',
                   borderRadius: 12,
                   textAlign: 'left',
                 }}>
-                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.4rem' }}>
-                    Want the full map?
+                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>
+                    Or — the complete kit (most women pick this)
                   </div>
+                  <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.15rem', lineHeight: 1.25, margin: '0 0 0.5rem', fontWeight: 500 }}>
+                    Step up to <em style={{ color: 'var(--clay)' }}>{upsell.name}</em> — {upsell.price}
+                  </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: '0 0 0.6rem', lineHeight: 1.5 }}>
-                    Step up to the full <strong>{upsell.name}</strong> — the 30-Day Map, Full-Stack BP path, Graduation phase, every herb chart, and the daily tracker. The same map Joel hands his own family.
+                    Everything in the {recommended?.price ?? '$17'} starter — <strong>plus</strong>:
+                  </p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 0.85rem', display: 'grid', gap: '0.4rem' }}>
+                    {[
+                      'The Full-Stack BP path (weeks 2–4) — the protocol that locks the drop in',
+                      'BP Reset Graduation phase — the pill-conversation script for Day 30',
+                      'Joel\'s complete herb formulary with dosing ranges + med-interaction quick-ref',
+                      'Printable BP tracker + daily readings log (the one Linda used)',
+                      'All future updates to the BP Reset library — for life',
+                    ].map((line, i) => (
+                      <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink)' }}>
+                        <span style={{ color: 'var(--sage-deep)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0 0 0.75rem', fontStyle: 'italic', lineHeight: 1.45 }}>
+                    Why most women pick this: the starter gets you started. The kit gets you to a closed pill bottle.
                   </p>
                   <a
                     href={upsell.stripe_payment_link}
@@ -797,51 +820,19 @@ function QuizModule({ products }) {
                     rel="noopener"
                     style={{
                       display: 'inline-block',
-                      fontSize: '0.88rem',
+                      fontSize: '0.92rem',
                       color: 'var(--cream)',
                       background: 'var(--ink)',
                       fontWeight: 600,
                       textDecoration: 'none',
-                      padding: '0.6rem 1rem',
+                      padding: '0.7rem 1.15rem',
                       borderRadius: 8,
                     }}
                   >
-                    Send the full map instead — {upsell.price} →
+                    Send the complete kit — {upsell.price} →
                   </a>
                 </div>
               )}
-
-              {/* VIP upgrade row — Monday 10pm ET group coaching, capped 50 seats. */}
-              <div style={{
-                marginTop: '0.6rem',
-                padding: '1rem 1.15rem',
-                background: 'var(--sage-deep)',
-                color: 'var(--cream)',
-                borderRadius: 12,
-                textAlign: 'left',
-              }}>
-                <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay-soft)', fontWeight: 700, marginBottom: '0.4rem' }}>
-                  Want Joel on the call with you?
-                </div>
-                <p style={{ fontSize: '0.85rem', color: 'rgba(251,248,241,0.85)', margin: '0 0 0.6rem', lineHeight: 1.5 }}>
-                  <strong style={{ color: 'var(--cream)' }}>The 30-Day Live Map — $97.</strong> Everything in the Full Map plus <strong style={{ color: 'var(--cream)' }}>Mondays 10 PM ET live with Joel</strong> for 4 weeks. He walks through your numbers on the call. 50 seats per cohort. Next cohort opens at $147.
-                </p>
-                <a
-                  href="/challenge"
-                  style={{
-                    display: 'inline-block',
-                    fontSize: '0.88rem',
-                    color: 'var(--sage-deep)',
-                    background: 'var(--cream)',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    padding: '0.6rem 1rem',
-                    borderRadius: 8,
-                  }}
-                >
-                  Walk it with Joel — $97 →
-                </a>
-              </div>
             </div>
           )}
         </div>
