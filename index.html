@@ -16,6 +16,11 @@
     <meta name="twitter:description" content="Take the free 60-second health quiz to get your personalized blood pressure, cortisol, or blood sugar reset protocol. Created by Joel Polley, RN." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Promoted from @import in src/index.css 2026-05-11 so the browser
+         starts fetching Fraunces (above-fold display serif) during HTML
+         parse instead of waiting for CSS to download + parse + discover
+         the @import. Saves ~100-300ms on cold-cache LCP. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
   </head>
   <body>
     <div id="root"></div>

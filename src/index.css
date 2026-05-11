@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Google Fonts moved to <link rel="stylesheet"> in index.html 2026-05-11
+   so the browser fetches in parallel with CSS rather than serial after
+   discovering an @import. ~100-300ms LCP win on cold-cache visits. */
 @import "tailwindcss";
 
 /* ============================================================
