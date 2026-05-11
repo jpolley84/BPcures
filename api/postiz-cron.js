@@ -273,48 +273,143 @@ function adaptForPlatform(post, platform, dayNum) {
   return fullText.length > limit ? fullText.slice(0, limit - 1).trimEnd() + '…' : fullText;
 }
 
-// ─── Match a YouTube video to the best content-bank entry ─────────────
-// Repurpose.io fabricates descriptions, so we NEVER use video.description
-// for body text. Instead we score the bank's curated entries against the
-// video title and pick the closest topical match. If nothing scores well,
-// we fall through to today's day-N entry.
-function matchVideoToBankEntry(video, bank) {
-  if (!video) return null;
-  const titleLower = (video.title || '').toLowerCase();
-  let best = null;
-  let bestScore = 0;
-  for (const entry of (bank.posts || [])) {
-    let score = 0;
-    // Tag match = strong signal (each tag is hand-picked).
-    for (const tag of (entry.tags || [])) {
-      if (titleLower.includes(tag.toLowerCase())) score += 3;
-    }
-    // Topic-word overlap = weaker signal. Skip stopwords.
-    const STOPWORDS = new Set(['the', 'and', 'for', 'with', 'from', 'this', 'that', 'your']);
-    const topicWords = (entry.topic || '').toLowerCase().split(/\s+/);
-    for (const word of topicWords) {
-      if (word.length > 3 && !STOPWORDS.has(word) && titleLower.includes(word)) score += 1;
-    }
-    if (score > bestScore) {
-      bestScore = score;
-      best = entry;
+// ─── Build a complete post from a YouTube video (video-first pipeline) ─
+//
+// 2026-05-11 rewrite: removed the hybrid pairing modes (`youtube+match`
+// and `youtube+day-N`). They caused a real misalignment bug where the
+// body was about hibiscus, the video link was about pneumonia, and the
+// image was about sodium foods — three different topics in one post.
+// Now the VIDEO is the single source of truth for body + image + URL.
+//
+// Body shape (Joel-voice, single CTA):
+//   {hook from title}
+//   {2-sentence "Joel just dropped" framing referencing the title}
+//   "📺 Watch: {url}"
+//   {marketing CTA}
+//
+// Image: built from video title + tags (no bank topics involved).
+//
+// We do NOT use video.description for body text — Repurpose.io sometimes
+// auto-generates fabricated descriptions, and they're inconsistent quality.
+// Title is reliable (Joel writes them or controls them via Repurpose).
+const VIDEO_TAG_MAP = [
+  // Keyword in title -> tag to apply. Stems matched case-insensitive on the
+  // title string. The first 4 tags wins (platform char budgets).
+  { kw: 'hibiscus', tag: 'hibiscus' },
+  { kw: 'garlic', tag: 'garlic' },
+  { kw: 'beet', tag: 'beets' },
+  { kw: 'sodium', tag: 'sodium' },
+  { kw: 'salt', tag: 'sodium' },
+  { kw: 'potassium', tag: 'potassium' },
+  { kw: 'magnesium', tag: 'magnesium' },
+  { kw: 'ashwagandha', tag: 'ashwagandha' },
+  { kw: 'cortisol', tag: 'cortisol' },
+  { kw: 'stress', tag: 'stress' },
+  { kw: 'insulin', tag: 'insulin' },
+  { kw: 'glucose', tag: 'bloodsugar' },
+  { kw: 'blood sugar', tag: 'bloodsugar' },
+  { kw: 'diabetes', tag: 'diabetes' },
+  { kw: 'a1c', tag: 'bloodsugar' },
+  { kw: 'sleep', tag: 'sleep' },
+  { kw: 'breath', tag: 'breathwork' },
+  { kw: 'breathwork', tag: 'breathwork' },
+  { kw: 'vagal', tag: 'vagusnerve' },
+  { kw: 'vagus', tag: 'vagusnerve' },
+  { kw: 'inflammation', tag: 'inflammation' },
+  { kw: 'kidney', tag: 'kidneys' },
+  { kw: 'heart', tag: 'heart' },
+  { kw: 'cuff', tag: 'bloodpressure' },
+  { kw: 'pressure', tag: 'bloodpressure' },
+  { kw: 'hypertension', tag: 'bloodpressure' },
+  { kw: 'lisinopril', tag: 'medications' },
+  { kw: 'medication', tag: 'medications' },
+  { kw: 'naturopath', tag: 'naturopath' },
+  { kw: 'pneumonia', tag: 'pneumonia' },
+  { kw: 'cold', tag: 'immunity' },
+  { kw: 'flu', tag: 'immunity' },
+  { kw: 'immune', tag: 'immunity' },
+];
+
+function deriveTagsFromTitle(title) {
+  const titleLower = (title || '').toLowerCase();
+  const seen = new Set();
+  const tags = [];
+  for (const { kw, tag } of VIDEO_TAG_MAP) {
+    if (titleLower.includes(kw) && !seen.has(tag)) {
+      seen.add(tag);
+      tags.push(tag);
+      if (tags.length >= 4) break;
     }
   }
-  // Threshold: require at least one tag match (3) OR multiple word hits (2+).
-  return bestScore >= 2 ? { entry: best, score: bestScore } : null;
+  // Defaults so we never have zero hashtags. 'nurse' + 'naturopath' fit any
+  // Joel video; 'bloodpressure' is brand-anchor.
+  if (tags.length === 0) tags.push('naturopath', 'nurse', 'bloodpressure');
+  return tags;
 }
 
-// ─── Build post from video + matched bank entry ───────────────────────
-// The body always comes from the curated bank — never from video.description.
-// The video itself becomes the secondary "📺 Full breakdown" line.
-function buildHybridPost({ video, bankEntry, sourceLabel }) {
-  // Spread the full bank entry so imageTitle, imagePoints, cta, etc.
-  // all flow through to the image renderer + per-platform adapter.
+// Light cleanup of the video title for use as a hook. Strips repurpose.io
+// noise like "[NEW]", trailing series tags, channel tags. Falls back to the
+// raw title if nothing to strip.
+function cleanTitleAsHook(title) {
+  if (!title) return '';
+  let t = title.trim();
+  // Strip leading [TAG] or 【...】 markers
+  t = t.replace(/^\s*[\[【][^\]】]+[\]】]\s*/g, '');
+  // Strip trailing "| Channel" or "— Joel Polley RN"
+  t = t.replace(/\s*[|—\-]\s*(BraveWorks.*|Joel Polley.*|@braveworksrn.*)$/i, '');
+  // Collapse whitespace
+  t = t.replace(/\s+/g, ' ').trim();
+  return t || title;
+}
+
+function buildPostFromVideo(video) {
+  const hook = cleanTitleAsHook(video.title);
+  const tags = deriveTagsFromTitle(video.title);
+
+  // Joel-voice body — short, references the video by title, drives to the
+  // video as the primary asset and bpquiz.com as the deep secondary CTA.
+  // The body is intentionally specific to the topic via {hook} placement
+  // so every platform's render mentions the actual video subject.
+  const body =
+    `Joel just dropped a new walkthrough — ${hook}.\n\n` +
+    `Inside the video: the nurse's read, the herbs and doses Joel actually trusts, and the conversation you should bring to your own doctor.`;
+
+  // CTA — uses the standard funnel CTA. The body already mentions the video;
+  // the per-platform adapter appends "📺 Full breakdown: {youtubeUrl}" too.
+  const cta = `Take the free BP Risk Quiz at bpquiz.com — RN-built, 90 sec, instant results.`;
+
+  // Image fields — all derived from the video. _image-gen.js prefers
+  // imageTitle/imagePoints when set; falling back to hook/topic otherwise.
+  // We set them explicitly here so the image always renders the video's
+  // subject, never a stale bank topic.
+  const imageTitle = hook.length > 80 ? hook.slice(0, 78) + '…' : hook;
+  const imagePoints = [
+    "The nurse's read",
+    'Herbs + doses Joel trusts',
+    'What to bring to your doctor',
+  ];
+
   return {
-    ...bankEntry,
+    // Core post fields used by adaptForPlatform + buildImagePrompt
+    topic: hook,
+    hook,
+    body,
+    cta,
+    tags,
+
+    // YouTube link — present so adaptForPlatform appends the "📺 Watch"
+    // line + so YouTube settings can title themselves accurately.
     youtubeUrl: video.url,
-    tags: bankEntry.tags || ['bloodpressure', 'naturopath'],
-    source: sourceLabel,
+
+    // Image-renderer hints — all video-derived
+    imageTitle,
+    imagePoints,
+    imageFact: hook,
+    imageStatLabel: hook.slice(0, 60),
+    imageStatContext: 'New on the channel',
+
+    // Bookkeeping
+    source: 'video',
     sourceVideoId: video.videoId,
     sourcePublishedAt: video.published,
   };
@@ -430,35 +525,29 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, skipped: 'before-startDate', dayNum });
   }
 
-  // Branching: try to find a fresh on-brand YouTube video. Body content ALWAYS
-  // comes from the curated bank (never from video.description — Repurpose.io
-  // sometimes fabricates). When a fresh video exists, we hybrid-pair it with the
-  // best topical bank match. Otherwise it's just today's day-N entry.
+  // 2026-05-11 rewrite — VIDEO-FIRST pipeline:
+  //   1. If a fresh on-brand YouTube video exists → build the whole post
+  //      from the video (body, image, URL all from the same topic). The
+  //      bank is NOT consulted in this path.
+  //   2. If no fresh video → fall back to today's day-N bank entry. No
+  //      video URL line; image comes from the bank entry's topic.
+  //
+  // The prior hybrid modes (`youtube+match`, `youtube+day-N`) were removed
+  // because they generated misaligned posts (body about hibiscus, video
+  // about pneumonia, image about sodium foods — all in one post).
   let post = null;
   let source = 'unknown';
   let ytLatest = null;
   let ytError = null;
   let ytTotalSeen = 0;
-  let bankMatchScore = 0;
 
   try {
     const yt = await fetchLatestVideos({ onlyOnBrand: true, maxAgeHours: YT_FRESHNESS_HOURS });
     ytLatest = yt.latest;
     ytTotalSeen = yt.all?.length || 0;
     if (ytLatest) {
-      const match = matchVideoToBankEntry(ytLatest, bank);
-      if (match) {
-        post = buildHybridPost({ video: ytLatest, bankEntry: match.entry, sourceLabel: 'youtube+match' });
-        source = 'youtube+match';
-        bankMatchScore = match.score;
-      } else {
-        // YT video fresh, but no good topical match — pair with today's day-N.
-        const todayEntry = bank.posts.find((p) => p.day === dayNum);
-        if (todayEntry) {
-          post = buildHybridPost({ video: ytLatest, bankEntry: todayEntry, sourceLabel: 'youtube+day-N' });
-          source = 'youtube+day-N';
-        }
-      }
+      post = buildPostFromVideo(ytLatest);
+      source = 'video';
     }
   } catch (err) {
     ytError = err.message;
@@ -481,11 +570,11 @@ export default async function handler(req, res) {
   }
 
   // Idempotency — skip if today's post already went out (manual re-trigger safety).
-  // Key includes source so a YT video posted earlier doesn't block a content-bank
+  // Key includes source so a video posted earlier doesn't block a content-bank
   // re-trigger on the same day (and vice versa).
   const dateKey = new Date().toISOString().slice(0, 10);
-  const kvKey = source === 'youtube' && post.sourceVideoId
-    ? `postiz-yt:${post.sourceVideoId}`
+  const kvKey = source === 'video' && post.sourceVideoId
+    ? `postiz-video:${post.sourceVideoId}`
     : `postiz-day:${dayNum}:${dateKey}`;
   try {
     const seen = await kv.get(kvKey);
@@ -514,8 +603,10 @@ export default async function handler(req, res) {
 
   // Generate today's image via Postiz MCP. Cached per dayKey so re-triggers
   // don't burn quota. Failure → text-only post (Instagram/Pinterest skipped).
-  const imgKey = source === 'youtube+match' || source === 'youtube+day-N'
-    ? `day-${dayNum}-${dateKey}`
+  // When the source is a video, key the image cache by videoId so a video
+  // change between runs forces a fresh image; when content-bank, key by day.
+  const imgKey = source === 'video' && post.sourceVideoId
+    ? `video-${post.sourceVideoId}`
     : `day-${dayNum}-${dateKey}`;
   let image = null;
   let imageError = null;
@@ -546,7 +637,7 @@ export default async function handler(req, res) {
     source,
     topic: post.topic,
     youtubeUrl: post.youtubeUrl || null,
-    ytDebug: { ytError, ytTotalSeen, ytLatestTitle: ytLatest?.title || null, ytLatestPublished: ytLatest?.published || null, bankMatchScore },
+    ytDebug: { ytError, ytTotalSeen, ytLatestTitle: ytLatest?.title || null, ytLatestPublished: ytLatest?.published || null },
     image: image ? { id: image.id, path: image.path, source: image.source, cached: image.cached } : null,
     imageError,
     posted: result.posted,
