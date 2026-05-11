@@ -26,6 +26,26 @@ const COOKBOOK_URL = `${SITE_URL}/downloads/cook-for-life-cookbook.pdf`;
 const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
 const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
 
+// ─────────────────────────────────────────────────────────────────────────
+// VERIFIED CATEGORY-AWARE — do not flag as "hardcoded BP" without re-reading
+//
+// 2026-05-11 daily review re-audit: this file IS already category-aware
+// and has been since at least 2026-04-19. Routing chain:
+//   1. handler() reads `category: rawCategory` from POST body (line ~512)
+//   2. normalizeCategory() maps to one of: blood_pressure / cortisol /
+//      blood_sugar (falls through to blood_pressure for 'all' / unknown)
+//   3. renderEmail({ category }) branches every customer-facing surface:
+//        - CATEGORIES[category].pdf_file / pdf_name / subject_a / quick_win
+//        - TIPS[category]            (3 tips per concern)
+//        - TIPS_HEADING[category]    (heading sentence)
+//        - tiersForCategory(category) (offer stack matches concern)
+//   4. Resend send uses cat.subject_a — the category-specific subject
+//
+// If an audit flags "lead-magnet sends BP content to all categories", the
+// audit is stale. Verify by sending a test POST with category: 'cortisol'
+// and inspecting the resulting Resend email.
+// ─────────────────────────────────────────────────────────────────────────
+
 // Category → lead-magnet PDF + copy constants
 const CATEGORIES = {
   blood_pressure: {

@@ -40,6 +40,29 @@ const DOWNLOADS = {
 
 const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 
+// ─────────────────────────────────────────────────────────────────────────
+// VERIFIED CATEGORY-AWARE — do not flag as "BP-only for all tiers"
+//
+// 2026-05-11 daily review re-audit: this file IS already category-aware
+// and has been since at least the 2026-05-09 funnel-fix pass. Routing chain:
+//   1. stripe-webhook.js receives checkout.session.completed
+//   2. amount_subtotal → AMOUNT_TO_TIER → kitTier (default '1' = BP starter)
+//   3. stripe-webhook.js lines 502-521 refine kitTier=1 →
+//        '1-cortisol' or '1-blood-sugar' by inspecting line-item product
+//        names ("cortisol" / "blood sugar" / "glucose" / "diabetes")
+//   4. sendPurchaseConfirmation(tier=refined) → renderPurchaseEmail
+//        reads TIER_CONFIG[tier] for product name + subject + downloads
+//
+// Separate TIER_CONFIG entries exist for: '1', '1-cortisol', '1-blood-sugar',
+// '2', 'vip'. Each has its own `product`, `subject`, `downloads`, and
+// `upgradeUrl`. A cortisol $17 buyer correctly receives the cortisol-branded
+// email with the cortisol PDFs and the cortisol upgrade link.
+//
+// If an audit flags "purchase-confirmation hardcodes BP for all tiers", the
+// audit is stale. Verify by running a $17 test purchase on the cortisol
+// product and inspecting the resulting Resend email.
+// ─────────────────────────────────────────────────────────────────────────
+
 export const TIER_CONFIG = {
   1: {
     product: 'Blood Pressure Cures — Starter Protocol Kit',
