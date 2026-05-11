@@ -1,0 +1,286 @@
+// scripts/send-zoom-closer-2026-05-11.mjs
+//
+// VIP-only Zoom-link closer for tonight's BP Triangle Challenge live call.
+// Designed to fire ~1 hour before the call (9:00 PM ET) so last-minute
+// buyers between now and then automatically land in the cohort.
+//
+// Audience: every paid Stripe session in the last 60 days where
+//   amount_subtotal === 9700 (the $97 BP Triangle Challenge)
+// We pull live from Stripe (no static cohort file) so any upgrade Joel
+// gets between 14:00 and 21:00 ET today is automatically included.
+//
+// Voice: short. One link. One sentence per beat.
+//
+// Usage:
+//   node scripts/send-zoom-closer-2026-05-11.mjs --list
+//        Pull and print the VIP-buyer list (no send). Sanity-check the
+//        audience before firing.
+//
+//   node scripts/send-zoom-closer-2026-05-11.mjs --test
+//        Send one preview to Joel's inbox.
+//
+//   node scripts/send-zoom-closer-2026-05-11.mjs --send
+//        Send to every VIP buyer in the 60-day window.
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Resend } from 'resend';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(__dirname, '..');
+
+const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
+const REPLY_TO = 'braveworksrn@gmail.com';
+const TEST_TO = 'brave.works.marketing@gmail.com';
+
+const ZOOM_URL = 'https://us06web.zoom.us/j/86045540939?pwd=4SowvLId0a8UiAY8TLppZIdYJdIIfe.1';
+const VIP_AMOUNT_CENTS = 9700;
+const LOOKBACK_DAYS = 60;
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ─── env loader (matches the pattern in send-bug-recovery / send-monday) ──
+
+function loadEnv() {
+  for (const f of ['.env', '.env.local']) {
+    const p = path.join(REPO_ROOT, f);
+    if (!fs.existsSync(p)) continue;
+    for (const line of fs.readFileSync(p, 'utf8').split('\n')) {
+      const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+      if (m && !process.env[m[1]]) {
+        process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+      }
+    }
+  }
+}
+
+// ─── Stripe VIP-buyer pull ────────────────────────────────────────────
+
+async function pullVipBuyers() {
+  const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
+  if (!STRIPE_KEY) {
+    console.error('NO STRIPE_SECRET_KEY in env. Aborting.');
+    process.exit(1);
+  }
+  const since = Math.floor(Date.now() / 1000) - LOOKBACK_DAYS * 86400;
+  const HEADERS = {
+    Authorization: `Bearer ${STRIPE_KEY}`,
+    'Stripe-Version': '2024-04-10',
+  };
+
+  // Paginate through checkout sessions
+  const sessions = [];
+  let startingAfter = null;
+  for (let i = 0; i < 30; i++) {
+    const qs = new URLSearchParams({
+      'created[gte]': String(since),
+      limit: '100',
+    });
+    if (startingAfter) qs.set('starting_after', startingAfter);
+    const res = await fetch(`https://api.stripe.com/v1/checkout/sessions?${qs}`, { headers: HEADERS });
+    if (!res.ok) {
+      throw new Error(`Stripe ${res.status}: ${await res.text()}`);
+    }
+    const j = await res.json();
+    sessions.push(...j.data);
+    if (!j.has_more) break;
+    startingAfter = j.data[j.data.length - 1]?.id;
+  }
+
+  // Filter: paid + amount_subtotal === VIP_AMOUNT
+  const vips = sessions.filter(s =>
+    s.payment_status === 'paid' &&
+    s.amount_subtotal === VIP_AMOUNT_CENTS
+  );
+
+  // Dedupe by email — keep most recent purchase per buyer
+  const byEmail = new Map();
+  for (const s of vips.sort((a, b) => b.created - a.created)) {
+    const email = s.customer_details?.email?.toLowerCase().trim();
+    if (!email) continue;
+    if (!byEmail.has(email)) {
+      byEmail.set(email, {
+        email,
+        name: s.customer_details?.name || '',
+        purchased: new Date(s.created * 1000).toISOString().slice(0, 10),
+        amount: s.amount_total / 100,
+      });
+    }
+  }
+  return Array.from(byEmail.values());
+}
+
+// ─── Email template ───────────────────────────────────────────────────
+
+function renderEmail({ fname }) {
+  const greeting = fname ? `${fname.split(/\s+/)[0]},` : 'Friend,';
+  const subject = `Tonight's Zoom link inside — see you at 10 PM ET`;
+
+  const html = `<!doctype html>
+<html><body style="margin:0;padding:0;background:#FBF8F1;font-family:Georgia,'Times New Roman',serif;color:#2C3E50;line-height:1.6;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:14px;border:1px solid #EAE3D5;">
+        <tr><td style="padding:34px 36px 6px 36px;">
+          <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#B85A36;margin-bottom:18px;">BP Triangle Challenge · Live tonight</div>
+          <h1 style="font-family:'Fraunces',Georgia,serif;font-size:26px;line-height:1.25;font-weight:500;margin:0 0 14px 0;color:#2C3E50;">
+            ${greeting} the <em style="color:#B85A36;">Zoom link</em> for tonight is below.
+          </h1>
+          <p style="font-size:16px;line-height:1.65;margin:0 0 16px 0;">
+            Tonight at <strong>10 PM ET</strong>, we unravel the Triangle — one side at a time. Pressure. Stress. Sugar. The loop. The two swaps that quiet it for most women by week two.
+          </p>
+          <p style="font-size:16px;line-height:1.65;margin:0 0 18px 0;">
+            Bring your numbers. Bring your meds list. Bring your questions.
+          </p>
+        </td></tr>
+
+        <tr><td style="padding:6px 36px 14px 36px;" align="center">
+          <a href="${ZOOM_URL}" style="display:inline-block;background:#2C3E50;color:#FFFFFF;padding:18px 32px;border-radius:12px;text-decoration:none;font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;letter-spacing:0.01em;">
+            Join the Zoom — 10 PM ET →
+          </a>
+        </td></tr>
+
+        <tr><td style="padding:0 36px 18px 36px;" align="center">
+          <p style="font-size:13px;color:#7A7A7A;margin:4px 0 0 0;line-height:1.5;word-break:break-all;">
+            Zoom link: <a href="${ZOOM_URL}" style="color:#7A7A7A;">${ZOOM_URL}</a>
+          </p>
+        </td></tr>
+
+        <tr><td style="padding:14px 36px 18px 36px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F1E8;border-radius:12px;">
+            <tr><td style="padding:18px 22px;">
+              <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6C3483;margin-bottom:8px;">Quick housekeeping</div>
+              <ul style="font-size:15px;line-height:1.7;margin:0;padding-left:20px;color:#3A3A3A;">
+                <li>Bring a notebook — there will be specific doses to write down.</li>
+                <li>Join 2 minutes early so the room is full when we open.</li>
+                <li>Replay goes to your inbox within 24 hours if life happens.</li>
+              </ul>
+            </td></tr>
+          </table>
+        </td></tr>
+
+        <tr><td style="padding:6px 36px 28px 36px;">
+          <p style="font-size:15px;line-height:1.6;margin:0;">See you at 10.</p>
+          <p style="font-size:15px;line-height:1.6;margin:8px 0 0 0;">— Joel</p>
+        </td></tr>
+
+        <tr><td style="padding:0 36px 28px 36px;">
+          <hr style="border:none;border-top:1px solid #EAE3D5;margin:10px 0 16px 0;" />
+          <p style="font-size:11px;color:#9A9A9A;line-height:1.6;margin:0;">
+            BraveWorks RN · Joel Polley, RN · Naturopathic practitioner · <a href="https://bpquiz.com" style="color:#9A9A9A;">bpquiz.com</a>
+            <br/>Sent to BP Triangle Challenge members. Educational content only. Not medical advice.
+          </p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+
+  return { subject, html };
+}
+
+// ─── Modes ────────────────────────────────────────────────────────────
+
+async function runList() {
+  loadEnv();
+  const buyers = await pullVipBuyers();
+  console.log(`\nVIP buyers found (paid $97 BP Triangle Challenge, last ${LOOKBACK_DAYS} days):\n`);
+  if (buyers.length === 0) {
+    console.log('  (none found)');
+  } else {
+    for (const b of buyers) {
+      console.log(`  ${b.purchased}  ${b.email.padEnd(40)}  ${b.name || '(no name)'}`);
+    }
+  }
+  console.log(`\nTotal: ${buyers.length}\n`);
+}
+
+async function runTest() {
+  loadEnv();
+  if (!process.env.RESEND_API_KEY) {
+    console.error('ERROR: RESEND_API_KEY not set');
+    process.exit(1);
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const { subject, html } = renderEmail({ fname: 'Joel' });
+  const tagged = `[TEST] ${subject}`;
+  console.log(`Sending test → ${TEST_TO}`);
+  const r = await resend.emails.send({
+    from: FROM,
+    to: TEST_TO,
+    reply_to: REPLY_TO,
+    subject: tagged,
+    html,
+  });
+  console.log(`  → ${r.data?.id || JSON.stringify(r.error || r)}`);
+}
+
+async function runSend() {
+  loadEnv();
+  if (!process.env.RESEND_API_KEY) {
+    console.error('ERROR: RESEND_API_KEY not set');
+    process.exit(1);
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const buyers = await pullVipBuyers();
+
+  if (buyers.length === 0) {
+    console.log('No VIP buyers found. Nothing to send.');
+    return;
+  }
+
+  console.log(`SEND — ${buyers.length} VIP buyers`);
+  console.log(`Zoom link → ${ZOOM_URL}`);
+  console.log('Press Ctrl-C in the next 8s to abort.\n');
+  await sleep(8_000);
+
+  let sent = 0, failed = 0;
+  const failures = [];
+  for (const b of buyers) {
+    const { subject, html } = renderEmail({ fname: b.name });
+    try {
+      const result = await resend.emails.send({
+        from: FROM,
+        to: b.email,
+        reply_to: REPLY_TO,
+        subject,
+        html,
+      });
+      if (result.error) {
+        failed++;
+        failures.push({ email: b.email, error: result.error });
+        console.log(`  ✗ ${b.email} — ${JSON.stringify(result.error).slice(0, 100)}`);
+      } else {
+        sent++;
+        console.log(`  ✓ ${b.email} — ${result.data?.id}`);
+      }
+    } catch (err) {
+      failed++;
+      failures.push({ email: b.email, error: err.message });
+      console.log(`  ✗ ${b.email} — ${err.message.slice(0, 100)}`);
+    }
+    await sleep(250);
+  }
+  console.log(`\nDone. Sent ${sent} / Failed ${failed}.`);
+  if (failures.length) {
+    const failPath = path.join(REPO_ROOT, 'tmp/zoom-closer-failures.json');
+    fs.mkdirSync(path.dirname(failPath), { recursive: true });
+    fs.writeFileSync(failPath, JSON.stringify(failures, null, 2));
+    console.log(`Failure detail → ${failPath}`);
+  }
+}
+
+// ─── Entry ────────────────────────────────────────────────────────────
+
+const mode = process.argv[2];
+if (mode === '--list') {
+  await runList();
+} else if (mode === '--test') {
+  await runTest();
+} else if (mode === '--send') {
+  await runSend();
+} else {
+  console.error('Usage: node send-zoom-closer-2026-05-11.mjs --list|--test|--send');
+  process.exit(1);
+}

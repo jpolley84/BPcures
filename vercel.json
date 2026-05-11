@@ -11,6 +11,10 @@
     {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/zoom-closer-cron",
+      "schedule": "0 1 * * 2"
     }
   ]
 }
