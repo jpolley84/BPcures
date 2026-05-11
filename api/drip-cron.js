@@ -92,8 +92,46 @@ export default async function handler(req, res) {
         continue;
       }
 
-      const day = computeDay(sub.enrolledAt);
-      if (day == null || day < 1) {
+      // ─── Self-healing day computation (2026-05-11) ───────────────────
+      // Old logic: send Day-N where N = days-since-enrollment. If a cron
+      // fire was missed (e.g., Vercel re-registering the schedule during
+      // a deploy at the same minute as the fire time), the missed day was
+      // SKIPPED FOREVER — tomorrow's fire would jump straight to the next
+      // calendar day.
+      //
+      // New logic: send `lastSentDay + 1` instead. Always one step forward,
+      // never skip. Calendar day cap: don't send a day that's beyond the
+      // subscriber's enrollment timeline (no "future" emails). Safety cap:
+      // if a subscriber is more than 7 days behind their computed day
+      // (e.g., a long unpause, or 7+ missed cron fires), pause them with
+      // a reason flag — manual review beats 7 emails in one day.
+      const computedDay = computeDay(sub.enrolledAt);
+      if (computedDay == null || computedDay < 1) {
+        summary.skipped++;
+        continue;
+      }
+
+      const lastSent = sub.lastSentDay || 0;
+      const day = lastSent + 1;
+
+      // Calendar cap: never send tomorrow's email today.
+      if (day > computedDay) {
+        summary.skipped++;
+        continue;
+      }
+
+      // Gap cap: more than 7 days behind = something broke worse than a
+      // single missed fire. Pause + surface, don't try to catch up.
+      if (computedDay - lastSent > 7) {
+        console.warn(`drip-cron: ${sub.email} is ${computedDay - lastSent} days behind — auto-pausing for review`);
+        await kv.set(key, {
+          ...sub,
+          paused: true,
+          pausedReason: 'gap-too-large',
+          pausedAt: new Date().toISOString(),
+          pausedComputedDay: computedDay,
+          pausedLastSent: lastSent,
+        });
         summary.skipped++;
         continue;
       }
@@ -116,12 +154,6 @@ export default async function handler(req, res) {
       // are still placeholder; will be filled in as the back-half drip is
       // authored.)
       if (!DAYS[day]) {
-        summary.skipped++;
-        continue;
-      }
-
-      // Don't double-send: lastSentDay tracks the highest day already delivered.
-      if (sub.lastSentDay && sub.lastSentDay >= day) {
         summary.skipped++;
         continue;
       }
