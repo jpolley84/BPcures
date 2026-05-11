@@ -1,7 +1,8 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
 import ExitIntentPopup from './components/ExitIntentPopup';
-import ChallengeBanner from './components/ChallengeBanner';
+// ChallengeBanner — pulled from header 2026-05-10 at Joel's request. Component
+// preserved in src/components/ChallengeBanner.jsx if we want it back later.
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import QuizPage from './pages/QuizPage';
@@ -19,7 +20,6 @@ import IntakeFormPage from './pages/IntakeFormPage';
 function SiteLayout({ children }) {
   return (
     <>
-      <ChallengeBanner />
       <header className="store-header">
         <Navbar />
       </header>
