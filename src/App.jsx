@@ -1,4 +1,6 @@
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import ScrollToTop from './components/ScrollToTop';
 // ExitIntentPopup (free-cookbook lead-magnet) — pulled 2026-05-11 at Joel's
 // request. Component preserved in src/components/ExitIntentPopup.jsx if we
@@ -32,6 +34,11 @@ function SiteLayout({ children }) {
 function App() {
   return (
     <Router>
+      {/* Vercel Web Analytics — pageviews, referrers, country/device.
+          Speed Insights — Core Web Vitals per route. Both auto-route-track
+          (no manual page-event firing needed). Free on Pro plan. */}
+      <Analytics />
+      <SpeedInsights />
       <ScrollToTop />
       <Routes>
         {/* Single-page funnel: quiz → email → results → checkout */}
