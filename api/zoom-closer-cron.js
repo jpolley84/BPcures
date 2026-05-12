@@ -1,11 +1,17 @@
-// /api/zoom-closer-cron — weekly VIP-only Zoom-link closer for the Monday
-// night BP Triangle Challenge live call.
+// /api/zoom-closer-cron — VIP-only Zoom-link closer for the Monday night
+// BP Triangle Challenge live call.
 //
-// Schedule: every Monday 21:00 ET (Tuesday 01:00 UTC).
-//   cron entry in vercel.json: `0 1 * * 2`
-//   Note: during EST (winter), this fires at 20:00 ET; during EDT (DST,
-//   ~Mar-Nov), at 21:00 ET. Update the schedule when DST ends if exact
-//   21:00 ET year-round is required.
+// 2026-05-12: Joel disabled the weekly auto-schedule (the Monday call was
+// a one-time event; future calls will be manually triggered when scheduled).
+// Vercel cron entry REMOVED from vercel.json. Handler kept live so Joel can
+// manually curl-fire it when a call is on the calendar:
+//
+//   curl -H "Authorization: Bearer $CRON_AUTH_TOKEN" \
+//        https://bpquiz.com/api/zoom-closer-cron
+//
+// To re-enable the weekly auto-fire, restore this entry to vercel.json:
+//   { "path": "/api/zoom-closer-cron", "schedule": "0 1 * * 2" }
+// (= Tuesday 01:00 UTC = Monday 21:00 ET during EDT / 20:00 ET during EST)
 //
 // What it does:
 //   1. Pulls paid checkout sessions from Stripe (last 60 days)
