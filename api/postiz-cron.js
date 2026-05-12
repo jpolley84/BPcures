@@ -12,9 +12,11 @@
 // Env vars:
 //   POSTIZ_API_KEY    — set via vercel env
 //   KV_REST_API_*     — for tracking what's posted (no double-posts)
-//   CRON_AUTH_TOKEN   — optional, for manual triggering
+//   CRON_SECRET       — Vercel auto-injects this as Bearer token on cron fires
+//   CRON_AUTH_TOKEN   — optional, separate value for manual curl triggers
 //
-// Auth: x-vercel-cron header (auto-set by Vercel cron) OR Bearer token.
+// Auth: see api/_cron-auth.js (Bearer CRON_SECRET / Bearer CRON_AUTH_TOKEN
+// / legacy x-vercel-cron header — accept any).
 
 import { kv } from '@vercel/kv';
 import fs from 'node:fs';
@@ -23,6 +25,7 @@ import { fileURLToPath } from 'node:url';
 import { fetchLatestVideos } from './_youtube-fetch.js';
 import { generateImage } from './_postiz-mcp.js';
 import { generateAndUploadQuoteCard } from './_image-gen.js';
+import { isAuthorizedCron } from './_cron-auth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -502,10 +505,7 @@ async function postFanOut({ integrations, post, dayNum, image }) {
 
 // Handler --------------------------------------------------------------
 export default async function handler(req, res) {
-  const fromVercelCron = req.headers['x-vercel-cron'] === '1';
-  const bearer = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  const manualOk = bearer && bearer === process.env.CRON_AUTH_TOKEN;
-  if (!fromVercelCron && !manualOk) {
+  if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'Unauthorized — not a Vercel cron request' });
   }
 

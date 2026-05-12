@@ -16,8 +16,10 @@
 //   5. Renders + sends a Zoom-link email via Resend (rate-limited 250ms)
 //   6. Returns JSON summary { sent, skipped, failed, recipients }
 //
-// Auth: Vercel cron requests include `x-vercel-cron: 1`. We also accept
-// `Authorization: Bearer <CRON_AUTH_TOKEN>` for manual triggering via curl.
+// Auth: see api/_cron-auth.js — three paths accepted:
+//   1. Authorization: Bearer ${CRON_SECRET}      ← Vercel cron (current spec)
+//   2. Authorization: Bearer ${CRON_AUTH_TOKEN}  ← manual curl trigger
+//   3. x-vercel-cron: 1                          ← Vercel cron (legacy)
 //
 // Manual fire (e.g., to test, or if Vercel cron misses):
 //   curl -H "Authorization: Bearer $CRON_AUTH_TOKEN" \
@@ -30,12 +32,14 @@
 // Env vars required (set in Vercel):
 //   STRIPE_SECRET_KEY     — for the Stripe API call
 //   RESEND_API_KEY        — for the email send
-//   CRON_AUTH_TOKEN       — bearer token for manual triggers
+//   CRON_SECRET           — Vercel auto-injects this as Bearer on cron fires
+//   CRON_AUTH_TOKEN       — separate token for manual curl triggers
 //   KV_REST_API_URL/TOKEN — auto-set when Vercel KV is provisioned
 //   ZOOM_URL              — full Zoom join URL (with passcode token)
 
 import { kv } from '@vercel/kv';
 import { Resend } from 'resend';
+import { isAuthorizedCron } from './_cron-auth.js';
 
 export const config = { maxDuration: 60 };
 
@@ -180,12 +184,7 @@ function renderEmail({ fname, zoomUrl }) {
 // ─── Handler ──────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
-  // Auth: Vercel cron OR explicit bearer token
-  const fromVercelCron = req.headers['x-vercel-cron'] === '1';
-  const bearer = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  const authToken = process.env.CRON_AUTH_TOKEN || '';
-  const tokenOk = bearer && authToken && bearer === authToken;
-  if (!fromVercelCron && !tokenOk) {
+  if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 

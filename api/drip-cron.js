@@ -18,13 +18,17 @@
 //   VITE_SITE_URL             — already set, used to build opt-in URLs
 //   DRIP_DRY_RUN              — set to '1' to log instead of send (dev/test)
 //
-// Auth: Vercel cron requests include 'x-vercel-cron: 1' header. We optionally
-// also accept a CRON_AUTH_TOKEN bearer for manual triggering.
+// Auth: Vercel cron now sends `Authorization: Bearer ${CRON_SECRET}`.
+// Legacy `x-vercel-cron: 1` header is kept as a fallback. Manual triggers
+// use a separate `CRON_AUTH_TOKEN` bearer. All three paths handled by the
+// shared helper in `./_cron-auth.js`. (2026-05-12 — three crons were
+// silently 401'ing because Vercel's auth mechanism changed.)
 
 import { kv } from '@vercel/kv';
 import { Resend } from 'resend';
 import crypto from 'node:crypto';
 import { renderEmail, DAYS } from './_drip-emails.js';
+import { isAuthorizedCron } from './_cron-auth.js';
 
 // 3,392 records × ~50ms KV.get + ~485 eligible × ~150ms (Resend + rate-limit
 // + KV.set) = budget about 4 minutes worst case. Pro plan max is 300s.
@@ -56,11 +60,7 @@ function computeDay(enrolledAt) {
 }
 
 export default async function handler(req, res) {
-  // Auth: Vercel cron OR explicit bearer token
-  const fromVercelCron = req.headers['x-vercel-cron'] === '1';
-  const bearer = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  const manualOk = bearer && bearer === process.env.CRON_AUTH_TOKEN;
-  if (!fromVercelCron && !manualOk) {
+  if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'Unauthorized — not a Vercel cron request' });
   }
 
