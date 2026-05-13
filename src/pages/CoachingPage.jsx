@@ -12,9 +12,50 @@
 //
 // Application-only (no buy button). Submits to /api/coaching-apply.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, CheckCircle2, Users, Play, ShieldCheck, Phone, TrendingDown, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
+// ── TikTok embed ──────────────────────────────────────────
+// Renders the TikTok-provided blockquote embed and loads
+// https://www.tiktok.com/embed.js once per page. The script auto-hydrates
+// the blockquote into the actual video player. Falls back to a plain
+// "Watch on TikTok" link if the script fails to load (no-JS, blocked, etc.).
+function TikTokEmbed({ videoId, username }) {
+  useEffect(() => {
+    const SRC = 'https://www.tiktok.com/embed.js';
+    if (typeof document === 'undefined') return;
+    const existing = document.querySelector(`script[src="${SRC}"]`);
+    if (existing) {
+      // Already loaded — re-run hydration in case the embed mounted late.
+      if (window.tiktokEmbed?.lib?.render) {
+        try { window.tiktokEmbed.lib.render(); } catch { /* swallow */ }
+      }
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = SRC;
+    s.async = true;
+    document.body.appendChild(s);
+  }, [videoId]);
+
+  const url = `https://www.tiktok.com/@${username}/video/${videoId}`;
+  return (
+    <blockquote
+      className="tiktok-embed"
+      cite={url}
+      data-video-id={videoId}
+      style={{ maxWidth: 605, minWidth: 325, margin: '0 auto', background: 'transparent' }}
+    >
+      <section style={{ padding: '1.5rem', textAlign: 'center' }}>
+        <a target="_blank" rel="noopener noreferrer" href={url}
+          style={{ color: 'var(--purple)', fontWeight: 600 }}>
+          Watch on TikTok →
+        </a>
+      </section>
+    </blockquote>
+  );
+}
 
 function AnimatedSection({ children, className = '', delay = 0, style = {} }) {
   const [ref, isVisible] = useScrollAnimation(0.1);
@@ -130,6 +171,29 @@ export default function CoachingPage() {
       </AnimatedSection>
 
       <hr className="gradient-divider" />
+
+      {/* TikTok video — cold visitors arriving from the broadcast or the
+          TikTok itself see the source video right here, above any pricing
+          or commitment ask. Built-in social proof bridge from short-form
+          to landing page. */}
+      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <div className="text-center mb-3">
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 6 }}>
+                The video that opened this cohort
+              </div>
+              <h2 className="font-bold" style={{ color: 'var(--navy)', fontSize: '22px', lineHeight: 1.3 }}>
+                Watch the 60 seconds first.
+              </h2>
+              <p style={{ color: 'var(--muted-gray)', fontSize: '13px', maxWidth: 400, margin: '8px auto 1.5rem' }}>
+                If you saw it on TikTok — this is the program. If you didn't, the next minute will tell you whether this is for you.
+              </p>
+            </div>
+            <TikTokEmbed videoId="7639447507050827039" username="braveworksrn" />
+          </AnimatedSection>
+        </div>
+      </div>
 
       {/* Value stack */}
       <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
