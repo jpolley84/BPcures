@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -29,6 +29,17 @@ const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
+const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
+
+// Subdomain → page map. When the SPA boots on a vanity subdomain like
+// `wakita.bpquiz.com`, the root route renders that client's intake instead of
+// the default landing page. Add new clients here as one-line entries; no
+// vercel.json edit needed (Vercel routes both apex + subdomains to this SPA).
+const SUBDOMAIN_PAGE = {
+  'wakita.bpquiz.com': WakitaIntakePage,
+};
+const subdomainPage =
+  typeof window !== 'undefined' ? SUBDOMAIN_PAGE[window.location.hostname] : null;
 
 function SiteLayout({ children }) {
   return (
@@ -64,8 +75,13 @@ function App() {
           {/* Single-page sales letter at / — the new landing for cold TikTok
               traffic (2026-05-12 split-test winner over the quiz format).
               SiteLayout intentionally omitted: bpcures-style standalone page
-              has its own header/footer/social-proof bar, no Navbar needed. */}
-          <Route path="/" element={<CheckoutPage />} />
+              has its own header/footer/social-proof bar, no Navbar needed.
+
+              Subdomain override: if the visitor is on a per-client vanity
+              subdomain (e.g. wakita.bpquiz.com), serve that client's intake
+              at the root path instead of the public landing page. See
+              SUBDOMAIN_PAGE map above. */}
+          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <CheckoutPage />} />
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
               traffic that wants the diagnostic before buying. */}
@@ -104,6 +120,10 @@ function App() {
               co-coach. Application-only (no buy button — Brunson high-ticket).
               Launched 2026-05-12, first cohort target 5 slots. */}
           <Route path="/coaching" element={<CoachingPage />} />
+
+          {/* Per-client pre-call intake — also reachable via subdomain
+              wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}
+          <Route path="/wakita" element={<WakitaIntakePage />} />
 
           {/* Operations dashboard — passcode-gated, standalone */}
           <Route path="/ops" element={<OpsDashboardPage />} />
