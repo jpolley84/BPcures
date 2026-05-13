@@ -660,8 +660,377 @@ P.S. The application is the same form regardless of which pillar is yours. Corti
 `,
 };
 
+// ─── DAY 9 ────────────────────────────────────────────────────────────
+// Lie #2 reveal (the "it's genetic" lie). Day 1 teased this as the "most
+// personal" lie. Resolves the curiosity gap + introduces the CORTISOL
+// corner of the BP Triangle Method explicitly.
+const day9 = {
+  subject: 'Lie #2 — "it\'s genetic, nothing I can do"',
+  subjectB: 'The most personal lie about blood pressure',
+  preview: 'Genes load the gun. Three other things pull the trigger.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Eight days ago I promised that today's email would reveal lie #2 — the most personal one.`)}
+    ${p(`Here it is:`)}
+    ${bigQuote('"My blood pressure is genetic. Nothing I can do about it."')}
+    ${p(`If you've ever said this out loud — or heard a parent say it about you — read this twice.`, { margin: '0 0 28px' })}
+    ${p(`<strong style="color:${PALETTE.text};">Genes load the gun. Inputs pull the trigger.</strong> The same DNA your mother had — sat in a Japanese village in 1960 with the same code in her cells, never developed hypertension. Move that same DNA to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep — boom. Same code, different inputs, different disease.`)}
+    ${p(`Your genes set the threshold. Your inputs decide whether you cross it.`, { margin: '0 0 28px' })}
+    ${clayBlock("What's actually inherited", `
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Not the blood pressure itself. What's inherited is a <strong style="color:${PALETTE.text};">sensitivity to one of three corners.</strong> Three corners of one loop. I call this the <strong style="color:${PALETTE.text};">BP Triangle</strong>:</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">VASCULAR</strong> — the pipes. Stiff arteries, low NO, K:Na imbalance.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">CORTISOL</strong> — the stress. Clamps the vessels, retains sodium.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">BLOOD SUGAR</strong> — the metabolism. Insulin is a vasoconstrictor.</p>
+    `)}
+    ${p(`Most boomer-aged readers I work with assume their corner is vascular — they hear "high blood pressure" and think "stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always <strong style="color:${PALETTE.text};">cortisol</strong>. And cortisol is the corner most cardiologists don't even measure.`)}
+    ${p(`This is why the genetics lie hurts so much: your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, and accepted a lifetime of pills as fate. <strong style="color:${PALETTE.text};">It wasn't fate. It was an input nobody helped her change.</strong>`, { margin: '0 0 28px' })}
+    ${bigQuote('The cortisol corner — two interventions that actually work.')}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Ashwagandha (KSM-66 form, 300 mg AM + PM).</strong> Chandrasekhar et al, 2012 — 64 adults, 8 weeks. Salivary cortisol dropped 27.9% versus placebo. Anxiety scores fell in parallel. Cheapest single move you can make for the cortisol corner.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. Asleep before 11 PM.</strong> Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset at 10 PM gives you ~3 hours inside that window. Sleep onset at 1 AM gives you zero — even if you sleep until 8.</p>
+    `)}
+    ${p(`If your morning BP runs high and your blood sugar is roughly normal, this corner is almost certainly the one driving your numbers. The good news: cortisol responds faster than vascular. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
+    ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.`, { margin: '0 0 28px' })}
+    ${clayBlock("Don't know which corner is yours?", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your corner + the first move for your specific type. Built around the same diagnostic I use with 1:1 clients.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
+    `)}
+    ${p(`Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.`, { margin: '0 0 24px' })}
+    ${joelSignoff()}
+    ${psBox(`Lie #3 comes Day 17. Once you see it, you can't look at your prescription bottle the same way. Stay with me.`)}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+Eight days ago I promised today would reveal lie #2 — the most personal one.
+
+LIE #2: "My blood pressure is genetic. Nothing I can do about it."
+
+GENES LOAD THE GUN. INPUTS PULL THE TRIGGER.
+
+The same DNA your mother had — sat in a Japanese village in 1960 with the same code, never developed hypertension. Move it to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep — boom. Same code, different inputs, different disease.
+
+WHAT'S ACTUALLY INHERITED is a sensitivity to one of three corners. Three corners of one loop. I call it the BP Triangle:
+
+→ VASCULAR — the pipes. Stiff arteries, low NO, K:Na imbalance.
+→ CORTISOL — the stress. Clamps the vessels, retains sodium.
+→ BLOOD SUGAR — the metabolism. Insulin is a vasoconstrictor.
+
+Most boomer-aged readers assume their corner is vascular — "high BP, stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always CORTISOL. And cortisol is the corner most cardiologists don't even measure.
+
+This is why the genetics lie hurts so much. Your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, accepted a lifetime of pills as fate. It wasn't fate. It was an input nobody helped her change.
+
+THE CORTISOL CORNER — TWO INTERVENTIONS THAT ACTUALLY WORK:
+
+1. Ashwagandha (KSM-66, 300mg AM+PM). Chandrasekhar 2012 — 64 adults, 8 weeks. Salivary cortisol dropped 27.9% vs placebo. Cheapest single move you can make.
+
+2. Asleep before 11 PM. Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset 10 PM = ~3 hours in that window. Sleep onset 1 AM = zero, even if you sleep until 8.
+
+If your morning BP runs high and your blood sugar is roughly normal, this corner is almost certainly driving your numbers. Cortisol responds faster than vascular — most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.
+
+PILLS MANAGE OUTPUT. PROTOCOL FIXES INPUT.
+
+AND not INSTEAD OF. Your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.
+
+DON'T KNOW WHICH CORNER IS YOURS?
+
+Free 90-second BP Triangle Quiz returns your corner + the first move for your type.
+→ ${SITE_URL}/quiz
+
+Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.
+
+Joel
+RN, BraveWorks
+
+P.S. Lie #3 comes Day 17. Once you see it, you can't look at your prescription bottle the same way. Stay with me.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 10 ───────────────────────────────────────────────────────────
+// The third corner of the Triangle — blood sugar. The corner cardiologists
+// never measure. Walk-after-meal + Anti-BP Plate as the practical levers.
+const day10 = {
+  subject: 'The corner cardiologists never measure',
+  subjectB: 'Sugar raises BP harder than salt',
+  preview: 'Three "savory" foods spike BP for 2-3 hours after every bite.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Yesterday — the cortisol corner. Today — the third corner.`)}
+    ${p(`This is the one I almost missed in my own practice for years. The one that explains why people who "cut their salt" for a decade watch their BP keep creeping up anyway.`, { margin: '0 0 28px' })}
+    ${bigQuote('Blood sugar raises blood pressure. Harder than salt does.')}
+    ${p(`Most cardiologists don't measure A1c. They look at your BP, they look at your cholesterol, maybe they look at your kidneys. <strong style="color:${PALETTE.text};">Blood sugar doesn't even show up on their scorecard.</strong>`)}
+    ${p(`But every time your blood sugar spikes, your insulin spikes. And insulin is a vasoconstrictor — it narrows your blood vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop on the back end.`)}
+    ${p(`Three corners of one loop. Pull one, the other two pull back. <strong style="color:${PALETTE.text};">Fix the Triangle, the BP fixes itself.</strong>`, { margin: '0 0 28px' })}
+    ${clayBlock('The three "savory" foods that spike BP harder than candy', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">White bread / bagels.</strong> Hits like 5 teaspoons of pure sugar. Insulin spikes within 30 minutes.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Boxed cereal.</strong> 30-50% sugar by weight. A "healthy breakfast" cereal can be the same insulin hit as a glazed donut.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">Crackers, pretzels, rice cakes.</strong> Refined starch behaves like sugar in your bloodstream. The body doesn't distinguish.</p>
+    `)}
+    ${p(`If you cut your salt and your BP didn't move, this is almost always why. Blood sugar is the silent corner.`, { margin: '0 0 28px' })}
+    ${bigQuote('Two moves that work without willpower.')}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. The 10-minute walk inside 30 minutes of eating.</strong> Your muscles pull glucose out of your bloodstream without insulin. Multiple meta-analyses show 30-40% reduction in the post-meal glucose curve. No equipment, no willpower, no diet rules. Walk to the mailbox and back. That's enough.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. The Anti-BP Plate.</strong> Half the plate non-starchy vegetables. Palm-sized protein. Thumb of fat. Small carb — and eat it <em>last</em>. Order matters more than calories. Same plate, carbs at the end, 30-40% smaller glucose spike. By the time the carb arrives, the stomach is partially emptied and GLP-1 is already up.</p>
+    `)}
+    ${p(`Pills manage output. Protocol fixes input. The protocol for this corner is two behaviors — walk after meals, eat carbs last. Both free. Both 14 days to start moving morning numbers.`, { margin: '0 0 28px' })}
+    ${clayBlock('Find out if blood sugar is YOUR corner', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz identifies your specific corner and returns the protocol that matches your type.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
+    `)}
+    ${p(`Tomorrow — the single sentence I teach every patient. The one that takes the fear out of the protocol and makes the doctor conversation easy.`, { margin: '0 0 24px' })}
+    ${joelSignoff()}
+    ${psBox(`Quieter numbers. Steadier mornings. Doctor-cleared independence. Three phrases I'll repeat all month — because they're the actual outcomes worth aiming at, not "lower my BP by Tuesday."`)}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+Yesterday — the cortisol corner. Today — the third corner of the Triangle.
+
+BLOOD SUGAR RAISES BLOOD PRESSURE. HARDER THAN SALT DOES.
+
+Most cardiologists don't measure A1c. They look at BP, cholesterol, maybe kidneys. Blood sugar doesn't even show up on their scorecard.
+
+But every time your blood sugar spikes, insulin spikes. Insulin is a vasoconstrictor — it narrows your vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop.
+
+Three corners of one loop. Pull one, the other two pull back. FIX THE TRIANGLE, THE BP FIXES ITSELF.
+
+THE THREE "SAVORY" FOODS THAT SPIKE BP HARDER THAN CANDY:
+
+→ White bread / bagels. Hits like 5 teaspoons of pure sugar.
+→ Boxed cereal. 30-50% sugar by weight. Same insulin hit as a glazed donut.
+→ Crackers, pretzels, rice cakes. Refined starch behaves like sugar — the body doesn't distinguish.
+
+If you cut your salt and your BP didn't move, this is almost always why. Blood sugar is the silent corner.
+
+TWO MOVES THAT WORK WITHOUT WILLPOWER:
+
+1. The 10-minute walk inside 30 minutes of eating. Muscles pull glucose out without insulin. Multiple meta-analyses show 30-40% reduction in the post-meal glucose curve. Walk to the mailbox. That's enough.
+
+2. The Anti-BP Plate. Half plate non-starchy veg. Palm of protein. Thumb of fat. Small carb LAST. Order matters more than calories. Same plate, carbs at the end, 30-40% smaller glucose spike.
+
+Pills manage output. Protocol fixes input. The protocol for this corner is two behaviors. Both free. Both 14 days to start moving morning numbers.
+
+FIND OUT IF BLOOD SUGAR IS YOUR CORNER:
+→ ${SITE_URL}/quiz
+
+Tomorrow — the single sentence I teach every patient. The one that takes the fear out of the protocol and makes the doctor conversation easy.
+
+Joel
+RN, BraveWorks
+
+P.S. Quieter numbers. Steadier mornings. Doctor-cleared independence. Three phrases I'll repeat all month — because they're the actual outcomes worth aiming at, not "lower my BP by Tuesday."
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 11 ───────────────────────────────────────────────────────────
+// The catechism essay — "Pills manage output. Protocol fixes input."
+// Single most important sentence Joel teaches. Reframes the meds-vs-natural
+// false choice. AND not INSTEAD OF.
+const day11 = {
+  subject: 'The one sentence I teach every patient',
+  subjectB: 'Pills manage output. Protocol fixes input.',
+  preview: 'The frame that takes the fear out of the doctor conversation.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`When I sit with a new client, before we talk about anything else — herbs, dosing, sleep, food, none of it — I write one sentence on a piece of paper and slide it across the desk.`, { margin: '0 0 28px' })}
+    ${bigQuote('Pills manage output. Protocol fixes input.')}
+    ${p(`Eight words. Most of my clients tape it to their refrigerator.`, { margin: '0 0 28px' })}
+    ${p(`Here's what it means:`)}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">Your medication does one thing well.</strong> It lowers the number on the cuff. That's it. That's what it was designed to do. That's what your doctor measures it by. That's what your insurance company is paying it to deliver.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Your medication does not fix what's making the number high in the first place.</strong> The vascular stiffness, the cortisol load, the insulin spike — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.</p>
+    `)}
+    ${p(`Pills manage the <em>output</em> — the reading. Protocol fixes the <em>input</em> — the loop that produced the reading.`)}
+    ${p(`The pills are fine. They're not the enemy. <strong style="color:${PALETTE.text};">But by themselves they're a fingers-in-the-dam strategy.</strong> The dam keeps leaking because nobody's fixing the water pressure upstream.`, { margin: '0 0 28px' })}
+    ${bigQuote('AND not INSTEAD OF.')}
+    ${p(`This is the second sentence I write down. The protocol you're learning over 30 days isn't replacing your medication. <strong style="color:${PALETTE.text};">It's running underneath it.</strong>`)}
+    ${p(`Your doctor watches the readings. Your readings drop because the inputs are moving. At some point — usually 60 to 90 days in — your doctor says "your numbers look good, let's try lowering this dose." That's the moment you've been working toward.`)}
+    ${p(`Never around your doctor. Always with them. <strong style="color:${PALETTE.text};">Doctor-cleared independence.</strong>`, { margin: '0 0 28px' })}
+    ${clayBlock('How to bring this to your next appointment', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Three sentences you can say verbatim. They keep your doctor as a partner, not an obstacle:</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">1. <em>"I'm running a nurse-built natural protocol alongside my medication. Can we cuff weekly for the next 8 weeks so we have data?"</em></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">2. <em>"If my morning average drops 8+ mmHg sustained for 4 weeks, can we talk about lowering the dose at that point?"</em></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">3. <em>"Here's the protocol on one page — I'd like it in my chart so you have the full picture."</em></p>
+    `)}
+    ${p(`Most doctors say yes. Some don't. If yours doesn't, that's information — and we can talk about second opinions another time. <strong style="color:${PALETTE.text};">The goal is not to fight your doctor. The goal is to do this work with their blessing and watch them be the one who says "let's lower the dose."</strong>`, { margin: '0 0 28px' })}
+    ${p(`Tomorrow — Marlene. Eleven points in nine days. Three swaps. No new pill. The most-asked-about case in this list.`, { margin: '0 0 24px' })}
+    ${joelSignoff()}
+    ${psBox(`If this email helped a sentence land — forward it to the friend who's about to start another medication and doesn't know there's an "AND" path. That's the most useful thing you can do with what I send you.`)}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+When I sit with a new client, before anything else — herbs, dosing, sleep, food — I write one sentence on a piece of paper and slide it across the desk.
+
+PILLS MANAGE OUTPUT. PROTOCOL FIXES INPUT.
+
+Eight words. Most clients tape it to the fridge.
+
+Here's what it means:
+
+YOUR MEDICATION DOES ONE THING WELL. It lowers the number on the cuff. That's what it was designed to do. That's what your doctor measures it by.
+
+YOUR MEDICATION DOES NOT FIX WHAT'S MAKING THE NUMBER HIGH. The vascular stiffness, the cortisol load, the insulin spike — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.
+
+Pills manage the OUTPUT — the reading. Protocol fixes the INPUT — the loop that produced the reading.
+
+The pills are fine. They're not the enemy. But by themselves they're a fingers-in-the-dam strategy. The dam keeps leaking because nobody's fixing the water pressure upstream.
+
+AND NOT INSTEAD OF.
+
+The protocol you're learning over 30 days isn't replacing your medication. It's running underneath it.
+
+Your doctor watches the readings. Your readings drop because the inputs are moving. At some point — usually 60 to 90 days in — your doctor says "your numbers look good, let's try lowering this dose." That's the moment you've been working toward.
+
+Never around your doctor. Always with them. Doctor-cleared independence.
+
+HOW TO BRING THIS TO YOUR NEXT APPOINTMENT:
+
+Three sentences you can say verbatim:
+
+1. "I'm running a nurse-built natural protocol alongside my medication. Can we cuff weekly for the next 8 weeks so we have data?"
+
+2. "If my morning average drops 8+ mmHg sustained for 4 weeks, can we talk about lowering the dose at that point?"
+
+3. "Here's the protocol on one page — I'd like it in my chart."
+
+Most doctors say yes. Some don't. If yours doesn't, that's information.
+
+The goal is not to fight your doctor. The goal is to do this work with their blessing and watch them be the one who says "let's lower the dose."
+
+Tomorrow — Marlene. Eleven points in nine days. Three swaps. No new pill.
+
+Joel
+RN, BraveWorks
+
+P.S. If this email helped a sentence land — forward it to the friend who's about to start another medication and doesn't know there's an "AND" path. That's the most useful thing you can do with what I send you.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 12 ───────────────────────────────────────────────────────────
+// The Marlene case study — 11 points in 9 days. Pays off the curiosity loop
+// opened on Day 3. Specific, named, falsifiable. Surfaces the 1:1 path
+// gently — for buyers who want this kind of customization for their case.
+const day12 = {
+  subject: 'Marlene. 11 points. 9 days. No new pill.',
+  subjectB: 'How my buyer dropped 11 systolic in 9 days',
+  preview: 'Three food swaps. No new prescription. Doctor lowered her dose.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`I told you about Marlene on Day 3. Today I unpack what she actually did — because almost every email I get back asks the same question:`)}
+    ${bigQuote('"How exactly did she do it?"')}
+    ${p(`Here's the full picture. Names changed, numbers are real.`, { margin: '0 0 28px' })}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 10px;font-weight:600;">Day 1 baseline:</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Age 52, six years on lisinopril 10mg</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Morning BP averaging <strong style="color:${PALETTE.text};">154/96</strong> — "controlled" but creeping</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ Sleep onset 12:30 AM most nights ("can't fall asleep")</p>
+    `)}
+    ${p(`When she took my quiz, her Triangle came back lit on two corners — <strong style="color:${PALETTE.text};">blood sugar</strong> primary, <strong style="color:${PALETTE.text};">cortisol</strong> secondary. Vascular tertiary. That's a very common pattern in stage-1 hypertension that "won't budge" on standard pills.`, { margin: '0 0 28px' })}
+    ${bigQuote('The three things she changed.')}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. Store-bought bread → sprouted-grain bread (or none).</strong> Store bread = ~200-300mg sodium per slice AND a glucose-curve hit. Sprouted grain = lower of both. Two slices a day cleared out 600mg of sodium and a major insulin spike.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. Weekday deli turkey → roasted from-the-bird the night before.</strong> Deli meat = 700-900mg sodium per lunch portion. Home-roasted = 80mg. Same protein, same convenience, $50/month less than the deli counter.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Canned soup for lunch → homemade in 15 minutes Sunday night.</strong> Canned soup = 800-1,200mg sodium per cup. Homemade with low-sodium broth and a pressure cooker = 80-200mg. Eight portions in one Sunday cook.</p>
+    `)}
+    ${p(`That's it. Three swaps. No new supplement, no new workout, no new pill. Six days in: morning BP <strong style="color:${PALETTE.text};">148/92.</strong> Day 9: <strong style="color:${PALETTE.text};">143/88.</strong>`, { margin: '0 0 28px' })}
+    ${clayBlock("Her cardiologist's response", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">She brought 14 days of morning cuff readings to her next appointment, plus the one-page protocol from her quiz results. Her cardiologist asked one question: <em>"You sure you don't want to keep going on the medication?"</em></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene answered: <em>"I do want to keep going. Just at a lower dose. The 10mg got me to 154. The protocol got me to 143. Can we try 5mg and re-check in 30 days?"</em></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">He wrote the lower script.</p>
+    `)}
+    ${p(`<strong style="color:${PALETTE.text};">Doctor-cleared independence.</strong> Not "natural instead of." Natural <em>alongside</em> — until the alongside-work moves the numbers enough that the medication can step down with the doctor's blessing.`, { margin: '0 0 28px' })}
+    ${bigQuote("What didn't work for Marlene.")}
+    ${p(`I'm careful with the success stories because they make the work look easier than it is. Here's what tripped her up in the first 90 days:`)}
+    ${sageBlock(`
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">Sunday cook-day fatigue.</strong> Two weeks in, she stopped doing the Sunday batch. Soup went back to canned. BP crept up 4 points in 10 days. Returning to the batch fixed it.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">Sleep got tighter, not easier.</strong> Moving bedtime from 12:30 to 11 PM took 6 weeks, not 6 days. She used the cortisol stack (ashwagandha + magnesium glycinate) for the bridge.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">First-month plateau at Day 14.</strong> Numbers stopped moving for 10 days. She wanted to quit. Day 24 they dropped another 4 points. Kidney recalibration is slow — Day 14 is the hardest day.</p>
+    `)}
+    ${p(`This is the realistic picture, not the testimonial picture. <strong style="color:${PALETTE.text};">Quieter numbers. Steadier mornings.</strong> But the path is bumpy and most people quit at Day 14. Don't.`, { margin: '0 0 28px' })}
+    ${clayBlock('If you want this customized for YOUR case', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is built for.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for 1:1 with Joel →</a></p>
+    `)}
+    ${p(`Tomorrow — the foundation everything sits on. The pillars that make every protocol work. Why some buyers see results in 4 days and others in 14.`, { margin: '0 0 24px' })}
+    ${joelSignoff()}
+    ${psBox(`If you've followed the daily emails this far, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+I told you about Marlene on Day 3. Today I unpack what she actually did — because almost every email I get back asks: "How exactly did she do it?"
+
+Names changed, numbers are real.
+
+DAY 1 BASELINE:
+→ Age 52, six years on lisinopril 10mg
+→ Morning BP averaging 154/96 — "controlled" but creeping
+→ A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes
+→ Sleep onset 12:30 AM most nights
+
+When she took my quiz, her Triangle came back: blood sugar PRIMARY, cortisol SECONDARY, vascular tertiary. Common pattern in stage-1 hypertension that won't budge on standard pills.
+
+THE THREE THINGS SHE CHANGED:
+
+1. Store-bought bread → sprouted-grain bread (or none). Two slices a day cleared 600mg sodium and a major insulin spike.
+
+2. Weekday deli turkey → home-roasted night before. 700-900mg per lunch dropped to 80mg. $50/month savings.
+
+3. Canned soup → homemade Sunday batch. 800-1,200mg per cup dropped to 80-200mg. Eight portions in one Sunday cook.
+
+Three swaps. No new supplement, no new workout, no new pill. Day 6: BP 148/92. Day 9: 143/88.
+
+HER CARDIOLOGIST:
+She brought 14 days of morning readings to her appointment, plus her one-page quiz protocol. He asked: "You sure you don't want to keep going on the medication?"
+
+She said: "I do want to keep going. Just at a lower dose. The 10mg got me to 154. The protocol got me to 143. Can we try 5mg and re-check in 30 days?"
+
+He wrote the lower script.
+
+DOCTOR-CLEARED INDEPENDENCE. Not "natural instead of." Natural ALONGSIDE — until the work moves the numbers enough that the medication can step down with the doctor's blessing.
+
+WHAT DIDN'T WORK (the realistic picture):
+
+→ Sunday cook-day fatigue. Stopped Week 2. BP crept up 4 points. Returning to the batch fixed it.
+→ Sleep got tighter, not easier. Moving bedtime 12:30→11 PM took 6 weeks, not 6 days. She used ashwagandha + magnesium glycinate as the bridge.
+→ First-month plateau at Day 14. Numbers stopped moving for 10 days. She wanted to quit. Day 24 they dropped another 4 points. Kidney recalibration is slow — Day 14 is the hardest day. Don't quit.
+
+Quieter numbers. Steadier mornings. The path is bumpy. Most people quit at Day 14. Don't.
+
+IF YOU WANT THIS CUSTOMIZED FOR YOUR CASE:
+
+Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is for.
+→ Apply: ${APPLY_URL}
+
+Tomorrow — the foundation everything sits on. The pillars that make every protocol work.
+
+Joel
+RN, BraveWorks
+
+P.S. If you've followed this far, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
 // ─── Day map ──────────────────────────────────────────────────────────
-export const DAYS = { 1: day1, 2: day2, 3: day3, 4: day4, 5: day5, 6: day6, 7: day7, 8: day8 };
+export const DAYS = { 1: day1, 2: day2, 3: day3, 4: day4, 5: day5, 6: day6, 7: day7, 8: day8, 9: day9, 10: day10, 11: day11, 12: day12 };
 
 // ─── Email shell renderer ─────────────────────────────────────────────
 export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays = 30 }) {
