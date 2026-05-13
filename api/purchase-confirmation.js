@@ -1,7 +1,12 @@
 import { Resend } from 'resend';
-import Stripe from 'stripe';
-import { kv } from '@vercel/kv';
 import { looksLikeValidEmail as sharedLooksLikeValidEmail } from './_email-validation.js';
+
+// 2026-05-13: dropped `Stripe` + `kv` imports — they were only used by the
+// dead webhook handler that's been removed (verified via Stripe API: the
+// live account routes all checkout.session.completed events to
+// /api/stripe-webhook, not here). If a future change re-adds a handler
+// here, restore those imports + the idempotency pattern from
+// api/stripe-webhook.js.
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 // Resend requires a verified sender domain. gmail.com is NOT verified —
@@ -524,100 +529,20 @@ export async function sendPurchaseConfirmation({ email, name, tier, apologyMode 
   });
 }
 
-// Disable Vercel's automatic body parsing so we can read the raw body for webhook signature verification.
-export const config = {
-  api: { bodyParser: false },
-};
-
-async function readRawBody(req) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on('data', (chunk) => chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)));
-    req.on('end', () => resolve(Buffer.concat(chunks)));
-    req.on('error', reject);
-  });
-}
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
-
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!webhookSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET not configured — add it to Vercel env vars');
-    return res.status(500).json({ error: 'Webhook not configured' });
-  }
-
-  const sig = req.headers['stripe-signature'];
-  if (!sig) return res.status(400).json({ error: 'Missing stripe-signature header' });
-
-  const rawBody = await readRawBody(req);
-
-  let event;
-  try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` });
-  }
-
-  // 2026-05-13 hardening: KV-backed idempotency on event.id.
-  // Defense-in-depth — even if BOTH webhook handlers are registered in
-  // Stripe (this one AND /api/stripe-webhook), each event.id is processed
-  // at most once. Without this, Stripe retries on a slow 200 → buyer gets
-  // a duplicate kit-confirmation email → sender-reputation burn.
-  // Same pattern as stripe-webhook.js. 7-day TTL covers Stripe's retry
-  // window (typically <72h) with plenty of margin.
-  if (process.env.KV_REST_API_URL) {
-    const dedupeKey = `purchase-confirmation-event:${event.id}`;
-    try {
-      const seen = await kv.get(dedupeKey);
-      if (seen) {
-        console.log(`purchase-confirmation: duplicate event ${event.id} (already processed) — returning 200 without resending`);
-        return res.status(200).json({ received: true, deduplicated: true });
-      }
-      // Mark as seen BEFORE the email send. Worst case: KV write succeeds
-      // but Resend fails — we don't double-send on retry, and the failure
-      // is logged for manual recovery. Better than the inverse (Resend
-      // succeeds, KV write fails, retry → duplicate email).
-      await kv.set(dedupeKey, { seenAt: new Date().toISOString() }, { ex: 7 * 86400 });
-    } catch (kvErr) {
-      console.warn('purchase-confirmation: KV dedupe check failed (proceeding):', kvErr.message);
-    }
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const email = session.customer_details?.email;
-    const name = session.customer_details?.name;
-
-    // 2026-05-10 fix: route by amount_subtotal (pre-discount) so promotion-code
-    // buyers still hit the right tier. Previously used amount_total which is
-    // post-discount — SORRY30 / JOEL25 redeemers would pay but the webhook
-    // would silently drop them (no kit email, no bonus PDFs). Fall back to
-    // amount_total for sessions where amount_subtotal isn't populated.
-    const routeAmount = session.amount_subtotal ?? session.amount_total;
-    const tier = AMOUNT_TO_TIER[routeAmount];
-
-    if (!email) {
-      console.error('No customer email in session', session.id);
-      return res.status(200).json({ received: true });
-    }
-
-    if (!tier) {
-      // Amount doesn't match a known tier — not a BraveWorks product or different amount
-      console.log('purchase-confirmation: no tier match for routeAmount', routeAmount, '(subtotal=' + session.amount_subtotal + ', total=' + session.amount_total + ')', 'session', session.id);
-      return res.status(200).json({ received: true });
-    }
-
-    try {
-      await sendPurchaseConfirmation({ email, name, tier });
-      console.log(`purchase-confirmation: sent tier ${tier} to ${email}`);
-    } catch (err) {
-      // Log but return 200 — Stripe retries on non-2xx and we don't want duplicate sends
-      console.error('purchase-confirmation: email failed', err.message);
-    }
-  }
-
-  return res.status(200).json({ received: true });
-}
+// 2026-05-13 cleanup: removed the dead `export default handler` webhook entry
+// point. Verified via Stripe API (GET /v1/webhook_endpoints) that the live
+// account has exactly ONE webhook against bpquiz.com, pointing to
+// /api/stripe-webhook — NOT this file. This module was never invoked as a
+// webhook in production; the handler was leftover scaffolding from an
+// earlier session.
+//
+// What this file still exports (used by api/stripe-webhook.js + others):
+//   - TIER_CONFIG (amount → product/subject/downloads/upgrade map)
+//   - AMOUNT_TO_TIER (cents → tier-key lookup)
+//   - renderPurchaseEmail (HTML builder)
+//   - sendPurchaseConfirmation (the actual Resend send, called by the
+//     canonical webhook handler in api/stripe-webhook.js)
+//
+// If we ever need a second webhook endpoint for some reason, copy the
+// pattern from api/stripe-webhook.js — it has the right idempotency dedupe,
+// signature verification, and amount-routing in place.
