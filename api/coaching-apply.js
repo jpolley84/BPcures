@@ -45,6 +45,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }
 
+  // Founding cohort closes 2026-05-17 23:59 ET = 2026-05-18 03:59 UTC.
+  // Reject any submission attempted after that instant — defense in depth
+  // beyond the frontend's UI-state check (someone could POST directly).
+  // Update this constant + the matching one in CoachingPage.jsx when
+  // rolling the next cohort.
+  const FOUNDING_COHORT_CLOSE_ISO = '2026-05-18T03:59:00Z';
+  if (Date.now() >= new Date(FOUNDING_COHORT_CLOSE_ISO).getTime()) {
+    return res.status(410).json({
+      error: 'Applications for the founding cohort closed 2026-05-17 11:59 PM ET. Email braveworksrn@gmail.com with subject "Next cohort" to be added to the waitlist.',
+    });
+  }
+
   // 2026-05-13: expanded from 7 fields to 17 to filter tire kickers using
   // Chris Do (diagnose-before-prescribe), Priestley (score-on-the-doors),
   // Myron Golden (cost-of-inaction), Hormozi (investment-range disqualifier),

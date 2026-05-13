@@ -55,6 +55,12 @@ const PRICE_FOUNDING = '$1,997';     // founding-cohort introductory rate
 const PRICE_3PAY = '$697 × 3';       // matches the live Stripe 3-pay link
 const PRICE_3PAY_TOTAL = '$2,091';
 
+// Founding cohort closes 2026-05-17 at 23:59 ET (end of day Sunday).
+// After this instant, the form swaps to a "closed — next cohort" state.
+// Update both DEADLINE_ISO and DEADLINE_LABEL when rolling cohort 2.
+const DEADLINE_ISO = '2026-05-18T03:59:00Z'; // midnight ET on May 18 = end of May 17
+const DEADLINE_LABEL = 'Sunday, May 17 · 11:59 PM ET';
+
 const GUARANTEES = [
   { day: 'Day 30', text: 'Top three symptoms not improving → full refund, keep every protocol.' },
   { day: 'Day 60', text: 'Labs not moving in the right direction → full refund.' },
@@ -110,6 +116,16 @@ export default function CoachingPage() {
           <p style={{ color: 'var(--muted-gray)', fontSize: '14px', margin: 0 }}>
             5 slots per cohort. Application reviewed personally. No buy button.
           </p>
+          {/* Deadline strip — hard close on May 17. Sits right under the
+              opening pitch so the urgency lands before the value stack. */}
+          <div style={{ marginTop: '1.25rem', background: '#FBF8F1', border: '2px solid #B85A36', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700 }}>
+              Applications close
+            </div>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--navy)' }}>
+              {DEADLINE_LABEL}
+            </div>
+          </div>
         </div>
       </AnimatedSection>
 
@@ -155,7 +171,7 @@ export default function CoachingPage() {
               or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
             </div>
             <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '12px', marginTop: 10, fontStyle: 'italic' }}>
-              Founding-cohort rate. 5 slots. Once they're gone, it's {PRICE_REGULAR}. Stack value is over 7× the price.
+              Founding-cohort rate. 5 slots. Applications close {DEADLINE_LABEL}. After that, it's {PRICE_REGULAR}.
             </div>
           </div>
         </div>
@@ -252,16 +268,35 @@ export default function CoachingPage() {
         </div>
       </div>
 
-      {/* Application form */}
+      {/* Application form (or closed-cohort message when past deadline) */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
-          <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-            Apply.
-          </h2>
-          <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-            ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected.
-          </p>
-          <ApplicationForm />
+          {Date.now() < new Date(DEADLINE_ISO).getTime() ? (
+            <>
+              <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+                Apply.
+              </h2>
+              <p className="text-center mb-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
+                ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected.
+              </p>
+              <p className="text-center mb-6" style={{ color: '#B85A36', fontSize: '13px', fontWeight: 700 }}>
+                Closes {DEADLINE_LABEL}
+              </p>
+              <ApplicationForm />
+            </>
+          ) : (
+            <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '2.5rem 1.5rem', textAlign: 'center' }}>
+              <h2 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+                Founding cohort closed.
+              </h2>
+              <p style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.6, margin: '0 auto 1.25rem', maxWidth: 480 }}>
+                Applications for this cohort closed {DEADLINE_LABEL}. The next opening is ~90 days out at the regular price of {PRICE_REGULAR}.
+              </p>
+              <p style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
+                To get on the waitlist, email <a href="mailto:braveworksrn@gmail.com" style={{ color: 'var(--purple)', fontWeight: 600 }}>braveworksrn@gmail.com</a> with the subject line "Next cohort."
+              </p>
+            </div>
+          )}
         </div>
       </AnimatedSection>
 
