@@ -277,11 +277,29 @@ export default function CoachingPage() {
                 Apply.
               </h2>
               <p className="text-center mb-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-                ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected.
+                ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected at this step.
               </p>
-              <p className="text-center mb-6" style={{ color: '#B85A36', fontSize: '13px', fontWeight: 700 }}>
+              <p className="text-center mb-4" style={{ color: '#B85A36', fontSize: '13px', fontWeight: 700 }}>
                 Closes {DEADLINE_LABEL}
               </p>
+              {/* Price-pinned-above-form so every applicant sees the exact cost
+                  before submitting. No surprises on the fit call. */}
+              <div style={{ background: 'var(--navy)', borderRadius: 12, padding: '14px 18px', margin: '0 auto 1.5rem', maxWidth: 480, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700 }}>
+                    What you're applying for
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 2 }}>
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
+                    <span style={{ color: 'var(--white)', fontSize: '22px', fontWeight: 800 }}>{PRICE_FOUNDING}</span>
+                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>or {PRICE_3PAY}</span>
+                  </div>
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px', lineHeight: 1.4, flexShrink: 0 }}>
+                  Stack value<br />
+                  <span style={{ color: '#C7A95E', fontSize: '15px', fontWeight: 700 }}>{STACK_VALUE}</span>
+                </div>
+              </div>
               <ApplicationForm />
             </>
           ) : (
