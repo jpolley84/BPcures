@@ -28,6 +28,7 @@ const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
+const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 
 function SiteLayout({ children }) {
   return (
@@ -98,6 +99,11 @@ function App() {
           {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
           <Route path="/apply" element={<Navigate to="/1on1" replace />} />
+
+          {/* 90-Day BP Triangle Freedom Sprint — $4,997 flagship. Joel + Annie
+              co-coach. Application-only (no buy button — Brunson high-ticket).
+              Launched 2026-05-12, first cohort target 5 slots. */}
+          <Route path="/coaching" element={<CoachingPage />} />
 
           {/* Operations dashboard — passcode-gated, standalone */}
           <Route path="/ops" element={<OpsDashboardPage />} />
