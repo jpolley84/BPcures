@@ -123,8 +123,8 @@ export default async function handler(req, res) {
     submittedAt,
     status: 'pending-review',
     program: 'BP Triangle Freedom Sprint',
-    price: '$6,997',
-    cohort: 'cohort-1',
+    price: '$1,997 (founding) · regular $6,997',
+    cohort: 'founding-cohort-1',
   };
 
   // 1. Store in KV (90-day TTL so old apps purge themselves)

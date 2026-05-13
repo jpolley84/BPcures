@@ -50,9 +50,10 @@ const STACK = [
   { name: 'Barbara O\'Neill LIVE Event — 20% off', value: '$197' },
 ];
 const STACK_VALUE = '$14,616';
-const PRICE_FULL = '$6,997';
-const PRICE_3PAY = '$2,497 × 3';
-const PRICE_3PAY_TOTAL = '$7,491';
+const PRICE_REGULAR = '$6,997';      // anchor — what future cohorts pay
+const PRICE_FOUNDING = '$1,997';     // founding-cohort introductory rate
+const PRICE_3PAY = '$697 × 3';       // matches the live Stripe 3-pay link
+const PRICE_3PAY_TOTAL = '$2,091';
 
 const GUARANTEES = [
   { day: 'Day 30', text: 'Top three symptoms not improving → full refund, keep every protocol.' },
@@ -143,17 +144,18 @@ export default function CoachingPage() {
             </ul>
           </div>
           <div style={{ marginTop: '1rem', background: 'var(--navy)', borderRadius: 12, padding: '1.25rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: 4 }}>
-              Your investment
+            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700, marginBottom: 6 }}>
+              Founding cohort · introductory rate
             </div>
-            <div style={{ color: 'var(--white)', fontSize: '28px', fontWeight: 800, lineHeight: 1.1 }}>
-              {PRICE_FULL}
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '10px', marginBottom: 2 }}>
+              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '16px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
+              <span style={{ color: 'var(--white)', fontSize: '32px', fontWeight: 800, lineHeight: 1.1 }}>{PRICE_FOUNDING}</span>
             </div>
-            <div style={{ color: 'var(--gold, #C7A95E)', fontSize: '13px', marginTop: 4 }}>
+            <div style={{ color: '#C7A95E', fontSize: '13px', marginTop: 4 }}>
               or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '12px', marginTop: 10, fontStyle: 'italic' }}>
-              Stack delivered is over 2× the price. Math is the math.
+            <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '12px', marginTop: 10, fontStyle: 'italic' }}>
+              Founding-cohort rate. 5 slots. Once they're gone, it's {PRICE_REGULAR}. Stack value is over 7× the price.
             </div>
           </div>
         </div>
@@ -215,7 +217,7 @@ export default function CoachingPage() {
                 ))}
               </ul>
               <p style={{ fontSize: '13px', color: '#3F5A3C', fontWeight: 700, marginTop: '12px', marginBottom: 0 }}>
-                One-time cost: {PRICE_FULL}. Pays for itself by Day 60.
+                One-time cost: {PRICE_FOUNDING} (founding cohort). Pays for itself by Day 60.
               </p>
             </div>
           </div>
