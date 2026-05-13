@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, HelpCircle } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 const PRICE = '$17';
-const STRIPE_KIT_PRICE_ID = import.meta.env.VITE_STRIPE_KIT_PRICE_ID;
+// 2026-05-12: hardcoded the Stripe price ID (was reading from VITE_STRIPE_KIT_PRICE_ID
+// env var which was never set in Vercel — same broken pattern as UpsellPage). This is
+// the $17 "Blood Pressure Cures — The 10-Day Nurse's Reset" price.
+const STRIPE_KIT_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
   const [ref, isVisible] = useScrollAnimation(0.1);
@@ -42,7 +46,11 @@ const CheckoutPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: STRIPE_KIT_PRICE_ID,
-          successUrl: `${window.location.origin}/upsell`,
+          // 2026-05-12 funnel fix: was pointing to /upsell which is currently
+          // a Navigate-to-/ redirect in App.jsx (dead). Repointed to the
+          // working /upsell-bp-reset-kit page that converts at 100% (the
+          // $30 OTO buyers actually take when offered).
+          successUrl: `${window.location.origin}/upsell-bp-reset-kit?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: window.location.href,
         }),
       });
@@ -351,6 +359,31 @@ const CheckoutPage = () => {
           </div>
         </div>
       )}
+
+      {/* Not-ready-yet quiz CTA — for visitors who want diagnostic before
+          committing to the $17. Demoted to footer so it doesn't compete with
+          the primary buy decision. 2026-05-12. */}
+      <AnimatedSection className="py-10" style={{ backgroundColor: 'var(--white)' }}>
+        <div className="container-mobile-first text-center">
+          <div className="inline-flex items-center justify-center gap-2 mb-3" style={{ color: 'var(--muted-gray)', fontSize: '14px' }}>
+            <HelpCircle size={16} />
+            <span>Not ready to buy?</span>
+          </div>
+          <h3 className="font-semibold mb-3" style={{ color: 'var(--navy)', fontSize: '20px', lineHeight: '1.3' }}>
+            Take the free 90-second BP Triangle Quiz first.
+          </h3>
+          <p className="mb-5 max-w-[440px] mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.55' }}>
+            Find out which corner of the Triangle is driving YOUR numbers — vascular, cortisol, or blood sugar. RN-built. Free. Instant results.
+          </p>
+          <Link
+            to="/quiz"
+            className="btn-standard inline-flex"
+            style={{ background: 'transparent', color: 'var(--purple)', border: '2px solid var(--purple)', fontSize: '15px' }}
+          >
+            Take the 90-second quiz →
+          </Link>
+        </div>
+      </AnimatedSection>
 
       {/* Footer */}
       <div className="py-8" style={{ backgroundColor: 'var(--light-gray)' }}>

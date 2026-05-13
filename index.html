@@ -6,60 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#F7F3EC" />
 
-    <!-- ─── A/B ROUTE SPLIT — 2026-05-11 ────────────────────────────────
-         50/50 split of `/` visitors between:
-           • the quiz funnel (this site, stays on bpquiz.com)
-           • the simple sales page (redirect to bpcures.com)
-         Sticky per visitor via localStorage. Runs SYNCHRONOUSLY in <head>
-         before React loads so cures-variant visitors never see a flash of
-         the quiz before redirecting.
-         Overrides:  ?force=quiz  or  ?force=cures  (caches the choice)
-         Reset:      localStorage.removeItem('ab_variant') in DevTools
-         ──────────────────────────────────────────────────────────────── -->
-    <script>
-      (function () {
-        try {
-          // Only split on bare home path. /challenge, /success, /upsell-bp-reset-kit
-          // etc. are out-of-scope and always render normally.
-          if (window.location.pathname !== '/') return;
-
-          var params = new URLSearchParams(window.location.search);
-          var force = params.get('force');
-          var variant;
-
-          if (force === 'quiz' || force === 'cures') {
-            variant = force;
-            try { localStorage.setItem('ab_variant', variant); } catch (e) {}
-          } else {
-            try { variant = localStorage.getItem('ab_variant'); } catch (e) {}
-            if (!variant) {
-              variant = Math.random() < 0.5 ? 'quiz' : 'cures';
-              try {
-                localStorage.setItem('ab_variant', variant);
-                localStorage.setItem('ab_assigned_at', new Date().toISOString());
-              } catch (e) {}
-            }
-          }
-
-          if (variant === 'cures') {
-            // Pass UTM tags so Stripe sessions + Vercel Analytics on the
-            // destination side can attribute the buyer back to this split.
-            var redirect =
-              'https://bpcures.com/' +
-              '?utm_source=bpquiz' +
-              '&utm_medium=ab_split' +
-              '&utm_campaign=ab_2026q2' +
-              '&variant=cures';
-            window.location.replace(redirect);
-          }
-          // else: quiz variant — fall through, React renders QuizPage as usual.
-        } catch (e) {
-          // Fail open: any error → show the quiz. Better to lose a split
-          // assignment than blank-screen a buyer.
-          if (window.console) console.warn('ab_split error:', e);
-        }
-      })();
-    </script>
+    <!-- A/B split test (bpquiz vs bpcures redirect) RETIRED 2026-05-12.
+         The split-test winner — bpcures-style sales letter — is now the
+         canonical landing page rendered by CheckoutPage.jsx at `/`. No
+         redirect needed; everyone gets the winning page. -->
 
     <title>BPQuiz.com — Free Blood Pressure Health Quiz | BraveWorks RN</title>
     <meta name="description" content="Take the free 60-second health quiz to get your personalized blood pressure, cortisol, or blood sugar reset protocol. Created by Joel Polley, RN — 20-year ICU nurse turned naturopathic practitioner." />

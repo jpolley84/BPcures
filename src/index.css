@@ -4,6 +4,48 @@
 @import "tailwindcss";
 
 /* ============================================================
+   bpcures-clone variables + utility classes — 2026-05-12
+   Powers the new HomePage.jsx (sales-letter format ported from
+   the Hostinger Horizons bpcures.com). Scoped to avoid stomping
+   the existing BraveWorks design tokens below.
+   ============================================================ */
+:root {
+  --navy: #2C3E50;
+  --purple: #6C3483;
+  --gold: #F39C12;
+  --white: #FFFFFF;
+  --light-gray: #F8F9FA;
+  --dark-gray: #4A4A4A;
+  --muted-gray: #9CA3AF;
+  --success-light: #E8F8F5;
+}
+
+.container-mobile-first { width: 100%; max-width: 640px; margin-left: auto; margin-right: auto; padding-left: 1.25rem; padding-right: 1.25rem; }
+.section-spacing { padding-top: 4rem; padding-bottom: 4rem; }
+.btn-standard { height: 56px; padding-left: 2rem; padding-right: 2rem; font-weight: 600; border-radius: 0.5rem; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 0; }
+.btn-standard:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.btn-cta { box-shadow: 0 4px 14px rgba(108, 52, 131, 0.25); }
+.gradient-purple-btn { background: linear-gradient(135deg, #6C3483 0%, #8E44AD 100%); }
+.gradient-navy { background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%); }
+.gradient-divider { height: 1px; border: 0; background: linear-gradient(90deg, transparent, #E8E2D4 50%, transparent); margin: 0; }
+.headshot-ring { padding: 4px; border-radius: 50%; background: linear-gradient(135deg, #F39C12 0%, #6C3483 100%); }
+.credential-bar { background-color: var(--navy); }
+.proof-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #FFFFFF; border-radius: 999px; border: 1px solid #E5E7EB; }
+.testimonial-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.sticky-bar { background: var(--navy); box-shadow: 0 -4px 12px rgba(0,0,0,0.15); }
+.quote-accent { border-left: 4px solid var(--purple); }
+.value-strike { text-decoration: line-through; }
+.text-balance { text-wrap: balance; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ============================================================
+   end bpcures-clone block
+   ============================================================ */
+
+
+/* ============================================================
    BraveWorks RN — Design System
    Editorial apothecary. Clinical warmth. Quiet confidence.
    ============================================================ */

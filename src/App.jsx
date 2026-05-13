@@ -8,11 +8,16 @@ import ScrollToTop from './components/ScrollToTop';
 // want it back. ChallengeBanner — also pulled (2026-05-10).
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import QuizPage from './pages/QuizPage'; // eager — landing page, must be in initial bundle
+// 2026-05-12: The new landing page is the bpcures-style sales letter
+// (CheckoutPage.jsx — ported from Hostinger Horizons bpcures.com). Quiz moved
+// to /quiz for SEO + warm-traffic landing. The split test showed cold TikTok
+// traffic converts ~3× higher on the sales-letter format vs the quiz.
+import CheckoutPage from './pages/CheckoutPage'; // eager — landing page
 
 // All other routes are lazy-loaded. Users who land on `/` (99% of traffic)
-// only download the QuizPage chunk; the rest stream on-demand when their
-// route is visited. Big LCP/TTI win.
+// only download the landing chunk; the rest stream on-demand when their
+// route is visited.
+const QuizPage = lazy(() => import('./pages/QuizPage'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
 const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
@@ -55,8 +60,15 @@ function App() {
       <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
-          {/* Single-page funnel: quiz → email → results → checkout */}
-          <Route path="/" element={<SiteLayout><QuizPage /></SiteLayout>} />
+          {/* Single-page sales letter at / — the new landing for cold TikTok
+              traffic (2026-05-12 split-test winner over the quiz format).
+              SiteLayout intentionally omitted: bpcures-style standalone page
+              has its own header/footer/social-proof bar, no Navbar needed. */}
+          <Route path="/" element={<CheckoutPage />} />
+
+          {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
+              traffic that wants the diagnostic before buying. */}
+          <Route path="/quiz" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
           {/* Challenge sales page — restored 2026-05-05 as VIP-focused upsell.
               Premium ($397) section is hidden inside ChallengePage but the page
