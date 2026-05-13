@@ -179,13 +179,19 @@ export default function CoachingPage() {
             </picture>
           </div>
           <div style={{ fontSize: '32px', color: 'var(--muted-gray)', fontWeight: 200 }}>+</div>
-          {/* Annie placeholder — when her photo file is provided, swap in
-              like the Joel one. Until then we render her initial in a ring
-              matching the brand. */}
-          <div className="headshot-ring" style={{ width: '98px', height: '98px', display: 'grid', placeItems: 'center' }}>
-            <div style={{ width: '90px', height: '90px', borderRadius: '50%', background: '#FBF8F1', border: '3px solid white', display: 'grid', placeItems: 'center', fontFamily: 'Georgia, serif', fontSize: '36px', color: 'var(--purple)', fontWeight: 600 }}>
-              A
-            </div>
+          {/* Annie Chitate, RN — photo dropped 2026-05-12.
+              Same render pattern as Joel: WebP source + JPG fallback. */}
+          <div className="headshot-ring">
+            <picture>
+              <source srcSet="/annie.webp" type="image/webp" />
+              <img
+                src="/annie.jpg"
+                alt="Annie Chitate, RN — hormone specialist, naturopathic practitioner"
+                width="100"
+                height="100"
+                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }}
+              />
+            </picture>
           </div>
         </div>
       </div>
