@@ -586,5 +586,33 @@ export default async function handler(req, res) {
   const list = await listUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
   if (!list.ok) console.warn('lead-magnet: list upsert incomplete', list.reason || 'unknown');
 
+  // 2026-05-13 funnel-coherence: every quiz email also enters the 7-day
+  // Resend drip nurture. Previously quiz takers got their category PDF +
+  // cookbook and then went silent until they bought — a major leak.
+  // Now Day 1 of the BP Triangle drip hits them at the next 12:00 UTC
+  // cron fire. Day 7 opt-in gate still applies — buyers click through,
+  // non-buyers self-filter. Don't overwrite existing drip records.
+  if (process.env.KV_REST_API_URL) {
+    const dripKey = `drip:${email.trim().toLowerCase()}`;
+    try {
+      const existing = await kv.get(dripKey);
+      if (!existing) {
+        await kv.set(dripKey, {
+          email: email.trim().toLowerCase(),
+          firstName: name || '',
+          cohort: 'quiz',
+          enrolledAt: new Date().toISOString(),
+          lastSentDay: 0,
+          optedIn: true, // taking the quiz IS the opt-in; Day-7 gate still filters
+          source: 'quiz-lead-magnet',
+          tags: ['quiz-taker', `category-${category}`, `tier-${tier}`],
+        });
+      }
+    } catch (err) {
+      console.warn('lead-magnet: drip-kv enroll failed', err.message);
+      // Non-blocking — PDF already shipped, drip is a bonus
+    }
+  }
+
   return res.status(200).json({ success: true, category, tier, deduped: isDuplicate });
 }

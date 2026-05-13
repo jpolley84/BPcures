@@ -20,7 +20,14 @@
 //   RESEND_API_KEY           — Resend API key
 //
 // Webhook URL Joel registers in Stripe: https://bpquiz.com/api/stripe-webhook
-// Events to subscribe: checkout.session.completed
+// Events to subscribe:
+//   - checkout.session.completed  (existing — purchase confirmation)
+//   - checkout.session.expired    (added 2026-05-13 — cart abandonment recovery)
+//
+// Stripe fires `checkout.session.expired` exactly once per session, 24h after
+// the session is created if no payment completes. If the buyer entered their
+// email on the Stripe Checkout page before bailing, customer_details.email is
+// present in the event payload — that's our recovery hook.
 
 import { Resend } from 'resend';
 import Stripe from 'stripe';
@@ -723,9 +730,9 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: `Webhook Error: ${err.message}` });
   }
 
-  // Filter — only act on checkout.session.completed. Acknowledge all
-  // other types with 200 so Stripe doesn't retry.
-  if (event.type !== 'checkout.session.completed') {
+  // Filter — only act on completed (purchase) or expired (abandonment).
+  // Acknowledge all other types with 200 so Stripe doesn't retry.
+  if (event.type !== 'checkout.session.completed' && event.type !== 'checkout.session.expired') {
     return res.status(200).json({ ok: true, ignored: event.type });
   }
 
@@ -751,7 +758,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const result = await processCheckoutCompleted(event);
+    const result = event.type === 'checkout.session.expired'
+      ? await processCheckoutExpired(event)
+      : await processCheckoutCompleted(event);
     return res.status(200).json({ ok: true, ...result });
   } catch (err) {
     // Already-handled errors return 200 internally; this catches truly
@@ -760,4 +769,150 @@ export default async function handler(req, res) {
     console.error('stripe-webhook: processing failed', err.stack || err.message);
     return res.status(200).json({ ok: false, error: err.message });
   }
+}
+
+// ─── Cart abandonment recovery ────────────────────────────────────────
+// Fired on `checkout.session.expired`. Stripe expires unpaid sessions 24h
+// after creation. If the user entered their email on Stripe Checkout but
+// bailed before paying, we have customer_details.email — recover them.
+//
+// Safety:
+//   - Skip if no email captured (they bailed before the email step)
+//   - Skip if they later became a `drip:<email>` subscriber (means they
+//     came back via the quiz or challenge path — already in nurture)
+//   - Skip if recovery already sent in last 30 days (KV dedupe key
+//     `cart-recovery-sent:<email>` with 30-day TTL — prevents re-sends
+//     if someone bails repeatedly)
+//   - Also enrolls them in `drip:*` KV so they get the educational drip
+//     starting tomorrow morning even if they don't click back to buy
+async function processCheckoutExpired(event) {
+  const session = event.data?.object || {};
+  const email = (session.customer_details?.email || '').trim().toLowerCase();
+
+  if (!email || !email.includes('@')) {
+    return { recovered: false, reason: 'no_email_captured' };
+  }
+
+  // Dedupe per-email so a chronic bailer doesn't get spammed
+  try {
+    const recoveryKey = `cart-recovery-sent:${email}`;
+    const alreadySent = await kv.get(recoveryKey);
+    if (alreadySent) {
+      console.log(`stripe-webhook: cart-recovery already sent to ${email} at ${alreadySent.sentAt}, skipping`);
+      return { recovered: false, reason: 'already_recovered' };
+    }
+    // Mark immediately to prevent races
+    await kv.set(recoveryKey, { sentAt: new Date().toISOString() }, { ex: 30 * 86400 });
+  } catch (err) {
+    console.warn('stripe-webhook: cart-recovery dedupe check failed (continuing)', err.message);
+  }
+
+  // Enroll into the drip:* nurture if they're not already there.
+  // Mirrors the lead-magnet enrollment pattern (2026-05-13).
+  try {
+    const dripKey = `drip:${email}`;
+    const existing = await kv.get(dripKey);
+    if (!existing) {
+      await kv.set(dripKey, {
+        email,
+        firstName: '',
+        cohort: 'cart-abandoned',
+        enrolledAt: new Date().toISOString(),
+        lastSentDay: 0,
+        optedIn: true,
+        source: 'cart-abandoned',
+        tags: ['cart-abandoned', 'bpquiz-checkout'],
+      });
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: cart-abandoned drip enrollment failed', err.message);
+  }
+
+  // Send recovery email — warm, no shame, single CTA
+  try {
+    const html = renderCartRecoveryEmail();
+    const text = `Hey,
+
+You started a checkout for the BP Reset Kit but didn't finish. No worries — life gets in the way.
+
+The kit's still here whenever you're ready:
+https://bpquiz.com/
+
+It's a $17 protocol I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step pressure-triangle reset.
+
+If you had a question that stopped you, hit reply — I read every email myself.
+
+Joel Polley, RN
+BraveWorks
+`;
+    await getResend().emails.send({
+      from: FROM_CUSTOMER,
+      to: email,
+      replyTo: REPLY_TO_CUSTOMER,
+      subject: 'You got distracted — your BP Reset Kit is still here',
+      html,
+      text,
+    });
+  } catch (err) {
+    console.error('stripe-webhook: cart-recovery send failed', err.message);
+    return { recovered: false, reason: 'send_failed', error: err.message };
+  }
+
+  // Tag Joel so it shows up in his stripe-events inbox for visibility
+  try {
+    await getResend().emails.send({
+      from: FROM_INTERNAL,
+      to: STRIPE_EVENTS_INBOX,
+      subject: `[stripe-event] cart-expired (recovery sent) — ${email}`,
+      text: `Checkout session expired without payment.
+Email: ${email}
+Recovery email + drip enrollment fired.
+Session: ${session.id}
+Created: ${new Date(session.created * 1000).toISOString()}
+`,
+    });
+  } catch (err) {
+    console.warn('stripe-webhook: cart-recovery audit log failed', err.message);
+  }
+
+  return { recovered: true, email };
+}
+
+function renderCartRecoveryEmail() {
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#FBF8F1;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#2C2A26;line-height:1.6;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;">
+    <tr><td align="center" style="padding:24px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFDF7;border-radius:12px;border:1px solid #E6DECE;">
+        <tr><td style="padding:32px 28px 8px;">
+          <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#B85A36;font-weight:600;margin-bottom:6px;">
+            BraveWorks RN
+          </div>
+          <p style="font-size:17px;margin:18px 0 14px;">Hey,</p>
+          <p style="font-size:15px;margin:0 0 14px;">
+            You started a checkout for the BP Reset Kit but didn't finish. No worries — life gets in the way.
+          </p>
+          <p style="font-size:15px;margin:0 0 18px;">
+            The kit's still here whenever you're ready:
+          </p>
+          <p style="margin:0 0 24px;text-align:center;">
+            <a href="https://bpquiz.com/" style="display:inline-block;padding:14px 28px;background:#3F5A3C;color:#FBF8F1;text-decoration:none;border-radius:8px;font-size:16px;font-weight:600;">
+              Finish your order →
+            </a>
+          </p>
+          <p style="font-size:15px;margin:0 0 14px;">
+            It's a <strong>$17 protocol</strong> I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step pressure-triangle reset.
+          </p>
+          <p style="font-size:15px;margin:0 0 14px;">
+            If you had a question that stopped you, hit reply — I read every email myself.
+          </p>
+          <p style="font-size:15px;margin:0 0 4px;font-weight:600;">Joel Polley, RN</p>
+          <p style="font-size:13px;margin:0 0 24px;color:#5B564C;font-style:italic;">BraveWorks</p>
+        </td></tr>
+      </table>
+      <p style="font-size:11px;color:#9C9485;margin:14px 0 0;">
+        BraveWorks RN · braveworksrn@gmail.com · bpquiz.com
+      </p>
+    </td></tr>
+  </table>
+</body></html>`;
 }
