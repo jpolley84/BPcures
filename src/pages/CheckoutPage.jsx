@@ -81,7 +81,15 @@ const CheckoutPage = () => {
   const whatIsIncluded = [
     { name: 'Master Blood Pressure Document', description: 'The full protocol. What to take, when to take it, how much.', value: '$47' },
     { name: 'Top 10 Herbs Deep Dive', description: 'Each herb matched to the drug it mimics — with dosages your doctor never learned in med school.', value: '$27' },
-    { name: '10-Day Blood Pressure Reset Challenge', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
+    // 2026-05-12 naming-taxonomy fix: was "10-Day Blood Pressure Reset Challenge"
+    // which collided with /challenge (the actual paid $97 BP Triangle Cohort).
+    // Renamed to "Protocol" so each tier has its own distinct noun:
+    // — Inside $17 kit:  "10-Day BP Reset Protocol"   (this bonus, $97 anchor)
+    // — Free email arc:  "30-Day BP Triangle Map"     (lead magnet)
+    // — Paid $97 page:   "30-Day BP Triangle Cohort"  (group coaching)
+    // — $1,297 1:1:      "BP Triangle Premium"        (application)
+    // — $4,997 90-day:   "BP Triangle Freedom Sprint" (flagship)
+    { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
     { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that move your numbers.', value: '$27' },
     { name: 'White Coat Syndrome Guide', description: 'Why your readings at the doctor are probably wrong — and the 2-minute trick nurses use to get real numbers.', value: '$17' },
     { name: 'Blood Pressure FAQ', description: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", value: '$12' },
@@ -317,12 +325,19 @@ const CheckoutPage = () => {
         </div>
       </AnimatedSection>
 
-      {/* AND Statement */}
+      {/* AND Statement + Bible catechism — 2026-05-12 funnel-coherence fix.
+          "Pills manage output. Protocol fixes input." is the bible's most-
+          repeated sentence; appears in 4+ drip emails. Anchoring it on the
+          home page reinforces the brand voice cold buyers will see again
+          in their inbox. */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
-          <div className="max-w-[480px] mx-auto">
-            <p className="text-center italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7' }}>
-              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance — that's the BraveWorks way.
+          <div className="max-w-[520px] mx-auto text-center">
+            <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.5', fontWeight: 600, margin: '0 0 14px' }}>
+              Pills manage output. Protocol fixes input.
+            </p>
+            <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
+              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance — that's the BraveWorks way. <strong style={{ color: 'var(--dark-gray)' }}>Doctor-cleared independence.</strong>
             </p>
           </div>
         </div>

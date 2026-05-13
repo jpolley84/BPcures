@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { kv } from '@vercel/kv';
 import crypto from 'node:crypto';
 
 let _resend = null;
@@ -162,6 +163,41 @@ function renderAnnouncementEmail(firstName) {
 </body></html>`;
 }
 
+// Enroll a new "Send my free map" signup into the Resend drip:* KV system.
+// 2026-05-12 funnel-coherence fix: the /challenge page was previously
+// double-pathing — Mailchimp tagged the user but the daily Resend drip
+// (which actually delivers the 30-day Triangle arc) never knew about them.
+// Now this is the single canonical source of truth.
+async function enrollInDripKV(email, name) {
+  if (!process.env.KV_REST_API_URL) {
+    return { ok: false, reason: 'kv_not_configured' };
+  }
+  const key = `drip:${email.toLowerCase()}`;
+  try {
+    // Don't overwrite an in-progress sub. If they're already in the drip
+    // (e.g., took the BPQuiz a few days ago, now also signed up via
+    // /challenge), keep their existing enrollment + lastSentDay intact.
+    const existing = await kv.get(key);
+    if (existing) {
+      return { ok: true, alreadyEnrolled: true, lastSentDay: existing.lastSentDay || 0 };
+    }
+    await kv.set(key, {
+      email,
+      firstName: name || '',
+      cohort: 0,
+      enrolledAt: new Date().toISOString(),
+      lastSentDay: 0,
+      optedIn: true, // signing up for the 30-day arc IS the opt-in; no Day-7 gate
+      source: 'challenge-page',
+      tags: ['30-day-challenge', 'pressure-triangle'],
+    });
+    return { ok: true, alreadyEnrolled: false };
+  } catch (err) {
+    console.error('challenge-signup: drip-kv enroll failed', err.message);
+    return { ok: false, reason: err.message };
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -175,12 +211,22 @@ export default async function handler(req, res) {
 
   const trimmedEmail = email.trim().toLowerCase();
 
-  // 1. Add to Mailchimp with challenge tags (fire-and-forget)
+  // 1. Enroll in Resend drip:* KV (the actual daily-arc delivery system).
+  //    This is the new single source of truth as of 2026-05-12. Daily cron
+  //    will start sending Day 1 → Day 30 tomorrow at 12:00 UTC.
+  const dripResult = await enrollInDripKV(trimmedEmail, name);
+  if (!dripResult.ok) {
+    console.warn('challenge-signup: drip enrollment skipped', dripResult.reason);
+  }
+
+  // 2. Add to Mailchimp with challenge tags (fire-and-forget; for legacy
+  //    segmentation + analytics. Eventually retire once beehiiv migration
+  //    completes or we standardize on the drip:* KV alone.)
   mailchimpUpsert(trimmedEmail, name).catch((err) =>
     console.error('challenge-signup: mailchimp failed', err.message)
   );
 
-  // 2. Send announcement email via Resend
+  // 3. Send announcement email via Resend (welcome + expectation-setting).
   try {
     const html = renderAnnouncementEmail(name);
     await getResend().emails.send({
@@ -195,5 +241,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Failed to send welcome email' });
   }
 
-  return res.status(200).json({ success: true });
+  return res.status(200).json({
+    success: true,
+    dripEnrolled: dripResult.ok,
+    alreadyEnrolled: dripResult.alreadyEnrolled || false,
+  });
 }
