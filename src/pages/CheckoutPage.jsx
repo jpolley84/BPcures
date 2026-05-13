@@ -140,9 +140,10 @@ const CheckoutPage = () => {
         <div className="container-mobile-first">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
             {[
-              { icon: Play, text: '90,000+ followers on TikTok' },
+              { icon: Play, text: '155K on TikTok' },
+              { icon: Users, text: '151K on Facebook' },
+              { icon: TrendingUp, text: '20K on Instagram' },
               { icon: Users, text: '1,100+ community members' },
-              { icon: TrendingUp, text: 'As seen on TikTok' },
             ].map((item, i) => (
               <div key={i} className="proof-badge">
                 <item.icon size={15} className="text-[#6C3483]" />
@@ -314,7 +315,7 @@ const CheckoutPage = () => {
             {[
               { icon: Heart, text: '20-Year ICU/ER Nurse' },
               { icon: Heart, text: 'Naturopathic Practitioner' },
-              { icon: Users, text: '90,000+ TikTok followers' },
+              { icon: Users, text: '326K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
                 <item.icon size={20} style={{ color: 'var(--purple)' }} />

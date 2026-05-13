@@ -291,7 +291,7 @@ function HeroCopy() {
         <div className="avatar">JP</div>
         <div className="bio">
           <span className="name">Joel Polley, RN</span>
-          <span className="role">20 years ICU &amp; Emergency · 116K on TikTok</span>
+          <span className="role">20 years ICU &amp; Emergency · 326K across TikTok, Facebook &amp; Instagram</span>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--ink-soft)' }}>
           <Star size={14} fill="currentColor" stroke="none" style={{ color: 'var(--gold)' }} />
