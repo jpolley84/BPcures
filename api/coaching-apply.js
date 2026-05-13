@@ -45,9 +45,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }
 
-  const { name, email, phone, bpNumbers, currentMeds, whyNow, whyAFit } = req.body;
+  // 2026-05-13: expanded from 7 fields to 17 to filter tire kickers using
+  // Chris Do (diagnose-before-prescribe), Priestley (score-on-the-doors),
+  // Myron Golden (cost-of-inaction), Hormozi (investment-range disqualifier),
+  // and Brunson (decision-maker filter).
+  const {
+    name, email, phone,
+    ageRange, bpRange, bpMeds,
+    healthScore, sleepScore, stressScore,
+    costOfInaction, commitment, pastAttempts, successLook,
+    investmentRange, decisionMaker, whenStart, whyNow,
+    foundMe,
+  } = req.body;
 
-  // Required-field validation
+  // Required-field validation — mirrors the page's required list.
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
   }
@@ -57,21 +68,62 @@ export default async function handler(req, res) {
   if (!whyNow || typeof whyNow !== 'string' || !whyNow.trim()) {
     return res.status(400).json({ error: '"Why now?" is required — Joel uses it to screen for fit' });
   }
+  for (const [key, label] of [
+    ['ageRange', 'Age range'], ['bpRange', 'BP range'],
+    ['commitment', 'Commitment score'], ['investmentRange', 'Investment range'],
+    ['decisionMaker', 'Decision maker'], ['whenStart', 'When could you start'],
+  ]) {
+    if (!req.body[key] || !String(req.body[key]).trim()) {
+      return res.status(400).json({ error: `${label} is required` });
+    }
+  }
 
   const trimmedEmail = email.trim().toLowerCase();
   const submittedAt = new Date().toISOString();
+  const safe = (v) => (typeof v === 'string' ? v.trim() : '');
+
+  // Score the application heuristically so Joel can spot top-of-stack
+  // applicants in the email subject without reading the body. Higher
+  // score = stronger fit signal.
+  let fitScore = 0;
+  if (commitment && commitment.startsWith('10')) fitScore += 4;
+  else if (commitment && commitment.startsWith('8')) fitScore += 3;
+  else if (commitment && commitment.startsWith('6')) fitScore += 1;
+  if (investmentRange === '$5,000–$10,000' || investmentRange === '$10,000+') fitScore += 4;
+  else if (investmentRange === '$2,000–$5,000') fitScore += 2;
+  if (decisionMaker && decisionMaker.startsWith('Yes')) fitScore += 2;
+  if (whenStart === 'This week' || whenStart === 'Within 30 days') fitScore += 2;
+  if (bpMeds && (bpMeds === '2' || bpMeds === '3+' || bpMeds === 'I want OFF')) fitScore += 1;
+  if (safe(costOfInaction).length > 80) fitScore += 1;
+  if (safe(successLook).length > 60) fitScore += 1;
+  // Max possible ~15. >=10 = hot. 7-9 = warm. <7 = needs more screening.
+  const fitTier = fitScore >= 10 ? 'HOT' : fitScore >= 7 ? 'WARM' : 'COLD';
+
   const application = {
-    name: name.trim(),
+    name: safe(name),
     email: trimmedEmail,
-    phone: (phone || '').trim(),
-    bpNumbers: (bpNumbers || '').trim(),
-    currentMeds: (currentMeds || '').trim(),
-    whyNow: whyNow.trim(),
-    whyAFit: (whyAFit || '').trim(),
+    phone: safe(phone),
+    ageRange: safe(ageRange),
+    bpRange: safe(bpRange),
+    bpMeds: safe(bpMeds),
+    healthScore: safe(healthScore),
+    sleepScore: safe(sleepScore),
+    stressScore: safe(stressScore),
+    costOfInaction: safe(costOfInaction),
+    commitment: safe(commitment),
+    pastAttempts: safe(pastAttempts),
+    successLook: safe(successLook),
+    investmentRange: safe(investmentRange),
+    decisionMaker: safe(decisionMaker),
+    whenStart: safe(whenStart),
+    whyNow: safe(whyNow),
+    foundMe: safe(foundMe),
+    fitScore,
+    fitTier,
     submittedAt,
     status: 'pending-review',
     program: 'BP Triangle Freedom Sprint',
-    price: '$4,997',
+    price: '$6,997',
     cohort: 'cohort-1',
   };
 
@@ -86,22 +138,47 @@ export default async function handler(req, res) {
     }
   }
 
-  // 2. Email notification to Joel
+  // 2. Email notification to Joel — structured rows for every field, with
+  // fit-tier in the subject line so HOT applicants jump in the inbox.
   try {
-    const subject = `[Coaching App] ${application.name} — ${application.email}`;
-    const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:640px;margin:0 auto;padding:24px;color:#2C3E50;">
-      <h2 style="color:#6C3483;margin:0 0 8px;">New 90-Day Sprint Application</h2>
-      <p style="font-size:13px;color:#9CA3AF;margin:0 0 24px;">Submitted ${submittedAt}</p>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;width:140px;">Name</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;font-weight:600;">${escapeHtml(application.name)}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;">Email</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;">${escapeHtml(application.email)}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;">Phone</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;">${escapeHtml(application.phone) || '<em style="color:#9CA3AF;">(not provided)</em>'}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;">BP numbers</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;">${escapeHtml(application.bpNumbers) || '<em style="color:#9CA3AF;">(blank)</em>'}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;vertical-align:top;">Current meds</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;white-space:pre-wrap;">${escapeHtml(application.currentMeds) || '<em style="color:#9CA3AF;">(blank)</em>'}</td></tr>
-        <tr><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;color:#9CA3AF;vertical-align:top;">Why now</td><td style="padding:8px 0;border-bottom:1px solid #E5E7EB;white-space:pre-wrap;">${escapeHtml(application.whyNow)}</td></tr>
-        <tr><td style="padding:8px 0;color:#9CA3AF;vertical-align:top;">Why a fit</td><td style="padding:8px 0;white-space:pre-wrap;">${escapeHtml(application.whyAFit) || '<em style="color:#9CA3AF;">(blank)</em>'}</td></tr>
-      </table>
-      <p style="margin:24px 0 0;font-size:13px;color:#9CA3AF;">Reply directly to ${escapeHtml(application.email)} when ready to schedule fit call.</p>
+    const subject = `[App ${application.fitTier} ${application.fitScore}] ${application.name} — ${application.investmentRange || 'no $ range'}`;
+    const tierColor = application.fitTier === 'HOT' ? '#3F5A3C' : application.fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
+    const row = (label, value) =>
+      `<tr><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#9C9485;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;width:180px;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#2C2A26;font-size:13px;line-height:1.55;white-space:pre-wrap;">${escapeHtml(value) || '<em style="color:#9C9485;">(blank)</em>'}</td></tr>`;
+
+    const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
+      <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Fit tier — ${application.fitTier} · score ${application.fitScore}/15</div>
+        <div style="font-size:20px;font-weight:700;margin-top:4px;">${escapeHtml(application.name)}</div>
+        <div style="font-size:13px;opacity:0.85;">${escapeHtml(application.email)} · ${escapeHtml(application.phone) || 'no phone'}</div>
+      </div>
+      <div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 8px;">Snapshot</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Age range', application.ageRange)}
+          ${row('BP usually runs', application.bpRange)}
+          ${row('On BP meds', application.bpMeds)}
+          ${row('Current health (1-10)', application.healthScore)}
+          ${row('Sleep', application.sleepScore)}
+          ${row('Stress (1-10)', application.stressScore)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Mental state + commitment</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Cost of inaction', application.costOfInaction)}
+          ${row('Commitment 1-10', application.commitment)}
+          ${row('What hasn\'t worked before', application.pastAttempts)}
+          ${row('What success looks like', application.successLook)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit math</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Investment range', application.investmentRange)}
+          ${row('Decision maker', application.decisionMaker)}
+          ${row('When could start', application.whenStart)}
+          ${row('Why now', application.whyNow)}
+          ${row('How they found you', application.foundMe)}
+        </table>
+        <p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ${escapeHtml(application.email)} when ready to schedule the fit call. Auto-ack already sent to applicant.</p>
+      </div>
     </body></html>`;
     await getResend().emails.send({
       from: FROM,

@@ -1,16 +1,19 @@
-// /coaching — The BP Triangle Freedom Sprint application page.
+// /coaching — The 90-Day BP Triangle Freedom Sprint application page.
 //
-// 2026-05-12: built for the new $4,997 90-day flagship offer. Two-coach
-// model (Joel + Annie), application-only flow (no buy button — Brunson
-// high-ticket rule). Form submits to /api/coaching-apply which stores
-// in KV + emails Joel a notification.
+// 2026-05-13 overhaul: streamlined funnel, higher anchor price ($6,997),
+// new $14,616 value stack matched to Wakita's signed offer, cost-of-
+// inaction section, and a 17-question pre-qualification application that
+// filters tire kickers using:
+//   • Chris Do — diagnose-before-prescribe, sophistication tests
+//   • Daniel Priestley — Score on the Doors, commitment scaling
+//   • Myron Golden — cost-of-inaction frame, premium-tier framing
+//   • Hormozi — disqualification, scaled investment range
+//   • Brunson — application-only, decision-maker filter
 //
-// Architecture matches the bpcures-style CheckoutPage.jsx so the buyer
-// feels brand continuity from $17 → $4,997. Same color tokens, same
-// section spacing, same Animation pattern.
+// Application-only (no buy button). Submits to /api/coaching-apply.
 
 import { useState } from 'react';
-import { Loader2, CheckCircle2, Heart, Users, Play, Award, Sparkles, ShieldCheck, Calendar, Phone } from 'lucide-react';
+import { Loader2, CheckCircle2, Users, Play, ShieldCheck, Phone, TrendingDown, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 function AnimatedSection({ children, className = '', delay = 0, style = {} }) {
@@ -31,94 +34,288 @@ function AnimatedSection({ children, className = '', delay = 0, style = {} }) {
   );
 }
 
-const phases = [
-  {
-    weeks: 'Wks 1-2',
-    name: 'Diagnostic Intensive',
-    bullets: [
-      'Joel reviews your labs, meds list, BP log, and lifestyle',
-      'Annie reviews your hormone panel + cortisol pattern',
-      'Joint custom 30-page protocol document delivered',
-    ],
-  },
-  {
-    weeks: 'Wks 3-6',
-    name: 'Implementation',
-    bullets: [
-      'Weekly 60-min 1:1 video calls with Joel',
-      'Daily Voxer/text access to BOTH Joel & Annie',
-      'Bi-weekly hormone check-ins with Annie',
-    ],
-  },
-  {
-    weeks: 'Wks 7-10',
-    name: 'Stabilization',
-    bullets: [
-      'Numbers locked in; doctor-conversation prep',
-      'One-page doctor handoff document',
-      'Joel role-plays your next appointment until you can run it cold',
-    ],
-  },
-  {
-    weeks: 'Wks 11-12',
-    name: 'Independence',
-    bullets: [
-      'Doctor-supervised medication step-down WITH you',
-      'Graduate transition into Skool VIP tier',
-      'Quarterly reunion calls — for life',
-    ],
-  },
+// ── Value stack (mirrors Wakita's signed offer document) ──
+const STACK = [
+  { name: 'Weekly 1:1 with Joel — 12 sessions (Mondays 8 PM ET)', value: '$5,964' },
+  { name: 'Biweekly hormone coaching with Annie — 6 sessions', value: '$1,782' },
+  { name: 'Full supplement + diet audit (live, 60 min)', value: '$697' },
+  { name: 'Daily schedule audit', value: '$497' },
+  { name: 'WhatsApp office hours (Sun–Thu 9–5 ET) × 90 days', value: '$1,997' },
+  { name: 'Skool VIP membership (90-day access)', value: '$297' },
+  { name: 'All BraveWorks courses — lifetime', value: '$1,997' },
+  { name: 'eBook library — lifetime', value: '$497' },
+  { name: 'Daily tailored email coaching', value: '$497' },
+  { name: 'Tracker suite (BP / symptom / food / sleep)', value: '$97' },
+  { name: 'Partner inclusion guide', value: '$97' },
+  { name: 'Barbara O\'Neill LIVE Event — 20% off', value: '$197' },
 ];
+const STACK_VALUE = '$14,616';
+const PRICE_FULL = '$6,997';
+const PRICE_3PAY = '$2,497 × 3';
+const PRICE_3PAY_TOTAL = '$7,491';
 
-const whatsIncluded = [
-  '12 weekly 60-min 1:1 video sessions',
-  'Daily Voxer access to both RNs (weeks 1-6)',
-  'Custom 30-page protocol document',
-  "Annie's Hormone Foundation Audit",
-  'Lab interpretation + doctor-conversation script',
-  'Doctor-conversation video coaching (Joel role-plays)',
-  'All lower-tier products included ($17 kit, $30 Reset Kit, Boomers book, cookbook)',
-  'Lifetime Skool VIP tier access',
-  'Quarterly graduate reunion calls (for life)',
-];
-
-const bonuses = [
-  { name: "Joel's Doctor Conversation Video Coach", value: '$497' },
-  { name: "Annie's Hormone Foundation Audit", value: '$497', highlight: 'CORE DELIVERABLE' },
-  { name: 'Quarterly Graduate Reunion Calls (4/yr × $197)', value: '$788' },
-  { name: 'Lifetime BraveWorks library updates', value: '$497' },
-  { name: 'VIP early access to all future BraveWorks programs', value: 'priceless' },
-];
-
-const guaranteePillars = [
-  { day: 'Day 30', threshold: 'At least 8 mmHg systolic drop sustained' },
-  { day: 'Day 60', threshold: 'Your doctor agrees to discuss dose reduction' },
-  { day: 'Day 90', threshold: 'You feel deep, calm control of your numbers' },
+const GUARANTEES = [
+  { day: 'Day 30', text: 'Top three symptoms not improving → full refund, keep every protocol.' },
+  { day: 'Day 60', text: 'Labs not moving in the right direction → full refund.' },
+  { day: 'Day 90', text: 'Don\'t feel safer in your body than today → full refund.' },
 ];
 
 export default function CoachingPage() {
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero — coaches */}
+      <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
+        <div className="flex justify-center items-center gap-3">
+          <div className="headshot-ring">
+            <picture>
+              <source srcSet="/headshot.webp" type="image/webp" />
+              <img src="/headshot.jpg" alt="Joel Polley, RN" width="100" height="100"
+                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }} />
+            </picture>
+          </div>
+          <div style={{ fontSize: '32px', color: 'var(--muted-gray)', fontWeight: 200 }}>+</div>
+          <div className="headshot-ring">
+            <picture>
+              <source srcSet="/annie.webp" type="image/webp" />
+              <img src="/annie.jpg" alt="Annie Chitate, RN" width="100" height="100"
+                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }} />
+            </picture>
+          </div>
+        </div>
+      </div>
+
+      {/* Credential bar */}
+      <div className="credential-bar py-3.5">
+        <div className="container-mobile-first text-center">
+          <p style={{ color: 'var(--white)', fontSize: '13px', lineHeight: 1.4, margin: 0 }}>
+            <strong>Joel Polley, RN</strong> — 20 yrs ICU/ER, Naturopathic Practitioner&nbsp;·&nbsp;
+            <strong>Annie Chitate, RN</strong> — Hormone Specialist, Naturopathic Practitioner
+          </p>
+        </div>
+      </div>
+
+      {/* Hero copy — terse */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 12 }}>
+            90-Day BP Triangle Freedom Sprint · Application Only
+          </div>
+          <h1 className="font-extrabold mb-4 text-balance" style={{ color: 'var(--navy)', fontSize: '32px', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
+            Doctor-cleared independence in 90 days.
+          </h1>
+          <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: 1.55, marginBottom: 8 }}>
+            Two RNs. Weekly 1:1s. Daily access. One protocol — vascular, cortisol, blood sugar — built for adults whose health gave up before they did.
+          </p>
+          <p style={{ color: 'var(--muted-gray)', fontSize: '14px', margin: 0 }}>
+            5 slots per cohort. Application reviewed personally. No buy button.
+          </p>
+        </div>
+      </AnimatedSection>
+
+      <hr className="gradient-divider" />
+
+      {/* Value stack */}
+      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+              What you get.
+            </h2>
+            <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
+              12 components. 90 days. Two RNs.
+            </p>
+          </AnimatedSection>
+          <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 14, padding: '1.25rem' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {STACK.map((item, i) => (
+                <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', padding: '10px 0', borderBottom: i < STACK.length - 1 ? '1px solid #F0EDE5' : 'none' }}>
+                  <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
+                    <CheckCircle2 size={16} style={{ color: 'var(--purple)', flexShrink: 0, marginTop: 3 }} />
+                    <span style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.5 }}>{item.name}</span>
+                  </div>
+                  <span style={{ color: 'var(--gold, #A88A4A)', fontSize: '14px', fontWeight: 600, flexShrink: 0 }}>{item.value}</span>
+                </li>
+              ))}
+              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', marginTop: '6px', borderTop: '2px solid var(--navy)' }}>
+                <span style={{ color: 'var(--navy)', fontSize: '15px', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Total stack value</span>
+                <span style={{ color: 'var(--navy)', fontSize: '20px', fontWeight: 800 }}>{STACK_VALUE}</span>
+              </li>
+            </ul>
+          </div>
+          <div style={{ marginTop: '1rem', background: 'var(--navy)', borderRadius: 12, padding: '1.25rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', fontWeight: 600, marginBottom: 4 }}>
+              Your investment
+            </div>
+            <div style={{ color: 'var(--white)', fontSize: '28px', fontWeight: 800, lineHeight: 1.1 }}>
+              {PRICE_FULL}
+            </div>
+            <div style={{ color: 'var(--gold, #C7A95E)', fontSize: '13px', marginTop: 4 }}>
+              or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '12px', marginTop: 10, fontStyle: 'italic' }}>
+              Stack delivered is over 2× the price. Math is the math.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cost of inaction (Myron Golden) */}
+      <div className="section-spacing">
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <div className="text-center mb-2">
+              <TrendingDown size={28} style={{ color: '#B85A36', margin: '0 auto' }} />
+            </div>
+            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+              The price of saying no.
+            </h2>
+            <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '14px', maxWidth: 480, margin: '0 auto 1.5rem' }}>
+              Most adults with this picture get worse, not better. Here's what the next 5 years cost on the current path.
+            </p>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div style={{ background: '#FBF8F1', border: '1px solid #E6DECE', borderRadius: 12, padding: '1.25rem' }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700, marginBottom: 10 }}>
+                Stay on the same path
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '8px' }}>
+                {[
+                  '2–3 more prescriptions added in the next 5 years',
+                  '$300–500/month on supplements that don\'t move the needle',
+                  '$4,800–$9,000/yr in co-pays + specialist referrals',
+                  'One avoidable ER visit (the average is one every 5 yrs in this picture)',
+                  'Five more years of compromised energy, sleep, mood, and intimacy',
+                ].map((line, i) => (
+                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
+                    <span style={{ color: '#B85A36', fontWeight: 700, flexShrink: 0 }}>×</span>
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+              <p style={{ fontSize: '13px', color: '#B85A36', fontWeight: 700, marginTop: '12px', marginBottom: 0 }}>
+                Compounded 5-year cost: $30,000–$75,000+ and a smaller life.
+              </p>
+            </div>
+            <div style={{ background: '#E6EBE0', border: '1px solid #3F5A3C', borderRadius: 12, padding: '1.25rem' }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#3F5A3C', fontWeight: 700, marginBottom: 10 }}>
+                Say yes once
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '8px' }}>
+                {[
+                  '90 days. One investment. Done.',
+                  'Supplement spend cut $200–400/month starting week 2',
+                  'A real PCP with a real plan they\'ll sign off on',
+                  'Doctor-cleared independence from at least one medication',
+                  'Your body trusted again. Energy back. Sleep back. You back.',
+                ].map((line, i) => (
+                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
+                    <CheckCircle2 size={14} style={{ color: '#3F5A3C', flexShrink: 0, marginTop: 3 }} />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+              <p style={{ fontSize: '13px', color: '#3F5A3C', fontWeight: 700, marginTop: '12px', marginBottom: 0 }}>
+                One-time cost: {PRICE_FULL}. Pays for itself by Day 60.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Guarantee */}
+      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <div className="text-center mb-5">
+              <ShieldCheck size={28} style={{ color: 'var(--purple)', margin: '0 auto 6px' }} />
+              <h2 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '22px' }}>
+                Triple Triangle Guarantee.
+              </h2>
+              <p style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>Miss any one threshold — full refund. You keep every protocol document.</p>
+            </div>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {GUARANTEES.map((g, i) => (
+              <AnimatedSection key={i} delay={i * 80}>
+                <div style={{ background: 'var(--white)', border: '2px solid var(--purple)', borderRadius: 10, padding: '1rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 6 }}>{g.day}</div>
+                  <p style={{ color: 'var(--dark-gray)', fontSize: '13px', lineHeight: 1.5, margin: 0 }}>{g.text}</p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+          <p className="text-center mt-5" style={{ color: 'var(--navy)', fontWeight: 600, fontSize: '14px', margin: '1.5rem 0 0' }}>
+            I carry the risk. You carry the action.
+          </p>
+        </div>
+      </div>
+
+      {/* Application form */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+            Apply.
+          </h2>
+          <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
+            ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected.
+          </p>
+          <ApplicationForm />
+        </div>
+      </AnimatedSection>
+
+      {/* Close */}
+      <div className="section-spacing gradient-navy">
+        <div className="container-mobile-first text-center">
+          <p style={{ color: 'var(--white)', fontSize: '17px', lineHeight: 1.5, margin: '0 0 8px', fontWeight: 600 }}>
+            Pills manage output. Protocol fixes input.
+          </p>
+          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '13px', margin: 0 }}>
+            Doctor-cleared independence — in 90 days, with two RNs in your corner.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Application form — 17 questions, pre-qualification heavy.
+// Click-driven to keep friction low despite the higher question count.
+// ============================================================
+function ApplicationForm() {
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    bpNumbers: '',
-    currentMeds: '',
+    name: '', email: '', phone: '',
+    ageRange: '',
+    bpRange: '',
+    bpMeds: '',
+    healthScore: '',
+    sleepScore: '',
+    stressScore: '',
+    costOfInaction: '',
+    commitment: '',
+    pastAttempts: '',
+    successLook: '',
+    investmentRange: '',
+    decisionMaker: '',
+    whenStart: '',
     whyNow: '',
-    whyAFit: '',
+    foundMe: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
-  function update(field, value) {
+  const update = (field, value) => {
     setForm((f) => ({ ...f, [field]: value }));
     setError('');
-  }
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.whyNow.trim()) {
-      setError('Name, email, and "why now" are required.');
+    const required = ['name', 'email', 'ageRange', 'bpRange', 'commitment', 'investmentRange', 'decisionMaker', 'whenStart', 'whyNow'];
+    const missing = required.filter((f) => !String(form[f] || '').trim());
+    if (missing.length) {
+      setError('Please complete every required field marked with ·');
       return;
     }
     setSubmitting(true);
@@ -142,380 +339,187 @@ export default function CoachingPage() {
 
   if (submitted) {
     return (
-      <main className="min-h-screen" style={{ background: 'var(--light-gray)', display: 'grid', placeItems: 'center', padding: '4rem 1.5rem' }}>
-        <div className="container-mobile-first text-center" style={{ background: 'var(--white)', borderRadius: 16, padding: '3rem 2rem', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-          <div style={{ width: 72, height: 72, margin: '0 auto 1.5rem', borderRadius: '50%', background: '#E8F8F5', display: 'grid', placeItems: 'center' }}>
-            <CheckCircle2 size={36} style={{ color: '#4A6741' }} />
-          </div>
-          <h1 className="font-bold mb-3" style={{ color: 'var(--navy)', fontSize: '24px', lineHeight: 1.3 }}>
-            Application received.
-          </h1>
-          <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 16px' }}>
-            Joel reads every application personally. If you're a fit for this cohort, you'll hear from him within 3-5 business days with next steps for a 20-minute fit call.
-          </p>
-          <p style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: 1.6 }}>
-            If you don't hear back within a week, the cohort is likely full — you're on the waitlist for the next opening (~90 days out).
-          </p>
+      <div style={{ background: 'var(--white)', borderRadius: 16, padding: '2rem 1.5rem', textAlign: 'center', border: '1px solid #E5E7EB' }}>
+        <div style={{ width: 56, height: 56, margin: '0 auto 1rem', borderRadius: '50%', background: '#E6EBE0', display: 'grid', placeItems: 'center' }}>
+          <CheckCircle2 size={28} style={{ color: '#3F5A3C' }} />
         </div>
-      </main>
+        <h3 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '20px' }}>Application received.</h3>
+        <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: '0 0 10px' }}>
+          Joel reads every application personally. If you're a fit, expect a reply within 3–5 business days with next steps for a 20-minute fit call.
+        </p>
+        <p style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: 1.5 }}>
+          If you don't hear back within a week, the cohort is full. Next opening in ~90 days.
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
-        <div className="flex justify-center items-center gap-3">
-          <div className="headshot-ring">
-            <picture>
-              <source srcSet="/headshot.webp" type="image/webp" />
-              <img
-                src="/headshot.jpg"
-                alt="Joel Polley, RN"
-                width="100"
-                height="100"
-                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }}
-              />
-            </picture>
-          </div>
-          <div style={{ fontSize: '32px', color: 'var(--muted-gray)', fontWeight: 200 }}>+</div>
-          {/* Annie Chitate, RN — photo dropped 2026-05-12.
-              Same render pattern as Joel: WebP source + JPG fallback. */}
-          <div className="headshot-ring">
-            <picture>
-              <source srcSet="/annie.webp" type="image/webp" />
-              <img
-                src="/annie.jpg"
-                alt="Annie Chitate, RN — hormone specialist, naturopathic practitioner"
-                width="100"
-                height="100"
-                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }}
-              />
-            </picture>
-          </div>
-        </div>
+    <form onSubmit={handleSubmit} style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem', display: 'grid', gap: '1.25rem' }}>
+      <Section title="The basics">
+        <TextField label="Full name" required value={form.name} onChange={(v) => update('name', v)} />
+        <TextField label="Email" type="email" required value={form.email} onChange={(v) => update('email', v)} />
+        <TextField label="Phone" placeholder="for the fit call" value={form.phone} onChange={(v) => update('phone', v)} />
+        <Radio label="Age range" required value={form.ageRange} onChange={(v) => update('ageRange', v)}
+          options={['30–44', '45–54', '55–64', '65+']} />
+      </Section>
+
+      <Section title="Your numbers (snapshot)">
+        <Radio label="Your BP usually runs" required value={form.bpRange} onChange={(v) => update('bpRange', v)}
+          options={['Under 130/80', '130s–140s / 80s–90s', '140s–150s / 90s+', '150s+ / 95s+', "Don't track / don't know"]} />
+        <Radio label="Currently on BP medication?" value={form.bpMeds} onChange={(v) => update('bpMeds', v)}
+          options={['None', '1', '2', '3+', 'Recently stopped', 'I want OFF']} />
+        <Radio label="Rate your CURRENT health (1 = worst, 10 = best)" value={form.healthScore} onChange={(v) => update('healthScore', v)}
+          options={['1–3 (struggling)', '4–5 (getting by)', '6–7 (okay)', '8–10 (good)']} />
+        <Radio label="Average sleep last 30 days" value={form.sleepScore} onChange={(v) => update('sleepScore', v)}
+          options={['Less than 5 hrs', '5–6 hrs', '6–7 hrs', '7+ hrs']} />
+        <Radio label="Stress level last 90 days (1–10)" value={form.stressScore} onChange={(v) => update('stressScore', v)}
+          options={['1–3 (calm)', '4–6 (medium)', '7–8 (high)', '9–10 (constantly overwhelmed)']} />
+      </Section>
+
+      <Section title="Where you are mentally">
+        <Textarea label="If you DON'T fix this in the next 90 days, what does it cost you?"
+          placeholder="Be specific. Medical, financial, relational, time off the planet. (This is the most important question on the page.)"
+          value={form.costOfInaction} onChange={(v) => update('costOfInaction', v)} />
+        <Radio label="On a 1–10 scale, how committed are you to following the plan EVEN ON HARD DAYS?" required
+          value={form.commitment} onChange={(v) => update('commitment', v)}
+          options={['10 — I will do whatever it takes', '8–9 — Very committed', '6–7 — Pretty committed', '5 or less — Honestly not sure']} />
+        <Textarea label="What have you tried before that didn't stick? Why didn't it?"
+          placeholder="Specific programs, coaches, supplements, diets. The more honest, the better the fit assessment."
+          value={form.pastAttempts} onChange={(v) => update('pastAttempts', v)} />
+        <Textarea label="What does success look like 90 days from now?"
+          placeholder="Be specific. 'Better health' isn't an answer. 'Off Lisinopril, sleeping 7 hours, walking 2 miles without pain' is."
+          value={form.successLook} onChange={(v) => update('successLook', v)} />
+      </Section>
+
+      <Section title="The fit math">
+        <Radio label="Investment range you're comfortable with for your health THIS YEAR" required
+          value={form.investmentRange} onChange={(v) => update('investmentRange', v)}
+          options={[
+            'Under $2,000',
+            '$2,000–$5,000',
+            '$5,000–$10,000',
+            '$10,000+',
+            'I haven\'t allocated for this yet',
+          ]} />
+        <Radio label="Are you the sole financial decision maker?" required
+          value={form.decisionMaker} onChange={(v) => update('decisionMaker', v)}
+          options={['Yes — I decide', 'No — I need spouse/partner approval', 'No — other (please note in Why Now)']} />
+        <Radio label="When could you realistically start?" required
+          value={form.whenStart} onChange={(v) => update('whenStart', v)}
+          options={['This week', 'Within 30 days', 'Within 90 days', 'Not sure yet']} />
+        <Textarea label="Why now? What changed?" required
+          placeholder="Why this week, not next year? Be honest — vague answers don't make the fit call."
+          value={form.whyNow} onChange={(v) => update('whyNow', v)} />
+      </Section>
+
+      <Section title="Last one">
+        <Radio label="How did you find me?" value={form.foundMe} onChange={(v) => update('foundMe', v)}
+          options={['TikTok', 'Instagram', 'Facebook', 'Skool community', 'Email from Joel', 'Friend / word of mouth', 'Other']} />
+      </Section>
+
+      {error && (
+        <p style={{ color: '#B85A36', fontSize: '14px', margin: 0, padding: '10px 12px', background: '#F5E4DA', borderRadius: 8 }}>{error}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={submitting}
+        className="btn-standard btn-cta gradient-purple-btn"
+        style={{ color: 'var(--white)', fontSize: '16px', fontWeight: 700 }}
+      >
+        {submitting ? (
+          <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Submitting...</span>
+        ) : (
+          <span className="flex items-center gap-2 justify-center"><Phone size={18} /> Submit application <ArrowRight size={16} /></span>
+        )}
+      </button>
+
+      <p className="text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: 1.5, margin: 0 }}>
+        Submitting doesn't sign you up. Joel reads, screens, and replies within 3–5 business days if there's a fit. No payment collected until after the fit call.
+      </p>
+    </form>
+  );
+}
+
+// ── Form primitives ───────────────────────────────────────
+function Section({ title, children }) {
+  return (
+    <div style={{ display: 'grid', gap: '1rem' }}>
+      <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, paddingBottom: 4, borderBottom: '1px solid #E5E7EB' }}>
+        {title}
       </div>
-
-      {/* Credential bar */}
-      <div className="credential-bar py-3.5" style={{ animation: 'fadeIn 0.6s ease-out 0.2s both' }}>
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--white)', fontSize: '13px', lineHeight: 1.4, letterSpacing: '0.02em', margin: 0 }}>
-            <strong>Joel Polley, RN</strong> — 20 yrs ICU/ER, Naturopathic Practitioner &nbsp;·&nbsp;
-            <strong>Annie Chitate, RN</strong> — Hormone Specialist, Naturopathic Practitioner
-          </p>
-        </div>
-      </div>
-
-      {/* Social proof rail */}
-      <div className="py-5" style={{ background: 'var(--light-gray)', animation: 'fadeIn 0.6s ease-out 0.4s both' }}>
-        <div className="container-mobile-first">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
-            {[
-              { icon: Play, text: '90,000+ followers on TikTok' },
-              { icon: Users, text: '1,100+ community members' },
-              { icon: Award, text: 'Two RNs. One protocol.' },
-            ].map((item, i) => (
-              <div key={i} className="proof-badge">
-                <item.icon size={15} style={{ color: 'var(--purple)' }} />
-                <span style={{ fontSize: '13px', color: '#555', fontWeight: 500 }}>{item.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Hero copy */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <div className="mb-3" style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700 }}>
-            The BP Triangle Freedom Sprint · 90 Days · Application Only
-          </div>
-          <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: 1.15, letterSpacing: '-0.03em' }}>
-            Doctor-cleared off your primary BP medication in 90 days — or your money back.
-          </h1>
-          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: 1.7 }}>
-            Twelve weeks. Two RNs. Daily access. Custom protocol. The complete BP Triangle Method™ applied to <em>your</em> case — vascular, cortisol, and (for women 35-65) the hormone layer that quietly drives half of all BP cases.
-          </p>
-          <p style={{ color: 'var(--muted-gray)', fontSize: '16px', lineHeight: 1.5 }}>
-            5 slots per cohort. Application gated. Price revealed on the fit call.
-          </p>
-        </div>
-      </AnimatedSection>
-
-      <hr className="gradient-divider" />
-
-      {/* Why two coaches */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-6 text-balance text-center" style={{ color: 'var(--navy)', fontSize: '24px', lineHeight: 1.3 }}>
-              Why two coaches.
-            </h2>
-            <p className="text-center mb-8" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, maxWidth: 540, margin: '0 auto 2rem' }}>
-              Most BP coaching covers BP. The Triangle says BP is <em>downstream</em> of three corners — vascular, cortisol, blood sugar — and for women 35-65, the hormone layer compounds all three. Joel runs the BP work. Annie covers the hormone-cortisol axis. Same protocol. Two specialists.
-            </p>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {[
-              {
-                title: 'Joel Polley, RN',
-                creds: '20 yrs ICU & emergency medicine. Naturopathic practitioner. Author of the BP Triangle Method™.',
-                domain: 'BP, vascular, blood sugar corners, doctor conversation, medication step-down.',
-              },
-              {
-                title: 'Annie Chitate, RN',
-                creds: 'Hormone specialist, naturopathic practitioner. Founder of RestoreHER Hormones.',
-                domain: 'Cortisol corner deep work, perimenopause/menopause hormone protocols, the hormone-BP undercurrent.',
-              },
-            ].map((c, i) => (
-              <AnimatedSection key={i} delay={i * 100}>
-                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem' }}>
-                  <h3 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '18px' }}>{c.title}</h3>
-                  <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: '0 0 12px' }}>{c.creds}</p>
-                  <p style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: 1.6, margin: 0 }}>
-                    <strong style={{ color: 'var(--dark-gray)' }}>Owns:</strong> {c.domain}
-                  </p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 12-week journey */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px', lineHeight: 1.3 }}>
-              The 12-week journey.
-            </h2>
-            <p className="text-center mb-8" style={{ color: 'var(--muted-gray)', fontSize: '15px' }}>
-              Four phases. Each one earns the next.
-            </p>
-          </AnimatedSection>
-          <div className="space-y-4">
-            {phases.map((phase, i) => (
-              <AnimatedSection key={i} delay={i * 80}>
-                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderLeft: '4px solid var(--purple)', borderRadius: 12, padding: '1.25rem 1.5rem' }}>
-                  <div className="flex items-baseline gap-3 mb-3">
-                    <span style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700 }}>{phase.weeks}</span>
-                    <h3 className="font-bold" style={{ color: 'var(--navy)', fontSize: '18px' }}>{phase.name}</h3>
-                  </div>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '6px' }}>
-                    {phase.bullets.map((b, j) => (
-                      <li key={j} className="flex gap-2" style={{ fontSize: '14px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
-                        <CheckCircle2 size={16} style={{ color: 'var(--purple)', flexShrink: 0, marginTop: 3 }} />
-                        <span>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* What's included */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-6 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              What's included.
-            </h2>
-          </AnimatedSection>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '8px' }}>
-            {whatsIncluded.map((item, i) => (
-              <AnimatedSection key={i} delay={i * 40}>
-                <li className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'var(--white)', border: '1px solid #E5E7EB' }}>
-                  <CheckCircle2 size={20} style={{ color: 'var(--purple)', flexShrink: 0, marginTop: 1 }} />
-                  <span style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.55 }}>{item}</span>
-                </li>
-              </AnimatedSection>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Bonus stack */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              The complete stack.
-            </h2>
-            <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '14px' }}>
-              Built so the bonuses alone exceed the cost of most "single-coach" programs.
-            </p>
-          </AnimatedSection>
-          <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem', marginBottom: '1rem' }}>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '10px' }}>
-              {bonuses.map((b, i) => (
-                <li key={i} className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.5, fontWeight: 500 }}>
-                      <Sparkles size={14} style={{ color: 'var(--purple)', display: 'inline', marginRight: 6 }} />
-                      {b.name}
-                    </div>
-                    {b.highlight && (
-                      <div style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginTop: 2 }}>
-                        ★ {b.highlight}
-                      </div>
-                    )}
-                  </div>
-                  <span className="value-strike" style={{ color: 'var(--muted-gray)', fontSize: '15px', fontWeight: 500, flexShrink: 0 }}>{b.value}</span>
-                </li>
-              ))}
-              <li className="flex items-start justify-between gap-4 pt-3" style={{ borderTop: '1px solid #E5E7EB' }}>
-                <div style={{ color: 'var(--navy)', fontWeight: 700, fontSize: '15px' }}>Bonus stack value</div>
-                <div style={{ color: 'var(--purple)', fontWeight: 700, fontSize: '17px' }}>$2,279+</div>
-              </li>
-            </ul>
-          </div>
-          <p className="text-center italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: 1.6, maxWidth: 460, margin: '0 auto' }}>
-            "If you only counted the bonuses, this is a $2,300 program. The transformation makes it a $50,000 program." — the operating principle.
-          </p>
-        </div>
-      </div>
-
-      {/* Triple Triangle Guarantee */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <div className="text-center mb-6">
-              <ShieldCheck size={32} style={{ color: 'var(--purple)', margin: '0 auto 8px' }} />
-              <h2 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-                The Triple Triangle Promise.
-              </h2>
-              <p style={{ color: 'var(--muted-gray)', fontSize: '14px' }}>Three thresholds. Miss any one — full refund AND you keep everything.</p>
-            </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {guaranteePillars.map((g, i) => (
-              <AnimatedSection key={i} delay={i * 100}>
-                <div style={{ background: 'var(--white)', border: '2px solid var(--purple)', borderRadius: 12, padding: '1.25rem 1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 8 }}>{g.day}</div>
-                  <p style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>{g.threshold}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-          <p className="text-center mt-6 italic" style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: 1.6, maxWidth: 480, margin: '1.5rem auto 0' }}>
-            <em>Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay while we move the inputs underneath them.</em>
-          </p>
-        </div>
-      </div>
-
-      {/* Scarcity bar */}
-      <div style={{ background: 'var(--navy)', padding: '2rem 1rem' }}>
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--white)', fontSize: '15px', lineHeight: 1.5, margin: '0 0 8px' }}>
-            <strong style={{ color: 'var(--gold)' }}>5 slots per cohort.</strong> Next applications close end-of-week.
-          </p>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '13px', margin: 0 }}>
-            Joel reads every application personally. Fit calls happen by phone (20 min). Price revealed on the call.
-          </p>
-        </div>
-      </div>
-
-      {/* Application form */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-            Apply for the next cohort.
-          </h2>
-          <p className="text-center mb-8" style={{ color: 'var(--muted-gray)', fontSize: '14px' }}>
-            ~3 minutes. Five fields. Read by Joel personally.
-          </p>
-
-          <form onSubmit={handleSubmit} style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem', display: 'grid', gap: '1rem' }}>
-            <Field label="Your name *" value={form.name} onChange={(v) => update('name', v)} placeholder="First and last" />
-            <Field label="Email *" type="email" value={form.email} onChange={(v) => update('email', v)} placeholder="best email — Joel reads every reply" />
-            <Field label="Phone (optional)" value={form.phone} onChange={(v) => update('phone', v)} placeholder="for the fit call" />
-            <Field label="Your current BP numbers" value={form.bpNumbers} onChange={(v) => update('bpNumbers', v)} placeholder="e.g. morning 152/96, evening 144/88" />
-            <Field label="Current medications" value={form.currentMeds} onChange={(v) => update('currentMeds', v)} placeholder="BP meds, statins, thyroid, anything else" multiline />
-            <Field label="Why now? *" value={form.whyNow} onChange={(v) => update('whyNow', v)} placeholder="What changed? Why apply this week, not next year?" multiline required />
-            <Field label="Why do you think you'd be a fit?" value={form.whyAFit} onChange={(v) => update('whyAFit', v)} placeholder="What about you tells you this is the right kind of work?" multiline />
-
-            {error && (
-              <p style={{ color: '#B85A36', fontSize: '14px', margin: 0 }}>{error}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="btn-standard btn-cta gradient-purple-btn"
-              style={{ color: 'var(--white)', fontSize: '16px', fontWeight: 700 }}
-            >
-              {submitting ? (
-                <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Submitting...</span>
-              ) : (
-                <span className="flex items-center gap-2"><Phone size={18} /> Submit application →</span>
-              )}
-            </button>
-
-            <p className="text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: 1.5, margin: 0 }}>
-              Submitting doesn't sign you up for anything. Joel reads, screens, and replies within 3-5 business days if there's a fit. No payment is collected until after the fit call.
-            </p>
-          </form>
-        </div>
-      </AnimatedSection>
-
-      {/* Final close */}
-      <div className="section-spacing gradient-navy">
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--white)', fontSize: '17px', lineHeight: 1.7, margin: '0 0 12px' }}>
-            Pills manage output. Protocol fixes input.
-          </p>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '15px', lineHeight: 1.7, margin: 0 }}>
-            Doctor-cleared independence — in 90 days, with two RNs in your corner.
-          </p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="py-8" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--muted-gray)', fontSize: '12px' }}>&copy; 2026 BraveWorks RN. All rights reserved.</p>
-        </div>
-      </div>
+      {children}
     </div>
   );
 }
 
-function Field({ label, type = 'text', value, onChange, placeholder, multiline = false, required = false }) {
-  const base = {
-    width: '100%',
-    border: '1px solid #E5E7EB',
-    borderRadius: 8,
-    padding: '10px 12px',
-    fontSize: '15px',
-    fontFamily: 'inherit',
-    color: 'var(--dark-gray)',
-    background: 'var(--white)',
-  };
+function TextField({ label, type = 'text', value, onChange, placeholder = '', required = false }) {
   return (
     <label style={{ display: 'block' }}>
-      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>{label}</div>
-      {multiline ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          required={required}
-          rows={3}
-          style={{ ...base, resize: 'vertical', minHeight: 70 }}
-        />
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          required={required}
-          style={base}
-        />
-      )}
+      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
+        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
+      </div>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box' }}
+      />
     </label>
+  );
+}
+
+function Textarea({ label, value, onChange, placeholder = '', required = false }) {
+  return (
+    <label style={{ display: 'block' }}>
+      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
+        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
+      </div>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        rows={3}
+        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }}
+      />
+    </label>
+  );
+}
+
+function Radio({ label, options, value, onChange, required = false }) {
+  return (
+    <div>
+      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 6 }}>
+        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {options.map((opt) => {
+          const selected = value === opt;
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => onChange(opt)}
+              style={{
+                textAlign: 'left', padding: '9px 12px',
+                background: selected ? '#E6EBE0' : 'var(--white)',
+                border: `1.5px solid ${selected ? '#3F5A3C' : '#E5E7EB'}`,
+                borderRadius: 8, fontSize: '14px',
+                fontWeight: selected ? 600 : 400,
+                color: 'var(--dark-gray)', cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'background 0.12s ease, border-color 0.12s ease',
+                display: 'flex', alignItems: 'center', gap: 10,
+              }}
+            >
+              <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: `2px solid ${selected ? '#3F5A3C' : '#CBC9BD'}`, background: selected ? '#3F5A3C' : 'transparent', flexShrink: 0 }} />
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
