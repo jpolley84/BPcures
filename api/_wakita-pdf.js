@@ -124,24 +124,32 @@ export function generateWakitaPDF({ answers, submittedAt }) {
       }
 
       // ── Footer on every page ──────────────────────────
-      // pdfkit's switchToPage uses 1-based indexing when bufferPages is on;
-      // bufferedPageRange() returns { start, count } where start is the first
-      // page number (1 in our case). Iterate inclusively.
+      // pdfkit's switchToPage uses 1-based indexing when bufferPages is on.
+      // CRITICAL: pdfkit's `text()` auto-paginates when y crosses the bottom
+      // margin. The footer lives BELOW the bottom margin (in the gutter), so
+      // we temporarily zero the bottom margin on each page just to draw the
+      // footer, then restore it. This is the standard pdfkit footer trick.
       const range = doc.bufferedPageRange();
       const totalPages = range.count;
       for (let i = range.start; i < range.start + range.count; i++) {
         doc.switchToPage(i);
+        const origBottom = doc.page.margins.bottom;
+        doc.page.margins.bottom = 0;
         const fy = doc.page.height - 38;
-        doc.moveTo(60, fy).lineTo(doc.page.width - 60, fy).strokeColor(BORDER).lineWidth(0.5).stroke();
-        doc
-          .fillColor(MUTED)
-          .font('Helvetica')
-          .fontSize(8)
-          .text(
-            'BraveWorks RN  ·  Joel Polley, RN  ·  braveworksrn@gmail.com  ·  bpquiz.com',
-            60, fy + 8, { align: 'left', width: doc.page.width - 120 - 50 }
-          )
-          .text(`Page ${i - range.start + 1} of ${totalPages}`, doc.page.width - 110, fy + 8, { align: 'right', width: 50 });
+        doc.moveTo(60, fy).lineTo(doc.page.width - 60, fy)
+          .strokeColor(BORDER).lineWidth(0.5).stroke();
+        doc.fillColor(MUTED).font('Helvetica').fontSize(8);
+        doc.text(
+          'BraveWorks RN  ·  Joel Polley, RN  ·  braveworksrn@gmail.com  ·  bpquiz.com',
+          60, fy + 8,
+          { width: doc.page.width - 220, align: 'left', lineBreak: false }
+        );
+        doc.text(
+          `Page ${i - range.start + 1} of ${totalPages}`,
+          doc.page.width - 130, fy + 8,
+          { width: 70, align: 'right', lineBreak: false }
+        );
+        doc.page.margins.bottom = origBottom;
       }
 
       doc.end();
