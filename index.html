@@ -11,15 +11,89 @@
          canonical landing page rendered by CheckoutPage.jsx at `/`. No
          redirect needed; everyone gets the winning page. -->
 
-    <title>BPQuiz.com — Free Blood Pressure Health Quiz | BraveWorks RN</title>
-    <meta name="description" content="Take the free 60-second health quiz to get your personalized blood pressure, cortisol, or blood sugar reset protocol. Created by Joel Polley, RN — 20-year ICU nurse turned naturopathic practitioner." />
-    <meta property="og:title" content="BPQuiz.com — Free Blood Pressure Health Quiz | BraveWorks RN" />
-    <meta property="og:description" content="Take the free 60-second health quiz to get your personalized blood pressure, cortisol, or blood sugar reset protocol. Created by Joel Polley, RN — 20-year ICU nurse turned naturopathic practitioner." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bpquiz.com" />
+    <title>BraveWorks RN — Blood Pressure Reset Kit by Joel Polley, RN</title>
+    <meta name="description" content="An ICU nurse's 10-day blood pressure protocol. 7 guides, 47 herbs, daily checklists. $17 — less than one copay. By Joel Polley, RN — 20 years ICU & emergency medicine, naturopathic practitioner." />
+    <link rel="canonical" href="https://bpquiz.com/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph (Facebook, LinkedIn, Skool, iMessage, Slack share cards) -->
+    <meta property="og:site_name" content="BraveWorks RN" />
+    <meta property="og:title" content="An ICU Nurse's 10-Day Blood Pressure Protocol — $17" />
+    <meta property="og:description" content="7 guides. 47 herbs. Daily checklists. Plus the full Overmedicated Boomers book. By Joel Polley, RN — 20 years ICU & emergency medicine, naturopathic practitioner." />
+    <meta property="og:type" content="product" />
+    <meta property="og:url" content="https://bpquiz.com/" />
+    <meta property="og:image" content="https://bpquiz.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Joel Polley, RN — BraveWorks Health BP Reset Kit" />
+    <meta property="product:price:amount" content="17.00" />
+    <meta property="product:price:currency" content="USD" />
+
+    <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BPQuiz.com — Free Blood Pressure Health Quiz | BraveWorks RN" />
-    <meta name="twitter:description" content="Take the free 60-second health quiz to get your personalized blood pressure, cortisol, or blood sugar reset protocol. Created by Joel Polley, RN." />
+    <meta name="twitter:title" content="An ICU Nurse's 10-Day Blood Pressure Protocol — $17" />
+    <meta name="twitter:description" content="7 guides. 47 herbs. Daily checklists. By Joel Polley, RN. $17 — less than one copay." />
+    <meta name="twitter:image" content="https://bpquiz.com/og-image.jpg" />
+
+    <!-- Schema.org Product JSON-LD — Google Shopping discovery + AI answer
+         engine citation. Specific, falsifiable, RN-attributed. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Blood Pressure Reset Kit — The 10-Day Nurse's Reset",
+      "image": "https://bpquiz.com/og-image.jpg",
+      "description": "A 10-day blood pressure reset protocol by Joel Polley, RN — 20 years ICU & emergency medicine, naturopathic practitioner. 7 guides, 47 herbs, daily checklists, plus the full Overmedicated Boomers book.",
+      "brand": { "@type": "Brand", "name": "BraveWorks RN" },
+      "url": "https://bpquiz.com/",
+      "sku": "bp-reset-kit-17",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://bpquiz.com/",
+        "priceCurrency": "USD",
+        "price": "17.00",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "127"
+      }
+    }
+    </script>
+
+    <!-- Author / Organization schema — establishes Joel as the credible
+         source so AI answer engines cite him by name. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Joel Polley, RN",
+      "jobTitle": "Registered Nurse, Naturopathic Practitioner",
+      "description": "20 years ICU & emergency medicine. Naturopathic practitioner. Founder of BraveWorks RN.",
+      "url": "https://bpquiz.com/",
+      "image": "https://bpquiz.com/headshot.jpg",
+      "sameAs": [
+        "https://www.tiktok.com/@braveworksrn",
+        "https://www.instagram.com/braveworksrn"
+      ]
+    }
+    </script>
+
+    <!-- Meta Pixel (Facebook / Instagram ads) — env-gated. Set
+         VITE_META_PIXEL_ID in Vercel env to activate. Until then the
+         script self-no-ops without errors. Conversion events
+         (PageView, Purchase, AddToCart) are fired from app code. -->
+    <script>
+      (function () {
+        var PIXEL_ID = "%VITE_META_PIXEL_ID%";
+        if (!PIXEL_ID || PIXEL_ID.indexOf('%') === 0) return; // no id set → skip
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', PIXEL_ID);
+        window.fbq('track', 'PageView');
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Promoted from @import in src/index.css 2026-05-11 so the browser

@@ -40,6 +40,17 @@ const CheckoutPage = () => {
   const handleBuyNow = async () => {
     setIsProcessing(true);
     setCheckoutError('');
+
+    // Meta Pixel AddToCart event — fires when buyer initiates checkout. The
+    // Purchase event fires on /success after webhook confirms. Together they
+    // give Meta the full attribution signal for ad optimization.
+    try {
+      if (typeof window !== 'undefined' && window.fbq) {
+        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Reset Kit' });
+        window.fbq('track', 'InitiateCheckout', { value: 17.00, currency: 'USD' });
+      }
+    } catch { /* pixel errors must never block checkout */ }
+
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -86,16 +97,23 @@ const CheckoutPage = () => {
 
   return (
     <div className={`min-h-screen bg-white ${showStickyBar ? 'pb-20' : ''}`}>
-      {/* Headshot */}
+      {/* Headshot — WebP for modern browsers (14KB) + JPG fallback (36KB).
+          2026-05-12: was a 2MB PNG that killed mobile LCP. Now <40KB total. */}
       <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
         <div className="flex justify-center">
           <div className="headshot-ring">
-            <img
-              src="/headshot.png"
-              alt="Professional headshot of Joel Polley, RN"
-              className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] md:w-[160px] md:h-[160px] lg:w-[180px] lg:h-[180px] rounded-full shadow-xl"
-              style={{ objectFit: 'cover', border: '4px solid white' }}
-            />
+            <picture>
+              <source srcSet="/headshot.webp" type="image/webp" />
+              <img
+                src="/headshot.jpg"
+                alt="Joel Polley, RN — 20 years ICU & emergency medicine, naturopathic practitioner"
+                width="180"
+                height="180"
+                fetchpriority="high"
+                className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] md:w-[160px] md:h-[160px] lg:w-[180px] lg:h-[180px] rounded-full shadow-xl"
+                style={{ objectFit: 'cover', border: '4px solid white' }}
+              />
+            </picture>
           </div>
         </div>
       </div>

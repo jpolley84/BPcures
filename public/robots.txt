@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Internal / passcode-gated routes — keep out of search indices
+Disallow: /ops
+Disallow: /intake/
+Disallow: /api/
+Disallow: /downloads/
+
+Sitemap: https://bpquiz.com/sitemap.xml

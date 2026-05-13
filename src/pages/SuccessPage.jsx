@@ -1,8 +1,24 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 export default function SuccessPage() {
+  const [searchParams] = useSearchParams();
+
+  // Meta Pixel Purchase event — closes the attribution loop for ads.
+  // Value/currency are static $17 baseline; if the buyer took the $30 OTO
+  // upsell, the success URL carries ?upsell=accepted so we boost the value.
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined' || !window.fbq) return;
+      const upsellAccepted = searchParams.get('upsell') === 'accepted';
+      const purchaseValue = upsellAccepted ? 47.00 : 17.00;
+      window.fbq('track', 'Purchase', { value: purchaseValue, currency: 'USD' });
+    } catch { /* pixel errors never block UX */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'grid', placeItems: 'center', padding: '3rem 1.5rem' }}>
       <motion.div
