@@ -11,6 +11,14 @@
     {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cohort-saturday-cron",
+      "schedule": "0 12 16 5 *"
+    },
+    {
+      "path": "/api/cohort-sunday-cron",
+      "schedule": "0 13 17 5 *"
     }
   ]
 }
