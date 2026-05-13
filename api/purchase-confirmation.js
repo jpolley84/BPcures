@@ -1,5 +1,7 @@
 import { Resend } from 'resend';
 import Stripe from 'stripe';
+import { kv } from '@vercel/kv';
+import { looksLikeValidEmail as sharedLooksLikeValidEmail } from './_email-validation.js';
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 // Resend requires a verified sender domain. gmail.com is NOT verified —
@@ -493,18 +495,11 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
 </body></html>`;
 }
 
-// Cheap RFC-5322-ish address shape check. Catches the common breakage:
-// Stripe webhook customer_details with email='' or email=null, or a session
-// where billing_details.email arrives as a leading-space whitespace string.
-// Resend silently rejects those — buyer never gets the email and we never
-// see an error. Better to throw loud so the webhook's try/catch logs it.
-function looksLikeValidEmail(s) {
-  if (typeof s !== 'string') return false;
-  const trimmed = s.trim();
-  if (trimmed.length < 5 || trimmed.length > 254) return false;
-  // Single @, at least one char each side, at least one dot in the domain.
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-}
+// 2026-05-13: replaced local validator with the shared one from
+// `_email-validation.js` (which adds CRLF header-injection protection on top
+// of the same RFC-shape check). Kept the local alias name so the rest of
+// this file's references continue to work.
+const looksLikeValidEmail = sharedLooksLikeValidEmail;
 
 export async function sendPurchaseConfirmation({ email, name, tier, apologyMode }) {
   const config = TIER_CONFIG[tier];
@@ -564,6 +559,31 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return res.status(400).json({ error: `Webhook Error: ${err.message}` });
+  }
+
+  // 2026-05-13 hardening: KV-backed idempotency on event.id.
+  // Defense-in-depth — even if BOTH webhook handlers are registered in
+  // Stripe (this one AND /api/stripe-webhook), each event.id is processed
+  // at most once. Without this, Stripe retries on a slow 200 → buyer gets
+  // a duplicate kit-confirmation email → sender-reputation burn.
+  // Same pattern as stripe-webhook.js. 7-day TTL covers Stripe's retry
+  // window (typically <72h) with plenty of margin.
+  if (process.env.KV_REST_API_URL) {
+    const dedupeKey = `purchase-confirmation-event:${event.id}`;
+    try {
+      const seen = await kv.get(dedupeKey);
+      if (seen) {
+        console.log(`purchase-confirmation: duplicate event ${event.id} (already processed) — returning 200 without resending`);
+        return res.status(200).json({ received: true, deduplicated: true });
+      }
+      // Mark as seen BEFORE the email send. Worst case: KV write succeeds
+      // but Resend fails — we don't double-send on retry, and the failure
+      // is logged for manual recovery. Better than the inverse (Resend
+      // succeeds, KV write fails, retry → duplicate email).
+      await kv.set(dedupeKey, { seenAt: new Date().toISOString() }, { ex: 7 * 86400 });
+    } catch (kvErr) {
+      console.warn('purchase-confirmation: KV dedupe check failed (proceeding):', kvErr.message);
+    }
   }
 
   if (event.type === 'checkout.session.completed') {

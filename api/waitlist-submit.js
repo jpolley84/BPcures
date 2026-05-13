@@ -15,6 +15,7 @@
 // later if/when application volume warrants a dashboard view.
 
 import { Resend } from 'resend';
+import { looksLikeValidEmail } from './_email-validation.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
@@ -128,7 +129,12 @@ async function handleApplication(req, res) {
   if (missing.length) {
     return res.status(400).json({ ok: false, error: `Missing fields: ${missing.join(', ')}` });
   }
-  if (!/\S+@\S+\.\S+/.test(app.email)) {
+  // 2026-05-13 hardening: tightened email check to the shared validator,
+  // which also blocks CRLF (\r\n) header-injection. Critical here because
+  // `app.email` flows directly into the Resend `reply_to:` header on the
+  // notification email below — without the CRLF check, a crafted email
+  // value could inject arbitrary mail headers.
+  if (!looksLikeValidEmail(app.email)) {
     return res.status(400).json({ ok: false, error: 'Invalid email format' });
   }
   if (!Array.isArray(app.triedAlready) || app.triedAlready.length === 0) {
@@ -145,12 +151,14 @@ async function handleApplication(req, res) {
   }
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  // Notification to Joel — this is the primary record.
-  // reply_to set to applicant so Joel can respond directly from his inbox.
+  // Notification to Joel — this is the primary record. reply_to set to
+  // applicant so Joel can respond directly from his inbox. `app.email` has
+  // been shape-validated + CRLF-injection-checked above; safe to use here.
+  const trimmedApplicantEmail = app.email.trim();
   await resend.emails.send({
     from: FROM_ADDRESS,
     to: NOTIFY_TO,
-    reply_to: app.email,
+    reply_to: trimmedApplicantEmail,
     subject: `[1:1 APPLICATION] ${app.firstName} ${app.lastName} — BP Triangle`,
     html: buildJoelEmail(app),
   });

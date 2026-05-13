@@ -1,6 +1,32 @@
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
 import crypto from 'node:crypto';
+import { looksLikeValidEmail } from './_email-validation.js';
+
+// Per-IP rate limit. 2026-05-13 hardening: this endpoint was previously
+// uncapped. A single attacker could spam unlimited POSTs → unlimited
+// Resend welcome emails → sender-reputation burn + KV abuse. Now mirrors
+// the lead-magnet rate-limit pattern (10 per IP per hour).
+async function checkRateLimit(ip) {
+  if (!process.env.KV_REST_API_URL || !ip) return { ok: true };
+  try {
+    const key = `cs-rl:${ip}`;
+    const count = (await kv.get(key)) || 0;
+    if (count >= 10) return { ok: false, count };
+    if (count === 0) await kv.set(key, 1, { ex: 3600 });
+    else await kv.incr(key);
+    return { ok: true, count: count + 1 };
+  } catch (err) {
+    console.warn('challenge-signup: rate-limit check failed (allowing):', err.message);
+    return { ok: true };
+  }
+}
+
+function getClientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return String(xff).split(',')[0].trim();
+  return req.headers['x-real-ip'] || req.socket?.remoteAddress || '';
+}
 
 let _resend = null;
 function getResend() {
@@ -203,9 +229,20 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Rate-limit FIRST so attackers can't exhaust Resend or burn sender rep.
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(ip);
+  if (!rl.ok) {
+    console.warn(`challenge-signup: rate-limited ip=${ip} count=${rl.count}`);
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
+
   const { email, name } = req.body || {};
 
-  if (!email || !email.includes('@')) {
+  // Email shape + header-injection-safety check (was previously `.includes('@')`
+  // only — too loose; let malformed addresses through which Resend then
+  // silently rejected, leaving customers stuck without their welcome email).
+  if (!looksLikeValidEmail(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
 

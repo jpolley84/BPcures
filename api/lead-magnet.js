@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
 import { upsertSubscriber as beehiivUpsert, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
+import { looksLikeValidEmail } from './_email-validation.js';
 
 // Local alias for the imported helper (keeps the call-site readable + matches
 // the convention used in this file).
@@ -531,7 +532,9 @@ export default async function handler(req, res) {
 
   const { email, name, category: rawCategory, riskScore, answers, tags: extraTags } = req.body || {};
 
-  if (!email || !email.includes('@')) {
+  // 2026-05-13 hardening: tightened from `.includes('@')` to the shared
+  // looksLikeValidEmail() which also blocks CRLF header-injection.
+  if (!looksLikeValidEmail(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
 

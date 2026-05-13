@@ -143,8 +143,22 @@ function readJsonFile(absPath) {
 
 // ── Handler ─────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  // CORS — allow same-origin with custom header
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS — tightened 2026-05-13 audit. Was '*' (any origin); the passcode
+  // header check still protects the data, but the open CORS made the
+  // endpoint browse-able from any origin. Locked to bpquiz.com only.
+  // Echo back the request origin when it matches the allowlist so the
+  // pre-flight is consistent across www/non-www / preview deployments.
+  const ALLOWED_ORIGINS = [
+    'https://bpquiz.com',
+    'https://www.bpquiz.com',
+  ];
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', 'https://bpquiz.com');
+  }
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-Ops-Pass');
   if (req.method === 'OPTIONS') return res.status(204).end();
