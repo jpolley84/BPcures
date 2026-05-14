@@ -15,9 +15,18 @@ export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
 // ─── URLs (single source of truth) ────────────────────────────────────
-export const KIT_URL = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
-export const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
-export const YOUTUBE_URL = 'https://www.youtube.com/@braveworksrn';
+// Active product Stripe links — verified live 2026-05-14, mirrors
+// purchase-confirmation.js + products.json. Ladder positions:
+//   $17  → entry (Days 1-3)
+//   $47  → upgrade (Days 5-6)
+//   $97  → Monday live + Skool VIP (Day 10)
+//   /coaching → 90-Day Freedom Sprint application (Days 8 + 12)
+export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
+export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
+export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
+export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Day 7 opt-in URL — token is generated per send via signOptInToken (see continue.js)
 export const optInUrl = (token) => `${SITE_URL}/api/continue?t=${token}`;
@@ -271,7 +280,7 @@ const day3 = {
     ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
     ${p(`5 nurse-vetted PDFs. $105 of protocol. The 7-Day Refund Promise.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If your BP didn't move yet, that's normal. Marlene didn't see her drop until Day 7. The mechanism I'll explain tomorrow is what tells your body it's safe to come down. Most people feel it before they see the numbers.`)}
+    ${psBox(`If your BP didn't move yet, that's normal — Marlene's drop hit on Day 7. And on Mondays at 10 PM ET I unravel the Triangle live with the $97 cohort. If you want me on the call walking your numbers, that path is at <a href="${CHALLENGE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">the BP Triangle Challenge →</a>`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -336,7 +345,7 @@ const day4 = {
     ${p(`The 4 Lifestyle Levers Cheat Sheet inside the kit covers the K:Na ratio in detail — including the 12 highest-potassium foods on a fixed grocery budget, dosing if you supplement, and the lab tests to ask your doctor for.`)}
     ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
     ${joelSignoff()}
-    ${psBox(`If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up. Almost everyone else is dramatically under-consuming it.`)}
+    ${psBox(`I made a 12-min YouTube video that walks the 3:1 ratio at the grocery store with my own basket. <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Watch on YouTube →</a> If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -404,10 +413,10 @@ const day5 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">If you usually eat bread at lunch, swap it for a romaine wrap or skip it entirely and add an extra protein. If cereal at breakfast, swap it for two eggs and an avocado.</p>
     `)}
     ${p(`Tomorrow I'm going to do a check-in. Some of you have already seen your numbers move. Some of you haven't. There's a reason — and it's not what you think.`, { margin: '0 0 28px' })}
-    ${p(`The Cook For Life Cookbook inside the kit is built for exactly this — recipes that don't taste like cardboard, don't take an hour to make, and don't spike insulin.`)}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
+    ${p(`If you've read the daily emails this far, you're past the $17 entry — the natural next move is the <strong>$47 BP Reset Kit</strong>. Includes the full 30-day Reset Challenge, the Graduation phase (weeks 2-4), Joel's complete herb formulary with safe dosing, and the printable BP tracker. Same protocol, the full system.`)}
+    ${ctaButton(RESET_KIT_URL, 'Upgrade to the BP Reset Kit — $47 →')}
     ${joelSignoff()}
-    ${psBox(`The fastest BP drops I see in BraveWorks members come from those who eliminate hidden sodium AND a refined-carb category in the same week. We're stacking the levers on purpose.`)}
+    ${psBox(`The fastest BP drops in BraveWorks members come from stacking hidden sodium + a refined-carb cut in the same week — both walked through day-by-day inside the $47 kit. Still on the $17 starter? Both kits are open: <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$17 →</a> or <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$47 →</a>`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -429,8 +438,10 @@ TODAY'S ASK: Skip ONE of those categories today. Just one. One day.
 
 Tomorrow: a check-in. Some of you are seeing movement. Some aren't. There's a reason.
 
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-Cook For Life Cookbook inside has the recipes.
+→ Upgrade to the BP Reset Kit ($47): ${RESET_KIT_URL}
+Adds the full 30-day plan, the Graduation phase (weeks 2-4), Joel's complete herb formulary, and the printable BP tracker.
+
+→ Still on the $17 starter? ${KIT_URL}
 
 Joel
 RN, BraveWorks
@@ -460,10 +471,10 @@ const day6 = {
     ${p(`<strong>3. You're a slower responder.</strong> Some bodies start moving in 48 hours. Some need 14-21 days. That's biology, not failure. The body has to recalibrate baroreceptors and reset kidney sodium handling — for some that's a 3-week process. The eliminations you're doing this week are doing their work whether or not the cuff has caught up yet.`)}
     ${bigQuote('Don\'t quit on Day 7. Day 7 is when most quitters quit.')}
     ${p(`Tomorrow I'll show you exactly what's happening underneath — and give you a choice about what comes next.`, { margin: '0 0 28px' })}
-    ${p(`If you've been reading along but haven't grabbed the kit yet, today's the day. The cuff protocol I mentioned above? It's inside, with diagrams. The 7-Day Refund Promise still applies — if your numbers haven't moved by tomorrow with honest effort, reply "refund" and keep the kit.`)}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
+    ${p(`If you're stuck at Day 6 with no movement, the $47 BP Reset Kit is built for exactly this moment. The cuff protocol I mentioned above is inside (with diagrams), plus the Graduation phase (weeks 2-4) that walks you through the slow-responder track day-by-day. The 7-Day Refund Promise applies — if your numbers haven't moved by Day 7 with honest effort, reply "refund."`)}
+    ${ctaButton(RESET_KIT_URL, 'Upgrade to the BP Reset Kit — $47 →')}
     ${joelSignoff()}
-    ${psBox(`If you've already seen 5+ points come off, hit reply and tell me. I read every one.`)}
+    ${psBox(`If you've already seen 5+ points come off on the $17 starter, hit reply and tell me — I read every one. If you're stuck, the $47 kit is the next rung: <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">upgrade here →</a>`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -486,13 +497,15 @@ Don't quit on Day 7. Day 7 is when most quitters quit.
 
 Tomorrow I show you what's happening underneath — and give you a choice.
 
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-The cuff protocol with diagrams is inside. 7-Day Refund Promise still stands.
+→ Upgrade to the BP Reset Kit ($47): ${RESET_KIT_URL}
+The cuff protocol with diagrams is inside. Plus the Graduation phase (weeks 2-4) for slow responders. 7-Day Refund Promise still stands.
+
+→ Still on the $17 starter? ${KIT_URL}
 
 Joel
 RN, BraveWorks
 
-P.S. If you've seen 5+ points off, reply and tell me.
+P.S. If you've seen 5+ points off on the starter, reply and tell me. If you're stuck, the $47 kit is the next rung.
 
 —
 → Skool: ${SKOOL_URL}
@@ -530,7 +543,7 @@ const day7 = {
     ${ctaButton(optInUrl(optInToken), 'Yes, give me Days 8-30 →')}
     ${p(`<span style="color:#999;font-size:14px;">(Click takes 2 seconds. No form. No payment. Just a yes.)</span>`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Don't have the kit yet? Last call before the back half. Day 8 onward references the cuff protocol, dosing charts, and doctor scripts inside it constantly. <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Get the BP Reset Kit — $17 →</a>`)}
+    ${psBox(`Don't have a kit yet? Last call before the back half. Day 8 onward references the cuff protocol, dosing charts, and doctor scripts constantly. Two options: <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$17 starter →</a> or the full <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$47 Reset Kit →</a> (adds the 30-day plan + Graduation phase + complete herb formulary).`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName, optInToken }) => `Hi ${firstName || 'there'},
@@ -560,7 +573,7 @@ If you don't click — no hard feelings. You're off this sequence after today.
 Joel
 RN, BraveWorks
 
-P.S. Don't have the kit? Last call before the back half. ${KIT_URL}
+P.S. Don't have a kit yet? Day 8 onward references the cuff protocol, dosing charts, and doctor scripts. Two options: starter ${KIT_URL} or full $47 kit ${RESET_KIT_URL} (adds the 30-day plan + Graduation phase + complete herb formulary).
 
 —
 → Skool: ${SKOOL_URL}
@@ -573,7 +586,10 @@ P.S. Don't have the kit? Last call before the back half. ${KIT_URL}
 // are the most engaged subs (clicked the Day 7 button to continue). Pitches
 // the $1,297 1:1 application at /1on1 and explicitly calls out 4+ meds
 // + drastic-change-ASAP profile per Joel's 2026-05-09 spec.
-const APPLY_URL = `${SITE_URL}/1on1`;
+// 2026-05-14: pointed at /coaching (the new $14,616-stack 90-Day Freedom
+// Sprint page with 17-question pre-qualification). /1on1 still works as
+// a fallback waitlist if /coaching ever goes down.
+const APPLY_URL = `${SITE_URL}/coaching`;
 
 const day8 = {
   subject: 'On 4+ medications? Read this one carefully.',
@@ -696,8 +712,10 @@ const day9 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.`, { margin: '0 0 24px' })}
+    ${p(`Until then — my deepest Triangle walkthroughs are on YouTube. The cortisol corner gets a 14-min video that names every herb dose, the bedtime math, and the one supplement I refuse to use.`)}
+    ${ctaButton(YOUTUBE_URL, 'Watch the Triangle deep-dive on YouTube →')}
     ${joelSignoff()}
-    ${psBox(`Lie #3 comes Day 17. Once you see it, you can't look at your prescription bottle the same way. Stay with me.`)}
+    ${psBox(`Tomorrow we walk the third corner — the one cardiologists never measure. Stay with me.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -742,7 +760,9 @@ Tomorrow — the third corner. The one cardiologists never bring up. The one cut
 Joel
 RN, BraveWorks
 
-P.S. Lie #3 comes Day 17. Once you see it, you can't look at your prescription bottle the same way. Stay with me.
+P.S. Tomorrow we walk the third corner — the one cardiologists never measure.
+
+→ Watch the Triangle deep-dive on YouTube: ${YOUTUBE_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -782,6 +802,8 @@ const day10 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow — the single sentence I teach every patient. The one that takes the fear out of the protocol and makes the doctor conversation easy.`, { margin: '0 0 24px' })}
+    ${p(`If you want my eyes on your numbers live — every Monday at 10 PM ET I unravel the Triangle on Zoom with the cohort. The <strong>$97 BP Triangle Challenge</strong> gets you a seat on every weekly call for 4 weeks, plus the Skool VIP room and the full bonus stack.`)}
+    ${ctaButton(CHALLENGE_URL, 'Join the BP Triangle Challenge — $97 →')}
     ${joelSignoff()}
     ${psBox(`Quieter numbers. Steadier mornings. Doctor-cleared independence. Three phrases I'll repeat all month — because they're the actual outcomes worth aiming at, not "lower my BP by Tuesday."`)}
     ${footerSecondaryCTAs()}
@@ -821,6 +843,9 @@ Tomorrow — the single sentence I teach every patient. The one that takes the f
 
 Joel
 RN, BraveWorks
+
+→ Want me on your call? The $97 BP Triangle Challenge: ${CHALLENGE_URL}
+Mondays at 10 PM ET live with me. 4 weeks of coaching + Skool VIP + the full bonus stack.
 
 P.S. Quieter numbers. Steadier mornings. Doctor-cleared independence. Three phrases I'll repeat all month — because they're the actual outcomes worth aiming at, not "lower my BP by Tuesday."
 
@@ -862,6 +887,8 @@ const day11 = {
     `)}
     ${p(`Most doctors say yes. Some don't. If yours doesn't, that's information — and we can talk about second opinions another time. <strong style="color:${PALETTE.text};">The goal is not to fight your doctor. The goal is to do this work with their blessing and watch them be the one who says "let's lower the dose."</strong>`, { margin: '0 0 28px' })}
     ${p(`Tomorrow — Marlene. Eleven points in nine days. Three swaps. No new pill. The most-asked-about case in this list.`, { margin: '0 0 24px' })}
+    ${p(`If you're not in the community yet, join the free Skool room — "How to Be Your Own Doctor." It's where the AND-not-INSTEAD-OF women trade weekly numbers, food swaps, and doctor-conversation wins.`)}
+    ${ctaButton(SKOOL_URL, 'Join the free Skool community →')}
     ${joelSignoff()}
     ${psBox(`If this email helped a sentence land — forward it to the friend who's about to start another medication and doesn't know there's an "AND" path. That's the most useful thing you can do with what I send you.`)}
     ${footerSecondaryCTAs()}
@@ -910,6 +937,9 @@ Tomorrow — Marlene. Eleven points in nine days. Three swaps. No new pill.
 
 Joel
 RN, BraveWorks
+
+→ Join the free Skool community: ${SKOOL_URL}
+"How to Be Your Own Doctor" — where AND-not-INSTEAD-OF women trade weekly numbers and food swaps.
 
 P.S. If this email helped a sentence land — forward it to the friend who's about to start another medication and doesn't know there's an "AND" path. That's the most useful thing you can do with what I send you.
 
@@ -965,7 +995,8 @@ const day12 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is built for.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for 1:1 with Joel →</a></p>
     `)}
-    ${p(`Tomorrow — the foundation everything sits on. The pillars that make every protocol work. Why some buyers see results in 4 days and others in 14.`, { margin: '0 0 24px' })}
+    ${p(`If you've followed 12 days of this and you're ready for me to walk YOUR numbers personally — not a course, not a community, the real 1:1 work — applications for the next coaching cohort are open. 90 days, weekly Zoom with me, Annie's hormone coaching biweekly, full supplement + diet audit, WhatsApp office hours, the works. Stack value $14,616; founding price is currently lower than regular. Reviewed every application personally.`, { margin: '0 0 24px' })}
+    ${ctaButton(COACHING_URL, 'Apply for 1:1 coaching with Joel →')}
     ${joelSignoff()}
     ${psBox(`If you've followed the daily emails this far, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
     ${footerSecondaryCTAs()}

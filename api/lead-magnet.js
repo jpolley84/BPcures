@@ -159,11 +159,14 @@ function tiersForCategory(category) {
     .sort((a, b) => a.tier - b.tier);
 }
 
+// 2026-05-14: tier bands match QuizPage.jsx tierForScore. Tier 1/2/3 maps
+// to the 3 active BP products. Coaching ($1,997/$6,997 at /coaching) is
+// surfaced via the Day-12 drip universally, not via this tier function.
 function recommendedTier(riskScore) {
   const s = Number(riskScore) || 0;
-  if (s <= 3) return 1;
-  if (s <= 6) return 2;
-  return 3;
+  if (s <= 3) return 1;  // $17 BP Starter
+  if (s <= 6) return 2;  // $47 BP Reset Kit
+  return 3;              // $97 BP Triangle Challenge
 }
 
 function normalizeCategory(c) {

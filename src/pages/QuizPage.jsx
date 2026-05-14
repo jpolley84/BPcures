@@ -165,6 +165,16 @@ const RESULT_TIPS = {
 };
 
 // Compute a 1–10 risk score from the answers.
+//
+// 2026-05-14 verified: scoring math is sound.
+//   Raw range per question:
+//     concern: 1 or 2          (BP/cort/sugar = 1; all = 2)
+//     duration: 0..3
+//     medication: 0/2/3
+//     barrier: 0..2
+//     age: 0..1
+//   Min raw = 1 (concern always ≥1), max raw = 11 (2+3+3+2+1).
+//   Normalized score range in practice: 2..10.
 function computeRiskScore(answers) {
   let raw = 0;
   for (const q of QUESTIONS) {
@@ -177,6 +187,13 @@ function computeRiskScore(answers) {
   return Math.max(1, Math.min(10, normalized));
 }
 
+// Tier-to-product mapping for the results page recommendation badge.
+//   tier 1 ($17 BP Starter)       → score 2-3
+//   tier 2 ($47 BP Reset Kit)     → score 4-6
+//   tier 3 ($97 BP Triangle Chal) → score 7-10
+// Coaching ($1,997/$6,997) is NOT a tier on the results page — it surfaces
+// universally via the Day-12 drip email (everyone reaches it). High-score
+// (9-10) buyers are pre-disposed but the door is the same for all readers.
 function tierForScore(score) {
   if (score <= 3) return 1;
   if (score <= 6) return 2;
