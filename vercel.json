@@ -3,6 +3,28 @@
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/((?!assets|downloads|headshot|favicon).*)", "destination": "/index.html" }
   ],
+  "redirects": [
+    {
+      "source": "/tt",
+      "destination": "/?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/ig",
+      "destination": "/?utm_source=instagram&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/fb",
+      "destination": "/?utm_source=facebook&utm_medium=profile&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/tt-c",
+      "destination": "/coaching?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    }
+  ],
   "crons": [
     {
       "path": "/api/drip-cron",
