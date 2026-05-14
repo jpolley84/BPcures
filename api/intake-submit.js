@@ -17,7 +17,11 @@ import {
   readJsonBody,
 } from './_intake-shared.js';
 
-const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
+// 2026-05-14: changed default from brave.works.marketing@gmail.com to
+// braveworksrn@gmail.com (Joel's primary operational inbox where DFY
+// client intake notifications need to land). See coaching-apply.js
+// for the full reasoning.
+const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM = 'Practice Launcher Intake <intake@bpquiz.com>';
 
 let _resend = null;

@@ -12,7 +12,10 @@ import { kv } from '@vercel/kv';
 import { SECTION_MAP, formatAnswer } from './_wakita-schema.js';
 import { generateWakitaPDF } from './_wakita-pdf.js';
 
-const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
+// 2026-05-14: changed default from brave.works.marketing@gmail.com to
+// braveworksrn@gmail.com (Joel's primary operational inbox). See the
+// matching note in coaching-apply.js for the reasoning.
+const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM = 'BraveWorks Intake <intake@bpquiz.com>';
 
 let _resend = null;

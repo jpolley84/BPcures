@@ -22,7 +22,14 @@ function getResend() {
   return _resend;
 }
 
-const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
+// 2026-05-14: changed default from brave.works.marketing@gmail.com to
+// braveworksrn@gmail.com — Joel's primary operational inbox (where
+// /api/waitlist-submit notifications also land). Previously, coaching
+// applications were going to a separate inbox Joel doesn't monitor,
+// which is why "we've had no applications" — they were arriving in
+// a parallel inbox. Override with LAUNCHER_NOTIFY_EMAIL in Vercel env
+// if a different routing is needed for any specific environment.
+const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM = 'BP Triangle Freedom Sprint <coaching@bpquiz.com>';
 
 // 2026-05-14 hardening (audit P0-2): per-IP rate limit, mirrors the
