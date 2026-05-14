@@ -4,7 +4,6 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
-import { upsertSubscriber as beehiivUpsert, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
 import { looksLikeValidEmail } from './_email-validation.js';
 
 // Local alias for the imported helper (keeps the call-site readable + matches
@@ -178,63 +177,20 @@ function normalizeCategory(c) {
   return 'blood_pressure';
 }
 
-// Subscribe or update subscriber in beehiiv — primary list as of 2026-05-06
-// cutover from Mailchimp. Non-blocking, never throws (returns ok:false on error).
-//
-// Custom field mapping:
-//   FNAME       <- name
-//   CONCERN     <- category (blood_pressure / cortisol / blood_sugar)
-//   RISK_SCORE  <- riskScore (1-10)
-//   JOIN_SOURCE <- bpquiz_quiz
-//
-// Tags applied (matches the prior MC tag taxonomy so segments port cleanly):
-//   bpquiz-taker, category-{x}, tier-{n}, meds-{x}, age-{y}, plus extraTags.
-async function listUpsert({ email, name, category, riskScore, tier, answers, extraTags }) {
-  if (!BEEHIIV_AVAILABLE) {
-    console.warn('lead-magnet: BEEHIIV_API_KEY/BEEHIIV_PUB_ID not set, skipping list write');
-    return { ok: false, reason: 'no_beehiiv_config' };
-  }
-  const a = answers || {};
-  const tags = [
-    'bpquiz-taker',
-    `category-${category}`,
-    `tier-${tier}`,
-  ];
-  if (a.medication) tags.push(`meds-${a.medication}`);
-  if (a.age) tags.push(`age-${a.age}`);
-  if (a.duration) tags.push(`duration-${a.duration}`);
-  if (a.barrier) tags.push(`barrier-${a.barrier}`);
-  if (Array.isArray(extraTags)) {
-    for (const t of extraTags) {
-      if (typeof t === 'string' && t.trim()) tags.push(t.trim());
-    }
-  }
-  try {
-    await beehiivUpsert({
-      email: email.trim(),
-      customFields: {
-        FNAME: name || '',
-        CONCERN: category,
-        RISK_SCORE: riskScore || '',
-        JOIN_SOURCE: 'bpquiz_quiz',
-      },
-      tags,
-      utmSource: 'bpquiz_quiz',
-      utmMedium: 'lead_magnet',
-      sendWelcomeEmail: false, // we send the kit email ourselves via Resend
-    });
-    return { ok: true };
-  } catch (err) {
-    console.error('lead-magnet: beehiiv upsert error', err.message);
-    return { ok: false, reason: err.message };
-  }
-}
+// 2026-05-14: Beehiiv retired. The list write previously did two things:
+//   (a) Add the subscriber to the Beehiiv mailing list
+//   (b) Tag them for future segmentation
+// Both jobs are now handled inline by the Vercel KV drip:* record — the
+// `enrollInDrip` block below stores email, firstName, category (as a tag),
+// tier (as a tag), and all answer fields. drip-cron + cohort-broadcast
+// both read that record directly. No external list service needed.
 
-// 2026-05-14: Removed `mailchimpUpsert_DEPRECATED` (was preserved for fast
-// revert in case the beehiiv migration needed to be rolled back, but
-// Mailchimp has been retired entirely). Subscriber storage is now Vercel
-// KV (drip:*); sending engine is Resend; tagging happens via listUpsert
-// → beehiivUpsert above (or none if beehiiv is retired in a follow-up).
+// 2026-05-14: Removed `mailchimpUpsert_DEPRECATED` AND `listUpsert` (the
+// beehiiv writer). Subscriber storage + segmentation is now Vercel KV
+// (drip:*) only; sending engine is Resend. The KV enrollment block in the
+// handler below tags every quiz taker with category-X/tier-N/meds-X/age-X/
+// duration-X/barrier-X — the same taxonomy beehiiv was tracking, kept
+// inline.
 
 function renderEmail({ name, category, tier, tiers }) {
   const cat = CATEGORIES[category];
@@ -522,31 +478,47 @@ export default async function handler(req, res) {
     console.log(`lead-magnet: dedupe skipped duplicate send to ${email.trim()} (within 5min window)`);
   }
 
-  // Always upsert to beehiiv — keeps tags + answers fresh even on dupes.
-  // (Replaced Mailchimp 2026-05-06; see listUpsert above for taxonomy.)
-  const list = await listUpsert({ email: email.trim(), name, category, riskScore, tier, answers: answers || {}, extraTags });
-  if (!list.ok) console.warn('lead-magnet: list upsert incomplete', list.reason || 'unknown');
-
-  // 2026-05-13 funnel-coherence: every quiz email also enters the 7-day
-  // Resend drip nurture. Previously quiz takers got their category PDF +
-  // cookbook and then went silent until they bought — a major leak.
-  // Now Day 1 of the BP Triangle drip hits them at the next 12:00 UTC
-  // cron fire. Day 7 opt-in gate still applies — buyers click through,
-  // non-buyers self-filter. Don't overwrite existing drip records.
+  // 2026-05-14: Beehiiv retired. List storage + segmentation tags now live
+  // entirely in the Vercel KV drip:* record. This block:
+  //   - Creates a fresh drip enrollment for new quiz takers
+  //   - Refreshes tags + answer-derived metadata for repeat takers
+  //   (matches the previous beehiiv upsert behavior — tags stay current
+  //   even if a subscriber retakes the quiz with different answers)
   if (process.env.KV_REST_API_URL) {
     const dripKey = `drip:${email.trim().toLowerCase()}`;
+    const a = answers || {};
+    const newTags = ['quiz-taker', `category-${category}`, `tier-${tier}`];
+    if (a.medication) newTags.push(`meds-${a.medication}`);
+    if (a.age) newTags.push(`age-${a.age}`);
+    if (a.duration) newTags.push(`duration-${a.duration}`);
+    if (a.barrier) newTags.push(`barrier-${a.barrier}`);
+    if (Array.isArray(extraTags)) {
+      for (const t of extraTags) if (typeof t === 'string' && t.trim()) newTags.push(t.trim());
+    }
     try {
       const existing = await kv.get(dripKey);
-      if (!existing) {
+      if (existing) {
+        // Refresh tags + answers metadata, preserve enrollment date / lastSentDay
+        await kv.set(dripKey, {
+          ...existing,
+          firstName: name || existing.firstName || '',
+          riskScore: riskScore || existing.riskScore || '',
+          answers: a,
+          tags: Array.from(new Set([...(existing.tags || []), ...newTags])),
+          lastQuizTakenAt: new Date().toISOString(),
+        });
+      } else {
         await kv.set(dripKey, {
           email: email.trim().toLowerCase(),
           firstName: name || '',
           cohort: 'quiz',
           enrolledAt: new Date().toISOString(),
           lastSentDay: 0,
-          optedIn: true, // taking the quiz IS the opt-in; Day-7 gate still filters
+          optedIn: true, // taking the quiz IS the opt-in
           source: 'quiz-lead-magnet',
-          tags: ['quiz-taker', `category-${category}`, `tier-${tier}`],
+          riskScore: riskScore || '',
+          answers: a,
+          tags: newTags,
         });
       }
     } catch (err) {

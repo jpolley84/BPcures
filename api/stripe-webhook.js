@@ -350,33 +350,52 @@ async function readRawBody(req) {
   });
 }
 
-// ─── beehiiv buyer tagging ────────────────────────────────────────────
-// Adds Purchased + tier-{n}-buyer tags after a kit/VIP/Premium purchase
-// so segmentation works for post-purchase automation + suppression of
-// entry-offer broadcasts to existing buyers. Replaces tagBuyerInMailchimp
-// as of the 2026-05-06 cutover.
-import { tagByEmail as beehiivTagByEmail, BEEHIIV_AVAILABLE } from './_beehiivClient.js';
-
+// ─── Buyer tagging in KV ──────────────────────────────────────────────
+// 2026-05-14: Beehiiv retired. Buyer segmentation lives in the same KV
+// drip:* record now. Adds Purchased + tier-{n}-buyer tags + purchase
+// metadata so future broadcasts can suppress existing buyers.
 async function tagBuyerOnList({ email, tier, amountCents }) {
-  if (!BEEHIIV_AVAILABLE) {
-    console.warn('tagBuyerOnList: BEEHIIV_API_KEY/BEEHIIV_PUB_ID not set, skipping');
+  if (!process.env.KV_REST_API_URL) {
+    console.warn('tagBuyerOnList: KV not configured, skipping');
     return;
   }
-  // Tier name normalization for the tier-buyer tag
   const tierName = String(tier).replace(/[^a-z0-9-]/gi, '').toLowerCase() || 'unknown';
-
-  const tags = ['Purchased', `tier-${tierName}-buyer`];
-
-  await beehiivTagByEmail({
-    email: email.trim(),
-    tags,
-    customFields: {
-      LAST_PURCHASE_AMOUNT: amountCents ? String(amountCents / 100) : '',
-      LAST_PURCHASE_TIER: tierName,
-    },
-    utmSource: 'stripe_purchase',
-  });
-  console.log(`tagBuyerOnList (beehiiv): tagged ${email} as Purchased + tier-${tierName}-buyer`);
+  const dripKey = `drip:${String(email).trim().toLowerCase()}`;
+  try {
+    const existing = await kv.get(dripKey);
+    const newTags = ['Purchased', `tier-${tierName}-buyer`];
+    const purchaseMeta = {
+      lastPurchaseAmount: amountCents ? amountCents / 100 : null,
+      lastPurchaseTier: tierName,
+      lastPurchaseAt: new Date().toISOString(),
+    };
+    if (existing) {
+      await kv.set(dripKey, {
+        ...existing,
+        ...purchaseMeta,
+        tags: Array.from(new Set([...(existing.tags || []), ...newTags])),
+      });
+    } else {
+      // Buyer paid without ever taking the quiz — create a fresh record.
+      await kv.set(dripKey, {
+        email: String(email).trim().toLowerCase(),
+        firstName: '',
+        cohort: 'paid-direct',
+        enrolledAt: new Date().toISOString(),
+        lastSentDay: 0,
+        optedIn: true,
+        isPaidCustomer: true,
+        paidTier: tierName,
+        source: 'stripe-paid-direct',
+        tags: newTags,
+        ...purchaseMeta,
+      });
+    }
+    console.log(`tagBuyerOnList (KV): tagged ${email} as Purchased + tier-${tierName}-buyer`);
+  } catch (err) {
+    console.error('tagBuyerOnList: KV write failed', err.message);
+    throw err; // surface to caller — they alert Joel
+  }
 }
 
 // ─── Joel-alert helper ────────────────────────────────────────────────
