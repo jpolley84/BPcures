@@ -50,7 +50,12 @@ export function escapeHtml(s) {
 export async function pullRecipients() {
   const keys = await kv.keys('drip:*');
   const recipients = [];
-  const stats = { total: 0, unsub: 0, paused: 0, complete: 0, noEmail: 0 };
+  // 2026-05-14 hardening: track emails-seen so a subscriber with duplicate
+  // drip:* records (e.g. re-enrollment) only receives the broadcast once.
+  // Without this dedupe, the Saturday + Sunday cohort blasts could send the
+  // same email twice to anyone with a stale + fresh KV record.
+  const seen = new Set();
+  const stats = { total: 0, unsub: 0, paused: 0, complete: 0, noEmail: 0, duplicate: 0 };
   for (const k of keys) {
     stats.total++;
     const r = await kv.get(k);
@@ -58,6 +63,9 @@ export async function pullRecipients() {
     if (r.unsubscribed) { stats.unsub++; continue; }
     if (r.paused) { stats.paused++; continue; }
     if (r.complete) { stats.complete++; continue; }
+    const emailKey = String(r.email).toLowerCase().trim();
+    if (seen.has(emailKey)) { stats.duplicate++; continue; }
+    seen.add(emailKey);
     recipients.push({ email: r.email, firstName: r.firstName || '' });
   }
   return { recipients, stats };

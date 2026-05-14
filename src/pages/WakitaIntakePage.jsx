@@ -553,6 +553,15 @@ export default function WakitaIntakePage() {
   const [intakeId, setIntakeId] = useState(null);
   const [error, setError] = useState('');
 
+  // 2026-05-14 hardening (audit P0-1): read access token from URL once on
+  // mount. Joel gives Wakita the URL with `?token=<secret>`; the backend
+  // /api/wakita-intake and /api/wakita-intake-pdf endpoints require it.
+  // Without a token in the URL, form submit + PDF download will 401.
+  const accessToken = useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    return new URLSearchParams(window.location.search).get('token') || '';
+  }, []);
+
   const setAns = (id, value) => setAnswers((prev) => ({ ...prev, [id]: value }));
 
   const missingRequired = useMemo(() => {
@@ -574,7 +583,10 @@ export default function WakitaIntakePage() {
     }
     setSubmitting(true);
     try {
-      const r = await fetch('/api/wakita-intake', {
+      // Token from URL is forwarded as a query param so the backend can
+      // gate this endpoint (P0-1 hardening). If the URL lacks ?token=,
+      // the API returns 401 and we surface a clear error.
+      const r = await fetch('/api/wakita-intake?token=' + encodeURIComponent(accessToken), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers, submittedAt: new Date().toISOString() }),
@@ -614,7 +626,7 @@ export default function WakitaIntakePage() {
 
           {intakeId && (
             <a
-              href={`/api/wakita-intake-pdf?id=${encodeURIComponent(intakeId)}`}
+              href={`/api/wakita-intake-pdf?id=${encodeURIComponent(intakeId)}&token=${encodeURIComponent(accessToken)}`}
               target="_blank"
               rel="noopener noreferrer"
               style={{

@@ -68,10 +68,49 @@ function renderEmailHtml(answers, submittedAt) {
 </body></html>`;
 }
 
+// Constant-time token comparison. We compare BUFFERS not strings so an
+// attacker can't shave bits off by timing. Lengths-must-match first; if
+// they don't, return false without leaking the secret length.
+function tokensMatch(supplied, expected) {
+  if (typeof supplied !== 'string' || typeof expected !== 'string') return false;
+  if (!supplied || !expected) return false;
+  if (supplied.length !== expected.length) return false;
+  try {
+    const a = Buffer.from(supplied);
+    const b = Buffer.from(expected);
+    // crypto imported lazily — avoid top-of-file import to keep cold-start lean
+    // when the token check short-circuits early on bad-shape inputs above.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    return require('node:crypto').timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // 2026-05-14 hardening (audit P0-1): require WAKITA_INTAKE_SECRET token
+  // to gate this endpoint. Previously public — anyone with the URL could
+  // POST garbage and overwrite Wakita's real submission.
+  // Accept token from EITHER the query string (`?token=...`) OR the
+  // Authorization: Bearer header. The page side prefers query-string for
+  // simplicity; bearer is supported for cleaner curl testing.
+  const expectedToken = process.env.WAKITA_INTAKE_SECRET || '';
+  if (!expectedToken) {
+    console.error('wakita-intake: WAKITA_INTAKE_SECRET not set in env — refusing to accept submissions');
+    return res.status(500).json({ error: 'Intake endpoint not configured' });
+  }
+  const supplied =
+    (req.query?.token && String(req.query.token)) ||
+    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
+    '';
+  if (!tokensMatch(supplied, expectedToken)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   if (!req.body || typeof req.body !== 'object') {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }

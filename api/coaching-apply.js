@@ -11,6 +11,7 @@
 
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
+import { looksLikeValidEmail } from './_email-validation.js';
 
 let _resend = null;
 function getResend() {
@@ -24,13 +25,29 @@ function getResend() {
 const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
 const FROM = 'BP Triangle Freedom Sprint <coaching@bpquiz.com>';
 
-// Cheap RFC-5322-ish shape check (mirrors what we added to
-// purchase-confirmation.js to catch malformed Stripe deliveries).
-function looksLikeValidEmail(s) {
-  if (typeof s !== 'string') return false;
-  const t = s.trim();
-  if (t.length < 5 || t.length > 254) return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t);
+// 2026-05-14 hardening (audit P0-2): per-IP rate limit, mirrors the
+// lead-magnet.js + challenge-signup.js pattern. Each apply triggers
+// 2 Resend emails (Joel + applicant ack) — uncapped, an attacker could
+// blow through Resend quota + burn sender reputation in minutes.
+async function checkRateLimit(ip) {
+  if (!process.env.KV_REST_API_URL || !ip) return { ok: true };
+  try {
+    const key = `ca-rl:${ip}`;
+    const count = (await kv.get(key)) || 0;
+    if (count >= 5) return { ok: false, count };
+    if (count === 0) await kv.set(key, 1, { ex: 3600 });
+    else await kv.incr(key);
+    return { ok: true, count: count + 1 };
+  } catch (err) {
+    console.warn('coaching-apply: rate-limit check failed (allowing):', err.message);
+    return { ok: true };
+  }
+}
+
+function getClientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return String(xff).split(',')[0].trim();
+  return req.headers['x-real-ip'] || req.socket?.remoteAddress || '';
 }
 
 function escapeHtml(s) {
@@ -41,6 +58,16 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  // 2026-05-14 hardening: rate-limit BEFORE accepting body (so attackers
+  // can't exhaust Resend quota or burn sender rep from one IP).
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(ip);
+  if (!rl.ok) {
+    console.warn(`coaching-apply: rate-limited ip=${ip} count=${rl.count}`);
+    return res.status(429).json({ error: 'Too many applications from this IP. Try again in an hour.' });
+  }
+
   if (!req.body || typeof req.body !== 'object') {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }
@@ -139,19 +166,16 @@ export default async function handler(req, res) {
     cohort: 'founding-cohort-1',
   };
 
-  // 1. Store in KV (90-day TTL so old apps purge themselves)
-  if (process.env.KV_REST_API_URL) {
-    try {
-      const kvKey = `coaching-app:${Date.now()}:${trimmedEmail}`;
-      await kv.set(kvKey, application, { ex: 90 * 86400 });
-    } catch (err) {
-      console.error('coaching-apply: KV store failed', err.message);
-      // Continue — KV failure shouldn't block the email notification.
-    }
-  }
+  // 2026-05-14 hardening (audit P0-3): reordered. Joel's notification email
+  // now fires FIRST and fails loud if Resend errors. Old order was:
+  //   KV save → notify email (swallowed errors) → applicant ack
+  // Risk: if Resend was down + KV silently failed, the user got 200 OK but
+  // Joel never saw the application AND the application wasn't persisted.
+  // New order: notify email first (FAIL THE REQUEST if it errors so the
+  // applicant retries), then KV save as durable backup, then applicant ack.
 
-  // 2. Email notification to Joel — structured rows for every field, with
-  // fit-tier in the subject line so HOT applicants jump in the inbox.
+  // 1. Email notification to Joel — FIRST, mandatory. If this fails, the
+  // applicant has not actually applied as far as the funnel is concerned.
   try {
     const subject = `[App ${application.fitTier} ${application.fitScore}] ${application.name} — ${application.investmentRange || 'no $ range'}`;
     const tierColor = application.fitTier === 'HOT' ? '#3F5A3C' : application.fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
@@ -200,8 +224,23 @@ export default async function handler(req, res) {
       html,
     });
   } catch (err) {
-    console.error('coaching-apply: notify email failed', err.message);
-    // Don't block the user — Joel can find it in KV.
+    console.error('coaching-apply: notify email failed — returning 500 so applicant retries', err.message);
+    return res.status(500).json({
+      ok: false,
+      error: 'We could not deliver your application right now. Please try again in a moment, or email braveworksrn@gmail.com directly.',
+    });
+  }
+
+  // 2. Store in KV (90-day TTL so old apps purge themselves) — durable
+  // backup in case Joel's inbox is buried. Non-blocking; the notify email
+  // above is the canonical record.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      const kvKey = `coaching-app:${Date.now()}:${trimmedEmail}`;
+      await kv.set(kvKey, application, { ex: 90 * 86400 });
+    } catch (err) {
+      console.error('coaching-apply: KV store failed (non-fatal)', err.message);
+    }
   }
 
   // 3. Auto-acknowledgement to applicant

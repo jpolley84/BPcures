@@ -7,11 +7,40 @@
 // can always grab the latest. Returns 404 if no intake exists yet.
 
 import { kv } from '@vercel/kv';
+import crypto from 'node:crypto';
 import { generateWakitaPDF } from './_wakita-pdf.js';
+
+function tokensMatch(supplied, expected) {
+  if (typeof supplied !== 'string' || typeof expected !== 'string') return false;
+  if (!supplied || !expected) return false;
+  if (supplied.length !== expected.length) return false;
+  try {
+    return crypto.timingSafeEqual(Buffer.from(supplied), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // 2026-05-14 hardening (audit P0-1): require WAKITA_INTAKE_SECRET token
+  // to gate this endpoint. Previously public — anyone with the URL could
+  // download Wakita's private health intake (BP readings, meds, sleep,
+  // budget). Now requires `?token=$secret` or `Authorization: Bearer $secret`.
+  const expectedToken = process.env.WAKITA_INTAKE_SECRET || '';
+  if (!expectedToken) {
+    console.error('wakita-intake-pdf: WAKITA_INTAKE_SECRET not set — refusing access');
+    return res.status(500).json({ error: 'Intake endpoint not configured' });
+  }
+  const supplied =
+    (req.query?.token && String(req.query.token)) ||
+    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
+    '';
+  if (!tokensMatch(supplied, expectedToken)) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const id = String(req.query?.id || '').trim();
