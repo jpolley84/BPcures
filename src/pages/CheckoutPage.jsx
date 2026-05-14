@@ -167,6 +167,15 @@ const CheckoutPage = () => {
           <p className="text-center font-medium" style={{ color: 'var(--white)', fontSize: '14px', lineHeight: '1.4', letterSpacing: '0.02em' }}>
             Joel Polley, RN — 20 Years ICU & Emergency Medicine | Naturopathic Practitioner
           </p>
+          <div className="text-center mt-2">
+            <a
+              href="/coaching"
+              className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-medium transition-colors"
+              style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.4)', textUnderlineOffset: '3px' }}
+            >
+              Work with Joel 1:1 →
+            </a>
+          </div>
         </div>
       </div>
 
