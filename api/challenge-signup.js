@@ -1,6 +1,5 @@
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
-import crypto from 'node:crypto';
 import { looksLikeValidEmail } from './_email-validation.js';
 
 // Per-IP rate limit. 2026-05-13 hardening: this endpoint was previously
@@ -37,56 +36,10 @@ function getResend() {
   return _resend;
 }
 
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
-const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
-
-async function mailchimpUpsert(email, name) {
-  if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
-  const [, dc] = MAILCHIMP_API_KEY.split('-');
-  if (!dc) return { ok: false, reason: 'bad_dc' };
-
-  const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
-  const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
-  const auth = 'Basic ' + Buffer.from(`anystring:${MAILCHIMP_API_KEY}`).toString('base64');
-
-  try {
-    const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}`, {
-      method: 'PUT',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email_address: email,
-        status_if_new: 'subscribed',
-        merge_fields: {
-          FNAME: name || '',
-          CATEGORY: '30-day-challenge',
-        },
-      }),
-    });
-
-    if (!r.ok) {
-      const text = await r.text().catch(() => '');
-      console.error('challenge-signup mailchimp upsert failed', r.status, text.slice(0, 200));
-      return { ok: false, status: r.status };
-    }
-
-    // Tag subscriber
-    await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`, {
-      method: 'POST',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tags: [
-          { name: '30-day-challenge', status: 'active' },
-          { name: 'pressure-triangle', status: 'active' },
-        ],
-      }),
-    });
-
-    return { ok: true };
-  } catch (err) {
-    console.error('challenge-signup mailchimp error', err.message);
-    return { ok: false, reason: err.message };
-  }
-}
+// 2026-05-14: Mailchimp retired. Removed MAILCHIMP env vars + the
+// mailchimpUpsert function. Subscriber enrollment now flows entirely
+// through the Vercel KV drip:* store (enrollInDripKV below). Resend
+// is the sending engine.
 
 function renderAnnouncementEmail(firstName) {
   const name = (firstName || '').trim() || 'Friend';
@@ -256,14 +209,11 @@ export default async function handler(req, res) {
     console.warn('challenge-signup: drip enrollment skipped', dripResult.reason);
   }
 
-  // 2. Add to Mailchimp with challenge tags (fire-and-forget; for legacy
-  //    segmentation + analytics. Eventually retire once beehiiv migration
-  //    completes or we standardize on the drip:* KV alone.)
-  mailchimpUpsert(trimmedEmail, name).catch((err) =>
-    console.error('challenge-signup: mailchimp failed', err.message)
-  );
+  // 2026-05-14: Mailchimp tagging removed. Drip:* KV is canonical;
+  // the enrollInDripKV call above already tags this signup with
+  // ['30-day-challenge', 'pressure-triangle']. No further list-side work.
 
-  // 3. Send announcement email via Resend (welcome + expectation-setting).
+  // 2. Send announcement email via Resend (welcome + expectation-setting).
   try {
     const html = renderAnnouncementEmail(name);
     await getResend().emails.send({

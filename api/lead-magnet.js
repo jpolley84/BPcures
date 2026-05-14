@@ -24,8 +24,9 @@ function getResend() {
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const COOKBOOK_URL = `${SITE_URL}/downloads/cook-for-life-cookbook.pdf`;
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
-const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
+// 2026-05-14: Mailchimp retired. The env vars + dead `mailchimpUpsert_DEPRECATED`
+// function removed in this commit. Vercel KV drip:* is the canonical
+// subscriber store; Resend is the sending engine.
 
 // ─────────────────────────────────────────────────────────────────────────
 // VERIFIED CATEGORY-AWARE — do not flag as "hardcoded BP" without re-reading
@@ -229,74 +230,11 @@ async function listUpsert({ email, name, category, riskScore, tier, answers, ext
   }
 }
 
-// Legacy Mailchimp upsert — preserved for reference / fast revert in case
-// the beehiiv migration needs to be rolled back. Not called from the
-// handler anymore (replaced by listUpsert above as of 2026-05-06).
-// eslint-disable-next-line no-unused-vars
-async function mailchimpUpsert_DEPRECATED({ email, name, category, riskScore, tier, answers, extraTags }) {
-  if (!MAILCHIMP_API_KEY || !MAILCHIMP_API_KEY.includes('-')) return { ok: false, reason: 'no_key' };
-  const [, dc] = MAILCHIMP_API_KEY.split('-');
-  if (!dc) return { ok: false, reason: 'bad_dc' };
-
-  const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
-
-  const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
-  const auth = 'Basic ' + Buffer.from(`anystring:${MAILCHIMP_API_KEY}`).toString('base64');
-
-  const a = answers || {};
-  const body = {
-    email_address: email,
-    status_if_new: 'subscribed',
-    merge_fields: {
-      FNAME: name || '',
-      CATEGORY: category,
-      SCORE: String(riskScore || ''),
-      TIER: `tier-${tier}`,
-      DURATION: a.duration || '',
-      MEDS: a.medication || '',
-      BARRIER: a.barrier || '',
-      AGE: a.age || '',
-    },
-  };
-
-  try {
-    const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}`, {
-      method: 'PUT',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (!r.ok) {
-      const text = await r.text().catch(() => '');
-      console.error('mailchimp upsert failed', r.status, text.slice(0, 200));
-      return { ok: false, status: r.status };
-    }
-    // Apply tags (bpquiz-taker + category + tier)
-    const tags = [
-      { name: 'bpquiz-taker', status: 'active' },
-      { name: `category-${category}`, status: 'active' },
-      { name: `tier-${tier}`, status: 'active' },
-    ];
-    // Tag by medication status — highest-value segmentation field
-    if (a.medication) tags.push({ name: `meds-${a.medication}`, status: 'active' });
-    // Tag by age range
-    if (a.age) tags.push({ name: `age-${a.age}`, status: 'active' });
-    // Extra tags from the request (e.g. footer challenge signup)
-    if (Array.isArray(extraTags)) {
-      for (const t of extraTags) {
-        if (typeof t === 'string' && t.trim()) tags.push({ name: t.trim(), status: 'active' });
-      }
-    }
-    await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`, {
-      method: 'POST',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags }),
-    });
-    return { ok: true };
-  } catch (err) {
-    console.error('mailchimp upsert error', err.message);
-    return { ok: false, reason: err.message };
-  }
-}
+// 2026-05-14: Removed `mailchimpUpsert_DEPRECATED` (was preserved for fast
+// revert in case the beehiiv migration needed to be rolled back, but
+// Mailchimp has been retired entirely). Subscriber storage is now Vercel
+// KV (drip:*); sending engine is Resend; tagging happens via listUpsert
+// → beehiivUpsert above (or none if beehiiv is retired in a follow-up).
 
 function renderEmail({ name, category, tier, tiers }) {
   const cat = CATEGORIES[category];

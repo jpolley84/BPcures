@@ -14,14 +14,18 @@
 //   - POST → applies + returns 200 (RFC 8058 one-click)
 //
 // On unsubscribe we:
-//   - Remove the contact from the master Mailchimp list (status: 'unsubscribed')
-//   - OR if `tag=foo` is present, just remove that tag (preserves broadcasts)
+//   - Set `unsubscribed: true` on the Vercel KV drip:<email> record
+//   - OR if `tag=foo` is present, just remove that tag (preserves drip)
 //   - Return a confirmation
 //
+// 2026-05-14: switched from Mailchimp to Vercel KV as the canonical
+// subscriber store. Mailchimp was retired; the old call was silently
+// failing AND not actually unsubscribing anyone from the daily drip-cron.
+// See unsubscribeInKV() below for the new implementation.
+//
 // Required env vars:
-//   UNSUB_SECRET       — 32-byte random for HMAC signing (any high-entropy string)
-//   MAILCHIMP_API_KEY  — already set
-//   MAILCHIMP_LIST_ID  — defaults to '1550e2956c'
+//   UNSUB_SECRET           — 32-byte random for HMAC signing
+//   KV_REST_API_URL/TOKEN  — auto-set when Vercel KV is provisioned
 //
 // Token format: base64url(`${email}.${ts}.${tag||''}.${sig}`) where
 //   sig = first 16 hex chars of HMAC-SHA256(SECRET, `${email}.${ts}.${tag||''}`)
@@ -29,8 +33,6 @@
 import crypto from 'node:crypto';
 
 const SECRET = process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
-const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY || '';
-const MAILCHIMP_LIST_ID = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
 
 function sign(payload) {
   return crypto.createHmac('sha256', SECRET).update(payload).digest('hex').slice(0, 16);
@@ -59,33 +61,55 @@ export function verifyUnsubToken(token) {
   }
 }
 
-async function mcUnsubscribe({ email, tag }) {
-  if (!MAILCHIMP_API_KEY) {
-    console.warn('unsubscribe: MAILCHIMP_API_KEY not set, skipping');
-    return { ok: false, reason: 'no_key' };
+// 2026-05-14: rewrote to update Vercel KV `drip:*` records as the canonical
+// unsubscribe path. Previously called Mailchimp which has been retired —
+// the API call returned 4xx every time, logged an error 18+ times/day, AND
+// the subscriber NEVER actually got removed from the daily drip-cron sends
+// (which keys off `sub.unsubscribed === true` in the KV record).
+//
+// New behavior:
+//   - Reads `drip:<email>` from KV
+//   - Sets `unsubscribed: true` and `unsubscribedAt: ISO timestamp`
+//   - drip-cron.js line 90 then skips them on every daily fire
+//   - If the subscriber isn't in KV (rare — direct beehiiv signup or
+//     orphaned record), creates a tombstone record so future enrollments
+//     for that email respect the unsubscribe preference
+async function unsubscribeInKV({ email, tag }) {
+  if (!process.env.KV_REST_API_URL) {
+    return { ok: false, reason: 'kv_not_configured' };
   }
-  const dc = MAILCHIMP_API_KEY.split('-').pop();
-  const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
-  const auth = `Basic ${Buffer.from(`anystring:${MAILCHIMP_API_KEY}`).toString('base64')}`;
-  const subscriberHash = crypto.createHash('md5').update(email.trim().toLowerCase()).digest('hex');
-
-  if (tag) {
-    // Tag-scoped unsubscribe — remove just one tag, leave the contact subscribed.
-    const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}/tags`, {
-      method: 'POST',
-      headers: { Authorization: auth, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tags: [{ name: tag, status: 'inactive' }] }),
+  // Lazy-import KV so the module loads cleanly if env vars aren't set
+  const { kv } = await import('@vercel/kv');
+  const cleanEmail = email.trim().toLowerCase();
+  const key = `drip:${cleanEmail}`;
+  try {
+    const existing = await kv.get(key);
+    const unsubAt = new Date().toISOString();
+    if (existing) {
+      // Tag-scoped unsubscribe = remove the tag, keep the subscription
+      if (tag) {
+        const newTags = (existing.tags || []).filter((t) => t !== tag);
+        await kv.set(key, { ...existing, tags: newTags, lastTagRemoved: tag, lastTagRemovedAt: unsubAt });
+        return { ok: true, scope: 'tag', tag };
+      }
+      // Full unsubscribe — set flag, keep enrollment data for audit
+      await kv.set(key, { ...existing, unsubscribed: true, unsubscribedAt: unsubAt });
+      return { ok: true, scope: 'full' };
+    }
+    // No existing record — create a tombstone so a future re-enrollment
+    // respects the unsubscribe preference.
+    await kv.set(key, {
+      email: cleanEmail,
+      unsubscribed: true,
+      unsubscribedAt: unsubAt,
+      source: 'unsubscribe-tombstone',
+      lastSentDay: 0,
     });
-    return { ok: r.ok, status: r.status };
+    return { ok: true, scope: 'tombstone' };
+  } catch (err) {
+    console.error('unsubscribe: KV update failed', err.message);
+    return { ok: false, reason: err.message };
   }
-
-  // Full unsubscribe — flip status.
-  const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}`, {
-    method: 'PATCH',
-    headers: { Authorization: auth, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: 'unsubscribed' }),
-  });
-  return { ok: r.ok, status: r.status };
 }
 
 const CONFIRMATION_HTML = (email) => `<!doctype html>
@@ -120,10 +144,12 @@ export default async function handler(req, res) {
 
   const { email, tag } = verified;
 
-  const result = await mcUnsubscribe({ email, tag });
-  if (!result.ok && result.reason !== 'no_key') {
-    console.error('unsubscribe: mailchimp call failed', result.status);
+  const result = await unsubscribeInKV({ email, tag });
+  if (!result.ok && result.reason !== 'kv_not_configured') {
+    console.error('unsubscribe: KV update failed', result.reason);
     // Soft-fail — still confirm to user; we'd rather over-confirm than block.
+  } else if (result.ok) {
+    console.log(`unsubscribe: KV ${result.scope} for ${email}${tag ? ' (tag=' + tag + ')' : ''}`);
   }
 
   // POST = RFC 8058 one-click — bare 200 with no body.
