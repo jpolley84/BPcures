@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, HelpCircle } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+// 2026-05-14 — re-wired the exit-intent lead-magnet popup to plug the
+// email-capture leak that opened when the quiz lost the homepage slot on
+// 2026-05-12. Triggers on mouseleave OR 14s dwell, once per visitor
+// (localStorage gate). POSTs to /api/lead-magnet → drip:* enrollment +
+// Cook For Life cookbook delivery. See ExitIntentPopup.jsx for behavior.
+import ExitIntentPopup from '../components/ExitIntentPopup';
 
 const PRICE = '$17';
 // 2026-05-12: hardcoded the Stripe price ID (was reading from VITE_STRIPE_KIT_PRICE_ID
@@ -427,6 +433,12 @@ const CheckoutPage = () => {
           </p>
         </div>
       </div>
+
+      {/* Exit-intent + dwell-time lead-magnet popup. Renders an absolutely-
+          positioned overlay; tree position doesn't matter for layout.
+          One-shot per visitor (localStorage cookbookPopupShown). Suppressed
+          after purchase (localStorage purchaseCompleted). */}
+      <ExitIntentPopup />
     </div>
   );
 };
