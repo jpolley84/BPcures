@@ -111,6 +111,35 @@ const CheckoutPage = () => {
 
   return (
     <div className={`min-h-screen bg-white ${showStickyBar ? 'pb-20' : ''}`}>
+      {/* Mobile-first quiz banner — sits at the very top of the page.
+          Rationale: ExitIntentPopup uses mouseleave, which doesn't fire on
+          touch devices. Without this banner, mobile bouncers leave with
+          nothing. The 90-second quiz is the highest-converting email
+          capture surface on the site (44% conversion) so it earns the
+          top slot. UTM-tagged so we can measure its lift in Vercel
+          Analytics → UTM Parameters tab. */}
+      <a
+        href="/quiz?utm_source=homepage-banner&utm_medium=top&utm_campaign=cohort1"
+        className="block text-center no-underline"
+        style={{
+          background: '#3F5A3C',
+          color: '#FBF8F1',
+          padding: '14px 16px',
+          fontSize: '14px',
+          fontWeight: 600,
+          textDecoration: 'none',
+          lineHeight: 1.4,
+          letterSpacing: '0.01em',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        Not sure if this is for you?&nbsp;
+        <span style={{ textDecoration: 'underline', textUnderlineOffset: '3px', color: '#C7A95E' }}>
+          Take the 90-second BP quiz
+        </span>
+        &nbsp;→
+      </a>
+
       {/* Headshot — WebP for modern browsers (14KB) + JPG fallback (36KB).
           2026-05-12: was a 2MB PNG that killed mobile LCP. Now <40KB total. */}
       <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
