@@ -1,30 +1,26 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ArrowRight, Check } from 'lucide-react';
+import { X, ArrowRight, Activity } from 'lucide-react';
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [email, setEmail] = useState('');
 
   useEffect(() => {
-    const hasShown = localStorage.getItem('cookbookPopupShown');
+    const hasShown = localStorage.getItem('quizPopupShown');
     if (hasShown === 'true') return;
     if (localStorage.getItem('purchaseCompleted') === 'true') return;
 
     const onLeave = e => {
-      if (localStorage.getItem('cookbookPopupShown') === 'true') return;
+      if (localStorage.getItem('quizPopupShown') === 'true') return;
       if (e.clientY <= 0) {
         setVisible(true);
-        localStorage.setItem('cookbookPopupShown', 'true');
+        localStorage.setItem('quizPopupShown', 'true');
       }
     };
     const timer = setTimeout(() => {
-      if (localStorage.getItem('cookbookPopupShown') !== 'true') {
+      if (localStorage.getItem('quizPopupShown') !== 'true') {
         setVisible(true);
-        localStorage.setItem('cookbookPopupShown', 'true');
+        localStorage.setItem('quizPopupShown', 'true');
       }
     }, 14000);
 
@@ -37,31 +33,10 @@ export default function ExitIntentPopup() {
 
   const close = () => setVisible(false);
 
-  async function submit(e) {
-    e.preventDefault();
-    setError('');
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await fetch('/api/lead-magnet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Something went wrong.');
-      }
-      setDone(true);
-    } catch (err) {
-      setError(err.message || 'Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const takeQuiz = () => {
+    close();
+    window.location.href = '/quiz';
+  };
 
   return (
     <AnimatePresence>
@@ -86,60 +61,46 @@ export default function ExitIntentPopup() {
               <X size={16} />
             </button>
 
-            {!done ? (
-              <>
-                <span className="kicker kicker-dot">Free · For readers</span>
-                <h2 className="display-s" style={{ marginTop: '0.75rem', marginBottom: '0.5rem' }}>
-                  The <em className="ital-display" style={{ color: 'var(--clay)' }}>Cook For Life</em> Cookbook
-                </h2>
-                <p style={{ color: 'var(--muted)', fontSize: '0.95rem', lineHeight: 1.55, marginBottom: '1.5rem' }}>
-                  45+ plant-forward recipes built around blood-pressure herbs, a 14-day meal plan, and a 4-day reset — from a nurse who's spent two decades watching what works.
-                </p>
-
-                <form onSubmit={submit} style={{ display: 'grid', gap: '0.75rem' }}>
-                  <input
-                    type="email"
-                    placeholder="your.email@domain.com"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); setError(''); }}
-                    disabled={loading}
-                    style={{
-                      width: '100%',
-                      padding: '0.95rem 1.1rem',
-                      border: '1px solid var(--line)',
-                      borderRadius: 12,
-                      background: 'var(--paper)',
-                      fontSize: '0.95rem',
-                    }}
-                  />
-                  {error && <p style={{ color: 'var(--clay)', fontSize: '0.82rem' }}>{error}</p>}
-                  <button type="submit" className="btn btn-ink" disabled={loading}>
-                    {loading ? 'Sending…' : 'Send the cookbook'}
-                    <ArrowRight size={16} className="arrow" />
-                  </button>
-                  <p style={{ fontSize: '0.72rem', color: 'var(--muted)', textAlign: 'center', marginTop: '0.25rem' }}>
-                    Delivered instantly · No spam · Unsubscribe anytime
-                  </p>
-                </form>
-              </>
-            ) : (
-              <div style={{ textAlign: 'center', paddingBlock: '1rem' }}>
-                <div style={{
-                  width: 56, height: 56, margin: '0 auto 1.5rem',
-                  borderRadius: '50%', background: 'var(--sage-soft)',
-                  display: 'grid', placeItems: 'center',
-                }}>
-                  <Check size={26} style={{ color: 'var(--sage-deep)' }} />
-                </div>
-                <h2 className="display-s" style={{ marginBottom: '0.5rem' }}>
-                  Check your inbox.
-                </h2>
-                <p style={{ color: 'var(--muted)', marginBottom: '1.5rem' }}>
-                  Your Cook For Life cookbook is on its way.
-                </p>
-                <button onClick={close} className="btn btn-ghost">Close</button>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                width: 64, height: 64, margin: '0 auto 1.25rem',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, var(--sage-soft) 0%, var(--clay-soft, #f4e8e1) 100%)',
+                display: 'grid', placeItems: 'center',
+              }}>
+                <Activity size={30} style={{ color: 'var(--clay)' }} />
               </div>
-            )}
+
+              <span className="kicker kicker-dot" style={{ color: 'var(--clay)' }}>Free · 2-minute quiz</span>
+
+              <h2 className="display-s" style={{ marginTop: '0.75rem', marginBottom: '0.75rem', lineHeight: 1.25 }}>
+                Which corner of the<br />
+                <em className="ital-display" style={{ color: 'var(--clay)' }}>BP Triangle</em> is yours?
+              </h2>
+
+              <p style={{
+                color: 'var(--muted)', fontSize: '0.95rem', lineHeight: 1.6,
+                marginBottom: '1.75rem', maxWidth: '28ch', marginInline: 'auto',
+              }}>
+                Vascular, cortisol, or blood sugar — find your root cause and get a personalized protocol.
+              </p>
+
+              <button
+                onClick={takeQuiz}
+                className="btn btn-ink"
+                style={{ width: '100%', fontSize: '1.05rem', padding: '1rem 1.5rem' }}
+              >
+                Take the free quiz
+                <ArrowRight size={18} className="arrow" />
+              </button>
+
+              <p style={{
+                fontSize: '0.75rem', color: 'var(--muted)',
+                textAlign: 'center', marginTop: '0.75rem',
+              }}>
+                No email required to start · Results in 2 minutes
+              </p>
+            </div>
           </motion.div>
         </motion.div>
       )}
