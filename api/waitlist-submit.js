@@ -15,6 +15,7 @@
 // later if/when application volume warrants a dashboard view.
 
 import { Resend } from 'resend';
+import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
@@ -171,6 +172,40 @@ async function handleApplication(req, res) {
     subject: 'Got your 1:1 application — Joel',
     html: buildApplicantEmail(app),
   });
+
+  // 2026-05-14: enroll the 1:1 applicant in the drip:* nurture so they
+  // receive the 7-day educational arc while their application is
+  // screened. Tag as 1on1-applicant. If already enrolled (e.g., came
+  // through the quiz first), don't overwrite — just add the tag.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      const dripEmail = trimmedApplicantEmail.toLowerCase();
+      const dripKey = `drip:${dripEmail}`;
+      const existing = await kv.get(dripKey);
+      const tags = ['1on1-applicant'];
+      if (existing) {
+        await kv.set(dripKey, {
+          ...existing,
+          is1on1Applicant: true,
+          tags: Array.from(new Set([...(existing.tags || []), ...tags])),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email: dripEmail,
+          firstName: String(app.firstName || '').trim(),
+          cohort: '1on1-applied',
+          enrolledAt: new Date().toISOString(),
+          lastSentDay: 0,
+          optedIn: true, // applicants are warm — auto-opt past Day 7
+          is1on1Applicant: true,
+          source: '1on1-waitlist',
+          tags,
+        });
+      }
+    } catch (err) {
+      console.warn('waitlist-submit: drip enrollment failed (non-fatal)', err.message);
+    }
+  }
 
   return res.status(200).json({ ok: true, submittedAt });
 }

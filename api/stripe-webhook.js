@@ -601,6 +601,49 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       });
     }
 
+    // 2026-05-14: enroll PAID buyers in the drip:* nurture system with
+    // optedIn:true pre-set so they auto-flow past the Day-7 opt-in gate
+    // into the extended sequence (Days 8+). If they're already enrolled
+    // (e.g. via the quiz before they bought), upgrade the record with
+    // isPaidCustomer flag + tier so future payer-specific content can
+    // target them. Non-blocking on failure (kit email already sent).
+    try {
+      const dripEmail = String(customerEmail).trim().toLowerCase();
+      const dripKey = `drip:${dripEmail}`;
+      const existing = await kv.get(dripKey);
+      const purchaseTags = ['bpquiz-purchaser', `tier-${kitTier}-buyer`];
+      if (existing) {
+        // Upgrade the existing record: mark as paid + auto-opt-in past Day 7.
+        await kv.set(dripKey, {
+          ...existing,
+          optedIn: true,                  // auto-opt past Day 7 gate
+          isPaidCustomer: true,
+          paidTier: String(kitTier),
+          purchasedAt: existing.purchasedAt || new Date().toISOString(),
+          tags: Array.from(new Set([...(existing.tags || []), ...purchaseTags])),
+        });
+        console.log(`stripe-webhook: drip record upgraded to paid for ${dripEmail} (tier=${kitTier})`);
+      } else {
+        // Fresh enrollment — they bought without ever taking the quiz.
+        await kv.set(dripKey, {
+          email: dripEmail,
+          firstName: firstNameOf(customerName) || '',
+          cohort: 'paid-direct',
+          enrolledAt: new Date().toISOString(),
+          lastSentDay: 0,
+          optedIn: true,                  // auto-opt past Day 7 gate
+          isPaidCustomer: true,
+          paidTier: String(kitTier),
+          purchasedAt: new Date().toISOString(),
+          source: 'stripe-paid-direct',
+          tags: purchaseTags,
+        });
+        console.log(`stripe-webhook: NEW drip enrollment (paid-direct) for ${dripEmail} (tier=${kitTier})`);
+      }
+    } catch (err) {
+      console.warn('stripe-webhook: paid-buyer drip enrollment failed (non-fatal)', err.message);
+    }
+
     // Audit trail — every successful kit/VIP/Premium delivery hits the
     // stripe-events inbox. Ops dashboard greps this for completion stats
     // and Joel can spot gaps by date range without API calls.

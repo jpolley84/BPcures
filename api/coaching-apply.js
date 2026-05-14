@@ -241,6 +241,39 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error('coaching-apply: KV store failed (non-fatal)', err.message);
     }
+
+    // 2026-05-14: enroll the applicant in the drip:* nurture system so
+    // they receive the 7-day educational arc while their application is
+    // being reviewed. If they're already enrolled (took the quiz first),
+    // don't overwrite — but tag them as a coaching-applicant.
+    try {
+      const dripKey = `drip:${trimmedEmail}`;
+      const existing = await kv.get(dripKey);
+      const applicantTags = ['coaching-applicant', `fit-${application.fitTier.toLowerCase()}`];
+      if (existing) {
+        await kv.set(dripKey, {
+          ...existing,
+          isCoachingApplicant: true,
+          coachingFitTier: application.fitTier,
+          tags: Array.from(new Set([...(existing.tags || []), ...applicantTags])),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email: trimmedEmail,
+          firstName: safe(name).split(' ')[0] || '',
+          cohort: 'coaching-applied',
+          enrolledAt: new Date().toISOString(),
+          lastSentDay: 0,
+          optedIn: true, // applicants are already warm — auto-opt past Day 7
+          isCoachingApplicant: true,
+          coachingFitTier: application.fitTier,
+          source: 'coaching-apply',
+          tags: applicantTags,
+        });
+      }
+    } catch (err) {
+      console.warn('coaching-apply: drip enrollment failed (non-fatal)', err.message);
+    }
   }
 
   // 3. Auto-acknowledgement to applicant
