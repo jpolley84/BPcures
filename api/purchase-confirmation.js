@@ -224,6 +224,24 @@ export const TIER_CONFIG = {
     upgradeDesc: 'Application-gated 90-day 1:1 program. $1,297 single-pay. Apply at bpquiz.com/1on1.',
     upgradeCta: 'Apply for 1:1 →',
   },
+  // 2026-05-15: Coaching tier — the 90-Day BP Triangle Freedom Sprint.
+  // Two price points: $1,997 founding cohort + $6,997 regular. Application-
+  // only via /coaching; buyer pays via Stripe invoice that Joel sends
+  // after the fit call. Webhook fires this confirmation as a TIME-BUYER
+  // — Joel still personally onboards within 24h with Calendly + kit
+  // shipment + program schedule. No PDF downloads here — coaching is
+  // 1:1 and the materials are custom.
+  coaching: {
+    product: 'BP Triangle Freedom Sprint — 90-Day 1:1 Coaching',
+    subject: 'Your 90-Day Sprint spot is locked in — what happens next',
+    downloads: [], // intentional — coaching is 1:1, no kit PDFs
+    includesCoaching: false, // skip the generic coaching block render
+    includesChallenge: false,
+    upgradeUrl: 'https://calendly.com/braveworksrn/60min',
+    upgradeLabel: 'Book your kickoff call (60 min, Joel will confirm by email)',
+    upgradeDesc: 'Joel reads every application + lab personally. Expect a personal email within 24 hours with your custom Week 1 plan + partner-inclusion guide. In the meantime, you can grab a kickoff slot here.',
+    upgradeCta: 'Book my kickoff call →',
+  },
 };
 
 // Map Stripe amount_total (cents) → tier key
@@ -243,6 +261,15 @@ export const AMOUNT_TO_TIER = {
   3000: 2,        // $30 BP Reset Kit OTO (post-checkout upgrade from $17)
   4700: 2,        // $47 BP Reset Kit (standalone)
   9700: 'vip',    // $97 BP Triangle Challenge + Skool (canonical post-restructure)
+
+  // ── 2026-05-15: Coaching tier (90-Day BP Triangle Freedom Sprint) ──
+  // Application-only via /coaching; Joel sends a Stripe invoice after
+  // the fit call. These amounts MUST be mapped or the webhook silently
+  // drops the buyer with no confirmation email. (Wakita's $1,997 payment
+  // on 2026-05-13 hit this gap — manual onboarding fixed her case;
+  // these entries prevent the next one.)
+  199700: 'coaching',  // founding cohort ($1,997)
+  699700: 'coaching',  // regular price  ($6,997)
 
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.

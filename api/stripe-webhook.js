@@ -41,8 +41,17 @@ import {
 
 const FROM_CUSTOMER = 'Joel Polley, RN <joel@bpquiz.com>';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
-const REPLY_TO_CUSTOMER = 'brave.works.marketing@gmail.com';
-const JOEL_NOTIFY = 'brave.works.marketing@gmail.com';
+// 2026-05-15: notify addresses consolidated to braveworksrn@gmail.com
+// (the inbox Joel actually checks). Was brave.works.marketing@gmail.com
+// — which silently swallowed alertJoel for Wakita's $1,997 unmapped-amount
+// event on 2026-05-13. Same wrong-inbox class as the coaching-apply fix
+// in commit 8620206. Override with explicit env var if env-specific
+// routing is needed.
+const REPLY_TO_CUSTOMER = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+// Stripe-events audit inbox: keep on brave.works.marketing+stripe-events
+// alias so the dashboard's grep-by-prefix continues to work. Only the
+// human-facing notifies move.
 const STRIPE_EVENTS_INBOX = 'brave.works.marketing+stripe-events@gmail.com';
 
 // Maps the Stripe product metadata.tier_slug → display name + price string
