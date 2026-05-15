@@ -111,11 +111,25 @@ function footerSecondaryCTAs() {
   </div>`;
 }
 
+// 2026-05-15: Rotated daily upsell footer — pitches a different ladder rung
+// each day so readers see the full path ($17 KIT → $47 RESET KIT → $97
+// CHALLENGE → $1,997 SPRINT) over the first week without feeling sold to
+// twice on the same product. Day 7 gets NO upsellFooter — the opt-in
+// button needs the spotlight there. Every 7 days from there (14, 21, 28,
+// 30) the Sprint application is the pitch.
+function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
+  return `<div style="margin:32px 0 0;padding:22px 24px;background:${PALETTE.outerBg};border-radius:12px;border-left:4px solid ${PALETTE.accentSage};">
+    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:10px;">${kicker}</div>
+    <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 14px;">${body}</p>
+    <a href="${ctaUrl}" style="display:inline-block;font-size:13px;color:${PALETTE.accentClay};text-decoration:none;font-weight:700;border-bottom:2px solid ${PALETTE.accentClay};padding-bottom:1px;">${ctaLabel} →</a>
+  </div>`;
+}
+
 // ─── DAY 1 ────────────────────────────────────────────────────────────
 const day1 = {
-  subject: '3 lies your doctor told you about blood pressure',
-  subjectB: "3 things I almost believed about my BP (until I saw the truth)",
-  preview: "I've been a nurse for years — and these three are the worst.",
+  subject: '3 lies your doctor told you about your BP',
+  subjectB: 'The first lie cost me three patients',
+  preview: 'The first one cost me three patients. Here\'s the truth.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`If you're new here, welcome. I'm Joel — RN, naturopath, founder of BraveWorks.`)}
@@ -135,13 +149,15 @@ const day1 = {
     ${p(`Between those three, I'll show you exactly what your body is actually asking for.`)}
     ${p(`Twenty-nine more emails. One a day. Same time, same place.`)}
     ${p(`If you do the small things I ask along the way, your numbers should be measurably lower by Day 30. That's not a maybe. That's the protocol working the way it always does when someone shows up.`, { margin: '0 0 18px' })}
-    ${p(`I'll teach you the framework inside these 7 emails. The actual swaps, the dosing charts, the cuff protocol, the doctor-conversation script — those live inside the BP Reset Kit.`)}
-    ${bonusStackBox()}
-    ${guaranteeBlock}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
     ${p(`See you in the morning.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Already have the kit? Reply with your starting BP — I read every one. Whatever the number is, you're starting somewhere.`)}
+    ${psBox(`If your number ever feels heavy this week, hit reply. I read every one and answer with a 90-second response.`)}
+    ${upsellFooter({
+      kicker: 'Want the patient protocol now?',
+      body: 'Marlene\'s exact 3-input reset (you\'ll meet her on Day 3) lives inside the $17 BP Reset Kit — the same document I hand patients on their way out of the hospital. Twenty years of ICU experience condensed into one PDF you can read tonight.',
+      ctaLabel: 'Get the kit for $17',
+      ctaUrl: KIT_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -166,24 +182,17 @@ Day 17, lie #3.
 
 29 more emails. One a day.
 
-What's actually in the BP Reset Kit:
-→ The 10-Day BP Reset Daily Plan ($27)
-→ Joel's 7 Most-Trusted BP Herbs ($27)
-→ The Cardiologist Conversation Script ($17)
-→ The 4 Lifestyle Levers Cheat Sheet ($17)
-→ Cook For Life Cookbook ($17)
-$105 of nurse-vetted protocol. $17 today.
-
-THE 7-DAY REFUND PROMISE: Read every email this week. No movement by Day 7? Reply "refund" — $17 back, kit yours to keep.
-
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-
 See you in the morning.
 
 Joel
 RN, BraveWorks
 
-P.S. Already have the kit? Reply with your starting BP — I read every one.
+P.S. If your number ever feels heavy this week, hit reply. I read every one and answer with a 90-second response.
+
+—
+Want the patient protocol now?
+Marlene's exact 3-input reset (you'll meet her on Day 3) lives inside the $17 BP Reset Kit — the same document I hand patients on their way out of the hospital.
+→ ${KIT_URL}
 
 —
 Two more ways to follow along:
@@ -194,9 +203,9 @@ Two more ways to follow along:
 
 // ─── DAY 2 — Lie #1 (Salt myth) ───────────────────────────────────────
 const day2 = {
-  subject: '3 hidden-sodium foods you eat every week',
-  subjectB: 'Why "cutting salt" isn\'t lowering your BP',
-  preview: "They're not the obvious ones — and that's why your numbers haven't moved.",
+  subject: 'The poison sitting on your counter',
+  subjectB: '3 hidden-sodium foods you eat every week',
+  preview: 'Not salt. Worse. It\'s the ratio.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Lie #1: "If you cut your salt intake, your blood pressure will come down."`)}
@@ -216,11 +225,14 @@ const day2 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Pick THREE foods you eat regularly. Look at the sodium count on the label. Just look. Don't change anything yet — I'll teach you the swap tomorrow.</p>
     `)}
     ${p(`Some of you are about to find a number that explains everything.`, { margin: '0 0 28px' })}
-    ${p(`The full hidden-sodium food list — plus the swaps that don't taste like cardboard — lives inside the BP Reset Kit. So does the K:Na ratio worksheet I'll teach you about on Day 4.`)}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
-    ${p(`The 7-Day Refund Promise still stands. No movement by Day 7? Reply "refund."`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Tomorrow I'm going to tell you about a 52-year-old grandmother who dropped 11 points off her systolic in nine days — without changing a single supplement. I think you'll see yourself in her.`)}
+    ${psBox(`Tomorrow — Marlene. 52 years old. Eleven systolic points off her top number in nine days. No new pill. I'll tell you exactly what she did.`)}
+    ${upsellFooter({
+      kicker: 'When you\'re ready for the live room',
+      body: 'The sodium-potassium ratio is the first lever in a 30-day group protocol. The BP Triangle Challenge runs Monday-night live calls, daily protocol, 1,100+ members. We open a new cohort every two weeks. $97.',
+      ctaLabel: 'Read more',
+      ctaUrl: CHALLENGE_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -240,15 +252,15 @@ You can pass the 2,300mg ceiling without ever picking up the salt shaker.
 
 TODAY'S ASK: Pick three foods you eat regularly. Look at the sodium count on the label. Don't change anything yet.
 
-The full hidden-sodium food list lives inside the BP Reset Kit.
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-
-The 7-Day Refund Promise still stands.
-
 Joel
 RN, BraveWorks
 
-P.S. Tomorrow — a 52-year-old grandmother who dropped 11 points in 9 days without a single supplement.
+P.S. Tomorrow — Marlene. 52 years old. Eleven systolic points off her top number in nine days. No new pill. I'll tell you exactly what she did.
+
+—
+When you're ready for the live room:
+The BP Triangle Challenge — Monday-night live calls, daily protocol, 1,100+ members. New cohort every two weeks. $97.
+→ ${CHALLENGE_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -258,9 +270,9 @@ P.S. Tomorrow — a 52-year-old grandmother who dropped 11 points in 9 days with
 
 // ─── DAY 3 — Marlene composite story ──────────────────────────────────
 const day3 = {
-  subject: 'Marlene dropped 11 points in 9 days',
-  subjectB: 'How a grandmother reversed 10 years of high BP in under 2 weeks',
-  preview: 'One protocol. No supplements. Just label-reading.',
+  subject: 'Marlene · 11 points · 9 days · no new pill',
+  subjectB: 'Three things. Nine days. No mystery.',
+  preview: 'Three inputs. Nine days. No mystery.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`(Marlene isn't her real name — I don't use real names in these emails to protect my buyers. But she's real, and so are her numbers.)`)}
@@ -276,11 +288,15 @@ const day3 = {
     ${bigQuote('Three swaps. Eleven points.')}
     ${p(`Tomorrow I'm going to tell you the real reason this worked — and it's not what you think. It's not "less sodium = lower BP." It's something the medical establishment has known about for forty years and somehow forgot to tell you.`, { margin: '0 0 28px' })}
     ${p(`Marlene used The Cardiologist Conversation Script (inside the kit) at her next appointment. Her doctor reduced her lisinopril dose. By Day 30 she was off the cough side effect that drove her to me in the first place.`)}
-    ${p(`If her story sounds like yours, here's the kit:`)}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
-    ${p(`5 nurse-vetted PDFs. $105 of protocol. The 7-Day Refund Promise.`, { margin: '0 0 28px' })}
+    ${p(`Tomorrow — the second lie. The one that lets most adults off the hook for twenty years.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If your BP didn't move yet, that's normal — Marlene's drop hit on Day 7. And on Mondays at 10 PM ET I unravel the Triangle live with the $97 cohort. If you want me on the call walking your numbers, that path is at <a href="${CHALLENGE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">the BP Triangle Challenge →</a>`)}
+    ${psBox(`If you took one input from Marlene's story and tried it today, which one would you pick? Reply with one word — I'm curious.`)}
+    ${upsellFooter({
+      kicker: 'Marlene\'s exact 3-day reset',
+      body: 'Page 4 of the BP Reset Kit. $17. Eighteen pages. The exact document that walked Marlene from a third-pill recommendation to "no new pill" in nine days. The same one I hand patients.',
+      ctaLabel: 'Get the kit for $17',
+      ctaUrl: KIT_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -297,15 +313,17 @@ No supplement. No workout. No fast. She swapped three foods — bread, deli turk
 
 Three swaps. Eleven points.
 
-Tomorrow: the real mechanism. It's not "less sodium = lower BP." It's something the medical establishment has known about for forty years.
-
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-5 PDFs. $105 of protocol. 7-Day Refund Promise.
+Tomorrow — the second lie. The one that lets most adults off the hook for twenty years.
 
 Joel
 RN, BraveWorks
 
-P.S. If your BP hasn't moved yet, that's normal. Marlene didn't see her drop until Day 7.
+P.S. If you took one input from Marlene's story and tried it today, which one would you pick? Reply with one word — I'm curious.
+
+—
+Marlene's exact 3-day reset:
+Page 4 of the BP Reset Kit. $17. Eighteen pages. The same document I hand patients.
+→ ${KIT_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -315,8 +333,8 @@ P.S. If your BP hasn't moved yet, that's normal. Marlene didn't see her drop unt
 
 // ─── DAY 4 — K:Na ratio mechanism ─────────────────────────────────────
 const day4 = {
-  subject: 'The 3:1 ratio your doctor never told you',
-  subjectB: 'Why potassium matters more than sodium',
+  subject: 'The hidden ratio your kidneys are reading',
+  subjectB: 'The 3:1 number your doctor never told you',
   preview: 'Forty years of research. Not in any pamphlet I\'ve ever seen.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
@@ -341,11 +359,15 @@ const day4 = {
       <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 12px;">— A banana: 420mg</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Pick one. Add it to today's lunch or dinner. Don't replace anything — just add.</p>
     `)}
-    ${p(`Tomorrow I'm going to tell you why sugar spikes your BP harder than sodium ever could — and three foods you'd never call sweet that are doing the most damage.`, { margin: '0 0 28px' })}
-    ${p(`The 4 Lifestyle Levers Cheat Sheet inside the kit covers the K:Na ratio in detail — including the 12 highest-potassium foods on a fixed grocery budget, dosing if you supplement, and the lab tests to ask your doctor for.`)}
-    ${ctaButton(KIT_URL, 'Get the BP Reset Kit — $17 →')}
+    ${p(`Tomorrow — three "healthy" foods you eat every week that spike your numbers harder than candy. You won't believe the second one.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`I made a 12-min YouTube video that walks the 3:1 ratio at the grocery store with my own basket. <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Watch on YouTube →</a> If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up.`)}
+    ${upsellFooter({
+      kicker: 'The next rung up',
+      body: 'If you already have the $17 starter kit, the natural upgrade is the $47 BP Reset Kit — the full 30-day Reset Challenge, the Graduation phase (weeks 2-4), the complete herb formulary with safe dosing, and the printable BP tracker. Same protocol, full system.',
+      ctaLabel: 'Upgrade for $47',
+      ctaUrl: RESET_KIT_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -372,15 +394,17 @@ TODAY'S ASK: Add ONE potassium-rich food to your day. Just one.
 
 Pick one. Add it. Don't replace anything.
 
-Tomorrow: why sugar spikes BP harder than sodium.
-
-→ Get the BP Reset Kit ($17): ${KIT_URL}
-The 4 Lifestyle Levers Cheat Sheet inside covers K:Na in detail.
+Tomorrow — three "healthy" foods that spike your numbers harder than candy.
 
 Joel
 RN, BraveWorks
 
 P.S. On a potassium-sparing diuretic? Check with your prescriber first.
+
+—
+The next rung up:
+The $47 BP Reset Kit adds the full 30-day plan, the Graduation phase (weeks 2-4), the complete herb formulary, and the printable BP tracker.
+→ ${RESET_KIT_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -390,9 +414,9 @@ P.S. On a potassium-sparing diuretic? Check with your prescriber first.
 
 // ─── DAY 5 — Sugar elimination ────────────────────────────────────────
 const day5 = {
-  subject: '3 "savory" foods spiking your BP harder than candy',
-  subjectB: 'Why sugar raises BP faster than salt',
-  preview: 'Bread. Cereal. Crackers. The hidden insulin spike.',
+  subject: '3 "savory" foods spiking your numbers harder than candy',
+  subjectB: 'Bread. Broth. Sauce. Each one a multiplier.',
+  preview: 'Bread. Broth. Sauce. Each one a hidden multiplier.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick recap.`)}
@@ -412,11 +436,15 @@ const day5 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Pick ONE of those three categories — bread, cereal, or refined-flour snacks — and don't eat it today. Just one day. One category.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">If you usually eat bread at lunch, swap it for a romaine wrap or skip it entirely and add an extra protein. If cereal at breakfast, swap it for two eggs and an avocado.</p>
     `)}
-    ${p(`Tomorrow I'm going to do a check-in. Some of you have already seen your numbers move. Some of you haven't. There's a reason — and it's not what you think.`, { margin: '0 0 28px' })}
-    ${p(`If you've read the daily emails this far, you're past the $17 entry — the natural next move is the <strong>$47 BP Reset Kit</strong>. Includes the full 30-day Reset Challenge, the Graduation phase (weeks 2-4), Joel's complete herb formulary with safe dosing, and the printable BP tracker. Same protocol, the full system.`)}
-    ${ctaButton(RESET_KIT_URL, 'Upgrade to the BP Reset Kit — $47 →')}
+    ${p(`Tomorrow — why your numbers haven't moved even though you're doing everything right. The hidden corner most cardiologists never measure.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`The fastest BP drops in BraveWorks members come from stacking hidden sodium + a refined-carb cut in the same week — both walked through day-by-day inside the $47 kit. Still on the $17 starter? Both kits are open: <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$17 →</a> or <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$47 →</a>`)}
+    ${psBox(`Tonight, before bed, look at the sodium milligrams on three things in your kitchen. Tomorrow's email goes deeper if you do this one piece of homework.`)}
+    ${upsellFooter({
+      kicker: 'When group accountability becomes the missing piece',
+      body: 'The sodium audit + the protein-fat-fiber rule are taught inside the 30-Day BP Triangle Challenge. Monday-night live calls. Group accountability. The exact weekly homework that built Marlene\'s outcome. $97.',
+      ctaLabel: 'Read more',
+      ctaUrl: CHALLENGE_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -436,17 +464,17 @@ Three ways your insulin spikes without anything sweet:
 
 TODAY'S ASK: Skip ONE of those categories today. Just one. One day.
 
-Tomorrow: a check-in. Some of you are seeing movement. Some aren't. There's a reason.
-
-→ Upgrade to the BP Reset Kit ($47): ${RESET_KIT_URL}
-Adds the full 30-day plan, the Graduation phase (weeks 2-4), Joel's complete herb formulary, and the printable BP tracker.
-
-→ Still on the $17 starter? ${KIT_URL}
+Tomorrow — why your numbers haven't moved even though you're doing everything right. The hidden corner most cardiologists never measure.
 
 Joel
 RN, BraveWorks
 
-P.S. Stack the levers — eliminate hidden sodium AND a refined-carb category in the same week. Fastest drops happen there.
+P.S. Tonight, before bed, look at the sodium milligrams on three things in your kitchen. Tomorrow's email goes deeper if you do this one piece of homework.
+
+—
+When group accountability becomes the missing piece:
+The 30-Day BP Triangle Challenge. Monday-night live calls. Group accountability. $97.
+→ ${CHALLENGE_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -456,9 +484,9 @@ P.S. Stack the levers — eliminate hidden sodium AND a refined-carb category in
 
 // ─── DAY 6 — Pre-empt the valley ──────────────────────────────────────
 const day6 = {
-  subject: '3 reasons your BP hasn\'t moved yet (and what to do)',
-  subjectB: 'If you\'re feeling discouraged today, read this',
-  preview: 'Day 6 is when most quitters quit. Don\'t.',
+  subject: 'Why your numbers haven\'t moved (the hidden corner)',
+  subjectB: 'You\'ve been working on one corner. There are three.',
+  preview: 'You\'ve been working on one corner. There are three.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Five days in. Time for an honest check.`)}
@@ -470,11 +498,16 @@ const day6 = {
     ${p(`<strong>2. You're cuffing wrong.</strong> Most home BP cuffs read 8-15 points high if you take your reading after coffee, in a chair without back support, with your arm hanging at your side, or with your legs crossed. If your last reading is from any of those conditions, it's not your real number. Tomorrow I'll give you the protocol I use with every BraveWorks member — same conditions, same time, same arm, twice a day.`)}
     ${p(`<strong>3. You're a slower responder.</strong> Some bodies start moving in 48 hours. Some need 14-21 days. That's biology, not failure. The body has to recalibrate baroreceptors and reset kidney sodium handling — for some that's a 3-week process. The eliminations you're doing this week are doing their work whether or not the cuff has caught up yet.`)}
     ${bigQuote('Don\'t quit on Day 7. Day 7 is when most quitters quit.')}
-    ${p(`Tomorrow I'll show you exactly what's happening underneath — and give you a choice about what comes next.`, { margin: '0 0 28px' })}
-    ${p(`If you're stuck at Day 6 with no movement, the $47 BP Reset Kit is built for exactly this moment. The cuff protocol I mentioned above is inside (with diagrams), plus the Graduation phase (weeks 2-4) that walks you through the slow-responder track day-by-day. The 7-Day Refund Promise applies — if your numbers haven't moved by Day 7 with honest effort, reply "refund."`)}
-    ${ctaButton(RESET_KIT_URL, 'Upgrade to the BP Reset Kit — $47 →')}
+    ${p(`Tomorrow I'll show you the three shifts already happening in your body right now. You may not feel them yet. And there's a button at the bottom of tomorrow's email.`)}
+    ${p(`Click it if you want to keep going. Days 8 through 30 cover the herbs that work like your meds, the water cure your grandmother knew, the breathing exercise that flips your nervous system in 60 seconds, and the gratitude practice that lowers cortisol faster than any supplement.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you've already seen 5+ points come off on the $17 starter, hit reply and tell me — I read every one. If you're stuck, the $47 kit is the next rung: <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">upgrade here →</a>`)}
+    ${psBox(`Which corner do you think is running yours? Reply with one word: vascular, sugar, or cortisol. I'll read every one.`)}
+    ${upsellFooter({
+      kicker: 'If two corners are running yours',
+      body: 'If you want both a vascular AND a cortisol protocol with a registered nurse beside you for ninety days — the 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.',
+      ctaLabel: 'Read the offer',
+      ctaUrl: COACHING_URL,
+    })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -495,17 +528,17 @@ Don't stop yet. Three reasons your numbers may be stuck:
 
 Don't quit on Day 7. Day 7 is when most quitters quit.
 
-Tomorrow I show you what's happening underneath — and give you a choice.
-
-→ Upgrade to the BP Reset Kit ($47): ${RESET_KIT_URL}
-The cuff protocol with diagrams is inside. Plus the Graduation phase (weeks 2-4) for slow responders. 7-Day Refund Promise still stands.
-
-→ Still on the $17 starter? ${KIT_URL}
+Tomorrow I show you the three shifts already happening in your body. There's a button at the bottom — click it if you want Days 8-30 (herbs, water cure, breathing, gratitude — the full protocol).
 
 Joel
 RN, BraveWorks
 
-P.S. If you've seen 5+ points off on the starter, reply and tell me. If you're stuck, the $47 kit is the next rung.
+P.S. Which corner do you think is running yours? Reply with one word: vascular, sugar, or cortisol. I read every one.
+
+—
+If two corners are running yours:
+The 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.
+→ ${COACHING_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -517,63 +550,82 @@ P.S. If you've seen 5+ points off on the starter, reply and tell me. If you're s
 // Note: htmlBody/textBody take an extra ctx field { optInToken } generated
 // at send time by drip-cron.js (HMAC-signed against email).
 const day7 = {
-  subject: '3 things shifting in your body right now',
-  subjectB: 'Day 7. Here\'s the choice.',
-  preview: 'One week down. The next 23 days are by invitation.',
+  subject: 'Three shifts already happening in your body',
+  subjectB: 'Day 7. What\'s behind the next 23 days.',
+  preview: 'And what the next 23 days unlock — if you want them.',
   htmlBody: ({ firstName, optInToken }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`You made it to Day 7.`)}
-    ${p(`That's not nothing. About 30% of the people I send these emails to don't read past Day 4. You did. You're in the group I'd write the rest of these for — if you want them.`)}
-    ${p(`<strong>Here's what's actually happening in your body right now, whether or not your cuff has registered it yet.</strong>`)}
-    ${p(`<strong>1. Your kidneys are rebalancing.</strong> Hidden sodium reduction lowered your aldosterone signal. Your kidneys are slowly stopping their sodium retention. This is a 2-week recalibration. By Day 10-12, you'll likely see a measurable shift in fluid weight and BP.`)}
-    ${p(`<strong>2. Your insulin is dropping.</strong> The refined-carb cuts are reducing the insulin spikes that drive vasoconstriction. Your fasting insulin (a number your doctor probably hasn't measured) is improving. You may notice you sleep deeper or wake less often.`)}
-    ${p(`<strong>3. Your potassium is climbing.</strong> The single potassium-rich food you've been adding is starting to reverse the K:Na ratio. Your vessels are receiving the signal to relax. Your endothelial function is improving.`)}
-    ${p(`You haven't taken a pill. You haven't joined a gym. You read three labels and made three swaps.`)}
-    ${p(`This is what I mean when I say your body isn't broken — it's been receiving the wrong inputs.`, { margin: '0 0 32px' })}
-    ${bigQuote('Now. The choice.')}
-    ${p(`What you've read this week is the on-ramp. The next 23 days — if you want them — are a different kind of email.`)}
-    ${p(`The biggest objection I hear from BraveWorks members usually surfaces around Day 8 or 9: <em>"Joel, this is great, but my mom had high BP. My grandmother had high BP. I'm genetically programmed for this. Even if I do everything right, I'm fighting my DNA."</em>`)}
-    ${p(`That's lie #2. Day 9, I demolish it.`)}
-    ${p(`Lie #3 is at Day 17 — the one you can't unsee about your prescription.`)}
-    ${p(`Between those, I'll teach you the cuff protocol, the doctor-conversation script, the breathwork that drops cortisol-driven BP, and the meal architecture that holds the kidney recalibration in place.`)}
-    ${p(`It ends Day 30 with an invitation to a live event with someone who taught me half of what I know — Barbara O'Neill, June 24-25.`)}
-    ${p(`But this is daily email — daily attention. <strong>I don't want to be in your inbox if you don't want me there.</strong>`)}
-    ${p(`So I'm asking you to choose.`)}
-    ${p(`If you want Days 8-30, click the button below. If you don't click — no hard feelings. You're off this sequence after today, your kit is still yours forever, and I'm not bothering you again about the deeper arc.`, { margin: '0 0 32px' })}
-    ${ctaButton(optInUrl(optInToken), 'Yes, give me Days 8-30 →')}
-    ${p(`<span style="color:#999;font-size:14px;">(Click takes 2 seconds. No form. No payment. Just a yes.)</span>`, { margin: '0 0 28px' })}
+    ${p(`We've been together seven days. Three things are already happening:`)}
+    ${p(`<strong>One</strong> — your kidneys are reading a different sodium-to-potassium ratio if you added one of those three foods.`)}
+    ${p(`<strong>Two</strong> — your gene expression is shifting. Hundreds of protective genes are responding to the inputs you're feeding them.`)}
+    ${p(`<strong>Three</strong> — you know which corner is yours. That's the diagnostic step most adults never reach.`, { margin: '0 0 28px' })}
+    ${bigQuote('Now you have a choice.')}
+    ${p(`If you stop here, you have enough to move your top number 5-8 points over the next month. That's real.`)}
+    ${p(`If you want the rest of it — <strong>twenty-three more days that cover what the foundation can't</strong> — click the button below. Here's what's behind it:`)}
+    ${sageBlock(`
+      <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin:0 0 6px;">Days 8–14 · The Herbs</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">The four herbs that work on the same biological pathways as your BP medications — without the prescription. Garlic. Hibiscus. Hawthorn berry. Magnesium glycinate. How they work. How much. How to layer them safely.</p>
+    `)}
+    ${sageBlock(`
+      <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin:0 0 6px;">Days 15–21 · The Water Cure</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">The hydrotherapy tradition your great-grandmother knew. Contrast showers that reset your nervous system in 60 seconds. The Kellogg footbath. The cold liver compress. The Eight Laws of Health your doctor never learned.</p>
+    `)}
+    ${sageBlock(`
+      <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin:0 0 6px;">Days 22–28 · The Hidden Corner Fix</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">The deep-breathing pattern that drops cortisol faster than any pill. The twenty-minute walk in nature that beats every supplement. The seventh-day rest your nervous system is begging for. The gratitude practice with the studies behind it. Morning sunlight as your free cortisol reset.</p>
+    `)}
+    ${sageBlock(`
+      <p style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin:0 0 6px;">Days 29–30 · Where You Go From Here</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">A full graduation. The roadmap forward. And one quiet invitation, only if you want it.</p>
+    `)}
+    ${p(`If that's the trail you want to walk — click below.`, { margin: '0 0 24px' })}
+    ${ctaButton(optInUrl(optInToken), 'Yes — send me Days 8–30 →')}
+    ${p(`<span style="color:#999;font-size:14px;">(Click takes 2 seconds. No form. No payment. Just a yes.)</span>`, { margin: '0 0 24px' })}
+    ${p(`If you'd rather stop here, you'll never hear from me again unless you reach out. No hard feelings. The seven days were yours to keep.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Don't have a kit yet? Last call before the back half. Day 8 onward references the cuff protocol, dosing charts, and doctor scripts constantly. Two options: <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$17 starter →</a> or the full <a href="${RESET_KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">$47 Reset Kit →</a> (adds the 30-day plan + Graduation phase + complete herb formulary).`)}
+    ${psBox(`The button stays alive for 48 hours. After that, the door closes for this round.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName, optInToken }) => `Hi ${firstName || 'there'},
 
-You made it to Day 7. About 30% of people I send these to don't read past Day 4. You did.
+We've been together seven days. Three things are already happening:
 
-Here's what's happening in your body right now, whether your cuff has registered it or not:
+One — your kidneys are reading a different sodium-to-potassium ratio if you added one of those three foods.
 
-1. Kidneys rebalancing (aldosterone dropping, sodium retention easing)
-2. Insulin dropping (less vasoconstriction, deeper sleep)
-3. Potassium climbing (K:Na ratio reversing, vessels relaxing)
+Two — your gene expression is shifting. Hundreds of protective genes are responding to the inputs you're feeding them.
 
-You haven't taken a pill. You read three labels and made three swaps.
+Three — you know which corner is yours. That's the diagnostic step most adults never reach.
 
-NOW. THE CHOICE.
+NOW YOU HAVE A CHOICE.
 
-The next 23 days — if you want them — demolish lie #2 (genetic) on Day 9 and lie #3 (prescription) on Day 17. They end Day 30 with Barbara O'Neill, June 24-25.
+If you stop here, you have enough to move your top number 5-8 points over the next month. That's real.
 
-I don't want to be in your inbox if you don't want me there. So I'm asking you to choose.
+If you want the rest of it — twenty-three more days that cover what the foundation can't — click the button below. Here's what's behind it:
 
-→ YES, give me Days 8-30: ${optInUrl(optInToken)}
+DAYS 8–14 · THE HERBS
+The four herbs that work on the same biological pathways as your BP medications — without the prescription. Garlic. Hibiscus. Hawthorn berry. Magnesium glycinate. How they work. How much. How to layer them safely.
+
+DAYS 15–21 · THE WATER CURE
+The hydrotherapy tradition your great-grandmother knew. Contrast showers that reset your nervous system in 60 seconds. The Kellogg footbath. The cold liver compress. The Eight Laws of Health your doctor never learned.
+
+DAYS 22–28 · THE HIDDEN CORNER FIX
+The deep-breathing pattern that drops cortisol faster than any pill. The twenty-minute walk in nature that beats every supplement. The seventh-day rest your nervous system is begging for. The gratitude practice with the studies behind it. Morning sunlight as your free cortisol reset.
+
+DAYS 29–30 · WHERE YOU GO FROM HERE
+A full graduation. The roadmap forward. And one quiet invitation, only if you want it.
+
+If that's the trail you want to walk — click below.
+
+→ YES, send me Days 8-30: ${optInUrl(optInToken)}
 
 (Click takes 2 seconds. No form. No payment. Just a yes.)
 
-If you don't click — no hard feelings. You're off this sequence after today.
+If you'd rather stop here, you'll never hear from me again unless you reach out. No hard feelings. The seven days were yours to keep.
 
 Joel
 RN, BraveWorks
 
-P.S. Don't have a kit yet? Day 8 onward references the cuff protocol, dosing charts, and doctor scripts. Two options: starter ${KIT_URL} or full $47 kit ${RESET_KIT_URL} (adds the 30-day plan + Graduation phase + complete herb formulary).
+P.S. The button stays alive for 48 hours. After that, the door closes for this round.
 
 —
 → Skool: ${SKOOL_URL}
