@@ -91,7 +91,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://www.skool.com/how-to-be-your-own-doctor" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.skool.com/how-to-be-your-own-doctor-8010/about" target="_blank" rel="noopener noreferrer">
                   Skool · How to Be Your Own Doctor
                 </a>
               </li>
