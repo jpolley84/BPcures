@@ -1,33 +1,36 @@
-// /coaching — The 90-Day BP Triangle Freedom Sprint application page.
+// /coaching — 90-Day BP Triangle Freedom Sprint application page.
 //
-// 2026-05-13 overhaul: streamlined funnel, higher anchor price ($6,997),
-// new $14,616 value stack matched to Wakita's signed offer, cost-of-
-// inaction section, and a 17-question pre-qualification application that
-// filters tire kickers using:
-//   • Chris Do — diagnose-before-prescribe, sophistication tests
-//   • Daniel Priestley — Score on the Doors, commitment scaling
-//   • Myron Golden — cost-of-inaction frame, premium-tier framing
-//   • Hormozi — disqualification, scaled investment range
-//   • Brunson — application-only, decision-maker filter
+// 2026-05-14 panel-audit rewrite. Eight fixes shipped:
+//  1. Application form reduced from 17 → 7 questions (biggest friction kill)
+//  2. Testimonial block added (3 real DMs, anonymized to first name)
+//  3. Price card moved ABOVE the TikTok video (pre-anchor on first scroll)
+//  4. "Picture August" future-self section added (Hardy / Myron L4)
+//  5. "4 of 5 founding slots remaining" earned scarcity
+//  6. "This IS / IS NOT for you" Brunson disqualifier section
+//  7. Value stack rewritten in Harry Dry voice (specific + emotional)
+//  8. CTA copy strengthened, FAQ added below form
+//
+// All previous experts still represented:
+//   • Chris Do — diagnose-before-prescribe, never chase
+//   • Daniel Priestley — pitch waterfall, score on doors (now on fit call)
+//   • Myron Golden — cost-of-inaction + L4 imagination ("Picture August")
+//   • Hormozi — disqualification + investment-range filter
+//   • Brunson — application-only, IS/IS NOT, decision-maker filter
+//   • Harry Dry — value stack rewrites earn every word
 //
 // Application-only (no buy button). Submits to /api/coaching-apply.
 
 import { useState, useEffect } from 'react';
-import { Loader2, CheckCircle2, Users, Play, ShieldCheck, Phone, TrendingDown, ArrowRight } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, ShieldCheck, Phone, TrendingDown, ArrowRight, HelpCircle } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// ── TikTok embed ──────────────────────────────────────────
-// Renders the TikTok-provided blockquote embed and loads
-// https://www.tiktok.com/embed.js once per page. The script auto-hydrates
-// the blockquote into the actual video player. Falls back to a plain
-// "Watch on TikTok" link if the script fails to load (no-JS, blocked, etc.).
+// TikTok embed (loads tiktok.com/embed.js once per page)
 function TikTokEmbed({ videoId, username }) {
   useEffect(() => {
     const SRC = 'https://www.tiktok.com/embed.js';
     if (typeof document === 'undefined') return;
     const existing = document.querySelector(`script[src="${SRC}"]`);
     if (existing) {
-      // Already loaded — re-run hydration in case the embed mounted late.
       if (window.tiktokEmbed?.lib?.render) {
         try { window.tiktokEmbed.lib.render(); } catch { /* swallow */ }
       }
@@ -41,15 +44,10 @@ function TikTokEmbed({ videoId, username }) {
 
   const url = `https://www.tiktok.com/@${username}/video/${videoId}`;
   return (
-    <blockquote
-      className="tiktok-embed"
-      cite={url}
-      data-video-id={videoId}
-      style={{ maxWidth: 605, minWidth: 325, margin: '0 auto', background: 'transparent' }}
-    >
+    <blockquote className="tiktok-embed" cite={url} data-video-id={videoId}
+      style={{ maxWidth: 605, minWidth: 325, margin: '0 auto', background: 'transparent' }}>
       <section style={{ padding: '1.5rem', textAlign: 'center' }}>
-        <a target="_blank" rel="noopener noreferrer" href={url}
-          style={{ color: 'var(--purple)', fontWeight: 600 }}>
+        <a target="_blank" rel="noopener noreferrer" href={url} style={{ color: 'var(--purple)', fontWeight: 600 }}>
           Watch on TikTok →
         </a>
       </section>
@@ -60,47 +58,46 @@ function TikTokEmbed({ videoId, username }) {
 function AnimatedSection({ children, className = '', delay = 0, style = {} }) {
   const [ref, isVisible] = useScrollAnimation(0.1);
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        ...style,
-        opacity: isVisible ? 1 : 0,
+    <div ref={ref} className={className}
+      style={{ ...style, opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
-        transition: `opacity 0.7s ease-out ${delay}ms, transform 0.7s ease-out ${delay}ms`,
-      }}
-    >
+        transition: `opacity 0.7s ease-out ${delay}ms, transform 0.7s ease-out ${delay}ms` }}>
       {children}
     </div>
   );
 }
 
-// ── Value stack (mirrors Wakita's signed offer document) ──
+// ─────────────────────────────────────────────────────────
+// Harry Dry value stack — every line earned its slot.
+// Specific (numbers, names, mechanisms) → emotional (what it means)
+// → functional (what it is). In that order.
+// ─────────────────────────────────────────────────────────
 const STACK = [
-  { name: 'Weekly 1:1 with Joel — 12 sessions (Mondays 8 PM ET)', value: '$5,964' },
-  { name: 'Biweekly hormone coaching with Annie — 6 sessions', value: '$1,782' },
-  { name: 'Full supplement + diet audit (live, 60 min)', value: '$697' },
-  { name: 'Daily schedule audit', value: '$497' },
-  { name: 'WhatsApp office hours (Sun–Thu 9–5 ET) × 90 days', value: '$1,997' },
-  { name: 'Skool VIP membership (90-day access)', value: '$297' },
-  { name: 'All BraveWorks courses — lifetime', value: '$1,997' },
-  { name: 'eBook library — lifetime', value: '$497' },
-  { name: 'Daily tailored email coaching', value: '$497' },
-  { name: 'Tracker suite (BP / symptom / food / sleep)', value: '$97' },
-  { name: 'Partner inclusion guide', value: '$97' },
-  { name: 'Barbara O\'Neill LIVE Event — 20% off', value: '$197' },
+  { name: '12 hours of one-on-one with a 20-year RN who reads your chart twice (Mondays 8 PM ET)', value: '$5,964' },
+  { name: '6 hormone sessions with Annie Chitate, RN — postmenopausal hormone specialty', value: '$1,782' },
+  { name: 'Live audit of every bottle in your drawer — most members save $200-400/mo by week 2', value: '$697' },
+  { name: 'Clean-sheet rebuild of your day — when you eat, sleep, take what, move', value: '$497' },
+  { name: 'WhatsApp access Sun-Thu 9-5 ET — text the photo, ask the dumb question, get a real RN answer', value: '$1,997' },
+  { name: 'Skool VIP community of adults on the same Triangle protocol', value: '$297' },
+  { name: 'Every course in the BraveWorks library — yours forever', value: '$1,997' },
+  { name: 'Every BraveWorks eBook + every new title released for life', value: '$497' },
+  { name: 'Daily email engineered to YOUR protocol — not the public newsletter', value: '$497' },
+  { name: 'Printable + digital trackers — the receipts you\'ll show your future PCP', value: '$97' },
+  { name: '12-page guide for your spouse — how to support without nagging', value: '$97' },
+  { name: '20% off Barbara O\'Neill\'s June LIVE event (live or replay)', value: '$197' },
 ];
 const STACK_VALUE = '$14,616';
-const PRICE_REGULAR = '$6,997';      // anchor — what future cohorts pay
-const PRICE_FOUNDING = '$1,997';     // founding-cohort introductory rate
-const PRICE_3PAY = '$697 × 3';       // matches the live Stripe 3-pay link
+const PRICE_REGULAR = '$6,997';
+const PRICE_FOUNDING = '$1,997';
+const PRICE_3PAY = '$697 × 3';
 const PRICE_3PAY_TOTAL = '$2,091';
 
-// Founding cohort closes 2026-05-17 at 23:59 ET (end of day Sunday).
-// After this instant, the form swaps to a "closed — next cohort" state.
-// Update both DEADLINE_ISO and DEADLINE_LABEL when rolling cohort 2.
-const DEADLINE_ISO = '2026-05-18T03:59:00Z'; // midnight ET on May 18 = end of May 17
+const DEADLINE_ISO = '2026-05-18T03:59:00Z';
 const DEADLINE_LABEL = 'Sunday, May 17 · 11:59 PM ET';
+
+// 1 of 5 sold (Wakita). Update as slots fill.
+const SLOTS_REMAINING = 4;
+const SLOTS_TOTAL = 5;
 
 const GUARANTEES = [
   { day: 'Day 30', text: 'Top three symptoms not improving → full refund, keep every protocol.' },
@@ -108,10 +105,64 @@ const GUARANTEES = [
   { day: 'Day 90', text: 'Don\'t feel safer in your body than today → full refund.' },
 ];
 
+// Anonymized testimonials. Gary, Candace = DMs (first names only). Drago = public TT comment.
+const TESTIMONIALS = [
+  {
+    quote: 'I approached my cardiologist and she stopped me on Plavix and tapered me off Metoprolol. I owe the majority of this to you.',
+    name: 'Gary',
+    source: 'TikTok viewer',
+  },
+  {
+    quote: 'From my 20s to now being 67, on 3 BP meds, you have been the only person that has ever made any impact in my BP journey.',
+    name: 'Drago',
+    source: 'public comment, @braveworksrn',
+  },
+  {
+    quote: 'I am successfully managing my POTS with hawthorn berry and dandelion. I got off 37.5 mg of metoprolol. I feel so much better.',
+    name: 'Candace',
+    source: 'TikTok viewer',
+  },
+];
+
+const IS_FOR_YOU = [
+  'You\'re 45-70, dealing with BP, metabolic, or hormone stuff that hasn\'t moved',
+  'You\'ve tried supplements, programs, doctors — and you\'re tired of starting over',
+  'You can commit one Monday evening per week for 90 days',
+  'You have $1,997 (or 3 × $697) set aside or ready to allocate',
+];
+const NOT_FOR_YOU = [
+  'You\'re looking for a magic pill or a quick fix',
+  'You won\'t follow a protocol when it\'s inconvenient',
+  'You need 4 people\'s permission before making a health decision',
+  'You expect us to work AROUND your doctor instead of WITH them',
+];
+
+const FAQ = [
+  {
+    q: 'What if I can\'t make Mondays at 8 PM ET?',
+    a: 'Every session is recorded. You also get WhatsApp access Sun–Thu 9–5 ET to ask anything in real time. Missing a live call doesn\'t cost you anything except the live energy.',
+  },
+  {
+    q: 'What\'s the difference between this and the $97 Challenge?',
+    a: 'The Challenge is group only, no 1:1, no Annie. The Sprint is weekly 1:1 with me, biweekly hormone work with Annie, a doctor-handoff document, the full stack of bonuses, and the protocol personalized to your labs at week 6.',
+  },
+  {
+    q: 'Will my doctor be involved?',
+    a: 'Yes — we build the protocol so you can hand it to them, not around them. The Sprint ends with a one-page doctor-cleared protocol you bring to your PCP at the graduation handoff.',
+  },
+  {
+    q: 'Is this medical care?',
+    a: 'No. This is RN-led naturopathic coaching alongside your existing doctor. We don\'t prescribe, diagnose, or replace medical care. We rebuild the inputs — vascular, cortisol, blood sugar — that your medications are managing the outputs of.',
+  },
+];
+
+// ============================================================
+// MAIN PAGE
+// ============================================================
 export default function CoachingPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero — coaches */}
+      {/* Hero — coach photos */}
       <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
         <div className="flex justify-center items-center gap-3">
           <div className="headshot-ring">
@@ -142,7 +193,7 @@ export default function CoachingPage() {
         </div>
       </div>
 
-      {/* Hero copy — terse */}
+      {/* Hero copy + deadline strip + EARNED SCARCITY */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
           <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 12 }}>
@@ -155,10 +206,8 @@ export default function CoachingPage() {
             Two RNs. Weekly 1:1s. Daily access. One protocol — vascular, cortisol, blood sugar — built for adults whose health gave up before they did.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '14px', margin: 0 }}>
-            5 slots per cohort. Application reviewed personally. No buy button.
+            <strong style={{ color: '#B85A36' }}>{SLOTS_REMAINING} of {SLOTS_TOTAL} founding slots remaining.</strong>&nbsp; Application reviewed personally. No buy button.
           </p>
-          {/* Deadline strip — hard close on May 17. Sits right under the
-              opening pitch so the urgency lands before the value stack. */}
           <div style={{ marginTop: '1.25rem', background: '#FBF8F1', border: '2px solid #B85A36', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700 }}>
               Applications close
@@ -170,12 +219,30 @@ export default function CoachingPage() {
         </div>
       </AnimatedSection>
 
+      {/* PRICE CARD — moved UP to anchor before TikTok / value stack */}
+      <div className="section-spacing" style={{ paddingTop: 0 }}>
+        <div className="container-mobile-first">
+          <div style={{ background: 'var(--navy)', borderRadius: 12, padding: '1.5rem', textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700, marginBottom: 6 }}>
+              Founding cohort · introductory rate
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '10px', marginBottom: 2 }}>
+              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '18px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
+              <span style={{ color: 'var(--white)', fontSize: '36px', fontWeight: 800, lineHeight: 1.1 }}>{PRICE_FOUNDING}</span>
+            </div>
+            <div style={{ color: '#C7A95E', fontSize: '14px', marginTop: 4 }}>
+              or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', marginTop: 12, fontStyle: 'italic' }}>
+              {STACK_VALUE} value stack · {SLOTS_REMAINING} slots left · After {DEADLINE_LABEL.split(' ·')[0]}, it's {PRICE_REGULAR}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <hr className="gradient-divider" />
 
-      {/* TikTok video — cold visitors arriving from the broadcast or the
-          TikTok itself see the source video right here, above any pricing
-          or commitment ask. Built-in social proof bridge from short-form
-          to landing page. */}
+      {/* TikTok video — proof from short-form to landing */}
       <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
           <AnimatedSection>
@@ -187,7 +254,7 @@ export default function CoachingPage() {
                 Watch the 60 seconds first.
               </h2>
               <p style={{ color: 'var(--muted-gray)', fontSize: '13px', maxWidth: 400, margin: '8px auto 1.5rem' }}>
-                If you saw it on TikTok — this is the program. If you didn't, the next minute will tell you whether this is for you.
+                If you saw it on TikTok — this is the program. If you didn't, the next minute tells you whether this is for you.
               </p>
             </div>
             <TikTokEmbed videoId="7639447507050827039" username="braveworksrn" />
@@ -195,12 +262,12 @@ export default function CoachingPage() {
         </div>
       </div>
 
-      {/* Value stack */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
+      {/* Value stack — Harry Dry rewrites */}
+      <div className="section-spacing">
         <div className="container-mobile-first">
           <AnimatedSection>
             <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              What you get.
+              What's yours when you say yes.
             </h2>
             <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
               12 components. 90 days. Two RNs.
@@ -223,26 +290,65 @@ export default function CoachingPage() {
               </li>
             </ul>
           </div>
-          <div style={{ marginTop: '1rem', background: 'var(--navy)', borderRadius: 12, padding: '1.25rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700, marginBottom: 6 }}>
-              Founding cohort · introductory rate
+        </div>
+      </div>
+
+      {/* Picture August — Hardy/Myron L4 future-self */}
+      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <h2 className="font-bold mb-3 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+              Picture August.
+            </h2>
+            <div style={{ maxWidth: 540, margin: '0 auto' }}>
+              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 12 }}>
+                You wake up before the alarm because your body is rested for the first time in years. The bottle drawer has three bottles in it, not eighteen.
+              </p>
+              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 12 }}>
+                The afternoon pain you used to brace for hasn't shown up in sixty days. You finally have a primary care doctor — a real one — who looked at your labs and said <em>whatever you're doing, keep doing it</em>.
+              </p>
+              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 18 }}>
+                Your spouse watches you laugh on a Tuesday at 2 PM because you have energy left.
+              </p>
+              <p style={{ color: 'var(--navy)', fontSize: '17px', lineHeight: 1.5, fontWeight: 700, textAlign: 'center', marginBottom: 0 }}>
+                That's the destination. The Sprint is the 90 days that get you there.
+              </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '10px', marginBottom: 2 }}>
-              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '16px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
-              <span style={{ color: 'var(--white)', fontSize: '32px', fontWeight: 800, lineHeight: 1.1 }}>{PRICE_FOUNDING}</span>
-            </div>
-            <div style={{ color: '#C7A95E', fontSize: '13px', marginTop: 4 }}>
-              or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
-            </div>
-            <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '12px', marginTop: 10, fontStyle: 'italic' }}>
-              Founding-cohort rate. 5 slots. Applications close {DEADLINE_LABEL}. After that, it's {PRICE_REGULAR}.
-            </div>
+          </AnimatedSection>
+        </div>
+      </div>
+
+      {/* TESTIMONIALS — anonymized DMs + 1 public comment */}
+      <div className="section-spacing">
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+              What people tell me.
+            </h2>
+            <p className="text-center mb-7" style={{ color: 'var(--muted-gray)', fontSize: '13px', maxWidth: 480, margin: '0 auto 2rem' }}>
+              These are video viewers, not Sprint clients. The Sprint is the deeper version — same protocol, with weekly 1:1, Annie's hormone module, and daily access.
+            </p>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {TESTIMONIALS.map((t, i) => (
+              <AnimatedSection key={i} delay={i * 80}>
+                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderLeft: '4px solid var(--purple)', borderRadius: 12, padding: '1.25rem 1.25rem 1rem', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                  <p style={{ color: 'var(--dark-gray)', fontSize: '14.5px', lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 14px', flex: 1 }}>
+                    "{t.quote}"
+                  </p>
+                  <div style={{ borderTop: '1px solid #F0EDE5', paddingTop: 10 }}>
+                    <div style={{ color: 'var(--navy)', fontSize: '13px', fontWeight: 700 }}>{t.name}</div>
+                    <div style={{ color: 'var(--muted-gray)', fontSize: '12px' }}>{t.source}</div>
+                  </div>
+                </div>
+              </AnimatedSection>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Cost of inaction (Myron Golden) */}
-      <div className="section-spacing">
+      {/* Cost of inaction (Myron) */}
+      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
           <AnimatedSection>
             <div className="text-center mb-2">
@@ -304,6 +410,45 @@ export default function CoachingPage() {
         </div>
       </div>
 
+      {/* BRUNSON IS / IS NOT for you */}
+      <div className="section-spacing">
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <h2 className="font-bold mb-6 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
+              Is this for you?
+            </h2>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div style={{ background: 'var(--white)', border: '2px solid #3F5A3C', borderRadius: 12, padding: '1.25rem' }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#3F5A3C', fontWeight: 700, marginBottom: 12 }}>
+                This is for you if
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '10px' }}>
+                {IS_FOR_YOU.map((line, i) => (
+                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
+                    <CheckCircle2 size={16} style={{ color: '#3F5A3C', flexShrink: 0, marginTop: 2 }} />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div style={{ background: 'var(--white)', border: '2px solid #B85A36', borderRadius: 12, padding: '1.25rem' }}>
+              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700, marginBottom: 12 }}>
+                This is NOT for you if
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '10px' }}>
+                {NOT_FOR_YOU.map((line, i) => (
+                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
+                    <XCircle size={16} style={{ color: '#B85A36', flexShrink: 0, marginTop: 2 }} />
+                    <span>{line}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Guarantee */}
       <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
@@ -332,8 +477,32 @@ export default function CoachingPage() {
         </div>
       </div>
 
-      {/* Application form (or closed-cohort message when past deadline) */}
-      <AnimatedSection className="section-spacing">
+      {/* FAQ — last objections */}
+      <div className="section-spacing">
+        <div className="container-mobile-first">
+          <AnimatedSection>
+            <div className="text-center mb-6">
+              <HelpCircle size={28} style={{ color: 'var(--purple)', margin: '0 auto 6px' }} />
+              <h2 className="font-bold" style={{ color: 'var(--navy)', fontSize: '22px' }}>
+                Common questions.
+              </h2>
+            </div>
+          </AnimatedSection>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {FAQ.map((f, i) => (
+              <AnimatedSection key={i} delay={i * 60}>
+                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 12, padding: '1rem 1.25rem' }}>
+                  <div style={{ color: 'var(--navy)', fontWeight: 700, fontSize: '15px', marginBottom: 6 }}>{f.q}</div>
+                  <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>{f.a}</p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Application — 7 questions only */}
+      <AnimatedSection className="section-spacing" style={{ background: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
           {Date.now() < new Date(DEADLINE_ISO).getTime() ? (
             <>
@@ -341,13 +510,11 @@ export default function CoachingPage() {
                 Apply.
               </h2>
               <p className="text-center mb-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-                ~6 minutes. Mostly clicks. Read by Joel personally. No payment collected at this step.
+                7 quick questions. Joel reads every one personally. No payment collected.
               </p>
               <p className="text-center mb-4" style={{ color: '#B85A36', fontSize: '13px', fontWeight: 700 }}>
-                Closes {DEADLINE_LABEL}
+                Closes {DEADLINE_LABEL} · {SLOTS_REMAINING} of {SLOTS_TOTAL} slots remaining
               </p>
-              {/* Price-pinned-above-form so every applicant sees the exact cost
-                  before submitting. No surprises on the fit call. */}
               <div style={{ background: 'var(--navy)', borderRadius: 12, padding: '14px 18px', margin: '0 auto 1.5rem', maxWidth: 480, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
                 <div>
                   <div style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700 }}>
@@ -398,27 +565,15 @@ export default function CoachingPage() {
 }
 
 // ============================================================
-// Application form — 17 questions, pre-qualification heavy.
-// Click-driven to keep friction low despite the higher question count.
+// APPLICATION FORM — 7 questions only (down from 17)
 // ============================================================
 function ApplicationForm() {
   const [form, setForm] = useState({
     name: '', email: '', phone: '',
     ageRange: '',
-    bpRange: '',
-    bpMeds: '',
-    healthScore: '',
-    sleepScore: '',
-    stressScore: '',
-    costOfInaction: '',
-    commitment: '',
-    pastAttempts: '',
-    successLook: '',
     investmentRange: '',
-    decisionMaker: '',
-    whenStart: '',
     whyNow: '',
-    foundMe: '',
+    whenStart: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -431,7 +586,7 @@ function ApplicationForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const required = ['name', 'email', 'ageRange', 'bpRange', 'commitment', 'investmentRange', 'decisionMaker', 'whenStart', 'whyNow'];
+    const required = ['name', 'email', 'ageRange', 'investmentRange', 'whyNow', 'whenStart'];
     const missing = required.filter((f) => !String(form[f] || '').trim());
     if (missing.length) {
       setError('Please complete every required field marked with ·');
@@ -462,9 +617,9 @@ function ApplicationForm() {
         <div style={{ width: 56, height: 56, margin: '0 auto 1rem', borderRadius: '50%', background: '#E6EBE0', display: 'grid', placeItems: 'center' }}>
           <CheckCircle2 size={28} style={{ color: '#3F5A3C' }} />
         </div>
-        <h3 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '20px' }}>Application received.</h3>
+        <h3 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '20px' }}>Got it — Joel reads every one.</h3>
         <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: '0 0 10px' }}>
-          Joel reads every application personally. If you're a fit, expect a reply within 3–5 business days with next steps for a 20-minute fit call.
+          If you're a fit for the founding cohort, expect a reply within 24-48 hours with the link to schedule a 20-minute fit call.
         </p>
         <p style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: 1.5 }}>
           If you don't hear back within a week, the cohort is full. Next opening in ~90 days.
@@ -475,117 +630,57 @@ function ApplicationForm() {
 
   return (
     <form onSubmit={handleSubmit} style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem', display: 'grid', gap: '1.25rem' }}>
-      <Section title="The basics">
-        <TextField label="Full name" required value={form.name} onChange={(v) => update('name', v)} />
-        <TextField label="Email" type="email" required value={form.email} onChange={(v) => update('email', v)} />
-        <TextField label="Phone" placeholder="for the fit call" value={form.phone} onChange={(v) => update('phone', v)} />
-        <Radio label="Age range" required value={form.ageRange} onChange={(v) => update('ageRange', v)}
-          options={['30–44', '45–54', '55–64', '65+']} />
-      </Section>
-
-      <Section title="Your numbers (snapshot)">
-        <Radio label="Your BP usually runs" required value={form.bpRange} onChange={(v) => update('bpRange', v)}
-          options={['Under 130/80', '130s–140s / 80s–90s', '140s–150s / 90s+', '150s+ / 95s+', "Don't track / don't know"]} />
-        <Radio label="Currently on BP medication?" value={form.bpMeds} onChange={(v) => update('bpMeds', v)}
-          options={['None', '1', '2', '3+', 'Recently stopped', 'I want OFF']} />
-        <Radio label="Rate your CURRENT health (1 = worst, 10 = best)" value={form.healthScore} onChange={(v) => update('healthScore', v)}
-          options={['1–3 (struggling)', '4–5 (getting by)', '6–7 (okay)', '8–10 (good)']} />
-        <Radio label="Average sleep last 30 days" value={form.sleepScore} onChange={(v) => update('sleepScore', v)}
-          options={['Less than 5 hrs', '5–6 hrs', '6–7 hrs', '7+ hrs']} />
-        <Radio label="Stress level last 90 days (1–10)" value={form.stressScore} onChange={(v) => update('stressScore', v)}
-          options={['1–3 (calm)', '4–6 (medium)', '7–8 (high)', '9–10 (constantly overwhelmed)']} />
-      </Section>
-
-      <Section title="Where you are mentally">
-        <Textarea label="If you DON'T fix this in the next 90 days, what does it cost you?"
-          placeholder="Be specific. Medical, financial, relational, time off the planet. (This is the most important question on the page.)"
-          value={form.costOfInaction} onChange={(v) => update('costOfInaction', v)} />
-        <Radio label="On a 1–10 scale, how committed are you to following the plan EVEN ON HARD DAYS?" required
-          value={form.commitment} onChange={(v) => update('commitment', v)}
-          options={['10 — I will do whatever it takes', '8–9 — Very committed', '6–7 — Pretty committed', '5 or less — Honestly not sure']} />
-        <Textarea label="What have you tried before that didn't stick? Why didn't it?"
-          placeholder="Specific programs, coaches, supplements, diets. The more honest, the better the fit assessment."
-          value={form.pastAttempts} onChange={(v) => update('pastAttempts', v)} />
-        <Textarea label="What does success look like 90 days from now?"
-          placeholder="Be specific. 'Better health' isn't an answer. 'Off Lisinopril, sleeping 7 hours, walking 2 miles without pain' is."
-          value={form.successLook} onChange={(v) => update('successLook', v)} />
-      </Section>
-
-      <Section title="The fit math">
-        <Radio label="Investment range you're comfortable with for your health THIS YEAR" required
-          value={form.investmentRange} onChange={(v) => update('investmentRange', v)}
-          options={[
-            'Under $2,000',
-            '$2,000–$5,000',
-            '$5,000–$10,000',
-            '$10,000+',
-            'I haven\'t allocated for this yet',
-          ]} />
-        <Radio label="Are you the sole financial decision maker?" required
-          value={form.decisionMaker} onChange={(v) => update('decisionMaker', v)}
-          options={['Yes — I decide', 'No — I need spouse/partner approval', 'No — other (please note in Why Now)']} />
-        <Radio label="When could you realistically start?" required
-          value={form.whenStart} onChange={(v) => update('whenStart', v)}
-          options={['This week', 'Within 30 days', 'Within 90 days', 'Not sure yet']} />
-        <Textarea label="Why now? What changed?" required
-          placeholder="Why this week, not next year? Be honest — vague answers don't make the fit call."
-          value={form.whyNow} onChange={(v) => update('whyNow', v)} />
-      </Section>
-
-      <Section title="Last one">
-        <Radio label="How did you find me?" value={form.foundMe} onChange={(v) => update('foundMe', v)}
-          options={['TikTok', 'Instagram', 'Facebook', 'Skool community', 'Email from Joel', 'Friend / word of mouth', 'Other']} />
-      </Section>
+      <TextField label="Full name" required value={form.name} onChange={(v) => update('name', v)} />
+      <TextField label="Email" type="email" required value={form.email} onChange={(v) => update('email', v)} />
+      <TextField label="Phone" placeholder="for the fit call" value={form.phone} onChange={(v) => update('phone', v)} />
+      <Radio label="Age range" required value={form.ageRange} onChange={(v) => update('ageRange', v)}
+        options={['30–44', '45–54', '55–64', '65+']} />
+      <Radio label="Investment range you've allocated for your health this year" required
+        value={form.investmentRange} onChange={(v) => update('investmentRange', v)}
+        options={[
+          'Under $2,000',
+          '$2,000–$5,000',
+          '$5,000–$10,000',
+          '$10,000+',
+          'I haven\'t allocated for this yet',
+        ]} />
+      <Textarea label="Why now? What changed?" required
+        placeholder="One or two sentences. Why this week, not next year?"
+        value={form.whyNow} onChange={(v) => update('whyNow', v)} />
+      <Radio label="When could you realistically start?" required
+        value={form.whenStart} onChange={(v) => update('whenStart', v)}
+        options={['This week', 'Within 30 days', 'Within 90 days', 'Not sure yet']} />
 
       {error && (
         <p style={{ color: '#B85A36', fontSize: '14px', margin: 0, padding: '10px 12px', background: '#F5E4DA', borderRadius: 8 }}>{error}</p>
       )}
 
-      <button
-        type="submit"
-        disabled={submitting}
+      <button type="submit" disabled={submitting}
         className="btn-standard btn-cta gradient-purple-btn"
-        style={{ color: 'var(--white)', fontSize: '16px', fontWeight: 700 }}
-      >
+        style={{ color: 'var(--white)', fontSize: '16px', fontWeight: 700 }}>
         {submitting ? (
-          <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Submitting...</span>
+          <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Sending to Joel…</span>
         ) : (
-          <span className="flex items-center gap-2 justify-center"><Phone size={18} /> Submit application <ArrowRight size={16} /></span>
+          <span className="flex items-center gap-2 justify-center"><Phone size={18} /> Submit — Joel reads every one <ArrowRight size={16} /></span>
         )}
       </button>
 
       <p className="text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: 1.5, margin: 0 }}>
-        Submitting doesn't sign you up. Joel reads, screens, and replies within 3–5 business days if there's a fit. No payment collected until after the fit call.
+        No payment collected at this step. Submission doesn't sign you up — Joel screens every applicant personally and replies within 24-48 hours if there's a fit.
       </p>
     </form>
   );
 }
 
 // ── Form primitives ───────────────────────────────────────
-function Section({ title, children }) {
-  return (
-    <div style={{ display: 'grid', gap: '1rem' }}>
-      <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, paddingBottom: 4, borderBottom: '1px solid #E5E7EB' }}>
-        {title}
-      </div>
-      {children}
-    </div>
-  );
-}
-
 function TextField({ label, type = 'text', value, onChange, placeholder = '', required = false }) {
   return (
     <label style={{ display: 'block' }}>
       <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
         {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
       </div>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box' }}
-      />
+      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box' }} />
     </label>
   );
 }
@@ -596,13 +691,8 @@ function Textarea({ label, value, onChange, placeholder = '', required = false }
       <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
         {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
       </div>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={3}
-        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }}
-      />
+      <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={3}
+        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }} />
     </label>
   );
 }
@@ -617,12 +707,8 @@ function Radio({ label, options, value, onChange, required = false }) {
         {options.map((opt) => {
           const selected = value === opt;
           return (
-            <button
-              key={opt}
-              type="button"
-              onClick={() => onChange(opt)}
-              style={{
-                textAlign: 'left', padding: '9px 12px',
+            <button key={opt} type="button" onClick={() => onChange(opt)}
+              style={{ textAlign: 'left', padding: '9px 12px',
                 background: selected ? '#E6EBE0' : 'var(--white)',
                 border: `1.5px solid ${selected ? '#3F5A3C' : '#E5E7EB'}`,
                 borderRadius: 8, fontSize: '14px',
@@ -630,9 +716,7 @@ function Radio({ label, options, value, onChange, required = false }) {
                 color: 'var(--dark-gray)', cursor: 'pointer',
                 fontFamily: 'inherit',
                 transition: 'background 0.12s ease, border-color 0.12s ease',
-                display: 'flex', alignItems: 'center', gap: 10,
-              }}
-            >
+                display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: `2px solid ${selected ? '#3F5A3C' : '#CBC9BD'}`, background: selected ? '#3F5A3C' : 'transparent', flexShrink: 0 }} />
               {opt}
             </button>

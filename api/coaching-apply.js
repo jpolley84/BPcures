@@ -91,20 +91,21 @@ export default async function handler(req, res) {
     });
   }
 
-  // 2026-05-13: expanded from 7 fields to 17 to filter tire kickers using
-  // Chris Do (diagnose-before-prescribe), Priestley (score-on-the-doors),
-  // Myron Golden (cost-of-inaction), Hormozi (investment-range disqualifier),
-  // and Brunson (decision-maker filter).
+  // 2026-05-14 panel-audit rewrite: form reduced from 17 fields → 7 to
+  // kill apply-rate friction. Score/sleep/stress/past-failures/decision-
+  // maker/etc all live on the fit call now where rapport carries them.
+  // We STILL accept legacy fields if a stale client sends them (so the
+  // API doesn't reject older form variants in flight).
   const {
     name, email, phone,
-    ageRange, bpRange, bpMeds,
-    healthScore, sleepScore, stressScore,
+    ageRange, investmentRange, whyNow, whenStart,
+    // legacy fields — optional, still scored if present
+    bpRange, bpMeds, healthScore, sleepScore, stressScore,
     costOfInaction, commitment, pastAttempts, successLook,
-    investmentRange, decisionMaker, whenStart, whyNow,
-    foundMe,
+    decisionMaker, foundMe,
   } = req.body;
 
-  // Required-field validation — mirrors the page's required list.
+  // Required-field validation — mirrors the page's 7-field form.
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
   }
@@ -115,9 +116,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '"Why now?" is required — Joel uses it to screen for fit' });
   }
   for (const [key, label] of [
-    ['ageRange', 'Age range'], ['bpRange', 'BP range'],
-    ['commitment', 'Commitment score'], ['investmentRange', 'Investment range'],
-    ['decisionMaker', 'Decision maker'], ['whenStart', 'When could you start'],
+    ['ageRange', 'Age range'],
+    ['investmentRange', 'Investment range'],
+    ['whenStart', 'When could you start'],
   ]) {
     if (!req.body[key] || !String(req.body[key]).trim()) {
       return res.status(400).json({ error: `${label} is required` });
