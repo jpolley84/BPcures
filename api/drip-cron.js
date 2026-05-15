@@ -114,32 +114,37 @@ export default async function handler(req, res) {
       const lastSent = sub.lastSentDay || 0;
       const day = lastSent + 1;
 
-      // Calendar cap: never send tomorrow's email today.
-      if (day > computedDay) {
-        summary.skipped++;
-        continue;
-      }
-
-      // Gap cap: more than 7 days behind = something broke worse than a
-      // single missed fire. Pause + surface, don't try to catch up.
-      if (computedDay - lastSent > 7) {
-        console.warn(`drip-cron: ${sub.email} is ${computedDay - lastSent} days behind — auto-pausing for review`);
-        await kv.set(key, {
-          ...sub,
-          paused: true,
-          pausedReason: 'gap-too-large',
-          pausedAt: new Date().toISOString(),
-          pausedComputedDay: computedDay,
-          pausedLastSent: lastSent,
-        });
-        summary.skipped++;
-        continue;
-      }
-
-      // Day 8+ requires opt-in flag.
-      if (day > FINAL_ONBOARDING_DAY && !sub.optedIn) {
-        summary.skipped++;
-        continue;
+      // 2026-05-15: foundation arc (Days 1-7) is now UNIVERSAL — no calendar
+      // cap, no gap pause. Every engaged subscriber gets the 7-day foundation
+      // regardless of when they enrolled or how silent they've been. This
+      // fixed the 2,712 beehiiv-migrated zombies that the old gap-cap was
+      // silently auto-pausing forever.
+      //
+      // The two safety checks below ONLY apply to Days 8+ (post-opt-in):
+      //   - Day 8+ requires optedIn === true OR a purchaser tag
+      //     (bpquiz-purchaser / tier-1-buyer / tier-2-buyer / tier-3-buyer).
+      //     Non-buyers who didn't click the Day 7 button stop at Day 7.
+      //   - Day 8+ still respects the calendar cap (no sending Day 9 to
+      //     someone whose enrolledAt is only 5 days old) to prevent races
+      //     during catch-up.
+      if (day > FINAL_ONBOARDING_DAY) {
+        const tags = Array.isArray(sub.tags) ? sub.tags : [];
+        const isBuyer = tags.some((t) =>
+          t === 'bpquiz-purchaser' ||
+          t === 'tier-1-buyer' ||
+          t === 'tier-2-buyer' ||
+          t === 'tier-3-buyer'
+        );
+        if (!sub.optedIn && !isBuyer) {
+          summary.skipped++;
+          continue;
+        }
+        // Calendar cap only for Days 8+ — prevents sending tomorrow's
+        // extended-arc email today.
+        if (day > computedDay) {
+          summary.skipped++;
+          continue;
+        }
       }
 
       // Past Day 30 → mark complete.
