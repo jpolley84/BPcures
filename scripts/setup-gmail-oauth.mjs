@@ -24,12 +24,31 @@
 //   • Print the refresh_token (paste into Vercel as GMAIL_OAUTH_REFRESH_TOKEN)
 
 import readline from 'node:readline';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { google } from 'googleapis';
+
+// Tiny .env.local loader (no dep). Picks up vars unless already set in process env.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.resolve(__dirname, '..', '.env.local');
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/i);
+    if (!m) continue;
+    const key = m[1];
+    let val = m[2];
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    if (!process.env[key]) process.env[key] = val;
+  }
+}
 
 const CLIENT_ID = process.env.GMAIL_OAUTH_CLIENT_ID;
 const CLIENT_SECRET = process.env.GMAIL_OAUTH_CLIENT_SECRET;
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error('Set GMAIL_OAUTH_CLIENT_ID and GMAIL_OAUTH_CLIENT_SECRET in env first.');
+  console.error('Set GMAIL_OAUTH_CLIENT_ID and GMAIL_OAUTH_CLIENT_SECRET in env or .env.local first.');
   process.exit(1);
 }
 
