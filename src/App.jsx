@@ -30,6 +30,10 @@ const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPa
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
+// Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
+// rebrand SEO content hub.
+const BlogListPage = lazy(() => import('./pages/BlogListPage'));
+const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 
 // Subdomain → page map. When the SPA boots on a vanity subdomain like
 // `wakita.bpquiz.com`, the root route renders that client's intake instead of
@@ -101,11 +105,18 @@ function App() {
           {/* Old routes → redirect to quiz */}
           <Route path="/shop" element={<Navigate to="/" replace />} />
           <Route path="/shop/:slug" element={<Navigate to="/" replace />} />
-          <Route path="/learn" element={<Navigate to="/" replace />} />
-          <Route path="/learn/:slug" element={<Navigate to="/" replace />} />
-          <Route path="/blog" element={<Navigate to="/" replace />} />
-          <Route path="/blog/:slug" element={<Navigate to="/" replace />} />
           <Route path="/upsell" element={<Navigate to="/" replace />} />
+
+          {/* Blog / Articles — Joel's SEO content hub (2026-05-17 re-enabled
+              for the "Blood Pressure Guy" rebrand. Articles target queries
+              like "blood pressure natural remedies", "cortisol and blood
+              pressure", etc. /learn + /articles are aliases for /blog.) */}
+          <Route path="/blog" element={<SiteLayout><BlogListPage /></SiteLayout>} />
+          <Route path="/blog/:slug" element={<SiteLayout><BlogPostPage /></SiteLayout>} />
+          <Route path="/learn" element={<Navigate to="/blog" replace />} />
+          <Route path="/learn/:slug" element={<Navigate to="/blog/:slug" replace />} />
+          <Route path="/articles" element={<Navigate to="/blog" replace />} />
+          <Route path="/articles/:slug" element={<Navigate to="/blog/:slug" replace />} />
 
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />

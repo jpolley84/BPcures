@@ -17,11 +17,11 @@ export default function BlogListPage() {
       <div className="gradient-navy py-16 px-4 text-center">
         <div className="max-w-2xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--gold)' }}>
-            BraveWorks RN
+            Joel Polley, RN · The Blood Pressure Guy
           </p>
-          <h1 className="text-4xl font-bold text-white mb-4">Health Blog</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">Blood Pressure Natural Remedies — The Journal</h1>
           <p className="text-base" style={{ color: '#cbd5e1' }}>
-            Evidence-based protocols by Joel Polley, RN
+            ICU/ER nurse, 20 years on the floor. Plain-language deep dives on the herbs, minerals, foods, and habits that actually move your numbers.
           </p>
         </div>
       </div>

@@ -16,8 +16,36 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://bpquiz.com/coaching</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://bpquiz.com/1on1</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bpquiz.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bpquiz.com/blog/cortisol-and-blood-pressure</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-05-17</lastmod>
+  </url>
+  <url>
+    <loc>https://bpquiz.com/blog/why-bp-is-still-high</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <lastmod>2026-04-19</lastmod>
+  </url>
+  <url>
+    <loc>https://bpquiz.com/blog/30-day-challenge-starts-may-1</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <lastmod>2026-04-21</lastmod>
   </url>
 </urlset>

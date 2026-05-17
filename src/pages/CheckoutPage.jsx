@@ -149,7 +149,7 @@ const CheckoutPage = () => {
               <source srcSet="/headshot.webp" type="image/webp" />
               <img
                 src="/headshot.jpg"
-                alt="Joel Polley, RN — 20 years ICU & emergency medicine, naturopathic practitioner"
+                alt="Joel Polley, RN — The Blood Pressure Guy — 20 years ICU & emergency medicine, naturopathic practitioner"
                 width="180"
                 height="180"
                 fetchpriority="high"
@@ -165,7 +165,7 @@ const CheckoutPage = () => {
       <div className="credential-bar py-3.5" style={{ animation: 'fadeIn 0.6s ease-out 0.2s both' }}>
         <div className="container-mobile-first">
           <p className="text-center font-medium" style={{ color: 'var(--white)', fontSize: '14px', lineHeight: '1.4', letterSpacing: '0.02em' }}>
-            Joel Polley, RN — 20 Years ICU & Emergency Medicine | Naturopathic Practitioner
+            Joel Polley, RN · The Blood Pressure Guy · 20 Years ICU & Emergency Medicine
           </p>
           <div className="text-center mt-2">
             <a

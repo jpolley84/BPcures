@@ -106,7 +106,7 @@ export default function Footer() {
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <span>© {year} BraveWorks Health, LLC</span>
             <span style={{ opacity: 0.4 }}>·</span>
-            <span>Joel Polley, RN · 20 yrs ICU &amp; ER</span>
+            <span>Joel Polley, RN · The Blood Pressure Guy · 20 yrs ICU &amp; ER</span>
           </div>
           <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
             <a href="/privacy">Privacy</a>
