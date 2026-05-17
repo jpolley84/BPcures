@@ -107,23 +107,42 @@ async function fetchStripe() {
   }
 }
 
-// ── Mailchimp ───────────────────────────────────────────────────────
-async function fetchMailchimp() {
-  const key = process.env.MAILCHIMP_API_KEY;
-  const listId = process.env.MAILCHIMP_LIST_ID || '1550e2956c';
-  if (!key || !key.includes('-')) return { error: 'MAILCHIMP_API_KEY missing/malformed' };
+// ── Drip list (KV) ──────────────────────────────────────────────────
+// 2026-05-17: replaced the Mailchimp fetcher. Mailchimp was retired
+// 2026-05-14; KV drip:* is now the canonical subscriber store. This
+// surfaces real engagement metrics the Mailchimp version couldn't
+// (opted-in, paused, unsubscribed, buyer count) since we own the data.
+async function fetchDripList() {
+  if (!process.env.KV_REST_API_URL) return { error: 'KV not configured' };
   try {
-    const dc = key.split('-')[1];
-    const auth = Buffer.from(`anystring:${key}`).toString('base64');
-    const res = await fetchWithTimeout(
-      `https://${dc}.api.mailchimp.com/3.0/lists/${listId}`,
-      { headers: { Authorization: `Basic ${auth}` } }
-    );
-    if (!res.ok) return { error: `Mailchimp ${res.status}` };
-    const data = await res.json();
+    const { kv } = await import('@vercel/kv');
+    const keys = await kv.keys('drip:*');
+    let total = 0, optedIn = 0, paused = 0, unsubscribed = 0, complete = 0, buyers = 0;
+    const dayDist = {};
+    for (const k of keys) {
+      const s = await kv.get(k);
+      if (!s || !s.email) continue;
+      total++;
+      if (s.unsubscribed) unsubscribed++;
+      if (s.paused) paused++;
+      if (s.complete) complete++;
+      if (s.optedIn) optedIn++;
+      if (Array.isArray(s.tags) && s.tags.some((t) =>
+        t === 'bpquiz-purchaser' || t === 'tier-1-buyer' || t === 'tier-2-buyer' || t === 'tier-3-buyer'
+      )) buyers++;
+      const d = s.lastSentDay || 0;
+      dayDist[d] = (dayDist[d] || 0) + 1;
+    }
+    const active = total - unsubscribed - paused - complete;
     return {
-      subscribers: data.stats?.member_count ?? 0,
-      campaigns: data.stats?.campaign_count ?? 0,
+      subscribers: total,
+      active,
+      optedIn,
+      buyers,
+      unsubscribed,
+      paused,
+      complete,
+      byDay: dayDist,
     };
   } catch (e) {
     return { error: e.message || String(e) };
@@ -176,7 +195,7 @@ export default async function handler(req, res) {
   const activityPath = path.join(dataDir, 'activity-stream.json');
 
   // Run live calls in parallel; read JSON state synchronously alongside
-  const [stripe, mailchimp] = await Promise.all([fetchStripe(), fetchMailchimp()]);
+  const [stripe, dripList] = await Promise.all([fetchStripe(), fetchDripList()]);
   const heartbeat = readJsonFile(opsStatePath);
   const activityRaw = readJsonFile(activityPath);
 
@@ -184,7 +203,11 @@ export default async function handler(req, res) {
   const response = {
     refreshedAt: new Date().toISOString(),
     stripe,
-    mailchimp,
+    // 2026-05-17: was `mailchimp` until Mailchimp retirement. Kept the
+    // old key as an alias so any existing dashboard fetch that reads
+    // response.mailchimp.subscribers keeps working until it's updated.
+    dripList,
+    mailchimp: dripList,
     pool: heartbeat?.pool || { error: 'No heartbeat data yet' },
     funnel: heartbeat?.funnel || { error: 'No heartbeat data yet' },
     crons: heartbeat?.crons || [],
