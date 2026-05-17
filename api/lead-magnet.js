@@ -347,34 +347,24 @@ function renderEmail({ name, category, tier, tiers }) {
 </body></html>`;
 }
 
-// Check Mailchimp for a recent lead-magnet send to this address.
-// Returns true if the member exists, has the bpquiz-taker tag, and
-// last_changed is within the dedupe window (default 5 min). This blocks
-// the rapid quiz-retake pattern where one user submits the form 3+ times
-// in a few minutes and triggers 3 identical Resend sends.
+// 2026-05-17: rewritten from Mailchimp-backed dedupe to KV-backed.
+// Mailchimp was retired 2026-05-14 but THIS function was missed — the
+// bare `MAILCHIMP_API_KEY` identifier was throwing ReferenceError on
+// every quiz submission, killing the lead-magnet endpoint (~30 500s
+// per day silently dropping email captures).
+//
+// New strategy: read the drip:<email> KV record's `lastQuizTakenAt`
+// timestamp. If it was set within the dedupe window, this is a rapid
+// retake — skip the Resend send.
 async function recentLeadMagnetSend({ email, windowMinutes = 5 }) {
-  if (!MAILCHIMP_API_KEY) return false; // can't check, default to send
+  if (!process.env.KV_REST_API_URL) return false; // can't check, default to send
   try {
-    const dc = MAILCHIMP_API_KEY.split('-').pop();
-    const baseUrl = `https://${dc}.api.mailchimp.com/3.0`;
-    const subscriberHash = crypto
-      .createHash('md5')
-      .update(email.trim().toLowerCase())
-      .digest('hex');
-    const r = await fetch(`${baseUrl}/lists/${MAILCHIMP_LIST_ID}/members/${subscriberHash}`, {
-      headers: {
-        Authorization: `Basic ${Buffer.from(`anystring:${MAILCHIMP_API_KEY}`).toString('base64')}`,
-      },
-    });
-    if (r.status !== 200) return false; // 404 = first time, ok to send
-    const member = await r.json();
-    const tags = (member.tags || []).map((t) => t.name);
-    // Must have bpquiz-taker tag (means we've sent before)
-    if (!tags.includes('bpquiz-taker')) return false;
-    // last_changed within window?
-    const lastChanged = member.last_changed ? new Date(member.last_changed).getTime() : 0;
+    const dripKey = `drip:${email.trim().toLowerCase()}`;
+    const existing = await kv.get(dripKey);
+    if (!existing || !existing.lastQuizTakenAt) return false;
+    const lastTakenMs = new Date(existing.lastQuizTakenAt).getTime();
     const cutoff = Date.now() - windowMinutes * 60 * 1000;
-    return lastChanged > cutoff;
+    return lastTakenMs > cutoff;
   } catch (err) {
     console.error('lead-magnet: dedupe check failed (defaulting to send)', err.message);
     return false;
@@ -445,8 +435,8 @@ export default async function handler(req, res) {
   }
 
   // Dedupe: skip the Resend send if this email got a lead magnet in the
-  // last 5 minutes. We still run the Mailchimp upsert so updated quiz
-  // answers / tier / category get recorded.
+  // last 5 minutes. The KV enrollment below still runs so updated quiz
+  // answers / tier / category get recorded on the drip:* record.
   const isDuplicate = await recentLeadMagnetSend({ email: email.trim() });
 
   const cat = CATEGORIES[category];
