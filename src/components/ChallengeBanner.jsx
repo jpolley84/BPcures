@@ -70,7 +70,7 @@ export default function ChallengeBanner() {
               </h2>
 
               <p className="challenge-banner-sub">
-                Blood pressure. Cortisol. Blood sugar. They're not three problems &mdash; they're three corners of the same loop.
+                Stress Pressure. Sugar Pressure. Pipe Pressure. Not three problems &mdash; three corners of the same loop.
                 One email a day. One protocol. One body. No card. No upsell wall.
               </p>
 

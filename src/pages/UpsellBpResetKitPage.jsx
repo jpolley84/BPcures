@@ -100,7 +100,7 @@ export default function UpsellBpResetKitPage() {
                 methodology behind it so the $97 cohort + 1:1 application
                 downstream don't feel like a different brand. */}
             <p style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 1.5rem', maxWidth: '54ch', lineHeight: 1.6, fontSize: '0.97rem' }}>
-              Built around the <strong style={{ color: 'var(--ink, #2C3E50)' }}>BP Triangle Method™</strong> — the three corners of one BP loop (vascular, cortisol, blood sugar). The kit teaches you which corner is yours and the protocol that breaks the loop. <em>Pills manage output. Protocol fixes input.</em>
+              Built around the <strong style={{ color: 'var(--ink, #2C3E50)' }}>BP Triangle Method™</strong> — the Three Pressures of one BP loop: Pipe Pressure (vascular), Stress Pressure (cortisol), Sugar Pressure (insulin). The kit teaches you which Pressure is loudest and the protocol that calms the loop. <em>Pills manage output. Protocol fixes input.</em>
             </p>
             <p className="lede" style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 2rem', maxWidth: '54ch', lineHeight: 1.6 }}>
               Add it to your order right now for <strong style={{ color: 'var(--ink, #2C3E50)' }}>$30 today only</strong> (normally $47 — you save $17 because you just bought the starter).

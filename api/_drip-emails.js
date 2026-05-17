@@ -501,10 +501,10 @@ const day6 = {
     ${p(`Tomorrow I'll show you the three shifts already happening in your body right now. You may not feel them yet. And there's a button at the bottom of tomorrow's email.`)}
     ${p(`Click it if you want to keep going. Days 8 through 30 cover the herbs that work like your meds, the water cure your grandmother knew, the breathing exercise that flips your nervous system in 60 seconds, and the gratitude practice that lowers cortisol faster than any supplement.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Which corner do you think is running yours? Reply with one word: vascular, sugar, or cortisol. I'll read every one.`)}
+    ${psBox(`Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I'll read every one.`)}
     ${upsellFooter({
-      kicker: 'If two corners are running yours',
-      body: 'If you want both a vascular AND a cortisol protocol with a registered nurse beside you for ninety days — the 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.',
+      kicker: 'If two Pressures are running yours',
+      body: 'If you want both a Pipe Pressure AND a Stress Pressure protocol with a registered nurse beside you for ninety days — the 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.',
       ctaLabel: 'Read the offer',
       ctaUrl: COACHING_URL,
     })}
@@ -533,7 +533,7 @@ Tomorrow I show you the three shifts already happening in your body. There's a b
 Joel
 RN, BraveWorks
 
-P.S. Which corner do you think is running yours? Reply with one word: vascular, sugar, or cortisol. I read every one.
+P.S. Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I read every one.
 
 —
 If two corners are running yours:
@@ -651,15 +651,19 @@ const day8 = {
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You opted in. Means you read all 7 days, found something useful, and want the deeper arc. I respect that.`)}
     ${p(`Before I keep going on the daily emails, I want to put one direct question in front of you — because for a small group of you, the next 23 days of emails won't be enough. You need something more direct.`, { margin: '0 0 32px' })}
-    ${bigQuote('Which pillar of the BP Triangle is yours?')}
-    ${p(`If you've followed along this week, you've seen me reference three pillars more than once. They're how I think about every BP case I see:`)}
+    ${bigQuote('Which of the Three Pressures is yours?')}
+    ${p(`If you've followed along this week, you've seen me reference three Pressures more than once. They're how I think about every BP case I see:`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Vascular.</strong> The BP itself. Arterial stiffness, oxidative stress, low NO. You see the numbers. Your doctor sees the numbers. But nobody's fixing the inputs.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Cortisol.</strong> Wired-tired. Can't sleep deep. Midsection weight gain. Cortisol pulls BP up like a pulley. Most cardiologists don't measure this.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Blood sugar.</strong> A1C creeping. 3 PM crashes. Can't lose the weight. Insulin is vasoconstrictive — high BP and high A1C are the same disease wearing different shirts.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Pipe Pressure (vascular).</strong> The pipes got stiff. Arterial stiffness, oxidative stress, low NO. You see the numbers. Your doctor sees the numbers. But nobody's fixing the inputs.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Stress Pressure (cortisol).</strong> The switch stuck on. Wired-tired. Can't sleep deep. Midsection weight gain. Cortisol pulls BP up like a pulley. Most cardiologists don't measure this.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Sugar Pressure (insulin).</strong> Sugar stays high. A1C creeping. 3 PM crashes. Can't lose the weight. Insulin is vasoconstrictive — high BP and high A1C are the same disease wearing different shirts.</p>
     `)}
-    ${p(`Most people have ONE pillar that's the lead domino. Fix that one and the other two fall in line. The 7-day arc gave you the foundation. The next 23 days teach you to identify and rebuild your weak pillar systematically.`)}
+    ${p(`Most people have ONE Pressure that's the lead domino. Calm that one and the other two fall in line. The 7-day arc gave you the foundation. The next 23 days teach you to identify and rebuild your loudest Pressure systematically.`)}
     ${p(`That's the work for most people. <strong>And it works.</strong>`, { margin: '0 0 32px' })}
+    ${clayBlock("Don't know your dominant Pressure yet?", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz routes you to one of the Three Pressures — Stress, Sugar, or Pipes — and returns the first move for your specific type.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
+    `)}
     ${clayBlock('If this is you, read this twice', `
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">You're on <strong style="color:${PALETTE.text};">4 or more medications.</strong> Maybe more. BP, statin, beta-blocker, ARB, possibly metformin, possibly a thyroid drug. Maybe a benzo or a sleep aid layered on top.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Your readings are still high. Or they\'re "controlled" but you feel like a ghost of the person you were 10 years ago. Side effects you can\'t pin to one drug because they could be coming from any of them.</p>
@@ -682,20 +686,20 @@ const day8 = {
     ${p(`<strong>If 1:1 isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each pillar, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need 1:1. The pillar protocols are enough.`)}
     ${p(`But if "drastic change ASAP" describes where you are right now — apply.`, { margin: '0 0 32px' })}
     ${joelSignoff()}
-    ${psBox(`The 1:1 application is the same form regardless of which pillar is yours. If your weak link is cortisol or blood sugar instead of BP — same application, same screening, same outcome. The work is pillar-specific; the door is the same.`)}
+    ${psBox(`The 1:1 application is the same form regardless of which Pressure is yours. If your loudest is Stress Pressure or Sugar Pressure instead of Pipes — same application, same screening, same outcome. The work is Pressure-specific; the door is the same.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
 You opted in — you want the deeper arc. Before I keep going on the daily emails, one direct question for the small group who needs more than emails.
 
-WHICH PILLAR OF THE BP TRIANGLE IS YOURS?
+WHICH OF THE THREE PRESSURES IS YOURS?
 
-1. VASCULAR — The BP itself. Arterial stiffness, low NO, oxidative stress.
-2. CORTISOL — Wired-tired, can't sleep deep, midsection weight gain.
-3. BLOOD SUGAR — A1C creeping, 3 PM crashes, can't drop the weight.
+1. PIPE PRESSURE (vascular) — The pipes got stiff. Arterial stiffness, low NO, oxidative stress.
+2. STRESS PRESSURE (cortisol) — The switch stuck on. Wired-tired, can't sleep deep, midsection weight gain.
+3. SUGAR PRESSURE (insulin) — Sugar stays high. A1C creeping, 3 PM crashes, can't drop the weight.
 
-Most people have ONE pillar that's the lead domino. The next 23 days teach you to identify and rebuild your weak pillar. That's the work for most people. And it works.
+Most people have ONE Pressure that's the lead domino. The next 23 days teach you to identify and rebuild your loudest Pressure. That's the work for most people. And it works.
 
 IF THIS IS YOU, READ THIS TWICE:
 
@@ -720,7 +724,7 @@ But if "drastic change ASAP" describes where you are — apply.
 Joel
 RN, BraveWorks
 
-P.S. The application is the same form regardless of which pillar is yours. Cortisol or blood sugar instead of BP — same application, same screening, same outcome. The work is pillar-specific; the door is the same.
+P.S. The application is the same form regardless of which Pressure is yours. Stress Pressure or Sugar Pressure instead of Pipes — same application, same screening, same outcome. The work is Pressure-specific; the door is the same.
 
 —
 → Skool: ${SKOOL_URL}
@@ -745,22 +749,22 @@ const day9 = {
     ${p(`<strong style="color:${PALETTE.text};">Genes load the gun. Inputs pull the trigger.</strong> The same DNA your mother had — sat in a Japanese village in 1960 with the same code in her cells, never developed hypertension. Move that same DNA to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep — boom. Same code, different inputs, different disease.`)}
     ${p(`Your genes set the threshold. Your inputs decide whether you cross it.`, { margin: '0 0 28px' })}
     ${clayBlock("What's actually inherited", `
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Not the blood pressure itself. What's inherited is a <strong style="color:${PALETTE.text};">sensitivity to one of three corners.</strong> Three corners of one loop. I call this the <strong style="color:${PALETTE.text};">BP Triangle</strong>:</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">VASCULAR</strong> — the pipes. Stiff arteries, low NO, K:Na imbalance.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">CORTISOL</strong> — the stress. Clamps the vessels, retains sodium.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">BLOOD SUGAR</strong> — the metabolism. Insulin is a vasoconstrictor.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Not the blood pressure itself. What's inherited is a <strong style="color:${PALETTE.text};">sensitivity to one of Three Pressures.</strong> Three Pressures of one loop. I call this the <strong style="color:${PALETTE.text};">BP Triangle</strong>:</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">PIPE PRESSURE</strong> (vascular) — the pipes. Stiff arteries, low NO, K:Na imbalance.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">STRESS PRESSURE</strong> (cortisol) — the switch stuck on. Clamps the vessels, retains sodium.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">SUGAR PRESSURE</strong> (insulin) — sugar stays high. Insulin is a vasoconstrictor.</p>
     `)}
-    ${p(`Most boomer-aged readers I work with assume their corner is vascular — they hear "high blood pressure" and think "stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always <strong style="color:${PALETTE.text};">cortisol</strong>. And cortisol is the corner most cardiologists don't even measure.`)}
+    ${p(`Most boomer-aged readers I work with assume their dominant Pressure is Pipe — they hear "high blood pressure" and think "stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always <strong style="color:${PALETTE.text};">Stress Pressure</strong>. And cortisol is the driver most cardiologists don't even measure.`)}
     ${p(`This is why the genetics lie hurts so much: your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, and accepted a lifetime of pills as fate. <strong style="color:${PALETTE.text};">It wasn't fate. It was an input nobody helped her change.</strong>`, { margin: '0 0 28px' })}
-    ${bigQuote('The cortisol corner — two interventions that actually work.')}
+    ${bigQuote('The Stress Pressure corner — two interventions that actually work.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Ashwagandha (KSM-66 form, 300 mg AM + PM).</strong> Chandrasekhar et al, 2012 — 64 adults, 8 weeks. Salivary cortisol dropped 27.9% versus placebo. Anxiety scores fell in parallel. Cheapest single move you can make for the cortisol corner.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. Asleep before 11 PM.</strong> Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset at 10 PM gives you ~3 hours inside that window. Sleep onset at 1 AM gives you zero — even if you sleep until 8.</p>
     `)}
-    ${p(`If your morning BP runs high and your blood sugar is roughly normal, this corner is almost certainly the one driving your numbers. The good news: cortisol responds faster than vascular. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
+    ${p(`If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly the one driving your numbers. The good news: Stress Pressure responds faster than Pipe Pressure. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
     ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.`, { margin: '0 0 28px' })}
-    ${clayBlock("Don't know which corner is yours?", `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your corner + the first move for your specific type. Built around the same diagnostic I use with 1:1 clients.</p>
+    ${clayBlock("Don't know which Pressure is yours?", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with 1:1 clients.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.`, { margin: '0 0 24px' })}
@@ -780,39 +784,39 @@ GENES LOAD THE GUN. INPUTS PULL THE TRIGGER.
 
 The same DNA your mother had — sat in a Japanese village in 1960 with the same code, never developed hypertension. Move it to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep — boom. Same code, different inputs, different disease.
 
-WHAT'S ACTUALLY INHERITED is a sensitivity to one of three corners. Three corners of one loop. I call it the BP Triangle:
+WHAT'S ACTUALLY INHERITED is a sensitivity to one of Three Pressures. Three Pressures of one loop. I call it the BP Triangle:
 
-→ VASCULAR — the pipes. Stiff arteries, low NO, K:Na imbalance.
-→ CORTISOL — the stress. Clamps the vessels, retains sodium.
-→ BLOOD SUGAR — the metabolism. Insulin is a vasoconstrictor.
+→ PIPE PRESSURE (vascular) — the pipes. Stiff arteries, low NO, K:Na imbalance.
+→ STRESS PRESSURE (cortisol) — the switch stuck on. Clamps the vessels, retains sodium.
+→ SUGAR PRESSURE (insulin) — sugar stays high. Insulin is a vasoconstrictor.
 
-Most boomer-aged readers assume their corner is vascular — "high BP, stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always CORTISOL. And cortisol is the corner most cardiologists don't even measure.
+Most boomer-aged readers assume their dominant Pressure is Pipe — "high BP, stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always STRESS PRESSURE. And cortisol is the driver most cardiologists don't even measure.
 
 This is why the genetics lie hurts so much. Your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, accepted a lifetime of pills as fate. It wasn't fate. It was an input nobody helped her change.
 
-THE CORTISOL CORNER — TWO INTERVENTIONS THAT ACTUALLY WORK:
+THE STRESS PRESSURE CORNER — TWO INTERVENTIONS THAT ACTUALLY WORK:
 
 1. Ashwagandha (KSM-66, 300mg AM+PM). Chandrasekhar 2012 — 64 adults, 8 weeks. Salivary cortisol dropped 27.9% vs placebo. Cheapest single move you can make.
 
 2. Asleep before 11 PM. Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset 10 PM = ~3 hours in that window. Sleep onset 1 AM = zero, even if you sleep until 8.
 
-If your morning BP runs high and your blood sugar is roughly normal, this corner is almost certainly driving your numbers. Cortisol responds faster than vascular — most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.
+If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly driving your numbers. Stress Pressure responds faster than Pipe Pressure — most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.
 
 PILLS MANAGE OUTPUT. PROTOCOL FIXES INPUT.
 
 AND not INSTEAD OF. Your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.
 
-DON'T KNOW WHICH CORNER IS YOURS?
+DON'T KNOW WHICH PRESSURE IS YOURS?
 
-Free 90-second BP Triangle Quiz returns your corner + the first move for your type.
+Free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your type.
 → ${SITE_URL}/quiz
 
-Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.
+Tomorrow — the third Pressure. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.
 
 Joel
 RN, BraveWorks
 
-P.S. Tomorrow we walk the third corner — the one cardiologists never measure.
+P.S. Tomorrow we walk the third Pressure — the one cardiologists never measure.
 
 → Watch the Triangle deep-dive on YouTube: ${YOUTUBE_URL}
 
@@ -831,12 +835,12 @@ const day10 = {
   preview: 'Three "savory" foods spike BP for 2-3 hours after every bite.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Yesterday — the cortisol corner. Today — the third corner.`)}
+    ${p(`Yesterday — the Stress Pressure corner. Today — the third Pressure.`)}
     ${p(`This is the one I almost missed in my own practice for years. The one that explains why people who "cut their salt" for a decade watch their BP keep creeping up anyway.`, { margin: '0 0 28px' })}
-    ${bigQuote('Blood sugar raises blood pressure. Harder than salt does.')}
+    ${bigQuote('Sugar Pressure raises blood pressure. Harder than salt does.')}
     ${p(`Most cardiologists don't measure A1c. They look at your BP, they look at your cholesterol, maybe they look at your kidneys. <strong style="color:${PALETTE.text};">Blood sugar doesn't even show up on their scorecard.</strong>`)}
     ${p(`But every time your blood sugar spikes, your insulin spikes. And insulin is a vasoconstrictor — it narrows your blood vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop on the back end.`)}
-    ${p(`Three corners of one loop. Pull one, the other two pull back. <strong style="color:${PALETTE.text};">Fix the Triangle, the BP fixes itself.</strong>`, { margin: '0 0 28px' })}
+    ${p(`Three Pressures of one loop. Calm one, the other two follow. <strong style="color:${PALETTE.text};">Fix the Triangle, the BP fixes itself.</strong>`, { margin: '0 0 28px' })}
     ${clayBlock('The three "savory" foods that spike BP harder than candy', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">White bread / bagels.</strong> Hits like 5 teaspoons of pure sugar. Insulin spikes within 30 minutes.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Boxed cereal.</strong> 30-50% sugar by weight. A "healthy breakfast" cereal can be the same insulin hit as a glazed donut.</p>
@@ -849,8 +853,8 @@ const day10 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. The Anti-BP Plate.</strong> Half the plate non-starchy vegetables. Palm-sized protein. Thumb of fat. Small carb — and eat it <em>last</em>. Order matters more than calories. Same plate, carbs at the end, 30-40% smaller glucose spike. By the time the carb arrives, the stomach is partially emptied and GLP-1 is already up.</p>
     `)}
     ${p(`Pills manage output. Protocol fixes input. The protocol for this corner is two behaviors — walk after meals, eat carbs last. Both free. Both 14 days to start moving morning numbers.`, { margin: '0 0 28px' })}
-    ${clayBlock('Find out if blood sugar is YOUR corner', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz identifies your specific corner and returns the protocol that matches your type.</p>
+    ${clayBlock('Find out if Sugar Pressure is YOURS', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz identifies your dominant Pressure and returns the protocol that matches your type.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow — the single sentence I teach every patient. The one that takes the fear out of the protocol and makes the doctor conversation easy.`, { margin: '0 0 24px' })}
@@ -862,15 +866,15 @@ const day10 = {
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Yesterday — the cortisol corner. Today — the third corner of the Triangle.
+Yesterday — the Stress Pressure corner. Today — the third Pressure of the Triangle.
 
-BLOOD SUGAR RAISES BLOOD PRESSURE. HARDER THAN SALT DOES.
+SUGAR PRESSURE RAISES BLOOD PRESSURE. HARDER THAN SALT DOES.
 
 Most cardiologists don't measure A1c. They look at BP, cholesterol, maybe kidneys. Blood sugar doesn't even show up on their scorecard.
 
 But every time your blood sugar spikes, insulin spikes. Insulin is a vasoconstrictor — it narrows your vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop.
 
-Three corners of one loop. Pull one, the other two pull back. FIX THE TRIANGLE, THE BP FIXES ITSELF.
+Three Pressures of one loop. Calm one, the other two follow. FIX THE TRIANGLE, THE BP FIXES ITSELF.
 
 THE THREE "SAVORY" FOODS THAT SPIKE BP HARDER THAN CANDY:
 
@@ -923,7 +927,7 @@ const day11 = {
     ${p(`Here's what it means:`)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">Your medication does one thing well.</strong> It lowers the number on the cuff. That's it. That's what it was designed to do. That's what your doctor measures it by. That's what your insurance company is paying it to deliver.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Your medication does not fix what's making the number high in the first place.</strong> The vascular stiffness, the cortisol load, the insulin spike — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Your medication does not fix what's making the number high in the first place.</strong> Pipe Pressure (vascular stiffness), Stress Pressure (cortisol load), Sugar Pressure (insulin spike) — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.</p>
     `)}
     ${p(`Pills manage the <em>output</em> — the reading. Protocol fixes the <em>input</em> — the loop that produced the reading.`)}
     ${p(`The pills are fine. They're not the enemy. <strong style="color:${PALETTE.text};">But by themselves they're a fingers-in-the-dam strategy.</strong> The dam keeps leaking because nobody's fixing the water pressure upstream.`, { margin: '0 0 28px' })}
@@ -957,7 +961,7 @@ Here's what it means:
 
 YOUR MEDICATION DOES ONE THING WELL. It lowers the number on the cuff. That's what it was designed to do. That's what your doctor measures it by.
 
-YOUR MEDICATION DOES NOT FIX WHAT'S MAKING THE NUMBER HIGH. The vascular stiffness, the cortisol load, the insulin spike — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.
+YOUR MEDICATION DOES NOT FIX WHAT'S MAKING THE NUMBER HIGH. Pipe Pressure (vascular stiffness), Stress Pressure (cortisol load), Sugar Pressure (insulin spike) — those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.
 
 Pills manage the OUTPUT — the reading. Protocol fixes the INPUT — the loop that produced the reading.
 
@@ -1021,7 +1025,7 @@ const day12 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ Sleep onset 12:30 AM most nights ("can't fall asleep")</p>
     `)}
-    ${p(`When she took my quiz, her Triangle came back lit on two corners — <strong style="color:${PALETTE.text};">blood sugar</strong> primary, <strong style="color:${PALETTE.text};">cortisol</strong> secondary. Vascular tertiary. That's a very common pattern in stage-1 hypertension that "won't budge" on standard pills.`, { margin: '0 0 28px' })}
+    ${p(`When she took my quiz, her Triangle came back lit on two Pressures — <strong style="color:${PALETTE.text};">Sugar Pressure</strong> primary, <strong style="color:${PALETTE.text};">Stress Pressure</strong> secondary. Pipe Pressure tertiary. That's a very common pattern in stage-1 hypertension that "won't budge" on standard pills.`, { margin: '0 0 28px' })}
     ${bigQuote('The three things she changed.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. Store-bought bread → sprouted-grain bread (or none).</strong> Store bread = ~200-300mg sodium per slice AND a glucose-curve hit. Sprouted grain = lower of both. Two slices a day cleared out 600mg of sodium and a major insulin spike.</p>
@@ -1065,7 +1069,7 @@ DAY 1 BASELINE:
 → A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes
 → Sleep onset 12:30 AM most nights
 
-When she took my quiz, her Triangle came back: blood sugar PRIMARY, cortisol SECONDARY, vascular tertiary. Common pattern in stage-1 hypertension that won't budge on standard pills.
+When she took my quiz, her Triangle came back: SUGAR PRESSURE primary, STRESS PRESSURE secondary, PIPE PRESSURE tertiary. Common pattern in stage-1 hypertension that won't budge on standard pills.
 
 THE THREE THINGS SHE CHANGED:
 

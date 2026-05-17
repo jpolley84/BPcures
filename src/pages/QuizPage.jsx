@@ -22,18 +22,21 @@ const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triang
 const TOTAL_STEPS = 5;
 
 // Each option carries a `score` (0–3) that contributes to a 1–10 risk score.
-// Rebuilt 2026-05-10: Harry Dry + Kennedy specifics, 4th grade reading level,
-// no negatives. Each option uses a mirror line that lets the buyer recognize
-// herself (Hardy identity > goals). Scoring math unchanged.
+// Rebuilt 2026-05-16: routes to the "Three Pressures" — Stress Pressure
+// (cortisol), Sugar Pressure (insulin), Pipe Pressure (vascular). The
+// 5-archetype model is gone; every reader maps to one of three corners.
+// Harry Dry + Kennedy specifics, 4th grade reading level, no negatives.
+// Each option uses a mirror line that lets the buyer recognize herself
+// (Hardy identity > goals). Scoring math unchanged.
 const QUESTIONS = [
   {
-    id: 'concern',
-    question: "Which corner do you want to start with?",
+    id: 'pressure',
+    question: "Which Pressure feels strongest in your story?",
     subtitle: "Joel's map starts at the corner that moves the other two fastest.",
     options: [
-      { value: 'blood_pressure', label: '💗 Pressure', desc: 'The number on the cuff.', score: 1 },
-      { value: 'cortisol', label: '🌿 Stress', desc: 'Wired by day, awake at 3 AM.', score: 1 },
-      { value: 'blood_sugar', label: '🍯 Sugar', desc: 'Cravings, crashes, the slow weight gain.', score: 1 },
+      { value: 'stress', label: '🌿 Stress Pressure', desc: 'Wired by day. Awake at 3 AM. Your switch is stuck on.', score: 1 },
+      { value: 'sugar', label: '🍯 Sugar Pressure', desc: 'Cravings, crashes, belly weight that will not go.', score: 1 },
+      { value: 'pipes', label: '💗 Pipe Pressure', desc: 'Numbers stuck high for years. Maybe family history.', score: 1 },
       { value: 'all', label: '🔺 All three', desc: 'Joel, you pick — I trust the map.', score: 2 },
     ],
   },
@@ -82,19 +85,56 @@ const QUESTIONS = [
   },
 ];
 
-const CONCERN_COPY = {
-  blood_pressure: { label: 'Blood pressure', ital: 'blood pressure', score_label: 'BP Risk' },
-  cortisol: { label: 'Stress response', ital: 'cortisol', score_label: 'Cortisol Risk' },
-  blood_sugar: { label: 'Blood sugar', ital: 'glucose', score_label: 'Glucose Risk' },
-  all: { label: 'Whole system', ital: 'systems', score_label: 'Whole-System Risk' },
+// PRESSURE_COPY — display strings for each of the Three Pressures.
+// Replaces the old CONCERN_COPY (blood_pressure / cortisol / blood_sugar).
+// Internal product-category mapping kept in PRESSURE_TO_CATEGORY below so
+// existing Stripe links and products.json stay untouched.
+const PRESSURE_COPY = {
+  stress: {
+    label: 'Stress Pressure',
+    ital: 'Stress Pressure',
+    score_label: 'Stress Pressure',
+    teach: 'Your stress switch is stuck on — body squeezes the pipes all day.',
+  },
+  sugar: {
+    label: 'Sugar Pressure',
+    ital: 'Sugar Pressure',
+    score_label: 'Sugar Pressure',
+    teach: 'Sugar stays high — water sticks, vessel walls swell, BP climbs.',
+  },
+  pipes: {
+    label: 'Pipe Pressure',
+    ital: 'Pipe Pressure',
+    score_label: 'Pipe Pressure',
+    teach: 'Pipes got stiff — same blood, harder squeeze to push it through.',
+  },
+  all: {
+    label: 'All three Pressures',
+    ital: 'whole Triangle',
+    score_label: 'Triangle Risk',
+    teach: 'All three corners feed each other. Joel maps the loudest one first.',
+  },
+};
+
+// Internal map: quiz answer → existing products.json category key. Lets us
+// rename the customer-facing labels without touching Stripe links, related
+// slugs, or the product DB schema.
+const PRESSURE_TO_CATEGORY = {
+  stress: 'cortisol',
+  sugar: 'blood_sugar',
+  pipes: 'blood_pressure',
+  all: 'blood_pressure',
 };
 
 // Tips shown on the results page — 3 per category. Rebuilt 2026-05-10:
 // Harry Dry + Kennedy concrete promise-headlines, named sources, day-numbered
 // proof, curiosity-hook tails. Every headline leads with the dream not the
 // problem. Zero negatives in customer-facing copy.
+// RESULT_TIPS — keyed by Pressure id. Each tip set creates desire for the
+// matched kit (Pipe = BP Reset Kit, Stress = Cortisol kit, Sugar = Blood
+// Sugar kit). The `all` set covers the whole-Triangle reader.
 const RESULT_TIPS = {
-  blood_pressure: [
+  pipes: [
     {
       title: 'Trade 3 foods. Drop 7 points in 6 weeks.',
       body: 'Tufts University measured it: 7.2 mmHg systolic, in 6 weeks, from one simple swap. Your map names the 3 foods that hide in most kitchens — and the herb that does the heavy lifting.',
@@ -111,7 +151,7 @@ const RESULT_TIPS = {
       hook: 'Night two is the night your map starts working while you sleep.',
     },
   ],
-  cortisol: [
+  stress: [
     {
       title: 'Wind down 60 minutes. Wake up with calmer mornings.',
       body: 'A single 60-minute screen-free window in the evening shifts your morning cortisol more than any supplement. Joel built the routine for nurses on night shift — it works in any season of life.',
@@ -128,7 +168,7 @@ const RESULT_TIPS = {
       hook: 'The 4-7-8 count is on page one of your map.',
     },
   ],
-  blood_sugar: [
+  sugar: [
     {
       title: 'Eat in the right order. Cut spikes by 20 to 30 percent.',
       body: 'Start each meal with vegetables or fiber. Glucose rises slower, your insulin works less, and your post-meal crash flattens out. Most women have never been told this.',
@@ -282,8 +322,8 @@ function HeroCopy() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        You have a Triangle: <strong>pressure, stress, sugar.</strong> Three corners.
-        One loop. Fix the loop and your numbers come down. Your doctor signs off.
+        Your cuff number is the sum of <strong>three Pressures:</strong> Stress, Sugar, Pipes.
+        Three corners. One loop. Calm the loudest one and the other two follow. Your doctor signs off.
         The bottle goes in the drawer.
       </motion.p>
 
@@ -385,7 +425,11 @@ function QuizModule({ products }) {
     }
   }
 
-  const concern = answers.concern === 'all' ? 'blood_pressure' : (answers.concern ?? 'blood_pressure');
+  // pressure = customer-facing key (stress / sugar / pipes / all)
+  // concern = internal products.json category (cortisol / blood_sugar / blood_pressure)
+  // We translate so existing recommendForScore / upsellForConcern stay intact.
+  const pressure = answers.pressure ?? 'pipes';
+  const concern = PRESSURE_TO_CATEGORY[pressure] ?? 'blood_pressure';
   const riskScore = useMemo(() => computeRiskScore(answers), [answers]);
 
   async function submitEmail(e) {
@@ -403,7 +447,8 @@ function QuizModule({ products }) {
         body: JSON.stringify({
           email: email.trim(),
           name: name.trim(),
-          category: concern,
+          category: concern,   // internal products.json key (back-compat)
+          pressure,            // 2026-05-16: new Three-Pressures id (stress/sugar/pipes/all)
           riskScore,
           answers,
         }),
@@ -426,7 +471,7 @@ function QuizModule({ products }) {
     [products, concern]
   );
   const urgency = urgencyWindow(riskScore);
-  const concernCopy = CONCERN_COPY[answers.concern] ?? CONCERN_COPY.blood_pressure;
+  const pressureCopy = PRESSURE_COPY[pressure] ?? PRESSURE_COPY.pipes;
 
   return (
     <motion.div
@@ -562,7 +607,7 @@ function QuizModule({ products }) {
                   <div style={{ fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginTop: '0.1rem' }}>/ 10</div>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>{concernCopy.score_label} Score</div>
+                  <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>Your dominant corner · {pressureCopy.label}</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
                     {answers.medication === 'want_off'
                       ? 'Joel matched you with a map for the women walking down with their doctor.'
@@ -582,7 +627,11 @@ function QuizModule({ products }) {
               </h2>
 
               <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)', margin: '0.5rem 0 0.5rem' }}>
-                Your Triangle leans hardest on <strong>{concernCopy.label.toLowerCase()}</strong>. Joel's map starts there — because moving that corner moves the other two by week two.
+                Your Triangle leans hardest on <strong>{pressureCopy.label}</strong>. Joel's map starts there — because moving that corner moves the other two by week two.
+              </p>
+
+              <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.5rem' }}>
+                <em>{pressureCopy.teach}</em>
               </p>
 
               {/* Epiphany Bridge — Brunson belief break in Joel's voice, no negatives */}
@@ -592,7 +641,7 @@ function QuizModule({ products }) {
 
               {/* 3 Tips — each creates desire for the full protocol */}
               <div style={{ margin: '1.25rem 0', display: 'grid', gap: '0.75rem' }}>
-                {(RESULT_TIPS[answers.concern] || RESULT_TIPS.blood_pressure).map((tip, i) => (
+                {(RESULT_TIPS[pressure] || RESULT_TIPS.pipes).map((tip, i) => (
                   <div key={i} style={{
                     display: 'flex', gap: '0.85rem',
                     padding: '1rem 1.15rem',
@@ -877,7 +926,7 @@ function TriangleVisual() {
       <svg
         viewBox="0 0 600 320"
         style={{ width: '100%', maxWidth: 520, height: 'auto', display: 'block', margin: '0 auto' }}
-        aria-label="The BP Triangle — pressure, stress, sugar"
+        aria-label="The BP Triangle — Stress Pressure, Sugar Pressure, Pipe Pressure"
       >
         {/* Three sides of the triangle */}
         <motion.line
@@ -916,36 +965,44 @@ function TriangleVisual() {
           initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.8, ease: [0.22, 1, 0.36, 1] }} />
 
-        {/* Corner labels — Fraunces serif italics for editorial feel */}
+        {/* Corner labels — Fraunces serif italics for editorial feel.
+            2026-05-16: relabeled to The Three Pressures. Pipes (vascular)
+            sits at the top because it is the corner BP is measured at. */}
         <motion.text
           x="300" y="35" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.55 }}
-        >Pressure</motion.text>
+        >Pipe Pressure</motion.text>
         <motion.text
-          x="62" y="280" textAnchor="middle"
+          x="78" y="280" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.7 }}
-        >Stress</motion.text>
+        >Stress Pressure</motion.text>
         <motion.text
-          x="540" y="280" textAnchor="middle"
+          x="524" y="280" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.85 }}
-        >Sugar</motion.text>
+        >Sugar Pressure</motion.text>
 
-        {/* Center caption inside the triangle */}
+        {/* Center caption inside the triangle — BP is the outcome. */}
         <motion.text
-          x="300" y="175" textAnchor="middle"
-          style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', fill: 'var(--muted)', fontWeight: 500 }}
+          x="300" y="170" textAnchor="middle"
+          style={{ fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', fill: 'var(--muted)', fontWeight: 600 }}
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-        >One Loop</motion.text>
+          transition={{ duration: 0.8, delay: 1.0 }}
+        >Your BP</motion.text>
+        <motion.text
+          x="300" y="190" textAnchor="middle"
+          style={{ fontFamily: 'Fraunces, serif', fontSize: 13, fontStyle: 'italic', fill: 'var(--muted)', fontWeight: 400 }}
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 1.15 }}
+        >is the sum of three</motion.text>
       </svg>
       <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', fontStyle: 'italic', marginTop: '1rem', maxWidth: 480, marginLeft: 'auto', marginRight: 'auto' }}>
-        3 corners feed each other. Calm one and the other two follow.
+        Three Pressures feed each other. Calm one and the other two follow.
       </p>
     </div>
   );
@@ -973,15 +1030,18 @@ function PulseLine() {
    ------------------------------------------------------------------ */
 
 function RotatingConcerns() {
+  // 2026-05-16: marquee rewritten around the Three Pressures vocabulary.
+  // Mixes the customer-facing Pressure names with the underlying drivers
+  // a reader will recognize from their doctor's office.
   const line = (
     <>
-      Blood pressure <span className="dot">·</span>
-      <em>cortisol</em> <span className="dot">·</span>
-      Insulin resistance <span className="dot">·</span>
+      <em>Stress Pressure</em> <span className="dot">·</span>
+      Sugar Pressure <span className="dot">·</span>
+      <em>Pipe Pressure</em> <span className="dot">·</span>
+      Cortisol <span className="dot">·</span>
+      <em>Insulin</em> <span className="dot">·</span>
+      Arterial stiffness <span className="dot">·</span>
       Sleep <span className="dot">·</span>
-      <em>HRV</em> <span className="dot">·</span>
-      Vagal tone <span className="dot">·</span>
-      Polypharmacy <span className="dot">·</span>
       <em>Herbs</em> <span className="dot">·</span>
     </>
   );
@@ -1077,25 +1137,25 @@ function NursesNote() {
    ------------------------------------------------------------------ */
 
 function HowItWorks() {
-  // 2026-05-10 v2: Joel said the 9-step Path felt like too much for the
-  // landing page. Stick to Triangle on the site; full Path lives in the
-  // email drip. This section now teaches the Triangle — three corners,
-  // what each one does, what calms it — in 4th-grade plain words.
+  // 2026-05-16: The Three Pressures replace the old Pressure/Stress/Sugar
+  // corners. BP is the OUTCOME — the cuff number — not a corner. The three
+  // CORNERS that drive that number are the Three Pressures: Stress, Sugar,
+  // Pipes. Each is taught in 4th-grade plain words with what calms it.
   const corners = [
     {
       n: '01',
-      t: 'Pressure',
-      d: 'The number on the cuff. Calmed by water, the walk, hibiscus tea, and the right form of magnesium.',
+      t: 'Stress Pressure',
+      d: 'Your stress switch is stuck on — body squeezes the pipes all day. Calmed by morning sunlight, hours before midnight, and 25 things to be grateful for.',
     },
     {
       n: '02',
-      t: 'Stress',
-      d: 'The wired-tired hum. Calmed by morning sunlight, hours before midnight, and 25 things to be grateful for.',
+      t: 'Sugar Pressure',
+      d: 'Sugar stays high — water sticks, vessel walls swell, BP climbs. Calmed by two real meals, no snacks between, and a 10-minute walk after each.',
     },
     {
       n: '03',
-      t: 'Sugar',
-      d: 'The spike and crash that pulls the cuff up. Calmed by two real meals, no snacks between, and a 10-minute walk after each.',
+      t: 'Pipe Pressure',
+      d: 'Pipes got stiff — same blood, harder squeeze to push it through. Calmed by water, the walk, hibiscus tea, and the right form of magnesium.',
     },
   ];
 
@@ -1103,14 +1163,14 @@ function HowItWorks() {
     <section className="section surface-paper">
       <div className="shell">
         <div className="section-label">
-          <span className="num">03 · The Triangle</span>
+          <span className="num">03 · The Three Pressures</span>
           <span className="line" />
         </div>
         <h2 className="display-m" style={{ maxWidth: '20ch', margin: '0 0 1rem' }}>
-          Three corners. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
+          Three Pressures. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
         </h2>
         <p className="lede" style={{ maxWidth: '52ch', margin: '0 0 clamp(2.5rem, 5vw, 4rem)' }}>
-          Your blood pressure leans on two other corners. Calm all three at once and your numbers come home. 1,247 women are on the path right now.
+          Your cuff number is the sum of three Pressures — Stress, Sugar, and Pipes. Calm the loudest one and the other two follow. 1,247 women are on the path right now.
         </p>
 
         <ul className="ruled-list">

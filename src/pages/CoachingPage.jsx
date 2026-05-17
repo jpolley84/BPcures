@@ -152,7 +152,7 @@ const FAQ = [
   },
   {
     q: 'Is this medical care?',
-    a: 'No. This is RN-led naturopathic coaching alongside your existing doctor. We don\'t prescribe, diagnose, or replace medical care. We rebuild the inputs — vascular, cortisol, blood sugar — that your medications are managing the outputs of.',
+    a: 'No. This is RN-led naturopathic coaching alongside your existing doctor. We don\'t prescribe, diagnose, or replace medical care. We rebuild the inputs — the Three Pressures (Pipe, Stress, Sugar) — that your medications are managing the outputs of.',
   },
 ];
 
@@ -203,7 +203,7 @@ export default function CoachingPage() {
             Doctor-cleared independence in 90 days.
           </h1>
           <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: 1.55, marginBottom: 8 }}>
-            Two RNs. Weekly 1:1s. Daily access. One protocol — vascular, cortisol, blood sugar — built for adults whose health gave up before they did.
+            Two RNs. Weekly 1:1s. Daily access. One protocol — the Three Pressures (Pipe, Stress, Sugar) — built for adults whose health gave up before they did.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '14px', margin: 0 }}>
             <strong style={{ color: '#B85A36' }}>{SLOTS_REMAINING} of {SLOTS_TOTAL} founding slots remaining.</strong>&nbsp; Application reviewed personally. No buy button.

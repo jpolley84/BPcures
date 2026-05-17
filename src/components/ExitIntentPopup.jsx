@@ -82,7 +82,7 @@ export default function ExitIntentPopup() {
                 color: 'var(--muted)', fontSize: '0.95rem', lineHeight: 1.6,
                 marginBottom: '1.75rem', maxWidth: '28ch', marginInline: 'auto',
               }}>
-                Vascular, cortisol, or blood sugar — find your root cause and get a personalized protocol.
+                Pipe Pressure, Stress Pressure, or Sugar Pressure — find which of the Three Pressures is driving your numbers and get a personalized protocol.
               </p>
 
               <button

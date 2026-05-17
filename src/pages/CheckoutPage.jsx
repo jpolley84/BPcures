@@ -451,7 +451,7 @@ const CheckoutPage = () => {
             Take the free 90-second BP Triangle Quiz first.
           </h3>
           <p className="mb-5 max-w-[440px] mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.55' }}>
-            Find out which corner of the Triangle is driving YOUR numbers — vascular, cortisol, or blood sugar. RN-built. Free. Instant results.
+            Find out which of the Three Pressures is driving YOUR numbers — Pipe Pressure, Stress Pressure, or Sugar Pressure. RN-built. Free. Instant results.
           </p>
           <Link
             to="/quiz"
