@@ -34,6 +34,7 @@ const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 // rebrand SEO content hub.
 const BlogListPage = lazy(() => import('./pages/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
+const AboutJoelPage = lazy(() => import('./pages/AboutJoelPage'));
 
 // Subdomain → page map. When the SPA boots on a vanity subdomain like
 // `wakita.bpquiz.com`, the root route renders that client's intake instead of
@@ -117,6 +118,13 @@ function App() {
           <Route path="/learn/:slug" element={<Navigate to="/blog/:slug" replace />} />
           <Route path="/articles" element={<Navigate to="/blog" replace />} />
           <Route path="/articles/:slug" element={<Navigate to="/blog/:slug" replace />} />
+
+          {/* Author authority page — E-E-A-T anchor for medical SEO. Every
+              blog post byline links here. Schema covers Person +
+              MedicalBusiness so Google attributes article authorship
+              correctly. */}
+          <Route path="/about/joel" element={<SiteLayout><AboutJoelPage /></SiteLayout>} />
+          <Route path="/about" element={<Navigate to="/about/joel" replace />} />
 
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />

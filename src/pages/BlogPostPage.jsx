@@ -71,7 +71,9 @@ export default function BlogPostPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             style={{ marginBottom: 'clamp(2rem, 4vw, 3rem)' }}
           >
-            <span className="kicker kicker-dot">Joel Polley, RN · The Blood Pressure Guy</span>
+            <Link to="/about/joel" className="kicker kicker-dot" style={{ textDecoration: 'none', cursor: 'pointer' }}>
+              Joel Polley, RN · The Blood Pressure Guy
+            </Link>
             <h1 className="display-l" style={{ margin: '1rem 0 1.5rem', lineHeight: 1.05 }}>
               {post.title}
             </h1>
