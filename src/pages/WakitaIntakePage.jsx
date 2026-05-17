@@ -1,523 +1,697 @@
 // src/pages/WakitaIntakePage.jsx
 //
-// Personalized pre-call intake for Wakita Cirillo Browne ahead of her
-// 2026-05-13 12:00 PM coaching call with Joel Polley, RN.
+// Week 1 coaching deep-dive intake for Wakita Cirillo Browne.
+// Sunday 2026-05-17 — building on the May 13 initial intake. Joel has her
+// chart, supplement list, and Bio Life status. This second intake digs
+// deeper into the levers we couldn't reach in 60 minutes the first time:
+//
+//   1. A real picture of what she eats every day
+//   2. The 5 main GI triggers — gluten, dairy, meat, alcohol, sugar — frequency
+//      and intensity, so we can identify causes beyond stress
+//   3. Hormone-dysfunction symptoms in everyday-nurse language
+//   4. Fasting + detox openness + her longest water fast
+//   5. Daily habits + lifestyle (sleep, movement, sun, screens)
+//   6. Partner relationship + emotional weight (security 1-10, unforgiveness)
+//   7. Coaching cadence — is Monday 8 PM ET a sustainable weekly slot
+//   8. This week's focus + questions for Joel
 //
 // Reachable at:
 //   - https://wakita.bpquiz.com (subdomain — see App.jsx SUBDOMAIN_PAGE map)
-//   - https://bpquiz.com/wakita (fallback path, always works)
+//   - https://bpquiz.com/wakita (fallback path)
 //
-// Built from her chart: Orlando Health Dec 23 2025 – Jan 3 2026 (EGD/EUS/
-// MRI/HIDA/CT/colonoscopy/tumor markers/gastric emptying), Mexico Bio Life
-// nano scan 2026-05-10, and her hand-written supplement list.
-//
-// Click-driven: 90%+ of questions are radio buttons or multi-select chips
-// so a 60-year-old can finish in <10 minutes without thumb fatigue. Free
-// text reserved for numbers (BP, weight) and 3 questions where it matters.
-//
-// Posts answers to /api/wakita-intake. KV-stored; emails Joel a structured
-// summary + a branded PDF attachment. Both Joel and Wakita can download
-// the PDF after submit via /api/wakita-intake-pdf?id=<intakeId>.
+// Same token-gating + email-Joel-with-PDF pattern as the May 13 intake.
 
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, AlertCircle, Download } from 'lucide-react';
 
 // ============================================================
-// Field schema — almost entirely click-driven.
+// Field schema — almost entirely click-driven for thumb friendliness.
 // Field types:
 //   radio       — single-choice, value = string
 //   multi       — multi-select chips, value = array of strings
-//   short_text  — small input for numbers (BP, weight, height)
+//   short_text  — small input for numbers (BP, weight)
 //   textarea    — free text (only where the answer can't be canned)
 // ============================================================
 
 const SECTIONS = [
   // ──────────────────────────────────────────────────────────
   {
-    id: 'vitals',
-    title: 'Quick vitals',
+    id: 'checkin',
+    title: 'Quick check-in',
     intro:
-      "Three numbers that anchor everything. None of these are in your Orlando chart.",
+      "Just the numbers — same anchors as last week so we can see the trend.",
     fields: [
-      { id: 'bp_recent', label: 'Your most recent home BP reading', type: 'short_text', placeholder: 'e.g., 138/86', required: true },
+      { id: 'bp_recent', label: 'Your most recent home BP reading', type: 'short_text', placeholder: 'e.g., 134/82', required: true },
       {
-        id: 'bp_typical',
-        label: "What does your BP usually run?",
+        id: 'bp_trend',
+        label: 'Compared to last week, your BP is…',
         type: 'radio',
-        options: [
-          'Always under 130/80',
-          '120s–130s / 70s–80s',
-          '130s–140s / 80s–90s',
-          '140s–150s / 80s–95s',
-          '150s+ / 90s+',
-          "I don't really track it",
-        ],
+        options: ['Definitely lower', 'A little lower', 'About the same', 'A little higher', 'I haven\'t been tracking'],
       },
-      {
-        id: 'bp_meds',
-        label: 'Any prescription blood-pressure medications right now?',
-        type: 'radio',
-        options: ['None', '1 medication', '2 medications', '3 or more', 'I just stopped one'],
-      },
-      { id: 'bp_meds_names', label: 'If yes — what are they (just names if you remember)?', type: 'short_text', placeholder: 'optional' },
       { id: 'weight', label: 'Current weight', type: 'short_text', placeholder: 'e.g., 168 lb' },
-      { id: 'height', label: 'Height', type: 'short_text', placeholder: "e.g., 5'5\"" },
+      {
+        id: 'weight_trend',
+        label: 'Weight since last week',
+        type: 'radio',
+        options: ['Down a couple pounds', 'Down a little', 'About the same', 'Up a little', 'Up a couple pounds'],
+      },
+      {
+        id: 'overall_feeling',
+        label: 'Overall, since last Tuesday\'s call, how are you feeling?',
+        type: 'radio',
+        options: ['Much better', 'A little better', 'About the same', 'A little worse', 'Worse'],
+        required: true,
+      },
     ],
   },
 
   // ──────────────────────────────────────────────────────────
   {
-    id: 'symptoms_now',
-    title: 'How you feel right now',
+    id: 'symptoms_progress',
+    title: 'Symptom progress this week',
     intro:
-      "December's workup found mild gastritis, a benign liver hemangioma, a calcified fibroid, and rapid gastric emptying. Tell me what your body is actually doing today.",
+      "Click what's actually happening — no judgment if nothing changed yet.",
     fields: [
       {
         id: 'pain_status',
-        label: 'The abdominal pain that started this workup — where is it now?',
+        label: 'Abdominal pain right now',
         type: 'radio',
-        options: ['Completely gone', 'A lot better', 'About the same', 'Worse', 'Comes and goes'],
+        options: ['Gone', 'A lot better', 'About the same', 'Worse', 'Comes and goes'],
       },
       {
-        id: 'pain_triggers',
-        label: 'When pain shows up, what triggers it? (pick all that apply)',
-        type: 'multi',
-        options: ['After eating', 'On an empty stomach', 'Certain foods', 'Stress', 'Lying down', 'No clear pattern'],
-      },
-      {
-        id: 'pain_quality',
-        label: 'What does the pain feel like? (pick all that apply)',
-        type: 'multi',
-        options: ['Burning', 'Gnawing', 'Sharp / stabbing', 'Pressure / heavy', 'Fullness / bloated', 'Cramping'],
-      },
-      {
-        id: 'melena_when',
-        label: 'Black tarry stools (melena) — when was the last episode?',
+        id: 'reflux_freq',
+        label: 'Heartburn / reflux / sour taste this week',
         type: 'radio',
-        options: ["Never had it", 'Once, before December', 'During the December workup', 'Within the last month', 'This week or yesterday'],
+        options: ['None', '1–2 times this week', '3–5 times', 'Daily', 'Multiple times a day'],
       },
       {
-        id: 'reflux',
-        label: 'Heartburn, acid reflux, sour taste — how often?',
+        id: 'bloating_freq',
+        label: 'Bloating or gas after meals this week',
         type: 'radio',
-        options: ['Never', 'Less than weekly', '1–3 times a week', 'Daily', 'Multiple times a day'],
-      },
-      {
-        id: 'bloating',
-        label: 'Bloating, gas, fullness after meals?',
-        type: 'radio',
-        options: ['Never', 'Occasionally', 'After most meals', 'All day, every day'],
+        options: ['None', 'A few times', 'After most meals', 'All day every day'],
       },
       {
         id: 'bowels_freq',
-        label: 'How often do you have a bowel movement?',
+        label: 'Bowel movements this week',
         type: 'radio',
-        options: ['Multiple times a day', 'Once a day', 'Every other day', '2–3 times a week', 'Less than weekly'],
+        options: ['Multiple times a day', 'Once a day', 'Every other day', '2–3 times all week', 'Less than that'],
       },
       {
-        id: 'bowels_form',
-        label: 'When you do go — what does it usually look like? (pick all that apply)',
-        type: 'multi',
-        options: ['Hard pellets', 'Formed and easy', 'Soft / loose', 'Urgent / runny', 'Varies a lot'],
-      },
-      {
-        id: 'straining',
-        label: 'Do you strain to go?',
+        id: 'energy_pattern',
+        label: 'Energy through the day this week',
         type: 'radio',
-        options: ['Never', 'Sometimes', 'Most days', 'Every time'],
+        options: ['Steady all day', 'Strong morning, afternoon crash', 'Slow morning, better later', 'Tired most of the day', 'Up and down'],
       },
       {
-        id: 'energy',
-        label: 'Energy through the day looks like…',
+        id: 'sleep_quality',
+        label: 'Sleep quality this week',
         type: 'radio',
-        options: ['Steady all day', 'Strong morning, crash afternoon', 'Slow morning, better later', 'Tired most of the day', 'Up and down — unpredictable'],
-      },
-      {
-        id: 'sleep_hours',
-        label: 'Average hours of sleep per night',
-        type: 'radio',
-        options: ['Less than 5', '5–6', '6–7', '7–8', 'More than 8'],
-      },
-      {
-        id: 'sleep_wakes',
-        label: 'Do you wake up during the night?',
-        type: 'radio',
-        options: ['Sleep through', 'Wake 1×', 'Wake 2–3×', 'Wake 4+ times', "Often can't get back to sleep"],
-      },
-      {
-        id: 'snoring',
-        label: 'Snoring or breathing pauses at night?',
-        type: 'radio',
-        options: ['No / partner says no', 'Some snoring', 'Loud snoring', 'Diagnosed sleep apnea (on CPAP or other)', "Don't know"],
-      },
-      {
-        id: 'mood',
-        label: 'In the last 3 months you have felt… (pick all that apply)',
-        type: 'multi',
-        options: ['Mostly fine', 'Anxious', 'Sad / low', 'Irritable', 'Foggy / forgetful', 'Lonely', 'Overwhelmed'],
-      },
-      {
-        id: 'other_symptoms',
-        label: 'Anything else bothering you? (pick all that apply)',
-        type: 'multi',
-        options: ['Joint pain', 'Headaches', 'Skin issues', 'Vision changes', 'Hair loss / thinning', 'Hot flashes', 'Cold hands / feet', 'Numbness / tingling', 'None of these'],
+        options: ['Best sleep I\'ve had in a while', 'Good — most nights', 'OK — some good, some bad', 'Poor — most nights restless', 'Awful'],
       },
     ],
   },
 
   // ──────────────────────────────────────────────────────────
   {
-    id: 'meds',
-    title: 'Medications from the hospital',
+    id: 'diet_typical_day',
+    title: 'A typical day of eating — walk me through it',
     intro:
-      'On 12/31 you walked out with 5 prescriptions. Tell me what you actually took — no judgment.',
+      "This is the section I most need. Be honest — I can't help you if I don't know what's actually going in. Pick everything that's on the table for you on a normal day, not just yesterday.",
     fields: [
       {
-        id: 'ppi_status',
-        label: 'Pantoprazole 40 mg twice a day (Protonix) — what are you doing with it?',
+        id: 'wake_time',
+        label: 'About what time do you wake up?',
         type: 'radio',
-        options: ['Taking both doses as prescribed', 'Taking 1× a day', 'Stopped taking it', 'Never started it', 'Take it sometimes'],
+        options: ['Before 5 AM', '5–6 AM', '6–7 AM', '7–8 AM', '8–9 AM', 'After 9 AM'],
+      },
+      {
+        id: 'first_thing',
+        label: 'First thing that goes in your mouth in the morning',
+        type: 'multi',
+        options: ['Water', 'Coffee', 'Tea', 'Lemon water', 'Bio Life shake', 'Supplements with water', 'Breakfast right away', 'Nothing for a few hours'],
         required: true,
       },
       {
-        id: 'ppi_side_effects',
-        label: 'Any side effects from the Protonix? (pick all that apply)',
-        type: 'multi',
-        options: ['None', 'Headaches', 'Gas / bloating', 'Loose stools', 'Constipation', 'Brain fog', 'Joint aches'],
-      },
-      {
-        id: 'bentyl_status',
-        label: 'Dicyclomine 20 mg twice a day (Bentyl, 10-day course) — status?',
-        type: 'radio',
-        options: ['Finished the full 10 days', 'Still taking', 'Stopped early — side effects', 'Never started', "Don't remember"],
-      },
-      {
-        id: 'nsaid_use_kinds',
-        label: 'In the last year, which of these have you taken? (pick all that apply)',
-        type: 'multi',
-        options: ['Ibuprofen / Advil / Motrin', 'Aleve / naproxen', 'Aspirin (daily)', 'Aspirin (occasional)', 'Celebrex', 'Other prescription NSAID', "None of these"],
-        required: true,
-      },
-      {
-        id: 'nsaid_frequency',
-        label: 'How often did you take them?',
-        type: 'radio',
-        options: ['Never', 'A few times the whole year', 'Once or twice a month', 'Weekly', 'Almost daily'],
-      },
-      {
-        id: 'tylenol_freq',
-        label: 'Tylenol (acetaminophen) — how often?',
-        type: 'radio',
-        options: ['Never', 'Occasionally', '1–3× per week', 'Daily', 'Multiple times a day'],
-      },
-      {
-        id: 'benadryl_itching',
-        label: 'You were prescribed Benadryl for itching — is the itching still happening?',
-        type: 'radio',
-        options: ["No itching anymore", 'A little, mild', 'Yes, regularly', 'Comes and goes', 'Never had itching'],
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'biolife',
-    title: 'The Bio Life regimen from Mexico',
-    intro:
-      "Six bottles in your photo: Magnesium, Selenium Plus, Plant Protein, Hepa D-Tox, Curcumin Plus, Chaparro Amargo — plus a pink powder. Quick check-in.",
-    fields: [
-      {
-        id: 'biolife_started',
-        label: 'Have you started the Bio Life protocol?',
-        type: 'radio',
-        options: ['Not yet', 'Day 1 or 2', 'Day 3–5', 'Day 6–10', 'More than 10 days in'],
-      },
-      {
-        id: 'biolife_response',
-        label: 'Since starting Bio Life, you feel…',
-        type: 'radio',
-        options: ['Much better', 'A little better', 'About the same', 'A little worse', 'Haven\'t started yet'],
-      },
-      {
-        id: 'biolife_side_effects',
-        label: 'Any side effects from the Bio Life supplements? (pick all that apply)',
-        type: 'multi',
-        options: ['None so far', 'Looser stools', 'Nausea', 'Headache', 'More energy', 'Sleep changes', 'Other'],
-      },
-      {
-        id: 'biolife_chaparro_reaction',
-        label: 'The Chaparro Amargo (bitter herb taken with each meal) — your gut\'s reaction?',
-        type: 'radio',
-        options: ['No reaction at all', 'Mild stomach discomfort', 'Stronger bowel movements', 'Nausea', "Haven't started this one"],
-      },
-      { id: 'biolife_selenium_dose', label: 'If you can grab the Selenium Plus bottle — micrograms (mcg) per serving?', type: 'short_text', placeholder: 'e.g., 200 mcg per teaspoon' },
-      { id: 'biolife_pink_powder', label: 'What\'s the pink powder? (label name)', type: 'short_text', placeholder: 'optional' },
-      {
-        id: 'mexico_findings_told',
-        label: 'What did the Mexico clinic tell you they found? (pick all that apply)',
-        type: 'multi',
-        options: ['Liver hemangioma', 'Liver / hepatic cysts', 'Gallbladder dyskinesia / sluggish bile', 'Constipation / colon issues', 'Toxins / heavy metals', 'Parasites', 'Hormone imbalance', "Don't fully remember"],
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'existing_supplements',
-    title: 'Your existing supplement list',
-    intro:
-      "You sent me 18. Check the ones you're STILL taking daily. Anything you've already stopped, just leave unchecked.",
-    fields: [
-      {
-        id: 'supps_still_taking',
-        label: 'Which of these am I still taking? (check all that apply)',
+        id: 'breakfast_foods',
+        label: 'Breakfast — pick everything you eat (on different days is fine)',
         type: 'multi',
         options: [
-          'Melatonin', 'Magnesium (separate from Bio Life)', 'Inositol', 'Vitamin C',
-          "Women's multivitamin", 'Liposomal turmeric (separate from Bio Life)', 'SAMe', 'B6',
-          'Potassium gluconate', '60 billion probiotic', 'Vitamin E', 'Areds 2 (eye)',
-          'Calcium', 'Omega 3 EPA & DHA', 'Spirulina', 'Chlorella',
-          'Irish Sea Moss', 'Moringa',
+          'Skip breakfast entirely',
+          'Just coffee or tea',
+          'Toast / bagel / English muffin',
+          'Cereal (boxed)',
+          'Oatmeal or hot cereal',
+          'Eggs',
+          'Bacon / sausage / ham',
+          'Yogurt',
+          'Fruit',
+          'Smoothie / protein shake',
+          'Pancakes / waffles / French toast',
+          'Grits or hash browns',
+          'Leftovers from dinner',
+        ],
+        required: true,
+      },
+      {
+        id: 'lunch_foods',
+        label: 'Lunch — pick everything that shows up in a normal week',
+        type: 'multi',
+        options: [
+          'Salad with protein',
+          'Salad with no protein',
+          'Sandwich on bread',
+          'Wrap or tortilla',
+          'Soup',
+          'Leftovers',
+          'Chicken + veg + starch',
+          'Fish + veg + starch',
+          'Fast food / takeout',
+          'Just a snack — nuts, fruit, cheese',
+          'Smoothie or shake',
+          'Skip lunch',
+        ],
+        required: true,
+      },
+      {
+        id: 'dinner_foods',
+        label: 'Dinner — pick everything that shows up in a normal week',
+        type: 'multi',
+        options: [
+          'Chicken + veg + starch',
+          'Fish or seafood',
+          'Beef (steak, ground, etc.)',
+          'Pork (chops, ribs, etc.)',
+          'Pasta',
+          'Pizza',
+          'Rice + beans / rice + protein',
+          'Soup or stew',
+          'Big salad as the meal',
+          'Vegetarian meal (no meat)',
+          'Eat out / takeout',
+          'Skip dinner',
+        ],
+        required: true,
+      },
+      {
+        id: 'snacks',
+        label: 'Snacks between meals (pick all that apply)',
+        type: 'multi',
+        options: [
+          'Don\'t really snack',
+          'Fruit',
+          'Nuts / seeds',
+          'Cheese or cheese sticks',
+          'Crackers / chips / pretzels',
+          'Granola bar / protein bar',
+          'Yogurt',
+          'Vegetables + dip',
+          'Cookies / pastries / sweets',
+          'Ice cream',
+          'Popcorn',
+          'Trail mix',
         ],
       },
       {
-        id: 'supps_other',
-        label: 'Anything ELSE you take that I don\'t already know about? (other prescriptions, herbs, teas)',
-        type: 'textarea',
-        rows: 3,
-        placeholder: 'optional',
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'diet',
-    title: 'A typical day of eating',
-    intro:
-      "Your BUN of 5 told me you're under-eating protein. Glucose of 109 told me carbs are doing some work. Click through what a normal day looks like.",
-    fields: [
-      {
-        id: 'breakfast',
-        label: 'Breakfast usually is… (pick all that apply)',
+        id: 'drinks_day',
+        label: 'Drinks throughout the day (pick all that apply)',
         type: 'multi',
-        options: ['Skip / coffee only', 'Toast or bread', 'Cereal', 'Eggs', 'Bio Life protein shake', 'Fruit', 'Oatmeal', 'Yogurt', 'Something heartier'],
+        options: [
+          'Plain water',
+          'Sparkling / mineral water',
+          'Coffee with cream / sugar',
+          'Black coffee',
+          'Tea (sweetened)',
+          'Tea (unsweetened)',
+          'Diet soda',
+          'Regular soda',
+          'Fruit juice',
+          'Milk',
+          'Plant milk (almond, oat, soy)',
+          'Sports drinks',
+          'Smoothies',
+          'Alcohol',
+        ],
       },
       {
-        id: 'lunch',
-        label: 'Lunch usually is…',
-        type: 'multi',
-        options: ['Salad', 'Sandwich', 'Leftovers', 'Soup', 'Fast food / takeout', 'Smoothie / shake', 'Light snack only'],
-      },
-      {
-        id: 'dinner',
-        label: 'Dinner usually is…',
-        type: 'multi',
-        options: ['Chicken or fish + sides', 'Beef or pork + sides', 'Pasta or rice based', 'Soup or stew', 'Vegetarian meal', 'Skip dinner', 'Eat out / takeout'],
-      },
-      {
-        id: 'water',
-        label: 'Glasses of water per day',
+        id: 'water_glasses',
+        label: 'Glasses of plain water per day (roughly)',
         type: 'radio',
         options: ['Fewer than 2', '2–4', '4–6', '6–8', 'More than 8'],
       },
       {
-        id: 'coffee',
-        label: 'Cups of coffee per day',
+        id: 'last_food_time',
+        label: 'About what time do you eat your LAST food of the day?',
         type: 'radio',
-        options: ['None', '1 cup', '2 cups', '3 cups', '4 or more'],
+        options: ['Before 6 PM', '6–7 PM', '7–8 PM', '8–9 PM', '9–10 PM', 'After 10 PM'],
       },
       {
-        id: 'alcohol',
-        label: 'Alcohol — honest answer',
+        id: 'eating_window',
+        label: 'From first food in the morning to last food at night, how many hours is your eating window?',
         type: 'radio',
-        options: ['Never drink', 'Special occasions only', '1–2 drinks a week', '3–7 drinks a week', 'A drink most days'],
+        options: ['Less than 8 hours', '8–10 hours', '10–12 hours', '12–14 hours', 'More than 14 hours', 'I\'m not sure'],
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'gi_triggers',
+    title: 'GI triggers — the 5 big ones',
+    intro:
+      "Stress isn't the only cause of GI pain. Five food categories are the usual suspects. Be honest about how often each one shows up — \"a few times a week\" is real data, not a confession.",
+    fields: [
+      {
+        id: 'gluten_freq',
+        label: 'GLUTEN — bread, pasta, cereal, crackers, pastries, tortillas, breaded foods. How often?',
+        type: 'radio',
+        options: ['Never / strictly avoid', '1–2 times a week', '3–5 times a week', 'Daily — once a day', 'Daily — at multiple meals'],
         required: true,
       },
       {
-        id: 'sweets',
-        label: 'Sweets, soda, juice, dessert — how often?',
-        type: 'radio',
-        options: ['Rarely', 'Once a week', 'A few times a week', 'Daily', 'Multiple times a day'],
-      },
-      {
-        id: 'food_triggers',
-        label: 'Any foods you\'re pretty sure bother you? (pick all that apply)',
+        id: 'gluten_after',
+        label: 'After you eat something with gluten, do you notice any of these?',
         type: 'multi',
-        options: ['Spicy', 'Fried', 'Gluten / bread / pasta', 'Dairy', 'Tomato / acidic', 'Coffee', 'Raw vegetables', 'Onion or garlic', 'Nothing I can pin down'],
+        options: ['No noticeable effect', 'Bloating', 'Gas', 'Cramps', 'Loose stools', 'Constipation', 'Brain fog / sleepy', 'Joint aches', 'Skin breakouts', 'Heartburn', "I've never paid attention"],
       },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'lifestyle',
-    title: 'Lifestyle + stress',
-    intro:
-      "The cortisol corner of the Triangle. Click through.",
-    fields: [
       {
-        id: 'movement',
-        label: 'How active are you in a typical week?',
+        id: 'dairy_freq',
+        label: 'DAIRY — milk, cheese, yogurt, ice cream, cream in coffee, butter. How often?',
         type: 'radio',
-        options: ['Mostly sedentary', 'Light walking 1–2× a week', 'Walk most days', 'Gym or class 1–3× a week', 'Active most days'],
-      },
-      {
-        id: 'stress',
-        label: 'On a 1–10 scale, your stress level the last 3 months has been…',
-        type: 'radio',
-        options: ['1–3 (low)', '4–5 (medium-low)', '6–7 (medium-high)', '8–9 (high)', '10 (constantly overwhelmed)'],
-      },
-      {
-        id: 'stress_carries',
-        label: 'Where does your body carry stress? (pick all that apply)',
-        type: 'multi',
-        options: ['Chest tightness', 'Jaw / teeth grinding', 'Stomach / gut', 'Shoulders / neck', 'Headache', 'Sleep loss', 'Skin breakouts', 'I shut down emotionally'],
-      },
-      {
-        id: 'sun_time',
-        label: 'Time outside / direct sunlight on a typical day',
-        type: 'radio',
-        options: ['Very little — mostly indoors', '15–30 min', '30–60 min', 'More than 1 hour'],
-      },
-      {
-        id: 'caregiver',
-        label: 'Caregiver responsibilities at home',
-        type: 'multi',
-        options: ['Just me — no caregiving', 'Spouse / partner', 'Aging parents', 'Adult children', 'Grandkids', 'Pet(s)'],
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'family_hx',
-    title: 'Family history',
-    intro: 'Quick taps — what runs in your family.',
-    fields: [
-      { id: 'fam_htn', label: 'High blood pressure in family', type: 'radio', options: ['No', 'Yes — parents or siblings', 'Yes — grandparents or aunts/uncles', "Don't know"] },
-      { id: 'fam_diabetes', label: 'Type 2 diabetes or pre-diabetes', type: 'radio', options: ['No', 'Yes — parents or siblings', 'Yes — grandparents or aunts/uncles', "Don't know"] },
-      { id: 'fam_cardiac', label: 'Heart attack, stroke, or sudden cardiac death', type: 'radio', options: ['No', 'Yes — before age 65', 'Yes — after age 65', "Don't know"] },
-      { id: 'fam_cancer', label: 'Cancer in family', type: 'multi', options: ['None I know of', 'Breast', 'Colon', 'Pancreatic', 'Liver', 'Prostate', 'Lung', 'Other'] },
-      { id: 'fam_autoimmune', label: 'Autoimmune conditions', type: 'multi', options: ['None', 'Thyroid (Hashimoto / Graves)', 'Lupus', 'Rheumatoid arthritis', 'Celiac', 'Type 1 diabetes', "Don't know"] },
-      { id: 'fam_gi', label: 'GI conditions in family', type: 'multi', options: ['None', "Crohn's or colitis", 'Colon cancer', 'Stomach cancer or ulcers', 'IBS', "Don't know"] },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'history',
-    title: 'A few personal-history checks',
-    intro:
-      'Things the Orlando workup either missed or that I need from you directly.',
-    fields: [
-      {
-        id: 'pcp_status',
-        label: "Your chart literally says 'PCP: None.' Status?",
-        type: 'radio',
-        options: ['I have a regular PCP I see annually', 'I had one but haven\'t seen in a year+', "I don't currently have a PCP", 'I just use specialists when I need to'],
+        options: ['Never / strictly avoid', '1–2 times a week', '3–5 times a week', 'Daily — once a day', 'Daily — at multiple meals'],
         required: true,
       },
       {
-        id: 'menopause',
+        id: 'dairy_after',
+        label: 'After dairy, do you notice any of these?',
+        type: 'multi',
+        options: ['No noticeable effect', 'Bloating', 'Gas', 'Cramps', 'Loose stools', 'Constipation', 'Sinus / phlegm', 'Skin breakouts', 'Heartburn', "I've never paid attention"],
+      },
+      {
+        id: 'red_meat_freq',
+        label: 'RED MEAT — beef, pork, lamb (steaks, burgers, chops, ribs). How often?',
+        type: 'radio',
+        options: ['Never', '1–2 times a month', '1–2 times a week', '3–5 times a week', 'Most days'],
+        required: true,
+      },
+      {
+        id: 'processed_meat_freq',
+        label: 'PROCESSED MEAT — bacon, sausage, hot dogs, deli meat, salami, pepperoni. How often?',
+        type: 'radio',
+        options: ['Never', '1–2 times a month', '1–2 times a week', '3–5 times a week', 'Most days'],
+        required: true,
+      },
+      {
+        id: 'meat_after',
+        label: 'After a heavy meat meal, do you notice any of these?',
+        type: 'multi',
+        options: ['No noticeable effect', 'Heavy / sluggish', 'Cramps or pain', 'Constipation', 'Long delay before bowel movement', 'Hard stool', 'Bad breath / coated tongue', "I've never paid attention"],
+      },
+      {
+        id: 'alcohol_freq',
+        label: 'ALCOHOL — beer, wine, liquor, mixed drinks. Honest answer.',
+        type: 'radio',
+        options: ['Never drink', 'Special occasions only', '1–2 drinks a week', '3–7 drinks a week', '1–2 drinks most days', '2+ drinks most days'],
+        required: true,
+      },
+      {
+        id: 'alcohol_after',
+        label: 'After alcohol, the next morning you usually feel…',
+        type: 'multi',
+        options: ['No effect', 'Fine — just tired', 'Stomach upset', 'Headache', 'Bloated', 'Anxious or low mood', 'Slept badly', 'Skipped breakfast', "I don't drink"],
+      },
+      {
+        id: 'sugar_freq',
+        label: 'SUGAR + SWEETS — desserts, candy, soda, juice, sweetened coffee, ice cream, baked goods. How often?',
+        type: 'radio',
+        options: ['Rarely', '1–2 times a week', '3–5 times a week', 'Daily — one sweet thing', 'Multiple times a day'],
+        required: true,
+      },
+      {
+        id: 'sugar_after',
+        label: 'After sugar, you notice…',
+        type: 'multi',
+        options: ['No noticeable effect', 'Energy crash 1–2 hours later', 'Stronger cravings later', 'Mood dip / irritability', 'Sleep disruption', 'Headache', 'Bloating', 'Heartburn'],
+      },
+      {
+        id: 'spicy_freq',
+        label: 'SPICY FOOD — hot sauce, peppers, curry, spicy dishes',
+        type: 'radio',
+        options: ['Never / can\'t handle it', 'Mild only', '1–2 times a week', 'Several times a week', 'Most meals'],
+      },
+      {
+        id: 'fried_freq',
+        label: 'FRIED FOOD — fries, fried chicken, anything deep-fried',
+        type: 'radio',
+        options: ['Almost never', '1–2 times a month', '1–2 times a week', '3+ times a week', 'Most days'],
+      },
+      {
+        id: 'fast_food_freq',
+        label: 'FAST FOOD or RESTAURANT FOOD',
+        type: 'radio',
+        options: ['Never / cook everything at home', 'Once a month', 'Once a week', '2–3 times a week', 'Most meals'],
+      },
+      {
+        id: 'foods_already_off',
+        label: 'Are there any foods you ALREADY avoid because they bother you? (pick all)',
+        type: 'multi',
+        options: ['Nothing I avoid', 'Gluten / wheat', 'Dairy', 'Spicy', 'Fried', 'Tomatoes / acidic', 'Coffee', 'Onions / garlic', 'Eggs', 'Chocolate', 'Citrus', 'Beans / legumes'],
+      },
+      {
+        id: 'gut_intuition',
+        label: 'If you had to GUESS what food is most likely behind your GI pain — what would you guess?',
+        type: 'textarea',
+        rows: 2,
+        placeholder: 'One sentence. No wrong answer — gut intuition matters.',
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'hormones',
+    title: 'Hormones — quick check',
+    intro:
+      "Plain language only. Just check anything that has been showing up for you in the last 3–6 months.",
+    fields: [
+      {
+        id: 'hormones_checked',
+        label: 'Have you ever had your hormones checked with bloodwork?',
+        type: 'radio',
+        options: ['Yes — within the last year', 'Yes — but more than a year ago', 'Yes — but I don\'t remember when', 'Never been checked', 'I\'m not sure what counts'],
+      },
+      {
+        id: 'menopause_status',
         label: 'Menopause status',
         type: 'radio',
-        options: ['Pre-menopausal', 'Going through it now', 'Past menopause 1–5 years', 'Past menopause 5–10 years', 'Past menopause 10+ years'],
+        options: ['Still having cycles (regular or irregular)', 'Going through it now — cycles are unpredictable', 'My last cycle was 6–12 months ago', 'Past menopause 1–5 years', 'Past menopause 5+ years', 'Surgical menopause (hysterectomy / oophorectomy)'],
       },
       {
-        id: 'hrt',
-        label: 'Hormone replacement therapy (HRT)',
+        id: 'thyroid_history',
+        label: 'Thyroid history',
         type: 'radio',
-        options: ['Never used', 'Used in the past, stopped', 'On HRT now', 'Considering it'],
+        options: ['Never been told I had a thyroid issue', 'Was told my thyroid was borderline', 'Diagnosed with hypothyroidism (low)', 'Diagnosed with hyperthyroidism (high)', 'On thyroid medication', 'Family has thyroid problems but I haven\'t been checked'],
       },
       {
-        id: 'surgeries',
-        label: 'Major surgeries (besides the December scopes)',
-        type: 'multi',
-        options: ['None', 'Gallbladder removal', 'Hysterectomy', 'Appendectomy', 'Joint replacement (hip/knee)', 'Spine / back', 'Cardiac', 'Other'],
-      },
-      {
-        id: 'allergies',
-        label: 'Drug or food allergies',
-        type: 'multi',
-        options: ['None', 'Penicillin', 'Sulfa', 'Other medication', 'Latex', 'Shellfish', 'Tree nuts', 'Other food'],
-      },
-      {
-        id: 'smoking',
-        label: 'Smoking / vaping history',
+        id: 'hot_flashes',
+        label: 'Hot flashes or night sweats',
         type: 'radio',
-        options: ['Never smoked', 'Quit 10+ years ago', 'Quit within the last 10 years', 'Currently smoke', 'Vape only'],
+        options: ['Never', 'A few times a week', 'Daily — mild', 'Daily — disruptive', 'Multiple times a day + every night'],
+      },
+      {
+        id: 'sleep_2_4_am',
+        label: 'Waking up between 2 and 4 AM and not being able to get back to sleep',
+        type: 'radio',
+        options: ['Almost never', 'Once a week', '2–3 nights a week', 'Most nights', 'Every single night'],
+      },
+      {
+        id: 'belly_weight',
+        label: 'Weight gain especially around the middle (belly) that wasn\'t there before',
+        type: 'radio',
+        options: ['No', 'A little', 'Yes — noticeable', 'Yes — and it\'s gotten worse over the years', 'Yes — and nothing makes it budge'],
+      },
+      {
+        id: 'hormone_symptoms',
+        label: 'Tap anything that has been showing up regularly in the last 3–6 months',
+        type: 'multi',
+        options: [
+          'Brain fog / forgetfulness',
+          'Mood swings or irritability',
+          'Anxiety I didn\'t used to have',
+          'Sad / low / weepy',
+          'Hair thinning or shedding more',
+          'Dry skin / changes in skin',
+          'Acne / breakouts as an adult',
+          'Dry vagina / discomfort',
+          'Low sex drive',
+          'Painful or tender breasts',
+          'Bloating that gets worse around cycle (if still cycling)',
+          'Joint aches / stiff in the morning',
+          'Tired even after a full night of sleep',
+          'Cold hands and feet',
+          'Heart racing for no reason',
+          'None of these are happening',
+        ],
+      },
+      {
+        id: 'cortisol_pattern',
+        label: 'When in the day are you MOST exhausted?',
+        type: 'radio',
+        options: ['Right when I wake up', 'Mid-morning (10–11 AM)', 'Afternoon (1–3 PM)', 'Evening (6–9 PM)', 'It varies', 'I don\'t feel exhausted'],
       },
     ],
   },
 
   // ──────────────────────────────────────────────────────────
   {
-    id: 'goals',
-    title: 'Your goals',
+    id: 'fasting_detox',
+    title: 'Fasting + detoxes — openness check',
     intro:
-      "What I'll be working backwards from when we talk tomorrow.",
+      "We may use fasting and water-cure techniques in your protocol. I need to know your history and comfort level before I recommend anything.",
     fields: [
       {
-        id: 'top_3_goals',
-        label: 'Top things you want to be true 90 days from today (pick up to 5)',
+        id: 'water_fast_history',
+        label: 'Longest you\'ve ever gone without food (water only — not juice, not bone broth)',
+        type: 'radio',
+        options: ['Never gone more than 12 hours', '12–16 hours (overnight)', '16–24 hours', '24–48 hours (1–2 full days)', '3–5 days', '5–7 days', 'More than 7 days'],
+        required: true,
+      },
+      {
+        id: 'intermittent_fast',
+        label: 'Comfortable with skipping breakfast or doing an overnight 16-hour fast?',
+        type: 'radio',
+        options: ['Already do it', 'Sounds doable — willing to try', 'Not sure — would need guidance', 'Resistant — I get shaky / lightheaded', 'Absolutely not'],
+      },
+      {
+        id: 'past_detoxes',
+        label: 'Detoxes or cleanses you\'ve tried in the past (pick all)',
+        type: 'multi',
+        options: [
+          'Never done one',
+          'Juice cleanse',
+          'Master cleanse (lemon / cayenne)',
+          'Herbal cleanse / colon cleanse',
+          'Liver / gallbladder flush',
+          'Parasite cleanse',
+          'Heavy metal detox',
+          'Whole30 / Daniel Fast',
+          'Bio Life is my first real cleanse',
+        ],
+      },
+      {
+        id: 'water_fast_open',
+        label: 'Open to a SUPERVISED 3-day water fast at some point in the next 90 days?',
+        type: 'radio',
+        options: ['Yes — let\'s plan it', 'Maybe — depends what it looks like', 'Nervous — would need a lot of hand-holding', 'Probably not', 'No'],
+      },
+      {
+        id: 'liver_flush_open',
+        label: 'Open to a guided liver / gallbladder flush?',
+        type: 'radio',
+        options: ['Yes', 'Maybe — tell me more', 'No', 'I don\'t know what that is'],
+      },
+      {
+        id: 'enema_open',
+        label: 'Open to colon hydrotherapy or coffee enemas if it would speed up healing?',
+        type: 'radio',
+        options: ['Yes — already done one or willing', 'Maybe — depends on guidance', 'Uncomfortable but open', 'No', 'I don\'t know what that is'],
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'daily_habits',
+    title: 'Daily habits + lifestyle',
+    intro: "Quick taps.",
+    fields: [
+      {
+        id: 'movement_daily',
+        label: 'Movement / exercise this week',
+        type: 'radio',
+        options: ['Sedentary — barely moved', 'Some light walking', 'Walked most days', 'Walked + 1 workout', '2+ workouts', 'Active most days'],
+      },
+      {
+        id: 'walk_minutes',
+        label: 'Minutes of walking per day on a typical day',
+        type: 'radio',
+        options: ['0–10', '10–20', '20–30', '30–45', '45–60', 'More than 60'],
+      },
+      {
+        id: 'sun_minutes',
+        label: 'Direct sunlight on your skin (face / arms) — minutes per day',
+        type: 'radio',
+        options: ['0–10', '10–20', '20–30', '30–60', 'More than 60', 'Almost none — indoors most days'],
+      },
+      {
+        id: 'phone_before_bed',
+        label: 'Screens / phone in bed before sleep',
+        type: 'radio',
+        options: ['No screens after 8 PM', 'A little — TV in background', 'Phone for 15–30 min', 'Phone for 30–60 min', 'Phone until I fall asleep'],
+      },
+      {
+        id: 'bedtime',
+        label: 'Usual bedtime',
+        type: 'radio',
+        options: ['Before 9 PM', '9–10 PM', '10–11 PM', '11 PM–midnight', 'After midnight'],
+      },
+      {
+        id: 'stress_level',
+        label: 'Stress level the last 7 days (1 = calm, 10 = constantly overwhelmed)',
+        type: 'radio',
+        options: ['1–2 (calm)', '3–4 (low-medium)', '5–6 (medium)', '7–8 (high)', '9–10 (overwhelmed)'],
+      },
+      {
+        id: 'stress_outlets',
+        label: 'When stress is high, what do you reach for? (pick all)',
+        type: 'multi',
+        options: ['Prayer / scripture', 'Walk outside', 'Talking to a friend / family', 'Music or hymns', 'Sleep / nap', 'Eating', 'Sweets / dessert', 'Alcohol', 'TV / streaming', 'Phone scroll', 'Shopping', 'Nothing — I just push through'],
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'relationship',
+    title: 'Relationship + emotional weight',
+    intro:
+      "Stress that lives in your body often started somewhere upstream of food. These three questions are confidential — they go to me only.",
+    fields: [
+      {
+        id: 'relationship_status',
+        label: 'Relationship status',
+        type: 'radio',
+        options: ['Married — living together', 'Married — living apart', 'Long-term partner', 'Dating someone', 'Single — by choice', 'Single — would like a partner', 'Widowed', 'Divorced'],
+      },
+      {
+        id: 'relationship_security',
+        label: 'On a 1–10 scale, how secure and happy do you feel in your primary relationship right now? (1 = miserable, 10 = deeply safe & loved)',
+        type: 'radio',
+        options: ['1 — miserable', '2', '3', '4', '5 — neutral', '6', '7', '8', '9', '10 — deeply safe & loved', 'Not in a relationship'],
+      },
+      {
+        id: 'unforgiveness',
+        label: 'Have you struggled with unforgiveness in this relationship — something they did (or didn\'t do) that you haven\'t fully let go of?',
+        type: 'radio',
+        options: ['No — we\'re clear', 'Some smaller things that linger', 'Yes — one big thing', 'Yes — several things', 'A lot — and I think it\'s affecting my health', 'Not in a relationship'],
+      },
+      {
+        id: 'resentment_other',
+        label: 'Outside of romantic relationships — anyone else you\'re carrying resentment, hurt, or grief toward? (pick all)',
+        type: 'multi',
+        options: ['No one — I\'m clear', 'A parent', 'A sibling', 'An adult child', 'A friend', 'A former pastor / spiritual leader', 'A doctor / the medical system', 'God', 'Myself', 'A deceased loved one'],
+      },
+      {
+        id: 'spiritual_practice',
+        label: 'Spiritual practice (pick all that apply)',
+        type: 'multi',
+        options: ['Personal prayer', 'Scripture reading', 'Church attendance', 'Worship music / hymns', 'Sabbath observance', 'Service to others', 'Time in nature', 'None right now'],
+      },
+      {
+        id: 'who_supports',
+        label: 'Who do you talk to when you\'re really overwhelmed?',
+        type: 'multi',
+        options: ['Spouse / partner', 'A best friend', 'A sibling', 'My pastor', 'A counselor / therapist', 'My adult kids', 'I keep it to myself', 'God in prayer'],
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'coaching_cadence',
+    title: 'Our coaching schedule',
+    intro:
+      "Locking in the weekly slot so it doesn't compete with the rest of your life.",
+    fields: [
+      {
+        id: 'monday_8pm',
+        label: 'Monday nights at 8 PM Eastern — does that work as your weekly 1:1 with me?',
+        type: 'radio',
+        options: ['Yes — perfect', 'Yes — but later (8:30 or 9 PM) would be even better', 'Not Monday — another day would be better', 'Not 8 PM — another time would be better', 'I\'m not sure yet'],
+        required: true,
+      },
+      {
+        id: 'alt_day',
+        label: 'If NOT Monday — which day would work better? (pick all that work)',
+        type: 'multi',
+        options: ['Sunday evening', 'Tuesday evening', 'Wednesday evening', 'Thursday evening', 'Saturday morning', 'Saturday afternoon', 'Monday is fine — skip this question'],
+      },
+      {
+        id: 'alt_time',
+        label: 'If NOT 8 PM ET — what time of day works better?',
+        type: 'radio',
+        options: ['Early morning (7–9 AM ET)', 'Late morning (9–11 AM ET)', 'Lunch (11 AM–1 PM ET)', 'Afternoon (1–4 PM ET)', 'Early evening (5–7 PM ET)', 'Late evening (9–10 PM ET)', '8 PM is fine — skip this question'],
+      },
+      {
+        id: 'whatsapp_window',
+        label: 'Daily WhatsApp office hours run Sun–Thu, 9 AM–5 PM ET. When are you most likely to message me or respond?',
+        type: 'radio',
+        options: ['Morning (9–11 AM ET)', 'Midday (11 AM–1 PM ET)', 'Early afternoon (1–3 PM ET)', 'Late afternoon (3–5 PM ET)', 'After hours — I\'ll send when I can'],
+      },
+      {
+        id: 'reminder_pref',
+        label: 'Best way to remind you about the call each Monday',
+        type: 'radio',
+        options: ['Text / SMS the morning of', 'Text the night before', 'Email a few hours before', 'WhatsApp reminder', 'I don\'t need a reminder'],
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────
+  {
+    id: 'this_week',
+    title: 'This week + questions for me',
+    intro: "Last one.",
+    fields: [
+      {
+        id: 'top_focus',
+        label: 'If we could move ONE thing this week, what would it be? (pick all top priorities)',
         type: 'multi',
         options: [
           'Get off the pantoprazole',
-          'Lower my BP naturally',
-          'End the abdominal pain for good',
-          'Stop taking 18 supplements',
-          'Lose weight',
+          'Lower the BP',
+          'End the abdominal pain',
+          'Sleep through the night',
+          'Lose a few pounds',
           'More daily energy',
-          'Better sleep',
-          'Mental clarity',
-          'Get my labs all in range',
-          'Feel safe in my own body again',
-          "Doctor-cleared independence from pills",
+          'Mental clarity / less brain fog',
+          'Better mood',
+          'Process some emotional weight',
+          'Get a clean baseline on hormones',
         ],
         required: true,
       },
       {
-        id: 'biggest_fear',
-        label: "What you're most afraid of if you DON'T get this dialed in (pick all that apply)",
+        id: 'wins_this_week',
+        label: 'Anything you\'re proud of this week — even small? (pick all)',
         type: 'multi',
-        options: ['Cancer or sudden death', 'More medications added', 'Surgery', 'Losing independence', 'Becoming a burden', 'Wasting money on supplements', 'Never feeling well again'],
+        options: [
+          'Stuck with the Bio Life protocol',
+          'Drank more water',
+          'Walked outside',
+          'Slept better at least one night',
+          'Cooked at home more',
+          'Cut back on something (specify in next box)',
+          'Resisted a craving',
+          'Talked to someone honestly',
+          'Prayed / read scripture',
+          'Reduced a medication',
+          'Nothing — survival week',
+        ],
       },
       {
-        id: 'past_failures',
-        label: 'What\'s let you down in the past? (pick all that apply)',
-        type: 'multi',
-        options: ['Diets that didn\'t stick', 'Exercise programs I quit', 'Supplements that did nothing', 'Other coaches or practitioners', 'Doctors who rushed me', 'My own motivation', 'Family / spouse not on board'],
+        id: 'anything_new',
+        label: 'Anything NEW since last Tuesday\'s call — new symptom, new test result, new med, new stressor?',
+        type: 'textarea',
+        rows: 3,
+        placeholder: '1–3 sentences. If nothing new, just type "nothing new."',
       },
       {
-        id: 'support_at_home',
-        label: 'Support at home for making changes',
-        type: 'radio',
-        options: ['Fully supported by family', 'Some support', 'Going it alone', 'Some pushback at home'],
-      },
-      {
-        id: 'coaching_interest',
-        label: 'How interested are you in 1:1 or group coaching with me (separate from this consult)?',
-        type: 'radio',
-        options: ['Very interested — tell me about it', 'Maybe — depends on details', 'Not sure yet', 'Just want this consult for now'],
-      },
-      { id: 'why_now', label: 'Why now? What flipped the switch on getting serious? (the only required typing question — 1–3 sentences is plenty)', type: 'textarea', rows: 4, required: true },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────
-  {
-    id: 'questions_for_joel',
-    title: 'Your questions for me',
-    intro: "Last one.",
-    fields: [
-      { id: 'questions_for_joel', label: 'What do you want me to be ready to answer on the call tomorrow?', type: 'textarea', rows: 5, placeholder: 'As many or as few as you want.' },
-      {
-        id: 'preferred_followup',
-        label: "After the call, the best way to reach you is…",
-        type: 'radio',
-        options: ['Email', 'Text / SMS', 'Phone call', 'All are fine'],
+        id: 'questions_for_joel',
+        label: 'What do you want me to be ready to answer on today\'s call?',
+        type: 'textarea',
+        rows: 5,
+        placeholder: 'As many or as few as you want.',
       },
     ],
   },
@@ -553,10 +727,7 @@ export default function WakitaIntakePage() {
   const [intakeId, setIntakeId] = useState(null);
   const [error, setError] = useState('');
 
-  // 2026-05-14 hardening (audit P0-1): read access token from URL once on
-  // mount. Joel gives Wakita the URL with `?token=<secret>`; the backend
-  // /api/wakita-intake and /api/wakita-intake-pdf endpoints require it.
-  // Without a token in the URL, form submit + PDF download will 401.
+  // Token comes from the URL Joel sends Wakita: ?token=<secret>
   const accessToken = useMemo(() => {
     if (typeof window === 'undefined') return '';
     return new URLSearchParams(window.location.search).get('token') || '';
@@ -583,9 +754,6 @@ export default function WakitaIntakePage() {
     }
     setSubmitting(true);
     try {
-      // Token from URL is forwarded as a query param so the backend can
-      // gate this endpoint (P0-1 hardening). If the URL lacks ?token=,
-      // the API returns 401 and we surface a clear error.
       const r = await fetch('/api/wakita-intake?token=' + encodeURIComponent(accessToken), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -621,7 +789,7 @@ export default function WakitaIntakePage() {
           </div>
           <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '2rem', margin: '0 0 1rem', lineHeight: 1.2 }}>Got it, Wakita.</h1>
           <p style={{ color: INK_SOFT, fontSize: '1rem', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
-            Your intake just landed in my inbox. I'll read every word tonight so when we hop on Zoom tomorrow at noon, we're using the time on <em>your</em> situation — not catching me up.
+            Your week-1 deep-dive just landed in my inbox. I'll read every word before we hop on Zoom — so we can use the time on <em>your</em> next move, not catching me up.
           </p>
 
           {intakeId && (
@@ -665,22 +833,22 @@ export default function WakitaIntakePage() {
             </picture>
             <div>
               <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: CLAY, fontWeight: 600 }}>
-                Pre-call intake — for Wakita
+                Week 1 deep-dive — for Wakita
               </div>
               <div style={{ fontSize: '1.05rem', fontWeight: 600, marginTop: 2 }}>Joel Polley, RN — BraveWorks</div>
             </div>
           </div>
           <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '1.75rem', lineHeight: 1.25, margin: '0 0 1rem' }}>
-            Hi Wakita — I've read your file.
+            Hi Wakita — round two.
           </h1>
           <p style={{ color: INK_SOFT, fontSize: '1rem', lineHeight: 1.65, margin: '0 0 1rem' }}>
-            All of it. Orlando Health from December (EGD, EUS, MRI, HIDA, colonoscopy, gastric emptying study, all the tumor markers). The Mexico ultrasound. The Bio Life nano scan. The supplement list. The photo of the bottles on your table.
+            Last Tuesday we anchored the big picture. This week I want to go deeper on the four levers I couldn't fully reach in 60 minutes: <strong>what you actually eat every day</strong>, <strong>which foods are most likely behind the GI pain</strong>, <strong>your hormone picture</strong>, and <strong>how open you are to fasting + detox techniques</strong>.
           </p>
           <p style={{ color: INK_SOFT, fontSize: '1rem', lineHeight: 1.65, margin: '0 0 1.5rem' }}>
-            Before we talk tomorrow at 12:00 PM, walk through this. It's almost all <strong>tap-the-answer</strong> — no big paragraphs to write. About <strong>8–10 minutes</strong>. Required questions are marked <span style={{ color: CLAY, fontWeight: 600 }}>·</span>; skip the rest if you want.
+            About <strong>10–12 minutes</strong>. Almost all tap-the-answer — only a few short typing questions. Required questions are flagged with a <span style={{ color: CLAY, fontWeight: 600 }}>·</span>. Be honest — the more honest, the better the protocol I can build for you.
           </p>
           <div style={{ background: SAGE_SOFT, border: `1px solid ${SAGE_DEEP}`, borderRadius: 10, padding: '0.85rem 1rem', fontSize: '0.9rem', color: SAGE_DEEP, lineHeight: 1.5 }}>
-            <strong>Mobile-friendly.</strong> No login. Your answers go straight to me. You'll get a PDF copy of everything once you submit.
+            <strong>Confidential.</strong> Your answers go directly to me. Not shared with anyone — not even Annie. You'll get a PDF copy of everything once you submit.
           </div>
         </div>
       </header>
@@ -729,7 +897,7 @@ export default function WakitaIntakePage() {
               transition: 'background 0.2s ease',
             }}
           >
-            {submitting ? 'Sending to Joel…' : 'Submit intake to Joel'}
+            {submitting ? 'Sending to Joel…' : 'Submit deep-dive to Joel'}
           </button>
           <p style={{ fontSize: '0.82rem', color: MUTED, textAlign: 'center', margin: '0.75rem 0 0' }}>
             Your responses go directly to Joel Polley, RN. Not shared with anyone else.

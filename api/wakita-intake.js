@@ -149,7 +149,7 @@ export default async function handler(req, res) {
       from: FROM,
       to: NOTIFY_EMAIL,
       replyTo: 'braveworksrn@gmail.com',
-      subject: `[Wakita intake] Submitted — call today at noon`,
+      subject: `[Wakita Week-1 deep-dive] Submitted — coaching call today`,
       html: renderEmailHtml(answers, submittedAt),
       attachments: pdfBuffer ? [{
         filename: 'wakita-intake.pdf',
