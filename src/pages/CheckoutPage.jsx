@@ -202,6 +202,14 @@ const CheckoutPage = () => {
       {/* Hero */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
+          {/* 7-Day Refund Promise badge — above-the-fold trust signal.
+              Matches the same promise used in Day 1 drip + Skool community. */}
+          <div className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 rounded-full" style={{ background: '#F3E8FF', border: '1px solid #E9D5FF' }}>
+            <Shield size={13} style={{ color: '#6C3483' }} />
+            <span style={{ color: '#6C3483', fontSize: '12px', fontWeight: 600, letterSpacing: '0.02em' }}>
+              7-day refund promise — no questions
+            </span>
+          </div>
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
             An ICU Nurse's 10-Day Blood Pressure Protocol — Yours for {PRICE}
           </h1>
@@ -292,6 +300,21 @@ const CheckoutPage = () => {
                 </div>
               </div>
               <p className="mt-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>That's less than one copay.</p>
+
+              {/* Detailed refund block — closes the buy-decision loop with risk reversal */}
+              <div className="mt-5 max-w-[420px] mx-auto p-4 rounded-xl text-left" style={{ background: '#FAF5FF', border: '1px solid #E9D5FF' }}>
+                <div className="flex items-start gap-2.5">
+                  <Shield size={18} className="flex-shrink-0 mt-0.5" style={{ color: '#6C3483' }} />
+                  <div>
+                    <p className="font-semibold mb-1" style={{ color: '#4A2964', fontSize: '14px' }}>
+                      The 7-Day Refund Promise
+                    </p>
+                    <p style={{ color: '#5B3B6E', fontSize: '13px', lineHeight: '1.55' }}>
+                      Run the protocol for 7 days with honest effort. If your numbers haven't moved, hit reply with the word <strong>"refund"</strong> and your {PRICE} comes back. The kit is yours to keep either way.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </AnimatedSection>
 

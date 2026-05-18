@@ -233,13 +233,14 @@ export const TIER_CONFIG = {
   // 1:1 and the materials are custom.
   coaching: {
     product: 'BP Triangle Freedom Sprint — 90-Day 1:1 Coaching',
-    subject: 'Your 90-Day Sprint spot is locked in — what happens next',
+    subject: "You're in the Sprint — Week 1 starts now",
     downloads: [], // intentional — coaching is 1:1, no kit PDFs
-    includesCoaching: false, // skip the generic coaching block render
+    includesCoaching: true,
+    coachingFlavor: 'sprint',  // triggers Sprint-specific render block
     includesChallenge: false,
     upgradeUrl: 'https://calendly.com/braveworksrn/60min',
-    upgradeLabel: 'Book your kickoff call (60 min, Joel will confirm by email)',
-    upgradeDesc: 'Joel reads every application + lab personally. Expect a personal email within 24 hours with your custom Week 1 plan + partner-inclusion guide. In the meantime, you can grab a kickoff slot here.',
+    upgradeLabel: 'Book your kickoff 1:1 with Joel',
+    upgradeDesc: 'Pick a 60-minute slot in the next 7 days for your kickoff call. Bring your home BP log, prescription list, supplements, and any recent labs.',
     upgradeCta: 'Book my kickoff call →',
   },
 
@@ -407,8 +408,77 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
   // Coaching block content varies by tier flavor:
   //   'vip'      → weekly group coaching only (Mondays 10pm EST)
   //   'premium'  → Barbara O'Neill LIVE + group coaching
+  //   'sprint'   → 90-Day 1:1 Sprint kickoff (Joel + Annie, weekly Zoom,
+  //                daily WhatsApp, Skool VIP, partner inclusion)
   let coachingBlock = '';
-  if (config.includesCoaching && config.coachingFlavor === 'vip') {
+  if (config.includesCoaching && config.coachingFlavor === 'sprint') {
+    coachingBlock = `
+    <tr><td style="padding:6px 28px 18px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#3F5A3C;border-radius:14px;">
+        <tr><td style="padding:28px 24px;">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:18px;">Your 90-Day Sprint — Week 1 starts now</div>
+
+          <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1 — Book your kickoff 1:1 (this week)</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 12px;">
+              Sixty minutes with me on Zoom. Bring your home BP log (or just your morning numbers from this week), your prescription list, your supplements, and any labs from the last year. We map your loudest Pressure live and design your Week 1 protocol together.
+            </p>
+            <a href="https://calendly.com/braveworksrn/60min" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+              Pick my kickoff time →
+            </a>
+          </div>
+
+          <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 2 — Meet your hormone-corner co-coach</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0;">
+              Annie Chitate, RN — my wife and the hormone-corner co-coach. About half my caseload involves hormone work (cortisol, thyroid, estrogen, testosterone). Annie handles that thread directly. You'll meet her by Week 2 with a 30-minute hormone-baseline call if your case calls for it.
+            </p>
+          </div>
+
+          <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 3 — Daily WhatsApp office hours</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 8px;">
+              Sun–Thu, 9 AM–5 PM ET. Send me a question, a photo of a confusing lab, a "should I take this today" — I answer same-day. The WhatsApp group invite arrives in a separate text from <strong>717-585-9505</strong> once your kickoff call is on the calendar.
+            </p>
+            <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,0.75);margin:0;">
+              Text me from your phone first so I have your number to add. One word — "Sprint" — is enough.
+            </p>
+          </div>
+
+          <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 4 — Partner inclusion (optional but recommended)</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0;">
+              If you have a spouse or partner, they get a free 30-minute briefing in Week 2 so they're rowing with you, not pulling against. The protocols stick when the household is aligned. We'll schedule that on your kickoff call if you want it.
+            </p>
+          </div>
+
+          <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 5 — Skool VIP access</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 12px;">
+              Join the &ldquo;How to Be Your Own Doctor&rdquo; community. Once you're in, DM me &mdash; I grant Sprint clients VIP access where the weekly group calls + protocol library live.
+            </p>
+            <a href="${SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+              Join the Skool community →
+            </a>
+          </div>
+
+          <div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">What I'm preparing before our kickoff</div>
+            <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 6px;">
+              While you're booking, I'm already reading your file. By the time we meet, I'll have:
+            </p>
+            <ul style="font-size:14px;line-height:1.65;color:rgba(255,255,255,0.9);margin:8px 0 0;padding-left:20px;">
+              <li>Your Week 1 protocol drafted (gratitudes practice, hydration with mineral salt, the one supplement to consider, the one to drop)</li>
+              <li>A doctor-conversation script template ready to customize for your prescriber</li>
+              <li>A short reading list — the 2–3 articles that explain why we're doing what we're doing</li>
+            </ul>
+          </div>
+
+        </td></tr>
+      </table>
+    </td></tr>
+    `;
+  } else if (config.includesCoaching && config.coachingFlavor === 'vip') {
     coachingBlock = `
     <tr><td style="padding:6px 28px 18px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#6C3483;border-radius:14px;">
@@ -511,7 +581,9 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
           You took your health into your own hands. That decision matters more than any single herb or protocol. Here's everything you now have access to:
         </p>
         <p style="font-size:14px;line-height:1.6;color:#5A5A5A;margin:0 0 12px;">
-          ${tier === 3
+          ${tier === 'coaching'
+            ? 'You\'re in the Sprint. The next 90 days, you have a 20-year ICU/ER nurse — and a hormone-corner co-coach — in your corner daily. Below: every step of Week 1, your Calendly link, your Skool VIP path, and a heads-up on the WhatsApp office hours. Read the whole thing — it\'s the map for what happens next.'
+            : tier === 3
             ? 'You\'re in the 30-Day Challenge — here\'s your full BraveWorks library. The 30-day daily email walk-through starts tomorrow, and your Skool community access is live now. Weekly group coaching happens in Skool — schedule posted there.'
             : tier === 'vip'
             ? 'You\'re in. Your BP Triangle Challenge starts now. Your downloads below are the FULL BraveWorks bonus stack — BP, cortisol, AND blood sugar protocols. The 30-day daily email walk-through begins tomorrow. Your "How to Be Your Own Doctor" Skool community access is live right now — weekly group coaching is posted in Skool.'
