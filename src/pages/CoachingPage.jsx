@@ -336,13 +336,13 @@ export default function CoachingPage() {
         <div className="max-w-xl mx-auto px-5 text-center">
           <Mail size={28} color="var(--sage-deep)" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
           <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
-            Not ready right now?
+            Cohort #2 — opens Sunday May 24, 2026
           </div>
           <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)' }}>
-            Drop your email for first access when group cohort #2 opens.
+            Drop your email for first booking when Cohort #2 opens.
           </h3>
           <p className="text-sm mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Cohort #2 is a group format. Same diagnostic depth, group rate, opens September 2026. Waitlist members get first booking + 14-day early-bird pricing window.
+            Cohort #2 is a group format — same diagnostic depth, group rate, opens <strong>Sunday May 24</strong>. Waitlist members get first booking access + an early-bird pricing window before the public registration goes live.
           </p>
 
           {waitlistDone ? (
