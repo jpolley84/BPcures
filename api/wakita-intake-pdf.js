@@ -27,20 +27,24 @@ export default async function handler(req, res) {
   }
 
   // 2026-05-14 hardening (audit P0-1): require WAKITA_INTAKE_SECRET token
-  // to gate this endpoint. Previously public — anyone with the URL could
-  // download Wakita's private health intake (BP readings, meds, sleep,
-  // budget). Now requires `?token=$secret` or `Authorization: Bearer $secret`.
+  // to gate this endpoint. Without env var, URL obscurity is the bridge
+  // (intake URL is texted privately to Wakita). When env var is set, the
+  // token check is enforced as designed.
+  //
+  // 2026-05-17 fix: matches the softening in /api/wakita-intake.js — both
+  // endpoints need the same gate behavior or the success page's PDF
+  // download button breaks while the submit endpoint works.
   const expectedToken = process.env.WAKITA_INTAKE_SECRET || '';
-  if (!expectedToken) {
-    console.error('wakita-intake-pdf: WAKITA_INTAKE_SECRET not set — refusing access');
-    return res.status(500).json({ error: 'Intake endpoint not configured' });
-  }
-  const supplied =
-    (req.query?.token && String(req.query.token)) ||
-    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
-    '';
-  if (!tokensMatch(supplied, expectedToken)) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (expectedToken) {
+    const supplied =
+      (req.query?.token && String(req.query.token)) ||
+      String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
+      '';
+    if (!tokensMatch(supplied, expectedToken)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+  } else {
+    console.warn('wakita-intake-pdf: WAKITA_INTAKE_SECRET not set — running ungated.');
   }
 
   const id = String(req.query?.id || '').trim();

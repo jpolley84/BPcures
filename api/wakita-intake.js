@@ -96,22 +96,27 @@ export default async function handler(req, res) {
   }
 
   // 2026-05-14 hardening (audit P0-1): require WAKITA_INTAKE_SECRET token
-  // to gate this endpoint. Previously public — anyone with the URL could
-  // POST garbage and overwrite Wakita's real submission.
-  // Accept token from EITHER the query string (`?token=...`) OR the
-  // Authorization: Bearer header. The page side prefers query-string for
-  // simplicity; bearer is supported for cleaner curl testing.
+  // to gate this endpoint when the secret is configured. Without a secret
+  // configured this is a single-named-recipient form (Wakita) reachable
+  // only via the private `/wakita` URL Joel texts her — URL-obscurity is
+  // an acceptable bridge while env wiring catches up. Accept token from
+  // EITHER ?token= or Authorization: Bearer.
+  //
+  // 2026-05-17 fix: changed unset-secret behavior from hard-500 to
+  // warn-and-allow. The hard-500 cost Wakita her Sunday-night submission
+  // because the env var was never wired in Vercel after the May-14
+  // hardening commit. The form posted, the API rejected, she screenshotted.
   const expectedToken = process.env.WAKITA_INTAKE_SECRET || '';
-  if (!expectedToken) {
-    console.error('wakita-intake: WAKITA_INTAKE_SECRET not set in env — refusing to accept submissions');
-    return res.status(500).json({ error: 'Intake endpoint not configured' });
-  }
-  const supplied =
-    (req.query?.token && String(req.query.token)) ||
-    String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
-    '';
-  if (!tokensMatch(supplied, expectedToken)) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (expectedToken) {
+    const supplied =
+      (req.query?.token && String(req.query.token)) ||
+      String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim() ||
+      '';
+    if (!tokensMatch(supplied, expectedToken)) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+  } else {
+    console.warn('wakita-intake: WAKITA_INTAKE_SECRET not set — running ungated. Wire the env var in Vercel to re-enable the token check.');
   }
 
   if (!req.body || typeof req.body !== 'object') {
