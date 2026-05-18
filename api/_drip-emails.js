@@ -688,7 +688,7 @@ const day8 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">30 days of follow-up email coaching</strong> — reply to me each Sunday with your numbers and I adjust as needed</p>
     `)}
     ${p(`It\'s <strong>$297</strong>. One time. No upsell on the call.`)}
-    ${p(`Honest math on availability: I take 10 of these calls a month. <strong>6 slots open this week</strong>; when they're gone, next openings are roughly two weeks out.`, { margin: '0 0 32px' })}
+    ${p(`Honest math on availability: I'm only taking <strong>5 of these calls total before Cohort 2 opens on Sunday May 24</strong>. After that, the path into Cohort 2 is the public registration page, not a 1:1 with me. If you want the prescreen, this is the window.`, { margin: '0 0 32px' })}
     ${ctaButton(APPLY_URL, 'Book the diagnostic ($297) →')}
     ${p(`<span style="color:#999;font-size:14px;">Already a Kit buyer? Your $17 credit applies — watch your inbox; a separate kit-credit pricing link is on its way over the next few days. Or reply "kit credit" and I'll send it now.</span>`, { margin: '0 0 28px' })}
     ${p(`<strong>If the diagnostic isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each Pressure, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a diagnostic. The daily protocols are enough.`)}
@@ -726,7 +726,7 @@ A single 60-minute Zoom with me. Bring your home BP log, your prescription list,
 
 $297. One time. No upsell on the call.
 
-Six slots open this week; when they're gone, next openings roughly two weeks out.
+I'm only taking 5 of these calls total before Cohort 2 opens Sunday May 24. After that, the path in is the public registration, not a 1:1.
 
 → Book the diagnostic: ${APPLY_URL}
 

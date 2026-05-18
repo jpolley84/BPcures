@@ -5,9 +5,9 @@
 // inDiagnosticSequence:true). Fired by api/diagnostic-drip-cron.js.
 //
 // Per Joel (2026-05-18):
-//   - Sprint is NEVER mentioned publicly on /coaching — only here, inside
+//   - Cohort 2 is NEVER mentioned publicly on /coaching — only here, inside
 //     the post-purchase sequence to $297 buyers.
-//   - Credit ladders all the way: $297 diagnostic → applies to $1,997 Sprint
+//   - Credit ladders all the way: $297 diagnostic → applies to $1,997 Cohort 2
 //     → buyer pays $1,700. Stripe Payment Link created.
 //   - Voice = same as buyer-upsell-cron + drip-cron Days 1-7. Warm,
 //     specific, no pressure.
@@ -15,9 +15,9 @@
 // Day cadence (from purchasedAt):
 //   1  — Prep checklist + restate
 //   3  — Why the diagnostic exists (Patricia case study)
-//   5  — The three paths after the call (Sprint introduced gently)
-//   7  — Sprint reveal: what it is, what it's not
-//   9  — Wakita's first 30 days in the Sprint (deep case)
+//   5  — The three paths after the call (Cohort 2 introduced gently)
+//   7  — Cohort 2 reveal: what it is, what it's not
+//   9  — Wakita's first 30 days inside the program (deep case)
 //   11 — Future-self / 90 days from today
 //   14 — Enrollment closes Friday (final close)
 
@@ -164,7 +164,7 @@ export const diagnosticDripDay5 = {
     </div>
 
     <div style="background:${PALETTE.paperLight};border-left:3px solid ${PALETTE.clay};border-radius:6px;padding:18px 20px;margin:18px 0;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — The 90-Day Sprint</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — Cohort 2 (90-day group)</div>
       <p style="margin:6px 0 8px;font-size:15px;">For the people who want me in their corner daily for the next twelve weeks. Weekly Zoom 1:1, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion. I'll tell you more on the call — this is for buyers who want the deepest version.</p>
       <p style="margin:0;font-size:14px;color:${PALETTE.textSoft};"><strong>Best for:</strong> 4+ medications, complex history, partner involvement needed, "I'm tired of guessing and want a guide" energy.</p>
     </div>
@@ -184,60 +184,60 @@ export const diagnosticDripDay5 = {
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// DAY 7 — Sprint reveal (FIRST detailed mention)
+// DAY 7 — Cohort 2 reveal (FIRST detailed mention)
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay7 = {
-  subject: 'The Sprint — what it is, what it\'s not',
-  preview: 'A real picture of the 90-day program for the buyers who want it.',
+  subject: "Cohort 2 — what it is, what it's not",
+  preview: 'A real picture of the 90-day group program opening May 24.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Yesterday I laid out the three paths after your diagnostic. Today I want to give you a real picture of Path 2 — the BP Triangle Freedom Sprint — so you can decide if it fits before we talk.</p>
+    <p style="margin:0 0 14px;">Yesterday I laid out the three paths after your diagnostic. Today I want to give you a real picture of Path 2 — Cohort 2, the 90-day group program — so you can decide if it fits before we talk.</p>
 
-    <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What the Sprint is</p>
+    <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
-      <li><strong>Twelve weeks. 1:1 with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half my caseload involves hormone work; Annie handles that thread.</li>
-      <li><strong>Weekly 60-minute Zoom 1:1.</strong> Monday nights 8 PM ET (other slots negotiable). Your numbers, your symptoms, your medication-tapering progress, week by week.</li>
-      <li><strong>Daily WhatsApp office hours.</strong> Sun–Thu, 9 AM–5 PM ET. Drop a question, send a photo of a confusing lab, ask "should I take this today" — I answer same day.</li>
-      <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> Never around them. We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the 90 days.</li>
+      <li><strong>Twelve weeks. Small group with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
+      <li><strong>Weekly group Zoom call.</strong> Monday nights 8 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too.</li>
+      <li><strong>WhatsApp office hours, group thread.</strong> Sun–Thu, 9 AM–5 PM ET. Drop a question, send a photo, ask "should I take this today." I answer same-day in front of the cohort — so everyone benefits from each question.</li>
+      <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the 90 days.</li>
       <li><strong>Partner inclusion guide.</strong> Spouses/partners get a parallel 30-minute briefing so they're rowing with you, not pulling against.</li>
-      <li><strong>The Sprint Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
+      <li><strong>The Cohort 2 Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
     </ul>
 
-    <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What the Sprint is NOT</p>
+    <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is NOT</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
-      <li>Not a course. No videos to watch on your own time.</li>
-      <li>Not a group program. 1:1 only — your hour, your file.</li>
+      <li>Not a self-paced course. The group meets live every Monday.</li>
+      <li>Not a passive sit-back. Cohort members share their own logs, ask their own questions, and learn from the protocols I design for the people sitting next to them.</li>
       <li>Not a 30-day reset. The protocols compound at week 6–10. You need the runway.</li>
       <li>Not for everyone. If your numbers are good and you just want education, the Kit covers it.</li>
     </ul>
 
     <div style="background:${PALETTE.sageSoft};border-left:3px solid ${PALETTE.sage};border-radius:6px;padding:18px 20px;margin:20px 0;">
       <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:4px;">Investment</div>
-      <p style="margin:6px 0 6px;font-size:15px;">Standard Sprint: $1,997 one-time. Or $697 × 3.</p>
-      <p style="margin:0;font-size:15px;"><strong>Your $297 diagnostic credit applies</strong> → your Sprint price is <strong>$1,700</strong> if you enroll within 30 days of our call.</p>
+      <p style="margin:6px 0 6px;font-size:15px;">Standard Cohort 2: $1,997 one-time. Or $697 × 3.</p>
+      <p style="margin:0;font-size:15px;"><strong>Your $297 diagnostic credit applies</strong> → your Cohort 2 price is <strong>$1,700</strong> if you enroll within 30 days of our call.</p>
     </div>
 
-    <p style="margin:0 0 14px;">No need to decide now. I'll bring it up on the call only if your case looks like a fit. Most diagnostic buyers don't need it. Some do.</p>
+    <p style="margin:0 0 14px;">Cohort 2 opens to public registration on <strong>Sunday May 24</strong>. The diagnostic prescreen — what we're doing on our call — gets you the credit-applied price and first-booking access. After May 24, public registration goes live without the diagnostic-credit option.</p>
 
     <p style="margin:18px 0 4px;">— Joel</p>
 
     ${unsubFooter(unsubUrl)}
-  `, 'BraveWorks RN · The Sprint'),
+  `, 'BraveWorks RN · Cohort 2'),
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// DAY 9 — Wakita case study (real Sprint client, real arc)
+// DAY 9 — Wakita case study (real 1:1 founding client, real arc)
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay9 = {
-  subject: 'Wakita\'s first 30 days inside the Sprint',
-  preview: 'What an actual Sprint week looks like, from one of my real clients.',
+  subject: 'Wakita\'s first 30 days inside Cohort 2',
+  preview: 'What an actual Cohort 2 week looks like, from one of my real clients.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Since the Sprint is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
+    <p style="margin:0 0 14px;">Since Cohort 2 is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
 
     <p style="margin:0 0 14px;"><strong>Wakita</strong> — age 60, complex GI history, BP 145/92 morning, 138/88 afternoon, on three BP meds, dealing with chronic abdominal pain from a December hospitalization, on a Mexican naturopathic protocol that was layering complication on top of complication.</p>
 
@@ -255,12 +255,12 @@ export const diagnosticDripDay9 = {
 
     <p style="margin:0 0 18px;">That's one month. We have eleven more weeks together. By Week 12 most clients are on 1–2 fewer medications, sleeping a full night, and have a daily protocol that's so dialed it no longer feels like a program.</p>
 
-    <p style="margin:0 0 14px;">If something in that arc made you go "yes, that's the program I want" — book the Sprint when we talk. If it sounds like more than you need, Path 1 is great.</p>
+    <p style="margin:0 0 14px;">If something in that arc made you go "yes, that's the program I want" — book Cohort 2 when we talk. If it sounds like more than you need, Path 1 is great.</p>
 
     <p style="margin:18px 0 4px;">— Joel</p>
 
     ${unsubFooter(unsubUrl)}
-  `, 'BraveWorks RN · A real Sprint month'),
+  `, 'BraveWorks RN · A real 90-day month'),
 };
 
 // ─────────────────────────────────────────────────────────────────────
@@ -284,11 +284,11 @@ export const diagnosticDripDay11 = {
 
     <p style="margin:0 0 14px;">That's a real picture. It's not optimistic — it's the actual ninety-day arc for clients who follow through.</p>
 
-    <p style="margin:0 0 14px;">The diagnostic gives you the protocol. The Sprint gives you the runway. The choice is whether you want the runway.</p>
+    <p style="margin:0 0 14px;">The diagnostic gives you the protocol. Cohort 2 gives you the runway. The choice is whether you want the runway.</p>
 
-    <p style="margin:0 0 14px;">If you decide you want it, your $297 credit is yours for 30 days from our call. After 30 days the credit window closes, the Sprint goes back to $1,997 flat for new buyers.</p>
+    <p style="margin:0 0 14px;">If you decide you want it, your $297 credit is yours for 30 days from our call. After 30 days the credit window closes, Cohort 2 returns to $1,997 flat for new buyers.</p>
 
-    ${ctaButton(SPRINT_WITH_CREDIT_LINK, 'Lock in your Sprint ($1,700)', PALETTE.clay)}
+    ${ctaButton(SPRINT_WITH_CREDIT_LINK, 'Lock in Cohort 2 ($1,700)', PALETTE.clay)}
 
     <p style="margin:14px 0 0;font-size:14px;color:${PALETTE.textSoft};">No pressure. Not today. Just wanted you to see the picture.</p>
 
@@ -303,17 +303,17 @@ export const diagnosticDripDay11 = {
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay14 = {
   subject: 'Your diagnostic credit window closes in 16 days',
-  preview: 'Real talk on whether the Sprint is for you. Then I stop mentioning it.',
+  preview: 'Real talk on whether Cohort 2 is for you. Then I stop mentioning it.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Last note on the Sprint. Then I stop.</p>
+    <p style="margin:0 0 14px;">Last note on Cohort 2. Then I stop.</p>
 
-    <p style="margin:0 0 14px;">Your $297 diagnostic credit toward the Sprint is yours for 30 days from our call. <strong>You have about 16 days left.</strong> After that window, the Sprint returns to $1,997 flat for everyone, and your credit can't be redeemed.</p>
+    <p style="margin:0 0 14px;">Your $297 diagnostic credit toward Cohort 2 is yours for 30 days from our call. <strong>You have about 16 days left.</strong> After that window, Cohort 2 returns to $1,997 flat for everyone, and your credit can't be redeemed.</p>
 
     <p style="margin:0 0 14px;">I'm not going to push. You already paid me $297 and you have your protocol. If the Kit + your protocol + the 30-day email follow-up window is enough — that's success. Most clients who go this route do great.</p>
 
-    <p style="margin:0 0 14px;">Book the Sprint if:</p>
+    <p style="margin:0 0 14px;">Book Cohort 2 if:</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 14px;">
       <li>You're on 3+ medications and want a real deprescribing plan</li>
@@ -323,7 +323,7 @@ export const diagnosticDripDay14 = {
       <li>You said "I want a guide for the next 90 days" on our call and meant it</li>
     </ul>
 
-    <p style="margin:0 0 14px;">Don't book the Sprint if:</p>
+    <p style="margin:0 0 14px;">Don't enroll in Cohort 2 if:</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
       <li>Your numbers are already trending well and you just want to maintain</li>
@@ -332,20 +332,20 @@ export const diagnosticDripDay14 = {
     </ul>
 
     <div style="background:${PALETTE.sageSoft};border-left:3px solid ${PALETTE.sage};border-radius:6px;padding:18px 20px;margin:20px 0;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:4px;">Your credit-applied Sprint price</div>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:4px;">Your credit-applied Cohort 2 price</div>
       <div style="font-size:22px;font-weight:600;color:${PALETTE.text};margin-bottom:2px;">$1,700</div>
       <p style="margin:6px 0 0;font-size:14px;color:${PALETTE.textSoft};">$1,997 standard, minus your $297 diagnostic credit. 16 days left to redeem.</p>
     </div>
 
-    ${ctaButton(SPRINT_WITH_CREDIT_LINK, 'Enroll in the Sprint ($1,700)', PALETTE.clay)}
+    ${ctaButton(SPRINT_WITH_CREDIT_LINK, 'Enroll in Cohort 2 ($1,700)', PALETTE.clay)}
 
     <p style="margin:14px 0;">If you're not going to enroll, reply "not for me" and I'll stop. The diagnostic and the email-coaching window are yours either way.</p>
 
     <p style="margin:18px 0 4px;">— Joel</p>
-    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. After the 30-day window closes, anyone who wants the Sprint pays $1,997 flat. No exceptions. The diagnostic credit is the only way it's $1,700.</p>
+    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. After the 30-day window closes, anyone who wants Cohort 2 pays $1,997 flat. No exceptions. The diagnostic credit is the only way it's $1,700.</p>
 
     ${unsubFooter(unsubUrl)}
-  `, 'BraveWorks RN · Sprint window'),
+  `, 'BraveWorks RN · Cohort 2 window'),
 };
 
 // ─────────────────────────────────────────────────────────────────────

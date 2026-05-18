@@ -103,7 +103,7 @@ export default function CoachingPage() {
       <section className="py-16 sm:py-20" style={{ background: 'var(--paper-light)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
           <div className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: '#FCEED9', color: '#B85A36', letterSpacing: '0.14em' }}>
-            BraveWorks RN · Limited monthly availability
+            BraveWorks RN · Only 5 calls total before Cohort 2 opens
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl leading-tight mb-5" style={{ color: 'var(--ink)' }}>
             The BP Triangle Diagnostic Session
@@ -115,7 +115,7 @@ export default function CoachingPage() {
           <div className="inline-block mb-6 px-7 py-5 rounded-xl" style={{ background: 'var(--paper)', border: '2px solid var(--sage-deep)' }}>
             <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--sage-deep)', letterSpacing: '0.12em' }}>One-time investment</div>
             <div className="font-serif text-4xl sm:text-5xl" style={{ color: 'var(--ink)', fontWeight: 500 }}>$297</div>
-            <div className="text-sm mt-1" style={{ color: 'var(--ink-soft)' }}>60 minutes of actual nursing time. No upsell on the call.</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--ink-soft)' }}>60 minutes of actual nursing time. Your prescreen for Cohort 2.</div>
           </div>
 
           <div className="mb-3">
@@ -310,7 +310,7 @@ export default function CoachingPage() {
       <section ref={fadeIn} className="py-16" style={{ background: 'var(--ink)', color: 'var(--paper-light)' }}>
         <div className="max-w-2xl mx-auto px-5 text-center">
           <div className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: 'rgba(184,90,54,0.18)', color: '#F5C68F', letterSpacing: '0.14em' }}>
-            6 slots left this month
+            Only 5 calls total — closing Friday May 23
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-5" style={{ color: 'var(--paper-light)' }}>
             One call. One protocol. One clear next step.
@@ -336,13 +336,13 @@ export default function CoachingPage() {
         <div className="max-w-xl mx-auto px-5 text-center">
           <Mail size={28} color="var(--sage-deep)" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
           <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
-            Cohort #2 — opens Sunday May 24, 2026
+            Cohort 2 — 90-day group program · Opens Sunday May 24
           </div>
           <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)' }}>
-            Drop your email for first booking when Cohort #2 opens.
+            Skip the diagnostic? Drop your email for Cohort 2 first access.
           </h3>
           <p className="text-sm mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Cohort #2 is a group format — same diagnostic depth, group rate, opens <strong>Sunday May 24</strong>. Waitlist members get first booking access + an early-bird pricing window before the public registration goes live.
+            The $297 diagnostic above is the 1:1 prescreen for Cohort 2 — that's the path most people take. If you'd rather skip the prescreen and go straight into the 90-day group cohort opening <strong>Sunday May 24</strong>, drop your email. Waitlist members get the registration link the moment it opens + early-bird pricing.
           </p>
 
           {waitlistDone ? (
