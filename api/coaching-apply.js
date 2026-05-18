@@ -79,15 +79,15 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }
 
-  // Founding cohort closes 2026-05-17 23:59 ET = 2026-05-18 03:59 UTC.
-  // Reject any submission attempted after that instant — defense in depth
-  // beyond the frontend's UI-state check (someone could POST directly).
-  // Update this constant + the matching one in CoachingPage.jsx when
-  // rolling the next cohort.
-  const FOUNDING_COHORT_CLOSE_ISO = '2026-05-18T03:59:00Z';
-  if (Date.now() >= new Date(FOUNDING_COHORT_CLOSE_ISO).getTime()) {
+  // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
+  // closed; this endpoint is now serving Cohort 2 applications (the
+  // 90-day group program opening May 24, 2026). Window stays open
+  // through Aug 31 to allow rolling enrollment + waitlist conversion.
+  // Update when rolling Cohort 3.
+  const COHORT_2_CLOSE_ISO = '2026-08-31T23:59:59Z';
+  if (Date.now() >= new Date(COHORT_2_CLOSE_ISO).getTime()) {
     return res.status(410).json({
-      error: 'Applications for the founding cohort closed 2026-05-17 11:59 PM ET. Email braveworksrn@gmail.com with subject "Next cohort" to be added to the waitlist.',
+      error: 'Cohort 2 applications closed. Email braveworksrn@gmail.com with subject "Next cohort" to be added to the waitlist for Cohort 3.',
     });
   }
 

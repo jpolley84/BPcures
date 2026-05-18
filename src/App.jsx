@@ -31,6 +31,7 @@ const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
+const Cohort2Page = lazy(() => import('./pages/Cohort2Page'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
@@ -148,6 +149,12 @@ function App() {
           {/* Post-$1,700/$1,997 Sprint purchase landing. Stripe Payment Link
               for sprint-with-diagnostic-credit redirects here. */}
           <Route path="/sprint-welcome" element={<SprintWelcomePage />} />
+          {/* Cohort 2 application page — vacation-style sales letter, no
+              price reveal, application form posts to /api/coaching-apply.
+              The $297 diagnostic at /coaching is the prescreen path INTO
+              Cohort 2; this page is for buyers who want to skip the
+              prescreen and apply directly. */}
+          <Route path="/cohort2" element={<Cohort2Page />} />
 
           {/* Per-client pre-call intake — also reachable via subdomain
               wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}

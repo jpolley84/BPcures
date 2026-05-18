@@ -16,7 +16,7 @@
 //
 // Bottom of the page: Cohort #2 waitlist email opt-in (low-friction).
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { CheckCircle2, ShieldCheck, ArrowRight, FileText, ClipboardCheck, MessageCircle, HelpCircle, Mail } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
@@ -60,39 +60,9 @@ function TikTokEmbed({ videoId, username }) {
 }
 
 export default function CoachingPage() {
-  const [waitlistEmail, setWaitlistEmail] = useState('');
-  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
-  const [waitlistDone, setWaitlistDone] = useState(false);
-  const [waitlistError, setWaitlistError] = useState('');
-
-  async function joinWaitlist(e) {
-    e.preventDefault();
-    if (!waitlistEmail || !waitlistEmail.includes('@')) {
-      setWaitlistError('Enter a valid email');
-      return;
-    }
-    setWaitlistSubmitting(true);
-    setWaitlistError('');
-    try {
-      const r = await fetch('/api/lead-magnet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: waitlistEmail,
-          name: '',
-          category: 'blood_pressure',
-          tags: ['coaching-cohort-2-waitlist'],
-        }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || 'Could not add you to the waitlist');
-      setWaitlistDone(true);
-    } catch (err) {
-      setWaitlistError(err.message || 'Try again in a moment');
-    } finally {
-      setWaitlistSubmitting(false);
-    }
-  }
+  // 2026-05-18: removed waitlist email-capture form. The Cohort 2 CTA
+  // now links to /cohort2 (application page) per Joel's pivot from
+  // price-reveal to application-only funnel.
 
   const fadeIn = useScrollAnimation();
 
@@ -339,43 +309,19 @@ export default function CoachingPage() {
             Cohort 2 — 90-day group program · Opens Sunday May 24
           </div>
           <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)' }}>
-            Skip the diagnostic? Drop your email for Cohort 2 first access.
+            Skip the diagnostic? Apply directly for Cohort 2.
           </h3>
           <p className="text-sm mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            The $297 diagnostic above is the 1:1 prescreen for Cohort 2 — that's the path most people take. If you'd rather skip the prescreen and go straight into the 90-day group cohort opening <strong>Sunday May 24</strong>, drop your email. Waitlist members get the registration link the moment it opens + early-bird pricing.
+            The $297 diagnostic above is the 1:1 prescreen path into Cohort 2 — that's how most people get in. If you'd rather skip the prescreen and apply directly for the 90-day group cohort opening <strong>Sunday May 24</strong>, the application takes about 5 minutes. Joel reads every one personally.
           </p>
 
-          {waitlistDone ? (
-            <div className="p-5 rounded-xl" style={{ background: 'var(--sage-soft)', border: '1px solid var(--sage-deep)' }}>
-              <CheckCircle2 size={24} color="var(--sage-deep)" style={{ margin: '0 auto 0.5rem', display: 'block' }} />
-              <div className="text-sm font-medium" style={{ color: 'var(--ink)' }}>
-                You're on the list. I'll email you the moment Cohort #2 opens.
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={joinWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                required
-                value={waitlistEmail}
-                onChange={(e) => setWaitlistEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="flex-1 px-4 py-3 rounded-lg text-base"
-                style={{ background: 'var(--paper)', border: '1.5px solid var(--border)', color: 'var(--ink)' }}
-              />
-              <button
-                type="submit"
-                disabled={waitlistSubmitting}
-                className="px-5 py-3 rounded-lg font-semibold text-base whitespace-nowrap"
-                style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)', opacity: waitlistSubmitting ? 0.6 : 1, cursor: waitlistSubmitting ? 'wait' : 'pointer' }}
-              >
-                {waitlistSubmitting ? 'Adding…' : 'Add me'}
-              </button>
-            </form>
-          )}
-          {waitlistError && (
-            <div className="text-sm mt-3" style={{ color: 'var(--clay)' }}>{waitlistError}</div>
-          )}
+          <a
+            href="/cohort2"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-base"
+            style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
+          >
+            Apply for Cohort 2 →
+          </a>
         </div>
       </section>
 
