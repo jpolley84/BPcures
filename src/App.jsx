@@ -30,6 +30,7 @@ const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPa
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
+const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
@@ -144,6 +145,9 @@ function App() {
               Configure the after_completion.redirect.url on the $297 link to:
               https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}
           <Route path="/coaching-welcome" element={<CoachingWelcomePage />} />
+          {/* Post-$1,700/$1,997 Sprint purchase landing. Stripe Payment Link
+              for sprint-with-diagnostic-credit redirects here. */}
+          <Route path="/sprint-welcome" element={<SprintWelcomePage />} />
 
           {/* Per-client pre-call intake — also reachable via subdomain
               wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}
