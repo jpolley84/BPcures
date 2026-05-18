@@ -266,7 +266,7 @@ export default function CoachingPage() {
           </h2>
           <div className="p-6 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
             <p className="text-base italic mb-4" style={{ color: 'var(--ink)', lineHeight: 1.65 }}>
-              "Marlene, age 62, on three BP meds for fifteen years, still running 140s/90s most mornings. We talked for 60 minutes. Found her loudest corner was cortisol. She'd been waking at 3 AM every night for two years. We dropped two things, added three, fixed her sleep architecture. Day 9: BP 129/82. She brought the log to her cardiologist. He took her off one of the three pills."
+              "Doreen, age 62, on three BP meds for fifteen years, still running 140s/90s most mornings. We talked for 60 minutes. Found her loudest corner was cortisol. She'd been waking at 3 AM every night for two years. We dropped two things, added three, fixed her sleep architecture. Twelve days later: BP 128/80. She brought the log to her cardiologist. He took her off the atenolol."
             </p>
             <p className="text-sm" style={{ color: 'var(--muted)' }}>
               Anonymized first name. Real case. Real numbers. This is one of about 30 conversations a month.

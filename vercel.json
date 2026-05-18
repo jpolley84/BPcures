@@ -45,6 +45,10 @@
     {
       "path": "/api/reply-agent",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/buyer-upsell-cron",
+      "schedule": "0 13 * * *"
     }
   ]
 }
