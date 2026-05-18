@@ -242,6 +242,34 @@ export const TIER_CONFIG = {
     upgradeDesc: 'Joel reads every application + lab personally. Expect a personal email within 24 hours with your custom Week 1 plan + partner-inclusion guide. In the meantime, you can grab a kickoff slot here.',
     upgradeCta: 'Book my kickoff call →',
   },
+
+  // 2026-05-18: BP Triangle Diagnostic Session — the $297 mid-tier bridge
+  // between $17 Kit and $1,997 Sprint, launched after the May 17 founding-
+  // cohort post-mortem showed 0 applications from a $17→$1,997 jump.
+  //
+  // A single 60-min Zoom with Joel where he writes a custom 30-day protocol.
+  // No downloads — the value is the LIVE call + the 30-day email-coaching
+  // follow-up window. Buyer is enrolled in the 'diagnostic-prospect' drip
+  // cohort by stripe-webhook.js — a separate 7-email sequence over 14 days
+  // that warms them toward the Sprint upsell (Sprint price after $297
+  // credit = $1,700; only mentioned inside that private email sequence,
+  // never on the public /coaching page).
+  //
+  // Two AMOUNT_TO_TIER entries hit this tier:
+  //   - 29700 ($297 standard)
+  //   - 28000 ($280 kit-credit variant — for $17 Kit buyers via the
+  //            Day 10/14/17 buyer-drip upsell emails)
+  diagnostic: {
+    product: 'BP Triangle Diagnostic Session — 60 min with Joel Polley, RN',
+    subject: 'Your BP Triangle Diagnostic is paid — pick your call time inside',
+    downloads: [], // intentional — the diagnostic IS the deliverable
+    includesCoaching: false,
+    includesChallenge: false,
+    upgradeUrl: process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://calendly.com/braveworksrn/60min',
+    upgradeLabel: 'Step 1: Book your 60-minute Zoom',
+    upgradeDesc: 'Pick a time on Joel\'s calendar that works for you. The diagnostic is a single Zoom call where Joel looks at your home BP log, your meds, your stress, your supplements, and writes you a custom 30-day protocol live on screen. You also get a 30-day email-coaching follow-up window — reply to Joel each Sunday with your numbers and he\'ll adjust as needed.',
+    upgradeCta: 'Book my diagnostic call →',
+  },
 };
 
 // Map Stripe amount_total (cents) → tier key
@@ -271,6 +299,16 @@ export const AMOUNT_TO_TIER = {
   199700: 'coaching',  // founding cohort ($1,997)
   699700: 'coaching',  // regular price  ($6,997)
 
+  // ── 2026-05-18: BP Triangle Diagnostic Session ($297 mid-tier) ──────
+  // Bridges the $17 Kit → $1,997 Sprint jump. Two prices:
+  //   29700 — standard $297 (sold publicly via /coaching)
+  //   28000 — $280 kit-credit variant (sold only via Day 10/14/17
+  //           buyer-drip upsell emails to existing $17 Kit buyers)
+  // Both map to the 'diagnostic' tier so they get the same welcome
+  // email + Calendly link + diagnostic-prospect drip enrollment.
+  29700: 'diagnostic',
+  28000: 'diagnostic',
+
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.
   // Frontend has no path to these; buyer can only land here via a saved
@@ -278,7 +316,7 @@ export const AMOUNT_TO_TIER = {
   1299: 1,           // BP Cures alt price (deactivated)
   2900: '1+pt-stack', // $17 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
   5900: '2+pt-stack', // $47 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
-  29700: 3,          // $297 legacy Premium (deactivated)
+  // 29700 reclaimed 2026-05-18 → diagnostic (was legacy Premium tier 3)
   39700: 3,          // $397 legacy Premium (deactivated 2026-05-09 Phase A.2)
 };
 

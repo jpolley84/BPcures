@@ -640,33 +640,50 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       const dripKey = `drip:${dripEmail}`;
       const existing = await kv.get(dripKey);
       const purchaseTags = ['bpquiz-purchaser', `tier-${kitTier}-buyer`];
+
+      // 2026-05-18: Diagnostic-tier buyers get a SEPARATE 14-day post-
+      // purchase sequence (diagnostic-prospect cohort, see api/diagnostic-
+      // drip-cron.js — TODO #43). To prevent the standard Days 1-7 drip
+      // from also firing at them, we set `paused: true` so the main
+      // drip-cron skips. The diagnostic sequence is engagement-gated +
+      // ends with the Sprint upsell.
+      const isDiagnostic = kitTier === 'diagnostic';
+      const diagnosticFields = isDiagnostic ? {
+        paused: true,                    // main drip-cron skips paused records
+        inDiagnosticSequence: true,      // diagnostic cron picks these up
+        diagnosticSequenceDay: 0,        // diagnostic-drip-cron uses this counter
+        diagnosticEnrolledAt: new Date().toISOString(),
+      } : {};
+
       if (existing) {
         // Upgrade the existing record: mark as paid + auto-opt-in past Day 7.
         await kv.set(dripKey, {
           ...existing,
-          optedIn: true,                  // auto-opt past Day 7 gate
+          optedIn: true,                  // auto-opt past Day 7 gate (for non-diagnostic)
           isPaidCustomer: true,
           paidTier: String(kitTier),
           purchasedAt: existing.purchasedAt || new Date().toISOString(),
           tags: Array.from(new Set([...(existing.tags || []), ...purchaseTags])),
+          ...diagnosticFields,
         });
-        console.log(`stripe-webhook: drip record upgraded to paid for ${dripEmail} (tier=${kitTier})`);
+        console.log(`stripe-webhook: drip record upgraded to paid for ${dripEmail} (tier=${kitTier})${isDiagnostic ? ' [diagnostic-prospect]' : ''}`);
       } else {
         // Fresh enrollment — they bought without ever taking the quiz.
         await kv.set(dripKey, {
           email: dripEmail,
           firstName: firstNameOf(customerName) || '',
-          cohort: 'paid-direct',
+          cohort: isDiagnostic ? 'diagnostic-prospect' : 'paid-direct',
           enrolledAt: new Date().toISOString(),
           lastSentDay: 0,
-          optedIn: true,                  // auto-opt past Day 7 gate
+          optedIn: true,
           isPaidCustomer: true,
           paidTier: String(kitTier),
           purchasedAt: new Date().toISOString(),
-          source: 'stripe-paid-direct',
+          source: isDiagnostic ? 'stripe-diagnostic-direct' : 'stripe-paid-direct',
           tags: purchaseTags,
+          ...diagnosticFields,
         });
-        console.log(`stripe-webhook: NEW drip enrollment (paid-direct) for ${dripEmail} (tier=${kitTier})`);
+        console.log(`stripe-webhook: NEW drip enrollment (${isDiagnostic ? 'diagnostic-prospect' : 'paid-direct'}) for ${dripEmail} (tier=${kitTier})`);
       }
     } catch (err) {
       console.warn('stripe-webhook: paid-buyer drip enrollment failed (non-fatal)', err.message);
