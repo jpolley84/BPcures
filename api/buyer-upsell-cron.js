@@ -27,6 +27,21 @@ import { BUYER_UPSELL_DAYS, upsellSentFlag } from './_buyer-upsell-emails.js';
 import { signUnsubToken } from './unsubscribe.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
+const JOEL_NOTIFY = process.env.JOEL_NOTIFY || 'braveworksrn@gmail.com';
+
+async function alertJoel(resend, subject, text) {
+  try {
+    await resend.emails.send({
+      from: 'BraveWorks Ops <noreply@bpquiz.com>',
+      to: JOEL_NOTIFY,
+      subject,
+      text,
+    });
+  } catch (err) {
+    console.error('alertJoel send failed:', err.message);
+  }
+}
+
 export const config = { maxDuration: 300 };
 
 const RATE_LIMIT_DELAY_MS = 100; // ~10 sends/sec (Resend's free tier ceiling)
@@ -144,6 +159,25 @@ export default async function handler(req, res) {
   }
 
   console.log('buyer-upsell-cron summary:', JSON.stringify(summary));
+
+  // alertJoel if errors exceed a small threshold — a few transient errors
+  // are OK; a flood means Resend is failing or the cron is broken.
+  if (!DRY_RUN && summary.errors >= 3) {
+    const totalAttempted = (summary.sentByDay[10] || 0) + (summary.sentByDay[14] || 0) + (summary.sentByDay[17] || 0) + summary.errors;
+    await alertJoel(resend,
+      `[buyer-upsell-cron] ${summary.errors} errors during today's fire`,
+      `buyer-upsell-cron ran with elevated errors.
+
+Summary: ${JSON.stringify(summary, null, 2)}
+
+First few errors:
+${errors.slice(0, 5).map(e => `  - ${e.key}: ${e.message}`).join('\n')}
+
+If Resend rate-limiting or a transient KV blip, expect the next fire to recover.
+If errors persist >3 days running, check the runtime logs and Resend dashboard.`,
+    );
+  }
+
   return res.status(200).json({
     ok: true,
     dryRun: DRY_RUN,

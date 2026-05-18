@@ -19,7 +19,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 
-const UPSELL_PRICE_ID = 'price_1TSCuLHseZnO3rRZPAcRKs7t'; // $30 BP Reset Kit upsell
+// 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
+// the $30 OTO BP Reset Kit upsell price; it stays as the safety net so a
+// missing env var doesn't break the OTO. To change the OTO price, update
+// VITE_STRIPE_UPSELL_PRICE_ID in Vercel — no code deploy needed.
+const UPSELL_PRICE_ID = import.meta.env.VITE_STRIPE_UPSELL_PRICE_ID || 'price_1TSCuLHseZnO3rRZPAcRKs7t';
 const FALLBACK_SUCCESS = '/success?slug=blood-pressure-cures';
 
 export default function UpsellBpResetKitPage() {

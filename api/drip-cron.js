@@ -82,6 +82,13 @@ export default async function handler(req, res) {
   const allKeys = await kv.keys('drip:*');
   console.log(`drip-cron: scanning ${allKeys.length} subscriber keys`);
 
+  // 2026-05-18: 18-hour no-double-send guard. The cron now fires 4x/day
+  // (every 6 hours) to clear the Vercel 300s function timeout that was
+  // capping each run at ~1,500 records. The guard ensures a subscriber
+  // who already got today's email isn't advanced again later in the day.
+  const TWENTY_HOURS_MS = 18 * 3600 * 1000;
+  const now = Date.now();
+
   for (const key of allKeys) {
     summary.scanned++;
     try {
@@ -90,6 +97,17 @@ export default async function handler(req, res) {
       if (sub.unsubscribed || sub.paused || sub.complete) {
         summary.skipped++;
         continue;
+      }
+
+      // No-double-send guard — if this subscriber got an email within the
+      // last 18 hours, skip. Subsequent fires today only pick up records
+      // that didn't get processed by earlier fires (Vercel timeout misses).
+      if (sub.lastSentAt) {
+        const sinceLastSent = now - new Date(sub.lastSentAt).getTime();
+        if (sinceLastSent < TWENTY_HOURS_MS) {
+          summary.skipped++;
+          continue;
+        }
       }
 
       // ─── Self-healing day computation (2026-05-11) ───────────────────

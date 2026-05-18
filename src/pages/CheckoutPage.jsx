@@ -10,10 +10,11 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import ExitIntentPopup from '../components/ExitIntentPopup';
 
 const PRICE = '$17';
-// 2026-05-12: hardcoded the Stripe price ID (was reading from VITE_STRIPE_KIT_PRICE_ID
-// env var which was never set in Vercel — same broken pattern as UpsellPage). This is
-// the $17 "Blood Pressure Cures — The 10-Day Nurse's Reset" price.
-const STRIPE_KIT_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG';
+// 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
+// the $17 "Blood Pressure Cures — The 10-Day Nurse's Reset" price; it stays
+// as the safety net so a missing env var doesn't break checkout. To change
+// the price, update VITE_STRIPE_KIT_PRICE_ID in Vercel — no code deploy needed.
+const STRIPE_KIT_PRICE_ID = import.meta.env.VITE_STRIPE_KIT_PRICE_ID || 'price_1TQTOlHseZnO3rRZANYJQnpG';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
   const [ref, isVisible] = useScrollAnimation(0.1);

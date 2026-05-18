@@ -633,24 +633,32 @@ P.S. The button stays alive for 48 hours. After that, the door closes for this r
 `,
 };
 
-// ─── DAY 8 — POST-OPT-IN: BP TRIANGLE + 1:1 APPLICATION GATE ─────────
+// ─── DAY 8 — POST-OPT-IN: BP TRIANGLE + $297 DIAGNOSTIC PITCH ────────
 // Fires the morning after Day 7 opt-in. Audience is self-selected — these
-// are the most engaged subs (clicked the Day 7 button to continue). Pitches
-// the $1,297 1:1 application at /1on1 and explicitly calls out 4+ meds
-// + drastic-change-ASAP profile per Joel's 2026-05-09 spec.
-// 2026-05-14: pointed at /coaching (the new $14,616-stack 90-Day Freedom
-// Sprint page with 17-question pre-qualification). /1on1 still works as
-// a fallback waitlist if /coaching ever goes down.
+// are the most engaged subs (clicked the Day 7 button to continue).
+//
+// 2026-05-18 rewrite: pitches the $297 BP Triangle Diagnostic Session
+// at /coaching (the new mid-tier direct-checkout product) instead of
+// the legacy $1,297 1:1 application. Per Joel's funnel-expansion call:
+// the diagnostic is the bridge between $17 Kit and $1,997 Sprint. Sprint
+// is NEVER mentioned publicly — only revealed inside the post-purchase
+// diagnostic→Sprint email sequence.
+//
+// Kit buyers reading this Day 8 will ALSO get the Day 10/14/17 buyer-
+// upsell-cron pitch at $280 (their $17 credit applied). That's the
+// intended dual-segment behavior — Day 8 is the warmer-than-cold pitch
+// to all opted-in subs; the buyer-upsell-cron is the buyer-specific
+// follow-up with credit math.
 const APPLY_URL = `${SITE_URL}/coaching`;
 
 const day8 = {
-  subject: 'On 4+ medications? Read this one carefully.',
-  subjectB: 'Day 8 — the 1:1 invitation',
-  preview: 'The application is open. Most people don\'t need this. Some do.',
+  subject: 'The 60-minute conversation that ends the guessing',
+  subjectB: 'Day 8 — your diagnostic invitation',
+  preview: 'One Zoom. Your loudest Pressure named. A written 30-day protocol that\'s yours.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You opted in. Means you read all 7 days, found something useful, and want the deeper arc. I respect that.`)}
-    ${p(`Before I keep going on the daily emails, I want to put one direct question in front of you — because for a small group of you, the next 23 days of emails won't be enough. You need something more direct.`, { margin: '0 0 32px' })}
+    ${p(`Before I keep going on the daily emails, I want to put one direct option in front of you — because some of you don't need another 22 days of education. You need a sixty-minute call with a real nurse looking at your real situation.`, { margin: '0 0 32px' })}
     ${bigQuote('Which of the Three Pressures is yours?')}
     ${p(`If you've followed along this week, you've seen me reference three Pressures more than once. They're how I think about every BP case I see:`)}
     ${sageBlock(`
@@ -658,40 +666,40 @@ const day8 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Stress Pressure (cortisol).</strong> The switch stuck on. Wired-tired. Can't sleep deep. Midsection weight gain. Cortisol pulls BP up like a pulley. Most cardiologists don't measure this.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Sugar Pressure (insulin).</strong> Sugar stays high. A1C creeping. 3 PM crashes. Can't lose the weight. Insulin is vasoconstrictive — high BP and high A1C are the same disease wearing different shirts.</p>
     `)}
-    ${p(`Most people have ONE Pressure that's the lead domino. Calm that one and the other two fall in line. The 7-day arc gave you the foundation. The next 23 days teach you to identify and rebuild your loudest Pressure systematically.`)}
+    ${p(`Most people have ONE Pressure that's the lead domino. Calm that one and the other two fall in line. The 7-day arc gave you the foundation. The next 22 days teach you to identify and rebuild your loudest Pressure systematically.`)}
     ${p(`That's the work for most people. <strong>And it works.</strong>`, { margin: '0 0 32px' })}
     ${clayBlock("Don't know your dominant Pressure yet?", `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz routes you to one of the Three Pressures — Stress, Sugar, or Pipes — and returns the first move for your specific type.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
-    ${clayBlock('If this is you, read this twice', `
+    ${clayBlock('If this is you, the next 22 emails won\'t be enough', `
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">You're on <strong style="color:${PALETTE.text};">4 or more medications.</strong> Maybe more. BP, statin, beta-blocker, ARB, possibly metformin, possibly a thyroid drug. Maybe a benzo or a sleep aid layered on top.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Your readings are still high. Or they\'re "controlled" but you feel like a ghost of the person you were 10 years ago. Side effects you can\'t pin to one drug because they could be coming from any of them.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Your doctor\'s answer is "another medication." Or "let\'s adjust the dose." Or "you\'ll just have to live with it."</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">If that\'s you, daily emails aren\'t enough. You need someone in your corner who can read your full picture, design a deprescribing plan with your prescriber, and walk you through it week by week. That\'s what 1:1 is for.</strong></p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">If that\'s you, daily emails aren\'t enough. You need someone in your corner who can read your full picture in one sitting, name your loudest Pressure, and hand you a written protocol that\'s yours — not the general kit.</strong></p>
     `)}
-    ${bigQuote('The 1:1 invitation.')}
-    ${p(`I take a small number of 1:1 BP Triangle clients each month. It\'s 90 days of working directly with me — your full medication picture, your labs, your daily protocol, weekly check-ins, and a staged plan to get drugs OFF your protocol the safe way (with your prescriber, never around them).`)}
-    ${p(`It\'s <strong>$1,297</strong> for the 90 days. That\'s less than most people spend on co-pays and supplements they\'re guessing at over the same period — and it\'s gated by application because I screen carefully.`)}
-    ${p(`<strong>I don\'t take everyone who applies.</strong> I take the people who:`)}
+    ${bigQuote('The BP Triangle Diagnostic Session.')}
+    ${p(`A single 60-minute Zoom with me. Bring your home BP log (even three readings from this week is enough), your prescription list, your supplements, your labs if you have any. I look at your full picture and name your loudest Pressure — Pipes, Stress, or Sugar.`)}
+    ${p(`You walk out with:`)}
     ${sageBlock(`
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Have read all 7 days of these emails (you have)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Know their numbers and their meds list cold</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Can articulate <em>why now</em> — what changed that finally made them say enough</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ Are willing to do the work — this is a partnership, not a magic bullet</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Your loudest Pressure, named (with the second-loudest noted too)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A written 30-day personalized protocol — yours, not generic</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A clean one-page script to bring your doctor for the deprescribing conversation</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">30 days of follow-up email coaching</strong> — reply to me each Sunday with your numbers and I adjust as needed</p>
     `)}
-    ${p(`If that\'s you, the application takes about 5 minutes. It\'s a more detailed quiz — I want to know your full picture before we talk. After you submit, I read every one personally. <strong>If we have an opening and you\'re a fit, I\'ll reach out within 1-2 weeks.</strong> If we don\'t, you\'re on the waitlist for the next cohort.`, { margin: '0 0 32px' })}
-    ${ctaButton(APPLY_URL, 'Apply for 1:1 with Joel →')}
-    ${p(`<span style="color:#999;font-size:14px;">No payment is collected at application. Path is application → screening → call → invoice if it\'s a fit on both sides.</span>`, { margin: '0 0 28px' })}
-    ${p(`<strong>If 1:1 isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each pillar, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need 1:1. The pillar protocols are enough.`)}
-    ${p(`But if "drastic change ASAP" describes where you are right now — apply.`, { margin: '0 0 32px' })}
+    ${p(`It\'s <strong>$297</strong>. One time. No upsell on the call.`)}
+    ${p(`Honest math on availability: I take 10 of these calls a month. <strong>6 slots open this week</strong>; when they're gone, next openings are roughly two weeks out.`, { margin: '0 0 32px' })}
+    ${ctaButton(APPLY_URL, 'Book the diagnostic ($297) →')}
+    ${p(`<span style="color:#999;font-size:14px;">Already a Kit buyer? Your $17 credit applies — watch your inbox; a separate kit-credit pricing link is on its way over the next few days. Or reply "kit credit" and I'll send it now.</span>`, { margin: '0 0 28px' })}
+    ${p(`<strong>If the diagnostic isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each Pressure, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a diagnostic. The daily protocols are enough.`)}
+    ${p(`But if you\'re on 4+ meds, or you\'re tired of guessing, or you just want a real conversation with a 20-year ICU/ER nurse looking at YOUR situation — book it.`, { margin: '0 0 32px' })}
     ${joelSignoff()}
-    ${psBox(`The 1:1 application is the same form regardless of which Pressure is yours. If your loudest is Stress Pressure or Sugar Pressure instead of Pipes — same application, same screening, same outcome. The work is Pressure-specific; the door is the same.`)}
+    ${psBox(`The diagnostic works regardless of which Pressure is yours. Stress Pressure, Sugar Pressure, or Pipes — same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-You opted in — you want the deeper arc. Before I keep going on the daily emails, one direct question for the small group who needs more than emails.
+You opted in — you want the deeper arc. Before I keep going on the daily emails, one direct option for the people who want more than education.
 
 WHICH OF THE THREE PRESSURES IS YOURS?
 
@@ -699,32 +707,39 @@ WHICH OF THE THREE PRESSURES IS YOURS?
 2. STRESS PRESSURE (cortisol) — The switch stuck on. Wired-tired, can't sleep deep, midsection weight gain.
 3. SUGAR PRESSURE (insulin) — Sugar stays high. A1C creeping, 3 PM crashes, can't drop the weight.
 
-Most people have ONE Pressure that's the lead domino. The next 23 days teach you to identify and rebuild your loudest Pressure. That's the work for most people. And it works.
+Most people have ONE Pressure that's the lead domino. The next 22 days teach you to identify and rebuild your loudest. That's the work for most people. And it works.
 
-IF THIS IS YOU, READ THIS TWICE:
+IF THIS IS YOU, THE NEXT 22 EMAILS WON'T BE ENOUGH:
 
 You're on 4 or more medications. Your readings are still high — or "controlled" but you feel like a ghost. Side effects you can't pin to one drug. Your doctor's answer is "another medication."
 
-If that's you, daily emails aren't enough. You need someone in your corner who can read your full picture, design a deprescribing plan with your prescriber, and walk you through it week by week. That's what 1:1 is for.
+If that's you, daily emails aren't enough. You need someone in your corner who can read your full picture in one sitting, name your loudest Pressure, and hand you a written protocol that's yours.
 
-THE 1:1 INVITATION
+THE BP TRIANGLE DIAGNOSTIC SESSION
 
-I take a small number of 1:1 BP Triangle clients each month. 90 days, working directly with me — your full medication picture, labs, daily protocol, weekly check-ins, and a staged plan to get drugs OFF your protocol the safe way (with your prescriber).
+A single 60-minute Zoom with me. Bring your home BP log, your prescription list, supplements, any labs you have. I look at your full picture, name your loudest Pressure, and you walk out with:
 
-$1,297 for 90 days. Application-gated. I don't take everyone — I take people who've read all 7 days (you have), know their numbers and meds cold, can articulate why now, and are willing to do the work.
+→ Your loudest Pressure, named (with the second-loudest noted too)
+→ A written 30-day personalized protocol — yours, not generic
+→ A doctor-conversation script for the deprescribing talk
+→ 30 days of follow-up email coaching — reply to me Sundays with numbers, I adjust
 
-→ Apply for 1:1 with Joel: ${APPLY_URL}
+$297. One time. No upsell on the call.
 
-No payment at application. Application → screening → call → invoice if we're a fit on both sides.
+Six slots open this week; when they're gone, next openings roughly two weeks out.
 
-If 1:1 isn't for you — no problem. The next 22 days of emails are coming. Most people don't need 1:1; the pillar protocols are enough.
+→ Book the diagnostic: ${APPLY_URL}
 
-But if "drastic change ASAP" describes where you are — apply.
+Already a Kit buyer? Your $17 credit applies — watch your inbox for a kit-credit pricing link in a few days, or reply "kit credit" and I'll send it now.
+
+If the diagnostic isn't for you — no problem. The next 22 days of emails are coming. Most people don't need it; the daily protocols are enough.
+
+But if you're on 4+ meds, or you're tired of guessing — book it.
 
 Joel
 RN, BraveWorks
 
-P.S. The application is the same form regardless of which Pressure is yours. Stress Pressure or Sugar Pressure instead of Pipes — same application, same screening, same outcome. The work is Pressure-specific; the door is the same.
+P.S. The diagnostic works regardless of which Pressure is yours. Stress, Sugar, or Pipes — same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.
 
 —
 → Skool: ${SKOOL_URL}
