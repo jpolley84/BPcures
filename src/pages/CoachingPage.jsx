@@ -1,30 +1,31 @@
-// /coaching — 90-Day BP Triangle Freedom Sprint application page.
+// /coaching — BP Triangle Diagnostic Session ($297 direct checkout)
 //
-// 2026-05-14 panel-audit rewrite. Eight fixes shipped:
-//  1. Application form reduced from 17 → 7 questions (biggest friction kill)
-//  2. Testimonial block added (3 real DMs, anonymized to first name)
-//  3. Price card moved ABOVE the TikTok video (pre-anchor on first scroll)
-//  4. "Picture August" future-self section added (Hardy / Myron L4)
-//  5. "4 of 5 founding slots remaining" earned scarcity
-//  6. "This IS / IS NOT for you" Brunson disqualifier section
-//  7. Value stack rewritten in Harry Dry voice (specific + emotional)
-//  8. CTA copy strengthened, FAQ added below form
+// 2026-05-18 rewrite. The previous version was a $1,997 90-Day Sprint
+// application-only page. The May 17 founding cohort launch generated
+// 0 real applications across 8K emails — the data said the price-jump
+// from $17 Kit → $1,997 Sprint was too steep without a trust bridge.
 //
-// All previous experts still represented:
-//   • Chris Do — diagnose-before-prescribe, never chase
-//   • Daniel Priestley — pitch waterfall, score on doors (now on fit call)
-//   • Myron Golden — cost-of-inaction + L4 imagination ("Picture August")
-//   • Hormozi — disqualification + investment-range filter
-//   • Brunson — application-only, IS/IS NOT, decision-maker filter
-//   • Harry Dry — value stack rewrites earn every word
+// New design: this page sells ONLY the $297 BP Triangle Diagnostic
+// Session as a direct-checkout offer. The $1,997 Sprint is NOT mentioned
+// here — it only surfaces inside the post-purchase email sequence to
+// $297 buyers (per Joel: "we are only presenting 297 offer not 1997").
 //
-// Application-only (no buy button). Submits to /api/coaching-apply.
+// The $297 acts as the first payment of the Sprint if buyers upgrade.
+// Credit ladders all the way: $17 Kit credit applies to $297 ($280),
+// then $297 Diagnostic credit applies to $1,997 ($1,700).
+//
+// Bottom of the page: Cohort #2 waitlist email opt-in (low-friction).
 
 import { useState, useEffect } from 'react';
-import { Loader2, CheckCircle2, XCircle, ShieldCheck, Phone, TrendingDown, ArrowRight, HelpCircle } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ArrowRight, FileText, ClipboardCheck, MessageCircle, HelpCircle, Mail } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// TikTok embed (loads tiktok.com/embed.js once per page)
+// Stripe Payment Link for the $297 Diagnostic — Joel creates in Stripe
+// Dashboard, pastes URL into Vercel env as VITE_STRIPE_DIAGNOSTIC_LINK.
+// After-completion redirect should point to: https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID}
+const DIAGNOSTIC_LINK = import.meta.env.VITE_STRIPE_DIAGNOSTIC_LINK || 'https://buy.stripe.com/MISSING_VITE_STRIPE_DIAGNOSTIC_LINK';
+
+// TikTok embed (preserved from previous page — works as social proof)
 function TikTokEmbed({ videoId, username }) {
   useEffect(() => {
     const SRC = 'https://www.tiktok.com/embed.js';
@@ -40,689 +41,353 @@ function TikTokEmbed({ videoId, username }) {
     s.src = SRC;
     s.async = true;
     document.body.appendChild(s);
-  }, [videoId]);
+  }, []);
 
-  const url = `https://www.tiktok.com/@${username}/video/${videoId}`;
   return (
-    <blockquote className="tiktok-embed" cite={url} data-video-id={videoId}
-      style={{ maxWidth: 605, minWidth: 325, margin: '0 auto', background: 'transparent' }}>
-      <section style={{ padding: '1.5rem', textAlign: 'center' }}>
-        <a target="_blank" rel="noopener noreferrer" href={url} style={{ color: 'var(--purple)', fontWeight: 600 }}>
-          Watch on TikTok →
+    <blockquote
+      className="tiktok-embed"
+      cite={`https://www.tiktok.com/@${username}/video/${videoId}`}
+      data-video-id={videoId}
+      style={{ maxWidth: '605px', minWidth: '325px', margin: '0 auto' }}
+    >
+      <section>
+        <a target="_blank" rel="noopener noreferrer" title={`@${username}`} href={`https://www.tiktok.com/@${username}?refer=embed`}>
+          @{username}
         </a>
       </section>
     </blockquote>
   );
 }
 
-function AnimatedSection({ children, className = '', delay = 0, style = {} }) {
-  const [ref, isVisible] = useScrollAnimation(0.1);
-  return (
-    <div ref={ref} className={className}
-      style={{ ...style, opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
-        transition: `opacity 0.7s ease-out ${delay}ms, transform 0.7s ease-out ${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────
-// Harry Dry value stack — every line earned its slot.
-// Specific (numbers, names, mechanisms) → emotional (what it means)
-// → functional (what it is). In that order.
-// ─────────────────────────────────────────────────────────
-const STACK = [
-  { name: '12 hours of one-on-one with a 20-year RN who reads your chart twice (Mondays 8 PM ET)', value: '$5,964' },
-  { name: '6 hormone sessions with Annie Chitate, RN — postmenopausal hormone specialty', value: '$1,782' },
-  { name: 'Live audit of every bottle in your drawer — most members save $200-400/mo by week 2', value: '$697' },
-  { name: 'Clean-sheet rebuild of your day — when you eat, sleep, take what, move', value: '$497' },
-  { name: 'WhatsApp access Sun-Thu 9-5 ET — text the photo, ask the dumb question, get a real RN answer', value: '$1,997' },
-  { name: 'Skool VIP community of adults on the same Triangle protocol', value: '$297' },
-  { name: 'Every course in the BraveWorks library — yours forever', value: '$1,997' },
-  { name: 'Every BraveWorks eBook + every new title released for life', value: '$497' },
-  { name: 'Daily email engineered to YOUR protocol — not the public newsletter', value: '$497' },
-  { name: 'Printable + digital trackers — the receipts you\'ll show your future PCP', value: '$97' },
-  { name: '12-page guide for your spouse — how to support without nagging', value: '$97' },
-  { name: '20% off Barbara O\'Neill\'s June LIVE event (live or replay)', value: '$197' },
-];
-const STACK_VALUE = '$14,616';
-const PRICE_REGULAR = '$6,997';
-const PRICE_FOUNDING = '$1,997';
-const PRICE_3PAY = '$697 × 3';
-const PRICE_3PAY_TOTAL = '$2,091';
-
-const DEADLINE_ISO = '2026-05-18T03:59:00Z';
-const DEADLINE_LABEL = 'Sunday, May 17 · 11:59 PM ET';
-
-// 1 of 5 sold (Wakita). Update as slots fill.
-const SLOTS_REMAINING = 4;
-const SLOTS_TOTAL = 5;
-
-const GUARANTEES = [
-  { day: 'Day 30', text: 'Top three symptoms not improving → full refund, keep every protocol.' },
-  { day: 'Day 60', text: 'Labs not moving in the right direction → full refund.' },
-  { day: 'Day 90', text: 'Don\'t feel safer in your body than today → full refund.' },
-];
-
-// Anonymized testimonials. Gary, Candace = DMs (first names only). Drago = public TT comment.
-const TESTIMONIALS = [
-  {
-    quote: 'I approached my cardiologist and she stopped me on Plavix and tapered me off Metoprolol. I owe the majority of this to you.',
-    name: 'Gary',
-    source: 'TikTok viewer',
-  },
-  {
-    quote: 'From my 20s to now being 67, on 3 BP meds, you have been the only person that has ever made any impact in my BP journey.',
-    name: 'Drago',
-    source: 'public comment, @braveworksrn',
-  },
-  {
-    quote: 'I am successfully managing my POTS with hawthorn berry and dandelion. I got off 37.5 mg of metoprolol. I feel so much better.',
-    name: 'Candace',
-    source: 'TikTok viewer',
-  },
-];
-
-const IS_FOR_YOU = [
-  'You\'re 45-70, dealing with BP, metabolic, or hormone stuff that hasn\'t moved',
-  'You\'ve tried supplements, programs, doctors — and you\'re tired of starting over',
-  'You can commit one Monday evening per week for 90 days',
-  'You have $1,997 (or 3 × $697) set aside or ready to allocate',
-];
-const NOT_FOR_YOU = [
-  'You\'re looking for a magic pill or a quick fix',
-  'You won\'t follow a protocol when it\'s inconvenient',
-  'You need 4 people\'s permission before making a health decision',
-  'You expect us to work AROUND your doctor instead of WITH them',
-];
-
-const FAQ = [
-  {
-    q: 'What if I can\'t make Mondays at 8 PM ET?',
-    a: 'Every session is recorded. You also get WhatsApp access Sun–Thu 9–5 ET to ask anything in real time. Missing a live call doesn\'t cost you anything except the live energy.',
-  },
-  {
-    q: 'What\'s the difference between this and the $97 Challenge?',
-    a: 'The Challenge is group only, no 1:1, no Annie. The Sprint is weekly 1:1 with me, biweekly hormone work with Annie, a doctor-handoff document, the full stack of bonuses, and the protocol personalized to your labs at week 6.',
-  },
-  {
-    q: 'Will my doctor be involved?',
-    a: 'Yes — we build the protocol so you can hand it to them, not around them. The Sprint ends with a one-page doctor-cleared protocol you bring to your PCP at the graduation handoff.',
-  },
-  {
-    q: 'Is this medical care?',
-    a: 'No. This is RN-led naturopathic coaching alongside your existing doctor. We don\'t prescribe, diagnose, or replace medical care. We rebuild the inputs — the Three Pressures (Pipe, Stress, Sugar) — that your medications are managing the outputs of.',
-  },
-];
-
-// ============================================================
-// MAIN PAGE
-// ============================================================
 export default function CoachingPage() {
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Hero — coach photos */}
-      <div className="pt-8 pb-5 sm:pt-10 sm:pb-6" style={{ animation: 'fadeInUp 0.8s ease-out' }}>
-        <div className="flex justify-center items-center gap-3">
-          <div className="headshot-ring">
-            <picture>
-              <source srcSet="/headshot.webp" type="image/webp" />
-              <img src="/headshot.jpg" alt="Joel Polley, RN" width="100" height="100"
-                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }} />
-            </picture>
-          </div>
-          <div style={{ fontSize: '32px', color: 'var(--muted-gray)', fontWeight: 200 }}>+</div>
-          <div className="headshot-ring">
-            <picture>
-              <source srcSet="/annie.webp" type="image/webp" />
-              <img src="/annie.jpg" alt="Annie Chitate, RN" width="100" height="100"
-                style={{ width: '90px', height: '90px', borderRadius: '50%', objectFit: 'cover', border: '3px solid white' }} />
-            </picture>
-          </div>
-        </div>
-      </div>
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSubmitting, setWaitlistSubmitting] = useState(false);
+  const [waitlistDone, setWaitlistDone] = useState(false);
+  const [waitlistError, setWaitlistError] = useState('');
 
-      {/* Credential bar */}
-      <div className="credential-bar py-3.5">
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--white)', fontSize: '13px', lineHeight: 1.4, margin: 0 }}>
-            <strong>Joel Polley, RN</strong> — 20 yrs ICU/ER, Naturopathic Practitioner&nbsp;·&nbsp;
-            <strong>Annie Chitate, RN</strong> — Hormone Specialist, Naturopathic Practitioner
-          </p>
-        </div>
-      </div>
-
-      {/* Hero copy + deadline strip + EARNED SCARCITY */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 12 }}>
-            90-Day BP Triangle Freedom Sprint · Application Only
-          </div>
-          <h1 className="font-extrabold mb-4 text-balance" style={{ color: 'var(--navy)', fontSize: '32px', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
-            Doctor-cleared independence in 90 days.
-          </h1>
-          <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: 1.55, marginBottom: 8 }}>
-            Two RNs. Weekly 1:1s. Daily access. One protocol — the Three Pressures (Pipe, Stress, Sugar) — built for adults whose health gave up before they did.
-          </p>
-          <p style={{ color: 'var(--muted-gray)', fontSize: '14px', margin: 0 }}>
-            <strong style={{ color: '#B85A36' }}>{SLOTS_REMAINING} of {SLOTS_TOTAL} founding slots remaining.</strong>&nbsp; Application reviewed personally. No buy button.
-          </p>
-          <div style={{ marginTop: '1.25rem', background: '#FBF8F1', border: '2px solid #B85A36', borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700 }}>
-              Applications close
-            </div>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--navy)' }}>
-              {DEADLINE_LABEL}
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* PRICE CARD — moved UP to anchor before TikTok / value stack */}
-      <div className="section-spacing" style={{ paddingTop: 0 }}>
-        <div className="container-mobile-first">
-          <div style={{ background: 'var(--navy)', borderRadius: 12, padding: '1.5rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700, marginBottom: 6 }}>
-              Founding cohort · introductory rate
-            </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: '10px', marginBottom: 2 }}>
-              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '18px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
-              <span style={{ color: 'var(--white)', fontSize: '36px', fontWeight: 800, lineHeight: 1.1 }}>{PRICE_FOUNDING}</span>
-            </div>
-            <div style={{ color: '#C7A95E', fontSize: '14px', marginTop: 4 }}>
-              or {PRICE_3PAY} ({PRICE_3PAY_TOTAL} total)
-            </div>
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '13px', marginTop: 12, fontStyle: 'italic' }}>
-              {STACK_VALUE} value stack · {SLOTS_REMAINING} slots left · After {DEADLINE_LABEL.split(' ·')[0]}, it's {PRICE_REGULAR}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr className="gradient-divider" />
-
-      {/* TikTok video — proof from short-form to landing */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <div className="text-center mb-3">
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 6 }}>
-                The video that opened this cohort
-              </div>
-              <h2 className="font-bold" style={{ color: 'var(--navy)', fontSize: '22px', lineHeight: 1.3 }}>
-                Watch the 60 seconds first.
-              </h2>
-              <p style={{ color: 'var(--muted-gray)', fontSize: '13px', maxWidth: 400, margin: '8px auto 1.5rem' }}>
-                If you saw it on TikTok — this is the program. If you didn't, the next minute tells you whether this is for you.
-              </p>
-            </div>
-            <TikTokEmbed videoId="7639447507050827039" username="braveworksrn" />
-          </AnimatedSection>
-        </div>
-      </div>
-
-      {/* Value stack — Harry Dry rewrites */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              What's yours when you say yes.
-            </h2>
-            <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-              12 components. 90 days. Two RNs.
-            </p>
-          </AnimatedSection>
-          <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 14, padding: '1.25rem' }}>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              {STACK.map((item, i) => (
-                <li key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', padding: '10px 0', borderBottom: i < STACK.length - 1 ? '1px solid #F0EDE5' : 'none' }}>
-                  <div style={{ display: 'flex', gap: '8px', flex: 1 }}>
-                    <CheckCircle2 size={16} style={{ color: 'var(--purple)', flexShrink: 0, marginTop: 3 }} />
-                    <span style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.5 }}>{item.name}</span>
-                  </div>
-                  <span style={{ color: 'var(--gold, #A88A4A)', fontSize: '14px', fontWeight: 600, flexShrink: 0 }}>{item.value}</span>
-                </li>
-              ))}
-              <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', marginTop: '6px', borderTop: '2px solid var(--navy)' }}>
-                <span style={{ color: 'var(--navy)', fontSize: '15px', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Total stack value</span>
-                <span style={{ color: 'var(--navy)', fontSize: '20px', fontWeight: 800 }}>{STACK_VALUE}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Picture August — Hardy/Myron L4 future-self */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-3 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              Picture August.
-            </h2>
-            <div style={{ maxWidth: 540, margin: '0 auto' }}>
-              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 12 }}>
-                You wake up before the alarm because your body is rested for the first time in years. The bottle drawer has three bottles in it, not eighteen.
-              </p>
-              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 12 }}>
-                The afternoon pain you used to brace for hasn't shown up in sixty days. You finally have a primary care doctor — a real one — who looked at your labs and said <em>whatever you're doing, keep doing it</em>.
-              </p>
-              <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.7, marginBottom: 18 }}>
-                Your spouse watches you laugh on a Tuesday at 2 PM because you have energy left.
-              </p>
-              <p style={{ color: 'var(--navy)', fontSize: '17px', lineHeight: 1.5, fontWeight: 700, textAlign: 'center', marginBottom: 0 }}>
-                That's the destination. The Sprint is the 90 days that get you there.
-              </p>
-            </div>
-          </AnimatedSection>
-        </div>
-      </div>
-
-      {/* TESTIMONIALS — anonymized DMs + 1 public comment */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              What people tell me.
-            </h2>
-            <p className="text-center mb-7" style={{ color: 'var(--muted-gray)', fontSize: '13px', maxWidth: 480, margin: '0 auto 2rem' }}>
-              These are video viewers, not Sprint clients. The Sprint is the deeper version — same protocol, with weekly 1:1, Annie's hormone module, and daily access.
-            </p>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {TESTIMONIALS.map((t, i) => (
-              <AnimatedSection key={i} delay={i * 80}>
-                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderLeft: '4px solid var(--purple)', borderRadius: 12, padding: '1.25rem 1.25rem 1rem', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                  <p style={{ color: 'var(--dark-gray)', fontSize: '14.5px', lineHeight: 1.6, fontStyle: 'italic', margin: '0 0 14px', flex: 1 }}>
-                    "{t.quote}"
-                  </p>
-                  <div style={{ borderTop: '1px solid #F0EDE5', paddingTop: 10 }}>
-                    <div style={{ color: 'var(--navy)', fontSize: '13px', fontWeight: 700 }}>{t.name}</div>
-                    <div style={{ color: 'var(--muted-gray)', fontSize: '12px' }}>{t.source}</div>
-                  </div>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Cost of inaction (Myron) */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <div className="text-center mb-2">
-              <TrendingDown size={28} style={{ color: '#B85A36', margin: '0 auto' }} />
-            </div>
-            <h2 className="font-bold mb-2 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              The price of saying no.
-            </h2>
-            <p className="text-center mb-6" style={{ color: 'var(--muted-gray)', fontSize: '14px', maxWidth: 480, margin: '0 auto 1.5rem' }}>
-              Most adults with this picture get worse, not better. Here's what the next 5 years cost on the current path.
-            </p>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div style={{ background: '#FBF8F1', border: '1px solid #E6DECE', borderRadius: 12, padding: '1.25rem' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700, marginBottom: 10 }}>
-                Stay on the same path
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '8px' }}>
-                {[
-                  '2–3 more prescriptions added in the next 5 years',
-                  '$300–500/month on supplements that don\'t move the needle',
-                  '$4,800–$9,000/yr in co-pays + specialist referrals',
-                  'One avoidable ER visit (the average is one every 5 yrs in this picture)',
-                  'Five more years of compromised energy, sleep, mood, and intimacy',
-                ].map((line, i) => (
-                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
-                    <span style={{ color: '#B85A36', fontWeight: 700, flexShrink: 0 }}>×</span>
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-              <p style={{ fontSize: '13px', color: '#B85A36', fontWeight: 700, marginTop: '12px', marginBottom: 0 }}>
-                Compounded 5-year cost: $30,000–$75,000+ and a smaller life.
-              </p>
-            </div>
-            <div style={{ background: '#E6EBE0', border: '1px solid #3F5A3C', borderRadius: 12, padding: '1.25rem' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#3F5A3C', fontWeight: 700, marginBottom: 10 }}>
-                Say yes once
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '8px' }}>
-                {[
-                  '90 days. One investment. Done.',
-                  'Supplement spend cut $200–400/month starting week 2',
-                  'A real PCP with a real plan they\'ll sign off on',
-                  'Doctor-cleared independence from at least one medication',
-                  'Your body trusted again. Energy back. Sleep back. You back.',
-                ].map((line, i) => (
-                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
-                    <CheckCircle2 size={14} style={{ color: '#3F5A3C', flexShrink: 0, marginTop: 3 }} />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-              <p style={{ fontSize: '13px', color: '#3F5A3C', fontWeight: 700, marginTop: '12px', marginBottom: 0 }}>
-                One-time cost: {PRICE_FOUNDING} (founding cohort). Pays for itself by Day 60.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* BRUNSON IS / IS NOT for you */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <h2 className="font-bold mb-6 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-              Is this for you?
-            </h2>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div style={{ background: 'var(--white)', border: '2px solid #3F5A3C', borderRadius: 12, padding: '1.25rem' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#3F5A3C', fontWeight: 700, marginBottom: 12 }}>
-                This is for you if
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '10px' }}>
-                {IS_FOR_YOU.map((line, i) => (
-                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
-                    <CheckCircle2 size={16} style={{ color: '#3F5A3C', flexShrink: 0, marginTop: 2 }} />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div style={{ background: 'var(--white)', border: '2px solid #B85A36', borderRadius: 12, padding: '1.25rem' }}>
-              <div style={{ fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#B85A36', fontWeight: 700, marginBottom: 12 }}>
-                This is NOT for you if
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '10px' }}>
-                {NOT_FOR_YOU.map((line, i) => (
-                  <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '14px', color: 'var(--dark-gray)', lineHeight: 1.55 }}>
-                    <XCircle size={16} style={{ color: '#B85A36', flexShrink: 0, marginTop: 2 }} />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Guarantee */}
-      <div className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <div className="text-center mb-5">
-              <ShieldCheck size={28} style={{ color: 'var(--purple)', margin: '0 auto 6px' }} />
-              <h2 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '22px' }}>
-                Triple Triangle Guarantee.
-              </h2>
-              <p style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>Miss any one threshold — full refund. You keep every protocol document.</p>
-            </div>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {GUARANTEES.map((g, i) => (
-              <AnimatedSection key={i} delay={i * 80}>
-                <div style={{ background: 'var(--white)', border: '2px solid var(--purple)', borderRadius: 10, padding: '1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--purple)', fontWeight: 700, marginBottom: 6 }}>{g.day}</div>
-                  <p style={{ color: 'var(--dark-gray)', fontSize: '13px', lineHeight: 1.5, margin: 0 }}>{g.text}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-          <p className="text-center mt-5" style={{ color: 'var(--navy)', fontWeight: 600, fontSize: '14px', margin: '1.5rem 0 0' }}>
-            I carry the risk. You carry the action.
-          </p>
-        </div>
-      </div>
-
-      {/* FAQ — last objections */}
-      <div className="section-spacing">
-        <div className="container-mobile-first">
-          <AnimatedSection>
-            <div className="text-center mb-6">
-              <HelpCircle size={28} style={{ color: 'var(--purple)', margin: '0 auto 6px' }} />
-              <h2 className="font-bold" style={{ color: 'var(--navy)', fontSize: '22px' }}>
-                Common questions.
-              </h2>
-            </div>
-          </AnimatedSection>
-          <div style={{ display: 'grid', gap: '12px' }}>
-            {FAQ.map((f, i) => (
-              <AnimatedSection key={i} delay={i * 60}>
-                <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 12, padding: '1rem 1.25rem' }}>
-                  <div style={{ color: 'var(--navy)', fontWeight: 700, fontSize: '15px', marginBottom: 6 }}>{f.q}</div>
-                  <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>{f.a}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Application — 7 questions only */}
-      <AnimatedSection className="section-spacing" style={{ background: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          {Date.now() < new Date(DEADLINE_ISO).getTime() ? (
-            <>
-              <h2 className="font-bold mb-1 text-center" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-                Apply.
-              </h2>
-              <p className="text-center mb-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-                7 quick questions. Joel reads every one personally. No payment collected.
-              </p>
-              <p className="text-center mb-4" style={{ color: '#B85A36', fontSize: '13px', fontWeight: 700 }}>
-                Closes {DEADLINE_LABEL} · {SLOTS_REMAINING} of {SLOTS_TOTAL} slots remaining
-              </p>
-              <div style={{ background: 'var(--navy)', borderRadius: 12, padding: '14px 18px', margin: '0 auto 1.5rem', maxWidth: 480, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: '#C7A95E', fontWeight: 700 }}>
-                    What you're applying for
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 2 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px', textDecoration: 'line-through' }}>{PRICE_REGULAR}</span>
-                    <span style={{ color: 'var(--white)', fontSize: '22px', fontWeight: 800 }}>{PRICE_FOUNDING}</span>
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '11px' }}>or {PRICE_3PAY}</span>
-                  </div>
-                </div>
-                <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: '11px', lineHeight: 1.4, flexShrink: 0 }}>
-                  Stack value<br />
-                  <span style={{ color: '#C7A95E', fontSize: '15px', fontWeight: 700 }}>{STACK_VALUE}</span>
-                </div>
-              </div>
-              <ApplicationForm />
-            </>
-          ) : (
-            <div style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '2.5rem 1.5rem', textAlign: 'center' }}>
-              <h2 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '24px' }}>
-                Founding cohort closed.
-              </h2>
-              <p style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.6, margin: '0 auto 1.25rem', maxWidth: 480 }}>
-                Applications for this cohort closed {DEADLINE_LABEL}. The next opening is ~90 days out at the regular price of {PRICE_REGULAR}.
-              </p>
-              <p style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
-                To get on the waitlist, email <a href="mailto:braveworksrn@gmail.com" style={{ color: 'var(--purple)', fontWeight: 600 }}>braveworksrn@gmail.com</a> with the subject line "Next cohort."
-              </p>
-            </div>
-          )}
-        </div>
-      </AnimatedSection>
-
-      {/* Close */}
-      <div className="section-spacing gradient-navy">
-        <div className="container-mobile-first text-center">
-          <p style={{ color: 'var(--white)', fontSize: '17px', lineHeight: 1.5, margin: '0 0 8px', fontWeight: 600 }}>
-            Pills manage output. Protocol fixes input.
-          </p>
-          <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '13px', margin: 0 }}>
-            Doctor-cleared independence — in 90 days, with two RNs in your corner.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ============================================================
-// APPLICATION FORM — 7 questions only (down from 17)
-// ============================================================
-function ApplicationForm() {
-  const [form, setForm] = useState({
-    name: '', email: '', phone: '',
-    ageRange: '',
-    investmentRange: '',
-    whyNow: '',
-    whenStart: '',
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-
-  const update = (field, value) => {
-    setForm((f) => ({ ...f, [field]: value }));
-    setError('');
-  };
-
-  async function handleSubmit(e) {
+  async function joinWaitlist(e) {
     e.preventDefault();
-    const required = ['name', 'email', 'ageRange', 'investmentRange', 'whyNow', 'whenStart'];
-    const missing = required.filter((f) => !String(form[f] || '').trim());
-    if (missing.length) {
-      setError('Please complete every required field marked with ·');
+    if (!waitlistEmail || !waitlistEmail.includes('@')) {
+      setWaitlistError('Enter a valid email');
       return;
     }
-    setSubmitting(true);
+    setWaitlistSubmitting(true);
+    setWaitlistError('');
     try {
-      const res = await fetch('/api/coaching-apply', {
+      const r = await fetch('/api/lead-magnet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          email: waitlistEmail,
+          name: '',
+          category: 'blood_pressure',
+          tags: ['coaching-cohort-2-waitlist'],
+        }),
       });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Something went wrong. Please try again.');
-      }
-      setSubmitted(true);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Could not add you to the waitlist');
+      setWaitlistDone(true);
     } catch (err) {
-      setError(err.message);
+      setWaitlistError(err.message || 'Try again in a moment');
     } finally {
-      setSubmitting(false);
+      setWaitlistSubmitting(false);
     }
   }
 
-  if (submitted) {
-    return (
-      <div style={{ background: 'var(--white)', borderRadius: 16, padding: '2rem 1.5rem', textAlign: 'center', border: '1px solid #E5E7EB' }}>
-        <div style={{ width: 56, height: 56, margin: '0 auto 1rem', borderRadius: '50%', background: '#E6EBE0', display: 'grid', placeItems: 'center' }}>
-          <CheckCircle2 size={28} style={{ color: '#3F5A3C' }} />
+  const fadeIn = useScrollAnimation();
+
+  return (
+    <main className="min-h-screen" style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
+
+      {/* ─── HERO ─────────────────────────────────────────────────── */}
+      <section className="py-16 sm:py-20" style={{ background: 'var(--paper-light)', borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-3xl mx-auto px-5 text-center">
+          <div className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: '#FCEED9', color: '#B85A36', letterSpacing: '0.14em' }}>
+            BraveWorks RN · Limited monthly availability
+          </div>
+          <h1 className="font-serif text-3xl sm:text-5xl leading-tight mb-5" style={{ color: 'var(--ink)' }}>
+            The BP Triangle Diagnostic Session
+          </h1>
+          <p className="text-lg sm:text-xl mb-7 max-w-2xl mx-auto" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+            Sixty minutes with Joel Polley, RN. Your numbers, your meds, your stress, your supplements looked at together for the first time. You walk out with a written 30-day personalized protocol.
+          </p>
+
+          <div className="inline-block mb-6 px-7 py-5 rounded-xl" style={{ background: 'var(--paper)', border: '2px solid var(--sage-deep)' }}>
+            <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--sage-deep)', letterSpacing: '0.12em' }}>One-time investment</div>
+            <div className="font-serif text-4xl sm:text-5xl" style={{ color: 'var(--ink)', fontWeight: 500 }}>$297</div>
+            <div className="text-sm mt-1" style={{ color: 'var(--ink-soft)' }}>60 minutes of actual nursing time. No upsell on the call.</div>
+          </div>
+
+          <div className="mb-3">
+            <a
+              href={DIAGNOSTIC_LINK}
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
+              style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
+            >
+              Book the diagnostic · $297 <ArrowRight size={18} />
+            </a>
+          </div>
+          <div className="text-xs" style={{ color: 'var(--muted)' }}>
+            Secure checkout via Stripe · 48-hour refund window before the call
+          </div>
         </div>
-        <h3 className="font-bold mb-2" style={{ color: 'var(--navy)', fontSize: '20px' }}>Got it — Joel reads every one.</h3>
-        <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, margin: '0 0 10px' }}>
-          If you're a fit for the founding cohort, expect a reply within 24-48 hours with the link to schedule a 20-minute fit call.
-        </p>
-        <p style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: 1.5 }}>
-          If you don't hear back within a week, the cohort is full. Next opening in ~90 days.
-        </p>
-      </div>
-    );
-  }
+      </section>
 
-  return (
-    <form onSubmit={handleSubmit} style={{ background: 'var(--white)', border: '1px solid #E5E7EB', borderRadius: 16, padding: '1.5rem', display: 'grid', gap: '1.25rem' }}>
-      <TextField label="Full name" required value={form.name} onChange={(v) => update('name', v)} />
-      <TextField label="Email" type="email" required value={form.email} onChange={(v) => update('email', v)} />
-      <TextField label="Phone" placeholder="for the fit call" value={form.phone} onChange={(v) => update('phone', v)} />
-      <Radio label="Age range" required value={form.ageRange} onChange={(v) => update('ageRange', v)}
-        options={['30–44', '45–54', '55–64', '65+']} />
-      <Radio label="Investment range you've allocated for your health this year" required
-        value={form.investmentRange} onChange={(v) => update('investmentRange', v)}
-        options={[
-          'Under $2,000',
-          '$2,000–$5,000',
-          '$5,000–$10,000',
-          '$10,000+',
-          'I haven\'t allocated for this yet',
-        ]} />
-      <Textarea label="Why now? What changed?" required
-        placeholder="One or two sentences. Why this week, not next year?"
-        value={form.whyNow} onChange={(v) => update('whyNow', v)} />
-      <Radio label="When could you realistically start?" required
-        value={form.whenStart} onChange={(v) => update('whenStart', v)}
-        options={['This week', 'Within 30 days', 'Within 90 days', 'Not sure yet']} />
+      {/* ─── WHY THIS, WHY NOW ────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Why this session</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-5" style={{ color: 'var(--ink)' }}>
+            The protocol is generic. Your body isn't.
+          </h2>
+          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+            You've read the articles. You've watched the videos. You've maybe even bought the BP Reset Kit. The information is solid. But after a few weeks, most people plateau.
+          </p>
+          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+            It's not the protocol's fault. The protocol is built for the general case. Your case is specific.
+          </p>
+          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+            One corner of the BP Triangle is loudest in your body right now. Vascular, cortisol, or blood sugar. Until you know which one is driving you, you're guessing. And guessing in a chronic condition adds weeks every time you have to backtrack.
+          </p>
+          <p className="text-base font-medium" style={{ color: 'var(--ink)' }}>
+            Sixty minutes of nursing time saves you weeks of guessing.
+          </p>
+        </div>
+      </section>
 
-      {error && (
-        <p style={{ color: '#B85A36', fontSize: '14px', margin: 0, padding: '10px 12px', background: '#F5E4DA', borderRadius: 8 }}>{error}</p>
-      )}
+      {/* ─── WHAT THE CALL IS ─────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em', textAlign: 'center' }}>What happens on the call</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-8 text-center" style={{ color: 'var(--ink)' }}>
+            Sixty minutes. One Zoom. Three outcomes.
+          </h2>
 
-      <button type="submit" disabled={submitting}
-        className="btn-standard btn-cta gradient-purple-btn"
-        style={{ color: 'var(--white)', fontSize: '16px', fontWeight: 700 }}>
-        {submitting ? (
-          <span className="flex items-center gap-2"><Loader2 className="animate-spin" size={18} /> Sending to Joel…</span>
-        ) : (
-          <span className="flex items-center gap-2 justify-center"><Phone size={18} /> Submit — Joel reads every one <ArrowRight size={16} /></span>
-        )}
-      </button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+            {[
+              { icon: ClipboardCheck, title: '1. Your Triangle, mapped', body: "I look at your home BP log, your morning vs afternoon pattern, your stress, your sleep, your A1c if you have it. I name which corner of the Triangle is loudest for you, and which is second." },
+              { icon: FileText, title: '2. Your 30-day protocol, written', body: "You leave with a one-page written protocol customized to your corner. The herbs to take, the foods to drop, the timing of meals, the sleep architecture for YOUR body, not the generic one." },
+              { icon: MessageCircle, title: '3. The doctor conversation', body: "A clean one-page script you can hand your doctor. Lab requests, supplements to disclose, language for the medication-tapering conversation. Most physicians read it and engage." },
+            ].map((card) => {
+              const Icon = card.icon;
+              return (
+                <div key={card.title} className="p-5 rounded-xl" style={{ background: 'var(--paper)', border: '1px solid var(--border)' }}>
+                  <Icon size={26} strokeWidth={1.5} color="var(--sage-deep)" />
+                  <h3 className="font-serif text-lg mt-3 mb-2" style={{ color: 'var(--ink)' }}>{card.title}</h3>
+                  <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>{card.body}</p>
+                </div>
+              );
+            })}
+          </div>
 
-      <p className="text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: 1.5, margin: 0 }}>
-        No payment collected at this step. Submission doesn't sign you up — Joel screens every applicant personally and replies within 24-48 hours if there's a fit.
-      </p>
-    </form>
-  );
-}
+          {/* Bonus */}
+          <div className="mt-8 p-5 rounded-xl" style={{ background: 'var(--sage-soft)', border: '1px solid var(--sage-deep)' }}>
+            <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--sage-deep)', letterSpacing: '0.14em' }}>Included bonus</div>
+            <div className="font-serif text-lg mb-2" style={{ color: 'var(--ink)' }}>30-day follow-up email coaching</div>
+            <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+              After our call, you get 30 days of follow-up email access. Reply to me with your home log every Sunday. I read every one. If we need to adjust, we adjust. This isn't available outside the diagnostic.
+            </p>
+          </div>
+        </div>
+      </section>
 
-// ── Form primitives ───────────────────────────────────────
-function TextField({ label, type = 'text', value, onChange, placeholder = '', required = false }) {
-  return (
-    <label style={{ display: 'block' }}>
-      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
-        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
-      </div>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
-        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box' }} />
-    </label>
-  );
-}
+      {/* ─── SOCIAL PROOF — TikTok ────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-xl mx-auto px-5">
+          <p className="text-center text-sm font-medium mb-5 uppercase tracking-widest" style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}>
+            Where the work shows up
+          </p>
+          <TikTokEmbed videoId="7639447507050827039" username="braveworksrn" />
+          <p className="text-center text-xs mt-3" style={{ color: 'var(--muted)' }}>
+            116K+ on TikTok. The protocol works. The diagnostic is where we customize it for you.
+          </p>
+        </div>
+      </section>
 
-function Textarea({ label, value, onChange, placeholder = '', required = false }) {
-  return (
-    <label style={{ display: 'block' }}>
-      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 4 }}>
-        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
-      </div>
-      <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} rows={3}
-        style={{ width: '100%', border: '1px solid #E5E7EB', borderRadius: 8, padding: '10px 12px', fontSize: '15px', fontFamily: 'inherit', color: 'var(--dark-gray)', background: 'var(--white)', boxSizing: 'border-box', resize: 'vertical', minHeight: 70, lineHeight: 1.5 }} />
-    </label>
-  );
-}
+      {/* ─── WHAT TO BRING ────────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>What to have ready</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)' }}>
+            Don't worry about being prepared. Bring what you have.
+          </h2>
+          <ul className="space-y-3">
+            {[
+              "Your home BP log if you have one, even three readings this week is enough",
+              "A list (or photo) of every prescription medication you're on",
+              "A list of every supplement, vitamin, and herb you take",
+              "Any recent labs (A1c, lipid panel, kidney, thyroid). Photos of the report are fine",
+              "Two or three things you've already tried that didn't work, so we don't waste time there",
+            ].map((item) => (
+              <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
+                <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
+                <span className="text-base" style={{ lineHeight: 1.55 }}>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="text-sm mt-6 italic" style={{ color: 'var(--muted)' }}>
+            No labs yet? No problem. We'll talk about what to order and how to get them done.
+          </p>
+        </div>
+      </section>
 
-function Radio({ label, options, value, onChange, required = false }) {
-  return (
-    <div>
-      <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--dark-gray)', marginBottom: 6 }}>
-        {label}{required && <span style={{ color: 'var(--purple)', marginLeft: 4 }}>·</span>}
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        {options.map((opt) => {
-          const selected = value === opt;
-          return (
-            <button key={opt} type="button" onClick={() => onChange(opt)}
-              style={{ textAlign: 'left', padding: '9px 12px',
-                background: selected ? '#E6EBE0' : 'var(--white)',
-                border: `1.5px solid ${selected ? '#3F5A3C' : '#E5E7EB'}`,
-                borderRadius: 8, fontSize: '14px',
-                fontWeight: selected ? 600 : 400,
-                color: 'var(--dark-gray)', cursor: 'pointer',
-                fontFamily: 'inherit',
-                transition: 'background 0.12s ease, border-color 0.12s ease',
-                display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', border: `2px solid ${selected ? '#3F5A3C' : '#CBC9BD'}`, background: selected ? '#3F5A3C' : 'transparent', flexShrink: 0 }} />
-              {opt}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+      {/* ─── WHO JOEL IS ──────────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-2xl mx-auto px-5 text-center">
+          <picture>
+            <source srcSet="/headshot.webp" type="image/webp" />
+            <img src="/headshot.jpg" alt="Joel Polley, RN" width="120" height="120"
+              style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--paper-light)', boxShadow: '0 8px 24px rgba(44,42,38,0.15)', margin: '0 auto 1.25rem' }} />
+          </picture>
+          <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Who you're talking to</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-3" style={{ color: 'var(--ink)' }}>
+            Joel Polley, RN · The Blood Pressure Guy
+          </h2>
+          <p className="text-base mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+            Twenty years in ICU and emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Now teaching the root-cause protocols the system never had bandwidth to offer.
+          </p>
+          <p className="text-base" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+            <em>"Pills manage output. Protocol fixes input."</em> That's the sentence the whole framework runs on.
+          </p>
+          <div className="mt-5">
+            <a href="/about/joel" className="text-sm font-medium" style={{ color: 'var(--sage-deep)', textDecoration: 'underline' }}>
+              Read Joel's full bio →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── REAL CASE — anonymized ───────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--sage-soft)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--sage-deep)', letterSpacing: '0.14em' }}>What happens after the call</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)' }}>
+            One real case from this month.
+          </h2>
+          <div className="p-6 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
+            <p className="text-base italic mb-4" style={{ color: 'var(--ink)', lineHeight: 1.65 }}>
+              "Marlene, age 62, on three BP meds for fifteen years, still running 140s/90s most mornings. We talked for 60 minutes. Found her loudest corner was cortisol. She'd been waking at 3 AM every night for two years. We dropped two things, added three, fixed her sleep architecture. Day 9: BP 129/82. She brought the log to her cardiologist. He took her off one of the three pills."
+            </p>
+            <p className="text-sm" style={{ color: 'var(--muted)' }}>
+              Anonymized first name. Real case. Real numbers. This is one of about 30 conversations a month.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FAQ ──────────────────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em', textAlign: 'center' }}>Common questions</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-7 text-center" style={{ color: 'var(--ink)' }}>
+            Before you book.
+          </h2>
+
+          <div className="space-y-5">
+            {[
+              { q: 'Is this medical advice?', a: 'No. This is education-based nursing consultation, not diagnosis or prescription. Your protocol always works alongside your physician, not instead of them. I write you a one-page script to bring to your doctor for the medical decisions.' },
+              { q: 'What if I already bought the BP Reset Kit?', a: 'Your $17 Kit purchase applies as credit toward your diagnostic. Reply to your kit-purchase email or email braveworksrn@gmail.com and I will send you a credit-applied checkout link so you pay $280 instead of $297.' },
+              { q: "I'm on five blood pressure medications. Is this still worth it?", a: 'Especially. The more meds, the higher the value of mapping which corner of the Triangle is actually driving the system. Most patients on 3+ meds are being treated for the wrong corner. We work alongside your prescribing physician on any medication changes; never stop a med without your doctor.' },
+              { q: "What if I can't make my scheduled call?", a: 'Reschedule once, no fee. Two reschedules in a row = we issue a refund. The 48-hour pre-call refund window covers cold-feet scenarios.' },
+              { q: 'Is there a follow-up program?', a: "For some people, yes. After the diagnostic, if you want to keep working together, I have a deeper program for buyers who want it. Most graduates of the diagnostic don't need it. The 30-day protocol does the job. We talk about it on the call if it makes sense for you." },
+              { q: "What's the refund policy?", a: 'Full refund within 48 hours of purchase, before the call. After the call: non-refundable, since the value (your written protocol + 30-day email follow-up) has been delivered.' },
+            ].map((item) => (
+              <div key={item.q} className="p-5 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
+                <div className="flex gap-3">
+                  <HelpCircle size={20} color="var(--clay)" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <div className="font-medium text-base mb-2" style={{ color: 'var(--ink)' }}>{item.q}</div>
+                    <div className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>{item.a}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FINAL CTA ────────────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-16" style={{ background: 'var(--ink)', color: 'var(--paper-light)' }}>
+        <div className="max-w-2xl mx-auto px-5 text-center">
+          <div className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: 'rgba(184,90,54,0.18)', color: '#F5C68F', letterSpacing: '0.14em' }}>
+            6 slots left this month
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl mb-5" style={{ color: 'var(--paper-light)' }}>
+            One call. One protocol. One clear next step.
+          </h2>
+          <p className="text-base sm:text-lg mb-7 max-w-xl mx-auto" style={{ color: 'rgba(251,248,241,0.85)', lineHeight: 1.55 }}>
+            Sixty minutes that gives you what most BP patients never get: a real nurse looking at your real situation. Not a chatbot. Not a 5-minute office visit. A full hour, your case, written takeaway.
+          </p>
+          <a
+            href={DIAGNOSTIC_LINK}
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
+            style={{ background: 'var(--clay)', color: 'var(--paper-light)' }}
+          >
+            Book the diagnostic · $297 <ArrowRight size={18} />
+          </a>
+          <div className="text-xs mt-4" style={{ color: 'rgba(251,248,241,0.5)' }}>
+            Secure checkout via Stripe · 48-hour refund window · No upsell on the call
+          </div>
+        </div>
+      </section>
+
+      {/* ─── COHORT #2 WAITLIST ───────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)' }}>
+        <div className="max-w-xl mx-auto px-5 text-center">
+          <Mail size={28} color="var(--sage-deep)" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
+          <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
+            Not ready right now?
+          </div>
+          <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)' }}>
+            Drop your email for first access when group cohort #2 opens.
+          </h3>
+          <p className="text-sm mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+            Cohort #2 is a group format. Same diagnostic depth, group rate, opens September 2026. Waitlist members get first booking + 14-day early-bird pricing window.
+          </p>
+
+          {waitlistDone ? (
+            <div className="p-5 rounded-xl" style={{ background: 'var(--sage-soft)', border: '1px solid var(--sage-deep)' }}>
+              <CheckCircle2 size={24} color="var(--sage-deep)" style={{ margin: '0 auto 0.5rem', display: 'block' }} />
+              <div className="text-sm font-medium" style={{ color: 'var(--ink)' }}>
+                You're on the list. I'll email you the moment Cohort #2 opens.
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={joinWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                required
+                value={waitlistEmail}
+                onChange={(e) => setWaitlistEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="flex-1 px-4 py-3 rounded-lg text-base"
+                style={{ background: 'var(--paper)', border: '1.5px solid var(--border)', color: 'var(--ink)' }}
+              />
+              <button
+                type="submit"
+                disabled={waitlistSubmitting}
+                className="px-5 py-3 rounded-lg font-semibold text-base whitespace-nowrap"
+                style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)', opacity: waitlistSubmitting ? 0.6 : 1, cursor: waitlistSubmitting ? 'wait' : 'pointer' }}
+              >
+                {waitlistSubmitting ? 'Adding…' : 'Add me'}
+              </button>
+            </form>
+          )}
+          {waitlistError && (
+            <div className="text-sm mt-3" style={{ color: 'var(--clay)' }}>{waitlistError}</div>
+          )}
+        </div>
+      </section>
+
+      {/* ─── Disclaimer footer ────────────────────────────────────── */}
+      <section className="py-10 px-5" style={{ background: 'var(--paper)', borderTop: '1px solid var(--border)' }}>
+        <div className="max-w-2xl mx-auto text-center">
+          <ShieldCheck size={22} color="var(--muted)" style={{ display: 'block', margin: '0 auto 0.75rem' }} />
+          <p className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.7, maxWidth: '60ch', margin: '0 auto' }}>
+            The BP Triangle Diagnostic Session is a nursing consultation rooted in 20 years of ICU and ER experience. It is education-based, not diagnostic. Your protocol always works alongside your physician, never as a replacement. Never start, stop, or change a prescribed medication without your doctor's supervision.
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }

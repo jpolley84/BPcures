@@ -29,6 +29,7 @@ const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
+const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
@@ -139,6 +140,10 @@ function App() {
               co-coach. Application-only (no buy button — Brunson high-ticket).
               Launched 2026-05-12, first cohort target 5 slots. */}
           <Route path="/coaching" element={<CoachingPage />} />
+          {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
+              Configure the after_completion.redirect.url on the $297 link to:
+              https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}
+          <Route path="/coaching-welcome" element={<CoachingWelcomePage />} />
 
           {/* Per-client pre-call intake — also reachable via subdomain
               wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}
