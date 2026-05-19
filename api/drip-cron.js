@@ -101,6 +101,22 @@ export default async function handler(req, res) {
         continue;
       }
 
+      // 2026-05-19 — state-aware skip. The Phase 1 state-machine migration
+      // means every record now has a `state` field. Universal drip-cron is
+      // ONLY appropriate for state==='lead' records during the transition
+      // period before Phase 7 cutover. tier-1/2/3/4 records belong to the
+      // new per-state crons; newsletter records belong to the (future)
+      // weekly newsletter-cron. Firing universal drip at any non-lead
+      // state risks wrong-product pitches (e.g. pitching $97 Challenge
+      // to a buyer who already owns it — Jill-class trust damage).
+      //
+      // Records with no state field yet (very rare — pre-migration zombies)
+      // still pass through to preserve the existing behavior.
+      if (sub.state && sub.state !== 'lead') {
+        summary.skipped++;
+        continue;
+      }
+
       // No-double-send guard — if this subscriber got an email within the
       // last 18 hours, skip. Subsequent fires today only pick up records
       // that didn't get processed by earlier fires (Vercel timeout misses).

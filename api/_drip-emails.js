@@ -25,6 +25,7 @@ export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
 export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
@@ -1217,7 +1218,7 @@ const day14 = {
     ${p(`Three-for-one mineral: vascular relaxation, sleep depth, insulin sensitivity. Every Triangle corner benefits.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — hydration with mineral salt. The 24-hour delay nobody told you about. Wakita dropped 12 systolic points on this alone.`)}
-    ${upsellFooter({ kicker: 'GET THE PROTOCOL', body: 'The $17 BP Reset Kit lays out every supplement protocol by Pressure — magnesium included, with the exact timing and a "what to drop" list for things that fight against absorption.', ctaLabel: 'Get the Kit ($17) →', ctaUrl: KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT JOEL ON YOUR SPECIFIC CASE?', body: 'The $297 BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol matched to which of the Three Pressures is loudest in you. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1318,7 +1319,7 @@ const day16 = {
     `)}
     ${joelSignoff()}
     ${psBox(`Tomorrow — crushed raw garlic. Four pharmacological mechanisms in one clove.`)}
-    ${upsellFooter({ kicker: 'WANT THE FULL SUPPLEMENT PROTOCOL?', body: 'The $97 BP Triangle Challenge — 30 days of daily protocol emails + the Skool community + weekly group coaching — includes the full herb stack with timing and contraindications by medication.', ctaLabel: 'Get the Challenge ($97) →', ctaUrl: CHALLENGE_URL })}
+    ${upsellFooter({ kicker: 'WANT JOEL TO BUILD YOUR HERB STACK?', body: 'The $297 BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol with every herb sized to your meds + your numbers. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1370,7 +1371,7 @@ const day17 = {
     `)}
     ${joelSignoff()}
     ${psBox(`Tomorrow — sleep architecture. The single most undervalued cardiovascular intervention. One bad night = +7 mmHg next morning.`)}
-    ${upsellFooter({ kicker: 'START HERE — \$17 BP RESET KIT', body: 'Every protocol so far — magnesium, hibiscus, garlic, hydration — is laid out in the Kit with dosing, timing, and the contraindication checklist by medication. \$17, less than one copay.', ctaLabel: 'Get the Kit ($17) →', ctaUrl: KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT THIS CUSTOMIZED FOR YOUR NUMBERS?', body: 'Every protocol so far — magnesium, hibiscus, garlic, hydration — sized to YOUR meds and YOUR readings. That is what the $297 BP Triangle Diagnostic Session is. 60 minutes with me on Zoom. Written protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1468,7 +1469,7 @@ const day19 = {
     ${p(`This is free. It's portable. It works. The barrier is consistency — most people try it for two days and quit. Set two phone alarms (10 AM, 8 PM) and do it for 14 days. Track your morning BP. The trend speaks for itself.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — the 25-gratitudes practice. The single best cortisol intervention I've ever seen. Most clients shift their nocturnal pattern in 7 days.`)}
-    ${upsellFooter({ kicker: 'BUILD THE FULL STACK — $47', body: 'The BP Reset Kit lays out breathing, gratitude, sleep, and supplement protocols in order. 8 PDFs. $47 buys the structure that turns one habit into a daily routine.', ctaLabel: 'Get the Reset Kit ($47) →', ctaUrl: RESET_KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT JOEL TO SEQUENCE THIS FOR YOU?', body: 'Breathing, gratitude, sleep, supplements — in the right order for your specific Pressure. That is what the $297 BP Triangle Diagnostic Session delivers. 60 minutes with me on Zoom + a written 30-day protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1560,7 +1561,7 @@ const day21 = {
     ${p(`Three meals a day × 10 minutes = 30 minutes of movement that costs you nothing. Most clients see A1c drop 0.3-0.5 in 90 days from this single habit. Multiple cardiology meta-analyses (Buffey 2022 most recent) replicate the effect.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`This single habit is the easiest way to test if blood sugar is your loudest Pressure. Run it for 14 days. If morning BP drops 3+ points, you've found your corner.`)}
-    ${upsellFooter({ kicker: '30 DAYS OF DAILY PROTOCOL — $97', body: 'The BP Triangle Challenge layers walking, sleep, breathing, supplements in the right order so you do not burn out trying to do everything. Daily emails + Skool community + weekly group coaching.', ctaLabel: 'Get the Challenge ($97) →', ctaUrl: CHALLENGE_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE 90-DAY WORK?', body: 'Cohort 2 — my 90-day Sprint — is the deeper room after the Challenge. Weekly Monday Live, WhatsApp office hours, the medication-tapering conversation with your doctor. Application only. 5 women per cohort.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1605,7 +1606,7 @@ const day22 = {
     ${p(`Best for: older adults (65+), people on 3+ medications who can't tolerate aggressive interventions, and patients whose BP responds poorly to single-mechanism drugs.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — ashwagandha. The cortisol-specific herb. 27% cortisol drop in 8 weeks of published studies.`)}
-    ${upsellFooter({ kicker: 'START WITH THE FOUNDATION', body: 'Hawthorn, hibiscus, garlic, magnesium — every supplement protocol on a single page, by Pressure, with dosing + contraindications. \$17.', ctaLabel: 'Get the BP Reset Kit ($17) →', ctaUrl: KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT YOUR PROTOCOL WRITTEN FOR YOU?', body: 'Hawthorn, hibiscus, garlic, magnesium — sized to YOUR meds + YOUR Pressure profile, on a Zoom call with me. The $297 BP Triangle Diagnostic Session. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1697,7 +1698,7 @@ const day24 = {
     ${p(`Practical protocol: cook with Celtic or Redmond's. Skip restaurant + packaged food (where the refined sodium hides). Use the mineral salt sublingually with water (Day 15 hydration protocol). Don't fear salt at meals if it's the mineralized kind.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — meal sequencing. Why eating the same food in a different order changes the glucose-insulin-sodium cascade by 30-40%.`)}
-    ${upsellFooter({ kicker: 'THE FULL FOOD PROTOCOL — $47', body: 'The Reset Kit includes the Cook For Life cookbook (64 recipes) built on the mineral-salt protocol + meal sequencing + the foods that flatten the insulin curve. No more guessing what to cook.', ctaLabel: 'Get the Reset Kit ($47) →', ctaUrl: RESET_KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT THIS PERSONALIZED?', body: 'Mineral salt, meal sequencing, the foods that flatten the insulin curve — matched to YOUR Pressure on a Zoom call with me. The $297 BP Triangle Diagnostic Session walks you out with a written 30-day protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1790,7 +1791,7 @@ const day26 = {
     ${p(`Bring the results to your next appointment. The conversation changes when you have data.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — 16:8 intermittent fasting. The safety screen + protocol. Not for everyone, accelerates everyone it IS for.`)}
-    ${upsellFooter({ kicker: 'WALK INTO YOUR DOCTOR\'S OFFICE WITH A PROTOCOL', body: 'The \$97 BP Triangle Challenge includes lab interpretation guides + the Doctor Conversation Script that gets cardiologists engaged. \$97 one-time, daily emails, Skool community.', ctaLabel: 'Get the Challenge ($97) →', ctaUrl: CHALLENGE_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE FULL TAPERING ARC?', body: 'Cohort 2 — my 90-day Sprint — is where lab interpretation, the doctor conversation, and the medication-tapering plan happen together with me on weekly calls. Application only. 5 women per cohort.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1996,7 +1997,7 @@ const day30 = {
     ${p(`Whatever you pick, I'm glad you read these. The information matters. What you do with it matters more.`)}
     ${joelSignoff()}
     ${psBox(`If you've moved your numbers from this sequence — hit reply and tell me. I read every one. The reason I write these is because the stories come back. Yours is one of them.`)}
-    ${upsellFooter({ kicker: 'THE FULL KIT IF YOU DON\'T HAVE IT', body: 'The \$47 BP Reset Kit consolidates every protocol from the 30-day sequence into a printable 8-PDF reference library. Doctor conversation script + cookbook + tracker. If you only ever buy one BraveWorks product, make it this one.', ctaLabel: 'Get the Reset Kit ($47) →', ctaUrl: RESET_KIT_URL })}
+    ${upsellFooter({ kicker: 'WANT JOEL\'S EYES ON YOUR CASE BEFORE YOU MOVE?', body: 'You have read 30 days of my work. The next door is the BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol matched to YOUR Pressure profile. $297. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
