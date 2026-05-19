@@ -18,7 +18,7 @@
 //   9  — Objection killer #1: "I'm not ready"
 //   10 — Future-self: 90 days from today
 //   11 — Objection killer #2: "Will this work for MY situation?"
-//   12 — Cohort 2 caps + scarcity (12 seats, 4 left)
+//   12 — Cohort 2 caps + scarcity (5 seats, 4 left)
 //   14 — Final close OR graceful exit (PASTOR + close)
 //
 // Pitch direction (HARD): Cohort 2 only. Never the $97 Challenge (sideways).
@@ -341,7 +341,7 @@ Unsubscribe: ${unsubUrl}
 // DAY 5 — Wakita's first 30 days inside the Sprint (BAB)
 // ─────────────────────────────────────────────────────────────────────
 const day5 = {
-  subject: "Wakita's Sunday — a peek inside the 90-day work",
+  subject: "Wakita's Monday — a peek inside the 90-day work",
   subjectB: "Inside the Sprint — first 30 days",
   preview: "What an actual Cohort 2 week looks like, from a real client.",
   htmlBody: ({ firstName, unsubUrl }) => `
@@ -427,7 +427,7 @@ const day7 = {
     ${p(`This is the longest email in the sequence. Take ten minutes when you can read it without distraction. I tried to put everything you'd ask on a sales call into the body so you can decide without needing to chase me down for answers.`)}
     ${bigQuote("What Cohort 2 is.")}
     ${sageBlock(`
-      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Twelve weeks. Small group with me, RN.</strong> Capped at twelve seats so I can actually keep my eyes on every client. Annie Chitate, RN — my wife and the hormone-corner co-coach — joins for the hormone work (about half the cases involve hormones).</p>
+      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Twelve weeks. Small group with me, RN.</strong> Capped at five seats so I can actually keep my eyes on every client. Annie Chitate, RN — my wife and the hormone-corner co-coach — joins for the hormone work (about half the cases involve hormones).</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Weekly group Zoom.</strong> Monday nights, 8 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too. The cohort effect is part of why it works.</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">WhatsApp office hours, group thread.</strong> Sunday through Thursday, 9 AM–5 PM ET. Drop a question, send a photo of a label, ask <em>"should I take this today?"</em> I answer same-day in front of the cohort — so every question becomes a teaching moment for everyone.</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop one to three medications inside the 90 days. Always alongside the doctor — never instead of.</p>
@@ -454,7 +454,7 @@ const day7 = {
     ${psBox(`The $1,700 is one payment. If you'd rather split it, three payments of $597 lands at the same number after credit applied. Reply if you want the split-pay link and I'll send it.`)}
     ${upsellFooter({
       kicker: 'Ready to lock the credit?',
-      body: '$1,997 standard − $297 diagnostic credit = $1,700. Twelve seats. Doors open through Friday of next week or until full, whichever comes first.',
+      body: '$1,997 standard − $297 diagnostic credit = $1,700. Five seats. Doors open through Friday of next week or until full, whichever comes first.',
       ctaLabel: 'Apply the credit',
       ctaUrl: SPRINT_CREDIT_URL,
     })}
@@ -466,7 +466,7 @@ const day7 = {
 I told you on Day 3 I'd give you the full Cohort 2 picture this week. Today's the day.
 
 WHAT COHORT 2 IS:
-→ Twelve weeks. Small group with me, RN. Capped at twelve seats. Annie Chitate, RN (my wife) joins for hormone work.
+→ Twelve weeks. Small group with me, RN. Capped at five seats. Annie Chitate, RN (my wife) joins for hormone work.
 → Weekly group Zoom. Monday nights 8 PM ET. We work the cohort case-by-case, live.
 → WhatsApp office hours. Sun-Thu, 9 AM-5 PM ET. Same-day answers.
 → Full deprescribing plan worked WITH your prescriber. Most clients drop 1-3 meds in 90 days.
@@ -707,7 +707,7 @@ const day11 = {
     ${psBox(`If you're not sure which of the six patterns you sit in, that's literally what your diagnostic call is for. Hit reply and tell me what you'd like me to look at most closely when we meet.`)}
     ${upsellFooter({
       kicker: 'Cohort 2 — built for all six patterns',
-      body: '$1,700 net after your $297 credit. Twelve seats. Annie runs the hormone thread, I run the rest. Closes Friday.',
+      body: '$1,700 net after your $297 credit. Five seats. Annie runs the hormone thread, I run the rest. Closes Friday.',
       ctaLabel: 'Apply the credit',
       ctaUrl: SPRINT_CREDIT_URL,
     })}
@@ -761,34 +761,37 @@ Unsubscribe: ${unsubUrl}
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// DAY 12 — Cohort 2 caps + scarcity (12 seats, 4 left)
+// DAY 12 — Honest scarcity (cap = 5, no countdown)
+// 2026-05-18: Joel's rule — "remove slots left but say I only take 5."
+// We don't post running countdowns. We name the actual cap once and
+// trust the reader. The cohort is small on purpose; the reader gets
+// to decide whether this round or the next round is theirs.
 // ─────────────────────────────────────────────────────────────────────
 const day12 = {
-  subject: '12 seats. 4 left.',
-  subjectB: 'Doors close Friday at midnight',
-  preview: 'Real seat count update. Real reason for the cap.',
+  subject: 'I only take 5 in this cohort',
+  subjectB: 'No countdown. Just the actual cap.',
+  preview: 'Why Cohort 2 is intentionally small — and what that means for you.',
   htmlBody: ({ firstName, unsubUrl }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Quick update on Cohort 2 numbers.`)}
-    ${clayBlock('Cohort 2 — current count', `
-      <p style="font-size:24px;line-height:1.3;color:${PALETTE.text};margin:0 0 8px;font-weight:700;">12 seats total · 4 left</p>
-      <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;">Doors close <strong>Friday at midnight ET</strong> or when full, whichever comes first.</p>
+    ${p(`Quick, honest note on Cohort 2.`)}
+    ${clayBlock('Cohort 2 — the actual cap', `
+      <p style="font-size:24px;line-height:1.3;color:${PALETTE.text};margin:0 0 8px;font-weight:700;">I only take 5 women in this cohort.</p>
+      <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;">Doors close <strong>Friday at midnight ET</strong> or when the room is full, whichever comes first.</p>
     `)}
-    ${p(`I want to be direct about why the cap is twelve and not "open enrollment."`)}
-    ${p(`Cohort 2 lives or dies on the WhatsApp office hours. That's the part of the program that turns a kit into a transformation — the daily access, the real-time answers, the photo-of-the-supplement-bottle questions that get answered in minutes instead of weeks.`)}
+    ${p(`I'm not going to run a countdown on you. "Three seats left, two seats left, one seat" — that's marketing theater and most of my readers see right through it. I just want you to know why the room is small.`)}
+    ${p(`Cohort 2 lives or dies on the WhatsApp office hours. That's the part of the program that turns a protocol into a transformation — the daily access, the real-time answers, the photo-of-the-supplement-bottle questions that get answered in minutes instead of weeks.`)}
     ${p(`I run that thread myself. Not a VA. Not a chatbot. Me, with my own eyes, on my own phone, replying within the same business day.`)}
-    ${bigQuote('Twelve clients is the most I can carry on WhatsApp and still answer the way you need me to.')}
-    ${p(`At fifteen clients, the answers get slower. At twenty, the program stops being what I sold you. So I cap it at twelve, and I'd rather close enrollment with two seats empty than break that promise.`)}
-    ${p(`The four seats remaining as of this morning will go this week. The diagnostic graduates who've been on the fence are coming off it. The credit-applied $1,700 price isn't available after the credit window — and the cohort itself isn't running again until Cohort 3, which I haven't scheduled.`)}
-    ${ctaButton(SPRINT_CREDIT_URL, 'Lock in one of the last 4 seats')}
-    ${p(`If you've been waiting for a sign — a specific moment to commit — this is it. Not because of urgency for urgency's sake. Because there are literally four chairs left in a room of twelve.`)}
-    ${p(`If a seat is no longer available by the time you click through, the page will tell you. I won't oversell the room.`)}
+    ${bigQuote('Five women is the most I can carry on WhatsApp and still answer the way you need me to.')}
+    ${p(`At eight, the answers get slower. At ten, the program stops being what I sold you. So I cap it at five and I'd rather close enrollment with a seat empty than break that promise.`)}
+    ${p(`If you've been on the fence, this is the moment to decide. Not because of urgency for urgency's sake. Because five-per-cohort is real and the room may already be filling. The credit-applied $1,700 price isn't available after the credit window — and the cohort itself isn't running again until Cohort 3, which I haven't scheduled.`)}
+    ${ctaButton(SPRINT_CREDIT_URL, 'Apply for one of the five seats')}
+    ${p(`If the cohort is already full by the time you click through, the page will tell you. I won't oversell the room. You'll go on the list for Cohort 3 and the credit window stays open until then.`)}
     ${joelSignoff()}
     ${psBox(`I'll send one more email Friday. After that, I stop. If Cohort 2 isn't your move right now, the diagnostic protocol and the 30-day email coaching window are yours either way. That was always the deal.`)}
     ${upsellFooter({
-      kicker: '4 of 12 seats remaining',
-      body: '$1,997 standard − $297 already paid = $1,700 net. Cap is twelve so I can run the WhatsApp office hours myself. Doors close Friday.',
-      ctaLabel: 'Lock in your seat',
+      kicker: 'COHORT 2 — 5 SEATS — NO COUNTDOWN',
+      body: '$1,997 standard − $297 already paid = $1,700 net. Cap is five so I can run WhatsApp office hours myself. Doors close Friday.',
+      ctaLabel: 'Apply for your seat',
       ctaUrl: SPRINT_CREDIT_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -796,25 +799,27 @@ const day12 = {
   `,
   textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
 
-Quick update on Cohort 2 numbers.
+Quick, honest note on Cohort 2.
 
-12 SEATS TOTAL · 4 LEFT
-Doors close Friday at midnight ET or when full, whichever comes first.
+THE ACTUAL CAP: I ONLY TAKE 5 WOMEN IN THIS COHORT.
+Doors close Friday at midnight ET or when the room is full, whichever comes first.
 
-I want to be direct about why the cap is twelve and not "open enrollment."
+I'm not going to run a countdown on you. "Three seats left, two seats left, one seat" — that's marketing theater and most of my readers see right through it. I just want you to know why the room is small.
 
-Cohort 2 lives or dies on the WhatsApp office hours. That's the part of the program that turns a kit into a transformation — daily access, real-time answers, the photo-of-the-supplement-bottle questions that get answered in minutes instead of weeks.
+Cohort 2 lives or dies on the WhatsApp office hours. That's the part of the program that turns a protocol into a transformation — daily access, real-time answers, the photo-of-the-supplement-bottle questions that get answered in minutes instead of weeks.
 
 I run that thread myself. Not a VA. Not a chatbot. Me, with my own eyes, on my own phone, replying within the same business day.
 
-Twelve clients is the most I can carry on WhatsApp and still answer the way you need me to. At fifteen, the answers get slower. At twenty, the program stops being what I sold you. So I cap it at twelve, and I'd rather close enrollment with two seats empty than break that promise.
+FIVE WOMEN IS THE MOST I CAN CARRY ON WHATSAPP AND STILL ANSWER THE WAY YOU NEED ME TO.
 
-The four seats remaining as of this morning will go this week. The credit-applied $1,700 price isn't available after the credit window. Cohort 3 isn't scheduled.
+At eight, the answers get slower. At ten, the program stops being what I sold you. So I cap it at five and I'd rather close enrollment with a seat empty than break that promise.
 
-Lock in one of the last 4 seats:
+If you've been on the fence, this is the moment to decide. Not because of urgency for urgency's sake. Because five-per-cohort is real and the room may already be filling. The credit-applied $1,700 price isn't available after the credit window. Cohort 3 isn't scheduled.
+
+Apply for one of the five seats:
 → ${SPRINT_CREDIT_URL}
 
-If a seat is no longer available by the time you click through, the page will tell you. I won't oversell the room.
+If the cohort is already full by the time you click through, the page will tell you. I won't oversell the room. You'll go on the list for Cohort 3 and the credit window stays open until then.
 
 Joel
 RN, BraveWorks

@@ -774,25 +774,28 @@ Whether you book this month or three months from now, your $17 stays applied.
 `,
 };
 
-// ─── DAY 19 — Real scarcity (6 slots/month cap) ───────────────────────
+// ─── DAY 19 — Honest scarcity (cap = 5/month, no countdown) ──────────
+// 2026-05-18: Joel's rule — "remove slots left but say I only take 5."
+// We don't run countdowns ("X seats left") because they make the inbox
+// feel like a marketing engine. We name the actual cap (5 per month)
+// once, then trust the reader to decide.
 const day19 = {
-  subject: 'Two open slots this month',
-  subjectB: 'Next opening: the first of next month',
-  preview: 'The real calendar cap. Not a marketing number.',
+  subject: 'I only take 5 of these a month',
+  subjectB: 'The cap is real. No countdown.',
+  preview: 'No fake scarcity. Just the actual number that fits on my calendar.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick, honest update on availability.`)}
-    ${p(`I take <strong>six diagnostic calls per month.</strong> That's the cap. It's not a marketing number — it's what fits on my actual calendar when I do this work alongside the cohort, the writing, and the rest of my life.`)}
-    ${p(`As of this morning, I have <strong>two slots left for this month</strong>. Once they're booked, the next opening is the first of next month.`, { margin: '0 0 28px' })}
+    ${p(`<strong>I only take 5 diagnostic calls a month.</strong> That's the cap. It's not a marketing number — it's what fits on my actual calendar when I do this work alongside the cohort, the writing, and the rest of my life.`)}
+    ${p(`I'm not going to run a countdown on you. "Three seats left, two seats left, one seat" — that's marketing theater and most of my readers see through it. I just want you to know the cap exists, so you can decide whether this month or next month is right for you.`, { margin: '0 0 28px' })}
     ${clayBlock(
       'Why the cap matters to you',
-      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">If you book this month, you can be running a personalized protocol within seven days.</p>
-       <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">If you book next month, that's another four to six weeks of logging the same kit, hoping the corner you're working on is the right one. Sometimes that's fine — sometimes that's a month you don't get back.</p>
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">If you book inside the month I have a spot, you can be running a personalized protocol within seven days.</p>
+       <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">If you wait for next month's window, that's another four to six weeks of logging the same kit, hoping the corner you're working on is the right one. Sometimes that's fine — sometimes it's a month you don't get back.</p>
        <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">You know your own urgency better than I do. I'm just naming the calendar.</p>`
     )}
-    ${p(`I want to be careful here, because I don't run fake scarcity. If both slots fill tomorrow and I write you Day 21 saying "last call," that doesn't mean a slot magically reappeared. It means the next opening is the calendar week I say it is.`, { margin: '0 0 18px' })}
-    ${p(`<strong>If those two slots fill before Day 21, your next opening is June 1.</strong>`)}
-    ${p(`If you've been on the fence and the kit is plateauing — this is the window. Not because I'm pressuring you. Because the calendar is real.`, { margin: '0 0 28px' })}
+    ${p(`If the month is already full when you write me, I'll tell you that directly. You go on the list for the next month and I lock you in the moment the new window opens. Same credit, same $280 net after your kit.`, { margin: '0 0 28px' })}
+    ${p(`If you've been on the fence and the kit is plateauing — this is the window. Not because I'm pressuring you. Because five-per-month is real.`, { margin: '0 0 28px' })}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Who should book this week:</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ You've logged 14+ mornings of readings.</p>
@@ -809,7 +812,7 @@ const day19 = {
     ${joelSignoff()}
     ${psBox(`If you want to know whether a specific morning works on the calendar without committing yet, hit reply with the day. I'll tell you what's open. No commitment to book.`)}
     ${diagnosticUpsell({
-      kicker: 'Two slots, real calendar',
+      kicker: '5 a month — real cap, no countdown',
       body: 'Your $17 credit is already applied. Sixty minutes, written protocol, doctor script, 30-day follow-up. $280 net.',
     })}
     ${footerSecondaryCTAs()}
@@ -818,17 +821,15 @@ const day19 = {
 
 Quick, honest update on availability.
 
-I take six diagnostic calls per month. That's the cap. Not a marketing number — what fits on my actual calendar.
+I ONLY TAKE 5 DIAGNOSTIC CALLS A MONTH. That's the cap. Not a marketing number — what fits on my actual calendar.
 
-As of this morning: TWO SLOTS LEFT for this month. Once they're booked, next opening is the first of next month.
+I'm not going to run a countdown on you. "Three seats left, two seats left, one seat" — that's marketing theater and most of my readers see through it. I just want you to know the cap exists, so you can decide whether this month or next month is right for you.
 
 WHY THE CAP MATTERS TO YOU:
-If you book this month, you can be running a personalized protocol within seven days.
-If you book next month, that's another 4-6 weeks of logging the same kit, hoping the corner you're working on is the right one.
+If you book inside the month I have a spot, you can be running a personalized protocol within seven days.
+If you wait for next month's window, that's another 4-6 weeks of logging the same kit, hoping the corner you're working on is the right one.
 
-I don't run fake scarcity. If both slots fill tomorrow and I write "last call" on Day 21, that doesn't mean a slot magically reappeared.
-
-If those two slots fill before Day 21, your next opening is June 1.
+If the month is already full when you write me, I'll tell you that directly. You go on the list for the next month and I lock you in the moment the new window opens. Same credit, same $280 net after your kit.
 
 WHO SHOULD BOOK THIS WEEK:
 → You've logged 14+ mornings
@@ -852,7 +853,7 @@ RN, BraveWorks
 P.S. Want to know whether a specific morning works on the calendar? Hit reply with the day. No commitment to book.
 
 —
-Two slots, real calendar:
+5 a month — real cap, no countdown:
 $17 credit already applied. $280 net.
 → ${COACHING_URL}
 

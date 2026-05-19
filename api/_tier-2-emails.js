@@ -123,18 +123,18 @@ const day0 = {
     ${bigQuote('Three things start this week.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. The chapter walkthroughs.</strong> Every few days for the next month, I'm going to walk you through one corner of the Triangle in deep detail — Stress Pressure, Sugar Pressure, Pipe Pressure. The herbs, the doses, the timing, the studies. This is the same teach I do with my $2,997 clients. You get it for $97 because you said yes early.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. The Monday live calls.</strong> Every Monday at 9 PM ET, I open Zoom and we work through whoever is on. Bring your cuff. Bring your numbers. Bring the question that's been bugging you. Recordings go in Skool if you can't make it live.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. The bonus stack.</strong> Cortisol Reset Kit unlocks Day 9. Blood Sugar 10-Day Reset unlocks Day 12. Cook For Life Cookbook drops at the end. I stagger them on purpose — one tool at a time so nothing gets ignored.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. The Monday live calls.</strong> Every Monday at 10 PM ET, I open Zoom and we work through whoever is on. Bring your cuff. Bring your numbers. Bring the question that's been bugging you. Recordings go in Skool if you can't make it live.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. The bonus stack.</strong> Cortisol Reset Kit unlocks Day 9. Blood Sugar 10-Day Reset unlocks Day 12. The Cook For Life Cookbook is your graduation gift on Day 30 — 45 plant-rich meals built around the foods that quiet all three Pressures. I stagger them on purpose: one tool at a time so nothing gets ignored.</p>
     `)}
     ${clayBlock('Step 1 — Join the Skool VIP room (today)', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Your VIP room is inside "How to Be Your Own Doctor." Introduce yourself with a one-liner: your first name, your current morning BP, and which Pressure you suspect is loudest in you. That post unlocks everything else.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Open your Skool VIP room →</a></p>
     `)}
-    ${clayBlock('Step 2 — Save Monday 9 PM ET to your calendar', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Same Zoom link every week. Bookmark it now and you'll never miss one. Block 9–10 PM ET on every Monday between now and Day 30. Bring your cuff. Bring your last 3 readings. Bring questions.</p>
+    ${clayBlock('Step 2 — Save Monday 10 PM ET to your calendar', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Same Zoom link every week. Bookmark it now and you'll never miss one. Block 10–11 PM ET on every Monday between now and Day 30. Bring your cuff. Bring your last 3 readings. Bring questions.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${MONDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Save the Monday Zoom link →</a></p>
     `)}
-    ${ctaButton(MONDAY_ZOOM_URL, 'Save Monday 9 PM ET — your live call link →')}
+    ${ctaButton(MONDAY_ZOOM_URL, 'Save Monday 10 PM ET — your live call link →')}
     ${p(`If you can't make the first Monday live, send me your question by reply to this email and I'll answer it on the call. The recording lands in Skool within 24 hours of the call ending.`)}
     ${p(`You're in family now. Talk soon.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
@@ -149,16 +149,16 @@ THREE THINGS START THIS WEEK:
 
 1. THE CHAPTER WALKTHROUGHS. Every few days for the next month, I'm going to walk you through one corner of the Triangle in deep detail — Stress Pressure, Sugar Pressure, Pipe Pressure. The herbs, the doses, the timing, the studies. This is the same teach I do with my $2,997 clients. You get it for $97 because you said yes early.
 
-2. THE MONDAY LIVE CALLS. Every Monday at 9 PM ET, I open Zoom and we work through whoever is on. Bring your cuff. Bring your numbers. Bring the question that's been bugging you. Recordings go in Skool if you can't make it live.
+2. THE MONDAY LIVE CALLS. Every Monday at 10 PM ET, I open Zoom and we work through whoever is on. Bring your cuff. Bring your numbers. Bring the question that's been bugging you. Recordings go in Skool if you can't make it live.
 
-3. THE BONUS STACK. Cortisol Reset Kit unlocks Day 9. Blood Sugar 10-Day Reset unlocks Day 12. Cook For Life Cookbook drops at the end. I stagger them on purpose — one tool at a time so nothing gets ignored.
+3. THE BONUS STACK. Cortisol Reset Kit unlocks Day 9. Blood Sugar 10-Day Reset unlocks Day 12. The Cook For Life Cookbook is your graduation gift on Day 30 — 45 plant-rich meals built around the foods that quiet all three Pressures. I stagger them on purpose: one tool at a time so nothing gets ignored.
 
 STEP 1 — JOIN THE SKOOL VIP ROOM (TODAY):
 Your VIP room is inside "How to Be Your Own Doctor." Introduce yourself with a one-liner: your first name, your current morning BP, and which Pressure you suspect is loudest in you.
 → ${SKOOL_URL}
 
-STEP 2 — SAVE MONDAY 9 PM ET TO YOUR CALENDAR:
-Same Zoom link every week. Bookmark it now. Block 9–10 PM ET every Monday between now and Day 30.
+STEP 2 — SAVE MONDAY 10 PM ET TO YOUR CALENDAR:
+Same Zoom link every week. Bookmark it now. Block 10–11 PM ET every Monday between now and Day 30.
 → ${MONDAY_ZOOM_URL}
 
 If you can't make the first Monday live, send me your question by reply to this email and I'll answer it on the call. Recording lands in Skool within 24 hours.
@@ -183,7 +183,7 @@ Unsubscribe: ${unsubUrl || ''}
 // Cohort-insider voice. Reinforces Monday call as the place to ask questions.
 const day3 = {
   subject: 'Stress Pressure — Chapter 1 of your Challenge',
-  subjectB: 'Monday at 9 PM ET — first live call',
+  subjectB: 'Monday at 10 PM ET — first live call',
   preview: 'The corner most cardiologists never measure. Your first walkthrough.',
   htmlBody: ({ firstName, unsubUrl }) => `
     ${p(`Hi ${firstName || 'there'},`)}
@@ -202,11 +202,11 @@ const day3 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">25 things, morning. 25 things, evening. Spoken aloud or written.</strong> Specific, not generic. "I'm grateful for the cardinal at the feeder this morning" beats "I'm grateful for nature."</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Gratitude is the only proven cognitive intervention that drops cortisol within 60 seconds. It costs nothing. It works on the first day. It's the single most underrated tool in this Challenge — and the one most people skip because it feels too soft. Don't skip it.</p>
     `)}
-    ${clayBlock('MONDAY 9 PM ET — FIRST LIVE CALL', `
+    ${clayBlock('MONDAY 10 PM ET — FIRST LIVE CALL', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">First Monday is two days away. Bring your baseline morning BP from this week. Bring the question about Stress Pressure that's been on your mind. We work through whoever is on, in the order they raise their hand.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${MONDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Monday Zoom link (save this) →</a></p>
     `)}
-    ${ctaButton(MONDAY_ZOOM_URL, 'See you Monday 9 PM ET →')}
+    ${ctaButton(MONDAY_ZOOM_URL, 'See you Monday 10 PM ET →')}
     ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay, your doctor watches the readings, the readings move because the inputs are moving.`)}
     ${p(`Three days from now, Chapter 2 lands in your inbox: <strong style="color:${PALETTE.text};">Sugar Pressure</strong> — the corner cardiologists never measure.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
@@ -237,7 +237,7 @@ THE 25-25 GRATITUDE PROTOCOL.
 
 Gratitude is the only proven cognitive intervention that drops cortisol within 60 seconds. It costs nothing. It works on the first day. Don't skip it.
 
-MONDAY 9 PM ET — FIRST LIVE CALL.
+MONDAY 10 PM ET — FIRST LIVE CALL.
 
 First Monday is two days away. Bring your baseline morning BP from this week. Bring the question about Stress Pressure that's been on your mind. We work through whoever is on, in the order they raise their hand.
 → ${MONDAY_ZOOM_URL}
@@ -376,7 +376,7 @@ const day9 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Don't read the whole thing today. Use it as a 10-day companion to Chapter 1 (Stress Pressure). One micro-action per day. Stack on top of the Triangle moves you already started.</p>
     `)}
     ${ctaButton(BONUS_CORTISOL_URL, 'Download your Cortisol Reset Kit →')}
-    ${p(`Next bonus — <strong style="color:${PALETTE.text};">Blood Sugar 10-Day Reset</strong> — unlocks on Day 12 of your Challenge. The Cook For Life Cookbook drops at the end of the month.`, { margin: '0 0 24px' })}
+    ${p(`Next bonus — <strong style="color:${PALETTE.text};">Blood Sugar 10-Day Reset</strong> — unlocks on Day 12 of your Challenge. The <strong style="color:${PALETTE.text};">Cook For Life Cookbook</strong> is your graduation gift on Day 30.`, { margin: '0 0 24px' })}
     ${p(`Pills manage output. Protocol fixes input. You're now running the full Triangle: Stress, Sugar, Pipes. Same loop, three doors in. That's why this Method works when the single-supplement experiments your friends tried did not.`)}
     ${joelSignoff()}
     ${psBox(`Monday's call is in 4 days. Halfway through the cohort, the question that comes up most is "should I be tapering my meds yet?" Short answer: usually no, not until Day 30+ with sustained readings. Long answer: bring it to Monday and we'll work through your specific case live.`)}
@@ -412,7 +412,7 @@ Don't read the whole thing today. Use it as a 10-day companion to Chapter 1 (Str
 
 → Download your Cortisol Reset Kit: ${BONUS_CORTISOL_URL}
 
-Next bonus — Blood Sugar 10-Day Reset — unlocks on Day 12. The Cook For Life Cookbook drops at the end of the month.
+Next bonus — Blood Sugar 10-Day Reset — unlocks on Day 12. The Cook For Life Cookbook is your graduation gift on Day 30.
 
 Pills manage output. Protocol fixes input. You're now running the full Triangle: Stress, Sugar, Pipes. Same loop, three doors in. That's why this Method works when the single-supplement experiments your friends tried did not.
 
@@ -451,11 +451,11 @@ const day12 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">On Monday's call I'm going to do something I don't do every week: a <strong style="color:${PALETTE.text};">live BP demo</strong>. I'll put my own cuff on, take a reading on camera, then walk through how I read my own numbers — what counts as a good reading, what to throw out, why the second reading on the same arm matters more than the first, and what the spread between morning and evening tells you about which Pressure is loudest.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">If you have a cuff, bring it. Take a reading on the call with me. Drop your number in the chat. We'll work through 3-4 readings live.</p>
     `)}
-    ${clayBlock('MONDAY 9 PM ET — BRING YOUR CUFF', `
+    ${clayBlock('MONDAY 10 PM ET — BRING YOUR CUFF', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Same Zoom link as last Monday — save it once, use it for all 4 weeks of the Challenge.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${MONDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Monday Zoom link →</a></p>
     `)}
-    ${ctaButton(MONDAY_ZOOM_URL, 'See you Monday 9 PM ET →')}
+    ${ctaButton(MONDAY_ZOOM_URL, 'See you Monday 10 PM ET →')}
     ${p(`You're 12 days into a 30-day cohort. Most of the structural protocols are in your hands now — Stress Pressure herbs, Sugar Pressure plate, Pipe Pressure stack. The next 18 days are about <em>doing them</em> long enough for the morning numbers to start telling a different story.`, { margin: '0 0 28px' })}
     ${p(`Day 15 — halfway through — I'll send you a mid-cohort check-in. Bring your week-1 baseline and your current readings. We'll compare and adjust.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
@@ -486,7 +486,7 @@ On Monday's call I'm going to do something I don't do every week: a live BP demo
 
 If you have a cuff, bring it. Take a reading on the call with me. Drop your number in the chat. We'll work through 3-4 readings live.
 
-MONDAY 9 PM ET — BRING YOUR CUFF.
+MONDAY 10 PM ET — BRING YOUR CUFF.
 
 Same Zoom link as last Monday — save it once, use it for all 4 weeks of the Challenge.
 → ${MONDAY_ZOOM_URL}
@@ -631,22 +631,22 @@ const day18 = {
     `)}
     ${bigQuote('TRANSFORMATION: From morning-number tracker to medication-conversation owner.')}
     ${p(`The Challenge taught you the Triangle protocol. Cohort 2 — the 90-day Sprint — gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations beside other clients.`)}
-    ${p(`Inside the Sprint you get: weekly 1:1 calls with me (30 minutes each), my eyes on your BP log every Sunday, the full Doctor Conversation Script (the exact words, the order, the fallback if they say no), the Med Wean Tracker for the actual taper window, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.`)}
+    ${p(`Inside the Sprint you get: weekly 1:1 calls with me (30 minutes each), my eyes on your BP log every Monday morning, the full Doctor Conversation Script (the exact words, the order, the fallback if they say no), the Med Wean Tracker for the actual taper window, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.`)}
     ${p(`The graduates from Cohort 1 of the Sprint are now ~70% off at least one medication, with their doctor's blessing. That's the outcome. <strong style="color:${PALETTE.text};">Doctor-cleared independence.</strong>`, { margin: '0 0 28px' })}
     ${bigQuote('OFFER: $1,997 for the 90-day Sprint. Applications open today.')}
-    ${p(`Cohort 2 is application-only — I cap it at 12 seats so I can actually be on every Sunday with every client. The doors are open until Friday at midnight ET. After Friday, applications close and the next cohort doesn't open until Cohort 3 fills, which is at least 60 days out.`)}
+    ${p(`Cohort 2 is application-only — I cap it at 5 seats so I can actually be on every Monday with every client. The doors are open until Friday at midnight ET. After Friday, applications close and the next cohort doesn't open until Cohort 3 fills, which is at least 60 days out.`)}
     ${p(`I'll walk the full credit math, the guarantee, and the application questions on Day 26 of this Challenge. Today is just the reveal — so you know what room is being opened.`, { margin: '0 0 28px' })}
     ${clayBlock('RESPONSE — IF THIS RESONATES', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Look at the Cohort 2 application page now. Don't apply yet — just read what it is. Get a feel for whether the deeper room is somewhere you want to be after Day 30.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Read about Cohort 2 →</a></p>
     `)}
     ${ctaButton(COHORT2_URL, 'Read about Cohort 2 (no commitment) →')}
-    ${p(`Day 22 — I'll tell you exactly what Wakita's Sunday looks like inside the Sprint. The Tuesday tracker. The Sunday call. The doctor visit prep. So you can see, in real terms, what the next 90 days could look like for you.`, { margin: '0 0 28px' })}
+    ${p(`Day 22 — I'll tell you exactly what Wakita's Monday looks like inside the Sprint. The Tuesday tracker. The Monday call. The doctor visit prep. So you can see, in real terms, what the next 90 days could look like for you.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient" — read this email again. The Sprint exists because the 30-day window is too short for a real conversation about getting off the meds. You need the next 60 with a coach on your data.`)}
     ${upsellFooter({
       kicker: 'COHORT 2 — THE 90-DAY SPRINT',
-      body: 'Applications open until Friday at midnight ET. 12 seats. The 90 days that turn your Challenge into a real doctor conversation about lowering or removing the meds.',
+      body: 'Applications open until Friday at midnight ET. 5 seats. The 90 days that turn your Challenge into a real doctor conversation about lowering or removing the meds.',
       ctaLabel: 'Read about Cohort 2',
       ctaUrl: COHORT2_URL,
     })}
@@ -684,13 +684,13 @@ TRANSFORMATION: FROM MORNING-NUMBER TRACKER TO MEDICATION-CONVERSATION OWNER.
 
 The Challenge taught you the Triangle protocol. Cohort 2 — the 90-day Sprint — gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations.
 
-Inside the Sprint: weekly 1:1 calls with me (30 min each), my eyes on your BP log every Sunday, the full Doctor Conversation Script, the Med Wean Tracker, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.
+Inside the Sprint: weekly 1:1 calls with me (30 min each), my eyes on your BP log every Monday morning, the full Doctor Conversation Script, the Med Wean Tracker, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.
 
 Graduates from Cohort 1 are now ~70% off at least one medication with their doctor's blessing. DOCTOR-CLEARED INDEPENDENCE.
 
 OFFER: $1,997 FOR THE 90-DAY SPRINT. APPLICATIONS OPEN TODAY.
 
-Cohort 2 is application-only — capped at 12 seats. Doors open until Friday at midnight ET. After Friday, the next cohort doesn't open until Cohort 3 fills, at least 60 days out.
+Cohort 2 is application-only — capped at 5 seats. Doors open until Friday at midnight ET. After Friday, the next cohort doesn't open until Cohort 3 fills, at least 60 days out.
 
 Full credit math, guarantee, and application questions on Day 26 of this Challenge. Today is just the reveal.
 
@@ -699,7 +699,7 @@ RESPONSE — IF THIS RESONATES:
 Look at the Cohort 2 application page now. Don't apply yet — just read what it is.
 → ${COHORT2_URL}
 
-Day 22 — I'll tell you exactly what Wakita's Sunday looks like inside the Sprint.
+Day 22 — I'll tell you exactly what Wakita's Monday looks like inside the Sprint.
 
 Joel
 RN, BraveWorks
@@ -707,7 +707,7 @@ RN, BraveWorks
 P.S. If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient" — read this email again. The Sprint exists because the 30-day window is too short for a real conversation about getting off the meds. You need the next 60 with a coach on your data.
 
 → COHORT 2 — THE 90-DAY SPRINT: ${COHORT2_URL}
-Applications open until Friday at midnight ET. 12 seats.
+Applications open until Friday at midnight ET. 5 seats.
 
 —
 → Skool: ${SKOOL_URL}
@@ -718,14 +718,14 @@ Unsubscribe: ${unsubUrl || ''}
 };
 
 // ─── DAY 22 — Wakita's first 30 days inside the Sprint (BAB case study) ─
-// Before-After-Bridge. Tangible Sunday-in-the-life inside Cohort 2.
+// Before-After-Bridge. Tangible Monday-in-the-life inside Cohort 2.
 const day22 = {
-  subject: 'Wakita\'s Sunday — a peek inside 90-day work',
+  subject: 'Wakita\'s Monday — a peek inside 90-day work',
   subjectB: 'What Sprint clients do on Day 30',
-  preview: 'The Sunday call. The tracker. The doctor visit prep.',
+  preview: 'The Monday call. The tracker. The doctor visit prep.',
   htmlBody: ({ firstName, unsubUrl }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`On Day 18, I told you Wakita Taylor closed in 16 days. Today I want to walk you through what her Sunday actually looks like inside the Sprint — so the 90-day Cohort 2 isn't an abstraction for you anymore.`)}
+    ${p(`On Day 18, I told you Wakita Taylor closed in 16 days. Today I want to walk you through what her Monday actually looks like inside the Sprint — so the 90-day Cohort 2 isn't an abstraction for you anymore.`)}
     ${p(`This is the BEFORE-AFTER-BRIDGE that most Challenge graduates need to see before the picture clicks.`, { margin: '0 0 28px' })}
     ${bigQuote('BEFORE: 90 days ago.')}
     ${p(`Wakita was 90 days into a personal stuck place. Morning BP averaging 152/95 on amlodipine and metformin. Type-2 diabetes diagnosed two years prior. Sleep fragmented — waking 3 AM, lying awake for an hour. Mid-section weight that hadn't moved in years. She'd done the Challenge once — gotten 6 mmHg off her morning average — but the numbers had crept back in the 30 days after Day 30 because she didn't know what to keep doing or who to ask.`)}
@@ -738,19 +738,19 @@ const day22 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">Waist:</strong> -2.5 inches.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Doctor conversation:</strong> already booked for Day 65. With our script. With her log printed. With the protocol summary in her chart for her doctor to review before she walks in.</p>
     `)}
-    ${bigQuote('BRIDGE: What her actual Sunday looks like.')}
+    ${bigQuote('BRIDGE: What her actual Monday looks like.')}
     ${p(`This is the part nobody describes in advance. So here it is, hour by hour.`, { margin: '0 0 28px' })}
-    ${clayBlock('WAKITA\'S SUNDAY INSIDE THE SPRINT', `
+    ${clayBlock('WAKITA\'S MONDAY INSIDE THE SPRINT', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">8 AM — Submit the week.</strong> She opens her Sprint tracker (a one-page Google Sheet I built) and enters 7 days of morning + evening BP readings, sleep hours, walk count, and any "off" days. Takes her 4 minutes.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">10 AM — I review.</strong> I open every Sprint client's tracker between 9 and 11 AM Sunday. I look at three things: trend direction (still moving down?), variance (consistent or jumpy?), and outliers (what happened on the days that were off?). I leave one comment per client.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2 PM — The Sunday call (Sprint cohort).</strong> 60 minutes, full cohort on Zoom. I walk through the patterns I saw across the cohort that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them about their week.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">10 AM — I review.</strong> I open every Sprint client's tracker between 9 and 11 AM Monday. I look at three things: trend direction (still moving down?), variance (consistent or jumpy?), and outliers (what happened on the days that were off?). I leave one comment per client.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">10 PM — The Monday call (Sprint cohort joins the Challenge live call).</strong> 60 minutes, full cohort on Zoom. I walk through the patterns I saw across the cohort that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them about their week.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">3 PM — 30-minute 1:1 (rotating).</strong> Once every two weeks, every Sprint client gets a 30-minute solo call with me. We look at their tracker together. We adjust the protocol. We rehearse their next doctor conversation if it's coming up.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">8 PM — Skool VIP Sprint room.</strong> Wakita posts her "wins of the week" in a smaller, tighter cohort (12 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">8 PM — Skool VIP Sprint room.</strong> Wakita posts her "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.</p>
     `)}
-    ${p(`That's the rhythm. <strong style="color:${PALETTE.text};">Every Sunday for 90 days.</strong> By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), they're maintenance-only.`, { margin: '0 0 28px' })}
-    ${bigQuote('Why I cap it at 12.')}
-    ${p(`Twelve clients is the most I can review every Sunday with real attention. I tried thirty in the first cohort I ever ran (years ago, before the Triangle Method was branded). I missed things. Clients drifted. I cut it to twelve and the outcomes doubled.`)}
-    ${p(`Cohort 2 has fewer than 12 seats left. The doors close Friday at midnight ET. I'll walk the credit math and the application questions on Day 26.`, { margin: '0 0 28px' })}
+    ${p(`That's the rhythm. <strong style="color:${PALETTE.text};">Every Monday for 90 days.</strong> By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), they're maintenance-only.`, { margin: '0 0 28px' })}
+    ${bigQuote('Why I cap it at 5.')}
+    ${p(`Five women is the most I can review every Monday morning with real attention. I tried thirty in the first cohort I ever ran (years ago, before the Triangle Method was branded). I missed things. Clients drifted. I cut it to five and the outcomes more than doubled.`)}
+    ${p(`Cohort 2 has 5 seats only — small on purpose. The doors close Friday at midnight ET. I'll walk the credit math and the application questions on Day 26.`, { margin: '0 0 28px' })}
     ${clayBlock('IF YOU\'RE READING THIS AND THINKING "THAT\'S ME"', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The Challenge graduates who do best in the Sprint are women who feel they "lost momentum after the last protocol" or "need someone watching" or "want to walk into the doctor visit with real data." If any of those are you — open the application page and read the questions. Don't fill it out yet. Just see whether the questions resonate.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Read the Cohort 2 application →</a></p>
@@ -758,7 +758,7 @@ const day22 = {
     ${ctaButton(COHORT2_URL, 'Read the Cohort 2 application →')}
     ${p(`Day 26 of your Challenge — the full credit math, the guarantee, and exactly how the application works.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`The single thing Wakita said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Sunday call buys you. Someone watching your numbers with the same seriousness you watch them with.`)}
+    ${psBox(`The single thing Wakita said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Monday call buys you. Someone watching your numbers with the same seriousness you watch them with.`)}
     ${upsellFooter({
       kicker: 'COHORT 2 — APPLICATIONS CLOSE FRIDAY',
       body: 'Read the application. See what kind of woman the Sprint is for. The doors close Friday at midnight ET and the next cohort is at least 60 days out.',
@@ -769,7 +769,7 @@ const day22 = {
   `,
   textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
 
-On Day 18, I told you Wakita Taylor closed in 16 days. Today I want to walk you through what her Sunday actually looks like inside the Sprint — so the 90-day Cohort 2 isn't an abstraction for you anymore.
+On Day 18, I told you Wakita Taylor closed in 16 days. Today I want to walk you through what her Monday actually looks like inside the Sprint — so the 90-day Cohort 2 isn't an abstraction for you anymore.
 
 BEFORE: 90 DAYS AGO.
 
@@ -789,25 +789,25 @@ BRIDGE: WHAT HER ACTUAL SUNDAY LOOKS LIKE.
 
 This is the part nobody describes in advance. So here it is, hour by hour.
 
-WAKITA'S SUNDAY INSIDE THE SPRINT:
+WAKITA'S MONDAY INSIDE THE SPRINT:
 
 → 8 AM — Submit the week. She opens her Sprint tracker (one-page Google Sheet) and enters 7 days of morning + evening BP readings, sleep hours, walk count, "off" days. 4 minutes.
 
-→ 10 AM — I review. I open every Sprint client's tracker between 9 and 11 AM Sunday. I look at trend direction, variance, and outliers. I leave one comment per client.
+→ 10 AM — I review. I open every Sprint client's tracker between 9 and 11 AM Monday. I look at trend direction, variance, and outliers. I leave one comment per client.
 
-→ 2 PM — The Sunday call (Sprint cohort). 60 minutes, full cohort on Zoom. Patterns I saw that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them.
+→ 10 PM — The Monday call (Sprint cohort joins the Challenge live call). 60 minutes, full cohort on Zoom. Patterns I saw that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them.
 
 → 3 PM — 30-minute 1:1 (rotating). Once every two weeks, every Sprint client gets a 30-minute solo call with me. We look at the tracker together. Adjust protocol. Rehearse the next doctor conversation if it's coming up.
 
-→ 8 PM — Skool VIP Sprint room. Wakita posts "wins of the week" in a smaller, tighter cohort (12 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.
+→ 8 PM — Skool VIP Sprint room. Wakita posts "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.
 
 That's the rhythm. EVERY SUNDAY FOR 90 DAYS. By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), maintenance-only.
 
 WHY I CAP IT AT 12.
 
-Twelve clients is the most I can review every Sunday with real attention. Tried thirty in the first cohort I ever ran. Missed things. Clients drifted. Cut to twelve and outcomes doubled.
+Five women is the most I can review every Monday morning with real attention. Tried thirty in the first cohort I ever ran. Missed things. Clients drifted. Cut to five and outcomes more than doubled.
 
-Cohort 2 has fewer than 12 seats left. Doors close Friday at midnight ET. Credit math and application questions on Day 26.
+Cohort 2 has 5 seats only — small on purpose. Doors close Friday at midnight ET. Credit math and application questions on Day 26.
 
 IF YOU'RE READING THIS AND THINKING "THAT'S ME":
 
@@ -820,7 +820,7 @@ Day 26 of your Challenge — the full credit math, guarantee, and exactly how th
 Joel
 RN, BraveWorks
 
-P.S. The single thing Wakita said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Sunday call buys you. Someone watching your numbers with the same seriousness you watch them with.
+P.S. The single thing Wakita said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Monday call buys you. Someone watching your numbers with the same seriousness you watch them with.
 
 → COHORT 2 — APPLICATIONS CLOSE FRIDAY: ${COHORT2_URL}
 Read the application. See what kind of woman the Sprint is for.
@@ -845,12 +845,12 @@ const day26 = {
     ${p(`If you've been waiting for the full picture before deciding whether to apply, this is the email.`, { margin: '0 0 28px' })}
     ${bigQuote('WHAT COHORT 2 IS.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A 90-day, 12-woman Sprint.</strong> Application-only. Starts Sunday following enrollment close. Ends 90 days later with a maintenance-phase graduation.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A weekly Sunday call</strong> with me at 2 PM ET, 60 minutes, full cohort. Recordings if you miss live.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A 90-day, 5-woman Sprint.</strong> Application-only. Starts the Monday after enrollment closes. Ends 90 days later with a maintenance-phase graduation.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A weekly Monday call</strong> with me at 10 PM ET, 60 minutes, full cohort. Recordings if you miss live.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Bi-weekly 30-minute 1:1 calls</strong> with me — six of them over the 90 days. Your time, your numbers, your protocol.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Weekly tracker review.</strong> Every Sunday morning I open every client's tracker between 9 and 11 AM ET. One comment per client. I see trends the client can't see.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Weekly tracker review.</strong> Every Monday morning I open every client's tracker between 9 and 11 AM ET. One comment per client. I see trends the client can't see.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">The Doctor Conversation Script + Med Wean Tracker.</strong> The two assets that turn 90 days of clean numbers into an actual taper conversation with your prescriber.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A smaller, tighter Skool VIP room.</strong> 12 women only. Different feel than the Challenge cohort. Higher-touch.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A smaller, tighter Skool VIP room.</strong> 5 women only. Different feel than the Challenge cohort. Higher-touch.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Barbara O'Neill virtual event ticket</strong> — June 24-25 — included for every Cohort 2 enrollment.</p>
     `)}
     ${bigQuote('WHAT IT IS NOT.')}
@@ -858,7 +858,7 @@ const day26 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a re-run of the Challenge.</strong> You've already done the chapter walkthroughs. The Sprint is the implementation phase — applying the Triangle to your specific case, week by week, with my eyes on the data.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a medical service.</strong> I'm a Registered Nurse and naturopathic practitioner. I do not prescribe, diagnose, or treat. Your prescribing doctor remains your prescribing doctor. The Sprint coaches the lifestyle and protocol side — they coach the medication side.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a guarantee that you'll be off your meds in 90 days.</strong> Your doctor decides medication changes. Most Sprint Cohort 1 graduates are down at least one dose. Some are off one medication entirely. A few are still on the same regimen but with sustained 20+ mmHg reductions — and an open conversation with their doctor about tapering at the 6-month mark.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Not for everyone.</strong> If you don't have 30 minutes a day for the protocol, the Sprint is the wrong fit. If you can't make Sunday calls (or watch recordings within 48 hours), the Sprint is the wrong fit. Better to know now.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Not for everyone.</strong> If you don't have 30 minutes a day for the protocol, the Sprint is the wrong fit. If you can't make Monday calls (or watch recordings within 48 hours), the Sprint is the wrong fit. Better to know now.</p>
     `)}
     ${bigQuote('THE CREDIT MATH.')}
     ${p(`The full Sprint is <strong style="color:${PALETTE.text};">$1,997</strong>. For Challenge graduates applying before Friday at midnight ET, the math runs like this:`)}
@@ -869,10 +869,10 @@ const day26 = {
     `)}
     ${p(`That credit is only available to current Challenge cohort members applying before Friday. After Friday it resets to standard pricing.`, { margin: '0 0 28px' })}
     ${bigQuote('THE GUARANTEE.')}
-    ${p(`Inside the first 14 days of the Sprint, if you've shown up to both Sunday calls, completed both Sunday trackers, and you don't see a clear path to your medication conversation — write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.`)}
-    ${p(`That's the deal because I know what the Sprint produces in the women who show up for it — and the women who show up for it the first two Sundays virtually always finish the 90 days.`, { margin: '0 0 28px' })}
+    ${p(`Inside the first 14 days of the Sprint, if you've shown up to both Monday calls, completed both Monday trackers, and you don't see a clear path to your medication conversation — write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.`)}
+    ${p(`That's the deal because I know what the Sprint produces in the women who show up for it — and the women who show up for it the first two Mondays virtually always finish the 90 days.`, { margin: '0 0 28px' })}
     ${clayBlock('THE THREE COMMON QUESTIONS', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"Can I do it if I work full-time?"</strong> Yes. Most Cohort 1 women worked full-time. The Sunday call is the only fixed live commitment — the rest is async tracker entry (4 min/day) and bi-weekly 1:1 calls you book on your own schedule.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"Can I do it if I work full-time?"</strong> Yes. Most Cohort 1 women worked full-time. The Monday call is the only fixed live commitment — the rest is async tracker entry (4 min/day) and bi-weekly 1:1 calls you book on your own schedule.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"What if my doctor won't budge on the taper?"</strong> The Sprint includes the Script for navigating that exact conversation, including a second-opinion-pathway script for when your current prescriber won't engage with data. A few Sprint graduates have switched physicians as part of this; most haven't needed to.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">"Can I pay in installments?"</strong> Yes. The application has a payment-plan option. Three or four monthly payments. Same total. No interest.</p>
     `)}
@@ -886,7 +886,7 @@ const day26 = {
     ${psBox(`The biggest single regret I hear from Cohort 1 graduates is "I waited a month after my Challenge to apply, and my numbers slipped." If you know the deeper room is yours, apply this week. Momentum matters more than perfect readiness.`)}
     ${upsellFooter({
       kicker: 'COHORT 2 — APPLICATIONS CLOSE FRIDAY MIDNIGHT ET',
-      body: 'Apply now to lock in your $97 Challenge credit on the $1,997 Sprint. 8 questions, 15 minutes, 12 seats total.',
+      body: 'Apply now to lock in your $97 Challenge credit on the $1,997 Sprint. 8 questions, 15 minutes, 5 seats total.',
       ctaLabel: 'Apply for Cohort 2',
       ctaUrl: COHORT2_URL,
     })}
@@ -900,12 +900,12 @@ If you've been waiting for the full picture before deciding whether to apply, th
 
 WHAT COHORT 2 IS:
 
-→ A 90-day, 12-woman Sprint. Application-only. Starts Sunday following enrollment close.
-→ A weekly Sunday call with me at 2 PM ET, 60 minutes, full cohort. Recordings if you miss live.
+→ A 90-day, 5-woman Sprint. Application-only. Starts the Monday after enrollment closes.
+→ A weekly Monday call with me at 10 PM ET, 60 minutes, full cohort. Recordings if you miss live.
 → Bi-weekly 30-minute 1:1 calls with me — six over 90 days.
-→ Weekly tracker review. Every Sunday I open every client's tracker between 9 and 11 AM ET. One comment per client.
+→ Weekly tracker review. Every Monday morning I open every client's tracker between 9 and 11 AM ET. One comment per client.
 → The Doctor Conversation Script + Med Wean Tracker.
-→ A smaller, tighter Skool VIP room. 12 women only.
+→ A smaller, tighter Skool VIP room. 5 women only.
 → Barbara O'Neill virtual event ticket — June 24-25 — included for every Cohort 2 enrollment.
 
 WHAT IT IS NOT:
@@ -913,7 +913,7 @@ WHAT IT IS NOT:
 → Not a re-run of the Challenge. The Sprint is the implementation phase — applying the Triangle to YOUR case, week by week, with my eyes on the data.
 → Not a medical service. I'm an RN and naturopathic practitioner. I do not prescribe, diagnose, or treat. Your prescribing doctor remains your prescribing doctor.
 → Not a guarantee that you'll be off your meds in 90 days. Your doctor decides medication changes. Most Cohort 1 graduates are down at least one dose. Some are off one medication entirely.
-→ Not for everyone. If you can't make Sunday calls (or recordings within 48 hours), the Sprint is the wrong fit.
+→ Not for everyone. If you can't make Monday calls (or recordings within 48 hours), the Sprint is the wrong fit.
 
 THE CREDIT MATH.
 
@@ -927,11 +927,11 @@ That credit is only available to current Challenge cohort members applying befor
 
 THE GUARANTEE.
 
-Inside the first 14 days of the Sprint, if you've shown up to both Sunday calls, completed both Sunday trackers, and you don't see a clear path to your medication conversation — write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.
+Inside the first 14 days of the Sprint, if you've shown up to both Monday calls, completed both Monday trackers, and you don't see a clear path to your medication conversation — write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.
 
 THE THREE COMMON QUESTIONS:
 
-→ "Can I do it if I work full-time?" Yes. Most Cohort 1 women worked full-time. The Sunday call is the only fixed live commitment.
+→ "Can I do it if I work full-time?" Yes. Most Cohort 1 women worked full-time. The Monday call is the only fixed live commitment.
 
 → "What if my doctor won't budge on the taper?" The Sprint includes the Script for that exact conversation, including a second-opinion-pathway script. A few graduates have switched physicians; most haven't needed to.
 
@@ -980,15 +980,22 @@ const day30 = {
     ${bigQuote('What\'s next — either door.')}
     ${p(`Two paths open up at Day 30, and I want both of them to be clear before tonight.`, { margin: '0 0 28px' })}
     ${clayBlock('DOOR 1 — COHORT 2 (THE SPRINT) — CLOSES TONIGHT', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Sunday call, bi-weekly 1:1, the doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday call, bi-weekly 1:1, the doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for Cohort 2 (closes tonight) →</a></p>
     `)}
     ${clayBlock('DOOR 2 — THE NEWSLETTER + SKOOL', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">If Cohort 2 isn't the right fit right now, that's a real answer. The Challenge graduates list keeps you in the Skool community and rolls you into the weekly newsletter — one email every Tuesday with new teaching, herb updates, RCT walkthroughs, and the most useful Skool conversations from the prior week. You'll hear about Cohort 3 when it opens (60+ days out).</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">No action needed — you're already on it. Just keep showing up Tuesdays.</p>
     `)}
+    ${bigQuote('Your graduation gift.')}
+    ${clayBlock('THE COOK FOR LIFE COOKBOOK — UNLOCKED TODAY', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Forty-five plant-rich meals built around the foods that quiet all three Pressures. Joel's grandmother's bean soup is page 22. The Anti-BP Plate template you've been printing all month gets its own chapter with 15 dinner-ready variations. The hibiscus-cinnamon iced tea recipe lives at page 38.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">I held this one for the end on purpose. The first 29 days were about understanding the Triangle. The cookbook is the rhythm tool you'll carry forward — the thing that keeps the protocol running long after the daily emails stop.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${BONUS_COOKBOOK_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Download Cook For Life Cookbook (your graduation gift) →</a></p>
+    `)}
+    ${ctaButton(BONUS_COOKBOOK_URL, 'Download your Cook For Life Cookbook →')}
     ${bigQuote('Either way, you have the protocol now.')}
-    ${p(`That's what I want you to walk away with most. The Triangle protocol — Stress Pressure herbs, Sugar Pressure plate, Pipe Pressure stack — is yours forever. The 30 days bought you the chapters, the bonus kits, the live Mondays, the Skool VIP room. <strong style="color:${PALETTE.text};">That doesn't get taken back at graduation.</strong> You own the tools.`)}
+    ${p(`That's what I want you to walk away with most. The Triangle protocol — Stress Pressure herbs, Sugar Pressure plate, Pipe Pressure stack — is yours forever. The 30 days bought you the chapters, the bonus kits, the live Mondays, the Skool VIP room, the cookbook. <strong style="color:${PALETTE.text};">That doesn't get taken back at graduation.</strong> You own the tools.`)}
     ${p(`Whether you walk into Cohort 2 tonight or come back in three months — the Triangle stays with you. The herbs stay with you. The "AND not INSTEAD OF" frame stays with you. Pills manage output. Protocol fixes input. That sentence is yours now.`, { margin: '0 0 28px' })}
     ${p(`If this Challenge has helped — even a little — there's one thing I'd ask. Forward this email to one woman in your life who's on a BP med and doesn't know there's an "AND" path. That's the most useful single thing you can do with what you learned over the last 30 days.`, { margin: '0 0 28px' })}
     ${p(`Thank you for trusting me with these thirty days. The Triangle works because women like you do the work. I'm glad you're on the graduate side.`, { margin: '0 0 28px' })}
@@ -1023,7 +1030,7 @@ Two paths open up at Day 30.
 
 DOOR 1 — COHORT 2 (THE SPRINT) — CLOSES TONIGHT.
 
-The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Sunday call, bi-weekly 1:1, doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.
+The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday call, bi-weekly 1:1, doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.
 → ${COHORT2_URL}
 
 DOOR 2 — THE NEWSLETTER + SKOOL.
@@ -1032,9 +1039,19 @@ If Cohort 2 isn't the right fit right now, that's a real answer. You stay in Sko
 
 No action needed — you're already on it. Just keep showing up Tuesdays.
 
+YOUR GRADUATION GIFT.
+
+THE COOK FOR LIFE COOKBOOK — UNLOCKED TODAY.
+
+Forty-five plant-rich meals built around the foods that quiet all three Pressures. Joel's grandmother's bean soup is page 22. The Anti-BP Plate template gets its own chapter with 15 dinner-ready variations. The hibiscus-cinnamon iced tea recipe lives at page 38.
+
+I held this one for the end on purpose. The first 29 days were about understanding the Triangle. The cookbook is the rhythm tool you'll carry forward — the thing that keeps the protocol running long after the daily emails stop.
+
+→ Download Cook For Life Cookbook (your graduation gift): ${BONUS_COOKBOOK_URL}
+
 EITHER WAY, YOU HAVE THE PROTOCOL NOW.
 
-The Triangle protocol — Stress Pressure herbs, Sugar Pressure plate, Pipe Pressure stack — is yours forever. The 30 days bought you the chapters, the bonus kits, the live Mondays, the Skool VIP room. THAT DOESN'T GET TAKEN BACK AT GRADUATION. You own the tools.
+The Triangle protocol — Stress Pressure herbs, Sugar Pressure plate, Pipe Pressure stack — is yours forever. The 30 days bought you the chapters, the bonus kits, the live Mondays, the Skool VIP room, the cookbook. THAT DOESN'T GET TAKEN BACK AT GRADUATION. You own the tools.
 
 Whether you walk into Cohort 2 tonight or come back in three months — the Triangle stays with you. The herbs stay with you. The "AND not INSTEAD OF" frame stays with you. Pills manage output. Protocol fixes input. That sentence is yours now.
 
