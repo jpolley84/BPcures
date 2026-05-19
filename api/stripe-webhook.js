@@ -39,6 +39,26 @@ import {
   TIER_CONFIG,
 } from './purchase-confirmation.js';
 
+// State-machine mapping (Phase 1 spec, 2026-05-17). Purchase events
+// transition the drip:* record's `state` field, which the new per-state
+// crons (lead/tier-1/tier-2/tier-3/tier-4) filter on. Keeps old
+// buyer-upsell-cron + diagnostic-drip-cron + drip-cron working during
+// Phase 7 cutover — additive only.
+//
+// Mapping:
+//   $17  + $47        → tier-1  (kit buyer → $297 Diagnostic upsell)
+//   $97               → tier-2  (Challenge cohort — fulfills 30-day promise)
+//   $297              → tier-3  (Diagnostic buyer → Cohort 2 upsell)
+//   $1,997 + $6,997   → tier-4  (Sprint / 1:1 — onboarding, never sells)
+function purchaseToState(kitTier) {
+  const t = String(kitTier || '').toLowerCase();
+  if (t === '1' || t === '2') return 'tier-1';
+  if (t === 'vip') return 'tier-2';
+  if (t === 'diagnostic') return 'tier-3';
+  if (t === 'coaching') return 'tier-4';
+  return null; // unknown tier — preserve existing state
+}
+
 const FROM_CUSTOMER = 'Joel Polley, RN <joel@bpquiz.com>';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 // 2026-05-15: notify addresses consolidated to braveworksrn@gmail.com
@@ -655,6 +675,20 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
         diagnosticEnrolledAt: new Date().toISOString(),
       } : {};
 
+      // State-machine transition — 2026-05-17.
+      // Purchase events are state-transition events. Map kitTier to the
+      // new state, and reset stateEnteredAt to NOW only if the state
+      // actually changed (so re-purchases at same tier don't restart
+      // the sequence from Day 0).
+      const newState = purchaseToState(kitTier);
+      const stateChanging = newState && existing && existing.state !== newState;
+      const stateFields = newState ? {
+        state: newState,
+        stateEnteredAt: (existing && existing.state === newState && existing.stateEnteredAt)
+          ? existing.stateEnteredAt
+          : new Date().toISOString(),
+      } : {};
+
       if (existing) {
         // Upgrade the existing record: mark as paid + auto-opt-in past Day 7.
         await kv.set(dripKey, {
@@ -664,9 +698,10 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
           paidTier: String(kitTier),
           purchasedAt: existing.purchasedAt || new Date().toISOString(),
           tags: Array.from(new Set([...(existing.tags || []), ...purchaseTags])),
+          ...stateFields,
           ...diagnosticFields,
         });
-        console.log(`stripe-webhook: drip record upgraded to paid for ${dripEmail} (tier=${kitTier})${isDiagnostic ? ' [diagnostic-prospect]' : ''}`);
+        console.log(`stripe-webhook: drip record upgraded to paid for ${dripEmail} (tier=${kitTier}, state=${newState || 'unchanged'}${stateChanging ? ' [transitioned]' : ''})${isDiagnostic ? ' [diagnostic-prospect]' : ''}`);
       } else {
         // Fresh enrollment — they bought without ever taking the quiz.
         await kv.set(dripKey, {
@@ -681,9 +716,10 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
           purchasedAt: new Date().toISOString(),
           source: isDiagnostic ? 'stripe-diagnostic-direct' : 'stripe-paid-direct',
           tags: purchaseTags,
+          ...stateFields,
           ...diagnosticFields,
         });
-        console.log(`stripe-webhook: NEW drip enrollment (${isDiagnostic ? 'diagnostic-prospect' : 'paid-direct'}) for ${dripEmail} (tier=${kitTier})`);
+        console.log(`stripe-webhook: NEW drip enrollment (${isDiagnostic ? 'diagnostic-prospect' : 'paid-direct'}) for ${dripEmail} (tier=${kitTier}, state=${newState || 'unset'})`);
       }
     } catch (err) {
       console.warn('stripe-webhook: paid-buyer drip enrollment failed (non-fatal)', err.message);

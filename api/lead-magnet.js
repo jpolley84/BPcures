@@ -488,7 +488,14 @@ export default async function handler(req, res) {
     try {
       const existing = await kv.get(dripKey);
       if (existing) {
-        // Refresh tags + answers metadata, preserve enrollment date / lastSentDay
+        // Refresh tags + answers metadata, preserve enrollment date.
+        // State-machine rule (2026-05-17 spec): never downgrade a paying
+        // buyer back to 'lead' if they re-take the quiz. Only set state
+        // if it isn't already set (fresh capture OR pre-state-machine record).
+        const stateFields = existing.state ? {} : {
+          state: 'lead',
+          stateEnteredAt: existing.stateEnteredAt || existing.enrolledAt || new Date().toISOString(),
+        };
         await kv.set(dripKey, {
           ...existing,
           firstName: name || existing.firstName || '',
@@ -496,19 +503,25 @@ export default async function handler(req, res) {
           answers: a,
           tags: Array.from(new Set([...(existing.tags || []), ...newTags])),
           lastQuizTakenAt: new Date().toISOString(),
+          ...stateFields,
         });
       } else {
+        // Fresh quiz capture — state machine enters at 'lead'.
+        const nowIso = new Date().toISOString();
         await kv.set(dripKey, {
           email: email.trim().toLowerCase(),
           firstName: name || '',
           cohort: 'quiz',
-          enrolledAt: new Date().toISOString(),
+          enrolledAt: nowIso,
           lastSentDay: 0,
           optedIn: true, // taking the quiz IS the opt-in
           source: 'quiz-lead-magnet',
           riskScore: riskScore || '',
           answers: a,
           tags: newTags,
+          // State-machine (2026-05-17): Stage 0 (lead arc, 10 emails / 21 days)
+          state: 'lead',
+          stateEnteredAt: nowIso,
         });
       }
     } catch (err) {
