@@ -2035,7 +2035,12 @@ P.S. Moved your numbers? Hit reply. I read every one.
 export const DAYS = { 1: day1, 2: day2, 3: day3, 4: day4, 5: day5, 6: day6, 7: day7, 8: day8, 9: day9, 10: day10, 11: day11, 12: day12, 13: day13, 14: day14, 15: day15, 16: day16, 17: day17, 18: day18, 19: day19, 20: day20, 21: day21, 22: day22, 23: day23, 24: day24, 25: day25, 26: day26, 27: day27, 28: day28, 29: day29, 30: day30 };
 
 // ─── Email shell renderer ─────────────────────────────────────────────
-export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays = 30 }) {
+// 2026-05-19 deliverability fix: footer Unsubscribe link was `href="#"`
+// (dead placeholder) — every drip-cron email was unsubscribable only
+// by replying. Now uses the real HMAC-signed unsubUrl passed in by
+// renderEmail() / drip-cron.
+export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays = 30, unsubUrl }) {
+  const unsubHref = unsubUrl || '#';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2061,7 +2066,7 @@ export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays
         <tr><td style="padding:24px 16px 0;text-align:center;">
           <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0 0 12px;">This is health education from Joel Polley, RN, BraveWorks Health. Not medical advice. If your BP reads above 180/120, seek emergency care. Always consult your prescriber before changing any medication or supplement.</p>
           <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0 0 12px;">BraveWorks Health · 4730 South Fort Apache Road, Suite 300, Las Vegas, NV 89147</p>
-          <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0;">You're getting this because you're on Joel's BraveWorks list. <a href="#" style="color:#8A8A8A;text-decoration:underline;">Unsubscribe</a></p>
+          <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0;">You're getting this because you're on Joel's BraveWorks list. <a href="${unsubHref}" style="color:#8A8A8A;text-decoration:underline;">Unsubscribe</a></p>
         </td></tr>
       </table>
     </td></tr>
@@ -2071,9 +2076,19 @@ export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays
 }
 
 // ─── Top-level render ─────────────────────────────────────────────────
+// 2026-05-19 deliverability fix: List-Unsubscribe header was missing —
+// Gmail/Yahoo native "Unsubscribe" UI requires it. drip-cron now passes
+// ctx.unsubUrl which we inject into both the header AND the footer link.
 export function renderEmail(day, ctx) {
   const d = DAYS[day];
   if (!d) throw new Error(`Day ${day} not defined in DAYS map`);
+  const headers = {
+    'X-Entity-Ref-ID': `bpquiz-drip-day${day}-${ctx.email}-${Date.now()}`,
+  };
+  if (ctx.unsubUrl) {
+    headers['List-Unsubscribe'] = `<${ctx.unsubUrl}>`;
+    headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click';
+  }
   return {
     from: FROM,
     replyTo: REPLY_TO,
@@ -2083,11 +2098,10 @@ export function renderEmail(day, ctx) {
       preview: d.preview,
       bodyHtml: d.htmlBody(ctx),
       dayNum: day,
+      unsubUrl: ctx.unsubUrl,
     }),
     text: d.textBody(ctx),
-    headers: {
-      'X-Entity-Ref-ID': `bpquiz-drip-day${day}-${ctx.email}-${Date.now()}`,
-    },
+    headers,
     tags: [
       { name: 'campaign', value: 'bpquiz-7day-onboarding' },
       { name: 'day', value: String(day) },

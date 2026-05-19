@@ -29,12 +29,14 @@ import { Resend } from 'resend';
 import crypto from 'node:crypto';
 import { renderEmail, DAYS } from './_drip-emails.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { signUnsubToken } from './unsubscribe.js';
 
 // 3,392 records × ~50ms KV.get + ~485 eligible × ~150ms (Resend + rate-limit
 // + KV.set) = budget about 4 minutes worst case. Pro plan max is 300s.
 export const config = { maxDuration: 300 };
 
 const SECRET = process.env.DRIP_OPT_IN_SECRET || process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
+const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const DRY_RUN = process.env.DRIP_DRY_RUN === '1';
 const RATE_LIMIT_DELAY_MS = 100; // Resend free tier = 10 req/s; 100ms between sends is safe
 const FINAL_ONBOARDING_DAY = 7;  // Days 1-7 universal; 8+ gated by opt-in
@@ -182,10 +184,19 @@ export default async function handler(req, res) {
       }
 
       // Render the email.
+      // 2026-05-19 deliverability fix: pass HMAC-signed unsubUrl in ctx so
+      // renderEmail() injects the List-Unsubscribe header + replaces the
+      // dead href="#" footer link. Was the cause of Jill's "unsubscribe
+      // tab not working" report — every drip-cron email since launch had
+      // a broken footer link AND missing header. Major spam-complaint
+      // + deliverability exposure.
+      const unsubToken = signUnsubToken({ email: sub.email });
+      const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
       const ctx = {
         email: sub.email,
         firstName: sub.firstName,
         optInToken: day === 7 ? signOptInToken(sub.email) : undefined,
+        unsubUrl,
       };
       const payload = renderEmail(day, ctx);
 
