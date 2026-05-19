@@ -32,6 +32,8 @@ const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
 const Cohort2Page = lazy(() => import('./pages/Cohort2Page'));
+const SeminarPage = lazy(() => import('./pages/SeminarPage'));
+const SeminarWelcomePage = lazy(() => import('./pages/SeminarWelcomePage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
@@ -155,6 +157,14 @@ function App() {
               Cohort 2; this page is for buyers who want to skip the
               prescreen and apply directly. */}
           <Route path="/cohort2" element={<Cohort2Page />} />
+
+          {/* Free 6-day Annie+Joel seminar — May 18-23 2026.
+              Email-capture-before-Zoom-link. FB + TikTok bio link target.
+              UTM-aware so we can attribute source. */}
+          <Route path="/seminar" element={<SeminarPage />} />
+          <Route path="/seminar/welcome" element={<SeminarWelcomePage />} />
+          <Route path="/intimacy" element={<Navigate to="/seminar" replace />} />
+          <Route path="/annie" element={<Navigate to="/seminar" replace />} />
 
           {/* Per-client pre-call intake — also reachable via subdomain
               wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}
