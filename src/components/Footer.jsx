@@ -68,6 +68,7 @@ export default function Footer() {
             <h4>Explore</h4>
             <ul>
               <li><Link to="/">Health assessment</Link></li>
+              <li><Link to="/library"><strong>Already bought? Get your downloads →</strong></Link></li>
               <li><Link to="/shop">Apothecary</Link></li>
               <li><Link to="/shop?category=blood_pressure">Blood pressure</Link></li>
               <li><Link to="/shop?category=cortisol">Cortisol &amp; stress</Link></li>

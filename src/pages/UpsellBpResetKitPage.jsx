@@ -18,6 +18,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
+import DownloadsSection from '../components/DownloadsSection';
 
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
 // the $30 OTO BP Reset Kit upsell price; it stays as the safety net so a
@@ -146,7 +147,14 @@ export default function UpsellBpResetKitPage() {
         </span>
       </div>
 
-      <section className="section surface-paper" style={{ padding: '3rem 1.5rem' }}>
+      {/* Inline downloads — let customers grab files before deciding on the OTO */}
+      <section style={{ padding: '2rem 1.5rem 0', background: 'var(--paper, #FBF8F1)' }}>
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <DownloadsSection title="Your files are ready — download now" />
+        </div>
+      </section>
+
+      <section className="section surface-paper" style={{ padding: '1rem 1.5rem 3rem' }}>
         <div className="shell-tight" style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

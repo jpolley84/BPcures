@@ -20,6 +20,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, ArrowRight, BookOpen, ShieldCheck, Loader } from 'lucide-react';
+import DownloadsSection from '../components/DownloadsSection';
 
 const BOOK_PAYMENT_LINK = 'https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02';
 
@@ -123,8 +124,15 @@ export default function UpsellBpCureBookPage() {
         </span>
       </div>
 
+      {/* Inline downloads — customer can grab files immediately, no waiting for email */}
+      <section style={{ padding: '2rem 1.5rem 0', background: 'var(--paper, #FBF8F1)' }}>
+        <div style={{ maxWidth: 640, margin: '0 auto' }}>
+          <DownloadsSection title="Your files are ready — download now" />
+        </div>
+      </section>
+
       {/* Hero */}
-      <section style={{ padding: '3rem 1.5rem', background: 'var(--paper, #FBF8F1)' }}>
+      <section style={{ padding: '1rem 1.5rem 3rem', background: 'var(--paper, #FBF8F1)' }}>
         <div style={{ maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <div style={{
             display: 'inline-flex',

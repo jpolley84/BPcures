@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Download, ArrowRight } from 'lucide-react';
+import DownloadsSection from '../components/DownloadsSection';
 
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
@@ -20,12 +21,12 @@ export default function SuccessPage() {
   }, []);
 
   return (
-    <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'grid', placeItems: 'center', padding: '3rem 1.5rem' }}>
+    <main style={{ minHeight: '100vh', background: 'var(--paper)', padding: '3rem 1.5rem' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        style={{ maxWidth: 560, width: '100%', textAlign: 'center' }}
+        style={{ maxWidth: 640, width: '100%', textAlign: 'center', margin: '0 auto' }}
       >
         <motion.div
           initial={{ scale: 0.6, opacity: 0 }}
@@ -56,12 +57,14 @@ export default function SuccessPage() {
           Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email — everything you need is inside.
         </p>
 
+        {/* 2026-05-20: inline downloads — customers report not getting confirmation emails.
+            Show files immediately on the page so they never have to wait. */}
+        <DownloadsSection title="Your files — download now" />
+
         <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2rem', maxWidth: '44ch' }}>
-          Don't see it? Check your spam or promotions folder. It comes from Joel Polley, RN — add braveworksrn@gmail.com to your contacts.
+          A copy of these links is also being emailed to you from Joel Polley, RN. If you don't see it within 5 minutes, check your spam or promotions folder.
         </p>
 
-        {/* 2026-05-20: prominent downloads CTA. /success no longer dead-ends —
-            every customer can grab their PDFs from this page. */}
         <Link to="/library" style={{
           display: 'inline-flex',
           alignItems: 'center',
