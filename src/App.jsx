@@ -24,6 +24,7 @@ const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
 const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
+const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
@@ -134,6 +135,10 @@ function App() {
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/upsell-bp-reset-kit" element={<UpsellBpResetKitPage />} />
+          {/* $12.99 BP Cures ebook upsell — inserted BETWEEN $17 Kit success
+              and the $47 Reset Kit upsell. Ported from bpcures' $17+$12
+              upsell mechanic (26% take rate vs 14.6% order-bump alone). */}
+          <Route path="/upsell-bp-cure-book" element={<UpsellBpCureBookPage />} />
           <Route path="/downloads" element={<DownloadsPage />} />
 
           {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}

@@ -43,6 +43,13 @@ const DOWNLOADS = {
     label: 'The BP Reset Book (digital — complete deep-dive guide)',
     file: 'bp-reset-book.pdf',
   },
+  // 2026-05-20: $12.99 post-purchase ebook upsell (mirror of bpcures'
+  // $17+$12 mechanic). Source: pipeline/ready/blood-pressure-cures/interior.pdf
+  // copied into public/downloads/bp-cures-10-day-reset.pdf.
+  bp_cures_book: {
+    label: 'Blood Pressure Cures — The 10-Day Nurse\'s Reset (full ebook)',
+    file: 'bp-cures-10-day-reset.pdf',
+  },
 };
 
 const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
@@ -134,6 +141,21 @@ export const TIER_CONFIG = {
     upgradeLabel: 'Upgrade to The BP Reset Kit ($47) — the complete clinical system',
     upgradeDesc: 'You have the starter and the bonus library. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
     upgradeCta: 'Upgrade to BP Reset Kit ($47) →',
+  },
+  // 2026-05-20: BP Cures ebook upsell ($12.99 post-purchase, between Kit
+  // and Reset Kit). Standalone deliverable — full 10-day reset PDF with
+  // master protocol + herbs + checklists. Buyer already owns the Kit so
+  // upgradeUrl points to Reset Kit (the natural next rung).
+  'bp-cure-book': {
+    product: 'Blood Pressure Cures — The 10-Day Nurse\'s Reset',
+    subject: 'Your Blood Pressure Cures book is ready — full PDF inside',
+    downloads: [DOWNLOADS.bp_cures_book],
+    includesCoaching: false,
+    includesChallenge: false,
+    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
+    upgradeLabel: 'Add The BP Reset Kit ($47) — the 8-PDF clinical stack',
+    upgradeDesc: 'You now have the master document. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
+    upgradeCta: 'Add the BP Reset Kit ($47) →',
   },
   2: {
     product: 'The BP Reset Kit',
@@ -310,11 +332,16 @@ export const AMOUNT_TO_TIER = {
   29700: 'diagnostic',
   28000: 'diagnostic',
 
+  // ── 2026-05-20: BP Cures ebook upsell ($12.99 post-purchase) ────────
+  // Inserted between $17 Kit and $47 Reset Kit upsell. Mirror of bpcures'
+  // converter. Stripe price_1TNGMuHseZnO3rRZSIMPnPaO, Payment Link
+  // plink_1TNGMvHseZnO3rRZlOi4zbxG, reactivated 2026-05-20.
+  1299: 'bp-cure-book',
+
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.
   // Frontend has no path to these; buyer can only land here via a saved
   // link from before the 2026-05-09 cleanup.
-  1299: 1,           // BP Cures alt price (deactivated)
   2900: '1+pt-stack', // $17 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
   5900: '2+pt-stack', // $47 + $12 Pressure Triangle Stack bump (cut 2026-05-09)
   // 29700 reclaimed 2026-05-18 → diagnostic (was legacy Premium tier 3)
