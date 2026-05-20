@@ -64,12 +64,15 @@ const CheckoutPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: STRIPE_KIT_PRICE_ID,
-          // 2026-05-12 funnel fix: was pointing to /upsell which is currently
-          // a Navigate-to-/ redirect in App.jsx (dead). Repointed to the
-          // working /upsell-bp-reset-kit page that converts at 100% (the
-          // $30 OTO buyers actually take when offered).
-          successUrl: `${window.location.origin}/upsell-bp-reset-kit?session_id={CHECKOUT_SESSION_ID}`,
+          // 2026-05-20: success now goes to the BP Cures BOOK upsell first
+          // ($12.99 ebook), then chains to the $30 Reset Kit OTO. Inserts
+          // the bpcures-mirror flow between Kit and Reset Kit upsell.
+          // saveCard:true makes both downstream upsells one-click — Stripe
+          // saves the PaymentMethod off_session, and /upsell-bp-cure-book
+          // + /upsell-bp-reset-kit hit /api/charge-saved-card to bill it.
+          successUrl: `${window.location.origin}/upsell-bp-cure-book?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: window.location.href,
+          saveCard: true,
         }),
       });
       const data = await res.json();

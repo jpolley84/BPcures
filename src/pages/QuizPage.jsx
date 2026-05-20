@@ -408,6 +408,11 @@ function QuizModule({ products }) {
         body: JSON.stringify({
           priceId: BP_STARTER_PRICE_ID,
           addOnPriceId: PT_STACK_PRICE_ID,
+          // 2026-05-20: enable one-click upsell chain. Card saved off_session
+          // so /upsell-bp-cure-book + /upsell-bp-reset-kit can charge with
+          // one click via /api/charge-saved-card.
+          saveCard: true,
+          successUrl: `${window.location.origin}/upsell-bp-cure-book?session_id={CHECKOUT_SESSION_ID}`,
         }),
       });
       const data = await res.json();

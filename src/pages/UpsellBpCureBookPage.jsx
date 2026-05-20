@@ -1,45 +1,110 @@
 // Post-purchase upsell #1 — Blood Pressure Cures: The 10-Day Nurse's
-// Reset ebook for $12.99. Inserted BETWEEN $17 Kit and $47 Reset Kit
-// upsell to mirror the bpcures funnel mechanic (which converts at ~26%
-// vs 14.6% on the order bump alone).
+// Reset ebook for $12.99. Inserted between $17 Kit and $47 Reset Kit
+// upsell to mirror bpcures' converting flow.
 //
-// Flow:
-//   $17 Kit Payment Link → /upsell-bp-cure-book (this page)
-//     → Yes → $12.99 Stripe Payment Link → /upsell-bp-reset-kit
-//     → No  → /upsell-bp-reset-kit (skip ahead, still see Reset Kit)
-//   /upsell-bp-reset-kit → /success
+// 2026-05-20: upgraded from click-through (Payment Link redirect) to
+// TRUE ONE-CLICK via saved card. Flow:
 //
-// Built 2026-05-20 as port of bpcures' $17 + $12 mechanic.
-// Existing Stripe Payment Link reused: plink_1TNGMvHseZnO3rRZlOi4zbxG.
-// PDF lives at /public/downloads/bp-cures-10-day-reset.pdf (12MB).
+//   1. On mount, hit /api/get-checkout-session?session_id=X
+//   2. If has_saved_card === true: show one-click "Yes" button that
+//      calls /api/charge-saved-card → done, redirect to next step.
+//   3. If no saved card (e.g. customer came via Stripe Payment Link
+//      without saveCard:true): fall back to Payment Link redirect
+//      (legacy click-through path — buyer re-enters card).
+//
+// This means /upsell-bp-cure-book WORKS for everyone:
+//   - Homepage CheckoutPage buyers (saveCard:true) → one-click
+//   - Drip-email / TikTok-bio buyers (Payment Link) → fallback
+// No buyer hits a dead end. Migration is incremental.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, ArrowRight, BookOpen, ShieldCheck } from 'lucide-react';
+import { Check, ArrowRight, BookOpen, ShieldCheck, Loader } from 'lucide-react';
 
 const BOOK_PAYMENT_LINK = 'https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02';
 
 export default function UpsellBpCureBookPage() {
   const [processing, setProcessing] = useState(false);
+  const [chargeError, setChargeError] = useState('');
+  const [sessionInfo, setSessionInfo] = useState(null); // { has_saved_card, first_name }
+  const [checkingSession, setCheckingSession] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
-  function buyBook() {
+  // On mount: probe the session for a saved payment method. If found,
+  // we'll do one-click. Otherwise fall back to Payment Link redirect.
+  useEffect(() => {
+    if (!sessionId) {
+      setCheckingSession(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/get-checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+        if (!cancelled) {
+          setSessionInfo(data.ok ? data : { has_saved_card: false });
+          setCheckingSession(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setSessionInfo({ has_saved_card: false });
+          setCheckingSession(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [sessionId]);
+
+  async function buyBookOneClick() {
     setProcessing(true);
-    // Existing Payment Link's after_completion already redirects to
-    // /upsell-bp-reset-kit?session_id=...&from=book — so we just hand off.
+    setChargeError('');
+    try {
+      const res = await fetch('/api/charge-saved-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, tier: 'bp-cure-book' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        // One-click charge succeeded → continue chain to Reset Kit upsell.
+        const next = data.next_url
+          ? `${data.next_url}${data.next_url.includes('?') ? '&' : '?'}session_id=${encodeURIComponent(sessionId)}&from=book-one-click`
+          : '/upsell-bp-reset-kit';
+        navigate(next);
+      } else if (res.status === 402 || res.status === 409) {
+        // 3DS required / card declined / no saved card → fall back to
+        // Payment Link (buyer re-enters card).
+        window.location.href = BOOK_PAYMENT_LINK;
+      } else {
+        setChargeError(data.error || 'Charge failed. Try again or skip.');
+        setProcessing(false);
+      }
+    } catch {
+      setChargeError('Connection issue. Trying the regular checkout instead.');
+      // Last-resort fallback: send to Payment Link.
+      window.location.href = BOOK_PAYMENT_LINK;
+    }
+  }
+
+  // Fallback path: customer arrived via a Payment Link (no saved card on
+  // session) — send them through the existing $12.99 Payment Link.
+  function buyBookFallback() {
+    setProcessing(true);
     window.location.href = BOOK_PAYMENT_LINK;
   }
 
   function skipBook() {
-    // Skip ahead to the next upsell in the chain. Preserve session_id so
-    // /upsell-bp-reset-kit can also identify the customer.
     const next = sessionId
       ? `/upsell-bp-reset-kit?session_id=${encodeURIComponent(sessionId)}&from=book-declined`
       : '/upsell-bp-reset-kit?from=book-declined';
     navigate(next);
   }
+
+  const hasSavedCard = sessionInfo?.has_saved_card === true;
+  const greeting = sessionInfo?.first_name ? `Hi ${sessionInfo.first_name},` : '';
 
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper, #FBF8F1)' }}>
@@ -78,6 +143,12 @@ export default function UpsellBpCureBookPage() {
             <BookOpen size={14} />
             One-time customer offer
           </div>
+
+          {greeting && (
+            <p style={{ fontSize: '1.1rem', color: 'var(--ink-soft, #3A3A3A)', margin: '0 0 0.5rem', fontFamily: 'Fraunces, Georgia, serif' }}>
+              {greeting}
+            </p>
+          )}
 
           <h1 style={{
             fontFamily: 'Fraunces, Georgia, serif',
@@ -166,36 +237,57 @@ export default function UpsellBpCureBookPage() {
             <BulletLine text="FAQ — every question Joel gets asked weekly" />
           </div>
 
-          {/* CTA stack */}
-          <button
-            onClick={buyBook}
-            disabled={processing}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              background: 'var(--clay, #B85A36)',
-              color: 'var(--cream, #FBF8F1)',
-              border: 'none',
-              padding: '1.1rem 2rem',
-              borderRadius: 12,
-              fontWeight: 700,
-              fontSize: '1.05rem',
-              letterSpacing: '0.02em',
-              cursor: processing ? 'not-allowed' : 'pointer',
-              opacity: processing ? 0.7 : 1,
-              width: '100%',
+          {/* Error message */}
+          {chargeError && (
+            <div style={{
+              background: '#FCE7E7',
+              border: '1px solid #E8A8A8',
+              borderRadius: 8,
+              padding: '0.85rem 1rem',
+              fontSize: '0.92rem',
+              color: '#8A2A2A',
+              marginBottom: '1rem',
               maxWidth: 460,
-              marginBottom: '0.85rem',
-            }}
-          >
-            {processing ? 'Loading checkout...' : (
-              <>
-                Yes — add the book for $12.99 <ArrowRight size={18} />
-              </>
-            )}
-          </button>
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}>
+              {chargeError}
+            </div>
+          )}
+
+          {/* CTA — one-click if saved card, else fallback Payment Link */}
+          {checkingSession ? (
+            <div style={{ padding: '1.1rem 0', color: 'var(--muted, #7A7061)', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Loader size={18} style={{ animation: 'spin 1s linear infinite' }} />
+              Preparing your offer...
+            </div>
+          ) : hasSavedCard ? (
+            <button
+              onClick={buyBookOneClick}
+              disabled={processing}
+              style={ctaButtonStyle(processing)}
+            >
+              {processing ? 'Adding to your order...' : (
+                <>
+                  <span>Yes — add the book for $12.99</span>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginLeft: '0.5rem', background: 'rgba(255,255,255,0.18)', padding: '0.2rem 0.55rem', borderRadius: 6 }}>1-click</span>
+                  <ArrowRight size={18} style={{ marginLeft: 4 }} />
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={buyBookFallback}
+              disabled={processing}
+              style={ctaButtonStyle(processing)}
+            >
+              {processing ? 'Loading checkout...' : (
+                <>
+                  Yes — add the book for $12.99 <ArrowRight size={18} />
+                </>
+              )}
+            </button>
+          )}
 
           <div>
             <button
@@ -225,12 +317,39 @@ export default function UpsellBpCureBookPage() {
             color: 'var(--muted, #7A7061)',
           }}>
             <ShieldCheck size={14} />
-            Secure checkout via Stripe. Instant PDF delivery to your inbox.
+            {hasSavedCard
+              ? 'Charged to the card you just used. Instant PDF delivery.'
+              : 'Secure checkout via Stripe. Instant PDF delivery to your inbox.'}
           </div>
         </div>
       </section>
+
+      {/* Spinner keyframes */}
+      <style>{`@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }`}</style>
     </main>
   );
+}
+
+function ctaButtonStyle(processing) {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    background: 'var(--clay, #B85A36)',
+    color: 'var(--cream, #FBF8F1)',
+    border: 'none',
+    padding: '1.1rem 2rem',
+    borderRadius: 12,
+    fontWeight: 700,
+    fontSize: '1.05rem',
+    letterSpacing: '0.02em',
+    cursor: processing ? 'not-allowed' : 'pointer',
+    opacity: processing ? 0.7 : 1,
+    width: '100%',
+    maxWidth: 460,
+    marginBottom: '0.85rem',
+  };
 }
 
 function BulletLine({ text }) {

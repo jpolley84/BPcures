@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid request body — expected JSON' });
   }
 
-  const { priceId, addOnPriceId, successUrl, cancelUrl } = req.body;
+  const { priceId, addOnPriceId, successUrl, cancelUrl, saveCard } = req.body;
 
   if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'Missing priceId' });
@@ -37,12 +37,26 @@ export default async function handler(req, res) {
       lineItems.push({ price: addOnPriceId, quantity: 1 });
     }
 
-    const session = await stripe.checkout.sessions.create({
+    // 2026-05-20: optional `saveCard` flag enables one-click post-purchase
+    // upsells. When true, we force customer creation and tell Stripe to
+    // save the payment method for off_session re-use. The follow-on
+    // upsell pages (/upsell-bp-cure-book, /upsell-bp-reset-kit) then call
+    // /api/charge-saved-card to bill that saved PM with one click —
+    // mirrors bpcures' 26% take rate mechanic. Defaults to false so any
+    // existing caller (legacy upsell paths) keeps the current behavior.
+    const sessionParams = {
       mode: 'payment',
       line_items: lineItems,
       success_url: successUrl || `${siteUrl}/success`,
       cancel_url: cancelUrl || siteUrl,
-    });
+    };
+
+    if (saveCard) {
+      sessionParams.customer_creation = 'always';
+      sessionParams.payment_intent_data = { setup_future_usage: 'off_session' };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return res.status(200).json({ url: session.url });
   } catch (err) {

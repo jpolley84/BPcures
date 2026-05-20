@@ -14,7 +14,7 @@
 //
 // Hardcoded price ID intentionally — this is a single-product upsell
 // and we don't want to risk a missing env var on deploy.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
@@ -29,11 +29,67 @@ const FALLBACK_SUCCESS = '/success?slug=blood-pressure-cures';
 export default function UpsellBpResetKitPage() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [sessionInfo, setSessionInfo] = useState(null);
+  const [checkingSession, setCheckingSession] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
-  async function addKit() {
+  // 2026-05-20: probe for saved card so we can do one-click if available.
+  // If session arrived via a Stripe Payment Link (no saveCard:true on the
+  // original Checkout Session), we fall back to the existing /api/checkout
+  // re-entry flow. Either path completes the purchase — just with
+  // different friction levels.
+  useEffect(() => {
+    if (!sessionId) {
+      setCheckingSession(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/get-checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+        if (!cancelled) {
+          setSessionInfo(data.ok ? data : { has_saved_card: false });
+          setCheckingSession(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setSessionInfo({ has_saved_card: false });
+          setCheckingSession(false);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [sessionId]);
+
+  async function addKitOneClick() {
+    setProcessing(true);
+    setError('');
+    try {
+      const res = await fetch('/api/charge-saved-card', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, tier: 'bp-reset-kit-oto' }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        navigate(data.next_url || `${FALLBACK_SUCCESS}&upsell=accepted&one_click=1`);
+      } else if (res.status === 402 || res.status === 409) {
+        // 3DS / card declined / no saved PM — fall back to re-entry path.
+        await addKitFallback();
+      } else {
+        setError(data.error || 'Something went wrong. Please try again.');
+        setProcessing(false);
+      }
+    } catch {
+      setError('Connection issue — please try again.');
+      setProcessing(false);
+    }
+  }
+
+  async function addKitFallback() {
     setProcessing(true);
     setError('');
     try {
@@ -54,6 +110,14 @@ export default function UpsellBpResetKitPage() {
     } finally {
       setProcessing(false);
     }
+  }
+
+  // Single entry point — auto-routes based on whether the session has
+  // a saved card. The bpcures-style one-click experience when possible,
+  // graceful card re-entry otherwise.
+  function addKit() {
+    if (sessionInfo?.has_saved_card) return addKitOneClick();
+    return addKitFallback();
   }
 
   function declineUpsell() {
