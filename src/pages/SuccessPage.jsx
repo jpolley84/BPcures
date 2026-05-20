@@ -62,7 +62,7 @@ export default function SuccessPage() {
 
         {/* 2026-05-20: prominent downloads CTA. /success no longer dead-ends —
             every customer can grab their PDFs from this page. */}
-        <Link to="/downloads" style={{
+        <Link to="/library" style={{
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',

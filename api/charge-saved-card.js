@@ -37,10 +37,11 @@ const UPSELL_TIERS = {
     priceId: 'price_1TSCuLHseZnO3rRZPAcRKs7t', // $30 OTO from UpsellBpResetKitPage
     amount: 3000,
     description: 'The BP Reset Kit (one-time post-purchase price)',
-    // 2026-05-20: route to /downloads so customers land on their library
-    // after the final upsell. /success had no download links — bug Joel
-    // caught when he tested the chain post-deploy.
-    nextStep: '/downloads?upsell=accepted&one_click=1',
+    // 2026-05-20: route to /library so customers land on their downloads
+    // page after the final upsell. Route is /library because the public
+    // folder name `downloads` shadows the SPA route. PDFs at
+    // /downloads/*.pdf continue to serve as static files.
+    nextStep: '/library?upsell=accepted&one_click=1',
   },
 };
 

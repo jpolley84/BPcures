@@ -23,6 +23,11 @@
       "source": "/tt-c",
       "destination": "/coaching?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
       "permanent": false
+    },
+    {
+      "source": "/downloads",
+      "destination": "/library",
+      "permanent": false
     }
   ],
   "crons": [

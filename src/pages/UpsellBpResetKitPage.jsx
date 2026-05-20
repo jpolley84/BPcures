@@ -24,10 +24,13 @@ import { Check, ArrowRight } from 'lucide-react';
 // missing env var doesn't break the OTO. To change the OTO price, update
 // VITE_STRIPE_UPSELL_PRICE_ID in Vercel — no code deploy needed.
 const UPSELL_PRICE_ID = import.meta.env.VITE_STRIPE_UPSELL_PRICE_ID || 'price_1TSCuLHseZnO3rRZPAcRKs7t';
-// 2026-05-20: route to /downloads instead of /success so customers
-// actually reach their library. /success had no download links and the
-// "take me to my downloads" button was leading nowhere useful.
-const FALLBACK_DOWNLOADS = '/downloads';
+// 2026-05-20: route to /library (the React downloads-list page) instead
+// of /success — /success had no download links and the "take me to my
+// downloads" button was leading nowhere. Route is /library because the
+// public folder name `downloads` shadows the SPA route at /downloads.
+// /downloads → /library redirect is wired in vercel.json for any legacy
+// link that still points to /downloads.
+const FALLBACK_DOWNLOADS = '/library';
 
 export default function UpsellBpResetKitPage() {
   const [processing, setProcessing] = useState(false);

@@ -139,7 +139,14 @@ function App() {
               and the $47 Reset Kit upsell. Ported from bpcures' $17+$12
               upsell mechanic (26% take rate vs 14.6% order-bump alone). */}
           <Route path="/upsell-bp-cure-book" element={<UpsellBpCureBookPage />} />
-          <Route path="/downloads" element={<DownloadsPage />} />
+          {/* Downloads route — route is /library because public/downloads/
+              is a static asset folder (PDF files) and Vercel shadows the
+              SPA route when the folder exists. PDFs at /downloads/*.pdf
+              continue to serve normally; this is just the React page.
+              /downloads → /library handled at Vercel level via vercel.json
+              redirect (React Router never sees the request — Vercel 404s
+              before SPA fallback runs). */}
+          <Route path="/library" element={<DownloadsPage />} />
 
           {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
