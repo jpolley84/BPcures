@@ -24,7 +24,10 @@ import { Check, ArrowRight } from 'lucide-react';
 // missing env var doesn't break the OTO. To change the OTO price, update
 // VITE_STRIPE_UPSELL_PRICE_ID in Vercel — no code deploy needed.
 const UPSELL_PRICE_ID = import.meta.env.VITE_STRIPE_UPSELL_PRICE_ID || 'price_1TSCuLHseZnO3rRZPAcRKs7t';
-const FALLBACK_SUCCESS = '/success?slug=blood-pressure-cures';
+// 2026-05-20: route to /downloads instead of /success so customers
+// actually reach their library. /success had no download links and the
+// "take me to my downloads" button was leading nowhere useful.
+const FALLBACK_DOWNLOADS = '/downloads';
 
 export default function UpsellBpResetKitPage() {
   const [processing, setProcessing] = useState(false);
@@ -75,7 +78,7 @@ export default function UpsellBpResetKitPage() {
       });
       const data = await res.json();
       if (res.ok && data.ok) {
-        navigate(data.next_url || `${FALLBACK_SUCCESS}&upsell=accepted&one_click=1`);
+        navigate(data.next_url || `${FALLBACK_DOWNLOADS}?upsell=accepted&one_click=1`);
       } else if (res.status === 402 || res.status === 409) {
         // 3DS / card declined / no saved PM — fall back to re-entry path.
         await addKitFallback();
@@ -98,7 +101,7 @@ export default function UpsellBpResetKitPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: UPSELL_PRICE_ID,
-          successUrl: `${window.location.origin}${FALLBACK_SUCCESS}&upsell=accepted`,
+          successUrl: `${window.location.origin}${FALLBACK_DOWNLOADS}?upsell=accepted`,
           cancelUrl: window.location.href,
         }),
       });
@@ -121,7 +124,7 @@ export default function UpsellBpResetKitPage() {
   }
 
   function declineUpsell() {
-    navigate(FALLBACK_SUCCESS);
+    navigate(FALLBACK_DOWNLOADS);
   }
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Download, ArrowRight } from 'lucide-react';
 
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
@@ -56,13 +56,37 @@ export default function SuccessPage() {
           Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email — everything you need is inside.
         </p>
 
-        <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2.5rem', maxWidth: '44ch' }}>
+        <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2rem', maxWidth: '44ch' }}>
           Don't see it? Check your spam or promotions folder. It comes from Joel Polley, RN — add braveworksrn@gmail.com to your contacts.
         </p>
 
-        <Link to="/" className="btn btn-ghost btn-lg">
-          Return home
+        {/* 2026-05-20: prominent downloads CTA. /success no longer dead-ends —
+            every customer can grab their PDFs from this page. */}
+        <Link to="/downloads" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '0.5rem',
+          background: 'var(--clay, #B85A36)',
+          color: 'var(--cream, #FBF8F1)',
+          padding: '1rem 2rem',
+          borderRadius: 12,
+          textDecoration: 'none',
+          fontWeight: 700,
+          fontSize: '1.05rem',
+          letterSpacing: '0.02em',
+          marginBottom: '1rem',
+        }}>
+          <Download size={18} />
+          Get your downloads
+          <ArrowRight size={16} />
         </Link>
+
+        <div>
+          <Link to="/" className="btn btn-ghost btn-sm" style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
+            Return home
+          </Link>
+        </div>
       </motion.div>
     </main>
   );

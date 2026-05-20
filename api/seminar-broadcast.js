@@ -17,8 +17,12 @@ import { Resend } from 'resend';
 import { pullRecipients, signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
-const SUBJECT = "Annie's free week — I'm on Thursday";
-const SEMINAR_URL = 'https://bpquiz.com/seminar';
+const SUBJECT = "Sorry — last link was broken. Annie's on in 5 minutes.";
+// Direct Zoom link this time. Existing list members already gave us their
+// email yesterday (we wrote the seminarInviteSent flag) so no capture
+// needed — get them to the call as fast as possible.
+const ZOOM_URL = 'https://tinyurl.com/2p3b449n';
+const SEMINAR_URL = 'https://bpquiz.com/seminar'; // kept as secondary CTA
 const RATE_LIMIT_MS = 70; // ~14/sec, completes ~4,000 in ~280s
 
 let _resend = null;
@@ -50,38 +54,35 @@ function renderHtml(firstName, email) {
       </td></tr>
 
       <tr><td style="padding:24px 28px 0;">
-        <p style="font-family:Georgia,serif;font-size:18px;line-height:1.55;color:#2C3E50;margin:0 0 18px;">
+        <p style="font-family:Georgia,serif;font-size:18px;line-height:1.55;color:#2C3E50;margin:0 0 14px;">
           Hi ${escapeHtml(name)},
         </p>
         <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
-          Annie is running a free 6-day live seminar this week &mdash; <strong>Monday May 18 through Saturday May 23, 1 PM ET daily.</strong>
+          The link in yesterday's email was broken. <strong>My fault.</strong> Apologies.
         </p>
-        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
-          Yesterday's was the foundation. <strong>Five sessions left.</strong> Drop into any of them.
-        </p>
-        <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
-          It's the <strong>Couples Intimacy and Sexual Health Seminar</strong> &mdash; built for women over 40 and their partners. Annie takes the hormone side. <strong style="color:#B85A36;">I'm presenting Thursday</strong> on the cardiovascular angle: what your BP meds may be doing to libido and circulation, and how to work with your body without quitting cold.
+        <p style="font-size:16px;line-height:1.65;color:#2C3E50;margin:0 0 4px;font-weight:700;">
+          Annie's session starts in 5 minutes &mdash; here's the working Zoom link:
         </p>
       </td></tr>
 
-      <tr><td style="padding:0 28px;">
-        <div style="background:#2E3A30;border-radius:14px;padding:24px;text-align:center;margin-bottom:22px;">
-          <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#C7A95E;font-weight:700;margin-bottom:10px;">Get the Zoom link</div>
-          <a href="${SEMINAR_URL}" style="display:inline-block;background:#C7A95E;color:#2E3A30;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.02em;">
-            Send me the link &rarr;
+      <tr><td style="padding:18px 28px 0;">
+        <div style="background:#2E3A30;border-radius:14px;padding:28px 24px;text-align:center;margin-bottom:22px;">
+          <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#C7A95E;font-weight:700;margin-bottom:10px;">Join the live session</div>
+          <a href="${ZOOM_URL}" style="display:inline-block;background:#C7A95E;color:#2E3A30;padding:16px 36px;border-radius:8px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:0.02em;">
+            Open Zoom &rarr;
           </a>
-          <div style="font-size:12px;color:#A8AC9F;margin-top:10px;line-height:1.5;">
-            One Zoom link works for all six sessions.
+          <div style="font-size:12px;color:#A8AC9F;margin-top:12px;line-height:1.5;word-break:break-all;">
+            ${ZOOM_URL}
           </div>
         </div>
       </td></tr>
 
       <tr><td style="padding:0 28px 18px;">
         <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
-          Same time, every day at 1 PM ET through Saturday.
+          Same link works for all the remaining sessions this week. <strong>Tomorrow (Wed) and Thursday (me)</strong> are the two most people come for.
         </p>
         <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 14px;">
-          Singles 30+ welcome &mdash; the science applies the same.
+          Daily at 1 PM ET through Saturday.
         </p>
         <p style="font-size:15px;line-height:1.65;color:#3A3A3A;margin:0 0 6px;">
           &mdash; Joel
@@ -90,7 +91,7 @@ function renderHtml(firstName, email) {
           Joel Polley, RN &middot; The Blood Pressure Guy
         </p>
         <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0;">
-          <strong>P.S.</strong> Bring questions to Thursday's call &mdash; I'll stay after for as long as people want.
+          <strong>P.S.</strong> If you can't make today's call live, the link still gets you into the next five. Thursday I'm walking through what your BP meds are doing to circulation and libido &mdash; bring questions.
         </p>
       </td></tr>
 
@@ -113,23 +114,20 @@ function renderText(firstName, email) {
   const name = (firstName || '').trim() || 'Friend';
   return `Hi ${name},
 
-Annie is running a free 6-day live seminar this week — Monday May 18 through Saturday May 23, 1 PM ET daily.
+The link in yesterday's email was broken. My fault. Apologies.
 
-Yesterday's was the foundation. Five sessions left. Drop into any of them.
+Annie's session starts in 5 minutes — here's the working Zoom link:
 
-It's the Couples Intimacy and Sexual Health Seminar — built for women over 40 and their partners. Annie takes the hormone side. I'm presenting Thursday on the cardiovascular angle: what your BP meds may be doing to libido and circulation, and how to work with your body without quitting cold.
+${ZOOM_URL}
 
-Get the Zoom link here:
-${SEMINAR_URL}
+Same link works for all the remaining sessions this week. Tomorrow (Wed) and Thursday (me) are the two most people come for.
 
-Same time, every day at 1 PM ET through Saturday.
-
-Singles 30+ welcome — the science applies the same.
+Daily at 1 PM ET through Saturday.
 
 — Joel
 Joel Polley, RN · The Blood Pressure Guy
 
-P.S. Bring questions to Thursday's call — I'll stay after for as long as people want.
+P.S. If you can't make today's call live, the link still gets you into the next five. Thursday I'm walking through what your BP meds are doing to circulation and libido — bring questions.
 
 ---
 Unsubscribe: ${unsubUrl(email)}
@@ -141,15 +139,11 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  // Idempotency — block accidental re-fire for 7 days.
-  try {
-    const fired = await kv.get('seminar-broadcast-fired');
-    if (fired) {
-      return res.status(200).json({ ok: true, skipped: true, reason: 'already fired', firedAt: fired.firedAt });
-    }
-  } catch (err) {
-    console.warn('seminar-broadcast: idempotency check failed (continuing)', err.message);
-  }
+  // 2026-05-19 V2 re-fire: original broadcast linked to /seminar which was
+  // broken in prod (untracked files overwritten by a parallel deploy).
+  // We're firing the corrected-link version now. Per-record dedupe uses
+  // a new flag (seminarInviteSentV2) so it's safe even though the V1 flag
+  // is set on ~4,191 records — V2 ignores V1, naturally hits everyone.
 
   // 2026-05-18 timeout-resume hardening: first fire timed out at 300s with
   // 4,251 records. Now we pull recipients via direct KV scan + filter on
@@ -194,7 +188,7 @@ export default async function handler(req, res) {
     if (rec.unsubscribed) { stats.unsub++; continue; }
     if (rec.paused) { stats.paused++; continue; }
     if (rec.complete) { stats.complete++; continue; }
-    if (rec.seminarInviteSent) { stats.alreadySent++; continue; }
+    if (rec.seminarInviteSentV2) { stats.alreadySent++; continue; }
 
     const emailKey = String(rec.email).toLowerCase().trim();
     if (seen.has(emailKey)) { stats.duplicate++; continue; }
@@ -215,7 +209,7 @@ export default async function handler(req, res) {
       // Write per-record flag immediately so a mid-loop timeout doesn't
       // cause a double-send on the next fire.
       try {
-        await kv.set(k, { ...rec, seminarInviteSent: true, seminarInviteSentAt: new Date().toISOString() });
+        await kv.set(k, { ...rec, seminarInviteSentV2: true, seminarInviteSentV2At: new Date().toISOString() });
       } catch (writeErr) {
         // Non-fatal — we logged the send, this just means the next fire
         // will try to send again. Resend dedupes by recent recipient anyway.

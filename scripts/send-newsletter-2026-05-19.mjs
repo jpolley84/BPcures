@@ -71,8 +71,8 @@ const PREVIEW   = 'One simple shift that drops morning BP 5-8 points in 14 days.
 const ISSUE_NUMBER = '#1';
 const ISSUE_DATE = 'Tuesday, May 19, 2026';
 
-const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/@braveworksrn';
-const YOUTUBE_VIDEO_TITLE = 'the Stress Pressure deep dive';
+const YOUTUBE_VIDEO_URL = 'https://youtu.be/a99KZHATsWc';
+const YOUTUBE_VIDEO_TITLE = 'this week\'s live walkthrough on YouTube';
 
 const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010';
 const ZOOM_URL = 'https://us06web.zoom.us/j/2548856205?pwd=6G4RrvnybablMQJciQlOJdsh1jtHjo.1';
@@ -172,9 +172,9 @@ const htmlBody = ({ firstName, unsubUrl }) => shell({
     `)}
     ${p(`Track your morning BP this week. Same arm, sitting, two minutes of quiet first. Write it down. Day 14 you compare.`, { margin: '0 0 28px' })}
 
-    ${bigQuote('Watch the deep dive on YouTube.')}
-    ${p(`I posted a walkthrough of the Stress Pressure corner — the herb stack (KSM-66 ashwagandha, holy basil), the 25-25 gratitude protocol that drops cortisol within 60 seconds, and the 4-7-8 breath card you can print and tape to your nightstand.`)}
-    ${ctaButton(YOUTUBE_VIDEO_URL, `Watch ${YOUTUBE_VIDEO_TITLE} →`)}
+    ${bigQuote('Watch this week\'s live walkthrough.')}
+    ${p(`I went live this week and the recording is up on YouTube. Bring your morning BP and your cuff — it's the kind of session where you can pause, take a reading, and see what I'm walking through in real time.`)}
+    ${ctaButton(YOUTUBE_VIDEO_URL, 'Watch the live walkthrough →')}
 
     ${bigQuote("What's open this week.")}
     ${p(`If you don't have a BP Starter Kit yet, I want to put two doors in front of you:`)}
@@ -219,11 +219,11 @@ THIS WEEK'S MICRO-ACTION: Move bedtime to 10:30 PM. Two minutes earlier each nig
 
 Track your morning BP this week. Same arm, sitting, two minutes of quiet first.
 
-WATCH THE DEEP DIVE ON YOUTUBE.
+WATCH THIS WEEK'S LIVE WALKTHROUGH.
 
-I posted a walkthrough of the Stress Pressure corner — herb stack (KSM-66 ashwagandha, holy basil), the 25-25 gratitude protocol, the 4-7-8 breath card.
+I went live this week and the recording is up on YouTube. Bring your morning BP and your cuff — pause, take a reading, see what I'm walking through in real time.
 
-→ Watch ${YOUTUBE_VIDEO_TITLE}: ${YOUTUBE_VIDEO_URL}
+→ Watch the live walkthrough: ${YOUTUBE_VIDEO_URL}
 
 WHAT'S OPEN THIS WEEK.
 

@@ -37,7 +37,10 @@ const UPSELL_TIERS = {
     priceId: 'price_1TSCuLHseZnO3rRZPAcRKs7t', // $30 OTO from UpsellBpResetKitPage
     amount: 3000,
     description: 'The BP Reset Kit (one-time post-purchase price)',
-    nextStep: '/success?slug=bp-reset-kit&upsell=accepted',
+    // 2026-05-20: route to /downloads so customers land on their library
+    // after the final upsell. /success had no download links — bug Joel
+    // caught when he tested the chain post-deploy.
+    nextStep: '/downloads?upsell=accepted&one_click=1',
   },
 };
 
