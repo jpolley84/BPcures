@@ -114,7 +114,7 @@ export default function Cohort2Page() {
             The Cohort
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-6 text-center" style={{ color: 'var(--ink)' }}>
-            Ninety days with your nurse, your hormone coach, and a small group of women doing this with you.
+            90 days. Two nurses. A small group of women. One outcome.
           </h2>
           <p className="text-base sm:text-lg mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
             This isn't a course. It isn't a chatbot. It isn't a $19 PDF.

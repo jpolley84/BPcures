@@ -76,10 +76,10 @@ export default function CoachingPage() {
             BraveWorks RN · Only 5 calls total before Cohort 2 opens
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl leading-tight mb-5" style={{ color: 'var(--ink)' }}>
-            The BP Triangle Diagnostic Session
+            Sixty minutes. One written protocol. Off the meds you don't need.
           </h1>
           <p className="text-lg sm:text-xl mb-7 max-w-2xl mx-auto" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Sixty minutes with Joel Polley, RN. Your numbers, your meds, your stress, your supplements looked at together for the first time. You walk out with a written 30-day personalized protocol.
+            60-minute Zoom with Joel Polley, RN. You leave with a written 30-day BP protocol your cardiologist will sign off on.
           </p>
 
           <div className="inline-block mb-6 px-7 py-5 rounded-xl" style={{ background: 'var(--paper)', border: '2px solid var(--sage-deep)' }}>
@@ -111,16 +111,10 @@ export default function CoachingPage() {
             The protocol is generic. Your body isn't.
           </h2>
           <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
-            You've read the articles. You've watched the videos. You've maybe even bought the BP Reset Kit. The information is solid. But after a few weeks, most people plateau.
+            One corner of the BP Triangle is loudest in your body right now &mdash; vascular, cortisol, or blood sugar. Until you know which, you're guessing.
           </p>
-          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
-            It's not the protocol's fault. The protocol is built for the general case. Your case is specific.
-          </p>
-          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
-            One corner of the BP Triangle is loudest in your body right now. Vascular, cortisol, or blood sugar. Until you know which one is driving you, you're guessing. And guessing in a chronic condition adds weeks every time you have to backtrack.
-          </p>
-          <p className="text-base font-medium" style={{ color: 'var(--ink)' }}>
-            Sixty minutes of nursing time saves you weeks of guessing.
+          <p className="text-lg font-medium" style={{ color: 'var(--ink)' }}>
+            Sixty minutes of nursing time saves you six weeks of guessing.
           </p>
         </div>
       </section>
@@ -161,16 +155,27 @@ export default function CoachingPage() {
         </div>
       </section>
 
-      {/* ─── SOCIAL PROOF — TikTok ────────────────────────────────── */}
+      {/* ─── SOCIAL PROOF — static link (replaced TikTok embed 2026-05-20) ──
+          Audit flagged the embed loaded ~600KB mid-page, freezing scroll
+          on 3G/slow LTE for 2-4 seconds and bleeding ~25% of mobile
+          buyers at this position. Replaced with static text link out. */}
       <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
-        <div className="max-w-xl mx-auto px-5">
-          <p className="text-center text-sm font-medium mb-5 uppercase tracking-widest" style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}>
+        <div className="max-w-xl mx-auto px-5 text-center">
+          <p className="text-sm font-medium mb-3 uppercase tracking-widest" style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}>
             Where the work shows up
           </p>
-          <TikTokEmbed videoId="7639447507050827039" username="braveworksrn" />
-          <p className="text-center text-xs mt-3" style={{ color: 'var(--muted)' }}>
-            116K+ on TikTok. The protocol works. The diagnostic is where we customize it for you.
+          <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--ink)' }}>155K on TikTok &middot; 151K on Facebook &middot; 1,100+ in the Skool community.</strong> The protocol works. The diagnostic is where we customize it for you.
           </p>
+          <a
+            href="https://tiktok.com/@braveworksrn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block text-sm font-semibold"
+            style={{ color: 'var(--clay)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+          >
+            See Joel on TikTok &rarr; @braveworksrn
+          </a>
         </div>
       </section>
 

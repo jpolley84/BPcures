@@ -177,13 +177,8 @@ export default function UpsellBpResetKitPage() {
             <p className="lede" style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 1rem', maxWidth: '54ch', lineHeight: 1.6 }}>
               The BP Reset Kit is the 8-PDF clinical bundle that picks up where your starter left off. Most readers move into it in week 2.
             </p>
-            {/* Triangle Method methodology bridge — 2026-05-12 funnel-coherence fix.
-                The starter sells a "10-Day BP Protocol"; the kit reveals the
-                methodology behind it so the $97 cohort + 1:1 application
-                downstream don't feel like a different brand. */}
-            <p style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 1.5rem', maxWidth: '54ch', lineHeight: 1.6, fontSize: '0.97rem' }}>
-              Built around the <strong style={{ color: 'var(--ink, #2C3E50)' }}>BP Triangle Method™</strong> — the Three Pressures of one BP loop: Pipe Pressure (vascular), Stress Pressure (cortisol), Sugar Pressure (insulin). The kit teaches you which Pressure is loudest and the protocol that calms the loop. <em>Pills manage output. Protocol fixes input.</em>
-            </p>
+            {/* 2026-05-20 funnel-audit: cut the Triangle Method™ brand-architecture
+                paragraph. Customers don't need the lineage; they need the bullets. */}
             <p className="lede" style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 2rem', maxWidth: '54ch', lineHeight: 1.6 }}>
               Add it to your order right now for <strong style={{ color: 'var(--ink, #2C3E50)' }}>$30 today only</strong> (normally $47 — you save $17 because you just bought the starter).
             </p>
@@ -228,7 +223,7 @@ export default function UpsellBpResetKitPage() {
               color: '#744210',
               lineHeight: 1.5,
             }}>
-              <strong>Same triple guarantee.</strong> Complete the 30 days. If your numbers haven&rsquo;t moved, full refund and keep the books. No hoops, no fine print.
+              <strong>Same 7-day refund promise.</strong> Run the kit for 7 days with honest effort. If your numbers haven&rsquo;t moved, hit reply with &ldquo;refund&rdquo; and your $30 comes back &mdash; kit yours to keep.
             </div>
 
             {error && (
@@ -265,10 +260,12 @@ export default function UpsellBpResetKitPage() {
                 style={{
                   background: 'transparent',
                   color: 'var(--ink-soft, #5A5A5A)',
-                  padding: '14px 24px',
+                  padding: '16px 28px',
+                  minHeight: '48px',
                   borderRadius: 10,
                   border: '1px solid var(--line, rgba(0,0,0,0.15))',
                   fontSize: '1rem',
+                  fontWeight: 500,
                   cursor: processing ? 'wait' : 'pointer',
                 }}
               >

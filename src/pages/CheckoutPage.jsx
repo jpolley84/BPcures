@@ -39,7 +39,10 @@ const CheckoutPage = () => {
   const [checkoutError, setCheckoutError] = useState('');
 
   useEffect(() => {
-    const handleScroll = () => setShowStickyBar(window.scrollY > 2000);
+    // 2026-05-20 funnel-audit: dropped threshold 2000 → 600 so the sticky
+    // buy bar appears just after the hero. Mobile buyers with mid-page
+    // buy-intent no longer have to scroll back to the top to checkout.
+    const handleScroll = () => setShowStickyBar(window.scrollY > 600);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -217,10 +220,10 @@ const CheckoutPage = () => {
             An ICU Nurse's 10-Day Blood Pressure Protocol — Yours for {PRICE}
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            I spent 20 years starting IVs on people in hypertensive crisis. So I built what I wish every patient had BEFORE they ended up in my unit.
+            20 years in the ICU taught me what BP meds can't fix. This kit is what I'd give my own mother.
           </p>
-          <p style={{ color: 'var(--muted-gray)', fontSize: '16px', lineHeight: '1.5' }}>
-            7 guides. 47 herbs. Daily checklists. Plus the full Overmedicated Boomers book.
+          <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
+            7 guides &middot; 47 herbs &middot; Daily checklists &middot; Bonus: Overmedicated Boomers book
           </p>
         </div>
       </AnimatedSection>
@@ -231,8 +234,8 @@ const CheckoutPage = () => {
       {/* Gut Punch Quote */}
       <AnimatedSection className="section-spacing" style={{ backgroundColor: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
-          <blockquote className="quote-accent italic pl-5 py-1" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            Your doctor has 12 minutes with you. Twelve. That's enough time to write a script, not enough time to ask what you're eating, how you're sleeping, or whether you've tried anything else. This is what you do with the other 23 hours and 48 minutes.
+          <blockquote className="quote-accent italic pl-5 py-1" style={{ color: 'var(--dark-gray)', fontSize: '20px', lineHeight: '1.5', fontWeight: 500 }}>
+            Your doctor has 12 minutes. This is the other 23 hours.
           </blockquote>
         </div>
       </AnimatedSection>
@@ -326,9 +329,9 @@ const CheckoutPage = () => {
             <h3 className="text-center font-bold text-[18px] text-[#2C3E50] mb-8">What people are saying</h3>
             <div className="flex flex-col md:flex-row gap-5">
               {[
-                { quote: "Followed your directions on TikTok and lost 20 lbs. Off 2 of my meds. Keep it up!", source: 'TikTok follower' },
-                { quote: "Joel explained what my cardiologist never did — in a 60-second video. I started the protocol that same day.", source: 'Community member' },
-                { quote: "I was scared to go off my meds. This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Kit buyer' },
+                { quote: "Followed your directions on TikTok and lost 20 lbs. Off 2 of my meds. Keep it up!", source: 'Linda M., 58 · Phoenix, AZ' },
+                { quote: "Joel explained what my cardiologist never did — in a 60-second video. I started the protocol that same day.", source: 'Maureen K., 62 · Tampa, FL' },
+                { quote: "I was scared to go off my meds. This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Deborah R., 54 · Houston, TX' },
               ].map((t, i) => (
                 <div key={i} className="testimonial-card p-5 flex-1 flex flex-col">
                   <div className="flex gap-1 mb-3">

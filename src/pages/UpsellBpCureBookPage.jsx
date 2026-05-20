@@ -166,7 +166,7 @@ export default function UpsellBpCureBookPage() {
             margin: '0 0 1rem',
             color: 'var(--ink, #2C3E50)',
           }}>
-            Want the book that lays out <em style={{ fontStyle: 'italic', color: 'var(--clay, #B85A36)' }}>every protocol</em> behind your Reset Kit?
+            Prefer reading on your <em style={{ fontStyle: 'italic', color: 'var(--clay, #B85A36)' }}>Kindle?</em>
           </h1>
 
           <p style={{
@@ -178,7 +178,7 @@ export default function UpsellBpCureBookPage() {
             marginLeft: 'auto',
             marginRight: 'auto',
           }}>
-            <strong style={{ color: 'var(--ink, #2C3E50)' }}>Blood Pressure Cures: The 10-Day Nurse's Reset</strong> — the full master document I wrote for my own patients. 10-day challenge with checklists, top-10 herbs deep-dive (each matched to the drug it mimics), the Cook For Life cookbook, the White Coat Syndrome guide, and the FAQ. Everything in one PDF you can save, print, and re-read.
+            <strong style={{ color: 'var(--ink, #2C3E50)' }}>Blood Pressure Cures: The 10-Day Nurse's Reset</strong> &mdash; the book version of what you just bought. Same protocol, but as one continuous read for the Kindle / iPad / couch crowd. $12.99 because you already paid for the protocol.
           </p>
 
           {/* Product card */}
@@ -303,15 +303,17 @@ export default function UpsellBpCureBookPage() {
               disabled={processing}
               style={{
                 background: 'transparent',
-                color: 'var(--muted, #7A7061)',
-                border: 'none',
-                padding: '0.65rem 1rem',
-                fontSize: '0.92rem',
+                color: 'var(--ink-soft, #5A5A5A)',
+                border: '1px solid var(--line, rgba(0,0,0,0.15))',
+                padding: '14px 22px',
+                minHeight: '48px',
+                borderRadius: 10,
+                fontSize: '0.95rem',
+                fontWeight: 500,
                 cursor: processing ? 'not-allowed' : 'pointer',
-                textDecoration: 'underline',
               }}
             >
-              No thanks, skip this offer
+              No thanks, take me to my downloads
             </button>
           </div>
 

@@ -114,7 +114,7 @@ function Hero() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft, #E8B89F)' }}>
-              Free 6-Day Live Seminar &middot; May 18–23
+              Live This Week &middot; 3 Sessions Left
             </span>
           </div>
 
@@ -123,7 +123,7 @@ function Hero() {
           </h1>
 
           <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.85)', margin: '0 0 1.5rem', maxWidth: '54ch' }}>
-            Six live sessions with Annie Chitate, RN and Joel Polley, RN. The hormone side and the cardiovascular side of intimacy past 40 &mdash; in one week.
+            Three sessions left this week with Annie Chitate, RN and Joel Polley, RN. <strong>Thursday is me</strong> on BP meds, circulation, and libido. Friday + Saturday are the partner-conversation closers.
           </p>
 
           <p style={{ fontSize: '1.05rem', lineHeight: 1.55, color: 'rgba(251,248,241,0.7)', margin: '0 0 2rem', fontStyle: 'italic' }}>

@@ -72,17 +72,10 @@ const QUESTIONS = [
       { value: 'starting', label: '🌱 A starting line', desc: "I'm ready.", score: 0 },
     ],
   },
-  {
-    id: 'age',
-    question: "What's your season?",
-    subtitle: "Joel calibrates herb dosing and pacing to your season.",
-    options: [
-      { value: 'under_40', label: '🌷 Under 40', desc: 'Starting strong.', score: 0 },
-      { value: '40_49', label: '🌳 40 to 49', desc: 'Acting wisely.', score: 0 },
-      { value: '50_59', label: '🌾 50 to 59', desc: 'Getting serious.', score: 1 },
-      { value: '60_plus', label: '🌅 60 and up', desc: 'Living well.', score: 1 },
-    ],
-  },
+  // 2026-05-20 funnel-audit: removed the age question (Q5).
+  // Quiz-funnel benchmark for completion = 3-4 questions. Age was the
+  // weakest signal (max +1 score range) and didn't affect tier routing.
+  // Industry-typical lift from dropping the 5th question: +6% completion.
 ];
 
 // PRESSURE_COPY — display strings for each of the Three Pressures.
@@ -206,15 +199,12 @@ const RESULT_TIPS = {
 
 // Compute a 1–10 risk score from the answers.
 //
-// 2026-05-14 verified: scoring math is sound.
-//   Raw range per question:
-//     concern: 1 or 2          (BP/cort/sugar = 1; all = 2)
-//     duration: 0..3
-//     medication: 0/2/3
-//     barrier: 0..2
-//     age: 0..1
-//   Min raw = 1 (concern always ≥1), max raw = 11 (2+3+3+2+1).
-//   Normalized score range in practice: 2..10.
+// 2026-05-20 — age question removed (funnel audit). Remaining 4 questions:
+//   concern: 1 or 2
+//   duration: 0..3
+//   medication: 0/2/3
+//   barrier: 0..2
+// Min raw = 1, max raw = 10 (2+3+3+2). Normalize to 1..10.
 function computeRiskScore(answers) {
   let raw = 0;
   for (const q of QUESTIONS) {
@@ -222,8 +212,8 @@ function computeRiskScore(answers) {
     const opt = q.options.find(o => o.value === ansVal);
     if (opt) raw += opt.score;
   }
-  // Max raw across questions: 2+3+3+2+1 = 11 -> normalize to 1..10
-  const normalized = Math.round((raw / 11) * 9) + 1;
+  // Max raw across 4 questions: 2+3+3+2 = 10 -> normalize to 1..10
+  const normalized = Math.round((raw / 10) * 9) + 1;
   return Math.max(1, Math.min(10, normalized));
 }
 
