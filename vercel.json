@@ -74,6 +74,26 @@
     {
       "path": "/api/daily-digest",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/lead-cron",
+      "schedule": "30 12 * * *"
+    },
+    {
+      "path": "/api/tier-1-cron",
+      "schedule": "45 12 * * *"
+    },
+    {
+      "path": "/api/tier-2-cron",
+      "schedule": "30 13 * * *"
+    },
+    {
+      "path": "/api/tier-3-cron",
+      "schedule": "45 13 * * *"
+    },
+    {
+      "path": "/api/tier-4-cron",
+      "schedule": "30 14 * * *"
     }
   ]
 }
