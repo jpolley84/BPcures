@@ -26,6 +26,8 @@
 //
 // Author: BraveWorks RN · state-machine email rebuild · 2026-05-18
 
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
@@ -109,12 +111,9 @@ function psBox(text) {
 }
 
 // Secondary footer — Skool + YouTube links. Append at bottom of EVERY email.
+// 2026-05-24: YouTube-first footer + 3-tier Skool ladder via shared module.
 function footerSecondaryCTAs() {
-  return `<div style="margin-top:24px;padding:20px 22px;background:${PALETTE.outerBg};border-radius:10px;">
-    <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:12px;">Two more ways to follow along</div>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0 0 10px;">→ <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Join the Skool community</a> &nbsp;<span style="color:#999;">— "How to Be Your Own Doctor"</span></p>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;">→ <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Subscribe on YouTube</a> &nbsp;<span style="color:#999;">— deeper teachings, weekly</span></p>
-  </div>`;
+  return youtubePrimaryCTA() + skoolTiersFooter();
 }
 
 // Tier-specific upsell footer. Place BEFORE footerSecondaryCTAs().

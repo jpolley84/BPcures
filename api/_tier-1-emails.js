@@ -22,6 +22,8 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
@@ -97,12 +99,9 @@ function psBox(text) {
   </div>`;
 }
 
+// 2026-05-24: YouTube-first footer + 3-tier Skool ladder via shared module.
 function footerSecondaryCTAs() {
-  return `<div style="margin-top:24px;padding:20px 22px;background:${PALETTE.outerBg};border-radius:10px;">
-    <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:12px;">Two more ways to follow along</div>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0 0 10px;">→ <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Join the Skool community</a> &nbsp;<span style="color:#999;">— "How to Be Your Own Doctor"</span></p>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;">→ <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Subscribe on YouTube</a> &nbsp;<span style="color:#999;">— deeper teachings, weekly</span></p>
-  </div>`;
+  return youtubePrimaryCTA() + skoolTiersFooter();
 }
 
 function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
@@ -292,6 +291,7 @@ const day4 = {
     ${p(`I'll see you on Day 7 — when I unpack what the three pressures actually are, and which one of them your kit is most likely targeting.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you're tempted to quit today, that's not a sign you bought the wrong thing. It's a sign the curve hasn't hit yet. Stay in.`)}
+    ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'For readers who plateau hard',
       body: 'Some readers get past Day 7 and still see no movement. That\'s usually a signal that the loudest corner of their Triangle is one the kit doesn\'t fully address. The diagnostic is built for exactly that case — sixty minutes, your full picture, a written protocol that names the specific corner.',
@@ -372,6 +372,7 @@ const day7 = {
     ${p(`Day 10, I'm going to show you what 60 minutes with me actually looks like — and why a few of you are going to ladder up to that conversation in the next two weeks.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Reply with one word — "Stress," "Sugar," or "Pipe" — and tell me which corner you think is loudest. I read them. I track them. It tells me which emails to send next.`)}
+    ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'Naming the loudest corner',
       body: 'The single thing the BP Triangle Diagnostic does is name your loudest corner — definitively, based on your readings, meds, sleep, and labs if you have them. Sixty minutes. A written protocol pointing at the right corner. That\'s the whole point.',
@@ -534,6 +535,7 @@ const day13 = {
     ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
     ${joelSignoff()}
     ${psBox(`Patricia's $17 kit purchase applied as credit, same as yours will. She paid $280 at checkout, not $297. Same arrangement is still there for you.`)}
+    ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'The same door Patricia walked through',
       body: 'Sixty minutes. Personalized protocol. Doctor script. Thirty-day follow-up window. Your $17 already applied as credit — $280 net.',

@@ -10,6 +10,8 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health. Spec v1.0 2026-05-17.
 
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
@@ -77,12 +79,12 @@ function psBox(text) {
   </div>`;
 }
 
+// 2026-05-24: YouTube-first footer + 3-tier Skool ladder.
+// Now delegates to shared _email-shared.js so all 5 tier sequences stay
+// aligned. Old "Two more ways to follow along" inline footer retired —
+// every email now leads with the YouTube CTA + exposes Free/$9/$47 rungs.
 function footerSecondaryCTAs() {
-  return `<div style="margin-top:24px;padding:20px 22px;background:${PALETTE.outerBg};border-radius:10px;">
-    <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:12px;">Two more ways to follow along</div>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0 0 10px;">→ <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Join the Skool community</a> &nbsp;<span style="color:#999;">— "How to Be Your Own Doctor"</span></p>
-    <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;">→ <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};text-decoration:none;font-weight:600;">Subscribe on YouTube</a> &nbsp;<span style="color:#999;">— deeper teachings, weekly</span></p>
-  </div>`;
+  return youtubePrimaryCTA() + skoolTiersFooter();
 }
 
 function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
@@ -299,6 +301,7 @@ const day5 = {
     `)}
     ${p(`<strong>Add your three scores.</strong> Whichever section came in highest is your loudest Pressure. Most readers find one clear winner and one runner-up. If two scored equally high, that's normal — most adults are running two at once. The plan is to address them in order: loudest first, second next.`, { margin: '0 0 28px' })}
     ${p(`In two days I'll send you Linda's story. She's 62, was on three medications, and dropped from 148/94 to 128/82 in 11 days. She did it by going after one Pressure first — the same way you're about to.`, { margin: '0 0 28px' })}
+    ${premiumVipBodyPitch()}
     ${joelSignoff()}
     ${psBox(`If you only want to do one thing today, hit reply and tell me which Pressure won the highest score. I keep these — and I'll write back if you ask a question.`)}
     ${footerSecondaryCTAs()}
@@ -372,6 +375,7 @@ const day7 = {
     ${p(`At her follow-up appointment, her cardiologist looked at the numbers, looked at her, and asked one question: "What did you do?" She told him. He didn't reduce her medication right away — that comes later, after a longer pattern — but he didn't add the third one either. He told her to keep going and come back in 90 days.`, { margin: '0 0 28px' })}
     ${p(`What Linda did, you can do. The Pressure she went after was hers, not yours — you may need a different combination. But the principle is the same: name it, choose the smallest right input, do it daily, log the number.`)}
     ${p(`Three days from now I'm going to share the exact PDF I gave Linda — eighteen pages, the same one I hand patients on their way out of the hospital. It's $17. I'll tell you about it then. Today, just sit with the idea that 20 points in 11 days is possible.`, { margin: '0 0 28px' })}
+    ${premiumVipBodyPitch()}
     ${joelSignoff()}
     ${psBox(`If your number is anywhere near Linda's starting point and you've been told "this is as good as it gets," hit reply and tell me what your number is today. I won't pitch you. I just want to know who's reading.`)}
     ${footerSecondaryCTAs()}
