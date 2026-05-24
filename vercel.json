@@ -32,22 +32,6 @@
   ],
   "crons": [
     {
-      "path": "/api/drip-cron",
-      "schedule": "0 12 * * *"
-    },
-    {
-      "path": "/api/drip-cron",
-      "schedule": "0 18 * * *"
-    },
-    {
-      "path": "/api/drip-cron",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/drip-cron",
-      "schedule": "0 6 * * *"
-    },
-    {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
     },
@@ -62,14 +46,6 @@
     {
       "path": "/api/reply-agent",
       "schedule": "0 1 * * *"
-    },
-    {
-      "path": "/api/buyer-upsell-cron",
-      "schedule": "0 13 * * *"
-    },
-    {
-      "path": "/api/diagnostic-drip-cron",
-      "schedule": "0 14 * * *"
     },
     {
       "path": "/api/daily-digest",
