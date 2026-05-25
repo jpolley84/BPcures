@@ -273,7 +273,7 @@ function InternationalBanner() {
       }}
     >
       <span style={{ fontSize: '1.1rem' }}>🌍</span>
-      <span>Outside the US? Get your plan here — $7</span>
+      <span>Outside the US? Get your plan here</span>
       <ArrowRight size={14} style={{ flexShrink: 0 }} />
     </a>
   );
