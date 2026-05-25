@@ -917,6 +917,50 @@ async function processCheckoutExpired(event) {
     return { recovered: false, reason: 'no_email_captured' };
   }
 
+  // 2026-05-25 — guard against the "paid customer gets abandoned-cart email"
+  // bug. Stripe fires checkout.session.expired on any unpaid session, even
+  // when the buyer SUCCEEDED on a DIFFERENT session (e.g. they tried twice:
+  // first attempt's card was declined → that session expires 24h later →
+  // recovery email fires AT a paying customer). Real case: Vernetha,
+  // 2026-05-22, paid Kit on the 21st but got "you got distracted" anyway.
+  //
+  // Two-layer check:
+  //   1. KV `drip:<email>` with isPaidCustomer:true (fast, covers ~99%)
+  //   2. Stripe search for any succeeded charge on the email (source of
+  //      truth, catches edge cases where KV hasn't synced yet)
+  // If either says paid → skip entirely. Do NOT enroll in cart-abandoned
+  // cohort, do NOT send recovery email.
+  try {
+    const drip = await kv.get(`drip:${email}`);
+    if (drip?.isPaidCustomer) {
+      console.log(`stripe-webhook: cart-recovery SKIPPED — ${email} is already a paid customer (KV)`);
+      return { recovered: false, reason: 'already_paid_kv' };
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: cart-recovery KV paid-check failed (continuing to Stripe fallback)', err.message);
+  }
+
+  // Stripe fallback — search customers by email and check for any
+  // successful charge. Catches cases where the buyer paid through a
+  // different funnel before KV had a chance to sync.
+  try {
+    const stripeClient = getStripe();
+    const customers = await stripeClient.customers.search({
+      query: `email:"${email}"`,
+      limit: 5,
+    });
+    for (const c of customers.data) {
+      const charges = await stripeClient.charges.list({ customer: c.id, limit: 5 });
+      const succeeded = charges.data.find(ch => ch.status === 'succeeded');
+      if (succeeded) {
+        console.log(`stripe-webhook: cart-recovery SKIPPED — ${email} has succeeded charge ${succeeded.id} on customer ${c.id}`);
+        return { recovered: false, reason: 'already_paid_stripe' };
+      }
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: cart-recovery Stripe paid-check failed (continuing — recovery may send)', err.message);
+  }
+
   // Dedupe per-email so a chronic bailer doesn't get spammed
   try {
     const recoveryKey = `cart-recovery-sent:${email}`;
