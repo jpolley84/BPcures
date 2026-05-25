@@ -1,8 +1,39 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { marked } from 'marked';
 import { fetchPost } from '../utils/blogLoader';
+
+// 2026-05-25: blog post bodies are stored as markdown (# headings, **bold**,
+// etc.). Previously dangerouslySetInnerHTML rendered the raw markdown, so
+// readers saw literal asterisks and hashtags on the page. We now parse the
+// markdown to HTML via `marked` before injecting. JSON-LD <script> tags at
+// the top of each body pass through marked's HTML-passthrough unchanged.
+marked.setOptions({ gfm: true, breaks: false });
+
+// Renders the article body. Bodies are stored as markdown with an optional
+// leading <script type="application/ld+json"> block for SEO; marked passes
+// the HTML block through untouched and parses the markdown that follows.
+function BlogBody({ source }) {
+  const html = useMemo(() => {
+    if (!source) return '';
+    // Already-HTML bodies (no markdown markers) skip parsing.
+    const looksMarkdown = /^|\n#{1,3}\s|\n\*\*|\n- |\n\d+\. /.test(source);
+    return looksMarkdown ? marked.parse(source) : source;
+  }, [source]);
+
+  return (
+    <motion.div
+      className="blog-content"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+      style={{ fontSize: '1.08rem', lineHeight: 1.7, maxWidth: '66ch' }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -100,14 +131,7 @@ export default function BlogPostPage() {
             </motion.div>
           )}
 
-          <motion.div
-            className="blog-content"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            style={{ fontSize: '1.08rem', lineHeight: 1.7, maxWidth: '66ch' }}
-            dangerouslySetInnerHTML={{ __html: post.body || post.content }}
-          />
+          <BlogBody source={post.body || post.content} />
 
           <div style={{
             marginTop: 'clamp(3rem, 5vw, 4rem)',

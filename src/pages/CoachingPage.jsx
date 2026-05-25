@@ -1,42 +1,32 @@
-// /coaching — BP Triangle Diagnostic Session ($297 direct checkout)
+// /coaching — Free 30-Minute Discovery Call with Joel Polley, RN
 //
-// 2026-05-18 rewrite. The previous version was a $1,997 90-Day Sprint
-// application-only page. The May 17 founding cohort launch generated
-// 0 real applications across 8K emails — the data said the price-jump
-// from $17 Kit → $1,997 Sprint was too steep without a trust bridge.
+// 2026-05-25 rewrite. Previous version sold a paid $297 BP Triangle Diagnostic
+// Session as direct checkout. That offer is retired here. The new page is a
+// free 30-minute discovery-call landing with an embedded Calendly widget.
 //
-// New design: this page sells ONLY the $297 BP Triangle Diagnostic
-// Session as a direct-checkout offer. The $1,997 Sprint is NOT mentioned
-// here — it only surfaces inside the post-purchase email sequence to
-// $297 buyers (per Joel: "we are only presenting 297 offer not 1997").
+// Rationale: lowering the friction from paid $297 to a free 30-min call
+// removes the price-jump objection that was killing application volume in
+// the May founding-cohort launch (0 sales from ~8K emails). The free call
+// is the new top of the high-ticket ladder; conversion into paid programs
+// happens on the call, not on the page.
 //
-// The $297 acts as the first payment of the Sprint if buyers upgrade.
-// Credit ladders all the way: $17 Kit credit applies to $297 ($280),
-// then $297 Diagnostic credit applies to $1,997 ($1,700).
-//
-// Bottom of the page: Cohort #2 waitlist email opt-in (low-friction).
+// Calendly: https://calendly.com/braveworksrn/30min
+// All "Work with Joel 1:1" CTAs site-wide now route here.
 
 import { useEffect } from 'react';
-import { CheckCircle2, ShieldCheck, ArrowRight, FileText, ClipboardCheck, MessageCircle, HelpCircle, Mail } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, HelpCircle, Calendar, Sparkles } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-// Stripe Payment Link for the $297 Diagnostic — Joel creates in Stripe
-// Dashboard, pastes URL into Vercel env as VITE_STRIPE_DIAGNOSTIC_LINK.
-// After-completion redirect should point to: https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID}
-const DIAGNOSTIC_LINK = import.meta.env.VITE_STRIPE_DIAGNOSTIC_LINK || 'https://buy.stripe.com/MISSING_VITE_STRIPE_DIAGNOSTIC_LINK';
+const CALENDLY_URL = 'https://calendly.com/braveworksrn/30min';
 
-// TikTok embed (preserved from previous page — works as social proof)
-function TikTokEmbed({ videoId, username }) {
+// Calendly inline embed. Loads the widget script once on mount and renders
+// the iframe at full width. Falls back gracefully on slow connections —
+// the "Pick your time" button below the widget links directly to Calendly.
+function CalendlyInline() {
   useEffect(() => {
-    const SRC = 'https://www.tiktok.com/embed.js';
+    const SRC = 'https://assets.calendly.com/assets/external/widget.js';
     if (typeof document === 'undefined') return;
-    const existing = document.querySelector(`script[src="${SRC}"]`);
-    if (existing) {
-      if (window.tiktokEmbed?.lib?.render) {
-        try { window.tiktokEmbed.lib.render(); } catch { /* swallow */ }
-      }
-      return;
-    }
+    if (document.querySelector(`script[src="${SRC}"]`)) return;
     const s = document.createElement('script');
     s.src = SRC;
     s.async = true;
@@ -44,26 +34,15 @@ function TikTokEmbed({ videoId, username }) {
   }, []);
 
   return (
-    <blockquote
-      className="tiktok-embed"
-      cite={`https://www.tiktok.com/@${username}/video/${videoId}`}
-      data-video-id={videoId}
-      style={{ maxWidth: '605px', minWidth: '325px', margin: '0 auto' }}
-    >
-      <section>
-        <a target="_blank" rel="noopener noreferrer" title={`@${username}`} href={`https://www.tiktok.com/@${username}?refer=embed`}>
-          @{username}
-        </a>
-      </section>
-    </blockquote>
+    <div
+      className="calendly-inline-widget"
+      data-url={`${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`}
+      style={{ minWidth: '320px', height: '700px', background: 'var(--paper-light)', borderRadius: 12, border: '1px solid var(--border)' }}
+    />
   );
 }
 
 export default function CoachingPage() {
-  // 2026-05-18: removed waitlist email-capture form. The Cohort 2 CTA
-  // now links to /cohort2 (application page) per Joel's pivot from
-  // price-reveal to application-only funnel.
-
   const fadeIn = useScrollAnimation();
 
   return (
@@ -72,33 +51,28 @@ export default function CoachingPage() {
       {/* ─── HERO ─────────────────────────────────────────────────── */}
       <section className="py-16 sm:py-20" style={{ background: 'var(--paper-light)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-3xl mx-auto px-5 text-center">
-          <div className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: '#FCEED9', color: '#B85A36', letterSpacing: '0.14em' }}>
-            BraveWorks RN · Only 5 calls total before Cohort 2 opens
+          <div className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: '#E8F2E5', color: '#3F5A3C', letterSpacing: '0.14em' }}>
+            <Sparkles size={12} style={{ display: 'inline-block', marginRight: 6, verticalAlign: -1 }} />
+            Free 30-minute call &middot; No card required
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl leading-tight mb-5" style={{ color: 'var(--ink)' }}>
-            Sixty minutes. One written protocol. Off the meds you don't need.
+            Thirty minutes with a real nurse. Free.
           </h1>
           <p className="text-lg sm:text-xl mb-7 max-w-2xl mx-auto" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            60-minute Zoom with Joel Polley, RN. You leave with a written 30-day BP protocol your cardiologist will sign off on.
+            Bring your numbers, your meds, and the question that's been keeping you up. I'll listen, ask the right questions, and tell you honestly if I can help &mdash; or who can.
           </p>
-
-          <div className="inline-block mb-6 px-7 py-5 rounded-xl" style={{ background: 'var(--paper)', border: '2px solid var(--sage-deep)' }}>
-            <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--sage-deep)', letterSpacing: '0.12em' }}>One-time investment</div>
-            <div className="font-serif text-4xl sm:text-5xl" style={{ color: 'var(--ink)', fontWeight: 500 }}>$297</div>
-            <div className="text-sm mt-1" style={{ color: 'var(--ink-soft)' }}>60 minutes of actual nursing time. Your prescreen for Cohort 2.</div>
-          </div>
 
           <div className="mb-3">
             <a
-              href={DIAGNOSTIC_LINK}
+              href={CALENDLY_URL}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
               style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
             >
-              Book the diagnostic · $297 <ArrowRight size={18} />
+              Pick your time <ArrowRight size={18} />
             </a>
           </div>
           <div className="text-xs" style={{ color: 'var(--muted)' }}>
-            Secure checkout via Stripe · 48-hour refund window before the call
+            Zoom &middot; 30 minutes &middot; You leave the call with a next step, not a pitch
           </div>
         </div>
       </section>
@@ -106,15 +80,15 @@ export default function CoachingPage() {
       {/* ─── WHY THIS, WHY NOW ────────────────────────────────────── */}
       <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
-          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Why this session</div>
+          <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Why a discovery call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-5" style={{ color: 'var(--ink)' }}>
             The protocol is generic. Your body isn't.
           </h2>
           <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
-            One corner of the BP Triangle is loudest in your body right now &mdash; vascular, cortisol, or blood sugar. Until you know which, you're guessing.
+            One corner of the BP Triangle is loudest in your body right now &mdash; vascular, cortisol, or blood sugar. Until you know which, you're guessing. This call exists so we can stop guessing together.
           </p>
           <p className="text-lg font-medium" style={{ color: 'var(--ink)' }}>
-            Sixty minutes of nursing time saves you six weeks of guessing.
+            Thirty minutes of nursing time costs you nothing and might save you six weeks of trial and error.
           </p>
         </div>
       </section>
@@ -124,14 +98,14 @@ export default function CoachingPage() {
         <div className="max-w-3xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em', textAlign: 'center' }}>What happens on the call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-8 text-center" style={{ color: 'var(--ink)' }}>
-            Sixty minutes. One Zoom. Three outcomes.
+            Thirty minutes. One Zoom. Three things you walk away with.
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
             {[
-              { icon: ClipboardCheck, title: '1. Your Triangle, mapped', body: "I look at your home BP log, your morning vs afternoon pattern, your stress, your sleep, your A1c if you have it. I name which corner of the Triangle is loudest for you, and which is second." },
-              { icon: FileText, title: '2. Your 30-day protocol, written', body: "You leave with a one-page written protocol customized to your corner. The herbs to take, the foods to drop, the timing of meals, the sleep architecture for YOUR body, not the generic one." },
-              { icon: MessageCircle, title: '3. The doctor conversation', body: "A clean one-page script you can hand your doctor. Lab requests, supplements to disclose, language for the medication-tapering conversation. Most physicians read it and engage." },
+              { icon: ClipboardCheck, title: '1. A clear picture', body: "We look at your home BP log, your meds, your sleep, your stress, your A1c if you have it. I tell you which corner of the BP Triangle is most likely driving your numbers." },
+              { icon: MessageCircle, title: '2. An honest answer', body: "If this is something I can help with, I'll tell you exactly how. If it's not, I'll tell you who to talk to instead. No pitch, no pressure. Just nursing." },
+              { icon: ArrowRight, title: '3. A next step', body: "You leave with one concrete action to take this week &mdash; whether that's working with me, getting a specific lab, or having a real conversation with your doctor." },
             ].map((card) => {
               const Icon = card.icon;
               return (
@@ -143,29 +117,44 @@ export default function CoachingPage() {
               );
             })}
           </div>
+        </div>
+      </section>
 
-          {/* Bonus */}
-          <div className="mt-8 p-5 rounded-xl" style={{ background: 'var(--sage-soft)', border: '1px solid var(--sage-deep)' }}>
-            <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--sage-deep)', letterSpacing: '0.14em' }}>Included bonus</div>
-            <div className="font-serif text-lg mb-2" style={{ color: 'var(--ink)' }}>30-day follow-up email coaching</div>
-            <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-              After our call, you get 30 days of follow-up email access. Reply to me with your home log every Sunday. I read every one. If we need to adjust, we adjust. This isn't available outside the diagnostic.
-            </p>
+      {/* ─── CALENDLY EMBED ───────────────────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <div className="text-xs font-bold uppercase tracking-widest mb-3 text-center" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Book your call</div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-3 text-center" style={{ color: 'var(--ink)' }}>
+            Pick a time that works for you.
+          </h2>
+          <p className="text-base mb-7 text-center max-w-xl mx-auto" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
+            All times shown in your timezone. Confirmation lands in your inbox the second you book.
+          </p>
+
+          <CalendlyInline />
+
+          <div className="mt-5 text-center">
+            <a
+              href={CALENDLY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-semibold"
+              style={{ color: 'var(--clay)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+            >
+              Widget not loading? Open Calendly directly &rarr;
+            </a>
           </div>
         </div>
       </section>
 
-      {/* ─── SOCIAL PROOF — static link (replaced TikTok embed 2026-05-20) ──
-          Audit flagged the embed loaded ~600KB mid-page, freezing scroll
-          on 3G/slow LTE for 2-4 seconds and bleeding ~25% of mobile
-          buyers at this position. Replaced with static text link out. */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      {/* ─── SOCIAL PROOF — static link ──────────────────────────── */}
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-xl mx-auto px-5 text-center">
           <p className="text-sm font-medium mb-3 uppercase tracking-widest" style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}>
             Where the work shows up
           </p>
           <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-            <strong style={{ color: 'var(--ink)' }}>155K on TikTok &middot; 151K on Facebook &middot; 1,100+ in the Skool community.</strong> The protocol works. The diagnostic is where we customize it for you.
+            <strong style={{ color: 'var(--ink)' }}>155K on TikTok &middot; 151K on Facebook &middot; 1,100+ in the Skool community.</strong> The protocol works. The call is where we figure out how it fits your body.
           </p>
           <a
             href="https://tiktok.com/@braveworksrn"
@@ -180,7 +169,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHAT TO BRING ────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>What to have ready</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)' }}>
@@ -188,7 +177,7 @@ export default function CoachingPage() {
           </h2>
           <ul className="space-y-3">
             {[
-              "Your home BP log if you have one, even three readings this week is enough",
+              "Your home BP log if you have one &mdash; even three readings this week is enough",
               "A list (or photo) of every prescription medication you're on",
               "A list of every supplement, vitamin, and herb you take",
               "Any recent labs (A1c, lipid panel, kidney, thyroid). Photos of the report are fine",
@@ -196,7 +185,7 @@ export default function CoachingPage() {
             ].map((item) => (
               <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
                 <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
-                <span className="text-base" style={{ lineHeight: 1.55 }}>{item}</span>
+                <span className="text-base" style={{ lineHeight: 1.55 }} dangerouslySetInnerHTML={{ __html: item }} />
               </li>
             ))}
           </ul>
@@ -207,7 +196,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHO JOEL IS ──────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-2xl mx-auto px-5 text-center">
           <picture>
             <source srcSet="/headshot.webp" type="image/webp" />
@@ -216,7 +205,7 @@ export default function CoachingPage() {
           </picture>
           <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Who you're talking to</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-3" style={{ color: 'var(--ink)' }}>
-            Joel Polley, RN · The Blood Pressure Guy
+            Joel Polley, RN &middot; The Blood Pressure Guy
           </h2>
           <p className="text-base mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
             Twenty years in ICU and emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Now teaching the root-cause protocols the system never had bandwidth to offer.
@@ -226,7 +215,7 @@ export default function CoachingPage() {
           </p>
           <div className="mt-5">
             <a href="/about/joel" className="text-sm font-medium" style={{ color: 'var(--sage-deep)', textDecoration: 'underline' }}>
-              Read Joel's full bio →
+              Read Joel's full bio &rarr;
             </a>
           </div>
         </div>
@@ -241,7 +230,7 @@ export default function CoachingPage() {
           </h2>
           <div className="p-6 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
             <p className="text-base italic mb-4" style={{ color: 'var(--ink)', lineHeight: 1.65 }}>
-              "Doreen, age 62, on three BP meds for fifteen years, still running 140s/90s most mornings. We talked for 60 minutes. Found her loudest corner was cortisol. She'd been waking at 3 AM every night for two years. We dropped two things, added three, fixed her sleep architecture. Twelve days later: BP 128/80. She brought the log to her cardiologist. He took her off the atenolol."
+              "Doreen, age 62, on three BP meds for fifteen years, still running 140s/90s most mornings. We talked for thirty minutes. Found her loudest corner was cortisol. She'd been waking at 3 AM every night for two years. We dropped two things, added three, fixed her sleep architecture. Twelve days later: BP 128/80. She brought the log to her cardiologist. He took her off the atenolol."
             </p>
             <p className="text-sm" style={{ color: 'var(--muted)' }}>
               Anonymized first name. Real case. Real numbers. This is one of about 30 conversations a month.
@@ -260,12 +249,12 @@ export default function CoachingPage() {
 
           <div className="space-y-5">
             {[
-              { q: 'Is this medical advice?', a: 'No. This is education-based nursing consultation, not diagnosis or prescription. Your protocol always works alongside your physician, not instead of them. I write you a one-page script to bring to your doctor for the medical decisions.' },
-              { q: 'What if I already bought the BP Reset Kit?', a: 'Your $17 Kit purchase applies as credit toward your diagnostic. Reply to your kit-purchase email or email braveworksrn@gmail.com and I will send you a credit-applied checkout link so you pay $280 instead of $297.' },
-              { q: "I'm on five blood pressure medications. Is this still worth it?", a: 'Especially. The more meds, the higher the value of mapping which corner of the Triangle is actually driving the system. Most patients on 3+ meds are being treated for the wrong corner. We work alongside your prescribing physician on any medication changes; never stop a med without your doctor.' },
-              { q: "What if I can't make my scheduled call?", a: 'Reschedule once, no fee. Two reschedules in a row = we issue a refund. The 48-hour pre-call refund window covers cold-feet scenarios.' },
-              { q: 'Is there a follow-up program?', a: "For some people, yes. After the diagnostic, if you want to keep working together, I have a deeper program for buyers who want it. Most graduates of the diagnostic don't need it. The 30-day protocol does the job. We talk about it on the call if it makes sense for you." },
-              { q: "What's the refund policy?", a: 'Full refund within 48 hours of purchase, before the call. After the call: non-refundable, since the value (your written protocol + 30-day email follow-up) has been delivered.' },
+              { q: 'Is this really free? What\'s the catch?', a: 'Genuinely free. No card required. The reason I do this: BP coaching only works when there\'s real fit between the patient and the practitioner. Thirty minutes of conversation tells both of us whether that fit exists. If we click, we\'ll talk about working together. If we don\'t, I send you to someone who can help.' },
+              { q: 'Is this medical advice?', a: 'No. This is education-based nursing consultation, not diagnosis or prescription. Anything we discuss works alongside your physician, not instead of them. For medication decisions you\'ll always go through your prescribing doctor.' },
+              { q: "I'm on five blood pressure medications. Is this still worth my time?", a: 'Especially. The more meds, the higher the value of mapping which corner of the Triangle is actually driving the system. Most patients on 3+ meds are being treated for the wrong corner. We never change meds without your physician; that\'s a hard line.' },
+              { q: "What if I can't make my scheduled call?", a: 'Reschedule any time from the Calendly confirmation email. No fees, no hard feelings. Life happens.' },
+              { q: 'How long until I can book?', a: 'Most weeks I open 6-8 slots between Monday and Friday afternoons. If nothing fits your schedule, email braveworksrn@gmail.com and I\'ll find time.' },
+              { q: "Will you try to sell me something on the call?", a: 'Only if you ask. The call exists to give you clarity, not to push an offer. If at the end you want to talk about working together more formally, I\'ll lay out the options. If you don\'t, you walk away with a free 30-minute consult and we both move on.' },
             ].map((item) => (
               <div key={item.q} className="p-5 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
                 <div className="flex gap-3">
@@ -284,49 +273,26 @@ export default function CoachingPage() {
       {/* ─── FINAL CTA ────────────────────────────────────────────── */}
       <section ref={fadeIn} className="py-16" style={{ background: 'var(--ink)', color: 'var(--paper-light)' }}>
         <div className="max-w-2xl mx-auto px-5 text-center">
+          <Calendar size={28} color="#F5C68F" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
           <div className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: 'rgba(184,90,54,0.18)', color: '#F5C68F', letterSpacing: '0.14em' }}>
-            Only 5 calls total — closing Friday May 23
+            Free &middot; 30 minutes &middot; No card required
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-5" style={{ color: 'var(--paper-light)' }}>
-            One call. One protocol. One clear next step.
+            One call. One honest conversation. One clear next step.
           </h2>
           <p className="text-base sm:text-lg mb-7 max-w-xl mx-auto" style={{ color: 'rgba(251,248,241,0.85)', lineHeight: 1.55 }}>
-            Sixty minutes that gives you what most BP patients never get: a real nurse looking at your real situation. Not a chatbot. Not a 5-minute office visit. A full hour, your case, written takeaway.
+            Most BP patients never get this: a real nurse, looking at their real situation, with no clock ticking on the visit. Thirty minutes is yours.
           </p>
           <a
-            href={DIAGNOSTIC_LINK}
+            href={CALENDLY_URL}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
             style={{ background: 'var(--clay)', color: 'var(--paper-light)' }}
           >
-            Book the diagnostic · $297 <ArrowRight size={18} />
+            Pick your time <ArrowRight size={18} />
           </a>
           <div className="text-xs mt-4" style={{ color: 'rgba(251,248,241,0.5)' }}>
-            Secure checkout via Stripe · 48-hour refund window · No upsell on the call
+            Powered by Calendly &middot; You'll get a Zoom link by email
           </div>
-        </div>
-      </section>
-
-      {/* ─── COHORT #2 WAITLIST ───────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)' }}>
-        <div className="max-w-xl mx-auto px-5 text-center">
-          <Mail size={28} color="var(--sage-deep)" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
-          <div className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
-            Cohort 2 — 90-day group program · Opens Sunday May 24
-          </div>
-          <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)' }}>
-            Skip the diagnostic? Apply directly for Cohort 2.
-          </h3>
-          <p className="text-sm mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            The $297 diagnostic above is the 1:1 prescreen path into Cohort 2 — that's how most people get in. If you'd rather skip the prescreen and apply directly for the 90-day group cohort opening <strong>Sunday May 24</strong>, the application takes about 5 minutes. Joel reads every one personally.
-          </p>
-
-          <a
-            href="/cohort2"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-base"
-            style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
-          >
-            Apply for Cohort 2 →
-          </a>
         </div>
       </section>
 
@@ -335,7 +301,7 @@ export default function CoachingPage() {
         <div className="max-w-2xl mx-auto text-center">
           <ShieldCheck size={22} color="var(--muted)" style={{ display: 'block', margin: '0 auto 0.75rem' }} />
           <p className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.7, maxWidth: '60ch', margin: '0 auto' }}>
-            The BP Triangle Diagnostic Session is a nursing consultation rooted in 20 years of ICU and ER experience. It is education-based, not diagnostic. Your protocol always works alongside your physician, never as a replacement. Never start, stop, or change a prescribed medication without your doctor's supervision.
+            The discovery call is a free nursing consultation rooted in 20 years of ICU and ER experience. It is education-based, not diagnostic. Any protocol we discuss always works alongside your physician, never as a replacement. Never start, stop, or change a prescribed medication without your doctor's supervision.
           </p>
         </div>
       </section>

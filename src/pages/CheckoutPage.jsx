@@ -180,7 +180,7 @@ const CheckoutPage = () => {
               className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-medium transition-colors"
               style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.4)', textUnderlineOffset: '3px' }}
             >
-              Work with Joel 1:1 →
+              Free 30-min discovery call with Joel →
             </a>
           </div>
         </div>
@@ -205,25 +205,30 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Hero */}
+      {/* Hero — 2026-05-25 expert-panel rewrite.
+          The previous H1 led with Joel's credentials ("An ICU Nurse's 10-Day…").
+          The new H1 is a qualifying QUESTION that makes BP-medicated readers
+          self-identify in <2 seconds, then bridges to Joel on line 2. Reasoning
+          + alternate variants captured in the audit; this is Version A. */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
-          {/* 7-Day Refund Promise badge — above-the-fold trust signal.
-              Matches the same promise used in Day 1 drip + Skool community. */}
+          {/* Community proof badge — replaces the refund badge above the H1.
+              The refund moves to microcopy (post-hook, where it removes
+              friction instead of pre-empting it). */}
           <div className="inline-flex items-center gap-1.5 mb-4 px-3 py-1 rounded-full" style={{ background: '#F3E8FF', border: '1px solid #E9D5FF' }}>
-            <Shield size={13} style={{ color: '#6C3483' }} />
+            <Users size={13} style={{ color: '#6C3483' }} />
             <span style={{ color: '#6C3483', fontSize: '12px', fontWeight: 600, letterSpacing: '0.02em' }}>
-              7-day refund promise — no questions
+              Read by 1,100+ in the BraveWorks community
             </span>
           </div>
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            An ICU Nurse's 10-Day Blood Pressure Protocol — Yours for {PRICE}
+            Still on BP meds &mdash; and your numbers won't drop?
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            20 years in the ICU taught me what BP meds can't fix. This kit is what I'd give my own mother.
+            I'm Joel Polley, RN &mdash; 20 years ICU and ER. They call me <strong>The Blood Pressure Guy</strong> because I built the 10-day protocol I'd give my own mother.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            7 guides &middot; 47 herbs &middot; Daily checklists &middot; Bonus: Overmedicated Boomers book
+            7 guides &middot; 47 herbs &middot; Daily checklists &middot; {PRICE} &middot; 7-day refund, no questions
           </p>
         </div>
       </AnimatedSection>
