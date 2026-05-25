@@ -253,7 +253,7 @@ export default function QuizPage() {
 function InternationalBanner() {
   return (
     <a
-      href="https://shahidizvi.gumroad.com/l/ekqnd"
+      href="https://shahidizvi.gumroad.com/l/pciija"
       target="_blank"
       rel="noopener noreferrer"
       style={{
