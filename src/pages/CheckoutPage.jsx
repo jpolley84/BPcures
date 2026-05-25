@@ -191,9 +191,9 @@ const CheckoutPage = () => {
         <div className="container-mobile-first">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
             {[
-              { icon: Play, text: '155K on TikTok' },
-              { icon: Users, text: '151K on Facebook' },
-              { icon: TrendingUp, text: '20K on Instagram' },
+              { icon: Play, text: '162K on TikTok' },
+              { icon: Users, text: '215K on Facebook' },
+              { icon: TrendingUp, text: '25K on Instagram' },
               { icon: Users, text: '1,100+ community members' },
             ].map((item, i) => (
               <div key={i} className="proof-badge">
@@ -394,7 +394,7 @@ const CheckoutPage = () => {
             {[
               { icon: Heart, text: '20-Year ICU/ER Nurse' },
               { icon: Heart, text: 'Naturopathic Practitioner' },
-              { icon: Users, text: '326K+ across TikTok, Facebook & Instagram' },
+              { icon: Users, text: '402K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
                 <item.icon size={20} style={{ color: 'var(--purple)' }} />

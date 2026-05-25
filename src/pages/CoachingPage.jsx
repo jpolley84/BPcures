@@ -154,7 +154,7 @@ export default function CoachingPage() {
             Where the work shows up
           </p>
           <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-            <strong style={{ color: 'var(--ink)' }}>155K on TikTok &middot; 151K on Facebook &middot; 1,100+ in the Skool community.</strong> The protocol works. The call is where we figure out how it fits your body.
+            <strong style={{ color: 'var(--ink)' }}>162K on TikTok &middot; 215K on Facebook &middot; 25K on Instagram &middot; 1,100+ in the Skool community.</strong> The protocol works. The call is where we figure out how it fits your body.
           </p>
           <a
             href="https://tiktok.com/@braveworksrn"
