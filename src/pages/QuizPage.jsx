@@ -31,45 +31,45 @@ const TOTAL_STEPS = 5;
 const QUESTIONS = [
   {
     id: 'pressure',
-    question: "Which Pressure feels strongest in your story?",
-    subtitle: "Joel's map starts at the corner that moves the other two fastest.",
+    question: "Which one sounds most like you?",
+    subtitle: "This helps us find the root cause of your blood pressure.",
     options: [
-      { value: 'stress', label: '🌿 Stress Pressure', desc: 'Wired by day. Awake at 3 AM. Your switch is stuck on.', score: 1 },
-      { value: 'sugar', label: '🍯 Sugar Pressure', desc: 'Cravings, crashes, belly weight that will not go.', score: 1 },
-      { value: 'pipes', label: '💗 Pipe Pressure', desc: 'Numbers stuck high for years. Maybe family history.', score: 1 },
-      { value: 'all', label: '🔺 All three', desc: 'Joel, you pick — I trust the map.', score: 2 },
+      { value: 'stress', label: '🌿 Stress', desc: 'Can\'t relax. Up at 3 AM. Always on edge.', score: 1 },
+      { value: 'sugar', label: '🍯 Sugar', desc: 'Cravings. Crashes. Belly weight that won\'t leave.', score: 1 },
+      { value: 'pipes', label: '💗 Blood Vessels', desc: 'Numbers stuck high. Maybe runs in the family.', score: 1 },
+      { value: 'all', label: '🔺 All three', desc: 'You pick for me — I\'m not sure.', score: 2 },
     ],
   },
   {
     id: 'duration',
-    question: "How long has your blood pressure been on your mind?",
-    subtitle: "Helps Joel set the pace of your map.",
+    question: "How long have you been dealing with blood pressure?",
+    subtitle: "So we know where to start.",
     options: [
-      { value: 'new', label: '🌷 A few months', desc: 'New, and I am getting ahead.', score: 0 },
+      { value: 'new', label: '🌷 A few months', desc: 'Just found out. Getting ahead of it.', score: 0 },
       { value: 'moderate', label: '🌳 1 to 2 years', desc: 'Ready for a real plan.', score: 1 },
-      { value: 'long', label: '🌾 3 to 5 years', desc: 'Ready for a path that works.', score: 2 },
-      { value: 'very_long', label: '🌅 5 years or more', desc: 'I want this to be my last season with it.', score: 3 },
+      { value: 'long', label: '🌾 3 to 5 years', desc: 'Need something that actually works.', score: 2 },
+      { value: 'very_long', label: '🌅 5+ years', desc: 'Done with this. Ready to be free.', score: 3 },
     ],
   },
   {
     id: 'medication',
-    question: "Where are you with your pills?",
-    subtitle: "So Joel can match your map to your dose.",
+    question: "Are you taking any blood pressure pills?",
+    subtitle: "This helps us build your plan.",
     options: [
-      { value: 'on_meds', label: '💊 1 pill', desc: "And I'd love help alongside it.", score: 2 },
-      { value: 'want_off', label: '💊💊 2 or more pills', desc: 'And I want to walk down with my doctor.', score: 3 },
-      { value: 'no_meds', label: '🌅 No pills yet', desc: 'And I want to stay free.', score: 0 },
+      { value: 'on_meds', label: '💊 1 pill', desc: 'Want to get off it safely.', score: 2 },
+      { value: 'want_off', label: '💊💊 2 or more pills', desc: 'Want to work my way down.', score: 3 },
+      { value: 'no_meds', label: '🌅 No pills', desc: 'Want to keep it that way.', score: 0 },
     ],
   },
   {
     id: 'barrier',
-    question: "What would help you most right now?",
-    subtitle: "Joel will weight your map toward this.",
+    question: "What do you need most right now?",
+    subtitle: "We will build your plan around this.",
     options: [
-      { value: 'overwhelm', label: '📖 A simple plan I can follow', desc: 'One map. Not ten.', score: 1 },
-      { value: 'tried_failed', label: '🩺 Proof from a real nurse', desc: 'Not a blog. Not a hunch.', score: 2 },
-      { value: 'complex', label: '🪶 Steps that fit my real life', desc: 'Short steps. Real results.', score: 1 },
-      { value: 'starting', label: '🌱 A starting line', desc: "I'm ready.", score: 0 },
+      { value: 'overwhelm', label: '📖 A simple plan', desc: 'Just tell me what to do.', score: 1 },
+      { value: 'tried_failed', label: '🩺 Real proof it works', desc: 'Not a blog. Not a guess.', score: 2 },
+      { value: 'complex', label: '🪶 Steps that fit my life', desc: 'Short. Easy. Real results.', score: 1 },
+      { value: 'starting', label: '🌱 A place to start', desc: "I'm ready.", score: 0 },
     ],
   },
   // 2026-05-20 funnel-audit: removed the age question (Q5).
@@ -87,25 +87,25 @@ const PRESSURE_COPY = {
     label: 'Stress Pressure',
     ital: 'Stress Pressure',
     score_label: 'Stress Pressure',
-    teach: 'Your stress switch is stuck on — body squeezes the pipes all day.',
+    teach: 'Stress keeps your body tight all day. That makes your blood pressure go up.',
   },
   sugar: {
     label: 'Sugar Pressure',
     ital: 'Sugar Pressure',
     score_label: 'Sugar Pressure',
-    teach: 'Sugar stays high — water sticks, vessel walls swell, BP climbs.',
+    teach: 'Too much sugar makes your blood thick and heavy. That pushes your numbers up.',
   },
   pipes: {
     label: 'Pipe Pressure',
     ital: 'Pipe Pressure',
     score_label: 'Pipe Pressure',
-    teach: 'Pipes got stiff — same blood, harder squeeze to push it through.',
+    teach: 'Your blood vessels got stiff. Your heart has to push harder. That raises your numbers.',
   },
   all: {
     label: 'All three Pressures',
     ital: 'whole Triangle',
     score_label: 'Triangle Risk',
-    teach: 'All three corners feed each other. Joel maps the loudest one first.',
+    teach: 'All three are working together. We find the loudest one and start there.',
   },
 };
 
@@ -129,70 +129,70 @@ const PRESSURE_TO_CATEGORY = {
 const RESULT_TIPS = {
   pipes: [
     {
-      title: 'Trade 3 foods. Drop 7 points in 6 weeks.',
-      body: 'Tufts University measured it: 7.2 mmHg systolic, in 6 weeks, from one simple swap. Your map names the 3 foods that hide in most kitchens — and the herb that does the heavy lifting.',
+      title: 'Swap 3 foods. Drop 7 points in 6 weeks.',
+      body: 'One study showed a 7-point drop from one simple food swap. Your plan names the 3 foods to trade — and the herb that does the most work.',
       hook: 'It grows in your grandmother\'s garden.',
     },
     {
-      title: 'Walk 20 minutes after dinner. Move 3 numbers at once.',
-      body: 'Pressure, blood sugar, and your sleep score — all three soften with one short stroll. Joel calls it the evening glide. It is free, it takes 20 minutes, and most women feel the first drop by day 3.',
-      hook: 'Day 3 is the day the first women write Joel back.',
+      title: 'Walk 20 minutes after dinner. Move 3 numbers.',
+      body: 'Blood pressure, blood sugar, and sleep — all three get better from one short walk. It costs nothing. Most women feel a change by day 3.',
+      hook: 'Day 3 is when it starts clicking.',
     },
     {
-      title: 'Bed by 10. Cuff by 7. Smile by 8.',
-      body: 'The hours before midnight do double the healing. Your map gives you Joel\'s 60-minute wind-down — the same routine he built for ICU nurses on night shift. Most women fall asleep faster by night two.',
-      hook: 'Night two is the night your map starts working while you sleep.',
+      title: 'Go to bed by 10. Wake up with better numbers.',
+      body: 'Sleep before midnight heals twice as fast. Your plan has a simple bedtime routine. Most women fall asleep faster by night two.',
+      hook: 'By night two, your body is already healing while you sleep.',
     },
   ],
   stress: [
     {
-      title: 'Wind down 60 minutes. Wake up with calmer mornings.',
-      body: 'A single 60-minute screen-free window in the evening shifts your morning cortisol more than any supplement. Joel built the routine for nurses on night shift — it works in any season of life.',
-      hook: 'The first morning most women notice is morning 4.',
+      title: 'Put the phone down an hour before bed. Wake up calmer.',
+      body: 'One hour with no screen before bed changes your whole morning. Joel built this routine for nurses on night shift. It works for anyone.',
+      hook: 'Most women feel it by morning 4.',
     },
     {
-      title: 'Eat 2 real meals. Watch stress soften within a week.',
-      body: 'Two warm meals — breakfast and lunch, plant-rich, no snacks between — keeps your stress curve flat all day. Most women feel the change within 7 mornings.',
-      hook: 'Your map names the 7 foods that quiet the curve fastest.',
+      title: 'Eat 2 good meals. Watch your stress go down.',
+      body: 'Two warm meals — plants on the plate, no snacking between — keeps your stress level flat all day. Most women feel the shift in one week.',
+      hook: 'Your plan names the 7 best foods for calm.',
     },
     {
-      title: 'Breathe 5 minutes a day. Shift your baseline in 2 weeks.',
-      body: 'Slow belly-breathing tells your nervous system the day is safe. Five minutes, twice a day, moves your stress baseline in 14 days flat. Joel includes a printable card for your nightstand.',
-      hook: 'The 4-7-8 count is on page one of your map.',
+      title: 'Breathe slow for 5 minutes. Feel the shift in 2 weeks.',
+      body: 'Slow belly breathing tells your body the day is safe. Five minutes, twice a day. That is all it takes to reset your stress level.',
+      hook: 'The breathing pattern is on page one of your plan.',
     },
   ],
   sugar: [
     {
-      title: 'Eat in the right order. Cut spikes by 20 to 30 percent.',
-      body: 'Start each meal with vegetables or fiber. Glucose rises slower, your insulin works less, and your post-meal crash flattens out. Most women have never been told this.',
-      hook: 'Joel maps the exact bite-by-bite order — meal by meal, for 10 days.',
+      title: 'Eat your food in the right order. Cut sugar spikes 20 to 30 percent.',
+      body: 'Eat your vegetables first, then everything else. Your blood sugar rises slower. Your energy stays even. Most women have never heard this.',
+      hook: 'Your plan shows the exact order — meal by meal, for 10 days.',
     },
     {
-      title: 'Walk 10 minutes after eating. Lower glucose without a pill.',
-      body: 'A short stroll after meals drives glucose into your muscles without extra insulin. Slow walking counts. Joel tracks this with his patients — it is the most consistent number-mover he has measured.',
-      hook: 'The tracker shows you when to walk and how to measure the win.',
+      title: 'Walk 10 minutes after eating. Lower blood sugar without a pill.',
+      body: 'A short walk after meals burns off the sugar. Slow walking counts. This is the most steady number-mover Joel has seen in 20 years.',
+      hook: 'The plan shows you when to walk and how to track it.',
     },
     {
-      title: 'Drink your gallon. Keep your numbers steady all day.',
-      body: 'Even mild dehydration concentrates your blood sugar. Joel\'s water formula — half your body weight in ounces, working up to a gallon — keeps your baseline low and your kidneys filtering well.',
-      hook: 'Your map includes the exact ounce target for your weight.',
+      title: 'Drink more water. Keep your numbers steady all day.',
+      body: 'When you are even a little dry, your blood sugar goes up. Joel\'s water goal — half your weight in ounces — keeps things level all day long.',
+      hook: 'Your plan gives you the exact amount for your body.',
     },
   ],
   all: [
     {
-      title: '1 loop. 3 corners. 30 days to start it coming home.',
-      body: 'Stress raises blood sugar. Blood sugar raises blood pressure. Sleep raises both back. Most women fix one corner and wait. Joel\'s map starts at the corner that moves the other two fastest — for you it changes the whole loop.',
-      hook: 'Your map names your starting corner on page one.',
+      title: 'Fix one thing. Watch the other two follow.',
+      body: 'Stress raises blood sugar. Blood sugar raises blood pressure. Bad sleep makes both worse. Most people try to fix all three at once. Your plan starts with the one that moves the others fastest.',
+      hook: 'Your starting point is on page one.',
     },
     {
       title: 'Eat 2 meals. Walk 3 times. Move all 3 numbers.',
-      body: 'Two plant-rich meals, three short walks, no snacks between. Joel calls it the simple rhythm. Most women feel the first change by day 4, and see numbers move by week 2.',
-      hook: 'The exact times for both meals are on day one of your map.',
+      body: 'Two plant-rich meals, three short walks, no snacks between. Simple. Most women feel the first change by day 4 and see their numbers move by week 2.',
+      hook: 'Day one of your plan tells you exactly when to eat and walk.',
     },
     {
-      title: 'Win your evening. Win the whole next day.',
-      body: 'Hours before midnight do double the healing. Joel\'s 60-minute wind-down was built for ICU nurses — it sets your morning cortisol, your morning glucose, and your morning cuff reading. All three.',
-      hook: 'Day 3 is the morning most women say: "wait, this is moving."',
+      title: 'Win your evening. Win your whole next day.',
+      body: 'Sleep before midnight heals twice as fast. Joel\'s bedtime routine sets your stress, your blood sugar, and your blood pressure — all three — for the morning.',
+      hook: 'Day 3 is when most women say: "wait, something is changing."',
     },
   ],
 };
@@ -277,7 +277,7 @@ function HeroCopy() {
   // with the Triangle (Chris Do above-fold visibility), names three corners,
   // and delivers proof (Linda/Paul/Rachel) before the CTA. Replaces the
   // "Quieter numbers. Steadier mornings." line (Joel flagged as ephemeral).
-  const words = ['3', 'corners.', '30', 'days.', 'One', 'closed', 'pill', 'bottle.'];
+  const words = ['No', 'pills.', 'No', 'cuff.', 'No', 'worry.', 'Just', 'life.'];
   return (
     <div className="hero-copy">
       <motion.div
@@ -301,7 +301,7 @@ function HeroCopy() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.08 * i, ease: [0.22, 1, 0.36, 1] }}
           >
-            {i === 5 ? <em style={{ fontStyle: 'italic', color: 'var(--clay)', fontVariationSettings: '"SOFT" 100, "opsz" 144' }}>{w}</em> : w}
+            {i === 7 ? <em style={{ fontStyle: 'italic', color: 'var(--clay)', fontVariationSettings: '"SOFT" 100, "opsz" 144' }}>{w}</em> : w}
           </motion.span>
         ))}
       </h1>
@@ -312,9 +312,8 @@ function HeroCopy() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        Your cuff number is the sum of <strong>three Pressures:</strong> Stress, Sugar, Pipes.
-        Three corners. One loop. Calm the loudest one and the other two follow. Your doctor signs off.
-        The bottle goes in the drawer.
+        Your blood pressure is high for a reason. Find that reason, fix it, and your body does the rest.
+        No more pills. No more checking. <strong>Just living.</strong>
       </motion.p>
 
       <motion.p
@@ -324,9 +323,9 @@ function HeroCopy() {
         transition={{ duration: 0.8, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
         style={{ fontStyle: 'italic', color: 'var(--ink-soft)', fontSize: '0.95rem', marginTop: '0.75rem' }}
       >
-        Linda did it in 11 days — 148/94 to 128/82. Paul slept through the night by day 4.
-        Rachel's fasting glucose dropped 29 points in 3 weeks. Same map. Same nurse.
-        Yours arrives today.
+        Linda went from 148/94 to 128/82 in 11 days. Paul slept through the night by day 4.
+        Rachel dropped 29 blood sugar points in 3 weeks. Same plan. Same nurse.
+        Your turn.
       </motion.p>
 
       <motion.div
@@ -338,7 +337,7 @@ function HeroCopy() {
         <div className="avatar">JP</div>
         <div className="bio">
           <span className="name">Joel Polley, RN</span>
-          <span className="role">20 years ICU &amp; Emergency · 402K across TikTok, Facebook &amp; Instagram</span>
+          <span className="role">20-year ICU nurse · Trusted by 402,000+ people</span>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--ink-soft)' }}>
           <Star size={14} fill="currentColor" stroke="none" style={{ color: 'var(--gold)' }} />
@@ -541,10 +540,10 @@ function QuizModule({ products }) {
             <div key="email">
               <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>One last step</span>
               <h2 className="quiz-question">
-                Where should Joel send your map?
+                Where should we send your plan?
               </h2>
               <p className="quiz-subtitle">
-                Your map, hand-matched to your Triangle — plus the Cook For Life plant-based cookbook, free.
+                Your plan, built for your answers — plus a free plant-based cookbook.
               </p>
 
               <form onSubmit={submitEmail} style={{ display: 'grid', gap: '0.65rem' }}>
@@ -565,7 +564,7 @@ function QuizModule({ products }) {
                 />
                 {error && <p style={{ color: 'var(--clay)', fontSize: '0.82rem' }}>{error}</p>}
                 <button type="submit" className="btn btn-ink btn-lg" disabled={loading} style={{ marginTop: '0.35rem' }}>
-                  {loading ? 'Sending…' : 'Show me my map'}
+                  {loading ? 'Sending…' : 'Show me my plan'}
                   <ArrowRight size={16} className="arrow" />
                 </button>
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.5rem', textAlign: 'center' }}>
@@ -605,33 +604,32 @@ function QuizModule({ products }) {
                   <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>Your dominant corner · {pressureCopy.label}</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
                     {answers.medication === 'want_off'
-                      ? 'Joel matched you with a map for the women walking down with their doctor.'
+                      ? 'Your plan is built to help you work your way off pills safely.'
                       : answers.medication === 'on_meds'
-                      ? 'Joel matched you with a map that works beside your pills.'
-                      : 'Joel matched you with a map for the women staying free from pills.'}
+                      ? 'Your plan works alongside your current pill — and helps you move toward freedom.'
+                      : 'Your plan is built to keep you free from pills for good.'}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
-                    1,247 women have walked this path. Women who score {riskScore}/10 and start <strong>{urgency.label}</strong> are usually the ones who write Joel back by day 4.
+                    Over 1,200 people have walked this path. People who score {riskScore}/10 and start <strong>{urgency.label}</strong> usually feel a change by day 4.
                   </div>
                 </div>
               </div>
 
               <h2 className="display-s" style={{ marginBottom: '0.5rem' }}>
-                {name ? `${name}, your` : 'Your'} <em className="ital-display" style={{ color: 'var(--clay)' }}>map</em> is ready.
+                {name ? `${name}, your` : 'Your'} <em className="ital-display" style={{ color: 'var(--clay)' }}>plan</em> is ready.
               </h2>
 
               <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)', margin: '0.5rem 0 0.5rem' }}>
-                Your Triangle leans hardest on <strong>{pressureCopy.label}</strong>. Joel's map starts there — because moving that corner moves the other two by week two.
+                Your biggest issue is <strong>{pressureCopy.label}</strong>. We start there — because fixing that one helps the other two fall in line.
               </p>
 
               <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.5rem' }}>
                 <em>{pressureCopy.teach}</em>
               </p>
 
-              {/* Epiphany Bridge — Brunson belief break in Joel's voice, no negatives */}
               <p style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0.5rem 0 0.25rem', fontStyle: 'italic' }}>
-                Twenty years in the ICU taught Joel one thing the textbooks left out: the women who got well fastest understood their Triangle. They knew which corner to love first. The map you are about to see is the same one Joel hands to his own family.
+                After 20 years as an ICU nurse, Joel learned one thing: the people who got better fastest found their root cause first. This plan is the same one he gives his own family.
               </p>
 
               {/* 3 Tips — each creates desire for the full protocol */}
@@ -667,7 +665,7 @@ function QuizModule({ products }) {
 
               {/* Identity nudge — Hardy Future Self. No negatives, future-self voice. */}
               <p style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', margin: '0 0 1rem', fontWeight: 500 }}>
-                A week from today you could be the woman who knows her Triangle by heart — and watches her cuff answer back. The map starts that shift on day one.
+                A week from now you could be the person who finally stopped worrying about blood pressure — because you fixed the root cause. It starts today.
               </p>
 
               {/* Order bump: DISABLED 2026-05-09 streamline pass. Panel consensus
@@ -737,8 +735,8 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Send my map + Stack — $29 <ArrowRight size={16} className="arrow" /></>
-                      : <>Send me my map — {recommended.price} <ArrowRight size={16} className="arrow" /></>
+                      ? <>Send my plan + Stack — $29 <ArrowRight size={16} className="arrow" /></>
+                      : <>Send me my plan — {recommended.price} <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
               )}
@@ -752,22 +750,22 @@ function QuizModule({ products }) {
                 marginBottom: '1rem',
               }}>
                 <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.55, fontWeight: 500, marginBottom: '0.75rem' }}>
-                  1,247 women are already on this path
+                  Over 1,200 people are already on this path
                 </div>
                 <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', lineHeight: 1.2, marginBottom: '0.75rem', fontWeight: 500 }}>
-                  Picture a Tuesday, <em style={{ color: 'var(--clay)' }}>6 months</em> from now.
+                  Picture your life <em style={{ color: 'var(--clay)' }}>without</em> blood pressure worry.
                 </h3>
                 <p style={{ fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 1.25rem' }}>
-                  You wake at 7. Sunlight on the kitchen floor. Hibiscus tea on the table. You take the cuff out — first time in 3 weeks — and read <strong style={{ color: 'var(--ink)' }}>122 over 78.</strong> You write it in the journal. You text your daughter. Your pill bottle? Two shelves down, behind the floss. Hasn't opened in <strong style={{ color: 'var(--ink)' }}>47 days.</strong> That's where The Path to BP Freedom ends. Your first step starts today.
+                  You wake up. Feel good. No pills on the counter. No cuff on the nightstand. No worry in your chest. You check in with your body and it says <strong style={{ color: 'var(--ink)' }}>I'm good.</strong> That is where this plan takes you. No pills. No supplements. No daily blood pressure checks. <strong style={{ color: 'var(--ink)' }}>Just living your life.</strong> Your first step starts today.
                 </p>
 
                 <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   {[
-                    { icon: '📋', label: 'The 10-day daily map — what to do each morning, in plain words', sub: 'Day 4 is the day most women write Joel: "wait, my numbers moved."' },
-                    { icon: '🌿', label: 'Joel\'s 7 most-trusted herbs — names, doses, what to skip on pills', sub: 'Herb #3 surprised Linda\'s cardiologist.' },
-                    { icon: '🩺', label: 'The 9-line doctor-visit script — word for word', sub: 'Most doctors say yes to step one before you finish the page.' },
-                    { icon: '🍽️', label: 'Cook For Life — 45 plant-rich meals (bonus)', sub: 'Built around the 7 foods that quiet all three corners. Joel\'s grandmother\'s bean soup is page 22.' },
-                    { icon: '👥', label: 'The Skool community — 1,247 women already walking', sub: 'Search "day 4" and read what is coming for you.' },
+                    { icon: '📋', label: 'Your 10-day plan — what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
+                    { icon: '🌿', label: '7 herbs that help blood pressure — names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
+                    { icon: '🗣️', label: 'What to say to your doctor — word for word', sub: 'So they support your plan instead of adding more pills.' },
+                    { icon: '🍽️', label: 'Cook For Life — 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
+                    { icon: '👥', label: 'The community — over 1,200 people on the same path', sub: 'You are not doing this alone.' },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
@@ -781,7 +779,7 @@ function QuizModule({ products }) {
 
                 {/* Price anchor — Kennedy 3-number compare. Driven by `recommended.price`. */}
                 <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
-                  One visit with a naturopath: $150 to $300. One month of brand-name pills with co-pay: $80 to $200. Your map, hand-matched to your Triangle, delivered to your inbox today: <strong style={{ color: 'var(--ink)' }}>{recommended?.price ?? '$17'}</strong>. One time. No refills. No co-pay.
+                  One doctor visit: $150 to $300. One month of pills: $80 to $200. Your plan, built for your body, in your inbox today: <strong style={{ color: 'var(--ink)' }}>{recommended?.price ?? '$17'}</strong>. One time. No refills. No monthly cost.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
@@ -802,7 +800,7 @@ function QuizModule({ products }) {
                   marginBottom: '0.75rem',
                 }}>
                   <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
-                    Joel's promise: Walk the 30-day map. If your doctor and you haven't agreed to step down a single pill by day 30, Joel refunds every penny. No hoops. No fine print.
+                    Joel's promise: Follow the 30-day plan. If you and your doctor haven't talked about stepping down a pill by day 30, you get every penny back. No hoops. No fine print.
                   </p>
                 </div>
 
@@ -825,13 +823,13 @@ function QuizModule({ products }) {
                     {bumpLoading
                       ? 'Loading checkout…'
                       : addBump
-                        ? <>Yes Joel — send my map + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                        : <>Yes Joel — send my map ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
+                        ? <>Yes — send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                        : <>Yes — send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
                     }
                   </a>
                 )}
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
-                  Inbox in 60 seconds · Skool community included · One-time. No subscription.
+                  In your inbox in 60 seconds · Community included · One-time. No subscription.
                 </p>
               </div>
 
@@ -860,11 +858,11 @@ function QuizModule({ products }) {
                   </p>
                   <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 0.85rem', display: 'grid', gap: '0.4rem' }}>
                     {[
-                      'The Full-Stack BP path (weeks 2–4) — the protocol that locks the drop in',
-                      'BP Reset Graduation phase — the pill-conversation script for Day 30',
-                      'Joel\'s complete herb formulary with dosing ranges + med-interaction quick-ref',
-                      'Printable BP tracker + daily readings log (the one Linda used)',
-                      'All future updates to the BP Reset library — for life',
+                      'The full 4-week path — locks in your results for good',
+                      'The pill-conversation script for Day 30 — so your doctor is on board',
+                      'Every herb with exact amounts + what to avoid if you take pills',
+                      'Printable tracker + daily log (the one Linda used)',
+                      'All future updates — for life',
                     ].map((line, i) => (
                       <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink)' }}>
                         <span style={{ color: 'var(--sage-deep)', fontWeight: 700, flexShrink: 0 }}>✓</span>
@@ -873,7 +871,7 @@ function QuizModule({ products }) {
                     ))}
                   </ul>
                   <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0 0 0.75rem', fontStyle: 'italic', lineHeight: 1.45 }}>
-                    Why most women pick this: the starter gets you started. The kit gets you to a closed pill bottle.
+                    The starter gets you going. The kit gets you all the way to freedom.
                   </p>
                   <a
                     href={upsell.stripe_payment_link}
@@ -1078,16 +1076,16 @@ function NursesNote() {
               A note from <em className="ital-display" style={{ color: 'var(--clay)' }}>Joel.</em>
             </h3>
             <p className="lede" style={{ marginBottom: '1.25rem' }}>
-              Twenty years in the ICU taught Joel one thing the textbooks left out:
-              the women who got well fastest understood their Triangle. They knew which corner to love first.
+              After 20 years in the ICU, Joel saw the same thing over and over:
+              the people who got better fastest found their root cause first. Not more pills. Not more tests. The root cause.
             </p>
             <p style={{ color: 'var(--ink-soft)', marginBottom: '2rem' }}>
-              The map you are about to see is the same one Joel hands his own family.
-              Plain words. Real herbs. Real doses. A nurse who has been in the room — and on the other side of the cuff —
-              walking you home.
+              This plan is the same one Joel gives his own family.
+              Simple words. Real herbs. Real amounts. A nurse who has been in the room
+              helping you get to a life with no pills and no worry.
             </p>
             <a href="#top" className="btn btn-ink" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-              Show me my Triangle
+              Take the free quiz
               <ArrowUpRight size={16} className="arrow" />
             </a>
           </div>
@@ -1103,9 +1101,9 @@ function NursesNote() {
             }}>
               <Quote size={28} style={{ color: 'var(--clay)', marginBottom: '1rem' }} />
               <p className="display-s" style={{ margin: '0 0 1.5rem', fontStyle: 'italic', fontVariationSettings: '"SOFT" 100, "opsz" 72' }}>
-                "Most of my patients did not need one more pill.
-                They needed someone to sit down and actually explain
-                what was happening."
+                "Most of my patients didn't need another pill.
+                They needed someone to explain what was really going on —
+                so they could fix it themselves."
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--muted)', fontSize: '0.88rem' }}>
                 <div className="avatar" style={{
@@ -1140,17 +1138,17 @@ function HowItWorks() {
     {
       n: '01',
       t: 'Stress Pressure',
-      d: 'Your stress switch is stuck on — body squeezes the pipes all day. Calmed by morning sunlight, hours before midnight, and 25 things to be grateful for.',
+      d: 'Stress keeps your body tight. That makes blood pressure go up. Fixed by better sleep, morning sunlight, and simple daily habits.',
     },
     {
       n: '02',
       t: 'Sugar Pressure',
-      d: 'Sugar stays high — water sticks, vessel walls swell, BP climbs. Calmed by two real meals, no snacks between, and a 10-minute walk after each.',
+      d: 'Too much sugar makes your blood heavy. That pushes your numbers up. Fixed by eating real food, walking after meals, and cutting the snacks.',
     },
     {
       n: '03',
       t: 'Pipe Pressure',
-      d: 'Pipes got stiff — same blood, harder squeeze to push it through. Calmed by water, the walk, hibiscus tea, and the right form of magnesium.',
+      d: 'Your blood vessels got stiff over time. Your heart has to push harder. Fixed by water, walking, hibiscus tea, and the right form of magnesium.',
     },
   ];
 
@@ -1165,7 +1163,7 @@ function HowItWorks() {
           Three Pressures. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
         </h2>
         <p className="lede" style={{ maxWidth: '52ch', margin: '0 0 clamp(2.5rem, 5vw, 4rem)' }}>
-          Your cuff number is the sum of three Pressures — Stress, Sugar, and Pipes. Calm the loudest one and the other two follow. 1,247 women are on the path right now.
+          Your blood pressure is high for one of three reasons. Find yours, fix it, and the other two calm down on their own. Over 1,200 people are on this path right now.
         </p>
 
         <ul className="ruled-list">
@@ -1268,16 +1266,16 @@ function FinalCTA() {
   return (
     <section className="section surface-warm">
       <div className="shell-tight" style={{ textAlign: 'center' }}>
-        <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>90 seconds · Your map today</span>
+        <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>90 seconds · Your plan today</span>
         <h2 className="display-l" style={{ margin: '1.25rem auto 1.5rem', maxWidth: '22ch' }}>
-          3 corners. 30 days. One closed pill <em className="ital-display" style={{ color: 'var(--clay)' }}>bottle.</em>
+          No pills. No cuff. No worry. Just <em className="ital-display" style={{ color: 'var(--clay)' }}>life.</em>
         </h2>
         <p className="lede" style={{ margin: '0 auto 1.5rem', maxWidth: '46ch' }}>
-          90 seconds from now, you will have a map written for your Triangle — and your first step will already be on the calendar. 1,247 women are walking the same path. Yours starts today.
+          90 seconds from now you will have a plan built for your body — and your first step toward a life free from blood pressure worry. Over 1,200 people are already on this path. Yours starts today.
         </p>
 
         <a href="#top" className="btn btn-ink btn-lg" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ display: 'inline-flex' }}>
-          Show me my Triangle
+          Take the free quiz
           <ArrowUpRight size={16} className="arrow" />
         </a>
       </div>
