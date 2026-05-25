@@ -250,9 +250,39 @@ export default function QuizPage() {
    Hero — editorial layout with integrated assessment quiz
    ------------------------------------------------------------------ */
 
+function InternationalBanner() {
+  return (
+    <a
+      href="https://shahidizvi.gumroad.com/l/ekqnd"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        padding: '0.65rem 1rem',
+        background: 'var(--sage)',
+        color: 'var(--cream)',
+        fontSize: '0.88rem',
+        fontWeight: 600,
+        textDecoration: 'none',
+        letterSpacing: '0.01em',
+        textAlign: 'center',
+        lineHeight: 1.4,
+      }}
+    >
+      <span style={{ fontSize: '1.1rem' }}>🌍</span>
+      <span>Outside the US? Get your plan here — $7</span>
+      <ArrowRight size={14} style={{ flexShrink: 0 }} />
+    </a>
+  );
+}
+
 function Hero({ products }) {
   return (
     <section className="hero-root">
+      <InternationalBanner />
       <div className="shell">
         <div className="hero-grid">
           <HeroCopy />
