@@ -10,14 +10,14 @@
 // is the new top of the high-ticket ladder; conversion into paid programs
 // happens on the call, not on the page.
 //
-// Calendly: https://calendly.com/braveworksrn/30min
+// Calendly: https://calendly.com/braveworksrn/60min (event slug is "60min" even though the call is 30 min)
 // All "Work with Joel 1:1" CTAs site-wide now route here.
 
 import { useEffect } from 'react';
 import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, HelpCircle, Calendar, Sparkles } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
-const CALENDLY_URL = 'https://calendly.com/braveworksrn/30min';
+const CALENDLY_URL = 'https://calendly.com/braveworksrn/60min';
 
 // Calendly inline embed. Loads the widget script once on mount and renders
 // the iframe at full width. Falls back gracefully on slow connections —
