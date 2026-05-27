@@ -337,6 +337,7 @@ export const AMOUNT_TO_TIER = {
   // converter. Stripe price_1TNGMuHseZnO3rRZSIMPnPaO, Payment Link
   // plink_1TNGMvHseZnO3rRZlOi4zbxG, reactivated 2026-05-20.
   1299: 'bp-cure-book',
+  1200: 'bp-cure-book',  // $12.00 variant (bpcures.com alternate price point)
 
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.
