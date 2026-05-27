@@ -188,6 +188,13 @@ function App() {
           {/* DFY client voice-intake — token-gated, standalone (no nav/footer).
               Each client gets a unique URL like /intake/karen-bush?token=... */}
           <Route path="/intake/:clientSlug" element={<IntakeFormPage />} />
+
+          {/* 404 catch-all. Without this, unknown URLs (e.g. /privacy,
+              /terms, /disclaimer that haven't been built yet) render an
+              empty <Routes/> which browsers + smoke-test crawlers
+              interpret as a hung page. Catch-all routes to home so users
+              always see SOMETHING. 2026-05-25 fix. */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </Router>
