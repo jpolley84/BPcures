@@ -191,10 +191,7 @@ const CheckoutPage = () => {
         <div className="container-mobile-first">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
             {[
-              { icon: Play, text: '162K on TikTok' },
-              { icon: Users, text: '215K on Facebook' },
-              { icon: TrendingUp, text: '25K on Instagram' },
-              { icon: Users, text: '1,100+ community members' },
+              { icon: Users, text: 'Trusted by 403,000+ people' },
             ].map((item, i) => (
               <div key={i} className="proof-badge">
                 <item.icon size={15} className="text-[#6C3483]" />
@@ -517,3 +514,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+                                                                                                                                                                              
