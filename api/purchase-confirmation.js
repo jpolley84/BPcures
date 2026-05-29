@@ -84,6 +84,7 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
+    includesDiscoveryCall: true,
     // 2026-05-10 funnel-fix: was pointing to deactivated plink
     // 9B63cv8k3b5Y63h8VrfnO0z (Complete Book Bundle $27 — pulled from Stripe in
     // last week's streamline pass). Repointed to the canonical $47 BP Reset
@@ -99,6 +100,7 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.cortisol_challenge, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
+    includesDiscoveryCall: true,
     // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
     // the canonical $47 Cortisol Reset Kit (3cIbJ1asbca2fDR2x3fnO0m) — same
     // category, the natural ladder rung.
@@ -113,6 +115,7 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.blood_sugar_challenge, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
+    includesDiscoveryCall: true,
     // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
     // the canonical $47 Blood Sugar Reset Kit (3cI28rdEn8XQfDRdbHfnO0o).
     upgradeUrl: 'https://buy.stripe.com/3cI28rdEn8XQfDRdbHfnO0o',
@@ -432,6 +435,26 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
     </td></tr>
   ` : '';
 
+  // 2026-05-29 — free 30-min discovery call as a $297 bonus on the $17 kit.
+  // Joel's directive: the call is now a stack bonus; the Calendly link is
+  // delivered here in the purchase confirmation email (tier 1 + variants).
+  const discoveryCallBlock = config.includesDiscoveryCall ? `
+    <tr><td style="padding:6px 28px 18px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5E5;border:2px solid #B85A36;border-radius:14px;">
+        <tr><td style="padding:24px;">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin-bottom:10px;">Your free bonus &middot; $297 value</div>
+          <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:8px;font-weight:500;">A free 30-minute 1:1 call with Joel, RN</div>
+          <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0 0 14px;">
+            You don't have to figure this out alone. As a thank-you for getting the kit, you've got a free 30-minute call with Joel. Bring your numbers, your meds, and your questions &mdash; he'll map your exact situation and tell you the one thing to do first. No pitch, just nursing.
+          </p>
+          <a href="https://calendly.com/braveworksrn/60min" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
+            Book your free call &rarr;
+          </a>
+        </td></tr>
+      </table>
+    </td></tr>
+  ` : '';
+
   // Coaching block content varies by tier flavor:
   //   'vip'      → weekly group coaching only (Mondays 10pm EST)
   //   'premium'  → Barbara O'Neill LIVE + group coaching
@@ -629,6 +652,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
       </td></tr>
 
       ${challengeBlock}
+      ${discoveryCallBlock}
       ${coachingBlock}
 
       <tr><td style="padding:6px 28px 18px;">

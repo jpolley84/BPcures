@@ -92,6 +92,7 @@ const CheckoutPage = () => {
   };
 
   const whatIsIncluded = [
+    { name: 'BONUS: Free 30-Minute Call with Joel, RN', description: 'A private 1:1 call after you buy. Bring your numbers and your meds — Joel maps your exact situation and tells you the one thing to do first. No pitch, just nursing.', value: '$297' },
     { name: 'Master Blood Pressure Document', description: 'The full protocol. What to take, when to take it, how much.', value: '$47' },
     { name: 'Top 10 Herbs Deep Dive', description: 'Each herb matched to the drug it mimics — with dosages your doctor never learned in med school.', value: '$27' },
     // 2026-05-12 naming-taxonomy fix: was "10-Day Blood Pressure Reset Challenge"
