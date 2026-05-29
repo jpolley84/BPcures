@@ -32,6 +32,10 @@
   ],
   "crons": [
     {
+      "path": "/api/calendly-poll-cron",
+      "schedule": "*/15 * * * *"
+    },
+    {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
     },
