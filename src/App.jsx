@@ -98,6 +98,13 @@ function App() {
               traffic that wants the diagnostic before buying. */}
           <Route path="/quiz" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
+          {/* /start — quiz-first entry for social bio links (TikTok/FB/IG).
+              2026-05-29: the homepage sales letter was leaking 98% of cold
+              traffic (1.7% email capture). /start routes that audience to the
+              44%-converting quiz instead. Same QuizPage, clean URL for bios
+              + UTM attribution. */}
+          <Route path="/start" element={<SiteLayout><QuizPage /></SiteLayout>} />
+
           {/* Challenge sales page — restored 2026-05-05 as VIP-focused upsell.
               Premium ($397) section is hidden inside ChallengePage but the page
               now serves as the dedicated VIP ($97) upgrade landing surface for

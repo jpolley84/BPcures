@@ -19,8 +19,6 @@ import {
 const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17 (primary)
 const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12 (bump)
 
-const TOTAL_STEPS = 5;
-
 // Each option carries a `score` (0–3) that contributes to a 1–10 risk score.
 // Rebuilt 2026-05-16: routes to the "Three Pressures" — Stress Pressure
 // (cortisol), Sugar Pressure (insulin), Pipe Pressure (vascular). The
@@ -72,11 +70,40 @@ const QUESTIONS = [
       { value: 'starting', label: '🌱 A place to start', desc: "I'm ready.", score: 0 },
     ],
   },
-  // 2026-05-20 funnel-audit: removed the age question (Q5).
-  // Quiz-funnel benchmark for completion = 3-4 questions. Age was the
-  // weakest signal (max +1 score range) and didn't affect tier routing.
-  // Industry-typical lift from dropping the 5th question: +6% completion.
+  // 2026-05-29 — coaching pre-qualification questions. score:0 so the 1-10
+  // risk-score math (computeRiskScore) is unchanged; these feed
+  // computeCoachingFit() which routes high-intent / high-severity takers to
+  // the FREE discovery call on the results page (Levesque Ask Method: segment
+  // first, then route the right people to the high-ticket door).
+  {
+    id: 'support',
+    question: "How do you want to take this on?",
+    subtitle: "No wrong answer — it just tells me how to help.",
+    options: [
+      { value: 'diy', label: '📘 On my own', desc: "Give me the plan, I'll run it.", score: 0 },
+      { value: 'guided', label: '🤝 Plan + backup', desc: 'I want a way to ask questions.', score: 0 },
+      { value: 'personal', label: '🩺 A nurse on my case', desc: 'My numbers, my meds — not generic.', score: 0 },
+    ],
+  },
+  {
+    id: 'call_interest',
+    question: "Want a free 30-min call with a nurse to map your situation?",
+    subtitle: "No cost, no pressure. Just a real conversation.",
+    options: [
+      { value: 'yes', label: "🙋 Yes, I'd book it", desc: 'Show me how.', score: 0 },
+      { value: 'maybe', label: '🤔 Maybe — tell me more', desc: 'Curious but not sure.', score: 0 },
+      { value: 'no', label: '📖 Just the plan, thanks', desc: 'Self-paced is my speed.', score: 0 },
+    ],
+  },
+  // 2026-05-20 funnel-audit: removed the age question. Quiz-funnel completion
+  // benchmark is 3-4 Qs; we're now at 6 with the 2 coaching Qs above — watch
+  // completion rate, the coaching-routing value should outweigh the dropoff.
 ];
+
+// TOTAL_STEPS derives from QUESTIONS.length so adding/removing a question
+// can't desync the step counter (fixes a latent off-by-one from the earlier
+// age-question removal where TOTAL_STEPS stayed 5 with only 4 questions).
+const TOTAL_STEPS = QUESTIONS.length;
 
 // PRESSURE_COPY — display strings for each of the Three Pressures.
 // Replaces the old CONCERN_COPY (blood_pressure / cortisol / blood_sugar).
@@ -215,6 +242,24 @@ function computeRiskScore(answers) {
   // Max raw across 4 questions: 2+3+3+2 = 10 -> normalize to 1..10
   const normalized = Math.round((raw / 10) * 9) + 1;
   return Math.max(1, Math.min(10, normalized));
+}
+
+// 2026-05-29 — coaching-fit score. Higher = better fit for the free 1:1
+// discovery call (now the top of the high-ticket ladder). Reads the new
+// support/call_interest answers plus the severity signals (meds, duration).
+// Max ~11. Results page routes fit>=6 (or an explicit "yes") to the call
+// instead of the $17 self-serve plan.
+function computeCoachingFit(answers) {
+  let fit = 0;
+  if (answers.call_interest === 'yes') fit += 4;
+  else if (answers.call_interest === 'maybe') fit += 2;
+  if (answers.support === 'personal') fit += 3;
+  else if (answers.support === 'guided') fit += 1;
+  if (answers.medication === 'want_off') fit += 2;       // 2+ pills
+  else if (answers.medication === 'on_meds') fit += 1;   // 1 pill
+  if (answers.duration === 'very_long') fit += 2;        // 5+ years
+  else if (answers.duration === 'long') fit += 1;        // 3-5 years
+  return fit;
 }
 
 // Tier-to-product mapping for the results page recommendation badge.
@@ -455,6 +500,12 @@ function QuizModule({ products }) {
   const pressure = answers.pressure ?? 'pipes';
   const concern = PRESSURE_TO_CATEGORY[pressure] ?? 'blood_pressure';
   const riskScore = useMemo(() => computeRiskScore(answers), [answers]);
+  // Coaching routing — high-fit takers see the free 1:1 call as the primary
+  // next step on the results page; everyone else gets the $17 self-serve plan.
+  const coachingFit = useMemo(() => computeCoachingFit(answers), [answers]);
+  const showCoachingCTA =
+    answers.call_interest === 'yes' ||
+    (answers.call_interest === 'maybe' && coachingFit >= 6);
 
   async function submitEmail(e) {
     e.preventDefault();
@@ -645,6 +696,44 @@ function QuizModule({ products }) {
                   </div>
                 </div>
               </div>
+
+              {/* Coaching CTA — shown only to high-fit takers (explicit "yes"
+                  to the call question, or "maybe" + high coaching-fit score).
+                  Routes them to the FREE discovery call; the $17 plan stays
+                  below as the self-serve alternative. */}
+              {showCoachingCTA && (
+                <div style={{
+                  padding: '1.1rem 1.25rem',
+                  background: 'rgba(63, 90, 60, 0.08)',
+                  border: '1px solid var(--sage)',
+                  borderRadius: 14,
+                  marginBottom: '1.25rem',
+                }}>
+                  <div className="eyebrow-num" style={{ color: 'var(--sage)', marginBottom: '0.35rem' }}>
+                    Based on your answers · you're a strong fit
+                  </div>
+                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.15rem', lineHeight: 1.3, color: 'var(--ink)', marginBottom: '0.5rem' }}>
+                    Your best next step is a <em style={{ color: 'var(--clay)' }}>free 30-minute call</em> with Joel.
+                  </div>
+                  <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.85rem' }}>
+                    Bring your numbers and your meds. He maps your exact situation and tells you the one thing to do next. No cost, no pressure.
+                  </p>
+                  <a
+                    href="/coaching"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                      background: 'var(--sage)', color: 'var(--cream)',
+                      padding: '0.8rem 1.4rem', borderRadius: 10,
+                      textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem',
+                    }}
+                  >
+                    Book your free call <ArrowRight size={16} />
+                  </a>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0.7rem 0 0' }}>
+                    Prefer to start on your own? Your $17 plan is right below.
+                  </p>
+                </div>
+              )}
 
               <h2 className="display-s" style={{ marginBottom: '0.5rem' }}>
                 {name ? `${name}, your` : 'Your'} <em className="ital-display" style={{ color: 'var(--clay)' }}>plan</em> is ready.
