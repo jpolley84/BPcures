@@ -480,6 +480,19 @@ async function emitStripeEvent({ kind, sessionId, amountCents, email, name, tier
 async function processCheckoutCompleted(event) {
   const stripe = getStripe();
   const session = event.data.object;
+
+  // 2026-05-28 CROSS-FUNNEL GUARD. bpquiz shares one Stripe account with
+  // braveworksengine + everydaynurse/RestoreHER. Their checkout sessions
+  // also fire this webhook, so without a gate bpquiz emailed its BP Reset
+  // Kit welcome to their buyers (and vice-versa — that's how a $17 bpquiz
+  // buyer got the Engine email). Skip any session explicitly stamped as a
+  // FOREIGN funnel. bpquiz's own purchases (payment links, Amazon Pay,
+  // Checkout Sessions) carry no foreign marker, so they pass through.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz']);
+  if (FOREIGN_FUNNELS.has(session.metadata?.funnel)) {
+    return { action: 'skipped', reason: `foreign_funnel:${session.metadata.funnel}` };
+  }
+
   const customerEmail = session.customer_details?.email;
   const customerName = session.customer_details?.name;
   // 2026-05-10: route by amount_subtotal (pre-discount) so promotion-code
