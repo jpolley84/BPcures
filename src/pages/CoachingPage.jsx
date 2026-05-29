@@ -15,7 +15,11 @@
 
 import { useEffect } from 'react';
 import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, HelpCircle, Calendar, Sparkles } from 'lucide-react';
-import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+
+// 2026-05-25 BUGFIX — useScrollAnimation removed. It was assigned without
+// destructure (`const fadeIn = useScrollAnimation()` returns [ref,isVisible])
+// then attached as ref={fadeIn} to 8 sections — array-as-ref on multiple
+// elements hung the renderer. Sections render fine without entry animation.
 
 const CALENDLY_URL = 'https://calendly.com/braveworksrn/60min';
 
@@ -43,8 +47,6 @@ function CalendlyInline() {
 }
 
 export default function CoachingPage() {
-  const fadeIn = useScrollAnimation();
-
   return (
     <main className="min-h-screen" style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
 
@@ -78,7 +80,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHY THIS, WHY NOW ────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      <section className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Why a discovery call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-5" style={{ color: 'var(--ink)' }}>
@@ -94,7 +96,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHAT THE CALL IS ─────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <section className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-3xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em', textAlign: 'center' }}>What happens on the call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-8 text-center" style={{ color: 'var(--ink)' }}>
@@ -121,7 +123,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── CALENDLY EMBED ───────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      <section className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-3xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3 text-center" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>Book your call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-3 text-center" style={{ color: 'var(--ink)' }}>
@@ -148,7 +150,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── SOCIAL PROOF — static link ──────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <section className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-xl mx-auto px-5 text-center">
           <p className="text-sm font-medium mb-3 uppercase tracking-widest" style={{ color: 'var(--muted)', letterSpacing: '0.12em' }}>
             Where the work shows up
@@ -169,7 +171,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHAT TO BRING ────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      <section className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>What to have ready</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)' }}>
@@ -196,7 +198,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── WHO JOEL IS ──────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <section className="py-14" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-2xl mx-auto px-5 text-center">
           <picture>
             <source srcSet="/headshot.webp" type="image/webp" />
@@ -222,7 +224,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── REAL CASE — anonymized ───────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--sage-soft)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+      <section className="py-14" style={{ background: 'var(--sage-soft)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--sage-deep)', letterSpacing: '0.14em' }}>What happens after the call</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)' }}>
@@ -240,7 +242,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── FAQ ──────────────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-14" style={{ background: 'var(--paper)' }}>
+      <section className="py-14" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em', textAlign: 'center' }}>Common questions</div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-7 text-center" style={{ color: 'var(--ink)' }}>
@@ -271,7 +273,7 @@ export default function CoachingPage() {
       </section>
 
       {/* ─── FINAL CTA ────────────────────────────────────────────── */}
-      <section ref={fadeIn} className="py-16" style={{ background: 'var(--ink)', color: 'var(--paper-light)' }}>
+      <section className="py-16" style={{ background: 'var(--ink)', color: 'var(--paper-light)' }}>
         <div className="max-w-2xl mx-auto px-5 text-center">
           <Calendar size={28} color="#F5C68F" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
           <div className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: 'rgba(184,90,54,0.18)', color: '#F5C68F', letterSpacing: '0.14em' }}>
