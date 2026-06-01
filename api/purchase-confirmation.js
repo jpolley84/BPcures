@@ -340,6 +340,15 @@ export const AMOUNT_TO_TIER = {
   // converter. Stripe price_1TNGMuHseZnO3rRZSIMPnPaO, Payment Link
   // plink_1TNGMvHseZnO3rRZlOi4zbxG, reactivated 2026-05-20.
   1299: 'bp-cure-book',
+  // 2026-06-01: bpcures.com sells the SAME book via its own "$17+$12"
+  // mechanic at a flat $12.00 (amount_subtotal 1200) — distinct price from
+  // bpquiz's $12.99 upsell above. bpcures shares this one Stripe account +
+  // webhook, and is NOT a FOREIGN_FUNNEL, so its charges route here. 1200
+  // was unmapped → every $12 buyer paid and got NO welcome email (each one
+  // fired an [ALERT] "Unmapped Stripe amount: $12.00"). Same deliverable
+  // (bp-cures-10-day-reset.pdf) → same tier. ~17 buyers affected in May;
+  // backfilled manually via /api/test-purchase-email.
+  1200: 'bp-cure-book',
 
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.
