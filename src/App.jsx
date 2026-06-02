@@ -36,6 +36,7 @@ const Cohort2Page = lazy(() => import('./pages/Cohort2Page'));
 const SeminarPage = lazy(() => import('./pages/SeminarPage'));
 const SeminarWelcomePage = lazy(() => import('./pages/SeminarWelcomePage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
+const LuveniaIntakePage = lazy(() => import('./pages/LuveniaIntakePage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
 const BlogListPage = lazy(() => import('./pages/BlogListPage'));
@@ -195,6 +196,11 @@ function App() {
           {/* Per-client pre-call intake — also reachable via subdomain
               wakita.bpquiz.com (see SUBDOMAIN_PAGE map). Standalone — no nav. */}
           <Route path="/wakita" element={<WakitaIntakePage />} />
+
+          {/* Luvenia's BP Triangle pre-call intake — standalone, no nav/footer.
+              Texted privately. POST → /api/luvenia-intake → KV save + PDF
+              + email to Joel. Same shape as /wakita. */}
+          <Route path="/luvenia" element={<LuveniaIntakePage />} />
 
           {/* Operations dashboard — passcode-gated, standalone */}
           <Route path="/ops" element={<OpsDashboardPage />} />
