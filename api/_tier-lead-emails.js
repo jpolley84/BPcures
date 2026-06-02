@@ -1,9 +1,14 @@
 // _tier-lead-emails.js — LEAD state sequence ($0, pre-purchase).
 //
 // Audience: just gave email via quiz / lead-magnet / exit-popup. State = `lead`.
-// Goal: convert to $17 BP Starter buyer in ≤21 days.
+// Goal: teach the BP Triangle (2 emails per corner) while climbing the full
+//   offer ladder — $17 Kit → BP Cures book → $97 Challenge → RestoreHER event
+//   (Virtual + Platinum VIP) → $1,997 1:1 coaching.
 // Length: 10 emails over 21 days (Day 0, 1, 3, 5, 7, 10, 13, 16, 19, 21).
-// Pitch rule: $17 KIT_URL only. NEVER pitch $47 / $97 / $297 / $1,997 in this arc.
+// 2026-05-28 rewrite: content-only swap. Day keys + tierLeadSentFlag UNCHANGED
+//   so live subscribers keep their position and just receive the new copy.
+// Arc: Day 0 overview · 1/3 Pipe Pressure · 5/7 Sugar Pressure · 10/13 Stress
+//   Pressure (cortisol/hormones → RestoreHER) · 16/19 coaching · 21 recap.
 //
 // Each day exports: { subject, subjectB, preview, htmlBody(ctx), textBody(ctx) }
 // Where ctx = { firstName, unsubUrl }
@@ -95,56 +100,75 @@ function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
   </div>`;
 }
 
-// ─── DAY 0 — Welcome + Triangle map delivery ──────────────────────────
+// ─── DAY 0 — Welcome + future self + Triangle overview (3 faucets, 1 sink)
 const day0 = {
-  subject: 'Your BP Triangle map is inside',
-  subjectB: '[Name], your map from Joel',
-  preview: 'The three pressures behind every BP number — yours included.',
+  subject: 'Three faucets, one sink',
+  subjectB: 'Meet the person you are 90 days from now',
+  preview: 'Why your BP number is really three numbers wearing one coat.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`You just told me your blood pressure is one of the things on your mind. I want you to know — that quiet decision to put your email in mattered.`)}
-    ${p(`I'm Joel. RN for 20 years — most of it in ICU and emergency. Then I crossed over and trained as a naturopath. I now run BraveWorks, and the women in my world are mostly 50 to 70, mostly on at least one BP medication, and mostly tired of being told "it's just genetic."`)}
-    ${p(`It's not just genetic. And I'm going to show you why.`)}
-    ${bigQuote('Your map: the BP Triangle Method.')}
-    ${p(`Every blood pressure number — yours, your husband's, your sister's — is being pushed up by some combination of three forces. I call them the Three Pressures. Most plans only address one. That's why most plans plateau.`)}
+    ${p(`You just told me your blood pressure is one of the things on your mind. That quiet decision to put your email in mattered. Most people scroll past. You stopped.`)}
+    ${p(`I'm Joel. RN for 20 years — most of it in ICU and emergency. Then I crossed over and trained as a naturopath. I run BraveWorks now, and the people I work with are mostly women 50 to 70, with a strong share of men in the same window — all on at least one BP medication, all tired of being told "it's just genetic."`)}
+    ${p(`It's not just genetic. I'm going to show you why.`)}
+    ${p(`But before the teaching, I want you to meet someone.`)}
+    ${bigQuote('Picture yourself 90 days from now.')}
+    ${p(`You cuff your arm in the morning and the number is lower than it was today. Not by accident — because you know exactly why. You walk into your next appointment calm, with a log in your hand, and your doctor leans in and asks, "What have you been doing?" You sleep through the night. The people who love you notice the color is back in your face.`)}
+    ${p(`That woman is not a different person. She's you, with a map. Today I'm handing you the map.`, { margin: '0 0 28px' })}
+    ${bigQuote('Your map: The BP Triangle Method™.')}
+    ${p(`Here's the picture I want in your head. Imagine a sink that's overflowing. You can mop the floor all day — that's what a medication does, and thank God for it, it keeps the water from ruining the house. But the sink is still overflowing. Why? Because three faucets are pouring into it.`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The Three Pressures</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Stress Pressure</strong> — your cortisol stays high. Sleep is light, mornings are tight, the alarm goes off and your shoulders are already at your ears.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Sugar Pressure</strong> — your insulin is doing the constricting. White bread, cereal, the 3 PM cookie. Numbers spike harder than table salt ever will.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Pipe Pressure</strong> — your vessels themselves. Less elastic. Inflamed. Constricted. The kind of thing diet alone has the slowest effect on.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The three faucets (the Three Pressures)</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Stress Pressure</strong> — cortisol. Your foot is stuck on the gas. Sleep is light, mornings are tight, the alarm goes off and your shoulders are already at your ears.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Sugar Pressure</strong> — insulin. White bread, cereal, the 3 PM cookie. This faucet spikes your numbers harder than the salt shaker ever will.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Pipe Pressure</strong> — your vessels. Less elastic. Stiff. Constricted. The pipes the water has to push through.</p>
     `)}
-    ${p(`Almost everyone has one Pressure that's loudest. Most have two running at once. A few have all three. Once you know which is loudest in you, the path narrows — and so does the work.`)}
-    ${p(`Here's the rhythm of the next three weeks.`)}
-    ${p(`I'll send you a short email every few days. Tomorrow I'll tell you why I left the ICU — there's a reason I do this work and don't sit in a hospital anymore. Day 3 you'll get a tea that drops 7 systolic points in 6 weeks for most readers. Day 5 we go deeper on the Three Pressures so you can name yours. Day 7, you'll meet Linda — 148/94 to 128/82 in 11 days, no new medication.`, { margin: '0 0 18px' })}
-    ${p(`Read at your own pace. Forward to your daughter, your husband, anyone who's been told "your numbers are creeping up." That's how this works.`, { margin: '0 0 28px' })}
+    ${p(`Most plans turn down one faucet and wonder why the sink still overflows. The Triangle turns down all three — and works <strong>alongside</strong> your medication and your doctor, never instead of them. Mop the floor AND turn off the faucets. That's the whole idea.`)}
+    ${p(`Almost everyone has one faucet running hardest. Most have two open at once. Once you know which is loudest in you, the work narrows — and so does the worry.`, { margin: '0 0 28px' })}
+    ${p(`Now, you might be thinking: <em>is this just another guru with a "secret"?</em> Fair question. So here's my honest answer — I'm not selling a secret. I'm a nurse who got tired of watching people get mopped and sent home. There's no magic pill in these emails. There's a map, a few small inputs, and proof. You decide.`)}
+    ${p(`Want a head start? The 60-second quiz tells you which faucet is loudest in you right now. And if you'd rather skip ahead, the same protocol I hand patients leaving my practice is in the BP Starter Kit — eighteen pages, $17.`, { margin: '0 0 24px' })}
+    ${ctaButton('https://bpquiz.com', 'Take the 60-second quiz')}
+    ${p(`Here's the rhythm of the next three weeks: a short email every few days. Tomorrow — why I left the ICU. Day 3 — a tea that drops 7 systolic points in 6 weeks. Day 5 and 7 — your first faucet, the pipes. Read at your own pace. Forward to your daughter, your husband, anyone whose numbers are "creeping up."`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Hit reply and tell me which Pressure feels loudest in you right now — Stress, Sugar, or Pipe. One word is enough. I read every single reply and it helps me know what to send you next.`)}
+    ${psBox(`Hit reply and tell me which faucet feels loudest in you right now — Stress, Sugar, or Pipe. One word is enough. I read every single reply, and it helps me know what to send you next.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-You just told me your blood pressure is on your mind. That quiet decision to put your email in mattered.
+You just told me your blood pressure is on your mind. That quiet decision to put your email in mattered. Most people scroll past. You stopped.
 
-I'm Joel. RN for 20 years — most of it in ICU and emergency. Then I crossed over and trained as a naturopath. I run BraveWorks, and the women in my world are mostly 50 to 70, mostly on at least one BP medication, and mostly tired of being told "it's just genetic."
+I'm Joel. RN for 20 years — most of it in ICU and emergency. Then I crossed over and trained as a naturopath. I run BraveWorks now. The people I work with are mostly women 50 to 70, with a strong share of men in the same window — all on at least one BP med, all tired of being told "it's just genetic."
 
-It's not just genetic. I'm going to show you why.
+It's not just genetic. I'll show you why. But first, meet someone.
+
+PICTURE YOURSELF 90 DAYS FROM NOW.
+
+You cuff your arm and the number is lower — and you know exactly why. You walk into your appointment calm, log in hand, and your doctor asks, "What have you been doing?" You sleep through the night. The people who love you notice the color back in your face.
+
+That person isn't different from you. That's you, with a map. Here's the map.
 
 YOUR MAP: THE BP TRIANGLE METHOD.
 
-Every BP number is being pushed up by some combination of three forces. I call them the Three Pressures. Most plans only address one. That's why most plans plateau.
+Picture a sink that's overflowing. You can mop the floor all day — that's what a medication does, and thank God for it. But the sink keeps overflowing, because THREE FAUCETS pour into it:
 
-— Stress Pressure (cortisol). Sleep is light, mornings are tight.
-— Sugar Pressure (insulin). White bread and cereal spike numbers harder than salt.
-— Pipe Pressure (vessels). Less elastic. Inflamed. Constricted.
+— Stress Pressure (cortisol). Foot stuck on the gas. Light sleep, tight mornings.
+— Sugar Pressure (insulin). Bread, cereal, the 3 PM cookie — spikes numbers harder than the salt shaker.
+— Pipe Pressure (vessels). Stiff, constricted pipes the water pushes through.
 
-Most have one loudest. Many have two running. Once you know which is yours, the path narrows.
+Most plans turn down ONE faucet. The Triangle turns down all three — alongside your medication and your doctor, never instead. Mop the floor AND turn off the faucets.
 
-Over the next three weeks: a short email every few days. Tomorrow — why I left the ICU. Day 3 — the tea that drops 7 points in 6 weeks. Day 5 — name your Pressure. Day 7 — meet Linda (148/94 → 128/82 in 11 days, no new medication).
+Is this just another guru with a "secret"? Fair question. No secret here. I'm a nurse who got tired of watching people get mopped and sent home. A map, a few small inputs, and proof. You decide.
+
+Head start: the 60-second quiz tells you which faucet is loudest in you.
+→ https://bpquiz.com
+
+Rather skip ahead? The same protocol I hand patients leaving my practice is the BP Starter Kit — 18 pages, $17.
+
+Next three weeks: a short email every few days. Tomorrow — why I left the ICU. Day 3 — the tea that drops 7 points in 6 weeks. Day 5 and 7 — the pipes.
 
 Joel
 RN, BraveWorks
 
-P.S. Hit reply and tell me which Pressure feels loudest — Stress, Sugar, or Pipe. One word is enough. I read every reply.
+P.S. Hit reply and tell me which faucet feels loudest — Stress, Sugar, or Pipe. One word is enough. I read every reply.
 
 —
 → Skool: ${SKOOL_URL}
@@ -152,52 +176,67 @@ P.S. Hit reply and tell me which Pressure feels loudest — Stress, Sugar, or Pi
 `,
 };
 
-// ─── DAY 1 — Origin story (ICU to naturopath) ─────────────────────────
+// ─── DAY 1 — Pipe Pressure #1 (vascular) + ICU origin story ────────────
 const day1 = {
-  subject: '20 years in the ICU taught me one thing',
-  subjectB: 'I almost didn\'t write this email',
-  preview: 'Why I left the bedside — and what it has to do with your numbers.',
+  subject: 'A garden hose with crimped walls',
+  subjectB: 'The first faucet: your pipes',
+  preview: 'Why I left the ICU — and what your vessels are doing right now.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`I almost didn't write this email. It's personal, and these aren't usually personal.`)}
-    ${p(`But I want you to know who's on the other end of these messages — and why I think you'll trust what I send you. So here it is.`)}
-    ${p(`I spent 20 years as a registered nurse. Most of it in ICU and emergency. I was the person standing over the bed when someone came in with a blood pressure of 220 over 130 and a stroke already starting in their brainstem.`)}
-    ${p(`I watched a lot of patients come back. I watched some not. And the ones I couldn't stop thinking about weren't the ones who came in dying — those, we expected.`)}
+    ${p(`Yesterday I showed you the three faucets. Today we open the first one: <strong>Pipe Pressure</strong> — your blood vessels themselves. But first, a quick story, because it's the reason I do this work at all.`)}
+    ${p(`I spent 20 years as a registered nurse. Most of it in ICU and emergency. I was the person standing over the bed when someone came in at 220 over 130 with a stroke already starting in the brainstem.`)}
+    ${p(`Some of those patients came back. Some didn't. But the ones I couldn't stop thinking about weren't the ones who came in dying — those, we expected.`)}
     ${bigQuote('The ones I couldn\'t shake were the ones we discharged.')}
-    ${p(`The ones who got stabilized, got handed a new prescription, got told "watch your salt and lose some weight," and walked out the door. We knew they'd be back. Most of them came back inside two years.`)}
-    ${p(`Nobody was teaching them how to use their bodies.`)}
-    ${p(`So I made a decision. I took five years and trained as a naturopathic practitioner. I learned what nursing school doesn't teach — the herbs, the hydrotherapy, the breathing, the eight laws of health that built sanitariums before there were hospitals.`)}
-    ${p(`Then I started doing what I do now — talking to women like you who have been told "your numbers are just creeping up, take this pill," and showing them what the other half of the equation looks like.`, { margin: '0 0 18px' })}
-    ${p(`I'm not anti-medication. I want to be clear about that. The work I do is <strong>AND, not INSTEAD OF</strong>. Your medication keeps you safe while we work on the inputs that put you on it in the first place. When the inputs change, your doctor will be the one to taper. Never you, never me.`)}
-    ${p(`That's the work. That's why I write you.`, { margin: '0 0 28px' })}
+    ${p(`Stabilized. Handed a new prescription. Told "watch your salt and lose some weight." Walked out the door. We knew they'd be back — and most of them were, inside two years. Nobody had taught them how to use their own bodies.`)}
+    ${p(`So I took five years and trained as a naturopath. I learned what nursing school doesn't teach: the herbs, the hydrotherapy, the breathing, the eight laws of health that built sanitariums before there were hospitals. And the first thing I had to relearn was what blood pressure even is.`, { margin: '0 0 28px' })}
+    ${bigQuote('Picture a garden hose.')}
+    ${p(`When the hose is new, the walls are soft and springy. Water flows through easy. Now picture that same hose left in the sun for ten summers — the rubber stiffens, the walls get crusty, and somewhere along the line it's crimped. To push the same water through, the pressure has to climb.`)}
+    ${p(`That's Pipe Pressure. Your vessels were once soft and springy. Over the years — inflammation, low nitric oxide, stiffening walls — they crimp and harden. Your heart has to push harder to move the same blood. The number on the cuff goes up. The pill helps relax the hose a little, but it doesn't rebuild the rubber. That part is on the inputs.`)}
+    ${p(`And here's the question I get most: <em>can something natural really be strong enough for a real medical number?</em>`)}
+    ${p(`I understand the doubt — I trained in a hospital, I respect pharmacology. So let me be straight with you. The vessels are living tissue. They respond to what you feed them. Beets and leafy greens raise nitric oxide, the molecule that tells the hose walls to relax — it's the exact same pathway nitroglycerin uses in the ER, just gentler and steadier. Potassium pulls excess sodium out so there's less water in the line. This isn't folklore. It's the same plumbing your medication works on, approached from the other end.`)}
+    ${p(`I'm not anti-medication — far from it. The work I do is <strong>AND, not INSTEAD OF</strong>. Your medication keeps you safe while we rebuild the pipes. When the inputs change, your doctor is the one who tapers. Never you, never me.`, { margin: '0 0 24px' })}
+    ${p(`That woman you pictured yesterday — the one with the lower morning number? Her pipes are softer than they were. That's not a fantasy. That's biology that answers to breakfast. The full pipe protocol — the foods, the dosing, the order — is in the BP Starter Kit.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Get the BP Starter Kit — $17')}
+    ${p(`Day 3 I'll give you the single cheapest thing you can do for your pipes this week — about three dollars at the grocery store — plus the study behind it.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you've ever had a discharge story like the one I described — yours or someone you loved — hit reply and tell me one line. I read every email and they shape what I send next.`)}
+    ${psBox(`If you've ever had a discharge story like the one I described — yours, or someone you love — hit reply and tell me one line. I read every email, and they shape what I send next.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-I almost didn't write this. It's personal, and these aren't usually personal.
+Yesterday — the three faucets. Today we open the first one: PIPE PRESSURE, your blood vessels. But first, a quick story, because it's why I do this at all.
 
-But I want you to know who's on the other end.
+I spent 20 years as an RN. Most of it ICU and emergency. I stood over the bed when someone came in at 220/130 with a stroke already starting.
 
-I spent 20 years as a registered nurse. Most of it in ICU and emergency. I stood over a lot of beds. Some patients came back. Some didn't.
+Some came back. Some didn't. But the ones I couldn't shake weren't the dying — those, we expected.
 
-The ones I couldn't shake weren't the dying — those, we expected. The ones I couldn't shake were the ones we DISCHARGED.
+THE ONES I COULDN'T SHAKE WERE THE ONES WE DISCHARGED.
 
-Stabilized. Handed a new prescription. Told "watch your salt and lose some weight." Walked out the door. We knew they'd be back. Most of them were, inside two years.
+Stabilized. New prescription. "Watch your salt, lose some weight." Out the door. We knew they'd be back. Most were, inside two years. Nobody taught them to use their own bodies.
 
-Nobody was teaching them how to use their bodies.
+So I took five years and trained as a naturopath. The herbs, hydrotherapy, breathing — the eight laws of health that built sanitariums before hospitals. And I had to relearn what blood pressure even is.
 
-So I took five years and trained as a naturopathic practitioner. The herbs, the hydrotherapy, the breathing, the eight laws of health that built sanitariums before there were hospitals.
+PICTURE A GARDEN HOSE.
 
-Now I do this work full time. I'm not anti-medication. The work I do is AND, not INSTEAD OF. Your med keeps you safe while we work on the inputs that put you on it. When the inputs change, your doctor will be the one to taper. Never you, never me.
+New hose: soft, springy walls, water flows easy. Same hose after ten summers in the sun: stiff, crusty, crimped. To push the same water through, pressure has to climb.
 
-That's why I write you.
+That's Pipe Pressure. Your vessels were soft once. Years of inflammation, low nitric oxide, stiffening walls — they crimp and harden. Your heart pushes harder. The pill relaxes the hose a little; it doesn't rebuild the rubber. That part is on the inputs.
+
+The question I get most: can something natural be strong enough for a real medical number?
+
+Straight answer: the vessels are living tissue. Beets and leafy greens raise nitric oxide — the molecule that tells the walls to relax. Same pathway nitroglycerin uses in the ER, just gentler. Potassium pulls excess sodium out. Not folklore — the same plumbing your med works on, from the other end.
+
+I'm not anti-medication. The work is AND, not INSTEAD OF. The med keeps you safe while we rebuild the pipes. Your doctor tapers — never you, never me.
+
+The full pipe protocol — foods, dosing, order — is in the BP Starter Kit.
+→ ${KIT_URL}
+
+Day 3 — the cheapest thing you can do for your pipes this week (about $3) and the study behind it.
 
 Joel
 RN, BraveWorks
 
-P.S. If you've ever had a discharge story like that — yours or someone you loved — hit reply and tell me one line.
+P.S. If you've ever had a discharge story like that — yours or someone you love — hit reply with one line. I read every email.
 
 —
 → Skool: ${SKOOL_URL}
@@ -205,61 +244,68 @@ P.S. If you've ever had a discharge story like that — yours or someone you lov
 `,
 };
 
-// ─── DAY 3 — Hibiscus tea quick win (PAS) ─────────────────────────────
+// ─── DAY 3 — Pipe Pressure #2: the fix + proof (hibiscus) ──────────────
 const day3 = {
-  subject: '3 cups of this tea, 7 points lower in 6 weeks',
-  subjectB: 'The tea your grandmother drank for BP',
-  preview: 'No supplement. No prescription. Three dollars at the grocery store.',
+  subject: 'Rusty pipes, clean pipes, $3 at the store',
+  subjectB: '7 points lower in 6 weeks — the proof',
+  preview: 'A falsifiable claim: 7.2 points, six weeks, one red box.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Here's a problem most BP plans have.`)}
-    ${p(`They ask you to change ten things at once. New food. New schedule. New exercise. New supplement. New mindset. By Day 4 you're exhausted and the only thing that's actually moved is your guilt.`)}
-    ${p(`So today I'm only asking for one thing. And it costs about three dollars.`)}
-    ${bigQuote('Hibiscus tea.')}
-    ${p(`Yes, the deep red flower tea your grandmother or great-aunt probably drank. The ones in red boxes — Tazo, Celestial Seasonings "Red Zinger," any Hibiscus or "sorrel" tea you can find in the grocery aisle.`)}
-    ${p(`I'm not telling you it's magic. I'm telling you the research is real.`)}
-    ${p(`A study at Tufts University put adults with mild hypertension on three cups of hibiscus tea a day for six weeks. The hibiscus group dropped an average of <strong>7.2 mmHg off their systolic number.</strong> The placebo group dropped 1.3.`)}
-    ${p(`Seven points isn't world-changing on its own — but seven points is the difference between Stage 1 hypertension and pre-hypertension for a lot of readers. Seven points is also the average drop most people get from a 10-pound weight loss, which is a much harder ask.`)}
-    ${p(`Why it works (the short version): hibiscus is rich in anthocyanins, the same compounds that color blueberries deep blue. They support healthy vessel elasticity and gently nudge sodium out through the kidneys. Mild diuretic effect, mild vasorelaxant effect, no prescription.`, { margin: '0 0 28px' })}
+    ${p(`Two days ago: the crimped garden hose. Today: how you start cleaning it out — and the proof it works.`)}
+    ${p(`Think of two pipes under a kitchen sink. One is old galvanized steel, rusted on the inside, the opening narrowed to half its size by years of buildup. The other is clean copper. Same water pressure at the street — but only a trickle comes out of the rusty one, while the clean one runs full. Your vessels are pipes. Rust narrows them. Cleaning them out widens the channel and the pressure drops.`)}
+    ${bigQuote('The cheapest pipe-cleaner I know: hibiscus tea.')}
+    ${p(`Yes — the deep red flower tea your grandmother probably drank. The red boxes: Tazo, Celestial Seasonings "Red Zinger," or any plain hibiscus or "sorrel" tea in the grocery aisle. About three dollars.`)}
+    ${p(`Now — I already know what some of you are thinking, because you've told me: <em>"I've tried herbs. They didn't do a thing."</em> I believe you. Most people try a herb the way they'd take a breath mint — once, casually, no dose, no consistency, no measuring. Then they conclude "herbs don't work." That's not a fair test. So let me give you a fair one — a claim you can actually check.`)}
+    ${bigQuote('Here is the falsifiable claim.')}
+    ${p(`A study at Tufts University put adults with mild hypertension on three cups of hibiscus tea a day for six weeks. The hibiscus group dropped an average of <strong>7.2 mmHg off their systolic number.</strong> The placebo group dropped 1.3. That's it. No fine print. Three cups, six weeks, measure before and after.`)}
+    ${p(`Seven points doesn't sound dramatic — until you know it's the gap between Stage 1 hypertension and pre-hypertension for a lot of readers, and it's the same drop most people get from losing ten pounds, which is a far harder ask.`)}
+    ${p(`Why it works: hibiscus is rich in anthocyanins — the deep-red cousins of what colors blueberries blue. They help the vessel walls relax (cleaning the rust off the pipe) and gently nudge sodium out through the kidneys (less water in the line). Mild vasorelaxant, mild diuretic, no prescription.`, { margin: '0 0 28px' })}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Today's ask.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Pick up a box of hibiscus tea this week. Three cups a day — one with breakfast, one with lunch, one in the afternoon. No sugar. Cold or hot.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">That's it. That's the whole assignment.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The fair test.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Cuff your arm in the morning. Write it down. Then drink three cups of hibiscus a day — one at breakfast, one at lunch, one in the afternoon. No sugar. Six weeks. Cuff again.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Let the number be the judge, not your memory of "that time herbs didn't work."</p>
     `)}
-    ${p(`A note: if you're on a thiazide diuretic (hydrochlorothiazide) or a potassium-sparing diuretic (spironolactone), check with your prescriber before adding three cups a day — hibiscus is mildly diuretic and the math may need to shift. Your safety, always, comes first.`)}
-    ${p(`In two days I'll teach you how to figure out which of the Three Pressures is loudest in you. With that one piece of self-knowledge, you'll know what to focus on first.`, { margin: '0 0 28px' })}
+    ${p(`A safety note: if you're on a thiazide diuretic (hydrochlorothiazide) or a potassium-sparing one (spironolactone), check with your prescriber first — hibiscus is mildly diuretic and the math may need adjusting. Your safety comes first, always.`, { margin: '0 0 24px' })}
+    ${p(`Hibiscus is one pipe-cleaner. There are more — beets, garlic, hawthorn, magnesium, the contrast shower. I put the falsifiable claim and the dose behind <em>every one of them</em> in my book, <strong>BP Cures</strong>. Not opinions. The studies, the amounts, and how to stack them safely with your medication. It's $12.99 — about the price of one bottle of supplements you might've wasted on a guess.`, { margin: '0 0 24px' })}
+    ${ctaButton('https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02', 'Get BP Cures — $12.99')}
+    ${p(`In two days we open the second faucet: Sugar Pressure. It's the one most people swear they don't have — and most people do.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you do pick up a box, snap a photo at the grocery store and reply with it. I'll cheer for you. Small wins are how big numbers move.`)}
+    ${psBox(`If you pick up a box of hibiscus, snap a photo at the store and reply with it. I'll cheer for you. Small wins are how big numbers move.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Most BP plans ask you to change ten things at once. By Day 4 you're exhausted and only your guilt has moved.
+Two days ago: the crimped garden hose. Today: how you start cleaning it out — and the proof.
 
-So today, one thing. About three dollars.
+Picture two pipes under a sink. One is old galvanized steel, rusted inside, the opening narrowed to half its size. The other is clean copper. Same water pressure at the street — but only a trickle comes out of the rusty one. Your vessels are pipes. Cleaning out the rust widens the channel and the pressure drops.
 
-HIBISCUS TEA.
+THE CHEAPEST PIPE-CLEANER I KNOW: HIBISCUS TEA.
 
-The deep red flower tea your grandmother drank. Red boxes — Tazo, Celestial Seasonings "Red Zinger," any "sorrel" tea.
+The deep red flower tea. Red boxes — Tazo, Celestial Seasonings "Red Zinger," any "sorrel" tea. About $3.
 
-Not magic. The research is real.
+I know what some of you are thinking: "I've tried herbs, nothing worked." I believe you. But most people try a herb like a breath mint — once, no dose, no measuring — then quit. That's not a fair test. Here's a fair one.
 
-Tufts University study, adults with mild hypertension, three cups of hibiscus a day for six weeks. Hibiscus group: 7.2 mmHg off systolic. Placebo group: 1.3.
+THE FALSIFIABLE CLAIM:
 
-Seven points is the difference between Stage 1 hypertension and pre-hypertension. Same drop most people get from a 10-pound weight loss — a much harder ask.
+Tufts University study. Adults with mild hypertension. Three cups of hibiscus a day, six weeks. Hibiscus group: 7.2 mmHg off systolic. Placebo: 1.3. No fine print.
 
-Why: hibiscus is rich in anthocyanins. Supports vessel elasticity. Gently nudges sodium out through the kidneys. Mild diuretic, mild vasorelaxant, no prescription.
+Seven points is the gap between Stage 1 and pre-hypertension for many — same drop as losing ten pounds, a far harder ask.
 
-TODAY'S ASK: Pick up a box this week. Three cups a day. One with breakfast, one with lunch, one in the afternoon. No sugar.
+Why: anthocyanins (the red cousins of what colors blueberries) relax the vessel walls and nudge sodium out through the kidneys. Mild vasorelaxant, mild diuretic, no prescription.
 
-If you're on a thiazide or potassium-sparing diuretic, check with your prescriber first — hibiscus is mildly diuretic and the math may need to shift.
+THE FAIR TEST: Cuff in the morning, write it down. Three cups a day, no sugar, six weeks. Cuff again. Let the number judge — not your memory of "that time herbs didn't work."
 
-In two days — how to find out which of the Three Pressures is loudest in you.
+Safety: on a thiazide (HCTZ) or potassium-sparing (spironolactone) diuretic? Check with your prescriber first — hibiscus is mildly diuretic.
+
+Hibiscus is one pipe-cleaner. There are more — beets, garlic, hawthorn, magnesium, the contrast shower. The falsifiable claim and dose behind EVERY one is in my book, BP CURES. Not opinions — the studies, the amounts, how to stack them safely with your med. $12.99.
+→ https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02
+
+In two days: the second faucet, Sugar Pressure. The one most swear they don't have — and most do.
 
 Joel
 RN, BraveWorks
 
-P.S. If you pick up a box, snap a photo at the grocery store and reply. I'll cheer for you. Small wins are how big numbers move.
+P.S. Pick up a box? Snap a photo at the store and reply. I'll cheer for you. Small wins are how big numbers move.
 
 —
 → Skool: ${SKOOL_URL}
@@ -267,79 +313,63 @@ P.S. If you pick up a box, snap a photo at the grocery store and reply. I'll che
 `,
 };
 
-// ─── DAY 5 — Three Pressures deep-teach + self-diagnostic ─────────────
+// ─── DAY 5 — Sugar Pressure #1 (insulin): the hidden driver ────────────
 const day5 = {
-  subject: 'Which of the Three Pressures is loudest in you?',
-  subjectB: 'Stress · Sugar · Pipes — pick one',
-  preview: 'A 90-second self-check so you know where to start.',
+  subject: 'The faucet you swear you don\'t have',
+  subjectB: 'Syrup doesn\'t move like water',
+  preview: 'You don\'t need to be diabetic for sugar to push your number up.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Day 0 I named them. Today I'm going to help you figure out which one is yours.`)}
-    ${p(`Because here's what most BP plans miss: not every elevated number comes from the same place. The same protocol that drops one person 15 points will barely move another. The reason is which Pressure is doing the pushing.`)}
-    ${bigQuote('Find yours first. Then the work narrows.')}
-    ${p(`Read each of the three sections below. Score yourself 0, 1, or 2 — how strong is each pattern in you? Add them up at the end.`, { margin: '0 0 18px' })}
+    ${p(`We've spent four days on the pipes. Today we open the second faucet — and it's the one almost everyone tells me they don't have.`)}
+    ${bigQuote('Sugar Pressure. Insulin.')}
+    ${p(`Let me name the problem precisely, because most people get it wrong. This isn't about diabetes. It isn't even mainly about your blood sugar. It's about <strong>insulin</strong> — the hormone your body releases every time you eat, especially bread, cereal, crackers, juice, and the 3 PM cookie.`)}
+    ${p(`Here's the picture. Go back to your garden hose. Run clean water through it — flows easy, low pressure. Now run warm pancake syrup through that same hose. Thicker. Stickier. It drags against the walls. The pressure to push it through climbs, even though nothing about the hose changed.`)}
+    ${p(`That's what chronically high insulin does. It does three things, and all three push the cuff up:`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 10px;font-weight:600;">1. Stress Pressure (cortisol)</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You wake between 2 and 4 AM and can't fall back asleep easily.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— Mornings feel "wired but tired." Coffee feels necessary.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You carry weight around the middle that didn't used to be there.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">— Your highest readings happen at the doctor's office. (White coat — Paul, age 48, had this exact pattern.)</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">What insulin does to the line</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>It tells your kidneys to hold salt.</strong> More salt held = more water in the line = more pressure. (This is why salt gets blamed — but insulin is often the hand on the valve.)</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>It thickens and stiffens the walls.</strong> High insulin makes vessel walls less springy — the syrup starts to coat the pipe.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>It revs the stress nerves.</strong> Insulin nudges the same "alert" system as cortisol, tightening the vessels further.</p>
     `)}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 10px;font-weight:600;">2. Sugar Pressure (insulin)</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You crave bread, crackers, or sweets in the afternoon.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— Your fasting glucose has crept up, or your A1c is over 5.7.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You've gained 10+ pounds in the last 5 years without changing how you eat.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">— Your numbers are worst in the afternoon and evening. (Rachel, 55, fasting glucose 138 → 109 in 3 weeks once we addressed this.)</p>
-    `)}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 10px;font-weight:600;">3. Pipe Pressure (vascular)</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You've been on BP medication for more than 5 years.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— Your bottom number (diastolic) is the stubborn one — it won't budge.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">— You have a family history of stroke or heart attack.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">— Your hands or feet feel cold often, even in warm rooms.</p>
-    `)}
-    ${p(`<strong>Add your three scores.</strong> Whichever section came in highest is your loudest Pressure. Most readers find one clear winner and one runner-up. If two scored equally high, that's normal — most adults are running two at once. The plan is to address them in order: loudest first, second next.`, { margin: '0 0 28px' })}
-    ${p(`In two days I'll send you Linda's story. She's 62, was on three medications, and dropped from 148/94 to 128/82 in 11 days. She did it by going after one Pressure first — the same way you're about to.`, { margin: '0 0 28px' })}
-    ${premiumVipBodyPitch()}
+    ${p(`Now the objection I hear most: <em>"But Joel, my sugar's fine. My doctor never said I'm diabetic."</em>`)}
+    ${p(`Here's the part nobody told you. Your fasting glucose can read perfectly normal for ten or fifteen years while your insulin is quietly running high the entire time. Glucose is the last domino to fall. By the time sugar shows up on a standard test, the syrup has been thickening your line for a decade. So "my sugar's fine" and "I have Sugar Pressure" can both be true at once. You don't have to be diabetic. You just have to have eaten like a normal American for thirty years.`)}
+    ${p(`How would you know? A few honest tells: a softening middle that diet doesn't touch, afternoon cravings you can set a clock by, the 3 o'clock energy crash, skin tags, or numbers that read worst in the evening. None of those require a diagnosis. They're the syrup talking.`, { margin: '0 0 28px' })}
+    ${p(`Here's the hopeful part: insulin responds <em>fast</em>. Of the three faucets, this is the one that can move your numbers in days, not weeks — because you turn it down at the very next meal. Swap the white toast. Walk ten minutes after you eat. Front-load protein and fiber before the starch. The syrup thins back toward water.`)}
+    ${p(`In two days I'll show you exactly that, through Linda — 148/94 down to 128/82 in eleven days, no new medication. Today, just sit with this: the faucet you were sure you didn't have may be the loudest one in the room.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you only want to do one thing today, hit reply and tell me which Pressure won the highest score. I keep these — and I'll write back if you ask a question.`)}
+    ${psBox(`Quick gut check — do you crave something starchy or sweet around 3 PM most days? Hit reply with just "yes" or "no." It's the single fastest tell for Sugar Pressure, and I read every reply.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Day 0 I named them. Today: figure out which is yours.
+Four days on the pipes. Today, the second faucet — the one almost everyone swears they don't have.
 
-Not every elevated number comes from the same place. Same protocol drops one person 15 points and barely moves another. The reason: which Pressure is pushing.
+SUGAR PRESSURE. INSULIN.
 
-Score each section 0, 1, or 2 — how strong is the pattern in you?
+Let me name it precisely: this isn't about diabetes. It isn't even mainly about blood sugar. It's about INSULIN — the hormone you release every time you eat, especially bread, cereal, crackers, juice, the 3 PM cookie.
 
-1. STRESS PRESSURE (cortisol)
-— Wake between 2 and 4 AM and can't fall back asleep.
-— Mornings "wired but tired." Coffee feels necessary.
-— Weight around the middle that didn't used to be there.
-— Highest readings at the doctor's office. (Paul, 48, had this exact pattern.)
+Back to the garden hose. Run clean water through — flows easy, low pressure. Now run warm pancake syrup through the same hose. Thicker, stickier, drags on the walls. Pressure climbs, though the hose never changed.
 
-2. SUGAR PRESSURE (insulin)
-— Afternoon cravings for bread, crackers, sweets.
-— Fasting glucose has crept up or A1c over 5.7.
-— 10+ pounds gained in 5 years without eating differently.
-— Numbers worst in the afternoon/evening. (Rachel, 55: fasting glucose 138 → 109 in 3 weeks.)
+That's chronically high insulin. Three things, all push the cuff up:
 
-3. PIPE PRESSURE (vascular)
-— On BP medication 5+ years.
-— Bottom number (diastolic) is the stubborn one.
-— Family history of stroke or heart attack.
-— Hands/feet often cold, even in warm rooms.
+— It tells your kidneys to HOLD SALT. More salt held = more water in the line = more pressure. (Salt gets blamed; insulin's often the hand on the valve.)
+— It STIFFENS the walls. Less springy — syrup coating the pipe.
+— It REVS the stress nerves, tightening vessels further.
 
-Add scores. Highest section = your loudest Pressure. Most have one clear winner and a runner-up. Two equal = you're running both. Address the loudest first.
+The objection I hear most: "But my sugar's fine, I'm not diabetic."
 
-In two days: Linda's story. 62, three medications, 148/94 → 128/82 in 11 days.
+Here's what nobody told you: your fasting glucose can read normal for 10-15 years while your insulin runs high the whole time. Glucose is the LAST domino. By the time sugar shows on a standard test, the syrup's been thickening your line for a decade. "My sugar's fine" and "I have Sugar Pressure" can both be true. You don't have to be diabetic — just have eaten like a normal American for thirty years.
+
+Honest tells: a softening middle diet won't touch, afternoon cravings you can set a clock by, the 3 PM crash, skin tags, numbers worst in the evening. No diagnosis required. That's the syrup talking.
+
+The hopeful part: insulin responds FAST — days, not weeks — because you turn it down at the next meal. Swap the white toast. Walk ten minutes after eating. Protein and fiber before the starch. The syrup thins back toward water.
+
+In two days — Linda. 148/94 to 128/82 in eleven days, no new med. Today, just sit with this: the faucet you were sure you didn't have may be the loudest in the room.
 
 Joel
 RN, BraveWorks
 
-P.S. Hit reply with which Pressure won. I keep these — and I'll write back if you ask.
+P.S. Gut check — crave something starchy or sweet around 3 PM most days? Reply "yes" or "no." Fastest tell for Sugar Pressure. I read every reply.
 
 —
 → Skool: ${SKOOL_URL}
@@ -347,386 +377,86 @@ P.S. Hit reply with which Pressure won. I keep these — and I'll write back if 
 `,
 };
 
-// ─── DAY 7 — Linda case study (BAB social proof) ──────────────────────
+// ─── DAY 7 — Sugar Pressure #2: the swing + Linda case study ───────────
 const day7 = {
-  subject: '148/94 → 128/82 in 11 days',
-  subjectB: 'What Linda\'s cardiologist asked her',
-  preview: 'Twenty points. Eleven days. One medication unchanged.',
+  subject: 'Linda: 148/94 → 128/82 in 11 days',
+  subjectB: 'Get off the blood-sugar rollercoaster',
+  preview: 'Twenty points, eleven days, no new medication.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Two days ago you scored yourself on the Three Pressures. Today I want to show you what's possible when someone names theirs and gets to work.`)}
-    ${p(`Linda is 62. (Not her real name — I protect everyone in these stories. The numbers are real.)`)}
-    ${p(`Two grandsons. A husband she's been married to for 38 years. Retired schoolteacher. The kind of person who reads the label on everything and still couldn't figure out why her numbers kept climbing.`)}
+    ${p(`Two days ago I told you about the syrup in the line. Today I want you to feel the second half of Sugar Pressure — the <em>swing</em> — and then meet a woman who got off it.`)}
+    ${bigQuote('The blood-sugar rollercoaster.')}
+    ${p(`Eat white toast and jam. Your blood sugar shoots up like the first climb of a rollercoaster. Insulin floods in to drag it back down — and overshoots, so an hour later you crash into a valley, shaky and craving the next carb. Up the hill, down the drop, again and again, all day. Every climb spikes your pressure. Every crash sends you reaching for the thing that spikes it again.`)}
+    ${p(`Most people ride that rollercoaster their whole adult life and call it "normal energy." Getting off it is one of the fastest ways to drop a number. Linda proved it.`, { margin: '0 0 28px' })}
+    ${p(`Linda is 62. (Not her real name — I protect everyone in these stories. The numbers are real.) Retired schoolteacher, married 38 years, reads the label on everything, and still couldn't figure out why her numbers kept climbing.`)}
     ${bigQuote('Before.')}
-    ${p(`Last cuff reading at home: <strong>148/94.</strong> On lisinopril 20mg for four years, then they added amlodipine 5mg two years ago, then the cardiologist mentioned a third medication at her last appointment.`)}
-    ${p(`Linda took the Three Pressures self-check the same way you just did. Pipe Pressure scored highest. Sugar Pressure was the runner-up. Stress was the quiet one.`)}
-    ${p(`So we went after Pipe first.`, { margin: '0 0 28px' })}
-    ${bigQuote('After.')}
-    ${p(`Eleven days in, her morning reading was <strong>128/82.</strong>`)}
-    ${p(`Twenty systolic points. Twelve diastolic. Same medications. Same doses. No new prescription.`)}
-    ${p(`Here's the bridge — what she actually did:`, { margin: '0 0 18px' })}
+    ${p(`Home reading: <strong>148/94.</strong> On lisinopril 20mg for four years, amlodipine 5mg added two years ago, and at her last visit the cardiologist floated a third medication.`)}
+    ${p(`Pipe Pressure was loud for her, but Sugar was the runner-up nobody had flagged — the afternoon crashes, the softening middle. So she worked both faucets at once. Here's exactly what she did:`, { margin: '0 0 18px' })}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Linda's first 11 days.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Days 1-3:</strong> Hibiscus tea, three cups a day. Swapped store-bought sandwich bread for a homemade alternative her granddaughter helped her bake. Walked 20 minutes after dinner. (Walking moves nitric oxide through the vessels — exactly what Pipe Pressure needs.)</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Days 4-7:</strong> Added a baked potato with skin to lunch most days (940mg of potassium each). Added garlic — one fresh clove crushed, sat for 10 minutes, added at the end of cooking. Started end-of-day contrast showers — 30 seconds cold at the close of every regular shower.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Days 8-11:</strong> Same routine. Cuffed every morning at the same time, sitting, both feet flat, no coffee yet. Number kept dropping.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Pipes:</strong> Hibiscus tea, three cups a day. Garlic — one fresh clove crushed, rested 10 minutes, added at the end of cooking. A walk after dinner. End-of-day contrast shower, 30 seconds cold to finish.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Sugar (the rollercoaster brakes):</strong> Swapped store-bought sandwich bread for a homemade alternative her granddaughter helped her bake. Ate protein and fiber <em>before</em> any starch. Walked ten minutes after lunch to burn the glucose before it spiked. The 3 PM cookie became an apple with peanut butter.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Every day:</strong> Cuffed each morning, same time, sitting, both feet flat, no coffee yet. Wrote the number down.</p>
     `)}
-    ${p(`No new supplement she'd never heard of. No fasting. No gym membership.`)}
-    ${p(`At her follow-up appointment, her cardiologist looked at the numbers, looked at her, and asked one question: "What did you do?" She told him. He didn't reduce her medication right away — that comes later, after a longer pattern — but he didn't add the third one either. He told her to keep going and come back in 90 days.`, { margin: '0 0 28px' })}
-    ${p(`What Linda did, you can do. The Pressure she went after was hers, not yours — you may need a different combination. But the principle is the same: name it, choose the smallest right input, do it daily, log the number.`)}
-    ${p(`Three days from now I'm going to share the exact PDF I gave Linda — eighteen pages, the same one I hand patients on their way out of the hospital. It's $17. I'll tell you about it then. Today, just sit with the idea that 20 points in 11 days is possible.`, { margin: '0 0 28px' })}
-    ${premiumVipBodyPitch()}
-    ${joelSignoff()}
-    ${psBox(`If your number is anywhere near Linda's starting point and you've been told "this is as good as it gets," hit reply and tell me what your number is today. I won't pitch you. I just want to know who's reading.`)}
-    ${footerSecondaryCTAs()}
-  `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
-
-Two days ago you scored yourself on the Three Pressures. Today, what's possible when someone names theirs.
-
-Linda is 62. (Not her real name. Numbers are real.)
-
-BEFORE: 148/94. On lisinopril 20mg for four years, amlodipine 5mg two years, cardiologist mentioning a third med.
-
-She took the self-check. Pipe Pressure scored highest. Sugar runner-up. Stress was quiet.
-
-We went after Pipe first.
-
-AFTER: Eleven days in, morning reading 128/82. Twenty systolic. Twelve diastolic. Same medications. Same doses.
-
-What she did:
-
-Days 1-3 — Hibiscus tea, 3 cups/day. Swapped store bread for homemade. Walked 20 minutes after dinner.
-
-Days 4-7 — Baked potato with skin at lunch (940mg potassium each). Garlic, fresh clove crushed and rested. End-of-day contrast showers — 30 seconds cold at the close of every regular shower.
-
-Days 8-11 — Same routine. Cuffed every morning, same time, sitting, both feet flat, no coffee yet.
-
-Her cardiologist asked one question: "What did you do?" She told him. He didn't reduce her medication yet (that comes later). He didn't add the third either. Told her to keep going.
-
-What Linda did, you can do. Your Pressure may be different. The principle is the same: name it, choose the smallest right input, do it daily, log the number.
-
-Three days from now — the exact PDF I gave Linda.
-
-Joel
-RN, BraveWorks
-
-P.S. If your number is near Linda's starting point, hit reply and tell me what yours is. I won't pitch you. I want to know who's reading.
-
-—
-→ Skool: ${SKOOL_URL}
-→ YouTube: ${YOUTUBE_URL}
-`,
-};
-
-// ─── DAY 10 — First soft pitch ($17 BP Starter) — PASTOR ──────────────
-const day10 = {
-  subject: 'If you only do one thing this week',
-  subjectB: '$17. Inbox in 60 seconds.',
-  preview: 'The same PDF I hand patients on their way out of the hospital.',
-  htmlBody: ({ firstName }) => `
-    ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Ten days in. If you've read every email this far, I want you to know — that's more than most. The average list reader opens three. You're somewhere in the small group that's still here, still curious, maybe still uncertain.`)}
-    ${p(`Today is the first time I'm asking for anything.`)}
-    ${bigQuote('The BP Starter Kit. $17.')}
-    ${p(`<strong>What it is:</strong> the same eighteen-page PDF I hand patients on their way out of my naturopathic practice. Marlene's three-input reset is on page 4. Linda's Pipe Pressure protocol is on page 8. The Cardiologist Conversation Script (so you know what to say at your next appointment) is on page 11.`)}
-    ${p(`<strong>What it's not:</strong> a course. A workshop. A 90-day program. You won't be on a call. You won't have homework due Friday. It's a document. You read it. You apply what fits. You move your numbers.`)}
-    ${p(`<strong>Who it's for:</strong> the person who's been reading these emails and thinking, "I want the system, not just the headlines." If you'd rather keep reading the free emails — that's fine. They keep coming. The kit is for the reader who's ready to skip ahead.`, { margin: '0 0 28px' })}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">What's inside (briefly).</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong>The 10-Day BP Reset Daily Plan</strong> — every step, day by day.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong>Joel's 7 Most-Trusted BP Herbs</strong> — safe dosing ranges for each.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong>The Cardiologist Conversation Script</strong> — what to say at your next appointment.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong>The 4 Lifestyle Levers Cheat Sheet</strong> — one page on your fridge.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">→ <strong>Cook For Life Cookbook</strong> — 45 plant-based recipes that fit the protocol.</p>
-    `)}
-    ${p(`I'll tell you the honest truth. The kit is $17 because I want it in the hands of anyone who's been wanting to start. Two cups of coffee. The cost of one of those meds you've been worrying about co-pays for. I made it so price isn't the reason someone walks away.`)}
-    ${p(`If $17 still doesn't feel like a fit for you today, keep reading the emails. There's no pressure, and there's no penalty.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit — $17')}
-    ${p(`<span style="color:#999;font-size:14px;">Delivered to your inbox in 60 seconds. Read tonight. Start tomorrow morning.</span>`, { margin: '0 0 28px' })}
-    ${joelSignoff()}
-    ${psBox(`If you'd rather wait, in three days I'll address the most common objection I hear: "I've tried everything." It's the email I wish I'd had when I started this work.`)}
-    ${upsellFooter({
-      kicker: 'The patient protocol',
-      body: 'Eighteen pages. Marlene\'s three-input reset on page 4. Linda\'s Pipe Pressure protocol on page 8. The Cardiologist Conversation Script on page 11. Same document I hand patients walking out of my practice.',
-      ctaLabel: 'Get the kit for $17',
-      ctaUrl: KIT_URL,
-    })}
-    ${footerSecondaryCTAs()}
-  `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
-
-Ten days in. If you've read every email this far, that's more than most. Average list reader opens three. You're in the small group still curious, maybe still uncertain.
-
-Today is the first time I'm asking for anything.
-
-THE BP STARTER KIT. $17.
-
-What it is: the same eighteen-page PDF I hand patients on their way out of my practice. Marlene's three-input reset on page 4. Linda's Pipe Pressure protocol on page 8. The Cardiologist Conversation Script on page 11.
-
-What it's not: a course. A workshop. A 90-day program. No homework due Friday. It's a document. You read it. Apply what fits. Move your numbers.
-
-What's inside:
-→ The 10-Day BP Reset Daily Plan
-→ Joel's 7 Most-Trusted BP Herbs (with safe dosing ranges)
-→ The Cardiologist Conversation Script
-→ The 4 Lifestyle Levers Cheat Sheet
-→ Cook For Life Cookbook (45 plant-based recipes)
-
-Honest truth: it's $17 because I want it in the hands of anyone wanting to start. Two cups of coffee. I made it so price isn't the reason someone walks away.
-
-If $17 doesn't feel right today, keep reading the emails. No pressure. No penalty.
-
-→ Get the kit: ${KIT_URL}
-Inbox in 60 seconds. Read tonight. Start tomorrow.
-
-Joel
-RN, BraveWorks
-
-P.S. If you'd rather wait, in three days I'll address the most common objection I hear: "I've tried everything." It's the email I wish I'd had when I started.
-
-—
-→ Skool: ${SKOOL_URL}
-→ YouTube: ${YOUTUBE_URL}
-`,
-};
-
-// ─── DAY 13 — Objection killer: "I've tried everything" ───────────────
-const day13 = {
-  subject: 'Why your last attempt didn\'t stick',
-  subjectB: 'The reason most BP plans fail at Day 14',
-  preview: 'It wasn\'t willpower. It wasn\'t discipline. It was the plan.',
-  htmlBody: ({ firstName }) => `
-    ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`I want to talk to the reader who's been here before. Not on my list — on the road.`)}
-    ${p(`You've tried DASH. You've tried Mediterranean. You did keto for six weeks and felt great until you didn't. You signed up for a wellness app that buzzed your wrist 14 times a day. You bought beet juice. You bought magnesium. You went to a sleep specialist.`)}
-    ${p(`Something worked for a little while. Then it didn't. And every time it stopped working, a quiet voice inside you said the same thing: <em>maybe I'm just the kind of person this doesn't work for.</em>`)}
-    ${bigQuote('I want to take that voice off the table today.')}
-    ${p(`The reason your last attempt didn't stick wasn't your willpower. It wasn't your discipline. It was the plan.`, { margin: '0 0 28px' })}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 10px;font-weight:600;">Three reasons every generic plan fails around Day 14.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 12px;"><strong>1. It only targeted one Pressure.</strong> DASH addresses sodium. Mediterranean addresses inflammation. Keto addresses insulin. None of them address all three. If your loudest Pressure wasn't the one the plan targeted, you got a half-result and called it failure.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 12px;"><strong>2. It asked for ten changes at once.</strong> Behavior change research is brutally clear: more than three new habits at once and the failure rate goes above 80%. By Day 14 you were trying to track eight things and remembering five.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>3. It had no feedback loop.</strong> If you weren't cuffing every morning the same way and writing it down, you didn't know if it was working. Without that loop, the brain quietly drifts back to baseline by Day 14. Always.</p>
-    `)}
-    ${p(`This is why I do the work the way I do.`)}
-    ${p(`On Day 5 you scored your Three Pressures — so you go after yours, not someone else's. The Starter Kit gives you the smallest number of right inputs, not the most. And the BP tracker page (the one I had Linda use) is the feedback loop your last plan was missing.`, { margin: '0 0 18px' })}
-    ${p(`I'm not telling you the kit is magic. I'm telling you it's targeted, narrow, and measured. Those three things alone usually fix what felt like willpower failure in the past.`)}
-    ${p(`In three days I'm going to send you Paul's story. He's 48 and his loudest Pressure was Stress — and his fix didn't come from food. Some of you are going to recognize yourselves in it.`, { margin: '0 0 28px' })}
-    ${joelSignoff()}
-    ${psBox(`What was the last plan you tried that didn't stick? Reply with one line. I read every one and they help me know what to write next.`)}
-    ${upsellFooter({
-      kicker: 'Targeted. Narrow. Measured.',
-      body: 'Eighteen pages. One Pressure-first protocol. A tracker page so you know it\'s working. The reason readers stick to this when they didn\'t stick to the last six things.',
-      ctaLabel: 'Get the kit for $17',
-      ctaUrl: KIT_URL,
-    })}
-    ${footerSecondaryCTAs()}
-  `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
-
-For the reader who's been here before. Not on my list — on the road.
-
-You've tried DASH. Mediterranean. Six weeks of keto. A wrist-buzzing wellness app. Beet juice. Magnesium. Sleep specialist.
-
-Something worked for a while. Then it didn't. And every time, a quiet voice: maybe I'm just the kind of person this doesn't work for.
-
-I want to take that voice off the table.
-
-The reason your last attempt didn't stick wasn't willpower. It wasn't discipline. It was the plan.
-
-Three reasons every generic plan fails around Day 14:
-
-1. It only targeted one Pressure. DASH = sodium. Mediterranean = inflammation. Keto = insulin. If your loudest Pressure wasn't the one targeted, you got a half-result and called it failure.
-
-2. It asked for ten changes at once. Behavior research is clear: more than three new habits at once and failure rate goes above 80%. By Day 14 you were tracking eight things and remembering five.
-
-3. No feedback loop. If you weren't cuffing every morning the same way and writing it down, you didn't know if it was working. The brain quietly drifts back to baseline by Day 14. Always.
-
-That's why I work the way I do. Day 5 you scored your Pressures — you go after YOURS. The Starter Kit gives the smallest number of right inputs, not the most. The tracker page is the feedback loop your last plan was missing.
-
-Targeted. Narrow. Measured. Three things alone usually fix what felt like willpower failure.
-
-In three days — Paul's story. 48 years old, loudest Pressure was Stress, and his fix didn't come from food.
-
-Joel
-RN, BraveWorks
-
-P.S. What was the last plan you tried that didn't stick? Reply with one line. I read every one.
-
-—
-Targeted. Narrow. Measured.
-The kit: ${KIT_URL}
-
-—
-→ Skool: ${SKOOL_URL}
-→ YouTube: ${YOUTUBE_URL}
-`,
-};
-
-// ─── DAY 16 — Paul case study (Stress Pressure angle) ─────────────────
-const day16 = {
-  subject: 'Paul slept through the night by Day 4',
-  subjectB: 'The cortisol thing nobody told you',
-  preview: 'His loudest Pressure wasn\'t food. It was 3 AM.',
-  htmlBody: ({ firstName }) => `
-    ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`I told you Paul's story was coming. Today it's here.`)}
-    ${p(`Paul is 48. (Not his real name. The numbers are real.)`)}
-    ${p(`Married, two teenagers, finance job. Cuffed himself one Sunday morning out of curiosity — <strong>156/98.</strong> Cuffed again Monday at the office — same. Saw his doctor. Got put on lisinopril 10mg. Came down to 138/88. Still high.`)}
-    ${p(`Doctor said cut salt. He cut salt. Nothing moved.`)}
-    ${p(`Doctor said lose 10 pounds. He lost 12. Numbers came down 3 points.`)}
-    ${p(`Doctor said add amlodipine. That's when he found me.`, { margin: '0 0 28px' })}
-    ${bigQuote('Paul\'s loudest Pressure wasn\'t food. It was 3 AM.')}
-    ${p(`He took the self-check. Sugar Pressure scored a 2. Pipe Pressure scored a 3. Stress Pressure scored an <strong>8</strong>. Off the charts.`)}
-    ${p(`He'd been waking at 2 to 4 AM for years. Mind racing. Couldn't get back to sleep. Mornings were "wired but tired." Three cups of coffee just to feel level. White-coat hypertension at every appointment — his readings at the doctor's office were always 15-20 points higher than his home readings.`)}
-    ${p(`That's cortisol. That's the sympathetic nervous system stuck in "alert." That's the Pressure that 90% of cardiologists don't measure and 90% of BP plans don't address.`, { margin: '0 0 28px' })}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">What Paul did.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>The 5-minute morning sunlight rule.</strong> Outside for five minutes within 30 minutes of waking. No phone. Sets the cortisol curve so it peaks in the morning instead of at 2 AM.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>The 4-7-8 breath, twice a day.</strong> In for 4 seconds, hold for 7, out for 8. Two minutes morning, two minutes before bed. Drops cortisol faster than any supplement I've ever measured.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Coffee cutoff at 10 AM.</strong> Caffeine has a 6-hour half-life. The 3 PM cup was still in his system at midnight.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Magnesium glycinate at bedtime.</strong> 300mg, 30 minutes before bed. Magnesium relaxes the smooth muscle around vessels AND supports the GABA pathway that calms the brain.</p>
-    `)}
-    ${p(`Day 4 he slept through the night for the first time in two years.`)}
-    ${p(`Day 14 his morning reading was <strong>128/82.</strong> Down from 138/88 on medication alone. His next appointment, the doctor didn't add amlodipine — he reduced the lisinopril to 5mg. Paul reports back every month. Five months in, he's on the half-dose and his average reading is 122/78.`, { margin: '0 0 28px' })}
-    ${p(`If you scored highest on Stress Pressure on Day 5, this is your path. The four inputs above are in the Starter Kit under the Stress Pressure section, with the full protocol, dosing, and the cuffing rhythm. The whole document — Stress, Sugar, and Pipe Pressure protocols all in one place — is $17.`)}
-    ${p(`In three days I'm going to write the last real pitch. After that, the rhythm of these emails changes.`, { margin: '0 0 28px' })}
-    ${joelSignoff()}
-    ${psBox(`If Paul's pattern feels familiar — the 3 AM wake-up, the wired-but-tired mornings — hit reply and tell me. You're not alone, and you're not broken. The plan just hasn't matched your Pressure yet.`)}
-    ${upsellFooter({
-      kicker: 'For the Stress Pressure reader',
-      body: 'Paul\'s exact 4-input protocol — sunlight, 4-7-8 breath, coffee cutoff, magnesium glycinate — is in Section 2 of the Starter Kit. Same document holds the Sugar and Pipe Pressure protocols.',
-      ctaLabel: 'Get the kit for $17',
-      ctaUrl: KIT_URL,
-    })}
-    ${footerSecondaryCTAs()}
-  `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
-
-Paul is 48. (Not his real name. Numbers are real.)
-
-Married, two teenagers, finance job. Cuffed one Sunday — 156/98. Doctor put him on lisinopril 10mg. Down to 138/88. Still high.
-
-Doctor said cut salt. He did. Nothing.
-Doctor said lose 10 pounds. He lost 12. Down 3 points.
-Doctor said add amlodipine. That's when he found me.
-
-Paul's loudest Pressure wasn't food. It was 3 AM.
-
-Self-check: Sugar = 2. Pipe = 3. Stress = 8. Off the charts.
-
-Waking 2-4 AM for years. Mind racing. Wired-but-tired mornings. Three cups of coffee to feel level. White coat 15-20 points high.
-
-That's cortisol. The Pressure 90% of cardiologists don't measure.
-
-What Paul did:
-
-— 5-minute morning sunlight within 30 min of waking. No phone. Sets the cortisol curve.
-
-— 4-7-8 breath, twice a day. In 4, hold 7, out 8. Two minutes morning, two minutes bedtime.
-
-— Coffee cutoff at 10 AM. (Caffeine has a 6-hour half-life. The 3 PM cup is still in your system at midnight.)
-
-— Magnesium glycinate, 300mg, 30 min before bed.
-
-Day 4 he slept through the night for the first time in two years.
-
-Day 14: 128/82. Down from 138/88 on medication alone. Doctor reduced the lisinopril to 5mg. Five months in he's on the half-dose averaging 122/78.
-
-If Stress Pressure scored highest for you on Day 5, this is your path. The 4-input protocol is in Section 2 of the Starter Kit. Whole document is $17.
-
-In three days — the last real pitch. After that, the rhythm changes.
-
-Joel
-RN, BraveWorks
-
-P.S. If Paul's pattern feels familiar — the 3 AM wake-up, the wired-but-tired mornings — hit reply. You're not broken. The plan just hasn't matched your Pressure yet.
-
-—
-For the Stress reader:
-${KIT_URL}
-
-—
-→ Skool: ${SKOOL_URL}
-→ YouTube: ${YOUTUBE_URL}
-`,
-};
-
-// ─── DAY 19 — Final pitch + 7-day refund framing ──────────────────────
-const day19 = {
-  subject: 'Worst case: $17 and a free PDF',
-  subjectB: 'Joel\'s refund promise',
-  preview: 'The math I want you to actually look at.',
-  htmlBody: ({ firstName }) => `
-    ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`This is the last real pitch I'm going to send you. After this, the rhythm of these emails changes — I'll keep writing, but I'll send less, and I won't be asking you to do anything except read.`)}
-    ${p(`So I want to make my final case as plainly as I can.`, { margin: '0 0 28px' })}
-    ${bigQuote('Look at the math with me.')}
-    ${p(`<strong>The cost:</strong> $17. About the price of two coffees. Less than one co-pay for most of you.`)}
-    ${p(`<strong>The promise:</strong> Read every page this week. Apply the protocol for your loudest Pressure. If you haven't seen your numbers move by Day 7 with honest effort, hit reply with the word "refund." I'll send your $17 back, no questions, and the PDF is yours to keep.`, { margin: '0 0 28px' })}
+    ${bigQuote('After.')}
+    ${p(`Eleven days in, her morning reading was <strong>128/82.</strong> Twenty systolic points. Twelve diastolic. Same medications, same doses, no new prescription. At her follow-up the cardiologist looked at the log, looked at her, and asked one question: <em>"What did you do?"</em> He didn't add the third drug. He told her to keep going and come back in 90 days.`, { margin: '0 0 28px' })}
+    ${p(`Now — here's the objection that stops most people from ever starting. Not "will it work." It's quieter than that. It's: <em>"I can't do this alone."</em>`)}
+    ${p(`And you're right. You shouldn't have to. Linda didn't — she had me, and she had a granddaughter in the kitchen. Reading a PDF by yourself at 9 PM, then forgetting it by Thursday, is how every good intention dies. What actually moves numbers is structure, a start date, and people doing it alongside you.`)}
+    ${p(`That's exactly why I built the <strong>BP Triangle Challenge</strong>, and it's the smartest thing on my whole shelf for $97.`, { margin: '0 0 24px' })}
     ${clayBlock(
-      'The 7-day refund promise',
-      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">$17 back. No questions. PDF yours forever. I do this because I'm confident in the protocol, and because I'd rather the wrong reader get their money back than feel stuck holding something that didn't serve them.</p>`
+      'The BP Triangle Challenge — $97',
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">A guided run through all three faucets with a real start date and a group going through it with you. Here's why it's the smart buy:</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 6px;">→ <strong>All three of my books included</strong> — BP Cures, plus the Cook For Life cookbook and the Overmedicated Boomers guide.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 6px;">→ <strong>Community + accountability</strong> — a group, daily prompts, and people cheering your numbers down.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">Buy the three books separately and you're already past $97 — before the group ever starts. This is the bundle that does the math in your favor.</p>`
     )}
-    ${p(`<strong>Worst-case scenario:</strong> the kit doesn't fit you. You reply with the word "refund." You get $17 back. You keep the PDF. You spent zero net dollars and you have the full document to reference forever, or pass to someone in your family who might use it differently.`)}
-    ${p(`<strong>Best-case scenario:</strong> you do what Marlene did. Eleven points in nine days. Or what Linda did. Twenty points in eleven days. Or what Paul did. The end of two years of 3 AM wake-ups and a halved medication. For $17.`)}
-    ${p(`I'm not telling you which scenario you'll fall into. I don't know your body or your history. I'm telling you the math is asymmetric — small downside, large upside — and the bet is structured so the downside doesn't actually exist.`, { margin: '0 0 28px' })}
-    ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">What you get for $17.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ The 10-Day BP Reset Daily Plan</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ Joel's 7 Most-Trusted BP Herbs with safe dosing ranges</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ The Cardiologist Conversation Script</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ The 4 Lifestyle Levers Cheat Sheet</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">→ Cook For Life Cookbook — 45 plant-based recipes</p>
-    `)}
-    ${p(`If now isn't your time — that's okay. There's no penalty, no door closing, no countdown clock. I'll keep showing up in your inbox at a slower pace, and the kit is here when you're ready.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit — $17')}
-    ${p(`<span style="color:#999;font-size:14px;">Delivered to your inbox in 60 seconds. 7-day refund if it doesn't move your numbers.</span>`, { margin: '0 0 28px' })}
+    ${ctaButton('https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H', 'Join the BP Triangle Challenge — $97')}
+    ${p(`Next week we open the third and quietest faucet — Stress Pressure — and I'll introduce you to something special happening in June. Today, sit with this: 20 points in 11 days, and she didn't do it alone.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If the price isn't the issue — if it's something else stopping you — hit reply and tell me what it is. I can't promise to solve it, but I always read, and sometimes a one-line answer is all that's needed.`)}
-    ${upsellFooter({
-      kicker: 'The asymmetric bet',
-      body: '$17. 7-day refund. Eighteen pages of protocol — Stress, Sugar, and Pipe Pressure paths, the Cardiologist Conversation Script, the herbs, the recipes. The worst case is the kit stays in your downloads folder for a friend who needs it later.',
-      ctaLabel: 'Get the kit for $17',
-      ctaUrl: KIT_URL,
-    })}
+    ${psBox(`If your number is anywhere near Linda's starting point and you've been told "this is as good as it gets," hit reply and tell me what your number is today. I won't pitch you in the reply — I just want to know who's reading.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-This is the last real pitch. After this, the rhythm changes — I'll keep writing, but slower, and I won't be asking you to do anything except read.
+Two days ago — the syrup in the line. Today, the second half of Sugar Pressure: the SWING. Then a woman who got off it.
 
-So plainly:
+THE BLOOD-SUGAR ROLLERCOASTER.
 
-THE COST: $17. About two coffees. Less than one co-pay.
+White toast and jam — sugar shoots up like the first climb. Insulin floods in, overshoots, and an hour later you crash into a valley, shaky, craving the next carb. Up the hill, down the drop, all day. Every climb spikes your pressure. Every crash sends you reaching for the thing that spikes it again.
 
-THE PROMISE: Read every page this week. Apply the protocol for your loudest Pressure. If your numbers haven't moved by Day 7 with honest effort, hit reply with "refund." $17 back, no questions, PDF yours to keep.
+Most people ride it their whole life and call it "normal energy." Getting off is one of the fastest ways to drop a number. Linda proved it.
 
-The 7-day refund promise. $17 back. No questions. PDF yours forever.
+Linda is 62. (Not her real name. Numbers are real.) Retired teacher, married 38 years, reads every label, still couldn't figure out why her numbers climbed.
 
-WORST CASE: kit doesn't fit. You reply "refund." $17 back. Keep the PDF. Zero net dollars. Full document forever.
+BEFORE: 148/94. Lisinopril 20mg four years, amlodipine 5mg two years, cardiologist floating a third.
 
-BEST CASE: what Marlene did (11 points / 9 days). What Linda did (20 points / 11 days). What Paul did (the end of two years of 3 AM wake-ups, halved medication). For $17.
+Pipe Pressure was loud; Sugar was the runner-up nobody flagged. She worked both:
 
-Small downside. Large upside. Bet structured so the downside doesn't actually exist.
+PIPES — Hibiscus, 3 cups/day. Garlic (fresh clove crushed, rested, added late). Walk after dinner. Contrast shower, 30 sec cold to finish.
 
-What you get for $17:
-→ The 10-Day BP Reset Daily Plan
-→ Joel's 7 Most-Trusted BP Herbs (safe dosing)
-→ The Cardiologist Conversation Script
-→ The 4 Lifestyle Levers Cheat Sheet
-→ Cook For Life Cookbook (45 recipes)
+SUGAR (the brakes) — Swapped store bread for homemade. Protein and fiber BEFORE starch. Ten-minute walk after lunch. The 3 PM cookie became apple + peanut butter.
 
-If now isn't your time, that's okay. No penalty. No clock. I'll keep showing up at a slower pace.
+EVERY DAY — Cuffed each morning, same time, sitting, feet flat, no coffee yet. Wrote it down.
 
-→ Get the kit: ${KIT_URL}
-60 seconds. 7-day refund.
+AFTER: Day 11, morning reading 128/82. Twenty systolic, twelve diastolic. Same meds, same doses. Cardiologist asked, "What did you do?" Didn't add the third drug. Told her to keep going.
+
+The objection that stops most people isn't "will it work." It's quieter: "I can't do this alone."
+
+You're right. You shouldn't have to. Reading a PDF alone at 9 PM, forgotten by Thursday, is how good intentions die. What moves numbers is structure, a start date, and people doing it with you.
+
+That's why I built the BP TRIANGLE CHALLENGE — $97, the smartest thing on my shelf:
+— ALL THREE of my books included (BP Cures, Cook For Life, Overmedicated Boomers)
+— Community + accountability — a group cheering your numbers down
+
+Buy the three books separately and you're already past $97 — before the group ever starts.
+→ https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H
+
+Next week — the third, quietest faucet: Stress Pressure. Today: 20 points in 11 days, and she didn't do it alone.
 
 Joel
 RN, BraveWorks
 
-P.S. If price isn't the issue — if it's something else stopping you — hit reply and tell me. I always read.
+P.S. If your number is near Linda's start, hit reply and tell me yours. I won't pitch you in the reply — I just want to know who's reading.
 
 —
 → Skool: ${SKOOL_URL}
@@ -734,69 +464,365 @@ P.S. If price isn't the issue — if it's something else stopping you — hit re
 `,
 };
 
-// ─── DAY 21 — Graceful exit / "I'll send less from here" ──────────────
-const day21 = {
-  subject: 'I\'m not going to keep sending these',
-  subjectB: 'Last email before you become a Tuesday person',
-  preview: 'A quieter rhythm starts tomorrow. Here\'s what to expect.',
+// ─── DAY 10 — Stress Pressure #1 (cortisol) + RestoreHER Virtual Pass ──
+const day10 = {
+  subject: 'Your foot is stuck on the gas',
+  subjectB: 'The silent faucet nobody measures',
+  preview: 'The third Pressure runs even while you sleep — here\'s how to ease off.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Twenty-one days. We've covered a lot of ground.`)}
-    ${p(`I'm not going to keep sending you an email every few days. Starting tomorrow, the rhythm changes — you'll hear from me about once a week, on a Tuesday, with one teaching and one story. No countdown clocks. No "last chance" subject lines. Just the work, at the pace of someone you can trust to be there but not be loud.`)}
-    ${bigQuote('Before the rhythm slows, a recap.')}
-    ${p(`Here's what you have now that you didn't 21 days ago:`)}
-    ${sageBlock(`
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">— A map. The BP Triangle Method. Stress, Sugar, and Pipe Pressure.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">— A self-diagnostic. You know which Pressure is loudest in you.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">— A quick win. Three cups of hibiscus tea a day.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">— Three case studies. Marlene (11 points / 9 days). Linda (20 points / 11 days). Paul (the cortisol fix and the halved medication).</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">— The reason your last plan didn't stick — and why this approach is different.</p>
-    `)}
-    ${p(`That's a foundation. It's enough to move your numbers if you do the small things.`, { margin: '0 0 28px' })}
-    ${p(`If you've been waiting for a sign to get the Starter Kit, this is the gentlest one I'll send you. <strong>The link still works. The refund promise still stands.</strong> Most people who buy do so within 21 days of joining the list — after that the rate drops, and the next time I write about it will be quietly inside a Tuesday email, not a dedicated one like this.`)}
-    ${p(`If the kit isn't for you, that's genuinely okay. The emails will keep coming. You're not graduating into silence — you're graduating into a slower, deeper conversation.`, { margin: '0 0 28px' })}
-    ${p(`Whatever happens next, I want to say thank you. The work I do exists because women like you put your email in and stayed long enough to learn. That's a quiet kind of bravery, and it's exactly what BraveWorks is named for.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit — $17')}
-    ${p(`<span style="color:#999;font-size:14px;">Or just hit reply and tell me how you're doing. That's also valid.</span>`, { margin: '0 0 28px' })}
+    ${p(`We've turned down the pipes. We've thinned the syrup. Today we reach the third faucet — the quiet one, the one almost no cardiologist measures: <strong>Stress Pressure</strong>. Cortisol.`)}
+    ${bigQuote('Imagine your foot stuck on the gas pedal.')}
+    ${p(`Engine revving in the driveway. You're not going anywhere, but the motor is roaring, burning fuel, wearing itself down. That's your body under chronic cortisol. Your nervous system is flooring the accelerator — heart faster, vessels tighter — bracing for a threat that never actually comes. And it does this all day, even while you sleep.`)}
+    ${p(`That's why this faucet is so sneaky. Pipe and Sugar Pressure you can sometimes feel. Stress Pressure runs in the background. The tells: you wake between 2 and 4 AM and can't drop back off. Mornings are "wired but tired." Coffee feels mandatory. Weight settles around the middle. And — the giveaway — your readings are always highest at the doctor's office. That's not white-coat nerves being silly. That's your foot mashing the pedal on cue.`, { margin: '0 0 28px' })}
+    ${p(`Now the belief I have to gently dismantle, because it stops almost everyone: <em>"Stress is just life at my age. I can't fix that."</em>`)}
+    ${p(`I hear you. You can't fire your family, undo a loss, or add hours to the day. But here's the bridge I want you to walk across: you are not trying to remove stress. You are trying to take your foot off the gas — to teach the nervous system it's allowed to idle. Those are completely different jobs. You don't need a calmer life. You need a body that stops revving when the driveway is empty.`)}
+    ${p(`And that part is absolutely trainable. Five minutes of morning sunlight resets the cortisol curve so it peaks in the morning instead of at 2 AM. A slow 4-7-8 breath drops cortisol faster than any supplement I've measured. Magnesium glycinate at night lifts the foot off the pedal while you sleep. None of that requires your life to get easier. It just requires the gas pedal to come up.`, { margin: '0 0 28px' })}
+    ${p(`Here's why this faucet matters so much for the women I serve — and why I want to invite you to something.`)}
+    ${p(`Especially for women in perimenopause and after — but really for anyone in their second half of life — Stress Pressure and hormones are tangled together in a way no one explains. So this June, I'm part of an event built entirely around it.`, { margin: '0 0 24px' })}
+    ${clayBlock(
+      'RestoreHER Hormones · June 24–25',
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">A two-day virtual event on the hormone–blood-pressure connection. <strong>Barbara O'Neill is keynoting.</strong> My wife <strong>Annie (RN, fellow naturopath)</strong> is teaching the hormone side. And I'll be there walking through the Stress Pressure faucet in depth.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">You can be in the (virtual) room from your own kitchen table. The <strong>Virtual Pass is $247</strong> — two full days of teaching you won't find anywhere else, watchable live or on replay.</p>`
+    )}
+    ${ctaButton('https://buy.stripe.com/6oU8wPcAjgqi77l8VrfnO0U', 'Get your RestoreHER Virtual Pass — $247')}
+    ${p(`In three days I'll tell you the part of the cortisol story that's specifically about menopause — and why so many women find their numbers started revving harder right around the time their hormones shifted. It's the email I wish someone had handed my own patients twenty years ago.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`I'll see you Tuesday. From here on, the work is slow and the conversation is long. That's how real change is built — not in 21 days, but in the year that follows.`)}
+    ${psBox(`Do you wake between 2 and 4 AM, mind racing, unable to drop back off? Hit reply with one word: "yes." That single symptom tells me your Stress faucet is wide open — and it's one of the most fixable things I teach.`)}
     ${upsellFooter({
-      kicker: 'Door stays open',
-      body: 'No deadline. No clock. The Starter Kit is here when you\'re ready — in a week, in a month, in a year. Same $17. Same refund promise. Same eighteen pages of protocol.',
-      ctaLabel: 'Get the kit for $17',
+      kicker: 'June 24–25, from your kitchen',
+      body: 'RestoreHER Hormones — Barbara O\'Neill keynoting, my wife Annie (RN) teaching the hormone side, and me on the Stress Pressure faucet. Two days, live or replay. Virtual Pass $247.',
+      ctaLabel: 'Get the Virtual Pass',
+      ctaUrl: 'https://buy.stripe.com/6oU8wPcAjgqi77l8VrfnO0U',
+    })}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+We turned down the pipes. We thinned the syrup. Today, the third faucet — the quiet one almost no cardiologist measures: STRESS PRESSURE. Cortisol.
+
+IMAGINE YOUR FOOT STUCK ON THE GAS PEDAL.
+
+Engine revving in the driveway. You're going nowhere, but the motor's roaring, burning fuel, wearing down. That's chronic cortisol — your nervous system flooring it, heart faster, vessels tighter, bracing for a threat that never comes. All day. Even while you sleep.
+
+That's why it's sneaky. Pipe and Sugar you can sometimes feel. Stress runs in the background. Tells: waking 2-4 AM and can't drop off, "wired but tired" mornings, mandatory coffee, weight around the middle, and readings always highest at the doctor's office. That's not silly nerves — that's your foot mashing the pedal on cue.
+
+The belief that stops everyone: "Stress is just life at my age. I can't fix that."
+
+I hear you. You can't fire your family or add hours to the day. But here's the bridge: you're not removing stress — you're taking your foot OFF the gas, teaching the nervous system it's allowed to idle. Different jobs. You don't need a calmer life. You need a body that stops revving when the driveway is empty.
+
+And that's trainable: 5 minutes of morning sunlight resets the cortisol curve. A slow 4-7-8 breath drops cortisol faster than any supplement I've measured. Magnesium glycinate at night lifts the foot off the pedal while you sleep. None of it needs your life to get easier.
+
+Especially for women in perimenopause and after — but really for anyone in their second half of life — Stress Pressure and hormones are tangled in a way no one explains. So this June, I'm part of an event built around it.
+
+RESTOREHER HORMONES · JUNE 24-25
+A two-day virtual event on the hormone-BP connection. Barbara O'Neill keynoting. My wife ANNIE (RN, fellow naturopath) teaching the hormone side. Me on the Stress faucet in depth. Be in the (virtual) room from your kitchen table.
+Virtual Pass $247 — live or replay.
+→ https://buy.stripe.com/6oU8wPcAjgqi77l8VrfnO0U
+
+In three days — the menopause half of the cortisol story, and why your body started revving harder right when your hormones shifted.
+
+Joel
+RN, BraveWorks
+
+P.S. Wake between 2 and 4 AM, mind racing, can't drop back off? Reply "yes." That one symptom tells me your Stress faucet is wide open — and it's one of the most fixable things I teach.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 13 — Stress Pressure #2: hormones + menopause link ────────────
+const day13 = {
+  subject: 'The dimmer switch nobody told you about',
+  subjectB: 'Why your BP shifted right around menopause',
+  preview: 'Estrogen held the dimmer on cortisol. It\'s fading. Here\'s the fix.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Three days ago I showed you the foot stuck on the gas pedal. Today I have to tell you the part of the story that's specifically about being a woman in your second half of life — because it changes everything about how you read your own numbers.`)}
+    ${p(`Think back. So many women tell me the same thing: <em>"My pressure was fine my whole life. Then somewhere around 50, it just... started creeping up."</em> They assume it's age. It's not really age. It's a switch that quietly turned off.`)}
+    ${bigQuote('Estrogen was the dimmer switch on your cortisol.')}
+    ${p(`For decades, estrogen sat on the wall of your body like a dimmer switch — keeping cortisol turned <em>down</em>, keeping your vessels soft and relaxed, keeping that gas pedal from sticking. You never noticed it working, the same way you don't notice a dimmer holding the lights at a gentle glow. It just quietly did its job for thirty years.`)}
+    ${p(`Then perimenopause and menopause arrive, and that dimmer switch fades. The hand that held cortisol down lifts off. Now the same daily stress that used to roll right past you sends the lights to full blast. Your vessels lose some of their give. The gas pedal sticks more easily. Your morning number climbs — and you blame "getting older."`)}
+    ${p(`This is exactly why a plan written for a 45-year-old man, or the generic advice on the pamphlet, so often fails the woman it was never designed for. Your Stress Pressure has a hormonal hand on it that his doesn't.`, { margin: '0 0 28px' })}
+    ${p(`So let me speak to the belief underneath it all — the one I hear most from women your age: <em>"It's just my age. It's genetics. This is what happens."</em>`)}
+    ${p(`Here's the truth I want you to hold onto. Your genes loaded the gun, but your inputs pull the trigger — and a fading dimmer switch is not a life sentence, it's a <strong>known, addressable shift</strong>. We can support what estrogen used to do: with the breathing, the sunlight, the magnesium, the right plant foods, and the hormone-aware protocols that actual practitioners — not pamphlets — use. "It's just my age" is the sentence that keeps a woman stuck on the gas pedal for the rest of her life. I refuse to let that be your story.`, { margin: '0 0 28px' })}
+    ${p(`And this is the heart of why I want you in the room this June.`)}
+    ${p(`The Virtual Pass I mentioned is wonderful — two days of teaching from your kitchen table. But there is something different that happens when you are physically <em>in the room</em> with Barbara O'Neill, learning the hormone side of this in person, asking your own question out loud, and turning to the woman beside you who is walking the exact same road.`, { margin: '0 0 24px' })}
+    ${clayBlock(
+      'RestoreHER Platinum — For Two — $1,497',
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">The live, in-the-room experience of RestoreHER on June 24–25 — for <strong>you and one other woman</strong>. Bring your daughter. Bring your sister. Bring the friend whose dimmer switch is fading right alongside yours.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">Picture the version of you who didn't do this alone — who learned the hormone-BP connection shoulder to shoulder with someone she loves, and came home with a partner in the work instead of a PDF. That's what Platinum For Two is. $1,497 for both seats.</p>`
+    )}
+    ${ctaButton('https://buy.stripe.com/9B67sLdEngqigHV9ZvfnO0K', 'RestoreHER Platinum For Two — $1,497')}
+    ${p(`In three days the emails turn a corner. I'm going to talk about the one faucet you genuinely cannot turn all the way down by yourself — and what to do about it.`, { margin: '0 0 28px' })}
+    ${joelSignoff()}
+    ${psBox(`Did your numbers start creeping up somewhere around 48 to 55? Hit reply and tell me roughly when it began. That timing is one of the clearest signs the dimmer switch — not "old age" — is what's driving your number.`)}
+    ${upsellFooter({
+      kicker: 'Be in the room — bring someone',
+      body: 'RestoreHER Platinum For Two — the live June 24-25 experience with Barbara O\'Neill, for you and your daughter, sister, or friend. Learn the hormone-BP connection together. $1,497 for both seats.',
+      ctaLabel: 'Get Platinum For Two',
+      ctaUrl: 'https://buy.stripe.com/9B67sLdEngqigHV9ZvfnO0K',
+    })}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+Three days ago — the foot stuck on the gas. Today, the part of the story that's specifically about being a woman in your second half of life.
+
+So many women tell me the same thing: "My pressure was fine my whole life. Then around 50, it just started creeping up." They assume it's age. It's not really age. It's a switch that quietly turned off.
+
+ESTROGEN WAS THE DIMMER SWITCH ON YOUR CORTISOL.
+
+For decades, estrogen sat on the wall like a dimmer — keeping cortisol turned DOWN, vessels soft, the gas pedal from sticking. You never noticed it working, like you don't notice a dimmer holding the lights at a gentle glow. It just did its job for thirty years.
+
+Then perimenopause and menopause arrive, and the dimmer fades. The hand holding cortisol down lifts off. The same daily stress that rolled past you now sends the lights to full blast. Vessels lose their give. The pedal sticks. Your morning number climbs — and you blame "getting older."
+
+That's why a plan written for a 45-year-old man so often fails the woman it was never designed for. Your Stress Pressure has a hormonal hand on it that his doesn't.
+
+The belief I hear most: "It's just my age. It's genetics. This is what happens."
+
+The truth: your genes loaded the gun, your inputs pull the trigger — and a fading dimmer switch isn't a life sentence, it's a known, addressable shift. We can support what estrogen used to do: the breathing, sunlight, magnesium, the right plant foods, hormone-aware protocols that real practitioners use. "It's just my age" is the sentence that keeps a woman stuck on the gas pedal forever. I won't let that be your story.
+
+This is why I want you IN THE ROOM this June. The Virtual Pass is wonderful. But something different happens when you're physically there with Barbara O'Neill, asking your own question out loud, turning to the woman beside you on the same road.
+
+RESTOREHER PLATINUM — FOR TWO — $1,497
+The live, in-the-room experience June 24-25, for YOU AND ONE OTHER WOMAN. Bring your daughter, your sister, the friend whose dimmer switch is fading too. Come home with a partner in the work instead of a PDF. $1,497 for both seats.
+→ https://buy.stripe.com/9B67sLdEngqigHV9ZvfnO0K
+
+In three days the emails turn a corner — the one faucet you genuinely can't turn all the way down by yourself.
+
+Joel
+RN, BraveWorks
+
+P.S. Did your numbers start creeping up around 48 to 55? Reply and tell me roughly when. That timing is one of the clearest signs the dimmer switch — not "old age" — is driving your number.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 16 — Coaching #1: the corner you can't fix alone (1:1 $1,997) ─
+const day16 = {
+  subject: 'Driving blind vs. driving with GPS',
+  subjectB: 'The corner you can\'t fix alone',
+  preview: 'Two slots left. 90 days, one-on-one, with me.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Over sixteen days you've learned the whole map. The pipes. The syrup. The gas pedal. The dimmer switch. You could turn down all three faucets starting tomorrow, and many of you will.`)}
+    ${p(`But I'd be a poor nurse if I didn't tell you the honest truth about the fourth corner — the one that isn't a faucet at all.`)}
+    ${bigQuote('Some roads you shouldn\'t drive blind.')}
+    ${p(`Picture two people driving to the same unfamiliar address across a big city. One has GPS — a voice that says "turn here," that reroutes the second she takes a wrong exit, that knows the road closures before she hits them. The other has a printed page of directions from ten years ago and her own best guess.`)}
+    ${p(`They might both arrive. But you already know who white-knuckles it, who doubles back, who gives up and goes home. The map was never the problem. The map is the same for both of them. The difference is one of them had a voice in the car.`)}
+    ${p(`That's the corner you can't fully fix alone — not because you're weak, but because you can't read your own blind spot. When your number jumps 12 points one morning, is it the new medication, the salt in last night's restaurant meal, a bad night's sleep, or the dimmer switch? A book can't answer that. A group can't answer that. Only a practitioner looking at <em>your</em> log, <em>your</em> meds, <em>your</em> body, in real time, can.`, { margin: '0 0 28px' })}
+    ${p(`So today I'm opening the door to the closest thing I offer to a voice in your car.`, { margin: '0 0 24px' })}
+    ${clayBlock(
+      '1:1 Coaching with Joel — 90 days — $1,997',
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">Ninety days, working directly with me. A <strong>weekly one-on-one</strong> where we read your numbers together, adjust your protocol to your body, and prepare you for every doctor's appointment so you walk in informed instead of nervous. AND, never instead of — I work alongside your physician, every step.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">This is the GPS. I'm the voice in the car for ninety days. <strong>I take only a handful of people, and there are 2 slots left.</strong></p>`
+    )}
+    ${p(`Now the belief I have to meet head-on, because I felt it once too: <em>"Coaching isn't worth that. I should be able to figure this out myself."</em>`)}
+    ${p(`Let me put it on a scale. On one side: $1,997, once. On the other side: ninety days of weekly one-on-one access to a nurse of 20 years who has walked hundreds of women down this exact road — plus the years you'd otherwise spend guessing, the wrong turns, the mornings you almost quit, and the slow creep toward a third medication you didn't have to be on. When you weigh what you actually get against what staying stuck actually costs, "not worth it" stops being the honest answer. The dream outcome — a lower number you understand and control — divided by the effort and doubt it takes you alone? A voice in the car changes that math entirely.`, { margin: '0 0 24px' })}
+    ${p(`If you'd rather just talk first, that's completely fine — I keep a few free 30-minute discovery calls open so you can hear my voice, ask your questions, and decide with zero pressure.`, { margin: '0 0 24px' })}
+    ${ctaButton('https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M', 'Claim a coaching slot — $1,997')}
+    ${p(`<span style="color:#999;font-size:14px;">Prefer to talk first? Book a free 30-minute discovery call: <a href="https://calendly.com/braveworksrn/60min" style="color:${PALETTE.accentClay};">calendly.com/braveworksrn/60min</a></span>`, { margin: '0 0 28px' })}
+    ${p(`In three days I'll show you the plain math of staying stuck — and I have to be straight with you about what happens to those two slots, and to the price, once they fill.`, { margin: '0 0 28px' })}
+    ${joelSignoff()}
+    ${psBox(`Not sure coaching is for you? Hit reply with the one thing about your numbers you most wish someone could just look at and explain. If it's the kind of thing a voice in the car solves, I'll tell you honestly — and if it isn't, I'll tell you that too.`)}
+    ${upsellFooter({
+      kicker: 'A voice in the car — 2 slots left',
+      body: '90 days of weekly 1:1 coaching with Joel — your numbers, your protocol, your appointments, read in real time. $1,997. Or book a free 30-minute discovery call first.',
+      ctaLabel: 'Claim a coaching slot',
+      ctaUrl: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
+    })}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+Sixteen days, and you've learned the whole map. The pipes. The syrup. The gas pedal. The dimmer switch. You could turn down all three faucets tomorrow, and many of you will.
+
+But I'd be a poor nurse if I didn't tell you the truth about the fourth corner — the one that isn't a faucet.
+
+SOME ROADS YOU SHOULDN'T DRIVE BLIND.
+
+Two people drive to the same unfamiliar address across a big city. One has GPS — a voice saying "turn here," rerouting after a wrong exit, knowing the closures ahead. The other has a printed page from ten years ago and her best guess.
+
+They might both arrive. But you know who white-knuckles it, doubles back, gives up. The map was never the problem — it's the same for both. The difference is a voice in the car.
+
+That's the corner you can't fully fix alone — not because you're weak, but because you can't read your own blind spot. When your number jumps 12 points one morning, is it the new med, the restaurant salt, a bad night's sleep, or the dimmer switch? A book can't answer that. A group can't. Only a practitioner looking at YOUR log, YOUR meds, YOUR body, in real time.
+
+So today I'm opening the closest thing I offer to a voice in your car.
+
+1:1 COACHING WITH JOEL — 90 DAYS — $1,997
+Ninety days working directly with me. A WEEKLY one-on-one — we read your numbers together, adjust your protocol to your body, prep you for every appointment so you walk in informed, not nervous. AND, never instead of — alongside your physician, every step.
+This is the GPS. I take only a handful of people. 2 SLOTS LEFT.
+
+The belief I have to meet: "Coaching isn't worth that. I should figure this out myself."
+
+On one side of the scale: $1,997, once. On the other: 90 days of weekly 1:1 access to a 20-year nurse who's walked hundreds of women down this exact road — plus the years you'd spend guessing, the wrong turns, the slow creep toward a third med you didn't have to be on. Weigh what you GET against what staying stuck COSTS, and "not worth it" stops being honest.
+
+Rather talk first? I keep a few free 30-minute discovery calls open. Zero pressure.
+
+→ Claim a slot: https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M
+→ Free discovery call: https://calendly.com/braveworksrn/60min
+
+In three days — the plain math of staying stuck, and what happens to those two slots and the price once they fill.
+
+Joel
+RN, BraveWorks
+
+P.S. Not sure coaching's for you? Reply with the one thing about your numbers you most wish someone could just look at and explain. If a voice in the car solves it, I'll tell you honestly — and if it doesn't, I'll tell you that too.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 19 — Coaching #2: math of staying stuck + price rises ─────────
+const day19 = {
+  subject: 'The bill you\'re already paying',
+  subjectB: 'Two slots, then the price goes to $2,997',
+  preview: 'The one-time cost of fixing it vs. the monthly cost of staying stuck.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Three days ago I opened two coaching slots and told you I'd be straight with you about the math. Today I'm keeping that promise — because I think you're doing the wrong arithmetic, and it's costing you more than you realize.`)}
+    ${p(`When I say "1:1 coaching, $1,997," the mind hears one big number and flinches. But that number isn't being compared to nothing. It's being compared to the bill you are <em>already paying</em> — month after month, quietly, without ever getting a receipt.`)}
+    ${bigQuote('Add up what staying stuck actually costs.')}
+    ${p(`Let's do it honestly, on the back of a napkin:`)}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The bill for staying stuck.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ Medication co-pays — every month, often more than one, often for years, frequently climbing as a third drug gets added.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ The appointments, the labs, the specialist visits — each with its own co-pay and its own half-day of your life.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ One ER visit or one cardiac scare — which can cost more by itself than a year of coaching, before you count the fear.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">→ And the part with no dollar sign: the 2 AM worry, the held breath at every cuff reading, the son or daughter who's quietly scared for you.</p>
+    `)}
+    ${p(`That bill runs every single month, on autopay, for the rest of your life — unless something changes the inputs. Coaching is a <strong>one-time cost</strong> aimed at changing those inputs so the monthly bill starts shrinking. One number, paid once, against a meter that never stops running. That's the real comparison.`, { margin: '0 0 28px' })}
+    ${p(`So let me speak gently to the honest version of the objection — not "is it worth it," but <em>"I can't afford it."</em>`)}
+    ${p(`I hear that, and I respect it. So two things. First, the truth underneath it: you're already affording the more expensive option — the monthly meter — you just can't see the total because it never arrives as one bill. Second, and this matters: <strong>you don't have to put yourself last to do this.</strong> Every woman I've ever coached spent years putting her own health at the bottom of the list, behind everyone else's needs. Choosing the voice in the car isn't selfish. It's the first time in a long while you put your own name on the list. And if the full amount is the hurdle, there's a <strong>3-payment plan at $697/month</strong> — so the door isn't bolted shut by a single number.`, { margin: '0 0 28px' })}
+    ${clayBlock(
+      'Two slots left — then it\'s $2,997',
+      `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;">I have to be honest about this, because it's simply true: there are <strong>2 coaching slots</strong> at the current $1,997. When they fill — and at this pace that's soon — the next person pays <strong>$2,997</strong>. Not a gimmick. I take only a handful of people, weekly 1:1 time is finite, and the price reflects the scarcity.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">If coaching is in your future at all, the cheapest day to start is today.</p>`
+    )}
+    ${ctaButton('https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M', 'Claim a slot at $1,997 (pay in full)')}
+    ${p(`<span style="color:#999;font-size:14px;">Prefer to spread it out? <a href="https://buy.stripe.com/6oU3cv2ZJ5LEgHV6NjfnO0N" style="color:${PALETTE.accentClay};">3 payments of $697/month</a>. Or talk first on a free 30-minute call: <a href="https://calendly.com/braveworksrn/60min" style="color:${PALETTE.accentClay};">calendly.com/braveworksrn/60min</a></span>`, { margin: '0 0 28px' })}
+    ${p(`In two days I send the last email in this series. No pitch in it, I promise — just a fork in the road, and an open door. After that, the rhythm of these emails slows for good.`, { margin: '0 0 28px' })}
+    ${joelSignoff()}
+    ${psBox(`If "I can't afford it" is the real wall, hit reply and tell me honestly. Sometimes it's the payment plan that solves it; sometimes it's just naming the fear out loud. Either way, I read every reply and I won't pressure you.`)}
+    ${upsellFooter({
+      kicker: 'Cheapest day to start is today',
+      body: '1:1 coaching with Joel — 90 days, weekly. $1,997 now, $2,997 once the last 2 slots fill. A 3-payment plan ($697/mo) exists, and you can book a free 30-minute call first.',
+      ctaLabel: 'Claim a coaching slot',
+      ctaUrl: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
+    })}
+    ${footerSecondaryCTAs()}
+  `,
+  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+
+Three days ago I opened two coaching slots and promised to be straight about the math. I think you're doing the wrong arithmetic, and it's costing you.
+
+When I say "1:1 coaching, $1,997," the mind hears one big number and flinches. But that number isn't compared to nothing. It's compared to the bill you're ALREADY paying — month after month, quietly, no receipt.
+
+ADD UP WHAT STAYING STUCK ACTUALLY COSTS.
+
+On the napkin:
+→ Medication co-pays — every month, often more than one, for years, climbing as a third drug gets added.
+→ Appointments, labs, specialist visits — each its own co-pay, its own half-day.
+→ One ER visit or cardiac scare — can cost more by itself than a year of coaching, before the fear.
+→ No dollar sign: the 2 AM worry, the held breath at every reading, the son or daughter quietly scared for you.
+
+That bill runs every month, on autopay, for life — unless something changes the inputs. Coaching is a ONE-TIME cost aimed at changing those inputs so the monthly bill shrinks. One number paid once, against a meter that never stops. That's the real comparison.
+
+The honest objection isn't "is it worth it" — it's "I can't afford it."
+
+Two things. First: you're already affording the more expensive option — the monthly meter — you just can't see the total because it never arrives as one bill. Second: you don't have to put yourself last to do this. Every woman I've coached spent years putting her health at the bottom of the list. Choosing the voice in the car isn't selfish — it's the first time in a while you put your own name on the list. And if the full amount is the hurdle, there's a 3-PAYMENT PLAN at $697/month.
+
+TWO SLOTS LEFT — THEN IT'S $2,997.
+Simply true: 2 coaching slots at the current $1,997. When they fill — soon, at this pace — the next person pays $2,997. Not a gimmick; weekly 1:1 time is finite. If coaching's in your future at all, the cheapest day to start is today.
+
+→ Pay in full ($1,997): https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M
+→ 3 payments of $697/mo: https://buy.stripe.com/6oU3cv2ZJ5LEgHV6NjfnO0N
+→ Free 30-min call: https://calendly.com/braveworksrn/60min
+
+In two days — the last email. No pitch, I promise. Just a fork in the road and an open door.
+
+Joel
+RN, BraveWorks
+
+P.S. If "I can't afford it" is the real wall, reply and tell me honestly. Sometimes it's the payment plan that solves it; sometimes it's just naming the fear out loud. I read every reply and won't pressure you.
+
+—
+→ Skool: ${SKOOL_URL}
+→ YouTube: ${YOUTUBE_URL}
+`,
+};
+
+// ─── DAY 21 — Last email: fork in the road, door stays open ────────────
+const day21 = {
+  subject: 'A fork in the road',
+  subjectB: 'The door stays open',
+  preview: 'Twenty-one days of the map. Now there are two roads. Both are okay.',
+  htmlBody: ({ firstName }) => `
+    ${p(`Hi ${firstName || 'there'},`)}
+    ${p(`Twenty-one days. We've walked the whole map together — and I want to say thank you before anything else. You read. You stayed. That's a quiet kind of bravery, and it's exactly what BraveWorks is named for.`)}
+    ${bigQuote('Stand with me at a fork in the road.')}
+    ${p(`Here's what I've learned in twenty years of nursing: a year from now, you will be somewhere. The only question is where. There's a version of you a year out who is still cuffing her arm with that little held breath, still creeping toward the next medication, still telling herself "it's just my age." And there's another version — same woman, same genes, same kitchen — who turned down her faucets, who understands her own number, who walks into the doctor's office calm.`)}
+    ${p(`Both of those women start at this exact fork, today. The thing that decides which one you become isn't talent or luck or perfect genes. It's the next small step. That's the whole secret, and it's why I have such conviction about this work: the body wants to heal. Give it the right inputs and it almost can't help itself. I have watched it happen too many times to be quiet about it.`, { margin: '0 0 28px' })}
+    ${p(`So before the emails slow down, let me lay out every road on the map — pick the one that fits where you actually are:`)}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The whole ladder, in one place.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Just starting?</strong> The 60-second quiz, or the BP Starter Kit ($17) — the protocol I hand patients leaving my practice.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Want the research?</strong> BP Cures ($12.99) — the falsifiable claim and the dose behind every remedy.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Don't want to do it alone?</strong> The BP Triangle Challenge ($97) — all three books, a virtual RestoreHER ticket, and a group walking it with you.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>It's the hormones?</strong> RestoreHER, June 24–25 — Virtual Pass ($247), or Platinum For Two ($1,497) to be in the room with Barbara O'Neill alongside someone you love.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Ready for a voice in the car?</strong> 1:1 coaching with me — 90 days, weekly. (The last 2 slots are still $1,997 before it moves to $2,997.)</p>
+    `)}
+    ${p(`Not sure? Then take the smallest honest step — the $17 kit, or a free 30-minute call so you can just hear my voice and ask your questions with zero pressure.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Start with the BP Starter Kit — $17')}
+    ${p(`<span style="color:#999;font-size:14px;">Or book a free 30-minute discovery call: <a href="https://calendly.com/braveworksrn/60min" style="color:${PALETTE.accentClay};">calendly.com/braveworksrn/60min</a></span>`, { margin: '0 0 28px' })}
+    ${p(`And if today the answer is "not yet" — that is genuinely okay. There's no door closing, no countdown clock. Starting next week you'll hear from me about once a week, on a Tuesday, with one teaching and one story. <strong>The door stays open.</strong> Every link in this email still works in a week, a month, a year from now. I'll be here when you're ready.`, { margin: '0 0 28px' })}
+    ${joelSignoff()}
+    ${psBox(`Wherever you are at the fork, hit reply and tell me one thing you're taking with you from these 21 days. I read every single one. The work is slow and the conversation is long — that's how real change is built, not in 21 days, but in the year that follows. I'll see you Tuesday.`)}
+    ${upsellFooter({
+      kicker: 'The door stays open',
+      body: 'No deadline, no clock. Every rung is here when you\'re ready — the $17 kit, the $12.99 book, the $97 Challenge, the RestoreHER passes, and 1:1 coaching. Take the step that fits where you are.',
+      ctaLabel: 'Start with the $17 kit',
       ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Twenty-one days. We've covered a lot.
+Twenty-one days. We've walked the whole map together — and thank you, before anything else. You read. You stayed. That's a quiet kind of bravery, exactly what BraveWorks is named for.
 
-I'm not going to keep sending one every few days. Starting tomorrow, the rhythm changes — about once a week, on a Tuesday, with one teaching and one story. No countdown clocks. No "last chance." The work at the pace of someone you can trust to be there but not be loud.
+STAND WITH ME AT A FORK IN THE ROAD.
 
-Before the rhythm slows, a recap. Here's what you have now:
+A year from now, you will be somewhere. The only question is where. One version of you is still cuffing with that held breath, creeping toward the next medication, saying "it's just my age." Another version — same woman, same genes, same kitchen — turned down her faucets, understands her number, walks into the doctor's office calm.
 
-— A map. The BP Triangle Method. Stress, Sugar, and Pipe Pressure.
-— A self-diagnostic. You know which Pressure is loudest.
-— A quick win. Three cups of hibiscus tea a day.
-— Three case studies. Marlene (11 points / 9 days). Linda (20 points / 11 days). Paul (cortisol fix, halved medication).
-— The reason your last plan didn't stick.
+Both women start at this fork, today. What decides which one you become isn't talent or luck or perfect genes. It's the next small step. That's the whole secret, and why I have such conviction: the body wants to heal. Give it the right inputs and it almost can't help itself. I've watched it too many times to be quiet about it.
 
-That's a foundation. Enough to move your numbers if you do the small things.
+THE WHOLE LADDER, IN ONE PLACE — pick the road that fits you:
 
-If you've been waiting for a sign to get the Starter Kit, this is the gentlest one. The link still works. The refund promise still stands. Most people who buy do so within 21 days of joining — after that the rate drops. Next time I write about the kit will be quietly inside a Tuesday email, not a dedicated one like this.
+Just starting? The 60-second quiz, or the BP Starter Kit ($17).
+Want the research? BP Cures ($12.99) — the claim and dose behind every remedy.
+Don't want to do it alone? The BP Triangle Challenge ($97) — all three books, a virtual RestoreHER ticket, and a group with you.
+It's the hormones? RestoreHER, June 24-25 — Virtual Pass ($247) or Platinum For Two ($1,497) to be in the room with Barbara O'Neill alongside someone you love.
+Ready for a voice in the car? 1:1 coaching — 90 days, weekly. (Last 2 slots still $1,997 before $2,997.)
 
-If the kit isn't for you, that's okay. The emails keep coming. You're not graduating into silence — you're graduating into a slower, deeper conversation.
+Not sure? Take the smallest honest step — the $17 kit, or a free 30-minute call.
 
-Thank you. The work I do exists because women like you put your email in and stayed long enough to learn. That's a quiet kind of bravery — exactly what BraveWorks is named for.
+→ BP Starter Kit ($17): ${KIT_URL}
+→ Free 30-min call: https://calendly.com/braveworksrn/60min
 
-→ Get the kit: ${KIT_URL}
-Or just hit reply and tell me how you're doing.
+And if today the answer is "not yet" — that's genuinely okay. No door closing, no clock. Starting next week, about once a week, on a Tuesday, one teaching and one story. THE DOOR STAYS OPEN. Every link here works in a week, a month, a year. I'll be here when you're ready.
 
 Joel
 RN, BraveWorks
 
-P.S. I'll see you Tuesday. From here on, the work is slow and the conversation is long. That's how real change is built — not in 21 days, but in the year that follows.
+P.S. Wherever you are at the fork, reply and tell me one thing you're taking from these 21 days. I read every one. The work is slow and the conversation is long — that's how real change is built. I'll see you Tuesday.
 
 —
 → Skool: ${SKOOL_URL}

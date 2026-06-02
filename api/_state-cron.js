@@ -84,7 +84,16 @@ export async function runStateCron({
 
   const DRY_RUN = dryRunEnv && process.env[dryRunEnv] === '1';
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const allKeys = await kv.keys('drip:*');
+  // 2026-06-01 — Upstash disabled KEYS() at our scale (~5K+ records,
+  // "ERR too many keys to fetch, please use SCAN"). Drain SCAN cursor into
+  // a flat array; downstream for-loop unchanged.
+  const allKeys = [];
+  let scanCursor = 0;
+  do {
+    const [next, batch] = await kv.scan(scanCursor, { match: 'drip:*', count: 500 });
+    allKeys.push(...batch);
+    scanCursor = next;
+  } while (String(scanCursor) !== '0');
   console.log(`${label}: scanning ${allKeys.length} drip records, state=${state}`);
 
   const summary = {

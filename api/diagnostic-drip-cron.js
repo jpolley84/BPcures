@@ -55,7 +55,14 @@ export default async function handler(req, res) {
   if (!process.env.KV_REST_API_URL) return res.status(500).json({ error: 'KV_REST_API_URL missing' });
 
   const resend = new Resend(process.env.RESEND_API_KEY);
-  const allKeys = await kv.keys('drip:*');
+  // 2026-06-01 — SCAN-cursor drain (Upstash disabled KEYS at our scale).
+  const allKeys = [];
+  let scanCursor = 0;
+  do {
+    const [next, batch] = await kv.scan(scanCursor, { match: 'drip:*', count: 500 });
+    allKeys.push(...batch);
+    scanCursor = next;
+  } while (String(scanCursor) !== '0');
   console.log(`diagnostic-drip-cron: scanning ${allKeys.length} drip records`);
 
   const summary = {

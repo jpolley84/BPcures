@@ -81,7 +81,14 @@ export default async function handler(req, res) {
   // the cursor bug — it's a single network call returning the full list.
   const summary = { scanned: 0, sent: 0, skipped: 0, complete: 0, errors: 0, byDay: {} };
   const errors = [];
-  const allKeys = await kv.keys('drip:*');
+  // 2026-06-01 — SCAN-cursor drain (Upstash disabled KEYS at our scale).
+  const allKeys = [];
+  let scanCursor = 0;
+  do {
+    const [next, batch] = await kv.scan(scanCursor, { match: 'drip:*', count: 500 });
+    allKeys.push(...batch);
+    scanCursor = next;
+  } while (String(scanCursor) !== '0');
   console.log(`drip-cron: scanning ${allKeys.length} subscriber keys`);
 
   // 2026-05-18: 18-hour no-double-send guard. The cron now fires 4x/day
