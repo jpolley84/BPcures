@@ -50,7 +50,15 @@ export default async function handler(req, res) {
   }
 
   const token = process.env.CALENDLY_TOKEN;
-  if (!token) return res.status(500).json({ error: 'CALENDLY_TOKEN missing' });
+  if (!token) {
+    // Soft-fail: cron is wired but the API token isn't in Vercel env yet.
+    // Return 200 so this doesn't pollute the error-rate dashboard at 96 runs/day.
+    // Joel still gets Calendly's native "New Event" emails to braveworksrn@gmail.com,
+    // so nothing's actually broken — only the SMS alerts to JOEL_SMS are dormant.
+    // Fix: generate a Calendly Personal Access Token + set CALENDLY_TOKEN in Vercel.
+    console.warn('calendly-poll-cron: CALENDLY_TOKEN env var not set — skipping run');
+    return res.status(200).json({ ok: false, skipped: true, reason: 'CALENDLY_TOKEN not configured' });
+  }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const nowIso = new Date().toISOString();

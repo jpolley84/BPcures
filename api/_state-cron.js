@@ -94,7 +94,13 @@ export async function runStateCron({
     allKeys.push(...batch);
     scanCursor = next;
   } while (String(scanCursor) !== '0');
-  console.log(`${label}: scanning ${allKeys.length} drip records, state=${state}`);
+
+  // 2026-06-03 — Batched mget instead of sequential kv.get() per record.
+  // At ~5K+ records, the old loop spent ~50s on KV round-trips alone (10ms each).
+  // mget at 100 keys/call drops that to ~0.5s total. Same memory profile (we
+  // process each record immediately in the inner loop and don't retain them).
+  const MGET_BATCH = 100;
+  console.log(`${label}: scanning ${allKeys.length} drip records, state=${state} (mget batch=${MGET_BATCH})`);
 
   const summary = {
     label,
@@ -111,10 +117,16 @@ export async function runStateCron({
   };
   const errors = [];
 
-  for (const key of allKeys) {
+  // Outer loop: batched mget. Inner loop: same per-record logic as before,
+  // but reads from the pre-fetched batch instead of one round-trip per key.
+  for (let batchStart = 0; batchStart < allKeys.length; batchStart += MGET_BATCH) {
+    const keysBatch = allKeys.slice(batchStart, batchStart + MGET_BATCH);
+    const subs = await kv.mget(...keysBatch);
+    for (let i = 0; i < keysBatch.length; i++) {
+      const key = keysBatch[i];
+      const sub = subs[i];
     summary.scanned++;
     try {
-      const sub = await kv.get(key);
       if (!sub || !sub.email) continue;
 
       // Hard exclusions — regardless of state, these never fire
@@ -196,7 +208,8 @@ export async function runStateCron({
       errors.push({ key, message: err.message });
       console.error(`${label} error on ${key}:`, err.message);
     }
-  }
+    } // end inner per-record loop
+  } // end batched mget outer loop
 
   console.log(`${label} summary:`, JSON.stringify(summary));
 
