@@ -32,9 +32,9 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // ─── Brand palette ────────────────────────────────────────────────────
@@ -687,7 +687,7 @@ const issue9 = {
     ${p(`If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly the one driving your numbers. The good news: Stress Pressure responds faster than Pipe Pressure. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
     ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.`, { margin: '0 0 28px' })}
     ${clayBlock("Don't know which Pressure is yours?", `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with 1:1 clients.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with my coaching clients.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`My deepest Triangle walkthroughs are on YouTube. The cortisol corner gets a 14-min video that names every herb dose, the bedtime math, and the one supplement I refuse to use.`)}
@@ -924,10 +924,10 @@ const issue12 = {
     `)}
     ${p(`This is the realistic picture, not the testimonial picture. <strong style="color:${PALETTE.text};">Quieter numbers. Steadier mornings.</strong> But the path is bumpy and most people quit at Day 14. Don't.`, { margin: '0 0 28px' })}
     ${clayBlock('If you want this customized for YOUR case', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is built for.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COACHING_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for 1:1 with Joel →</a></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is built for.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COACHING_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for coaching with Joel →</a></p>
     `)}
-    ${ctaButton(COACHING_URL, 'Apply for 1:1 coaching with Joel →')}
+    ${ctaButton(COACHING_URL, 'Apply for 90-Day Group Coaching with Joel →')}
     ${mondayCallReminder()}
     ${joelSignoff()}
     ${psBox(`If you've followed this newsletter for a while, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
@@ -966,7 +966,7 @@ WHAT DIDN'T WORK:
 → Day 14 plateau. 10 days no movement. Day 24 dropped 4 more points. Don't quit.
 
 IF YOU WANT THIS CUSTOMIZED:
-Marlene was on 1 medication. If you're on 3+, you need 1:1.
+Marlene was on 1 medication. If you're on 3+, you need 90-Day Group Coaching.
 → ${COACHING_URL}
 
 Joel

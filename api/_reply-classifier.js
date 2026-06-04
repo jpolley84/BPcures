@@ -60,7 +60,7 @@ COMPLIANCE RULES (apply to ALL drafts):
 - If a draft references the BP Reset Kit ($17), 30-Day Challenge ($97), or 90-Day Sprint ($1,997), use these EXACT URLs:
     Kit:       https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A
     Challenge: https://bpquiz.com/challenge
-    Sprint:    https://bpquiz.com/coaching
+    Sprint:    https://scheduler.zoom.us/joel-polley-d276dj/discovery-call
 
 OUTPUT FORMAT: respond with ONLY a JSON object, no preamble:
 {

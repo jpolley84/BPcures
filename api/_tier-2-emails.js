@@ -21,9 +21,9 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Cohort fulfillment URLs — Joel populates these env vars at deploy time
@@ -623,14 +623,14 @@ const day18 = {
     ${p(`That gap — between Day 30 of the Challenge and Day 90 of a real taper window — is where most BP buyers stall out. They lose momentum. They drift off the protocol. The numbers creep back. They're still on the meds at the end of the year, frustrated, wondering what went wrong.`, { margin: '0 0 28px' })}
     ${bigQuote('STORY: Wakita closed in 16 days.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Wakita Taylor was the first paid 1:1 client of mine inside the Sprint. She came in May 15 with elevated BP, type-2 diabetes, mid-fifties, two meds running.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Wakita Taylor was one of my first paid clients inside the Sprint. She came in May 15 with elevated BP, type-2 diabetes, mid-fifties, two meds running.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">First 30 days: same chapter walkthroughs you're getting now. Stress Pressure, Sugar Pressure, Pipe Pressure. Same Triangle protocol. Same herbs.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">What was different in the Sprint: I was on her data every week. I caught a missed dose on Day 12. I caught a hidden cortisol spike on Day 19 — she'd added an afternoon coffee that was killing her sleep. I sent her into her doctor on Day 60 with a printed BP log and a one-page protocol summary.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Her doctor lowered her metformin first. Her doctor lowered her amlodipine second. Wakita's writing her own bonus chapter for the Sprint cookbook this month — the woman who 90 days ago thought she'd be on pills for life is now teaching the women coming in behind her.</p>
     `)}
     ${bigQuote('TRANSFORMATION: From morning-number tracker to medication-conversation owner.')}
     ${p(`The Challenge taught you the Triangle protocol. Cohort 2 — the 90-day Sprint — gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations beside other clients.`)}
-    ${p(`Inside the Sprint you get: weekly 1:1 calls with me (30 minutes each), my eyes on your BP log every Monday morning, the full Doctor Conversation Script (the exact words, the order, the fallback if they say no), the Med Wean Tracker for the actual taper window, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.`)}
+    ${p(`Inside the Sprint you get: weekly group Zoom calls with me (60 minutes — small cohort, real face time), <strong style="color:${PALETTE.text};">WhatsApp office hours Sun–Thu 9 AM–5 PM ET</strong> so you're never more than a day from an answer, full lab review at the start and again at the finish, my eyes on your BP log every Monday morning, the full Doctor Conversation Script (the exact words, the order, the fallback if they say no), the Med Wean Tracker for the actual taper window I coordinate with your prescriber, your spouse included free, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.`)}
     ${p(`The graduates from Cohort 1 of the Sprint are now ~70% off at least one medication, with their doctor's blessing. That's the outcome. <strong style="color:${PALETTE.text};">Doctor-cleared independence.</strong>`, { margin: '0 0 28px' })}
     ${bigQuote('OFFER: $1,997 for the 90-day Sprint. Applications open today.')}
     ${p(`Cohort 2 is application-only — I cap it at 5 seats so I can actually be on every Monday with every client. The doors are open until Friday at midnight ET. After Friday, applications close and the next cohort doesn't open until Cohort 3 fills, which is at least 60 days out.`)}
@@ -671,7 +671,7 @@ That gap — between Day 30 of the Challenge and Day 90 of a real taper window �
 
 STORY: WAKITA CLOSED IN 16 DAYS.
 
-Wakita Taylor was the first paid 1:1 client of mine inside the Sprint. Elevated BP, type-2 diabetes, mid-fifties, two meds.
+Wakita Taylor was one of my first paid clients inside the Sprint. Elevated BP, type-2 diabetes, mid-fifties, two meds.
 
 First 30 days: same chapter walkthroughs you're getting now. Same Triangle protocol. Same herbs.
 
@@ -683,7 +683,7 @@ TRANSFORMATION: FROM MORNING-NUMBER TRACKER TO MEDICATION-CONVERSATION OWNER.
 
 The Challenge taught you the Triangle protocol. Cohort 2 — the 90-day Sprint — gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations.
 
-Inside the Sprint: weekly 1:1 calls with me (30 min each), my eyes on your BP log every Monday morning, the full Doctor Conversation Script, the Med Wean Tracker, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.
+Inside the Sprint: weekly group Zoom calls with me (60 min, small cohort, real face time), WhatsApp office hours Sun-Thu 9-5 ET, full lab review at start and finish, my eyes on your BP log every Monday morning, the full Doctor Conversation Script, the Med Wean Tracker I coordinate with your prescriber, spouse included free, and the Skool VIP Sprint room — a smaller, tighter cohort than the Challenge.
 
 Graduates from Cohort 1 are now ~70% off at least one medication with their doctor's blessing. DOCTOR-CLEARED INDEPENDENCE.
 
@@ -743,7 +743,7 @@ const day22 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">8 AM — Submit the week.</strong> She opens her Sprint tracker (a one-page Google Sheet I built) and enters 7 days of morning + evening BP readings, sleep hours, walk count, and any "off" days. Takes her 4 minutes.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">10 AM — I review.</strong> I open every Sprint client's tracker between 9 and 11 AM Monday. I look at three things: trend direction (still moving down?), variance (consistent or jumpy?), and outliers (what happened on the days that were off?). I leave one comment per client.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">10 PM — The Monday call (Sprint cohort joins the Challenge live call).</strong> 60 minutes, full cohort on Zoom. I walk through the patterns I saw across the cohort that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them about their week.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">3 PM — 30-minute 1:1 (rotating).</strong> Once every two weeks, every Sprint client gets a 30-minute solo call with me. We look at their tracker together. We adjust the protocol. We rehearse their next doctor conversation if it's coming up.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">All week — WhatsApp office hours.</strong> Sun–Thu 9 AM–5 PM ET. Every Sprint client can drop a question, send a photo of a label, or ask "should I take this today?" in the group thread. I answer same-day in front of the cohort — so every question becomes a teaching moment for the whole room. This is the personalization that doesn't need a private call.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">8 PM — Skool VIP Sprint room.</strong> Wakita posts her "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.</p>
     `)}
     ${p(`That's the rhythm. <strong style="color:${PALETTE.text};">Every Monday for 90 days.</strong> By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), they're maintenance-only.`, { margin: '0 0 28px' })}
@@ -796,7 +796,7 @@ WAKITA'S MONDAY INSIDE THE SPRINT:
 
 → 10 PM — The Monday call (Sprint cohort joins the Challenge live call). 60 minutes, full cohort on Zoom. Patterns I saw that week. Each client gets a 3-5 minute slot to ask the one question that's been bugging them.
 
-→ 3 PM — 30-minute 1:1 (rotating). Once every two weeks, every Sprint client gets a 30-minute solo call with me. We look at the tracker together. Adjust protocol. Rehearse the next doctor conversation if it's coming up.
+→ All week — WhatsApp office hours. Sun–Thu 9 AM–5 PM ET. Every Sprint client can drop a question, send a photo of a label, ask "should I take this today" in the group thread. I answer same-day in front of the cohort — every question is a teaching moment for the whole room.
 
 → 8 PM — Skool VIP Sprint room. Wakita posts "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.
 
@@ -846,7 +846,9 @@ const day26 = {
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A 90-day, 5-woman Sprint.</strong> Application-only. Starts the Monday after enrollment closes. Ends 90 days later with a maintenance-phase graduation.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A weekly Monday call</strong> with me at 10 PM ET, 60 minutes, full cohort. Recordings if you miss live.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Bi-weekly 30-minute 1:1 calls</strong> with me — six of them over the 90 days. Your time, your numbers, your protocol.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">WhatsApp office hours, Sun–Thu, 9 AM–5 PM ET.</strong> Direct line to me, five days a week. Drop a question, send a photo of a label, ask "should I take this today" — same-day answer in the group thread. The personalization happens here, not on private weekly calls.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Full lab review at the start and again at the finish.</strong> Two complete walk-throughs of your labs, so we know exactly what's moving underneath your numbers.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Spouse included free.</strong> Parallel 30-minute briefing so they're rowing with you, not pulling against. Single biggest predictor of who finishes the 90 days.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Weekly tracker review.</strong> Every Monday morning I open every client's tracker between 9 and 11 AM ET. One comment per client. I see trends the client can't see.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">The Doctor Conversation Script + Med Wean Tracker.</strong> The two assets that turn 90 days of clean numbers into an actual taper conversation with your prescriber.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A smaller, tighter Skool VIP room.</strong> 5 women only. Different feel than the Challenge cohort. Higher-touch.</p>
@@ -871,7 +873,7 @@ const day26 = {
     ${p(`Inside the first 14 days of the Sprint, if you've shown up to both Monday calls, completed both Monday trackers, and you don't see a clear path to your medication conversation — write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.`)}
     ${p(`That's the deal because I know what the Sprint produces in the women who show up for it — and the women who show up for it the first two Mondays virtually always finish the 90 days.`, { margin: '0 0 28px' })}
     ${clayBlock('THE THREE COMMON QUESTIONS', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"Can I do it if I work full-time?"</strong> Yes. Most Cohort 1 women worked full-time. The Monday call is the only fixed live commitment — the rest is async tracker entry (4 min/day) and bi-weekly 1:1 calls you book on your own schedule.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"Can I do it if I work full-time?"</strong> Yes. Most Cohort 1 women worked full-time. The Monday call is the only fixed live commitment — the rest is async tracker entry (4 min/day) and WhatsApp office-hour questions you send on your own schedule.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"What if my doctor won't budge on the taper?"</strong> The Sprint includes the Script for navigating that exact conversation, including a second-opinion-pathway script for when your current prescriber won't engage with data. A few Sprint graduates have switched physicians as part of this; most haven't needed to.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">"Can I pay in installments?"</strong> Yes. The application has a payment-plan option. Three or four monthly payments. Same total. No interest.</p>
     `)}
@@ -901,7 +903,9 @@ WHAT COHORT 2 IS:
 
 → A 90-day, 5-woman Sprint. Application-only. Starts the Monday after enrollment closes.
 → A weekly Monday call with me at 10 PM ET, 60 minutes, full cohort. Recordings if you miss live.
-→ Bi-weekly 30-minute 1:1 calls with me — six over 90 days.
+→ WhatsApp office hours Sun-Thu 9-5 ET — direct line to me, five days a week, same-day answers in the group thread.
+→ Full lab review at start and finish — two complete walk-throughs.
+→ Spouse included free — parallel 30-minute briefing.
 → Weekly tracker review. Every Monday morning I open every client's tracker between 9 and 11 AM ET. One comment per client.
 → The Doctor Conversation Script + Med Wean Tracker.
 → A smaller, tighter Skool VIP room. 5 women only.
@@ -979,7 +983,7 @@ const day30 = {
     ${bigQuote('What\'s next — either door.')}
     ${p(`Two paths open up at Day 30, and I want both of them to be clear before tonight.`, { margin: '0 0 28px' })}
     ${clayBlock('DOOR 1 — COHORT 2 (THE SPRINT) — CLOSES TONIGHT', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday call, bi-weekly 1:1, the doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday group call, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, the doctor conversation prep, spouse included free — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for Cohort 2 (closes tonight) →</a></p>
     `)}
     ${clayBlock('DOOR 2 — THE NEWSLETTER + SKOOL', `
@@ -1029,7 +1033,7 @@ Two paths open up at Day 30.
 
 DOOR 1 — COHORT 2 (THE SPRINT) — CLOSES TONIGHT.
 
-The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday call, bi-weekly 1:1, doctor conversation prep — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.
+The 90-day Sprint application closes tonight at midnight ET. If the Challenge has been the right work but you want me on your numbers for the next 90 days — weekly Monday group call, WhatsApp office hours Sun-Thu 9-5, full lab review at start and finish, doctor conversation prep, spouse included free — this is the door. Your $97 Challenge enrollment credits toward the $1,997 Sprint. $1,900 net.
 → ${COHORT2_URL}
 
 DOOR 2 — THE NEWSLETTER + SKOOL.

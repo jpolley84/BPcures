@@ -111,7 +111,7 @@ export const buyerUpsellDay10 = {
       <li><strong style="color:${PALETTE.sage};">A 30-day follow-up email coaching window — buyer-only, not available to non-buyers</strong></li>
     </ul>
 
-    <p style="margin:0 0 14px;">Honest math on availability: I'm only taking <strong>5 of these calls total</strong> before Cohort 2 — the 90-day group program — opens Sunday May 24. After that, the way into Cohort 2 is the public registration, not a 1:1 with me.</p>
+    <p style="margin:0 0 14px;">Honest math on availability: I'm only taking <strong>5 of these calls total</strong> before Cohort 2 — the 90-Day Group Coaching program — opens Sunday May 24. After that, the way into Cohort 2 is the public registration, not a prescreen call with me.</p>
 
     ${ctaButton(DIAGNOSTIC_WITH_KIT_CREDIT_LINK, 'Book the diagnostic · $280')}
 
@@ -162,7 +162,7 @@ export const buyerUpsellDay14 = {
 
     ${ctaButton(DIAGNOSTIC_WITH_KIT_CREDIT_LINK, 'Book the diagnostic · $280')}
 
-    <p style="font-size:14px;color:${PALETTE.textSoft};margin:0 0 14px;">5 calls total before Cohort 2 opens Sunday May 24. After that, no more 1:1 prescreens. If this isn't your moment, reply "not now" and I'll stop mentioning it.</p>
+    <p style="font-size:14px;color:${PALETTE.textSoft};margin:0 0 14px;">5 calls total before Cohort 2 opens Sunday May 24. After that, no more prescreen calls. If this isn't your moment, reply "not now" and I'll stop mentioning it.</p>
 
     <p style="margin:18px 0 4px;">— Joel</p>
     <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. Doreen's loudest corner was cortisol. Yours might be vascular. Might be blood sugar. You don't know until we look together.</p>
@@ -184,7 +184,7 @@ export const buyerUpsellDay17 = {
 
     <p style="margin:0 0 14px;">Last note on the diagnostic. Then I'll stop.</p>
 
-    <p style="margin:0 0 14px;">I'm only taking <strong>5 of these calls total</strong> before Cohort 2 — the 90-day group program — opens Sunday May 24. After that, the way into Cohort 2 is the public registration page, not a 1:1 prescreen with me.</p>
+    <p style="margin:0 0 14px;">I'm only taking <strong>5 of these calls total</strong> before Cohort 2 — the 90-Day Group Coaching program — opens Sunday May 24. After that, the way into Cohort 2 is the public registration page, not a prescreen call with me.</p>
 
     <p style="margin:0 0 14px;">If you've been thinking about it, this is the window. Six days.</p>
 

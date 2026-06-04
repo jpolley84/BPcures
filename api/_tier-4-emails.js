@@ -1,6 +1,6 @@
 // _tier-4-emails.js — onboarding sequence for TIER-4 buyers.
 //
-// Audience: Cohort 2 Sprint ($1,997) OR 1:1 Coaching ($6,997) buyers.
+// Audience: 90-Day Group Coaching ($1,997) OR legacy 1:1 Coaching ($6,997) buyers.
 // State = `tier-4`. Wakita Taylor is the proof case (closed 2026-05-15).
 //
 // Goal: ONBOARD + RETAIN + REFERRAL momentum. NEVER sell.
@@ -23,14 +23,14 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Tier-4-only URLs
 export const INTAKE_FORM_URL = process.env.VITE_TIER4_INTAKE_FORM_URL || `${SITE_URL}/cohort2/intake`;
-export const SKOOL_VIP_URL   = process.env.VITE_TIER4_SKOOL_VIP_URL  || 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_VIP_URL   = process.env.VITE_TIER4_SKOOL_VIP_URL  || 'https://www.skool.com/braveworksrn/about';
 export const BARBARA_EVENT_URL = 'https://everydaynurse.com/event-virtual';
 export const SUNDAY_ZOOM_URL = process.env.VITE_TIER4_SUNDAY_ZOOM_URL || 'https://us06web.zoom.us/j/2548856205?pwd=6G4RrvnybablMQJciQlOJdsh1jtHjo.1';
 
@@ -127,8 +127,8 @@ const day0 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The four pieces of your Week 1:</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">1. The intake form</strong> — 12 minutes. I read every word before Monday. The deeper you go, the deeper I can go on the call.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. Monday kickoff</strong> — 10 PM ET. Zoom link below. Full Triangle map, your weeks 1-2 plan, and what we're doing first.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly 1:1 calls</strong> — once we meet Monday I'll lock your recurring slot. Yours, every week, twelve weeks.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. WhatsApp office hours</strong> — Sun-Thu, 9 AM-5 PM ET. My number drops Monday on the call. Once it's in your phone, text me direct.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly group Zoom</strong> — same time every week, twelve weeks. Small cohort, real face time. Once we meet Monday I'll lock the recurring slot on your calendar.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. WhatsApp office hours</strong> — Sun-Thu, 9 AM-5 PM ET. My number drops Monday on the call. Once it's in your phone, text me direct — same-day answers in the cohort thread.</p>
     `)}
     ${p(`Fill out the intake first. Everything else flows from there.`, { margin: '0 0 18px' })}
     ${ctaButton(INTAKE_FORM_URL, 'Open the intake form →')}
@@ -160,8 +160,8 @@ THE FOUR PIECES OF YOUR WEEK 1:
 
 1. The intake form — 12 minutes. I read every word before Monday.
 2. Monday kickoff — 10 PM ET. Zoom link below.
-3. Weekly 1:1 calls — yours, every week, twelve weeks.
-4. WhatsApp office hours — Sun-Thu, 9 AM-5 PM ET.
+3. Weekly group Zoom — same time every week, twelve weeks. Small cohort, real face time.
+4. WhatsApp office hours — Sun-Thu, 9 AM-5 PM ET. Same-day answers in the cohort thread.
 
 OPEN THE INTAKE FORM:
 ${INTAKE_FORM_URL}
@@ -278,7 +278,7 @@ const day3 = {
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Your VIP Skool room is live. Walk in.`, { margin: '0 0 28px' })}
     ${ctaButton(SKOOL_VIP_URL, 'Open your VIP Skool room →')}
-    ${p(`This is not the public Skool community. This room is locked. It holds you, the other 1:1 and Sprint clients I'm walking the same 90 days with, and me — and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
+    ${p(`This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me — and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
     ${p(`That's intentional. The reason most online communities don't move the needle is they're noisy. Ninety percent of the room is shopping, ten percent is working. In here it's reversed.`, { margin: '0 0 28px' })}
     ${bigQuote('One ask today.')}
     ${p(`Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here — introduce yourself" — drop your reply on that thread.`)}
@@ -304,7 +304,7 @@ Your VIP Skool room is live. Walk in.
 
 → ${SKOOL_VIP_URL}
 
-This is not the public Skool community. This room is locked. It holds you, the other 1:1 and Sprint clients I'm walking the same 90 days with, and me. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.
+This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.
 
 ONE ASK TODAY.
 
@@ -363,7 +363,7 @@ const day5 = {
     ${bigQuote('How to make the most of it.')}
     ${p(`<strong style="color:${PALETTE.text};">Watch with your husband.</strong> Barbara converts more skeptical husbands than anyone else in this space — she's a grandmother teaching plain truth, no aggression, no salesmanship. He'll lean in.`)}
     ${p(`<strong style="color:${PALETTE.text};">Take notes by hand.</strong> Two days is a lot. The notes you write down by hand are the ones you'll actually use in Week 4 and 5. The notes you screenshot will sit in your phone unopened.`)}
-    ${p(`<strong style="color:${PALETTE.text};">Bring questions to our next 1:1.</strong> When you hear Barbara say something that lands, write the timestamp and ask me about it on our call. That's how the two streams of teaching weave together.`, { margin: '0 0 28px' })}
+    ${p(`<strong style="color:${PALETTE.text};">Bring questions to our next group call.</strong> When you hear Barbara say something that lands, write the timestamp and ask me about it on the Monday call — or drop it in the WhatsApp thread. That's how the two streams of teaching weave together.`, { margin: '0 0 28px' })}
     ${p(`See you on the call this week.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Wakita is going to be on the June stream too. If you want a watch-buddy from the cohort, post in Skool the day-of — half this room watches it live together with a shared chat thread running.`)}
@@ -396,7 +396,7 @@ HOW TO MAKE THE MOST OF IT.
 
 → Watch with your husband. Barbara converts skeptical husbands.
 → Take notes by hand. Two days is a lot. Handwritten notes get used.
-→ Bring questions to our next 1:1. Hear something that lands, write the timestamp, ask me on our call.
+→ Bring questions to our next group call. Hear something that lands, write the timestamp, ask me on the Monday call or in the WhatsApp thread.
 
 See you on the call this week.
 
@@ -426,7 +426,7 @@ const day7 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. What's working?</strong> Anything you've noticed shift. Sleep onset 20 minutes earlier. Morning headache gone Wednesday. Husband said something different over coffee. The 3 PM crash didn't crash. Cuff reading in the 130s when it usually sits in the 140s. Bigger than that or smaller than that — anything you wouldn't have written down last week.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. What's tight?</strong> Where is friction showing up? Can't get the full gallon. Forgetting evening gratitudes. The salt taste under the tongue is harder than expected. Your husband's snacks. Three PM cravings sharper, not duller. Be specific. Be honest. There is no answer that disappoints me — only the ones you don't tell me.</p>
     `)}
-    ${p(`When you have both answers, reply to this email. One paragraph. I read every word before Monday's call and I will adjust your Week 2 around what you write — that's the whole point of the 1:1 structure you bought.`)}
+    ${p(`When you have both answers, reply to this email. One paragraph. I read every word before Monday's call and I will adjust your Week 2 around what you write — that's the whole point of the small-group structure with WhatsApp office hours that you bought.`)}
     ${p(`If you want to post your reflection in Skool instead so the cohort can read it, do that. Either way I see it.`, { margin: '0 0 28px' })}
     ${bigQuote('Why the reflection matters more than the numbers.')}
     ${p(`A lot of clients want me to look at their cuff readings and tell them whether they're winning. I do look at the cuff. But the cuff is the lagging indicator — the body changes underneath it for two or three weeks before the number catches up.`)}
@@ -453,7 +453,7 @@ Anything you've noticed shift. Sleep 20 min earlier. Morning headache gone Wedne
 2. WHAT'S TIGHT?
 Where is friction showing up? Can't get the full gallon. Forgetting evening gratitudes. Salt taste under the tongue. Husband's snacks. Three PM cravings sharper. Be specific. Be honest.
 
-When you have both answers, reply. One paragraph. I read every word before Monday's call and adjust your Week 2 around what you write — that's the whole point of the 1:1 structure you bought.
+When you have both answers, reply. One paragraph. I read every word before Monday's call and adjust your Week 2 around what you write — that's the whole point of the small-group structure with WhatsApp office hours that you bought.
 
 If you want to post in Skool instead so the cohort can read it, do that. Either way I see it.
 
@@ -587,8 +587,8 @@ const day14 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. The relationship between sleep and the morning number.</strong> If your morning BP drops the day after a 7-hour night and climbs the day after a 5-hour night, sleep is your highest-leverage move. That single relationship determines whether I add a magnesium glycinate tweak or hold steady.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Gallon adherence vs. systolic.</strong> If your hydration days correlate with lower readings, water is doing the heavy lifting and we don't introduce a new herb yet. If they don't correlate, Pipe Pressure has stiffer roots and we lean into hibiscus earlier.</p>
     `)}
-    ${p(`This is the whole reason the 1:1 structure costs what it costs. I'm not running a curriculum at you. I'm reading your specific case and adjusting in real time.`, { margin: '0 0 28px' })}
-    ${p(`Send me the five lines by tomorrow night and I'll have your Week 3 adjustment in your inbox before your next 1:1.`, { margin: '0 0 28px' })}
+    ${p(`This is the whole reason the small-group + WhatsApp-office-hours structure costs what it costs. I'm not running a curriculum at you. I'm reading your specific case and adjusting in real time.`, { margin: '0 0 28px' })}
+    ${p(`Send me the five lines by tomorrow night and I'll have your Week 3 adjustment in your inbox before your next group call.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If your numbers haven't moved at all in two weeks — and a small number of clients fit this — that's the most useful data of all. It tells me there's a hidden cause behind the loud one (sleep apnea, medication side effect, a thyroid drift). Reply "stuck" and we'll add that conversation to your next call.`)}
     ${footerSecondaryCTAs()}
@@ -623,9 +623,9 @@ Once I have your five lines I look at three things you can't easily see:
 
 3. GALLON ADHERENCE VS. SYSTOLIC. Hydration days correlate with lower readings = water is doing the lifting, no new herb yet. No correlation = lean into hibiscus earlier.
 
-This is the whole reason the 1:1 structure costs what it costs. I'm not running a curriculum at you. I'm reading your case and adjusting in real time.
+This is the whole reason the small-group + WhatsApp-office-hours structure costs what it costs. I'm not running a curriculum at you. I'm reading your case and adjusting in real time.
 
-Send me the five lines by tomorrow night. I'll have your Week 3 adjustment in your inbox before your next 1:1.
+Send me the five lines by tomorrow night. I'll have your Week 3 adjustment in your inbox before your next group call.
 
 Joel
 RN, BraveWorks
@@ -696,7 +696,7 @@ const day17 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Insulin sensitivity. The Sugar Pressure lever for clients whose A1c sits above 5.7 and whose morning fasting glucose runs above 95.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Optional. Determined by your morning fasting numbers in Week 5.</p>
     `)}
-    ${p(`<strong style="color:${PALETTE.text};">Read once. Save the email. Don't act on it yet — your specific sequence is in your next 1:1 plan.</strong>`)}
+    ${p(`<strong style="color:${PALETTE.text};">Read once. Save the email. Don't act on it yet — your specific sequence comes through your Monday group call or the WhatsApp office hours thread.</strong>`)}
     ${p(`If you go to the supplement store this weekend, the only one I'd green-light on your own is hibiscus tea. The rest we sequence on the call.`, { margin: '0 0 28px' })}
     ${p(`Day 21 — the doctor conversation. Saving the most important Week 4 piece for then.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
@@ -753,7 +753,7 @@ Form: Ceylon — NOT cassia. 1-3 g.
 Why: Insulin sensitivity. For A1c >5.7 and fasting glucose >95.
 When: Optional. Determined by Week 5 numbers.
 
-READ ONCE. SAVE THE EMAIL. DON'T ACT YET — your specific sequence is in your next 1:1 plan.
+READ ONCE. SAVE THE EMAIL. DON'T ACT YET — your specific sequence comes through your Monday group call or the WhatsApp office hours thread.
 
 If you go to the supplement store this weekend, the only one I'd green-light on your own is hibiscus tea. The rest we sequence on the call.
 
@@ -810,7 +810,7 @@ const day21 = {
     ${p(`Then text me on WhatsApp when you leave the parking lot. We talk strategy. Sometimes that's a second-opinion conversation, sometimes it's a "give him one more cycle of data" conversation. Always it's with respect for your doctor.`, { margin: '0 0 28px' })}
     ${p(`Practice the four sentences out loud this week. With your husband if you can. The first time you say them shouldn't be in the appointment.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with if I were you. The 1:1 includes a doctor-conversation rehearsal call when you want one.`)}
+    ${psBox(`Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with if I were you. We also rehearse the conversation on the Monday group call or in WhatsApp whenever you want one.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -863,7 +863,7 @@ Practice the four sentences out loud this week. With your husband if you can. Th
 Joel
 RN, BraveWorks
 
-P.S. Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with. The 1:1 includes a doctor-conversation rehearsal call when you want one.
+P.S. Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with. We also rehearse the conversation on the Monday group call or in WhatsApp whenever you want one.
 
 —
 → Skool: ${SKOOL_URL}
@@ -898,7 +898,7 @@ const day30 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month three — Stabilize + Negotiate. Days 61-90.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">The doctor conversation happens for everyone who hasn't already had it. We move from "tracking" to "tapering" under your physician. For some of you, the first dose reduction lands inside the 90 days. For some it lands in month four — that's normal. The point isn't the dose number. The point is that you are on the road off, with your doctor's signature on the path.</p>
     `)}
-    ${p(`After Day 90 the structure changes. The cohort calls slow to monthly. The 1:1 cadence stays for clients who want it (most do). Skool stays open for life. The relationship doesn't end — it changes shape.`, { margin: '0 0 28px' })}
+    ${p(`After Day 90 the structure changes. The cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship doesn't end — it changes shape.`, { margin: '0 0 28px' })}
     ${bigQuote('What I need from you today.')}
     ${p(`Three things, simple to do this week.`)}
     ${sageBlock(`
@@ -938,7 +938,7 @@ The herb stack completes. Anti-BP Plate is default lunch and breakfast. Walking 
 MONTH THREE — STABILIZE + NEGOTIATE. Days 61-90.
 Doctor conversation for everyone who hasn't had it. From "tracking" to "tapering" under your physician. For some, first dose reduction inside the 90 days. For some, month four — normal. The point isn't the dose number. The point is you are on the road off, with your doctor's signature on the path.
 
-After Day 90 the structure changes. Cohort calls slow to monthly. 1:1 cadence stays for clients who want it (most do). Skool stays open for life. The relationship changes shape, doesn't end.
+After Day 90 the structure changes. Cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship changes shape, doesn't end.
 
 WHAT I NEED FROM YOU TODAY.
 

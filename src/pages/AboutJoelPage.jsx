@@ -268,11 +268,11 @@ export default function AboutJoelPage() {
               <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '1.2rem', margin: '0 0 0.5rem' }}>The BP Reset Kit</h3>
               <p style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--ink-soft)', margin: 0 }}>Full 10-day protocol, herb deep dive, recipe library, tracker. 180+ pages of clinical education.</p>
             </a>
-            <Link to="/coaching" style={{ display: 'block', padding: '1.5rem', background: 'var(--paper)', borderRadius: 12, border: '1px solid var(--border)', textDecoration: 'none', color: 'var(--ink)' }}>
+            <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '1.5rem', background: 'var(--paper)', borderRadius: 12, border: '1px solid var(--border)', textDecoration: 'none', color: 'var(--ink)' }}>
               <div style={{ fontSize: '0.75rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>Application · founding cohort</div>
               <h3 style={{ fontFamily: 'Georgia, serif', fontSize: '1.2rem', margin: '0 0 0.5rem' }}>The 90-Day Sprint</h3>
               <p style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--ink-soft)', margin: 0 }}>Weekly 1:1 with me. Daily WhatsApp office hours. Personalized protocol. 12-week intensive.</p>
-            </Link>
+            </a>
           </div>
         </div>
       </section>

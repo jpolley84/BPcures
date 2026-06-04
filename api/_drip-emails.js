@@ -24,9 +24,9 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Day 7 opt-in URL — token is generated per send via signOptInToken (see continue.js)
@@ -650,7 +650,7 @@ P.S. The button stays alive for 48 hours. After that, the door closes for this r
 // intended dual-segment behavior — Day 8 is the warmer-than-cold pitch
 // to all opted-in subs; the buyer-upsell-cron is the buyer-specific
 // follow-up with credit math.
-const APPLY_URL = `${SITE_URL}/coaching`;
+const APPLY_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 
 const day8 = {
   subject: 'The 60-minute conversation that ends the guessing',
@@ -689,7 +689,7 @@ const day8 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">30 days of follow-up email coaching</strong> — reply to me each Sunday with your numbers and I adjust as needed</p>
     `)}
     ${p(`It\'s <strong>$297</strong>. One time. No upsell on the call.`)}
-    ${p(`Honest math on availability: I'm only taking <strong>5 of these calls total before Cohort 2 opens on Sunday May 24</strong>. After that, the path into Cohort 2 is the public registration page, not a 1:1 with me. If you want the prescreen, this is the window.`, { margin: '0 0 32px' })}
+    ${p(`Honest math on availability: I'm only taking <strong>5 of these calls total before Cohort 2 opens on Sunday May 24</strong>. After that, the path into Cohort 2 — the 90-Day Group Coaching program — is the public registration page, not a prescreen call with me. If you want the prescreen, this is the window.`, { margin: '0 0 32px' })}
     ${ctaButton(APPLY_URL, 'Book the diagnostic ($297) →')}
     ${p(`<span style="color:#999;font-size:14px;">Already a Kit buyer? Your $17 credit applies — watch your inbox; a separate kit-credit pricing link is on its way over the next few days. Or reply "kit credit" and I'll send it now.</span>`, { margin: '0 0 28px' })}
     ${p(`<strong>If the diagnostic isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each Pressure, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a diagnostic. The daily protocols are enough.`)}
@@ -727,7 +727,7 @@ A single 60-minute Zoom with me. Bring your home BP log, your prescription list,
 
 $297. One time. No upsell on the call.
 
-I'm only taking 5 of these calls total before Cohort 2 opens Sunday May 24. After that, the path in is the public registration, not a 1:1.
+I'm only taking 5 of these calls total before Cohort 2 (90-Day Group Coaching) opens Sunday May 24. After that, the path in is the public registration, not a prescreen call.
 
 → Book the diagnostic: ${APPLY_URL}
 
@@ -780,7 +780,7 @@ const day9 = {
     ${p(`If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly the one driving your numbers. The good news: Stress Pressure responds faster than Pipe Pressure. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
     ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF — your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.`, { margin: '0 0 28px' })}
     ${clayBlock("Don't know which Pressure is yours?", `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with 1:1 clients.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with my coaching clients.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow — the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.`, { margin: '0 0 24px' })}
@@ -1064,11 +1064,11 @@ const day12 = {
     `)}
     ${p(`This is the realistic picture, not the testimonial picture. <strong style="color:${PALETTE.text};">Quieter numbers. Steadier mornings.</strong> But the path is bumpy and most people quit at Day 14. Don't.`, { margin: '0 0 28px' })}
     ${clayBlock('If you want this customized for YOUR case', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is built for.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for 1:1 with Joel →</a></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is built for.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for coaching with Joel →</a></p>
     `)}
-    ${p(`If you've followed 12 days of this and you're ready for me to walk YOUR numbers personally — not a course, not a community, the real 1:1 work — applications for the next coaching cohort are open. 90 days, weekly Zoom with me, Annie's hormone coaching biweekly, full supplement + diet audit, WhatsApp office hours, the works. Stack value $14,616; founding price is currently lower than regular. Reviewed every application personally.`, { margin: '0 0 24px' })}
-    ${ctaButton(COACHING_URL, 'Apply for 1:1 coaching with Joel →')}
+    ${p(`If you've followed 12 days of this and you're ready for me on your numbers personally — not a course, not a passive community, the real 90-day work — applications for the next coaching cohort are open. 90 days, weekly group Zoom with me (small cohort, real face time), Annie's hormone coaching biweekly, full supplement + diet audit, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. Stack value $14,616; founding price is currently lower than regular. Reviewed every application personally.`, { margin: '0 0 24px' })}
+    ${ctaButton(COACHING_URL, 'Apply for 90-Day Group Coaching with Joel →')}
     ${joelSignoff()}
     ${psBox(`If you've followed the daily emails this far, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
     ${footerSecondaryCTAs()}
@@ -1116,7 +1116,7 @@ Quieter numbers. Steadier mornings. The path is bumpy. Most people quit at Day 1
 
 IF YOU WANT THIS CUSTOMIZED FOR YOUR CASE:
 
-Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 1:1 is for.
+Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is for.
 → Apply: ${APPLY_URL}
 
 Tomorrow — the foundation everything sits on. The pillars that make every protocol work.

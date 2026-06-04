@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY = 'braveworksrn@gmail.com';
-export const APPLY_URL = 'https://bpquiz.com/coaching';
+export const APPLY_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const SITE_URL = 'https://bpquiz.com';
 
 // Tighter than scripts (110ms) because we have a hard 300s function limit:
@@ -73,9 +73,9 @@ export async function pullRecipients() {
 
 export function valueStackHtml() {
   const items = [
-    ['Weekly 1:1 with Joel — 12 sessions (Mondays 8 PM ET)', '$5,964'],
+    ['Weekly group Zoom with Joel — 12 sessions (Mondays 8 PM ET, small cohort)', '$5,964'],
     ['Biweekly hormone coaching with Annie — 6 sessions', '$1,782'],
-    ['Full supplement + diet audit (live, 60 min)', '$697'],
+    ['Full lab review at start + finish (live, 60 min each)', '$697'],
     ['Daily schedule audit', '$497'],
     ['WhatsApp office hours (Sun–Thu 9–5 ET) × 90 days', '$1,997'],
     ['Skool VIP membership (90-day access)', '$297'],
@@ -83,7 +83,7 @@ export function valueStackHtml() {
     ['eBook library — lifetime', '$497'],
     ['Daily tailored email coaching', '$497'],
     ['Tracker suite (BP / symptom / food / sleep)', '$97'],
-    ['Partner inclusion guide', '$97'],
+    ['Spouse included free — partner inclusion guide', '$97'],
     ["Barbara O'Neill LIVE Event — 20% off", '$197'],
   ];
   const rows = items.map(([n, v]) =>

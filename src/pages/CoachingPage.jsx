@@ -10,10 +10,9 @@
 // is the new top of the high-ticket ladder; conversion into paid programs
 // happens on the call, not on the page.
 //
-// Calendly: https://calendly.com/braveworksrn/60min (event slug is "60min" even though the call is 30 min)
+// Booking: https://scheduler.zoom.us/joel-polley-d276dj/discovery-call (event slug is "discovery-call" — 30 min)
 // All "Work with Joel 1:1" CTAs site-wide now route here.
 
-import { useEffect } from 'react';
 import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, HelpCircle, Calendar, Sparkles } from 'lucide-react';
 
 // 2026-05-25 BUGFIX — useScrollAnimation removed. It was assigned without
@@ -21,30 +20,7 @@ import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, H
 // then attached as ref={fadeIn} to 8 sections — array-as-ref on multiple
 // elements hung the renderer. Sections render fine without entry animation.
 
-const CALENDLY_URL = 'https://calendly.com/braveworksrn/60min';
-
-// Calendly inline embed. Loads the widget script once on mount and renders
-// the iframe at full width. Falls back gracefully on slow connections —
-// the "Pick your time" button below the widget links directly to Calendly.
-function CalendlyInline() {
-  useEffect(() => {
-    const SRC = 'https://assets.calendly.com/assets/external/widget.js';
-    if (typeof document === 'undefined') return;
-    if (document.querySelector(`script[src="${SRC}"]`)) return;
-    const s = document.createElement('script');
-    s.src = SRC;
-    s.async = true;
-    document.body.appendChild(s);
-  }, []);
-
-  return (
-    <div
-      className="calendly-inline-widget"
-      data-url={`${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`}
-      style={{ minWidth: '320px', height: '700px', background: 'var(--paper-light)', borderRadius: 12, border: '1px solid var(--border)' }}
-    />
-  );
-}
+const BOOKING_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 
 export default function CoachingPage() {
   return (
@@ -66,7 +42,9 @@ export default function CoachingPage() {
 
           <div className="mb-3">
             <a
-              href={CALENDLY_URL}
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
               style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
             >
@@ -133,17 +111,30 @@ export default function CoachingPage() {
             All times shown in your timezone. Confirmation lands in your inbox the second you book.
           </p>
 
-          <CalendlyInline />
+          <div className="mx-auto max-w-md text-center" style={{ padding: '36px 28px', background: 'var(--paper-light)', borderRadius: 16, border: '2px solid var(--sage-deep)' }}>
+            <p style={{ fontSize: 15, color: 'var(--ink-soft)', margin: '0 0 22px', lineHeight: 1.55 }}>
+              Tap below to see Joel's open times and lock in a 30-minute window. Booking happens on Zoom Scheduler &mdash; confirmation lands in your inbox immediately.
+            </p>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
+              style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
+            >
+              Pick your time on Zoom &rarr;
+            </a>
+          </div>
 
           <div className="mt-5 text-center">
             <a
-              href={CALENDLY_URL}
+              href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm font-semibold"
               style={{ color: 'var(--clay)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
             >
-              Widget not loading? Open Calendly directly &rarr;
+              Or open it in a new tab &rarr;
             </a>
           </div>
         </div>
@@ -254,7 +245,7 @@ export default function CoachingPage() {
               { q: 'Is this really free? What\'s the catch?', a: 'Genuinely free. No card required. The reason I do this: BP coaching only works when there\'s real fit between the patient and the practitioner. Thirty minutes of conversation tells both of us whether that fit exists. If we click, we\'ll talk about working together. If we don\'t, I send you to someone who can help.' },
               { q: 'Is this medical advice?', a: 'No. This is education-based nursing consultation, not diagnosis or prescription. Anything we discuss works alongside your physician, not instead of them. For medication decisions you\'ll always go through your prescribing doctor.' },
               { q: "I'm on five blood pressure medications. Is this still worth my time?", a: 'Especially. The more meds, the higher the value of mapping which corner of the Triangle is actually driving the system. Most patients on 3+ meds are being treated for the wrong corner. We never change meds without your physician; that\'s a hard line.' },
-              { q: "What if I can't make my scheduled call?", a: 'Reschedule any time from the Calendly confirmation email. No fees, no hard feelings. Life happens.' },
+              { q: "What if I can't make my scheduled call?", a: 'Reschedule any time from the Zoom Scheduler confirmation email. No fees, no hard feelings. Life happens.' },
               { q: 'How long until I can book?', a: 'Most weeks I open 6-8 slots between Monday and Friday afternoons. If nothing fits your schedule, email braveworksrn@gmail.com and I\'ll find time.' },
               { q: "Will you try to sell me something on the call?", a: 'Only if you ask. The call exists to give you clarity, not to push an offer. If at the end you want to talk about working together more formally, I\'ll lay out the options. If you don\'t, you walk away with a free 30-minute consult and we both move on.' },
             ].map((item) => (
@@ -286,14 +277,16 @@ export default function CoachingPage() {
             Most BP patients never get this: a real nurse, looking at their real situation, with no clock ticking on the visit. Thirty minutes is yours.
           </p>
           <a
-            href={CALENDLY_URL}
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
             style={{ background: 'var(--clay)', color: 'var(--paper-light)' }}
           >
             Pick your time <ArrowRight size={18} />
           </a>
           <div className="text-xs mt-4" style={{ color: 'rgba(251,248,241,0.5)' }}>
-            Powered by Calendly &middot; You'll get a Zoom link by email
+            Powered by Zoom Scheduler &middot; You'll get a Zoom link by email
           </div>
         </div>
       </section>

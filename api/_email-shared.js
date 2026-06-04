@@ -10,7 +10,7 @@
 // Match the canonical /about marketing URL used in tier email files.
 // Internal-only — tier files keep their own SKOOL_URL export to avoid
 // import collision. Not exported here.
-const SKOOL_URL    = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+const SKOOL_URL    = 'https://www.skool.com/braveworksrn/about';
 const YOUTUBE_URL  = 'https://www.youtube.com/@braveworksrn';
 
 // Shared palette — matches existing tier email files

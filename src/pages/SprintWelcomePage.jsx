@@ -15,7 +15,7 @@ import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Phone, Calendar, Users, ClipboardList } from 'lucide-react';
 
 const CALENDLY_URL = import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL
-  || 'https://calendly.com/braveworksrn/60min';
+  || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 
 export default function SprintWelcomePage() {
   const [searchParams] = useSearchParams();
@@ -77,10 +77,10 @@ export default function SprintWelcomePage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar size={18} color="var(--sage-deep)" />
-                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Book your kickoff 1:1 (this week)</h3>
+                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Book your kickoff call + lab review (this week)</h3>
                   </div>
                   <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.65, marginBottom: 12 }}>
-                    Sixty minutes on Zoom. Bring your home BP log (even three readings this week is enough), your prescription list, your supplement list, and any recent labs. We map your loudest Pressure live and design Week 1 together.
+                    Sixty minutes on Zoom — your full lab review at the start. Bring your home BP log (even three readings this week is enough), your prescription list, your supplement list, and any recent labs. We map your loudest Pressure live and design Week 1 together.
                   </p>
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg font-semibold text-sm"
@@ -103,7 +103,7 @@ export default function SprintWelcomePage() {
                   <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.65, marginBottom: 12 }}>
                     "How to Be Your Own Doctor" is free to join. Once you're inside, DM me there and I'll grant Sprint VIP access — that's where the weekly group calls happen + the protocol library lives.
                   </p>
-                  <a href="https://www.skool.com/how-to-be-your-own-doctor-8010/about" target="_blank" rel="noopener noreferrer"
+                  <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg font-semibold text-sm"
                     style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}>
                     Join the Skool community →

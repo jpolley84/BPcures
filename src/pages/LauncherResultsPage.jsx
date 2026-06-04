@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { TIER_DETAILS, decodeSlugPayload, scoreColor } from '../utils/launcherQuiz';
 
-const CALENDLY = 'https://calendly.com/braveworksrn/60min';
+const CALENDLY = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 
 const cream = 'var(--cream)';
 const ink = 'var(--ink)';

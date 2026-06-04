@@ -719,7 +719,9 @@ function QuizModule({ products }) {
                     Bring your numbers and your meds. He maps your exact situation and tells you the one thing to do next. No cost, no pressure.
                   </p>
                   <a
-                    href="/coaching"
+                    href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                       background: 'var(--sage)', color: 'var(--cream)',

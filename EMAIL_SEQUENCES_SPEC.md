@@ -41,7 +41,7 @@ This is the canonical reference for every agent authoring an email sequence in t
 | `tier-1` | BP Starter, BP Reset Kit | $17 / $47 | `_tier-1-emails.js` | Upsell to tier-3 Diagnostic ($297) | 10 emails / 21 days |
 | `tier-2` | BP Triangle Challenge | $97 | `_tier-2-emails.js` | Fulfill 30-day promise + upsell to Cohort 2 | 10 emails / 30 days |
 | `tier-3` | BP Triangle Diagnostic | $297 | `_tier-3-emails.js` | Upsell to Cohort 2 ($1,997) | 10 emails / 14 days |
-| `tier-4` | Cohort 2 / 1:1 | $1,997+ | `_tier-4-emails.js` | Onboarding, never selling | 10 emails / 30 days |
+| `tier-4` | 90-Day Group Coaching (Cohort 2) / legacy 1:1 | $1,997+ | `_tier-4-emails.js` | Onboarding, never selling | 10 emails / 30 days |
 | `newsletter` | All-graduates | — | (Phase 6 content bank) | Re-warm, weekly forever | Evergreen |
 
 **Single rule:** a subscriber occupies ONE state at a time. State transitions on purchase events. Sequences NEVER fire concurrently across tiers — only one cron's `state === 'X'` filter matches any given record.
@@ -57,7 +57,7 @@ CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H'    // $97 BP Tr
 COACHING_URL  = `${SITE_URL}/coaching`                              // $297 BP Triangle Diagnostic
 COHORT2_URL   = `${SITE_URL}/cohort2`                               // $1,997 Cohort 2 (application)
 SPRINT_CREDIT = process.env.VITE_STRIPE_SPRINT_WITH_DIAGNOSTIC_CREDIT_LINK || COHORT2_URL  // $1,700 = $1,997 - $297 credit
-SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about'
+SKOOL_URL     = 'https://www.skool.com/braveworksrn/about'
 YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn'
 ```
 
@@ -83,7 +83,7 @@ export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
 export const COACHING_URL  = `${SITE_URL}/coaching`;
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Brand palette
@@ -387,8 +387,8 @@ Each agent gets the skeleton for ONE sequence. The skeleton specifies day, goal,
 | 10 | 14 | Final close OR graceful exit | PASTOR + Close | "Last email about Cohort 2" | "If now isn't your moment — here's what to do" |
 
 **Stop conditions:**
-- Buys Cohort 2 → transition to tier-4
-- Buys $6,997 1:1 → transition to tier-4 (1:1 variant)
+- Buys Cohort 2 (90-Day Group Coaching, $1,997) → transition to tier-4
+- Buys legacy $6,997 1:1 → transition to tier-4 (legacy 1:1 variant)
 - Day 14 + no upgrade → transition to newsletter (tagged `diagnostic-graduate` — warmer subset)
 - Unsubscribe → drop
 
@@ -396,7 +396,7 @@ Each agent gets the skeleton for ONE sequence. The skeleton specifies day, goal,
 
 ### SEQUENCE E — TIER-4 (`_tier-4-emails.js`)
 
-**Audience:** Bought Cohort 2 Sprint ($1,997) OR 1:1 Coaching ($6,997). State = `tier-4`.
+**Audience:** Bought Cohort 2 / 90-Day Group Coaching ($1,997) OR legacy 1:1 Coaching ($6,997). State = `tier-4`. The $1,997 program (effective 2026-06-02) is small-group with WhatsApp office hours Sun–Thu 9–5, full lab review at start + finish, spouse included free, medication-weaning coordinated with the buyer's doctor.
 **Goal:** Onboard them for success in Week 1. NEVER sell. Build retention + referral momentum.
 **Length:** 10 emails over 30 days.
 
@@ -431,7 +431,7 @@ Each agent gets the skeleton for ONE sequence. The skeleton specifies day, goal,
    - **Rachel** — 55, fasting glucose 138 → 109 in 3 weeks, Complete Bundle
    - **Marlene** — 52, 11 points in 9 days with 3 food swaps (Day 3 + Day 12 universal drip)
    - **Patricia** — Diagnostic call case (introduced in tier-3 sequence)
-   - **Wakita Taylor** — first paid 1:1 client (use ONLY in tier-3/tier-4 sequences, never lead/tier-1)
+   - **Wakita Taylor** — first paid coaching client (use ONLY in tier-3/tier-4 sequences, never lead/tier-1)
 
 3. **Bonus content names** (real products that ship via tier-2):
    - Cortisol Reset Kit (10-Day Cortisol Cure)

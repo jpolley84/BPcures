@@ -177,7 +177,9 @@ const CheckoutPage = () => {
           </p>
           <div className="text-center mt-2">
             <a
-              href="/coaching"
+              href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-medium transition-colors"
               style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.4)', textUnderlineOffset: '3px' }}
             >

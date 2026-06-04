@@ -412,7 +412,7 @@ export default function ShopPage() {
                             <a href="https://everydaynurse.com/event-virtual" target="_blank" rel="noopener noreferrer" className="tier-event-link">
                               View event details <ExternalLink size={10} />
                             </a>
-                            <a href="https://www.skool.com/how-to-be-your-own-doctor-8010/about" target="_blank" rel="noopener noreferrer" className="tier-skool-link">
+                            <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer" className="tier-skool-link">
                               <Users size={10} /> Join community on Skool
                             </a>
                           </div>

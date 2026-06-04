@@ -36,18 +36,18 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
-export const SKOOL_URL     = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // $1,700 credit-applied Stripe Payment Link (env override falls back to /cohort2)
 export const SPRINT_CREDIT_URL =
   process.env.VITE_STRIPE_SPRINT_WITH_DIAGNOSTIC_CREDIT_LINK || COHORT2_URL;
 
-// Calendly for the 60-minute diagnostic
+// Zoom Scheduler for the 30-minute discovery call
 export const CALENDLY_URL =
-  process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://calendly.com/braveworksrn/60min';
+  process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 
 // Brand palette
 const PALETTE = {

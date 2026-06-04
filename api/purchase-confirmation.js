@@ -52,7 +52,7 @@ const DOWNLOADS = {
   },
 };
 
-const SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
+const SKOOL_URL = 'https://www.skool.com/braveworksrn/about';
 
 // ─────────────────────────────────────────────────────────────────────────
 // VERIFIED CATEGORY-AWARE — do not flag as "BP-only for all tiers"
@@ -257,14 +257,14 @@ export const TIER_CONFIG = {
   // shipment + program schedule. No PDF downloads here — coaching is
   // 1:1 and the materials are custom.
   coaching: {
-    product: 'BP Triangle Freedom Sprint — 90-Day 1:1 Coaching',
+    product: 'BP Triangle Freedom Sprint — 90-Day Group Coaching',
     subject: "You're in the Sprint — Week 1 starts now",
-    downloads: [], // intentional — coaching is 1:1, no kit PDFs
+    downloads: [], // intentional — group coaching, no kit PDFs
     includesCoaching: true,
     coachingFlavor: 'sprint',  // triggers Sprint-specific render block
     includesChallenge: false,
-    upgradeUrl: 'https://calendly.com/braveworksrn/60min',
-    upgradeLabel: 'Book your kickoff 1:1 with Joel',
+    upgradeUrl: 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call',
+    upgradeLabel: 'Book your kickoff call with Joel',
     upgradeDesc: 'Pick a 60-minute slot in the next 7 days for your kickoff call. Bring your home BP log, prescription list, supplements, and any recent labs.',
     upgradeCta: 'Book my kickoff call →',
   },
@@ -291,7 +291,7 @@ export const TIER_CONFIG = {
     downloads: [], // intentional — the diagnostic IS the deliverable
     includesCoaching: false,
     includesChallenge: false,
-    upgradeUrl: process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://calendly.com/braveworksrn/60min',
+    upgradeUrl: process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call',
     upgradeLabel: 'Step 1: Book your 60-minute Zoom',
     upgradeDesc: 'Pick a time on Joel\'s calendar that works for you. The diagnostic is a single Zoom call where Joel looks at your home BP log, your meds, your stress, your supplements, and writes you a custom 30-day protocol live on screen. You also get a 30-day email-coaching follow-up window — reply to Joel each Sunday with your numbers and he\'ll adjust as needed.',
     upgradeCta: 'Book my diagnostic call →',
@@ -452,11 +452,11 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5E5;border:2px solid #B85A36;border-radius:14px;">
         <tr><td style="padding:24px;">
           <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin-bottom:10px;">Your free bonus &middot; $297 value</div>
-          <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:8px;font-weight:500;">A free 30-minute 1:1 call with Joel, RN</div>
+          <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:8px;font-weight:500;">A free 30-minute call with Joel, RN</div>
           <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0 0 14px;">
             You don't have to figure this out alone. As a thank-you for getting the kit, you've got a free 30-minute call with Joel. Bring your numbers, your meds, and your questions &mdash; he'll map your exact situation and tell you the one thing to do first. No pitch, just nursing.
           </p>
-          <a href="https://calendly.com/braveworksrn/60min" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
+          <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
             Book your free call &rarr;
           </a>
         </td></tr>
@@ -478,11 +478,11 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
           <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:18px;">Your 90-Day Sprint — Week 1 starts now</div>
 
           <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
-            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1 — Book your kickoff 1:1 (this week)</div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1 — Book your kickoff call (this week)</div>
             <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 12px;">
-              Sixty minutes with me on Zoom. Bring your home BP log (or just your morning numbers from this week), your prescription list, your supplements, and any labs from the last year. We map your loudest Pressure live and design your Week 1 protocol together.
+              Sixty minutes with me on Zoom — your full lab review at the start. Bring your home BP log (or just your morning numbers from this week), your prescription list, your supplements, and any labs from the last year. We map your loudest Pressure live and design your Week 1 protocol together.
             </p>
-            <a href="https://calendly.com/braveworksrn/60min" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+            <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
               Pick my kickoff time →
             </a>
           </div>
@@ -505,9 +505,9 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
           </div>
 
           <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
-            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 4 — Partner inclusion (optional but recommended)</div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 4 — Spouse included free</div>
             <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0;">
-              If you have a spouse or partner, they get a free 30-minute briefing in Week 2 so they're rowing with you, not pulling against. The protocols stick when the household is aligned. We'll schedule that on your kickoff call if you want it.
+              Your spouse or partner is part of this — at no extra cost. They get a free 30-minute briefing in Week 2 so they're rowing with you, not pulling against. The protocols stick when the household is aligned. We'll schedule that on your kickoff call if you want it.
             </p>
           </div>
 

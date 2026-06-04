@@ -34,7 +34,7 @@ const PALETTE = {
 };
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
-const CALENDLY_URL = process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://calendly.com/braveworksrn/60min';
+const CALENDLY_URL = process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
 const SPRINT_WITH_CREDIT_LINK =
   process.env.VITE_STRIPE_SPRINT_WITH_DIAGNOSTIC_CREDIT_LINK ||
   'https://buy.stripe.com/eVq6oH57RgqicrF6NjfnO0Q';
@@ -164,8 +164,8 @@ export const diagnosticDripDay5 = {
     </div>
 
     <div style="background:${PALETTE.paperLight};border-left:3px solid ${PALETTE.clay};border-radius:6px;padding:18px 20px;margin:18px 0;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — Cohort 2 (90-day group)</div>
-      <p style="margin:6px 0 8px;font-size:15px;">For the people who want me in their corner daily for the next twelve weeks. Weekly Zoom 1:1, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion. I'll tell you more on the call — this is for buyers who want the deepest version.</p>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — 90-Day Group Coaching</div>
+      <p style="margin:6px 0 8px;font-size:15px;">For the people who want me on call for the next twelve weeks. Weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, full medication-tapering plan worked with your prescriber, spouse included free. I'll tell you more on the call — this is for buyers who want the deepest version.</p>
       <p style="margin:0;font-size:14px;color:${PALETTE.textSoft};"><strong>Best for:</strong> 4+ medications, complex history, partner involvement needed, "I'm tired of guessing and want a guide" energy.</p>
     </div>
 
@@ -197,12 +197,13 @@ export const diagnosticDripDay7 = {
     <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
-      <li><strong>Twelve weeks. Small group with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
+      <li><strong>Twelve weeks. Small-group cohort with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
       <li><strong>Weekly group Zoom call.</strong> Monday nights 8 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too.</li>
       <li><strong>WhatsApp office hours, group thread.</strong> Sun–Thu, 9 AM–5 PM ET. Drop a question, send a photo, ask "should I take this today." I answer same-day in front of the cohort — so everyone benefits from each question.</li>
+      <li><strong>Full lab review at the start and again at the finish.</strong> So we know exactly what's moving underneath the numbers.</li>
       <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the 90 days.</li>
-      <li><strong>Partner inclusion guide.</strong> Spouses/partners get a parallel 30-minute briefing so they're rowing with you, not pulling against.</li>
-      <li><strong>The Cohort 2 Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
+      <li><strong>Spouse included free.</strong> Spouses/partners get a parallel 30-minute briefing so they're rowing with you, not pulling against.</li>
+      <li><strong>The 90-Day Group Coaching Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
     </ul>
 
     <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is NOT</p>
@@ -229,15 +230,15 @@ export const diagnosticDripDay7 = {
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// DAY 9 — Wakita case study (real 1:1 founding client, real arc)
+// DAY 9 — Wakita case study (real founding client, real arc)
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay9 = {
-  subject: 'Wakita\'s first 30 days inside Cohort 2',
-  preview: 'What an actual Cohort 2 week looks like, from one of my real clients.',
+  subject: 'Wakita\'s first 30 days inside 90-Day Group Coaching',
+  preview: 'What an actual 90-Day Group Coaching week looks like, from one of my real clients.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Since Cohort 2 is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
+    <p style="margin:0 0 14px;">Since 90-Day Group Coaching is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
 
     <p style="margin:0 0 14px;"><strong>Wakita</strong> — age 60, complex GI history, BP 145/92 morning, 138/88 afternoon, on three BP meds, dealing with chronic abdominal pain from a December hospitalization, on a Mexican naturopathic protocol that was layering complication on top of complication.</p>
 
