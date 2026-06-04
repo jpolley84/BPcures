@@ -487,6 +487,14 @@ export default async function handler(req, res) {
     }
     try {
       const existing = await kv.get(dripKey);
+      const nowIso = new Date().toISOString();
+      // YYYY-MM-DD in UTC for the daily lead-log set. UTC is the right
+      // bucket key here — we want "what happened in this 24h window" not
+      // "what happened on Joel's local Wednesday." Joel can convert at
+      // read-time if he wants ET-day buckets.
+      const dayKey = nowIso.slice(0, 10);
+      const emailLower = email.trim().toLowerCase();
+
       if (existing) {
         // Refresh tags + answers metadata, preserve enrollment date.
         // State-machine rule (2026-05-17 spec): never downgrade a paying
@@ -494,25 +502,31 @@ export default async function handler(req, res) {
         // if it isn't already set (fresh capture OR pre-state-machine record).
         const stateFields = existing.state ? {} : {
           state: 'lead',
-          stateEnteredAt: existing.stateEnteredAt || existing.enrolledAt || new Date().toISOString(),
+          stateEnteredAt: existing.stateEnteredAt || existing.enrolledAt || nowIso,
         };
         await kv.set(dripKey, {
           ...existing,
           firstName: name || existing.firstName || '',
+          // 2026-06-03 instrumentation: backfill firstSeen on every write so
+          // older records get a real timestamp the next time they take the
+          // quiz. New records below get firstSeen at enrollment.
+          firstSeen: existing.firstSeen || existing.enrolledAt || nowIso,
           riskScore: riskScore || existing.riskScore || '',
           answers: a,
           tags: Array.from(new Set([...(existing.tags || []), ...newTags])),
-          lastQuizTakenAt: new Date().toISOString(),
+          lastQuizTakenAt: nowIso,
           ...stateFields,
         });
       } else {
         // Fresh quiz capture — state machine enters at 'lead'.
-        const nowIso = new Date().toISOString();
         await kv.set(dripKey, {
-          email: email.trim().toLowerCase(),
+          email: emailLower,
           firstName: name || '',
           cohort: 'quiz',
           enrolledAt: nowIso,
+          // 2026-06-03 instrumentation: firstSeen is THE canonical
+          // "when did this lead first land" field. Use this for trafficmetrics.
+          firstSeen: nowIso,
           lastSentDay: 0,
           optedIn: true, // taking the quiz IS the opt-in
           source: 'quiz-lead-magnet',
@@ -523,6 +537,17 @@ export default async function handler(req, res) {
           state: 'lead',
           stateEnteredAt: nowIso,
         });
+      }
+
+      // 2026-06-03 instrumentation: push email to a daily set so we can
+      // ask "how many quiz takers in the last 24h" with a single SCARD,
+      // independent of firstSeen-field coverage. 90-day TTL keeps the
+      // set bounded. SADD is idempotent — repeat takers don't double-count.
+      try {
+        await kv.sadd(`lead-log:${dayKey}`, emailLower);
+        await kv.expire(`lead-log:${dayKey}`, 90 * 86400);
+      } catch (logErr) {
+        console.warn('lead-magnet: daily lead-log write failed (non-fatal)', logErr.message);
       }
     } catch (err) {
       console.warn('lead-magnet: drip-kv enroll failed', err.message);
