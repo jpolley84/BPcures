@@ -10,7 +10,8 @@
 // is the new top of the high-ticket ladder; conversion into paid programs
 // happens on the call, not on the page.
 //
-// Booking: https://scheduler.zoom.us/joel-polley-d276dj/discovery-call (event slug is "discovery-call" — 30 min)
+// 2026-06-03: Free discovery calls PAUSED — Joel cutting off new free bookings until paid 1:1 channel is wired up.
+// All booking CTAs now route to https://bpquiz.com (top-of-funnel quiz + email capture). Existing Calendly bookings remain on the old URL — see api/calendly-webhook.js.
 // All "Work with Joel 1:1" CTAs site-wide now route here.
 
 import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, HelpCircle, Calendar, Sparkles } from 'lucide-react';
@@ -20,7 +21,7 @@ import { CheckCircle2, ShieldCheck, ArrowRight, ClipboardCheck, MessageCircle, H
 // then attached as ref={fadeIn} to 8 sections — array-as-ref on multiple
 // elements hung the renderer. Sections render fine without entry animation.
 
-const BOOKING_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+const BOOKING_URL = 'https://bpquiz.com';
 
 export default function CoachingPage() {
   return (
@@ -31,13 +32,13 @@ export default function CoachingPage() {
         <div className="max-w-3xl mx-auto px-5 text-center">
           <div className="inline-block mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: '#E8F2E5', color: '#3F5A3C', letterSpacing: '0.14em' }}>
             <Sparkles size={12} style={{ display: 'inline-block', marginRight: 6, verticalAlign: -1 }} />
-            Free 30-minute call &middot; No card required
+            Discovery calls reopening soon &middot; Free 60-second assessment
           </div>
           <h1 className="font-serif text-3xl sm:text-5xl leading-tight mb-5" style={{ color: 'var(--ink)' }}>
-            Thirty minutes with a real nurse. Free.
+            Discovery calls are paused while we rebuild. Start with the free BP Triangle assessment.
           </h1>
           <p className="text-lg sm:text-xl mb-7 max-w-2xl mx-auto" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Bring your numbers, your meds, and the question that's been keeping you up. I'll listen, ask the right questions, and tell you honestly if I can help &mdash; or who can.
+            We're setting up a new paid 1:1 channel. In the meantime, take the free 60-second assessment to find your loudest Pressure &mdash; when calls reopen, you'll be first to know.
           </p>
 
           <div className="mb-3">
@@ -48,11 +49,11 @@ export default function CoachingPage() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
               style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
             >
-              Pick your time <ArrowRight size={18} />
+              Take the free assessment <ArrowRight size={18} />
             </a>
           </div>
           <div className="text-xs" style={{ color: 'var(--muted)' }}>
-            Zoom &middot; 30 minutes &middot; You leave the call with a next step, not a pitch
+            60 seconds &middot; No card required &middot; Email when calls reopen
           </div>
         </div>
       </section>
@@ -113,7 +114,7 @@ export default function CoachingPage() {
 
           <div className="mx-auto max-w-md text-center" style={{ padding: '36px 28px', background: 'var(--paper-light)', borderRadius: 16, border: '2px solid var(--sage-deep)' }}>
             <p style={{ fontSize: 15, color: 'var(--ink-soft)', margin: '0 0 22px', lineHeight: 1.55 }}>
-              Tap below to see Joel's open times and lock in a 30-minute window. Booking happens on Zoom Scheduler &mdash; confirmation lands in your inbox immediately.
+              Discovery calls are paused while we set up the new paid 1:1 channel. In the meantime, find your loudest Pressure with the free 60-second assessment &mdash; when calls reopen, you'll be first to know.
             </p>
             <a
               href={BOOKING_URL}
@@ -122,7 +123,7 @@ export default function CoachingPage() {
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
               style={{ background: 'var(--sage-deep)', color: 'var(--paper-light)' }}
             >
-              Pick your time on Zoom &rarr;
+              Take the free assessment &rarr;
             </a>
           </div>
 
@@ -134,7 +135,7 @@ export default function CoachingPage() {
               className="text-sm font-semibold"
               style={{ color: 'var(--clay)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
             >
-              Or open it in a new tab &rarr;
+              Or visit BPQuiz.com &rarr;
             </a>
           </div>
         </div>
@@ -245,9 +246,9 @@ export default function CoachingPage() {
               { q: 'Is this really free? What\'s the catch?', a: 'Genuinely free. No card required. The reason I do this: BP coaching only works when there\'s real fit between the patient and the practitioner. Thirty minutes of conversation tells both of us whether that fit exists. If we click, we\'ll talk about working together. If we don\'t, I send you to someone who can help.' },
               { q: 'Is this medical advice?', a: 'No. This is education-based nursing consultation, not diagnosis or prescription. Anything we discuss works alongside your physician, not instead of them. For medication decisions you\'ll always go through your prescribing doctor.' },
               { q: "I'm on five blood pressure medications. Is this still worth my time?", a: 'Especially. The more meds, the higher the value of mapping which corner of the Triangle is actually driving the system. Most patients on 3+ meds are being treated for the wrong corner. We never change meds without your physician; that\'s a hard line.' },
-              { q: "What if I can't make my scheduled call?", a: 'Reschedule any time from the Zoom Scheduler confirmation email. No fees, no hard feelings. Life happens.' },
-              { q: 'How long until I can book?', a: 'Most weeks I open 6-8 slots between Monday and Friday afternoons. If nothing fits your schedule, email braveworksrn@gmail.com and I\'ll find time.' },
-              { q: "Will you try to sell me something on the call?", a: 'Only if you ask. The call exists to give you clarity, not to push an offer. If at the end you want to talk about working together more formally, I\'ll lay out the options. If you don\'t, you walk away with a free 30-minute consult and we both move on.' },
+              { q: "What if I already have a call booked?", a: 'If you booked one before discovery calls were paused, that call still happens. Use the reschedule link in your original booking confirmation if you need to move it. If you can\'t find that email, write braveworksrn@gmail.com and I\'ll dig it up.' },
+              { q: 'When will new bookings open?', a: 'I\'m rebuilding the 1:1 channel as a paid offer. Take the free BP Triangle assessment at BPQuiz.com and you\'ll be on the list that hears first when it opens.' },
+              { q: "Will you try to sell me something?", a: 'Only when calls reopen and only if you ask. The call exists to give you clarity, not to push an offer. If you ask about working together more formally, I\'ll lay out the options. If you don\'t, you leave with a free consult and we both move on.' },
             ].map((item) => (
               <div key={item.q} className="p-5 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>
                 <div className="flex gap-3">
@@ -268,13 +269,13 @@ export default function CoachingPage() {
         <div className="max-w-2xl mx-auto px-5 text-center">
           <Calendar size={28} color="#F5C68F" strokeWidth={1.5} style={{ display: 'block', margin: '0 auto 1rem' }} />
           <div className="inline-block mb-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest" style={{ background: 'rgba(184,90,54,0.18)', color: '#F5C68F', letterSpacing: '0.14em' }}>
-            Free &middot; 30 minutes &middot; No card required
+            Free assessment &middot; 60 seconds &middot; No card required
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-5" style={{ color: 'var(--paper-light)' }}>
-            One call. One honest conversation. One clear next step.
+            Find your loudest Pressure first. Then we&rsquo;ll talk.
           </h2>
           <p className="text-base sm:text-lg mb-7 max-w-xl mx-auto" style={{ color: 'rgba(251,248,241,0.85)', lineHeight: 1.55 }}>
-            Most BP patients never get this: a real nurse, looking at their real situation, with no clock ticking on the visit. Thirty minutes is yours.
+            Discovery calls reopen soon. While I rebuild the 1:1 channel, take the free BP Triangle assessment so I know exactly what to bring to your call when it&rsquo;s time.
           </p>
           <a
             href={BOOKING_URL}
@@ -283,10 +284,10 @@ export default function CoachingPage() {
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-base sm:text-lg transition-all hover:scale-[1.02]"
             style={{ background: 'var(--clay)', color: 'var(--paper-light)' }}
           >
-            Pick your time <ArrowRight size={18} />
+            Take the free assessment <ArrowRight size={18} />
           </a>
           <div className="text-xs mt-4" style={{ color: 'rgba(251,248,241,0.5)' }}>
-            Powered by Zoom Scheduler &middot; You'll get a Zoom link by email
+            BPQuiz.com &middot; Email when calls reopen
           </div>
         </div>
       </section>

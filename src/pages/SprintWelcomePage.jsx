@@ -15,7 +15,7 @@ import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Phone, Calendar, Users, ClipboardList } from 'lucide-react';
 
 const CALENDLY_URL = import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL
-  || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+  || 'https://bpquiz.com';
 
 export default function SprintWelcomePage() {
   const [searchParams] = useSearchParams();

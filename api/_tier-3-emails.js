@@ -36,7 +36,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
@@ -47,7 +47,7 @@ export const SPRINT_CREDIT_URL =
 
 // Zoom Scheduler for the 30-minute discovery call
 export const CALENDLY_URL =
-  process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+  process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://bpquiz.com';
 
 // Brand palette
 const PALETTE = {

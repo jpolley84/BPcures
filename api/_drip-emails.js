@@ -24,7 +24,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
@@ -504,9 +504,9 @@ const day6 = {
     ${joelSignoff()}
     ${psBox(`Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I'll read every one.`)}
     ${upsellFooter({
-      kicker: 'If two Pressures are running yours',
-      body: 'If you want both a Pipe Pressure AND a Stress Pressure protocol with a registered nurse beside you for ninety days — the 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.',
-      ctaLabel: 'Read the offer',
+      kicker: 'Not sure which Pressure is loudest?',
+      body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. It is the best first step while the 1:1 channel is being rebuilt.',
+      ctaLabel: 'Take the free BP quiz',
       ctaUrl: COACHING_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -537,8 +537,8 @@ RN, BraveWorks
 P.S. Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I read every one.
 
 —
-If two corners are running yours:
-The 90-Day Sprint is open for the founding cohort until Sunday at 11:59 PM ET. 5 slots. Application only. After Sunday, the price triples.
+Not sure which Pressure is loudest?
+The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -650,7 +650,7 @@ P.S. The button stays alive for 48 hours. After that, the door closes for this r
 // intended dual-segment behavior — Day 8 is the warmer-than-cold pitch
 // to all opted-in subs; the buyer-upsell-cron is the buyer-specific
 // follow-up with credit math.
-const APPLY_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+const APPLY_URL = 'https://bpquiz.com';
 
 const day8 = {
   subject: 'The 60-minute conversation that ends the guessing',
@@ -690,10 +690,10 @@ const day8 = {
     `)}
     ${p(`It\'s <strong>$297</strong>. One time. No upsell on the call.`)}
     ${p(`Honest math on availability: I'm only taking <strong>5 of these calls total before Cohort 2 opens on Sunday May 24</strong>. After that, the path into Cohort 2 — the 90-Day Group Coaching program — is the public registration page, not a prescreen call with me. If you want the prescreen, this is the window.`, { margin: '0 0 32px' })}
-    ${ctaButton(APPLY_URL, 'Book the diagnostic ($297) →')}
-    ${p(`<span style="color:#999;font-size:14px;">Already a Kit buyer? Your $17 credit applies — watch your inbox; a separate kit-credit pricing link is on its way over the next few days. Or reply "kit credit" and I'll send it now.</span>`, { margin: '0 0 28px' })}
+    ${ctaButton(APPLY_URL, 'Take the free BP quiz →')}
+    ${p(`<span style="color:#999;font-size:14px;">Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. The free quiz shows your loudest Pressure and where to start today, and you'll be first to know when calls reopen.</span>`, { margin: '0 0 28px' })}
     ${p(`<strong>If the diagnostic isn\'t for you</strong> — no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each Pressure, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a diagnostic. The daily protocols are enough.`)}
-    ${p(`But if you\'re on 4+ meds, or you\'re tired of guessing, or you just want a real conversation with a 20-year ICU/ER nurse looking at YOUR situation — book it.`, { margin: '0 0 32px' })}
+    ${p(`But if you\'re on 4+ meds, or you\'re tired of guessing, start with the free quiz. It shows your biggest Pressure and where to begin, and puts you first in line when 1:1 calls reopen.`, { margin: '0 0 32px' })}
     ${joelSignoff()}
     ${psBox(`The diagnostic works regardless of which Pressure is yours. Stress Pressure, Sugar Pressure, or Pipes — same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.`)}
     ${footerSecondaryCTAs()}
@@ -729,13 +729,13 @@ $297. One time. No upsell on the call.
 
 I'm only taking 5 of these calls total before Cohort 2 (90-Day Group Coaching) opens Sunday May 24. After that, the path in is the public registration, not a prescreen call.
 
-→ Book the diagnostic: ${APPLY_URL}
+→ Take the free BP quiz: ${APPLY_URL}
 
-Already a Kit buyer? Your $17 credit applies — watch your inbox for a kit-credit pricing link in a few days, or reply "kit credit" and I'll send it now.
+Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. The free quiz shows your loudest Pressure and where to start today.
 
-If the diagnostic isn't for you — no problem. The next 22 days of emails are coming. Most people don't need it; the daily protocols are enough.
+If you'd rather just keep reading, no problem. The next 22 days of emails are coming. Most people don't need a call; the daily protocols are enough.
 
-But if you're on 4+ meds, or you're tired of guessing — book it.
+But if you're on 4+ meds, or you're tired of guessing, start with the quiz, and you'll be first to know when calls reopen.
 
 Joel
 RN, BraveWorks
@@ -1064,11 +1064,11 @@ const day12 = {
     `)}
     ${p(`This is the realistic picture, not the testimonial picture. <strong style="color:${PALETTE.text};">Quieter numbers. Steadier mornings.</strong> But the path is bumpy and most people quit at Day 14. Don't.`, { margin: '0 0 28px' })}
     ${clayBlock('If you want this customized for YOUR case', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is built for.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for coaching with Joel →</a></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. The free quiz is the fastest way to see which Pressure to work first.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${APPLY_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the free BP quiz →</a></p>
     `)}
-    ${p(`If you've followed 12 days of this and you're ready for me on your numbers personally — not a course, not a passive community, the real 90-day work — applications for the next coaching cohort are open. 90 days, weekly group Zoom with me (small cohort, real face time), Annie's hormone coaching biweekly, full supplement + diet audit, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. Stack value $14,616; founding price is currently lower than regular. Reviewed every application personally.`, { margin: '0 0 24px' })}
-    ${ctaButton(COACHING_URL, 'Apply for 90-Day Group Coaching with Joel →')}
+    ${p(`If you've followed 12 days of this, the free BP quiz shows your loudest Pressure and the first move for your specific type. One-on-one coaching is paused while I rebuild the 1:1 channel. Take the quiz and you'll be first to know when it reopens.`, { margin: '0 0 24px' })}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz →')}
     ${joelSignoff()}
     ${psBox(`If you've followed the daily emails this far, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
     ${footerSecondaryCTAs()}
@@ -1116,8 +1116,8 @@ Quieter numbers. Steadier mornings. The path is bumpy. Most people quit at Day 1
 
 IF YOU WANT THIS CUSTOMIZED FOR YOUR CASE:
 
-Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is for.
-→ Apply: ${APPLY_URL}
+Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. The free quiz is the fastest way to see which Pressure to work first. (One-on-one coaching is paused while I rebuild the 1:1 channel.)
+→ Take the free BP quiz: ${APPLY_URL}
 
 Tomorrow — the foundation everything sits on. The pillars that make every protocol work.
 
@@ -1191,7 +1191,7 @@ Tomorrow: magnesium glycinate. The single most underrated mineral for blood pres
 Joel
 RN, BraveWorks
 
-P.S. Want me looking at YOUR case before adding inputs? The BP Triangle Diagnostic Session — 60 min, $297, written protocol — is the door. Three slots open this week: ${COACHING_URL}
+P.S. Not sure which input to add first? The free BP quiz shows your loudest Pressure and where to start: ${COACHING_URL}
 
 —
 → Get the Reset Kit ($47): ${RESET_KIT_URL}
@@ -1218,7 +1218,7 @@ const day14 = {
     ${p(`Three-for-one mineral: vascular relaxation, sleep depth, insulin sensitivity. Every Triangle corner benefits.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — hydration with mineral salt. The 24-hour delay nobody told you about. Wakita dropped 12 systolic points on this alone.`)}
-    ${upsellFooter({ kicker: 'WANT JOEL ON YOUR SPECIFIC CASE?', body: 'The $297 BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol matched to which of the Three Pressures is loudest in you. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1268,7 +1268,7 @@ const day15 = {
     ${p(`Counterintuitive: waking at night to pee usually means you're MORE dehydrated, not less. A chronically dry bladder becomes hypersensitive. Hydrate steadily for 12-24 hours and it recalibrates. Most clients sleep through within a week.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — hibiscus tea. A clinical-grade ACE inhibitor that grows on a bush.`)}
-    ${upsellFooter({ kicker: 'WANT A PROTOCOL TAILORED TO YOUR BODY?', body: 'The $297 BP Triangle Diagnostic Session — 60 min with Joel — builds a 30-day protocol customized to your loudest Pressure. Hydration is one of six inputs we calibrate to YOU. Six slots open this week.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1319,7 +1319,7 @@ const day16 = {
     `)}
     ${joelSignoff()}
     ${psBox(`Tomorrow — crushed raw garlic. Four pharmacological mechanisms in one clove.`)}
-    ${upsellFooter({ kicker: 'WANT JOEL TO BUILD YOUR HERB STACK?', body: 'The $297 BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol with every herb sized to your meds + your numbers. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1371,7 +1371,7 @@ const day17 = {
     `)}
     ${joelSignoff()}
     ${psBox(`Tomorrow — sleep architecture. The single most undervalued cardiovascular intervention. One bad night = +7 mmHg next morning.`)}
-    ${upsellFooter({ kicker: 'WANT THIS CUSTOMIZED FOR YOUR NUMBERS?', body: 'Every protocol so far — magnesium, hibiscus, garlic, hydration — sized to YOUR meds and YOUR readings. That is what the $297 BP Triangle Diagnostic Session is. 60 minutes with me on Zoom. Written protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1423,7 +1423,7 @@ const day18 = {
     ${p(`If you wake at 2-4 AM and can't fall back asleep, that's a cortisol signature. Tomorrow: box breathing — the fastest fix.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If sleep is your loudest Pressure (cortisol corner), the diagnostic is built to map your specific cascade. 60 minutes. Written protocol. Six slots this week.`)}
-    ${upsellFooter({ kicker: 'WHEN GENERAL ISN\'T ENOUGH', body: 'The \$297 BP Triangle Diagnostic Session maps which Pressure is loudest for YOUR body. Sleep, cortisol, hydration, blood sugar — we calibrate which protocol comes first.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1447,7 +1447,7 @@ If you wake at 2-4 AM and can't fall back asleep — that's cortisol. Tomorrow: 
 Joel
 RN, BraveWorks
 
-P.S. If sleep is your loudest Pressure, the $297 diagnostic maps the specific cascade: ${COACHING_URL}
+P.S. If sleep is your loudest Pressure, the free BP quiz points you to the first move: ${COACHING_URL}
 `,
 };
 
@@ -1469,7 +1469,7 @@ const day19 = {
     ${p(`This is free. It's portable. It works. The barrier is consistency — most people try it for two days and quit. Set two phone alarms (10 AM, 8 PM) and do it for 14 days. Track your morning BP. The trend speaks for itself.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — the 25-gratitudes practice. The single best cortisol intervention I've ever seen. Most clients shift their nocturnal pattern in 7 days.`)}
-    ${upsellFooter({ kicker: 'WANT JOEL TO SEQUENCE THIS FOR YOU?', body: 'Breathing, gratitude, sleep, supplements — in the right order for your specific Pressure. That is what the $297 BP Triangle Diagnostic Session delivers. 60 minutes with me on Zoom + a written 30-day protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1516,7 +1516,7 @@ const day20 = {
     ${p(`I taught this to one of my Sprint clients last month. She was waking at 3 AM every night for two years. Day 4 of the gratitude practice she slept eight hours straight. Day 9, BP 128/82 from 142/88. Same diet, same meds, same everything else.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you've been doing all the protocols and your morning BP is still high, cortisol is the likely culprit. The diagnostic catches this in 60 minutes. 297, written protocol, six slots this week.`)}
-    ${upsellFooter({ kicker: 'WHEN STRESS PRESSURE IS THE CORNER', body: 'The \$297 BP Triangle Diagnostic Session names your loudest Pressure live. If cortisol is the answer, you walk out with a 30-day cortisol-calming protocol customized to your body. 60 min, six slots.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. If cortisol is the answer, you walk out with the first move for the Stress corner. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1539,7 +1539,7 @@ One Sprint client: waking 3 AM every night for 2 years. Day 4 — slept 8 hours.
 Joel
 RN, BraveWorks
 
-P.S. If cortisol is your loudest Pressure, the $297 diagnostic catches it in 60 min: ${COACHING_URL}
+P.S. If cortisol is your loudest Pressure, the free BP quiz catches it in two minutes: ${COACHING_URL}
 `,
 };
 
@@ -1606,7 +1606,7 @@ const day22 = {
     ${p(`Best for: older adults (65+), people on 3+ medications who can't tolerate aggressive interventions, and patients whose BP responds poorly to single-mechanism drugs.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — ashwagandha. The cortisol-specific herb. 27% cortisol drop in 8 weeks of published studies.`)}
-    ${upsellFooter({ kicker: 'WANT YOUR PROTOCOL WRITTEN FOR YOU?', body: 'Hawthorn, hibiscus, garlic, magnesium — sized to YOUR meds + YOUR Pressure profile, on a Zoom call with me. The $297 BP Triangle Diagnostic Session. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1651,7 +1651,7 @@ const day23 = {
     ${p(`Best for: people whose BP runs higher in the afternoon than morning (cortisol signature), who wake at 2-4 AM, or who can name 3 stressful things off the top of their head right now.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — the salt mistake. Why blanket low-sodium advice is wrong for 70% of you.`)}
-    ${upsellFooter({ kicker: 'CORTISOL CORNER — DIAGNOSED LIVE', body: 'If cortisol is your loudest Pressure, generic supplement advice misses the timing. The \$297 BP Triangle Diagnostic Session names YOUR cortisol cascade in 60 min + writes the specific protocol.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'If cortisol is your loudest Pressure, generic supplement advice misses the timing. The free BP quiz names your loudest corner and the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1676,7 +1676,7 @@ Tomorrow: the salt mistake. Why blanket low-sodium advice is wrong for 70% of yo
 Joel
 RN, BraveWorks
 
-P.S. $297 diagnostic names YOUR cortisol cascade in 60 min: ${COACHING_URL}
+P.S. The free BP quiz names your loudest corner in two minutes: ${COACHING_URL}
 `,
 };
 
@@ -1698,7 +1698,7 @@ const day24 = {
     ${p(`Practical protocol: cook with Celtic or Redmond's. Skip restaurant + packaged food (where the refined sodium hides). Use the mineral salt sublingually with water (Day 15 hydration protocol). Don't fear salt at meals if it's the mineralized kind.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — meal sequencing. Why eating the same food in a different order changes the glucose-insulin-sodium cascade by 30-40%.`)}
-    ${upsellFooter({ kicker: 'WANT THIS PERSONALIZED?', body: 'Mineral salt, meal sequencing, the foods that flatten the insulin curve — matched to YOUR Pressure on a Zoom call with me. The $297 BP Triangle Diagnostic Session walks you out with a written 30-day protocol. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1745,7 +1745,7 @@ const day25 = {
     ${p(`This is the single easiest food change in BP nutrition. No new ingredients. No special cooking. No willpower beyond the order in which you put food in your mouth. Run it for 14 days and watch your morning BP.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you've tried meal sequencing + walking after meals for 30 days and your numbers still aren't moving, blood sugar might not be your loudest Pressure. The diagnostic catches this in 60 minutes.`)}
-    ${upsellFooter({ kicker: 'CALIBRATE TO YOUR CORNER', body: 'The \$297 BP Triangle Diagnostic Session names whether vascular, cortisol, or blood sugar is loudest for YOU. 60 min, written protocol, six slots this week.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz names whether vascular, cortisol, or blood sugar is loudest for YOU, and gives the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1768,7 +1768,7 @@ Easiest food change in BP nutrition. No new ingredients. Just order. 14 days →
 Joel
 RN, BraveWorks
 
-P.S. 30 days of sequencing + walking and numbers haven't moved? Blood sugar isn't your loudest. $297 diagnostic catches it in 60 min: ${COACHING_URL}
+P.S. 30 days of sequencing + walking and numbers haven't moved? Blood sugar isn't your loudest. The free BP quiz catches the real one in two minutes: ${COACHING_URL}
 `,
 };
 
@@ -1841,7 +1841,7 @@ const day27 = {
     ${p(`Best for: 50+ with stubborn BP, A1c 5.7+, central fat that won't budge, post-menopausal weight gain. Most clients see A1c drop 0.4-0.8 in 90 days and 8-12 mmHg systolic drop alongside.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — the doctor conversation script. Lab requests, supplement disclosure, deprescribing language. The single most-requested document I've ever made.`)}
-    ${upsellFooter({ kicker: 'WANT THIS PROTOCOL FOR YOUR SPECIFIC BODY?', body: 'Fasting is a CONDITIONAL protocol. The diagnostic screens whether your case is a fit and writes the timing + supplements + meal-window for YOUR body. \$297, 60 min.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'Fasting is a CONDITIONAL protocol. Start with the free BP quiz to see your loudest Pressure and whether this even fits your case. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1870,7 +1870,7 @@ Tomorrow: the doctor conversation script.
 Joel
 RN, BraveWorks
 
-P.S. Fasting is conditional. $297 diagnostic screens fit + writes timing for YOUR body: ${COACHING_URL}
+P.S. Fasting is conditional. The free BP quiz shows your loudest Pressure and whether this fits: ${COACHING_URL}
 `,
 };
 
@@ -1893,7 +1893,7 @@ const day28 = {
     ${p(`The phrase that opens the conversation: <em>"I'm not asking you to stop the medication. I'm asking whether the data supports tapering it under your supervision."</em> Most doctors will engage with this. The few who don't, you change doctors.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow — your loudest Pressure, revisited. And what to do if 28 days of protocols haven't moved your numbers enough.`)}
-    ${upsellFooter({ kicker: 'WANT THE SCRIPT IN YOUR HAND TOMORROW?', body: 'The \$297 BP Triangle Diagnostic Session ends with a doctor-conversation script customized to YOUR meds, YOUR labs, YOUR loudest Pressure. Bring it to your next appointment. Six slots this week.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1922,7 +1922,7 @@ Tomorrow: your loudest Pressure revisited. And what to do if 28 days hasn't move
 Joel
 RN, BraveWorks
 
-P.S. $297 diagnostic ends with a customized doctor-conversation script — for YOUR meds, YOUR labs, YOUR Pressure: ${COACHING_URL}
+P.S. The free BP quiz points you to the first move for your loudest Pressure: ${COACHING_URL}
 `,
 };
 
@@ -1944,7 +1944,7 @@ const day29 = {
     ${p(`If you read these and one of them lit up — that's your next focus. Tomorrow's the graduation message. After that the daily emails slow down and we move into the long-term re-engagement cadence.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If reason #1 or #2 hit closest to home — the diagnostic is the fastest fix. 60 min with me, your loudest Pressure named, your protocol customized. Six slots this week.`)}
-    ${upsellFooter({ kicker: 'THE FASTEST PATH OUT OF A STALL', body: 'The \$297 BP Triangle Diagnostic Session does in 60 minutes what 28 days of guessing can\'t — names your specific corner and writes the specific protocol for YOUR body.', ctaLabel: 'Book the diagnostic →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz does in two minutes what guessing can\'t. It names your specific corner and gives the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1970,7 +1970,7 @@ Tomorrow: graduation.
 Joel
 RN, BraveWorks
 
-P.S. Reason #1 or #2? $297 diagnostic does in 60 min what 28 days of guessing can't: ${COACHING_URL}
+P.S. Reason #1 or #2? The free BP quiz does in two minutes what 28 days of guessing can't: ${COACHING_URL}
 `,
 };
 
@@ -1997,7 +1997,7 @@ const day30 = {
     ${p(`Whatever you pick, I'm glad you read these. The information matters. What you do with it matters more.`)}
     ${joelSignoff()}
     ${psBox(`If you've moved your numbers from this sequence — hit reply and tell me. I read every one. The reason I write these is because the stories come back. Yours is one of them.`)}
-    ${upsellFooter({ kicker: 'WANT JOEL\'S EYES ON YOUR CASE BEFORE YOU MOVE?', body: 'You have read 30 days of my work. The next door is the BP Triangle Diagnostic Session — 60 minutes with me on Zoom, written 30-day protocol matched to YOUR Pressure profile. $297. I only take 5 of these a month.', ctaLabel: 'Book the Diagnostic ($297) →', ctaUrl: COACHING_URL })}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'You have read 30 days of my work. The free BP quiz names your loudest Pressure and the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel. Take the quiz and you\'ll be first to know when it reopens.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},

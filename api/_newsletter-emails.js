@@ -32,7 +32,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
@@ -462,9 +462,9 @@ const issue6 = {
     ${joelSignoff()}
     ${psBox(`Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I'll read every one.`)}
     ${upsellFooter({
-      kicker: 'If two Pressures are running yours',
-      body: 'If you want both a Pipe Pressure AND a Stress Pressure protocol with a registered nurse beside you for ninety days — the 90-Day Sprint is open for the founding cohort. 5 slots. Application only.',
-      ctaLabel: 'Read the offer',
+      kicker: 'Not sure which Pressure is loudest?',
+      body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. It is the best first step while the 1:1 channel is being rebuilt.',
+      ctaLabel: 'Take the free BP quiz',
       ctaUrl: COACHING_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -493,8 +493,8 @@ RN, BraveWorks
 P.S. Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I read every one.
 
 —
-If two corners are running yours:
-The 90-Day Sprint is open for the founding cohort. 5 slots. Application only.
+Not sure which Pressure is loudest?
+The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -609,8 +609,8 @@ const issue8 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">30 days of follow-up email coaching</strong> — reply to me each Sunday with your numbers and I adjust as needed</p>
     `)}
     ${p(`It's <strong>$297</strong>. One time. No upsell on the call.`, { margin: '0 0 32px' })}
-    ${ctaButton(COACHING_URL, 'Book the diagnostic ($297) →')}
-    ${p(`<span style="color:#999;font-size:14px;">Already a Kit buyer? Your $17 credit applies — reply "kit credit" and I'll send the credit pricing link.</span>`, { margin: '0 0 28px' })}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz →')}
+    ${p(`<span style="color:#999;font-size:14px;">Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. Start with the free quiz to find your loudest Pressure today, and you'll be first to know when calls reopen.</span>`, { margin: '0 0 28px' })}
     ${mondayCallReminder()}
     ${joelSignoff()}
     ${psBox(`The diagnostic works regardless of which Pressure is yours. Stress, Sugar, or Pipes — same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.`)}
@@ -645,9 +645,9 @@ A single 60-minute Zoom with me. Bring your home BP log, your prescription list,
 
 $297. One time. No upsell on the call.
 
-→ Book the diagnostic: ${COACHING_URL}
+→ Take the free BP quiz: ${COACHING_URL}
 
-Already a Kit buyer? Reply "kit credit" — your $17 credit applies.
+Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. The free quiz finds your loudest Pressure today.
 
 Joel
 RN, BraveWorks
@@ -924,10 +924,10 @@ const issue12 = {
     `)}
     ${p(`This is the realistic picture, not the testimonial picture. <strong style="color:${PALETTE.text};">Quieter numbers. Steadier mornings.</strong> But the path is bumpy and most people quit at Day 14. Don't.`, { margin: '0 0 28px' })}
     ${clayBlock('If you want this customized for YOUR case', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. That's what 90-Day Group Coaching is built for.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COACHING_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for coaching with Joel →</a></p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Marlene was on 1 medication. If you're on 3+, your protocol is more complex and the deprescribing path needs more careful sequencing. The free quiz is the fastest way to see which Pressure to work first.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COACHING_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the free BP quiz →</a></p>
     `)}
-    ${ctaButton(COACHING_URL, 'Apply for 90-Day Group Coaching with Joel →')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz →')}
     ${mondayCallReminder()}
     ${joelSignoff()}
     ${psBox(`If you've followed this newsletter for a while, you already know more about the BP Triangle than 90% of cardiology patients in the US. Forward this to one person who needs it. That's how this changes.`)}
@@ -966,7 +966,7 @@ WHAT DIDN'T WORK:
 → Day 14 plateau. 10 days no movement. Day 24 dropped 4 more points. Don't quit.
 
 IF YOU WANT THIS CUSTOMIZED:
-Marlene was on 1 medication. If you're on 3+, you need 90-Day Group Coaching.
+Marlene was on 1 medication. If you're on 3+, the free BP quiz is the fastest way to see which Pressure to work first.
 → ${COACHING_URL}
 
 Joel

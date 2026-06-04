@@ -14,7 +14,7 @@ import crypto from 'node:crypto';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY = 'braveworksrn@gmail.com';
-export const APPLY_URL = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const APPLY_URL = 'https://bpquiz.com';
 export const SITE_URL = 'https://bpquiz.com';
 
 // Tighter than scripts (110ms) because we have a hard 300s function limit:
@@ -105,7 +105,7 @@ export function priceBlockHtml() {
   </table>`;
 }
 
-export function ctaButtonHtml(label = 'Apply for the founding cohort →') {
+export function ctaButtonHtml(label = 'Take the free BP quiz →') {
   return `<p style="margin:0 0 24px;text-align:center;">
     <a href="${APPLY_URL}" style="display:inline-block;padding:16px 32px;background:#3F5A3C;color:#FBF8F1;text-decoration:none;border-radius:10px;font-size:16px;font-weight:700;letter-spacing:0.02em;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">${escapeHtml(label)}</a>
   </p>`;

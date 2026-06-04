@@ -263,10 +263,10 @@ export const TIER_CONFIG = {
     includesCoaching: true,
     coachingFlavor: 'sprint',  // triggers Sprint-specific render block
     includesChallenge: false,
-    upgradeUrl: 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call',
-    upgradeLabel: 'Book your kickoff call with Joel',
-    upgradeDesc: 'Pick a 60-minute slot in the next 7 days for your kickoff call. Bring your home BP log, prescription list, supplements, and any recent labs.',
-    upgradeCta: 'Book my kickoff call →',
+    upgradeUrl: 'https://bpquiz.com',
+    upgradeLabel: 'Take the free BP quiz',
+    upgradeDesc: 'While I set up your 1:1 scheduling, take the free BP quiz so you walk in knowing your loudest Pressure and where to start. Have your home BP log, prescription list, supplements, and any recent labs handy.',
+    upgradeCta: 'Take the free BP quiz →',
   },
 
   // 2026-05-18: BP Triangle Diagnostic Session — the $297 mid-tier bridge
@@ -291,7 +291,7 @@ export const TIER_CONFIG = {
     downloads: [], // intentional — the diagnostic IS the deliverable
     includesCoaching: false,
     includesChallenge: false,
-    upgradeUrl: process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call',
+    upgradeUrl: process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://bpquiz.com',
     upgradeLabel: 'Step 1: Book your 60-minute Zoom',
     upgradeDesc: 'Pick a time on Joel\'s calendar that works for you. The diagnostic is a single Zoom call where Joel looks at your home BP log, your meds, your stress, your supplements, and writes you a custom 30-day protocol live on screen. You also get a 30-day email-coaching follow-up window — reply to Joel each Sunday with your numbers and he\'ll adjust as needed.',
     upgradeCta: 'Book my diagnostic call →',
@@ -451,13 +451,13 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
     <tr><td style="padding:6px 28px 18px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5E5;border:2px solid #B85A36;border-radius:14px;">
         <tr><td style="padding:24px;">
-          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin-bottom:10px;">Your free bonus &middot; $297 value</div>
-          <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:8px;font-weight:500;">A free 30-minute call with Joel, RN</div>
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin-bottom:10px;">Your free bonus</div>
+          <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:8px;font-weight:500;">The free BP quiz, RN-built</div>
           <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0 0 14px;">
-            You don't have to figure this out alone. As a thank-you for getting the kit, you've got a free 30-minute call with Joel. Bring your numbers, your meds, and your questions &mdash; he'll map your exact situation and tell you the one thing to do first. No pitch, just nursing.
+            You don't have to figure this out alone. One-on-one calls are paused while I rebuild the 1:1 channel, so start with the free BP quiz. It shows your biggest Pressure and the one thing to do first. Take it with your numbers and meds handy. No pitch, just nursing.
           </p>
-          <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
-            Book your free call &rarr;
+          <a href="https://bpquiz.com" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:15px;">
+            Take the free BP quiz &rarr;
           </a>
         </td></tr>
       </table>
@@ -478,12 +478,12 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
           <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:18px;">Your 90-Day Sprint — Week 1 starts now</div>
 
           <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
-            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1 — Book your kickoff call (this week)</div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1. Take the free BP quiz, then I'll set your kickoff</div>
             <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 12px;">
-              Sixty minutes with me on Zoom — your full lab review at the start. Bring your home BP log (or just your morning numbers from this week), your prescription list, your supplements, and any labs from the last year. We map your loudest Pressure live and design your Week 1 protocol together.
+              Start with the free BP quiz so we both know your loudest Pressure going in. I personally schedule your 60-minute kickoff and full lab review once you're in (watch for my text and welcome email). Have your home BP log, prescription list, supplements, and any labs from the last year handy.
             </p>
-            <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
-              Pick my kickoff time →
+            <a href="https://bpquiz.com" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+              Take the free BP quiz →
             </a>
           </div>
 

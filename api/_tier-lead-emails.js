@@ -25,7 +25,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
@@ -625,15 +625,15 @@ const day16 = {
     )}
     ${p(`Now the belief I have to meet head-on, because I felt it once too: <em>"Coaching isn't worth that. I should be able to figure this out myself."</em>`)}
     ${p(`Let me put it on a scale. On one side: $1,997, once. On the other side: ninety days of weekly group time with a nurse of 20 years who has walked hundreds of women down this exact road — plus WhatsApp office hours five days a week, two full lab reviews, your spouse rowing with you, and the years you'd otherwise spend guessing, the wrong turns, the mornings you almost quit, and the slow creep toward a third medication you didn't have to be on. When you weigh what you actually get against what staying stuck actually costs, "not worth it" stops being the honest answer. The dream outcome — a lower number you understand and control — divided by the effort and doubt it takes you alone? A voice on call changes that math entirely.`, { margin: '0 0 24px' })}
-    ${p(`If you'd rather just talk first, that's completely fine — I keep a few free 30-minute discovery calls open so you can hear my voice, ask your questions, and decide with zero pressure.`, { margin: '0 0 24px' })}
+    ${p(`If you'd rather not decide yet, that's completely fine. The free BP quiz shows your loudest Pressure and where to start, so your next step is clear with zero pressure.`, { margin: '0 0 24px' })}
     ${ctaButton('https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M', 'Claim a coaching slot — $1,997')}
-    ${p(`<span style="color:#999;font-size:14px;">Prefer to talk first? Book a free 30-minute discovery call: <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="color:${PALETTE.accentClay};">scheduler.zoom.us/joel-polley-d276dj/discovery-call</a></span>`, { margin: '0 0 28px' })}
+    ${p(`<span style="color:#999;font-size:14px;">Not ready? Take the free BP quiz to find your best starting point: <a href="https://bpquiz.com" style="color:${PALETTE.accentClay};">bpquiz.com</a></span>`, { margin: '0 0 28px' })}
     ${p(`In three days I'll show you the plain math of staying stuck — and I have to be straight with you about what happens to those two slots, and to the price, once they fill.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Not sure coaching is for you? Hit reply with the one thing about your numbers you most wish someone could just look at and explain. If it's the kind of thing a voice on call solves, I'll tell you honestly — and if it isn't, I'll tell you that too.`)}
     ${upsellFooter({
       kicker: 'A voice on call — 2 slots left',
-      body: '90 days of small-group coaching with Joel — weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free, medication-weaning coordinated with your doctor. $1,997. Or book a free 30-minute discovery call first.',
+      body: '90 days of small-group coaching with Joel. Weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free, medication-weaning coordinated with your doctor. $1,997. Or take the free BP quiz first to find your best starting point.',
       ctaLabel: 'Claim a coaching slot',
       ctaUrl: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
     })}
@@ -663,10 +663,10 @@ The belief I have to meet: "Coaching isn't worth that. I should figure this out 
 
 On one side of the scale: $1,997, once. On the other: 90 days of weekly group time with a 20-year nurse who's walked hundreds of women down this exact road — plus WhatsApp office hours five days a week, two full lab reviews, your spouse rowing with you, and the years you'd spend guessing, the wrong turns, the slow creep toward a third med you didn't have to be on. Weigh what you GET against what staying stuck COSTS, and "not worth it" stops being honest.
 
-Rather talk first? I keep a few free 30-minute discovery calls open. Zero pressure.
+Not ready to decide? Take the free BP quiz to find your best starting point. Zero pressure.
 
 → Claim a slot: https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M
-→ Free discovery call: https://scheduler.zoom.us/joel-polley-d276dj/discovery-call
+→ Take the free BP quiz: https://bpquiz.com
 
 In three days — the plain math of staying stuck, and what happens to those two slots and the price once they fill.
 
@@ -708,13 +708,13 @@ const day19 = {
       <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">If coaching is in your future at all, the cheapest day to start is today.</p>`
     )}
     ${ctaButton('https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M', 'Claim a slot at $1,997 (pay in full)')}
-    ${p(`<span style="color:#999;font-size:14px;">Prefer to spread it out? <a href="https://buy.stripe.com/6oU3cv2ZJ5LEgHV6NjfnO0N" style="color:${PALETTE.accentClay};">3 payments of $697/month</a>. Or talk first on a free 30-minute call: <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="color:${PALETTE.accentClay};">scheduler.zoom.us/joel-polley-d276dj/discovery-call</a></span>`, { margin: '0 0 28px' })}
+    ${p(`<span style="color:#999;font-size:14px;">Prefer to spread it out? <a href="https://buy.stripe.com/6oU3cv2ZJ5LEgHV6NjfnO0N" style="color:${PALETTE.accentClay};">3 payments of $697/month</a>. Or take the free BP quiz first to find your best starting point: <a href="https://bpquiz.com" style="color:${PALETTE.accentClay};">bpquiz.com</a></span>`, { margin: '0 0 28px' })}
     ${p(`In two days I send the last email in this series. No pitch in it, I promise — just a fork in the road, and an open door. After that, the rhythm of these emails slows for good.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If "I can't afford it" is the real wall, hit reply and tell me honestly. Sometimes it's the payment plan that solves it; sometimes it's just naming the fear out loud. Either way, I read every reply and I won't pressure you.`)}
     ${upsellFooter({
       kicker: 'Cheapest day to start is today',
-      body: '90-Day Group Coaching with Joel — weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. $1,997 now, $2,997 once the last 2 slots fill. A 3-payment plan ($697/mo) exists, and you can book a free 30-minute call first.',
+      body: '90-Day Group Coaching with Joel. Weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. $1,997 now, $2,997 once the last 2 slots fill. A 3-payment plan ($697/mo) exists, and you can take the free BP quiz first to find your best starting point.',
       ctaLabel: 'Claim a coaching slot',
       ctaUrl: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
     })}
@@ -745,7 +745,7 @@ Simply true: 2 coaching slots at the current $1,997. When they fill — soon, at
 
 → Pay in full ($1,997): https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M
 → 3 payments of $697/mo: https://buy.stripe.com/6oU3cv2ZJ5LEgHV6NjfnO0N
-→ Free 30-min call: https://scheduler.zoom.us/joel-polley-d276dj/discovery-call
+→ Take the free BP quiz: https://bpquiz.com
 
 In two days — the last email. No pitch, I promise. Just a fork in the road and an open door.
 
@@ -780,9 +780,9 @@ const day21 = {
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>It's the hormones?</strong> RestoreHER, June 24–25 — Virtual Pass ($247), or Platinum For Two ($1,497) to be in the room with Barbara O'Neill alongside someone you love.</p>
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Ready for a voice on call?</strong> 90-Day Group Coaching with me — weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. (The last 2 slots are still $1,997 before it moves to $2,997.)</p>
     `)}
-    ${p(`Not sure? Then take the smallest honest step — the $17 kit, or a free 30-minute call so you can just hear my voice and ask your questions with zero pressure.`, { margin: '0 0 24px' })}
+    ${p(`Not sure? Then take the smallest honest step, the $17 kit, or the free BP quiz so you can see your loudest Pressure and where to start with zero pressure.`, { margin: '0 0 24px' })}
     ${ctaButton(KIT_URL, 'Start with the BP Starter Kit — $17')}
-    ${p(`<span style="color:#999;font-size:14px;">Or book a free 30-minute discovery call: <a href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call" style="color:${PALETTE.accentClay};">scheduler.zoom.us/joel-polley-d276dj/discovery-call</a></span>`, { margin: '0 0 28px' })}
+    ${p(`<span style="color:#999;font-size:14px;">Or take the free BP quiz to find your best starting point: <a href="https://bpquiz.com" style="color:${PALETTE.accentClay};">bpquiz.com</a></span>`, { margin: '0 0 28px' })}
     ${p(`And if today the answer is "not yet" — that is genuinely okay. There's no door closing, no countdown clock. Starting next week you'll hear from me about once a week, on a Tuesday, with one teaching and one story. <strong>The door stays open.</strong> Every link in this email still works in a week, a month, a year from now. I'll be here when you're ready.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Wherever you are at the fork, hit reply and tell me one thing you're taking with you from these 21 days. I read every single one. The work is slow and the conversation is long — that's how real change is built, not in 21 days, but in the year that follows. I'll see you Tuesday.`)}
@@ -812,10 +812,10 @@ Don't want to do it alone? The BP Triangle Challenge ($97) — all three books, 
 It's the hormones? RestoreHER, June 24-25 — Virtual Pass ($247) or Platinum For Two ($1,497) to be in the room with Barbara O'Neill alongside someone you love.
 Ready for a voice on call? 90-Day Group Coaching — weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, spouse included free. (Last 2 slots still $1,997 before $2,997.)
 
-Not sure? Take the smallest honest step — the $17 kit, or a free 30-minute call.
+Not sure? Take the smallest honest step, the $17 kit, or the free BP quiz.
 
 → BP Starter Kit ($17): ${KIT_URL}
-→ Free 30-min call: https://scheduler.zoom.us/joel-polley-d276dj/discovery-call
+→ Take the free BP quiz: https://bpquiz.com
 
 And if today the answer is "not yet" — that's genuinely okay. No door closing, no clock. Starting next week, about once a week, on a Tuesday, one teaching and one story. THE DOOR STAYS OPEN. Every link here works in a week, a month, a year. I'll be here when you're ready.
 

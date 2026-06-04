@@ -713,13 +713,13 @@ function QuizModule({ products }) {
                     Based on your answers · you're a strong fit
                   </div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.15rem', lineHeight: 1.3, color: 'var(--ink)', marginBottom: '0.5rem' }}>
-                    Your best next step is a <em style={{ color: 'var(--clay)' }}>free 30-minute call</em> with Joel.
+                    Your best next step is the <em style={{ color: 'var(--clay)' }}>free BP quiz</em>, then your plan below.
                   </div>
                   <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.85rem' }}>
-                    Bring your numbers and your meds. He maps your exact situation and tells you the one thing to do next. No cost, no pressure.
+                    One-on-one calls are paused while I rebuild the 1:1 channel. The free quiz maps your loudest Pressure and the one thing to do next. No cost, no pressure.
                   </p>
                   <a
-                    href="https://scheduler.zoom.us/joel-polley-d276dj/discovery-call"
+                    href="https://bpquiz.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -729,7 +729,7 @@ function QuizModule({ products }) {
                       textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem',
                     }}
                   >
-                    Book your free call <ArrowRight size={16} />
+                    Take the free BP quiz <ArrowRight size={16} />
                   </a>
                   <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0.7rem 0 0' }}>
                     Prefer to start on your own? Your $17 plan is right below.

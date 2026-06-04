@@ -34,7 +34,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
@@ -119,7 +119,7 @@ function diagnosticUpsell({ kicker, body }) {
   return upsellFooter({
     kicker,
     body,
-    ctaLabel: 'See how the diagnostic works',
+    ctaLabel: 'Take the free BP quiz',
     ctaUrl: COACHING_URL,
   });
 }
@@ -154,7 +154,7 @@ const day0 = {
     ${psBox(`If you can't find the kit PDF, check your spam folder — sometimes Stripe receipts get filtered. Subject line is "Your BP Kit — files inside." Hit reply if it's still missing and I'll resend within the day.`)}
     ${diagnosticUpsell({
       kicker: 'Already thinking past the kit?',
-      body: 'A few readers come in already knowing the kit is step one, not step ten. The next step — when you\'re ready — is the BP Triangle Diagnostic. Sixty minutes with me on Zoom, a personalized protocol, and a written plan for your specific Triangle. Not for tonight. But on the menu when you want it.',
+      body: 'A few readers come in already knowing the kit is step one, not step ten. The free BP quiz shows your loudest Pressure and the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel, so the quiz is the best next step today.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -186,7 +186,7 @@ P.S. If you can't find the kit PDF, check your spam folder. Subject "Your BP Kit
 
 —
 Already thinking past the kit?
-The next step — when you're ready — is the BP Triangle Diagnostic. Sixty minutes with me on Zoom, personalized protocol.
+The free BP quiz names your loudest Pressure and the first move for it. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -224,7 +224,7 @@ const day2 = {
     ${psBox(`If you've already had a number swing you didn't expect — high or low — hit reply with the two numbers. I read them. I won't reply with a protocol over email, but I'll tell you if it's a noise-pattern or a signal-pattern.`)}
     ${diagnosticUpsell({
       kicker: 'When the cuff stops giving you answers',
-      body: 'You\'re going to log for three weeks. Most readers, by Day 14, hit a plateau the kit alone can\'t solve — because the kit is the general playbook, and a plateau means your specific Triangle is asking for a specific answer. That\'s where the diagnostic comes in. Not yet. But it\'s the door.',
+      body: 'You\'re going to log for three weeks. Most readers, by Day 14, hit a plateau the kit alone can\'t solve, because the kit is the general playbook and a plateau means your specific Triangle is asking for a specific answer. The free BP quiz names your loudest Pressure so you know which corner to work first.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -254,7 +254,7 @@ P.S. If you've already had a number swing you didn't expect, hit reply with the 
 
 —
 When the cuff stops giving you answers:
-Most readers hit a plateau by Day 14 — the kit is the general playbook. The diagnostic is the specific one.
+Most readers hit a plateau by Day 14. The kit is the general playbook. The free BP quiz names your specific corner.
 → ${COACHING_URL}
 
 —
@@ -294,7 +294,7 @@ const day4 = {
     ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'For readers who plateau hard',
-      body: 'Some readers get past Day 7 and still see no movement. That\'s usually a signal that the loudest corner of their Triangle is one the kit doesn\'t fully address. The diagnostic is built for exactly that case — sixty minutes, your full picture, a written protocol that names the specific corner.',
+      body: 'Some readers get past Day 7 and still see no movement. That\'s usually a signal that the loudest corner of their Triangle is one the kit doesn\'t fully address. The free BP quiz is built for exactly that case. It names the specific corner so you know where to start.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -332,7 +332,7 @@ P.S. If you're tempted to quit today, that's not a sign you bought the wrong thi
 
 —
 For readers who plateau hard:
-Some readers get past Day 7 and still see no movement. The diagnostic names the specific corner.
+Some readers get past Day 7 and still see no movement. The free BP quiz names the specific corner.
 → ${COACHING_URL}
 
 —
@@ -375,7 +375,7 @@ const day7 = {
     ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'Naming the loudest corner',
-      body: 'The single thing the BP Triangle Diagnostic does is name your loudest corner — definitively, based on your readings, meds, sleep, and labs if you have them. Sixty minutes. A written protocol pointing at the right corner. That\'s the whole point.',
+      body: 'The single thing the free BP quiz does is name your loudest corner, based on your symptoms and answers, and hand you the first move for it. Two minutes, no card. That\'s the whole point.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -413,7 +413,7 @@ P.S. Reply with one word — "Stress," "Sugar," or "Pipe" — and tell me which 
 
 —
 Naming the loudest corner:
-The diagnostic names your loudest corner definitively. Sixty minutes. Written protocol.
+The free BP quiz names your loudest corner and the first move for it. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -448,12 +448,12 @@ const day10 = {
     )}
     ${p(`Over the next ten days I'm going to share two more pieces — a story (Patricia's), and a deep-teach on what actually happens in the call. By Day 17 you'll know whether this is for you, and you'll have enough information to decide without me pushing.`)}
     ${p(`If you already know, here's the link. Otherwise, sit with it.`, { margin: '0 0 28px' })}
-    ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz')}
     ${joelSignoff()}
     ${psBox(`The diagnostic isn't for everyone. If your kit is moving your numbers and you're happy with the pace, stay the course. The door is here when you want it — not before.`)}
     ${diagnosticUpsell({
       kicker: 'Want to read the page first?',
-      body: 'Most readers click through to the diagnostic page once, read it, close it, then come back a few days later. That\'s a healthy pattern. The page lays out exactly what happens, what you walk out with, and the calendar capacity.',
+      body: 'The free BP quiz takes two minutes and names your loudest Pressure plus the first move for it. No card, no booking. The fastest way to know which corner to work first.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -482,7 +482,7 @@ I'm not asking you to book today. Most readers book around Day 14-21 — after t
 
 I'm telling you now because I want you to know the door exists.
 
-SEE HOW THE DIAGNOSTIC WORKS:
+TAKE THE FREE BP QUIZ:
 → ${COACHING_URL}
 
 Joel
@@ -491,8 +491,8 @@ RN, BraveWorks
 P.S. The diagnostic isn't for everyone. If your kit is moving your numbers, stay the course. The door is here when you want it.
 
 —
-Want to read the page first?
-Most readers click through, read it, close it, come back a few days later. Healthy pattern.
+Want your loudest Pressure named first?
+The free BP quiz takes two minutes and names your loudest corner plus the first move. No card.
 → ${COACHING_URL}
 
 —
@@ -532,13 +532,13 @@ const day13 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ A buyer-only 30-day email follow-up window with me — so she wasn't alone the first month.</p>
     `)}
     ${p(`If you've been logging for two weeks and your numbers have plateaued the way Patricia's did — the door is the same one she walked through.`, { margin: '0 0 28px' })}
-    ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz')}
     ${joelSignoff()}
     ${psBox(`Patricia's $17 kit purchase applied as credit, same as yours will. She paid $280 at checkout, not $297. Same arrangement is still there for you.`)}
     ${premiumVipBodyPitch()}
     ${diagnosticUpsell({
       kicker: 'The same door Patricia walked through',
-      body: 'Sixty minutes. Personalized protocol. Doctor script. Thirty-day follow-up window. Your $17 already applied as credit — $280 net.',
+      body: 'Two minutes. Your loudest Pressure named, with the first move for it. No card, no booking. One-on-one calls are paused while I rebuild the 1:1 channel, so the quiz is the best next step.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -577,7 +577,7 @@ WHAT THE KIT ALONE COULDN'T GIVE HER:
 
 If you've been logging two weeks and you're plateauing like Patricia did — the door is the same one she walked through.
 
-SEE HOW THE DIAGNOSTIC WORKS:
+TAKE THE FREE BP QUIZ:
 → ${COACHING_URL}
 
 Joel
@@ -586,8 +586,8 @@ RN, BraveWorks
 P.S. Patricia's $17 kit purchase applied as credit. She paid $280, not $297. Same for you.
 
 —
-The same door Patricia walked through:
-Sixty minutes. Personalized protocol. Doctor script. 30-day follow-up. $280 net.
+The same first step Patricia took:
+The free BP quiz names your loudest Pressure and the first move for it. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -631,7 +631,7 @@ const day15 = {
     ${psBox(`If you want to see the diagnostic page before Day 17, the link is below. Some readers like to read it three times before they decide. That's fine. That's exactly the kind of reader who does well on the call.`)}
     ${diagnosticUpsell({
       kicker: 'See the full mechanism',
-      body: 'The diagnostic page lays out every detail — the four patterns I look for in your log, the doctor script, the thirty-day follow-up window, the calendar capacity. Read it as many times as you need.',
+      body: 'The free BP quiz names your loudest Pressure and the first move for it. Two minutes, no card. Take it as many times as you need as your numbers change.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -673,8 +673,8 @@ RN, BraveWorks
 P.S. Some readers like to read the diagnostic page three times before they decide. That's exactly the kind of reader who does well on the call.
 
 —
-See the full mechanism:
-The page lays out every detail. Read it as many times as you need.
+See your loudest Pressure:
+The free BP quiz names it and the first move. Take it as many times as you need.
 → ${COACHING_URL}
 
 —
@@ -718,13 +718,13 @@ const day17 = {
     ${p(`Standard diagnostic price: $297.`)}
     ${p(`Your kit purchase (applied as credit): −$17.`)}
     ${p(`Your checkout: <strong>$280.</strong>`, { margin: '0 0 28px' })}
-    ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz')}
     ${p(`Day 19 I'll let you know the real number of slots left this month. Day 21 is the last email I send about this — after that, you'll move to a quieter list and I'll stop mentioning it unless you ask.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Reply with the objection I didn't cover, if there is one. If it's a real one, I'll write back. If it's the same one in different words, I'll tell you that too.`)}
     ${diagnosticUpsell({
       kicker: 'The credit doesn\'t expire',
-      body: 'Whether you book this month or three months from now, your $17 stays applied. The diagnostic page has the full breakdown of what you walk out with — read it, then decide on your own timeline.',
+      body: 'Whether you take it today or three months from now, the free BP quiz names your loudest Pressure and the first move for it. Two minutes, no card. Decide on your own timeline.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -755,7 +755,7 @@ $297 standard
 −$17 kit credit
 = $280 at checkout
 
-SEE HOW THE DIAGNOSTIC WORKS:
+TAKE THE FREE BP QUIZ:
 → ${COACHING_URL}
 
 Day 19 I'll share the real slot count. Day 21 is the last email I send about this.
@@ -766,8 +766,8 @@ RN, BraveWorks
 P.S. Reply with the objection I didn't cover. If it's real, I'll write back.
 
 —
-The credit doesn't expire:
-Whether you book this month or three months from now, your $17 stays applied.
+Free, whenever you're ready:
+Whether you take it this month or three months from now, the quiz names your loudest Pressure.
 → ${COACHING_URL}
 
 —
@@ -809,13 +809,13 @@ const day19 = {
     ${p(`→ You haven't run the kit through Day 14 yet. (Run it. Plateau. Then book.)`)}
     ${p(`→ Your numbers are dropping steadily on the kit alone. (Stay the course. The kit is doing it for you.)`)}
     ${p(`→ You're in a season where Zoom feels heavy. (Wait. The credit doesn't expire. June or July is fine.)`, { margin: '0 0 28px' })}
-    ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz')}
     ${p(`Tomorrow you have a quiet day. Day 21 is the last email I send in this sequence. Then you graduate to a calmer cadence — one email per week instead of every two or three days.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you want to know whether a specific morning works on the calendar without committing yet, hit reply with the day. I'll tell you what's open. No commitment to book.`)}
     ${diagnosticUpsell({
       kicker: '5 a month — real cap, no countdown',
-      body: 'Your $17 credit is already applied. Sixty minutes, written protocol, doctor script, 30-day follow-up. $280 net.',
+      body: 'The free BP quiz names your loudest Pressure and the first move for it. Two minutes, no card, no booking.',
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -844,7 +844,7 @@ WHO SHOULD WAIT:
 → Numbers dropping steadily on the kit (stay the course)
 → Zoom feels heavy this season (wait — credit doesn't expire)
 
-SEE HOW THE DIAGNOSTIC WORKS:
+TAKE THE FREE BP QUIZ:
 → ${COACHING_URL}
 
 Day 21 is the last email I send in this sequence. Then a calmer cadence.
@@ -855,8 +855,8 @@ RN, BraveWorks
 P.S. Want to know whether a specific morning works on the calendar? Hit reply with the day. No commitment to book.
 
 —
-5 a month — real cap, no countdown:
-$17 credit already applied. $280 net.
+Free, no countdown:
+The free BP quiz names your loudest Pressure and the first move. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -889,7 +889,7 @@ const day21 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">That's a real answer. Keep using the kit. Keep logging. The credit doesn't expire. Three months from now, six months from now, a year from now — the door is the same door, your $17 still applies.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">When you're ready, you'll know. Until then, the weekly emails from this point forward are content-only — no pitches, no urgency.</p>
     `)}
-    ${ctaButton(COACHING_URL, 'See how the diagnostic works')}
+    ${ctaButton(COACHING_URL, 'Take the free BP quiz')}
     ${p(`Whichever path you take, I want to say thank you. Three weeks ago you trusted me with $17 or $47 on a hunch. Most people don't follow through on hunches. You did. The fact that you read this email — the tenth one in a row from a guy you don't really know yet — tells me you're the kind of reader I want around for a long time.`, { margin: '0 0 28px' })}
     ${p(`Tomorrow's email is shorter, calmer, and on a different topic entirely. I'll see you there.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
@@ -924,7 +924,7 @@ That's a real answer. Keep using the kit. Keep logging. The credit doesn't expir
 
 When you're ready, you'll know. The weekly emails from here are content-only — no pitches, no urgency.
 
-SEE HOW THE DIAGNOSTIC WORKS:
+TAKE THE FREE BP QUIZ:
 → ${COACHING_URL}
 
 Whichever path you take — thank you. Three weeks ago you trusted me with $17 or $47 on a hunch. Most people don't follow through on hunches. You did.

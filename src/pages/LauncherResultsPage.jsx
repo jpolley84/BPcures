@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Check, ChevronDown, ChevronUp, Shield } from 'lucide-react';
 import { TIER_DETAILS, decodeSlugPayload, scoreColor } from '../utils/launcherQuiz';
 
-const CALENDLY = 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+const CALENDLY = 'https://bpquiz.com';
 
 const cream = 'var(--cream)';
 const ink = 'var(--ink)';
@@ -649,7 +649,7 @@ function RecommendedTierCard({ tier, tierKey, primary }) {
           textDecoration: 'none',
         }}
       >
-        Apply for {tier.name} <ArrowRight size={16} />
+        See the system at BPQuiz.com <ArrowRight size={16} />
       </a>
     </motion.div>
   );
@@ -820,7 +820,7 @@ function OtherTiers({ tierKeys }) {
                     paddingBottom: '0.15rem',
                   }}
                 >
-                  Apply for {t.name} <ArrowRight size={12} />
+                  See the system at BPQuiz.com <ArrowRight size={12} />
                 </a>
               </div>
             );

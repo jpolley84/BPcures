@@ -34,7 +34,7 @@ const PALETTE = {
 };
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
-const CALENDLY_URL = process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://scheduler.zoom.us/joel-polley-d276dj/discovery-call';
+const CALENDLY_URL = process.env.VITE_CALENDLY_DIAGNOSTIC_URL || 'https://bpquiz.com';
 const SPRINT_WITH_CREDIT_LINK =
   process.env.VITE_STRIPE_SPRINT_WITH_DIAGNOSTIC_CREDIT_LINK ||
   'https://buy.stripe.com/eVq6oH57RgqicrF6NjfnO0Q';
