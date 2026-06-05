@@ -167,9 +167,12 @@ function App() {
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
           <Route path="/apply" element={<Navigate to="/1on1" replace />} />
 
-          {/* 90-Day BP Triangle Freedom Sprint — $4,997 flagship. Joel + Annie
-              co-coach. Application-only (no buy button — Brunson high-ticket).
-              Launched 2026-05-12, first cohort target 5 slots. */}
+          {/* 2026-06-04: /coaching rebuilt as the 1:1 with Joel landing page.
+              Four tiers, email-only close (joel@bpquiz.com). Replaces both the
+              retired $297 Diagnostic and the paused free-discovery-call page.
+              Brand-as-close posture: AVAILABLE not selling. The $297 Stripe
+              products remain live for existing buyers in their drip; only the
+              public-facing offer here changed. See CoachingPage.jsx. */}
           <Route path="/coaching" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
@@ -180,9 +183,9 @@ function App() {
           <Route path="/sprint-welcome" element={<SprintWelcomePage />} />
           {/* Cohort 2 application page — vacation-style sales letter, no
               price reveal, application form posts to /api/coaching-apply.
-              The $297 diagnostic at /coaching is the prescreen path INTO
-              Cohort 2; this page is for buyers who want to skip the
-              prescreen and apply directly. */}
+              (Note: as of 2026-06-04 /coaching no longer prescreens into
+              Cohort 2 — it lists Joel's 1:1 tiers. This page remains the
+              direct-apply path for buyers who want the Sprint specifically.) */}
           <Route path="/cohort2" element={<Cohort2Page />} />
 
           {/* Free 6-day Annie+Joel seminar — May 18-23 2026.
