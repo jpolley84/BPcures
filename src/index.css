@@ -1612,3 +1612,57 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   70%  { box-shadow: 0 0 0 10px rgba(255, 233, 199, 0);   }
   100% { box-shadow: 0 0 0 0    rgba(255, 233, 199, 0);   }
 }
+
+/* 2026-06-04 PODCAST-PREP — Results page polish: scroll-snap rhythm +
+   sticky "your loudest pressure" badge. Editorial reading cadence: each
+   major results section settles into view as you scroll. */
+.results-scroll {
+  scroll-snap-type: y proximity;
+}
+.results-scroll > div[style],
+.results-scroll > a {
+  scroll-snap-align: start;
+  scroll-margin-top: 90px;
+}
+
+/* Sticky result badge — desktop only. Pinned top-right, follows the scroll
+   so the personalized verdict stays anchored while the buyer reads the offer. */
+.results-sticky-badge {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .results-sticky-badge {
+    position: sticky;
+    top: 96px;
+    float: right;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.1rem;
+    margin: 0 0 0.5rem 1rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--ink, #2C3530);
+    color: var(--cream, #F7F3EC);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 6;
+    line-height: 1.1;
+  }
+  .results-sticky-badge .rsb-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .results-sticky-badge .rsb-value {
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--clay-soft, #E0A07E);
+  }
+  .results-sticky-badge .rsb-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    opacity: 0.85;
+  }
+}

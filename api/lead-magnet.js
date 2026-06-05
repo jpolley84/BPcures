@@ -549,6 +549,19 @@ export default async function handler(req, res) {
       } catch (logErr) {
         console.warn('lead-magnet: daily lead-log write failed (non-fatal)', logErr.message);
       }
+
+      // 2026-06-04 — live "Triangles Mapped Today" hero counter. Raw INCR
+      // (not a deduped set) so the public number feels alive. Read by
+      // GET /api/triangles-today. 48h TTL keeps yesterday's key around long
+      // enough to avoid a midnight-rollover flash of 0. This is a
+      // quiz-completion counter, NOT an outcomes claim — zero FTC exposure.
+      try {
+        const tKey = `triangles:${dayKey}`;
+        await kv.incr(tKey);
+        await kv.expire(tKey, 48 * 3600);
+      } catch (tErr) {
+        console.warn('lead-magnet: triangles-today incr failed (non-fatal)', tErr.message);
+      }
     } catch (err) {
       console.warn('lead-magnet: drip-kv enroll failed', err.message);
       // Non-blocking — PDF already shipped, drip is a bonus

@@ -1,9 +1,140 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 // Link removed — single-page funnel, no internal navigation needed
 import { AnimatePresence, motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import {
   ArrowRight, ArrowUpRight, Star, Quote, AlertCircle,
 } from 'lucide-react';
+
+// 2026-06-04 — prefers-reduced-motion guard, computed once. Confetti + the
+// typewriter both honor this so the celebration never fights accessibility.
+const PREFERS_REDUCED_MOTION =
+  typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false;
+
+// Soft paper-fall confetti in the brand palette (sage / clay / gold). No
+// rainbow, low gravity, small scalar — reads as "handmade celebration" not
+// "carnival". Fired once when the results panel reveals.
+function fireResultsConfetti() {
+  if (PREFERS_REDUCED_MOTION) return;
+  const colors = ['#4A6741', '#B85A36', '#D4A24A', '#3F5A3C'];
+  confetti({
+    particleCount: 90,
+    spread: 55,
+    startVelocity: 32,
+    origin: { y: 0.38 },
+    colors,
+    shapes: ['circle', 'square'],
+    gravity: 0.34,
+    scalar: 0.75,
+    ticks: 220,
+    disableForReducedMotion: true,
+  });
+}
+
+// 2026-06-04 — live "Triangles mapped today" hero counter. Reads
+// GET /api/triangles-today (KV-backed, incremented on every quiz completion).
+// Animated count-up on first paint. The community number carries social proof
+// early in the day when today's count is still small. Renders nothing until
+// the fetch resolves, so it never flashes a 0.
+function TrianglesCounter() {
+  const [data, setData] = useState(null);
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/triangles-today')
+      .then((r) => r.json())
+      .then((d) => { if (alive) setData(d); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  // Count-up animation toward today's number.
+  useEffect(() => {
+    if (!data) return;
+    const target = data.today || 0;
+    if (PREFERS_REDUCED_MOTION || target <= 0) { setDisplay(target); return; }
+    const DURATION = 900;
+    let raf;
+    let start;
+    const tick = (ts) => {
+      if (start === undefined) start = ts;
+      const p = Math.min((ts - start) / DURATION, 1);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(Math.round(eased * target));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [data]);
+
+  if (!data) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, delay: 0.4 }}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.55rem',
+        marginTop: '1rem',
+        padding: '0.5rem 0.9rem',
+        background: 'rgba(184, 90, 54, 0.07)',
+        border: '1px solid rgba(184, 90, 54, 0.25)',
+        borderRadius: 999,
+        fontSize: '0.82rem',
+        color: 'var(--ink-soft)',
+      }}
+    >
+      <span style={{
+        display: 'inline-block', width: 7, height: 7, borderRadius: '50%',
+        background: '#4A6741', boxShadow: '0 0 0 0 rgba(74,103,65,0.7)',
+        animation: PREFERS_REDUCED_MOTION ? 'none' : 'pulse-dot 2s infinite',
+        flexShrink: 0,
+      }} />
+      {data.today > 0 ? (
+        <span>
+          <strong style={{ color: 'var(--clay)', fontVariantNumeric: 'tabular-nums' }}>{display.toLocaleString()}</strong>
+          {' '}Triangle{display === 1 ? '' : 's'} mapped today · joining{' '}
+          <strong style={{ color: 'var(--ink)' }}>{data.community.toLocaleString()}</strong> in the community
+        </span>
+      ) : (
+        <span>
+          Join <strong style={{ color: 'var(--ink)' }}>{data.community.toLocaleString()}</strong> people who mapped their Triangle
+        </span>
+      )}
+    </motion.div>
+  );
+}
+
+// Lightweight character-by-character typewriter. Renders plain text only.
+// Respects reduced-motion by showing the full string immediately.
+function Typewriter({ text, speed = 42, className, style }) {
+  const [shown, setShown] = useState(PREFERS_REDUCED_MOTION ? text : '');
+  useEffect(() => {
+    if (PREFERS_REDUCED_MOTION) return;
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      setShown(text.slice(0, i));
+      if (i >= text.length) clearInterval(id);
+    }, speed);
+    return () => clearInterval(id);
+  }, [text, speed]);
+  return (
+    <span className={className} style={style}>
+      {shown}
+      {!PREFERS_REDUCED_MOTION && shown.length < text.length && (
+        <span aria-hidden="true" style={{ opacity: 0.4 }}>|</span>
+      )}
+    </span>
+  );
+}
 import {
   fetchProducts,
   recommendForScore,
@@ -456,6 +587,8 @@ function HeroCopy() {
       >
         Education and lifestyle support. Works <strong>alongside</strong> your doctor, never instead of. Always consult your physician before changing medications.
       </motion.div>
+
+      <TrianglesCounter />
     </div>
   );
 }
@@ -473,6 +606,18 @@ function QuizModule({ products }) {
   // of following the recommended product's static stripe_payment_link.
   const [addBump, setAddBump] = useState(false);
   const [bumpLoading, setBumpLoading] = useState(false);
+
+  // 2026-06-04 — fire the results confetti exactly once, the first time the
+  // panel flips to 'results'. Guarded by a ref so a re-render never re-fires.
+  const confettiFired = useRef(false);
+  useEffect(() => {
+    if (phase === 'results' && !confettiFired.current) {
+      confettiFired.current = true;
+      // small delay lets the panel paint before the burst
+      const id = setTimeout(fireResultsConfetti, 280);
+      return () => clearTimeout(id);
+    }
+  }, [phase]);
 
   const q = QUESTIONS[step];
   const answered = answers[q?.id];
@@ -692,8 +837,26 @@ function QuizModule({ products }) {
           )}
 
           {phase === 'results' && (
-            <div key="results">
-              <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>Your assessment · Complete</span>
+            <div key="results" className="results-scroll">
+              {/* 2026-06-04 — Celebration headline. Soft confetti fires on
+                  panel entry (see useEffect above); the headline types in
+                  character-by-character. Both honor prefers-reduced-motion. */}
+              <span className="kicker kicker-dot" style={{ marginBottom: '0.5rem' }}>Your assessment · Complete</span>
+              <h2 className="display-s" style={{ margin: '0 0 1.1rem', lineHeight: 1.15 }}>
+                <Typewriter
+                  text={name ? `${name}, your Triangle is ready.` : 'Your Triangle is ready.'}
+                  speed={42}
+                />
+              </h2>
+
+              {/* Sticky "loudest pressure" badge — follows the scroll on desktop
+                  so the personalized result stays anchored while reading the
+                  offer. Hidden on mobile (sticky overlay gets claustrophobic). */}
+              <div className="results-sticky-badge" aria-hidden="true">
+                <span className="rsb-label">Your loudest</span>
+                <span className="rsb-value">{pressureCopy.label}</span>
+                <span className="rsb-score">{riskScore}/10</span>
+              </div>
 
               {/* 2026-06-04 RESTRUCTURE — Kit stack moved to TOP. The misplaced
                   "Take the free BP quiz" coaching CTA box was removed (the
