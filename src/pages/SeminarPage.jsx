@@ -36,7 +36,7 @@ export default function SeminarPage() {
   const utmCampaign = searchParams.get('utm_campaign') || null;
 
   useEffect(() => {
-    document.title = "Couples Intimacy + Sexual Health — Free Week with Annie & Joel";
+    document.title = "Couples Intimacy + Sexual Health. Free Week with Annie & Joel";
   }, []);
 
   async function handleSubmit(e) {
@@ -140,7 +140,7 @@ function Hero() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '2rem', color: 'rgba(251,248,241,0.6)', fontSize: '0.88rem' }}>
-            <span>Singles 30+ welcome too &mdash; the science applies the same.</span>
+            <span>Singles 30+ welcome too. The science applies the same.</span>
           </div>
         </motion.div>
       </div>
@@ -300,7 +300,7 @@ function WhatYoullLearn() {
     { icon: Heart, title: 'Why libido falls off a cliff in your 40s + 50s', body: 'And which three hormone shifts are running the show.' },
     { icon: Heart, title: 'What your BP medication is doing to circulation', body: 'Joel walks Thursday\'s session through the exact mechanism. Most cardiologists never mention this.' },
     { icon: Heart, title: 'The cortisol corner of intimacy', body: 'Stress hormone blocks arousal at the chemistry level. We cover the 90-day pattern that resets it.' },
-    { icon: Heart, title: 'The partner conversation script', body: 'Annie\'s Friday session — how to have the talk without making it about blame.' },
+    { icon: Heart, title: 'The partner conversation script', body: 'Annie\'s Friday session: how to have the talk without making it about blame.' },
     { icon: Heart, title: 'Rebuilding desire on purpose', body: 'Saturday close: a 30-day stack of small inputs that bring back the spark women keep telling us they miss.' },
   ];
 
@@ -370,7 +370,7 @@ function Hosts() {
                 The cardiovascular corner
               </h3>
               <p style={{ color: 'var(--ink-soft)', margin: 0, fontSize: '0.97rem', lineHeight: 1.6 }}>
-                Twenty years in ICU and emergency medicine. Joel went naturopathic after seeing the same medication-and-intimacy story play out across every shift. Thursday he walks through the specific mechanism of how BP meds, calcium channel blockers, and beta blockers affect circulation and libido &mdash; and what to actually do about it without quitting cold.
+                Twenty years in ICU and emergency medicine. Joel went naturopathic after seeing the same medication-and-intimacy story play out across every shift. Thursday he walks through the specific mechanism of how BP meds, calcium channel blockers, and beta blockers affect circulation and libido, and what to actually do about it without quitting cold.
               </p>
             </div>
           </div>
@@ -384,7 +384,7 @@ function Hosts() {
 function FAQ() {
   const items = [
     { q: 'Is it really free?', a: 'Yes. Six live sessions, no card, no upsell wall. We do offer a hormone bundle and the BP Triangle Method for people who want a structured follow-on, but everything during the week is free.' },
-    { q: 'Will there be replays?', a: 'Live only this week. If we can record a session we\'ll send it out to attendees, but show up live if you can — that\'s where the questions get answered.' },
+    { q: 'Will there be replays?', a: 'Live only this week. If we can record a session we\'ll send it out to attendees, but show up live if you can. That\'s where the questions get answered.' },
     { q: 'Do I have to attend every day?', a: 'No. Each session stands alone. Pick the ones that apply to you. Thursday (Joel) and Friday (the partner conversation) are the two most people come for.' },
     { q: "I'm single. Is this for me?", a: 'Yes. The science of hormones, cortisol, and circulation applies the same. Drop in on whichever sessions speak to you. The Tuesday hormone session and Thursday med-effect session are especially relevant.' },
     { q: 'My partner won\'t come. Can I still benefit?', a: 'Absolutely. Most women attend solo on the first day or two and bring their partner for Friday\'s conversation session once they see what we\'re doing. Send them this page if it helps.' },
@@ -455,7 +455,7 @@ function PageFooter() {
       <div className="shell" style={{ maxWidth: 600 }}>
         <p style={{ fontSize: '0.78rem', color: 'var(--muted, #7a7061)', lineHeight: 1.55, margin: 0 }}>
           BraveWorks RN &middot; Joel Polley, RN &middot; Annie Chitate, RN<br />
-          Educational content only. Not medical advice. Always complement &mdash; never replace &mdash; care from your physician.
+          Educational content only. Not medical advice. Always complement, never replace, care from your physician.
         </p>
       </div>
     </footer>

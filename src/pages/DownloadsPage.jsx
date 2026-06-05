@@ -22,12 +22,12 @@ import { Download, FileText, ArrowLeft, BookOpen } from 'lucide-react';
 const groups = [
   {
     title: 'Blood Pressure',
-    desc: 'Every BP protocol Joel publishes — start with the Day 1 quick win and the master Reset Kit.',
+    desc: 'Every BP protocol Joel publishes. Start with the Day 1 quick win and the master Reset Kit.',
     files: [
       { name: 'BP Reset Day 1 + Full Challenge', desc: 'Day-by-day BP protocol with checklists. Start here.', file: 'bp-reset-day1-and-beyond.pdf' },
       { name: 'BP Reset Kit (8-PDF zip)', desc: 'The full clinical system: hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates.', file: 'bp-reset-kit.zip' },
-      { name: 'BP Reset Book (full deep-dive guide)', desc: 'The complete BP Reset book — every protocol explained in depth.', file: 'bp-reset-book.pdf' },
-      { name: 'Blood Pressure Cures — 10-Day Nurse\'s Reset', desc: 'Master document + top 10 herbs deep-dive (each matched to the drug it mimics) + White Coat guide + FAQ.', file: 'bp-cures-10-day-reset.pdf' },
+      { name: 'BP Reset Book (full deep-dive guide)', desc: 'The complete BP Reset book. Every protocol explained in depth.', file: 'bp-reset-book.pdf' },
+      { name: 'Blood Pressure Cures: 10-Day Nurse\'s Reset', desc: 'Master document + top 10 herbs deep-dive (each matched to the drug it mimics) + White Coat guide + FAQ.', file: 'bp-cures-10-day-reset.pdf' },
     ],
   },
   {
@@ -35,12 +35,12 @@ const groups = [
     desc: 'For the stress corner of the Pressure Triangle.',
     files: [
       { name: '10-Day Cortisol Cure (full protocol)', desc: 'Day-by-day cortisol reset with adrenal-recovery guide.', file: 'cortisol-cure-10-day.pdf' },
-      { name: 'Cortisol Day 1 — Wired and Tired Diagnosis', desc: 'Self-diagnose your cortisol pattern. Day 1 of the protocol.', file: 'cortisol-day1-diagnosis.pdf' },
+      { name: 'Cortisol Day 1: Wired and Tired Diagnosis', desc: 'Self-diagnose your cortisol pattern. Day 1 of the protocol.', file: 'cortisol-day1-diagnosis.pdf' },
     ],
   },
   {
     title: 'Blood Sugar',
-    desc: 'For the glucose corner — insulin resistance, meal timing, food sequencing.',
+    desc: 'For the glucose corner: insulin resistance, meal timing, food sequencing.',
     files: [
       { name: '10-Day Blood Sugar Reset (full protocol)', desc: 'Day-by-day glucose reset with herb stack + meal timing.', file: 'blood-sugar-reset-10-day.pdf' },
       { name: 'Blood Sugar Day 1', desc: 'Day 1 of the blood sugar protocol. Quick win.', file: 'blood-sugar-day1.pdf' },
@@ -51,7 +51,7 @@ const groups = [
     desc: 'Meal prep + the bonus library.',
     files: [
       { name: 'Cook For Life Cookbook', desc: 'Plant-based recipes built to lower BP and stabilize blood sugar.', file: 'cook-for-life-cookbook.pdf' },
-      { name: 'Overmedicated Boomers (bonus)', desc: 'The complete book on getting off prescription overload — included with every purchase.', file: 'overmedicated-boomers.pdf' },
+      { name: 'Overmedicated Boomers (bonus)', desc: 'The complete book on getting off prescription overload. Included with every purchase.', file: 'overmedicated-boomers.pdf' },
     ],
   },
 ];
@@ -71,7 +71,7 @@ export default function DownloadsPage() {
         <span className="kicker kicker-dot">Your library</span>
         <h1 className="display-l" style={{ margin: '1rem 0 1rem' }}>Your downloads.</h1>
         <p className="lede" style={{ marginBottom: '0.75rem' }}>
-          Every BraveWorks protocol Joel publishes — ready to download instantly. Click any file to save it to your device.
+          Every BraveWorks protocol Joel publishes, ready to download instantly. Click any file to save it to your device.
         </p>
         <p style={{ color: 'var(--muted)', fontSize: '0.92rem', marginBottom: 'clamp(2.5rem, 4vw, 3.5rem)' }}>
           Bookmark this page. Your access never expires.

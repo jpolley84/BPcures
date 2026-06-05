@@ -26,7 +26,7 @@ const SCHEMA = {
       '@id': 'https://bpquiz.com/about/joel#joel',
       name: 'Joel Polley',
       alternateName: 'The Blood Pressure Guy',
-      jobTitle: 'Registered Nurse · Naturopathic Practitioner',
+      jobTitle: 'Registered Nurse · Naturopathic-Trained',
       description:
         'Joel Polley, RN, is an ICU and emergency-medicine nurse of 20 years who turned to naturopathic medicine after seeing the limits of pharmaceutical-only blood-pressure care. He is the founder of BraveWorks RN and the creator of the BP Triangle method.',
       url: 'https://bpquiz.com/about/joel',
@@ -62,23 +62,22 @@ const SCHEMA = {
       '@type': 'WebPage',
       '@id': 'https://bpquiz.com/about/joel',
       url: 'https://bpquiz.com/about/joel',
-      name: 'About Joel Polley, RN — The Blood Pressure Guy',
+      name: 'About Joel Polley, RN. The Blood Pressure Guy',
       description:
-        'Meet Joel Polley, RN — 20 years in ICU and emergency medicine, now teaching natural blood-pressure protocols through BraveWorks RN. Author of every article on bpquiz.com.',
+        'Meet Joel Polley, RN. 20 years in ICU and emergency medicine, now teaching natural blood-pressure protocols through BraveWorks RN. Author of every article on bpquiz.com.',
       mainEntity: { '@id': 'https://bpquiz.com/about/joel#joel' },
       inLanguage: 'en-US',
       isPartOf: {
         '@type': 'WebSite',
         url: 'https://bpquiz.com',
-        name: 'BraveWorks RN — Blood Pressure Natural Remedies',
+        name: 'BraveWorks RN. Blood Pressure Natural Remedies',
       },
     },
     {
-      '@type': 'MedicalBusiness',
+      '@type': 'EducationalOrganization',
       name: 'BraveWorks RN',
       url: 'https://bpquiz.com',
       founder: { '@id': 'https://bpquiz.com/about/joel#joel' },
-      medicalSpecialty: 'Cardiovascular',
       description:
         'BraveWorks RN teaches natural blood-pressure protocols through a 4-mechanism framework: vascular health, cortisol regulation, blood-sugar balance, and inflammation control.',
     },
@@ -88,13 +87,13 @@ const SCHEMA = {
 const CREDS = [
   { icon: Stethoscope, title: '20 Years ICU + ER', body: 'Cardiovascular crash carts, hypertensive emergencies, pulmonary edema, post-MI care. The places blood pressure stops being theoretical.' },
   { icon: Heart, title: 'Registered Nurse', body: 'Licensed RN with clinical experience across critical care, emergency medicine, pediatrics, and primary care.' },
-  { icon: Leaf, title: 'Naturopathic Practitioner', body: 'Trained in the herbal, mineral, and lifestyle protocols that the pharmaceutical model leaves out. Joining clinical rigor to root-cause medicine.' },
+  { icon: Leaf, title: 'Naturopathic-Trained', body: 'Trained in the herbal, mineral, and lifestyle protocols that the pharmaceutical model leaves out. Joining clinical rigor to root-cause medicine.' },
 ];
 
 const PILLARS = [
   {
     name: 'Vascular Pressure',
-    body: 'Endothelial damage, nitric oxide deficiency, mineral depletion. The mechanical corner — what your vessels are physically doing.',
+    body: 'Endothelial damage, nitric oxide deficiency, mineral depletion. The mechanical corner. What your vessels are physically doing.',
   },
   {
     name: 'Cortisol Pressure',
@@ -102,7 +101,7 @@ const PILLARS = [
   },
   {
     name: 'Blood Sugar Pressure',
-    body: 'Insulin resistance, glucose-driven vessel damage, sodium retention. The metabolic corner — your A1c, fasting glucose, and fasting insulin all live here.',
+    body: 'Insulin resistance, glucose-driven vessel damage, sodium retention. The metabolic corner. Your A1c, fasting glucose, and fasting insulin all live here.',
   },
 ];
 
@@ -123,7 +122,7 @@ export default function AboutJoelPage() {
               <source srcSet="/headshot.webp" type="image/webp" />
               <img
                 src="/headshot.jpg"
-                alt="Joel Polley, RN — The Blood Pressure Guy — 20 years ICU and emergency medicine"
+                alt="Joel Polley, RN. The Blood Pressure Guy. 20 years ICU and emergency medicine"
                 width="160"
                 height="160"
                 style={{
@@ -142,7 +141,7 @@ export default function AboutJoelPage() {
               I'm Joel. The Blood Pressure Guy.
             </h1>
             <p style={{ fontSize: '1.05rem', color: 'var(--ink-soft)', maxWidth: '52ch', margin: '0 auto', lineHeight: 1.65 }}>
-              Registered Nurse · 20 years in ICU and ER · Naturopathic practitioner · Founder of BraveWorks RN
+              Registered Nurse · 20 years in ICU and ER · Naturopathic-trained · Founder of BraveWorks RN
             </p>
           </motion.div>
         </div>
@@ -181,7 +180,7 @@ export default function AboutJoelPage() {
               What nobody in those rooms talked about was that the pills were never designed to fix anything. They were designed to manage a number. The number is high because something upstream is broken. The pill doesn't touch the upstream thing.
             </p>
             <p style={{ margin: '0 0 1.25rem' }}>
-              I spent the next decade in emergency medicine watching the same pattern. The same patients coming back with the same numbers, just on more pills than the last time. By year 15 I'd seen enough that I had to stop and ask a different question. Not "what pill do they need" — but "what's actually driving this?"
+              I spent the next decade in emergency medicine watching the same pattern. The same patients coming back with the same numbers, just on more pills than the last time. By year 15 I'd seen enough that I had to stop and ask a different question. Not "what pill do they need," but "what's actually driving this?"
             </p>
             <p style={{ margin: '0 0 1.25rem' }}>
               That question is what BraveWorks is. The protocols on this site are what I learned by walking out of the pharmaceutical-only frame and into the herbs, the minerals, the foods, the sleep architecture, the breathing patterns, the gratitude practice, and the lab interpretation that actually move the upstream drivers of high blood pressure.
@@ -190,7 +189,7 @@ export default function AboutJoelPage() {
               Pills manage output. Protocol fixes input. That's the whole sentence.
             </p>
             <p style={{ margin: 0 }}>
-              If you've been on BP medication for years and your numbers aren't where they should be, you don't have a heart problem. You have an input problem with a heart-shaped symptom. The articles on this site, the BP Reset Kit, and the coaching program exist for one reason — to give you the input fixes that the pharmaceutical model never offered you.
+              If you've been on BP medication for years and your numbers aren't where they should be, you don't have a heart problem. You have an input problem with a heart-shaped symptom. The articles on this site, the BP Reset Kit, and the coaching program exist for one reason: to give you the input fixes that the pharmaceutical model never offered you.
             </p>
           </div>
         </div>
@@ -235,7 +234,7 @@ export default function AboutJoelPage() {
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.75rem' }}>
             {[
-              { slug: 'cortisol-and-blood-pressure', title: 'Cortisol and Blood Pressure — the stress hormone driving your numbers' },
+              { slug: 'cortisol-and-blood-pressure', title: 'Cortisol and Blood Pressure: the stress hormone driving your numbers' },
               { slug: 'why-bp-is-still-high', title: "Why Your Blood Pressure Is Still High (and what your pill doesn't touch)" },
               { slug: '30-day-challenge-starts-may-1', title: 'The 30-Day Blood Pressure Reset Challenge' },
             ].map((a) => (
@@ -281,7 +280,7 @@ export default function AboutJoelPage() {
       <section style={{ padding: '2rem 1.5rem', background: 'var(--paper)', borderTop: '1px solid var(--border)' }}>
         <div className="shell-tight" style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '0.82rem', lineHeight: 1.7, color: 'var(--muted)', maxWidth: '64ch', margin: '0 auto' }}>
-            All content on this site is educational only and not a substitute for medical advice. Always work with your physician before making changes to medications or treatment plans. Joel Polley, RN, is a licensed registered nurse and naturopathic practitioner; he is not your prescribing physician unless you have entered into a direct clinical relationship.
+            All content on this site is educational only and not a substitute for medical advice. Always work with your physician before making changes to medications or treatment plans. Joel Polley, RN, is a licensed registered nurse and naturopathic-trained educator; he is not your prescribing physician unless you have entered into a direct clinical relationship.
           </p>
         </div>
       </section>

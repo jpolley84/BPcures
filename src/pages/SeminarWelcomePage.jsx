@@ -16,7 +16,7 @@ export default function SeminarWelcomePage() {
   const email = searchParams.get('email');
 
   useEffect(() => {
-    document.title = "You're in — your Zoom link is ready";
+    document.title = "You're in. Your Zoom link is ready";
   }, []);
 
   return (
@@ -35,10 +35,10 @@ export default function SeminarWelcomePage() {
           <p style={{ fontSize: '1.05rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: 0 }}>
             {email ? (
               <>
-                We just sent the Zoom link to <strong style={{ color: 'var(--ink)' }}>{email}</strong>. Use the link below to join today's session right now &mdash; or come back at 1 PM ET any day this week.
+                We just sent the Zoom link to <strong style={{ color: 'var(--ink)' }}>{email}</strong>. Use the link below to join today's session right now, or come back at 1 PM ET any day this week.
               </>
             ) : (
-              "We just emailed you the Zoom link. Use the button below to join today's session right now — or come back at 1 PM ET any day this week."
+              "We just emailed you the Zoom link. Use the button below to join today's session right now, or come back at 1 PM ET any day this week."
             )}
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function SeminarWelcomePage() {
                 Mon, Tue, Wed, Fri, Sat
               </div>
               <div style={{ fontSize: '0.95rem', color: 'var(--ink)', lineHeight: 1.4 }}>
-                Annie Chitate, RN &mdash; hormones and intimacy
+                Annie Chitate, RN. Hormones and intimacy
               </div>
             </div>
             <div style={{ padding: '1rem 1.25rem', background: 'var(--clay-soft, #F5E5DA)', border: '1.5px solid var(--clay)', borderRadius: 10 }}>
@@ -108,7 +108,7 @@ export default function SeminarWelcomePage() {
                 Thursday May 21
               </div>
               <div style={{ fontSize: '0.95rem', color: 'var(--ink)', lineHeight: 1.4 }}>
-                Joel Polley, RN &mdash; BP meds, circulation, and libido
+                Joel Polley, RN. BP meds, circulation, and libido
               </div>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function SeminarWelcomePage() {
         <div className="shell" style={{ maxWidth: 600 }}>
           <p style={{ fontSize: '0.78rem', color: 'var(--muted, #7a7061)', lineHeight: 1.55, margin: 0 }}>
             BraveWorks RN &middot; Joel Polley, RN &middot; Annie Chitate, RN<br />
-            Educational content only. Not medical advice. Always complement &mdash; never replace &mdash; care from your physician.
+            Educational content only. Not medical advice. Always complement, never replace, care from your physician.
           </p>
         </div>
       </footer>

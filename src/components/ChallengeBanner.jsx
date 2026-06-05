@@ -70,7 +70,7 @@ export default function ChallengeBanner() {
               </h2>
 
               <p className="challenge-banner-sub">
-                Stress Pressure. Sugar Pressure. Pipe Pressure. Not three problems &mdash; three corners of the same loop.
+                Stress Pressure. Sugar Pressure. Pipe Pressure. Not three problems, three corners of the same loop.
                 One email a day. One protocol. One body. No card. No upsell wall.
               </p>
 
@@ -88,7 +88,7 @@ export default function ChallengeBanner() {
                     <Mail size={16} className="challenge-banner-input-icon" />
                     <input
                       type="email"
-                      placeholder="Your email — we'll save your spot"
+                      placeholder="Your email. We'll save your spot"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
                       required
@@ -110,7 +110,7 @@ export default function ChallengeBanner() {
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  You're in! Friday 8 AM EST &mdash; watch your inbox.
+                  You're in! Friday 8 AM EST. Watch your inbox.
                 </motion.div>
               )}
 
@@ -125,7 +125,7 @@ export default function ChallengeBanner() {
               )}
 
               <p className="challenge-banner-proof">
-                Joel Polley, RN &mdash; 20 years ICU &amp; Emergency &middot; Free. No card required.
+                Joel Polley, RN &middot; 20 years ICU &amp; Emergency &middot; Free. No card required.
               </p>
             </div>
           </div>

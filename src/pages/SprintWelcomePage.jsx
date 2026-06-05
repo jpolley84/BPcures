@@ -58,7 +58,7 @@ export default function SprintWelcomePage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Phone size={18} color="var(--sage-deep)" />
-                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Text me — open the WhatsApp office hours</h3>
+                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Text me. Open the WhatsApp office hours</h3>
                   </div>
                   <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.65, marginBottom: 8 }}>
                     Send a text to <strong style={{ color: 'var(--ink)' }}>717-585-9505</strong> from your phone with just the word "Sprint". That gives me your number so I can add you to the BraveWorks Sprint WhatsApp group, where your daily 9 AM-5 PM ET office hours happen.
@@ -80,7 +80,7 @@ export default function SprintWelcomePage() {
                     <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Book your kickoff call + lab review (this week)</h3>
                   </div>
                   <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.65, marginBottom: 12 }}>
-                    Sixty minutes on Zoom — your full lab review at the start. Bring your home BP log (even three readings this week is enough), your prescription list, your supplement list, and any recent labs. We map your loudest Pressure live and design Week 1 together.
+                    Sixty minutes on Zoom. Your full lab review at the start. Bring your home BP log (even three readings this week is enough), your prescription list, your supplement list, and any recent labs. We map your loudest Pressure live and design Week 1 together.
                   </p>
                   <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg font-semibold text-sm"
@@ -98,10 +98,10 @@ export default function SprintWelcomePage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <Users size={18} color="var(--sage-deep)" />
-                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Join the Skool community — I'll grant VIP access</h3>
+                    <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Join the Skool community. I'll grant VIP access</h3>
                   </div>
                   <p style={{ color: 'var(--ink-soft)', fontSize: '15px', lineHeight: 1.65, marginBottom: 12 }}>
-                    "How to Be Your Own Doctor" is free to join. Once you're inside, DM me there and I'll grant Sprint VIP access — that's where the weekly group calls happen + the protocol library lives.
+                    "How to Be Your Own Doctor" is free to join. Once you're inside, DM me there and I'll grant Sprint VIP access. That's where the weekly group calls happen + the protocol library lives.
                   </p>
                   <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg font-semibold text-sm"
@@ -122,11 +122,11 @@ export default function SprintWelcomePage() {
                     <h3 className="font-serif text-lg" style={{ color: 'var(--ink)' }}>Pull these together before the kickoff call</h3>
                   </div>
                   <ul className="space-y-1.5 mt-2" style={{ color: 'var(--ink-soft)', fontSize: '14.5px', lineHeight: 1.6 }}>
-                    <li>• Home BP log (or screenshots of your meter — last 7 days minimum)</li>
+                    <li>• Home BP log (or screenshots of your meter, last 7 days minimum)</li>
                     <li>• Photo or list of every prescription you're on</li>
                     <li>• Photo or list of every supplement, vitamin, herb you take daily</li>
                     <li>• Any labs from the last year (A1c, lipids, kidney, thyroid, hormones)</li>
-                    <li>• Anything you've already tried that didn't work — so we don't waste time there</li>
+                    <li>• Anything you've already tried that didn't work, so we don't waste time there</li>
                   </ul>
                 </div>
               </div>
@@ -147,11 +147,11 @@ export default function SprintWelcomePage() {
           <ul className="space-y-3" style={{ color: 'var(--ink-soft)', fontSize: '15.5px', lineHeight: 1.65 }}>
             <li className="flex gap-3">
               <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>Read your full intake — every word.</span>
+              <span>Read your full intake, every word.</span>
             </li>
             <li className="flex gap-3">
               <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>Drafted your Week 1 protocol — gratitudes practice, hydration with mineral salt, the one supplement to consider, the one to drop.</span>
+              <span>Drafted your Week 1 protocol: gratitudes practice, hydration with mineral salt, the one supplement to consider, the one to drop.</span>
             </li>
             <li className="flex gap-3">
               <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
@@ -163,7 +163,7 @@ export default function SprintWelcomePage() {
             </li>
             <li className="flex gap-3">
               <CheckCircle2 size={20} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 2 }} />
-              <span>Looped in Annie — your hormone-corner co-coach — if your case calls for a Week 2 hormone-baseline call.</span>
+              <span>Looped in Annie, your hormone-corner co-coach, if your case calls for a Week 2 hormone-baseline call.</span>
             </li>
           </ul>
         </div>
@@ -184,7 +184,7 @@ export default function SprintWelcomePage() {
             See you on Zoom.
           </p>
           <p className="text-sm mt-1" style={{ color: 'var(--ink-soft)' }}>
-            — Joel
+            Joel
           </p>
         </div>
       </section>

@@ -35,7 +35,7 @@ const QUESTIONS = [
       { value: 'stress', label: '🌿 Stress', desc: 'Can\'t relax. Up at 3 AM. Always on edge.', score: 1 },
       { value: 'sugar', label: '🍯 Sugar', desc: 'Cravings. Crashes. Belly weight that won\'t leave.', score: 1 },
       { value: 'pipes', label: '💗 Blood Vessels', desc: 'Numbers stuck high. Maybe runs in the family.', score: 1 },
-      { value: 'all', label: '🔺 All three', desc: 'You pick for me — I\'m not sure.', score: 2 },
+      { value: 'all', label: '🔺 All three', desc: 'You pick for me. I\'m not sure.', score: 2 },
     ],
   },
   {
@@ -70,34 +70,12 @@ const QUESTIONS = [
       { value: 'starting', label: '🌱 A place to start', desc: "I'm ready.", score: 0 },
     ],
   },
-  // 2026-05-29 — coaching pre-qualification questions. score:0 so the 1-10
-  // risk-score math (computeRiskScore) is unchanged; these feed
-  // computeCoachingFit() which routes high-intent / high-severity takers to
-  // the FREE discovery call on the results page (Levesque Ask Method: segment
-  // first, then route the right people to the high-ticket door).
-  {
-    id: 'support',
-    question: "How do you want to take this on?",
-    subtitle: "No wrong answer — it just tells me how to help.",
-    options: [
-      { value: 'diy', label: '📘 On my own', desc: "Give me the plan, I'll run it.", score: 0 },
-      { value: 'guided', label: '🤝 Plan + backup', desc: 'I want a way to ask questions.', score: 0 },
-      { value: 'personal', label: '🩺 A nurse on my case', desc: 'My numbers, my meds — not generic.', score: 0 },
-    ],
-  },
-  {
-    id: 'call_interest',
-    question: "Want a free 30-min call with a nurse to map your situation?",
-    subtitle: "No cost, no pressure. Just a real conversation.",
-    options: [
-      { value: 'yes', label: "🙋 Yes, I'd book it", desc: 'Show me how.', score: 0 },
-      { value: 'maybe', label: '🤔 Maybe — tell me more', desc: 'Curious but not sure.', score: 0 },
-      { value: 'no', label: '📖 Just the plan, thanks', desc: 'Self-paced is my speed.', score: 0 },
-    ],
-  },
-  // 2026-05-20 funnel-audit: removed the age question. Quiz-funnel completion
-  // benchmark is 3-4 Qs; we're now at 6 with the 2 coaching Qs above — watch
-  // completion rate, the coaching-routing value should outweigh the dropoff.
+  // 2026-06-04 PODCAST-PREP: dropped support + call_interest (6 -> 4 Qs).
+  // Both questions scored 0 and only fed computeCoachingFit() routing to the
+  // FREE discovery call -- and discovery calls are paused. ~30% completion
+  // lift expected. Coaching-fit fallback returns 0 from a now-empty answer set
+  // so showCoachingCTA stays false everywhere. To restore later, paste these
+  // back from git history (commit 50ba94f or earlier).
 ];
 
 // TOTAL_STEPS derives from QUESTIONS.length so adding/removing a question
@@ -157,12 +135,12 @@ const RESULT_TIPS = {
   pipes: [
     {
       title: 'Swap 3 foods. Drop 7 points in 6 weeks.',
-      body: 'One study showed a 7-point drop from one simple food swap. Your plan names the 3 foods to trade — and the herb that does the most work.',
+      body: 'One study showed a 7-point drop from one simple food swap. Your plan names the 3 foods to trade, and the herb that does the most work.',
       hook: 'It grows in your grandmother\'s garden.',
     },
     {
       title: 'Walk 20 minutes after dinner. Move 3 numbers.',
-      body: 'Blood pressure, blood sugar, and sleep — all three get better from one short walk. It costs nothing. Most women feel a change by day 3.',
+      body: 'Blood pressure, blood sugar, and sleep, all three get better from one short walk. It costs nothing. Most women feel a change by day 3.',
       hook: 'Day 3 is when it starts clicking.',
     },
     {
@@ -179,7 +157,7 @@ const RESULT_TIPS = {
     },
     {
       title: 'Eat 2 good meals. Watch your stress go down.',
-      body: 'Two warm meals — plants on the plate, no snacking between — keeps your stress level flat all day. Most women feel the shift in one week.',
+      body: 'Two warm meals, plants on the plate, no snacking between. Keeps your stress level flat all day. Most women feel the shift in one week.',
       hook: 'Your plan names the 7 best foods for calm.',
     },
     {
@@ -192,7 +170,7 @@ const RESULT_TIPS = {
     {
       title: 'Eat your food in the right order. Cut sugar spikes 20 to 30 percent.',
       body: 'Eat your vegetables first, then everything else. Your blood sugar rises slower. Your energy stays even. Most women have never heard this.',
-      hook: 'Your plan shows the exact order — meal by meal, for 10 days.',
+      hook: 'Your plan shows the exact order, meal by meal, for 10 days.',
     },
     {
       title: 'Walk 10 minutes after eating. Lower blood sugar without a pill.',
@@ -201,7 +179,7 @@ const RESULT_TIPS = {
     },
     {
       title: 'Drink more water. Keep your numbers steady all day.',
-      body: 'When you are even a little dry, your blood sugar goes up. Joel\'s water goal — half your weight in ounces — keeps things level all day long.',
+      body: 'When you are even a little dry, your blood sugar goes up. Joel\'s water goal, half your weight in ounces, keeps things level all day long.',
       hook: 'Your plan gives you the exact amount for your body.',
     },
   ],
@@ -218,7 +196,7 @@ const RESULT_TIPS = {
     },
     {
       title: 'Win your evening. Win your whole next day.',
-      body: 'Sleep before midnight heals twice as fast. Joel\'s bedtime routine sets your stress, your blood sugar, and your blood pressure — all three — for the morning.',
+      body: 'Sleep before midnight heals twice as fast. Joel\'s bedtime routine sets your stress, your blood sugar, and your blood pressure, all three, for the morning.',
       hook: 'Day 3 is when most women say: "wait, something is changing."',
     },
   ],
@@ -341,6 +319,24 @@ function SkoolTrialBanner() {
 function Hero({ products }) {
   return (
     <section className="hero-root">
+      {/* 2026-06-04 PODCAST-PREP: BPQuiz.com brand-confirmation eyebrow.
+          The podcast host will say "go to BPQuiz dot com" -- the listener
+          who lands here needs an instant visual confirmation that they're
+          in the right place. The brand name appeared ZERO times above the
+          fold prior to this. Sage strip, JetBrains Mono, uppercase, low
+          letter-spacing for a deliberate editorial feel. */}
+      <div style={{
+        background: 'var(--ink, #2C3530)',
+        color: 'var(--cream, #F7F3EC)',
+        padding: '0.55rem 1rem',
+        textAlign: 'center',
+        fontFamily: '"JetBrains Mono", monospace',
+        fontSize: '0.72rem',
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+      }}>
+        BPQuiz.com · 90-Second BP Triangle Quiz · by Joel Polley, RN
+      </div>
       <SkoolTrialBanner />
       <div className="shell">
         <div className="hero-grid">
@@ -366,7 +362,11 @@ function HeroCopy() {
   // with the Triangle (Chris Do above-fold visibility), names three corners,
   // and delivers proof (Linda/Paul/Rachel) before the CTA. Replaces the
   // "Quieter numbers. Steadier mornings." line (Joel flagged as ephemeral).
-  const words = ['No', 'pills.', 'No', 'cuff.', 'No', 'worry.', 'Just', 'life.'];
+  // 2026-06-04 PODCAST-PREP: "No pills" implies prescribing claim per the
+  // compliance attorney + skeptic-buyer red team. Softened to "Fewer pills"
+  // with future-self framing kept intact. Italic marker moved to i === 5
+  // ("life.") to track the shorter word array.
+  const words = ['Fewer', 'pills.', 'Quieter', 'numbers.', 'Just', 'life.'];
   return (
     <div className="hero-copy">
       <motion.div
@@ -390,7 +390,7 @@ function HeroCopy() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.08 * i, ease: [0.22, 1, 0.36, 1] }}
           >
-            {i === 7 ? <em style={{ fontStyle: 'italic', color: 'var(--clay)', fontVariationSettings: '"SOFT" 100, "opsz" 144' }}>{w}</em> : w}
+            {i === 5 ? <em style={{ fontStyle: 'italic', color: 'var(--clay)', fontVariationSettings: '"SOFT" 100, "opsz" 144' }}>{w}</em> : w}
           </motion.span>
         ))}
       </h1>
@@ -401,8 +401,8 @@ function HeroCopy() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        Your blood pressure is high for a reason. Find that reason, fix it, and your body does the rest.
-        No more pills. No more checking. <strong>Just living.</strong>
+        A doctor-cleared road to quieter numbers, built around your body. Find the loudest of the three
+        Pressures, work the right protocol, and let the rest fall in line. <strong>Alongside your doctor, never instead of.</strong>
       </motion.p>
 
       <motion.p
@@ -413,8 +413,8 @@ function HeroCopy() {
         style={{ fontStyle: 'italic', color: 'var(--ink-soft)', fontSize: '0.95rem', marginTop: '0.75rem' }}
       >
         Linda went from 148/94 to 128/82 in 11 days. Paul slept through the night by day 4.
-        Rachel dropped 29 blood sugar points in 3 weeks. Same plan. Same nurse.
-        Your turn.
+        Rachel dropped 29 blood sugar points in 3 weeks. Individual results, not typical, always
+        in coordination with their physicians.
       </motion.p>
 
       <motion.div
@@ -426,13 +426,35 @@ function HeroCopy() {
         <div className="avatar">JP</div>
         <div className="bio">
           <span className="name">Joel Polley, RN</span>
-          <span className="role">20-year ICU nurse · Trusted by 402,000+ people</span>
+          <span className="role">20-year ICU nurse · 1,200+ readers in the community</span>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--ink-soft)' }}>
           <Star size={14} fill="currentColor" stroke="none" style={{ color: 'var(--gold)' }} />
           <span className="tabular" style={{ fontSize: '0.88rem' }}>4.9</span>
           <span style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>· 1,200+ readers</span>
         </div>
+      </motion.div>
+
+      {/* 2026-06-04 PODCAST-PREP: Compliance "AND, never instead of" strip
+          directly below the hero credentials. Required by the brand bible
+          and flagged by the FTC compliance attorney as the single highest
+          impact addition for healthcare positioning. Stays above the fold. */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, delay: 1.5 }}
+        style={{
+          marginTop: '1.25rem',
+          padding: '0.7rem 1rem',
+          background: 'rgba(74, 103, 65, 0.08)',
+          border: '1px solid rgba(74, 103, 65, 0.35)',
+          borderRadius: 10,
+          fontSize: '0.82rem',
+          lineHeight: 1.55,
+          color: 'var(--ink-soft)',
+        }}
+      >
+        Education and lifestyle support. Works <strong>alongside</strong> your doctor, never instead of. Always consult your physician before changing medications.
       </motion.div>
     </div>
   );
@@ -498,12 +520,12 @@ function QuizModule({ products }) {
         window.location.href = data.url;
       } else {
         console.error('Bump checkout failed:', data.error);
-        alert('Sorry — checkout failed. Try unchecking the bonus stack and retrying, or refresh the page.');
+        alert('Sorry. Checkout failed. Try unchecking the bonus stack and retrying, or refresh the page.');
         setBumpLoading(false);
       }
     } catch (err) {
       console.error('Bump checkout error:', err);
-      alert('Sorry — checkout error. Try unchecking the bonus stack and retrying, or refresh the page.');
+      alert('Sorry. Checkout error. Try unchecking the bonus stack and retrying, or refresh the page.');
       setBumpLoading(false);
     }
   }
@@ -638,7 +660,7 @@ function QuizModule({ products }) {
                 Where should we send your plan?
               </h2>
               <p className="quiz-subtitle">
-                Your plan, built for your answers — plus a free plant-based cookbook.
+                Your plan, built for your answers, plus a free plant-based cookbook.
               </p>
 
               <form onSubmit={submitEmail} style={{ display: 'grid', gap: '0.65rem' }}>
@@ -703,8 +725,8 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Send my plan + Stack — $29 <ArrowRight size={16} className="arrow" /></>
-                      : <>Send me my plan — {recommended?.price ?? '$17'} <ArrowRight size={16} className="arrow" /></>
+                      ? <>Send my plan + Stack: $29 <ArrowRight size={16} className="arrow" /></>
+                      : <>Send me my plan: {recommended?.price ?? '$17'} <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
               )}
@@ -729,11 +751,11 @@ function QuizModule({ products }) {
 
                 <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   {[
-                    { icon: '📋', label: 'Your 10-day plan — what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
-                    { icon: '🌿', label: '7 herbs that help blood pressure — names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
-                    { icon: '🗣️', label: 'What to say to your doctor — word for word', sub: 'So they support your plan instead of adding more pills.' },
-                    { icon: '🍽️', label: 'Cook For Life — 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
-                    { icon: '👥', label: 'The community — over 1,200 people on the same path', sub: 'You are not doing this alone.' },
+                    { icon: '📋', label: 'Your 10-day plan: what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
+                    { icon: '🌿', label: '7 herbs that help blood pressure: names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
+                    { icon: '🗣️', label: 'What to say to your doctor, word for word', sub: 'So they support your plan instead of adding more pills.' },
+                    { icon: '🍽️', label: 'Cook For Life: 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
+                    { icon: '👥', label: 'The community: over 1,200 people on the same path', sub: 'You are not doing this alone.' },
                   ].map((item, i) => (
                     <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                       <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
@@ -766,7 +788,7 @@ function QuizModule({ products }) {
                   marginBottom: '0.75rem',
                 }}>
                   <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
-                    Joel's promise: Follow the 30-day plan. If you and your doctor haven't talked about stepping down a pill by day 30, you get every penny back. No hoops. No fine print.
+                    Joel's promise: Run the 30-day plan. If you don't feel a difference, reply with the word REFUND and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
                   </p>
                 </div>
 
@@ -788,8 +810,8 @@ function QuizModule({ products }) {
                     {bumpLoading
                       ? 'Loading checkout…'
                       : addBump
-                        ? <>Yes — send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                        : <>Yes — send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
+                        ? <>Yes, send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                        : <>Yes, send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
                     }
                   </a>
                 )}
@@ -843,7 +865,7 @@ function QuizModule({ products }) {
                     {answers.medication === 'want_off'
                       ? 'Your plan is built to help you work your way off pills safely.'
                       : answers.medication === 'on_meds'
-                      ? 'Your plan works alongside your current pill — and helps you move toward freedom.'
+                      ? 'Your plan works alongside your current pill, and helps you move toward freedom.'
                       : 'Your plan is built to keep you free from pills for good.'}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
@@ -858,7 +880,7 @@ function QuizModule({ products }) {
               </h2>
 
               <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink)', margin: '0.5rem 0 0.5rem' }}>
-                Your biggest issue is <strong>{pressureCopy.label}</strong>. We start there — because fixing that one helps the other two fall in line.
+                Your biggest issue is <strong>{pressureCopy.label}</strong>. We start there, because fixing that one helps the other two fall in line.
               </p>
 
               <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.5rem' }}>
@@ -902,7 +924,7 @@ function QuizModule({ products }) {
 
               {/* Identity nudge — Hardy Future Self. No negatives, future-self voice. */}
               <p style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', margin: '0 0 1rem', fontWeight: 500 }}>
-                A week from now you could be the person who finally stopped worrying about blood pressure — because you fixed the root cause. It starts today.
+                A week from now you could be the person who finally stopped worrying about blood pressure, because you fixed the root cause. It starts today.
               </p>
 
               {/* Order bump: DISABLED 2026-05-09 streamline pass. Panel consensus
@@ -941,10 +963,10 @@ function QuizModule({ products }) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.25rem' }}>
-                      Complete the Pressure Triangle — add the Stack for +$12
+                      Complete the Pressure Triangle. Add the Stack for +$12
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
-                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Starter — the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on at checkout.
+                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Starter, the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on at checkout.
                     </div>
                   </div>
                 </div>
@@ -973,8 +995,8 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Yes — solve my {pressureCopy.label} + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                      : <>Yes — solve my {pressureCopy.label} ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
+                      ? <>Yes, solve my {pressureCopy.label} + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                      : <>Yes, solve my {pressureCopy.label} ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
               )}
@@ -994,20 +1016,20 @@ function QuizModule({ products }) {
                 textAlign: 'left',
               }}>
                 <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>
-                  Or — try the live group coaching free for 7 days
+                  Or, try the live group coaching free for 7 days
                 </div>
                 <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.2rem', lineHeight: 1.25, margin: '0 0 0.5rem', fontWeight: 500 }}>
-                  Join the <em style={{ color: 'var(--clay)' }}>BraveWorks Skool</em> community — first 7 days free
+                  Join the <em style={{ color: 'var(--clay)' }}>BraveWorks Skool</em> community. First 7 days free
                 </h3>
                 <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 0.8rem', lineHeight: 1.55 }}>
-                  Live group coaching with Joel every <strong>Wednesday at 7 PM ET</strong>. Bring your numbers, your meds, your questions. Plus everything below — included in your trial.
+                  Live group coaching with Joel every <strong>Wednesday at 7 PM ET</strong>. Bring your numbers, your meds, your questions. Plus everything below, included in your trial.
                 </p>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', display: 'grid', gap: '0.4rem' }}>
                   {[
                     'Weekly live coaching call (Wed 7 PM ET)',
-                    'Every Joel Polley ebook — Be There in 30, BP Cures, Cook For Life, Overmedicated Boomers + more',
+                    'Every Joel Polley ebook: Be There in 30, BP Cures, Cook For Life, Overmedicated Boomers + more',
                     'Every BP protocol + printable Triangle infographic',
-                    'Daily community feed — over 1,200 members on the path',
+                    'Daily community feed: over 1,200 members on the path',
                     'Feel-It-or-Free: 30-day refund + keep every ebook if you don\'t feel a difference',
                   ].map((line, i) => (
                     <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.84rem', lineHeight: 1.5, color: 'var(--ink)' }}>
@@ -1051,7 +1073,10 @@ const inputStyle = {
   border: '1px solid var(--line)',
   borderRadius: 12,
   background: 'var(--paper)',
-  fontSize: '0.95rem',
+  // 2026-06-04 PODCAST-PREP: 1rem prevents iOS Safari auto-zoom on focus.
+  // 0.95rem was below the 16px threshold and triggered a layout shudder on
+  // the highest-friction moment (email gate).
+  fontSize: '1rem',
 };
 
 /* ------------------------------------------------------------------
@@ -1064,7 +1089,7 @@ function TriangleVisual() {
       <svg
         viewBox="0 0 600 320"
         style={{ width: '100%', maxWidth: 520, height: 'auto', display: 'block', margin: '0 auto' }}
-        aria-label="The BP Triangle — Stress Pressure, Sugar Pressure, Pipe Pressure"
+        aria-label="The BP Triangle. Stress Pressure, Sugar Pressure, Pipe Pressure"
       >
         {/* Three sides of the triangle */}
         <motion.line
@@ -1247,7 +1272,7 @@ function NursesNote() {
               <Quote size={28} style={{ color: 'var(--clay)', marginBottom: '1rem' }} />
               <p className="display-s" style={{ margin: '0 0 1.5rem', fontStyle: 'italic', fontVariationSettings: '"SOFT" 100, "opsz" 72' }}>
                 "Most of my patients didn't need another pill.
-                They needed someone to explain what was really going on —
+                They needed someone to explain what was really going on,
                 so they could fix it themselves."
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--muted)', fontSize: '0.88rem' }}>
@@ -1259,7 +1284,7 @@ function NursesNote() {
                 }}>JP</div>
                 <div>
                   <div style={{ color: 'var(--ink)', fontWeight: 500 }}>Joel Polley, RN</div>
-                  <div>ICU · Emergency · Naturopathic practitioner</div>
+                  <div>ICU · Emergency · Naturopathic-trained</div>
                 </div>
               </div>
             </blockquote>
@@ -1335,7 +1360,7 @@ function HowItWorks() {
 
 const TESTIMONIALS = [
   {
-    quote: "148/94 to 128/82 in eleven days. My cardiologist asked what I changed. I showed her Joel's protocol. She made notes.",
+    quote: "148/94 to 128/82 in eleven days. I brought Joel's protocol to my next appointment and we built a plan together.",
     author: 'Linda M.',
     meta: 'Verified buyer · BP Reset Kit · Age 62',
   },
@@ -1398,6 +1423,16 @@ function Testimonials() {
             </motion.blockquote>
           ))}
         </div>
+        <p style={{
+          fontSize: '0.78rem',
+          color: 'var(--muted)',
+          fontStyle: 'italic',
+          marginTop: '1rem',
+          lineHeight: 1.55,
+        }}>
+          Individual results. Not typical. Most readers see modest change in 30 days,
+          some see none. Always work with your physician before changing medications.
+        </p>
       </div>
     </section>
   );
@@ -1416,7 +1451,7 @@ function FinalCTA() {
           No pills. No cuff. No worry. Just <em className="ital-display" style={{ color: 'var(--clay)' }}>life.</em>
         </h2>
         <p className="lede" style={{ margin: '0 auto 1.5rem', maxWidth: '46ch' }}>
-          90 seconds from now you will have a plan built for your body — and your first step toward a life free from blood pressure worry. Over 1,200 people are already on this path. Yours starts today.
+          90 seconds from now you will have a plan built for your body, and your first step toward a life free from blood pressure worry. Over 1,200 people are already on this path. Yours starts today.
         </p>
 
         <a href="#top" className="btn btn-ink btn-lg" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ display: 'inline-flex' }}>

@@ -69,12 +69,9 @@ export default function Footer() {
             <ul>
               <li><Link to="/">Health assessment</Link></li>
               <li><Link to="/library"><strong>Already bought? Get your downloads →</strong></Link></li>
-              <li><Link to="/shop">Apothecary</Link></li>
-              <li><Link to="/shop?category=blood_pressure">Blood pressure</Link></li>
-              <li><Link to="/shop?category=cortisol">Cortisol &amp; stress</Link></li>
-              <li><Link to="/shop?category=blood_sugar">Blood sugar</Link></li>
-              <li><Link to="/learn">Journal</Link></li>
-              <li><Link to="/1on1">Work 1:1 with Joel</Link></li>
+              <li><Link to="/about/joel">The Method</Link></li>
+              <li><Link to="/blog">Journal</Link></li>
+              <li><a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer">Skool community</a></li>
             </ul>
           </div>
 
@@ -97,7 +94,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:hello@braveworksrn.com">hello@braveworksrn.com</a>
+                <a href="mailto:hello@bpquiz.com">hello@bpquiz.com</a>
               </li>
             </ul>
           </div>

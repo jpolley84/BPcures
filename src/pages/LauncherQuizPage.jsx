@@ -259,7 +259,7 @@ export default function LauncherQuizPage() {
                       style={inputStyle}
                     />
                     <p style={{ fontSize: '0.78rem', color: muted, margin: '0.25rem 0 0', lineHeight: 1.5 }}>
-                      I'll personally look at your work before recommending a tier — this is the input that shapes everything I tell you on the next page.
+                      I'll personally look at your work before recommending a tier. This is the input that shapes everything I tell you on the next page.
                     </p>
 
                     <Fm0Checkbox checked={applyFm0} onToggle={() => setApplyFm0((v) => !v)} />
@@ -472,7 +472,7 @@ function Fm0Checkbox({ checked, onToggle }) {
           Apply to be Founding Member #0
         </span>
         <span style={{ fontSize: '0.82rem', color: muted, lineHeight: 1.55, display: 'block' }}>
-          One free Tier 2 install ($9,997 value) in exchange for being the case study. Joel picks one applicant by May 7. Audience size doesn't matter — alignment and willingness to publish results does.
+          One free Tier 2 install ($9,997 value) in exchange for being the case study. Joel picks one applicant by May 7. Audience size doesn't matter, alignment and willingness to publish results does.
         </span>
       </div>
     </button>

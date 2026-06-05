@@ -19,7 +19,7 @@ export default function BlogListPage() {
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--gold)' }}>
             Joel Polley, RN · The Blood Pressure Guy
           </p>
-          <h1 className="text-4xl font-bold text-white mb-4">Blood Pressure Natural Remedies — The Journal</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">Blood Pressure Natural Remedies. The Journal</h1>
           <p className="text-base" style={{ color: '#cbd5e1' }}>
             ICU/ER nurse, 20 years on the floor. Plain-language deep dives on the herbs, minerals, foods, and habits that actually move your numbers.
           </p>
@@ -35,7 +35,7 @@ export default function BlogListPage() {
 
         {!loading && posts.length === 0 && (
           <div className="text-center py-20">
-            <p style={{ color: 'var(--muted-gray)' }}>No articles yet — check back soon.</p>
+            <p style={{ color: 'var(--muted-gray)' }}>No articles yet. Check back soon.</p>
           </div>
         )}
 

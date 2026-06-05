@@ -259,7 +259,7 @@ export default function LauncherResultsPage() {
               The "First Client" <em style={{ fontStyle: 'italic', color: claySoft }}>Guarantee.</em>
             </h2>
             <p style={{ fontSize: 'var(--step-0)', lineHeight: 1.7, color: 'rgba(251,248,241,0.8)', margin: '0 auto 1rem', maxWidth: '54ch' }}>
-              Your first paying client — at least $500 in collected revenue — within 60 days of launch. If 90 days pass and you haven't landed that first client, full setup-fee refund and you keep everything installed.
+              Your first paying client, at least $500 in collected revenue, within 60 days of launch. If 90 days pass and you haven't landed that first client, full setup-fee refund and you keep everything installed.
             </p>
             <p style={{ fontSize: '0.92rem', color: claySoft, margin: '1.25rem 0 0', letterSpacing: '0.04em' }}>
               Founding cohort closes May 15, 2026 · 10 spots · One is still open
@@ -694,10 +694,10 @@ function FoundationCard() {
         I won't take your money for a system you're not ready to fill.
       </h3>
       <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: inkSoft, margin: '0 0 1rem' }}>
-        Right now you don't have the certification, audience, or revenue motion to use the install. That's not a closed door — it's a different door. Finish the certification first. Get the first 500 followers. Take 5 unpaid clients and build proof. Then come back and the system will be ready for you.
+        Right now you don't have the certification, audience, or revenue motion to use the install. That's not a closed door. It's a different door. Finish the certification first. Get the first 500 followers. Take 5 unpaid clients and build proof. Then come back and the system will be ready for you.
       </p>
       <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: inkSoft, margin: '0 0 1.75rem' }}>
-        In the meantime, the free 30-Day Pressure Triangle Challenge teaches the protocol I use with patients — it's the same content engine that produced 1,751 subscribers from a quiz funnel. It's a better look at how the system works than any of these tier pages.
+        In the meantime, the free 30-Day Pressure Triangle Challenge teaches the protocol I use with patients. It's the same content engine that produced 1,751 subscribers from a quiz funnel. It's a better look at how the system works than any of these tier pages.
       </p>
       <a
         href="https://bpquiz.com"
@@ -839,20 +839,20 @@ function scoreInterpretation(score, tierKey) {
   const { composite, alignment } = score;
   if (tierKey === 'none') {
     if (alignment <= 3) {
-      return 'The diagnostic suggests a values gap more than a fit gap. Practice Launcher is faith-leaning, naturopathic-aligned, and AI-forward — that\'s not a fit for everyone, and that\'s okay.';
+      return 'The diagnostic suggests a values gap more than a fit gap. Practice Launcher is faith-leaning, naturopathic-aligned, and AI-forward, that\'s not a fit for everyone, and that\'s okay.';
     }
-    return 'You\'re earlier in the journey — and that\'s genuinely fine. The diagnostic shows a foundation gap, not a fit gap. Let\'s talk about what to build first.';
+    return 'You\'re earlier in the journey, and that\'s genuinely fine. The diagnostic shows a foundation gap, not a fit gap. Let\'s talk about what to build first.';
   }
   if (composite >= 75) {
-    return 'You\'re built to scale. The certification, audience, revenue motion, and investment readiness are all here — what\'s missing is the infrastructure underneath them.';
+    return 'You\'re built to scale. The certification, audience, revenue motion, and investment readiness are all here. What\'s missing is the infrastructure underneath them.';
   }
   if (composite >= 55) {
     return 'You\'re at the inflection point. The foundation is real, the audience is real, the next move is the system that captures what you\'re already building.';
   }
   if (composite >= 30) {
-    return 'You have the calling and the credentials. The leverage gap is the install — the funnel, the email engine, the content runway underneath.';
+    return 'You have the calling and the credentials. The leverage gap is the install: the funnel, the email engine, the content runway underneath.';
   }
-  return 'You\'re at the start. There\'s real signal here, and the right move is a careful one — the install matters more for you than for anyone in this cohort.';
+  return 'You\'re at the start. There\'s real signal here, and the right move is a careful one. The install matters more for you than for anyone in this cohort.';
 }
 
 function diagnosticParagraphs(answers, score, tierKey, name) {
@@ -862,15 +862,15 @@ function diagnosticParagraphs(answers, score, tierKey, name) {
   if (tierKey === 'none') {
     if (alignment <= 3) {
       lines.push(
-        `${name ? name + ', ' : ''}I want to be honest with you: Practice Launcher is built around a specific worldview. It's faith-leaning, naturopathic-aligned, and AI-forward — meaning my system uses AI to scale content, replies, and email A/B testing. Your answers tell me that's probably not the shape of work you want.`
+        `${name ? name + ', ' : ''}I want to be honest with you: Practice Launcher is built around a specific worldview. It's faith-leaning, naturopathic-aligned, and AI-forward, meaning my system uses AI to scale content, replies, and email A/B testing. Your answers tell me that's probably not the shape of work you want.`
       );
       lines.push(
-        `That's not a problem with you, and it's not a soft no — it's a real one. I'd rather you know up front than spend $9,997 on a system that doesn't match how you practice. The free resources at BPQuiz.com are still yours to use, and there are great Practice Launcher-style installs for conventional, evidence-only practices that aren't this one.`
+        `That's not a problem with you, and it's not a soft no. It's a real one. I'd rather you know up front than spend $9,997 on a system that doesn't match how you practice. The free resources at BPQuiz.com are still yours to use, and there are great Practice Launcher-style installs for conventional, evidence-only practices that aren't this one.`
       );
       return lines;
     }
     lines.push(
-      `Your answers tell me you're at the very start of the path${name ? ', ' + name : ''}. That's not a flaw — it's a fact. Most of the people I talk to about Practice Launcher already have certification, an audience that knows them, and a few clients on the books. The system installs on top of those. Without them, the install has nothing to fill.`
+      `Your answers tell me you're at the very start of the path${name ? ', ' + name : ''}. That's not a flaw. It's a fact. Most of the people I talk to about Practice Launcher already have certification, an audience that knows them, and a few clients on the books. The system installs on top of those. Without them, the install has nothing to fill.`
     );
     lines.push(
       'The honest path: finish your certification (or get further into it), pick a niche specific enough to build content around, post 30 times in 30 days, take 3-5 unpaid clients to build case studies. Six months from now, the diagnostic looks completely different and we have something real to talk about.'
@@ -881,11 +881,11 @@ function diagnosticParagraphs(answers, score, tierKey, name) {
   // Revenue line
   if (revenue >= 6) {
     lines.push(
-      `Your revenue tells me you've already built the demand — the practice is already earning, and the question now isn't whether people will pay you, it's how much of the work that drives that revenue you can stop doing yourself.`
+      `Your revenue tells me you've already built the demand. The practice is already earning, and the question now isn't whether people will pay you, it's how much of the work that drives that revenue you can stop doing yourself.`
     );
   } else if (revenue >= 3) {
     lines.push(
-      `You're earning real money but it's still tied to your time — every dollar comes through a one-on-one conversation. The leverage gap is what happens after the conversation: the funnel that nurtures the people who didn't book, the digital product that captures the curious, the email engine that keeps your name in their inbox while they decide.`
+      `You're earning real money but it's still tied to your time. Every dollar comes through a one-on-one conversation. The leverage gap is what happens after the conversation: the funnel that nurtures the people who didn't book, the digital product that captures the curious, the email engine that keeps your name in their inbox while they decide.`
     );
   } else {
     lines.push(
@@ -896,48 +896,48 @@ function diagnosticParagraphs(answers, score, tierKey, name) {
   // Audience line
   if (audience >= 5) {
     lines.push(
-      `The audience side of the score is strong — you have actual reach. Reach is the most expensive thing in this business; you've already built it. What you don't have yet is the conversion path underneath, which is exactly the wiring this offer installs.`
+      `The audience side of the score is strong. You have actual reach. Reach is the most expensive thing in this business; you've already built it. What you don't have yet is the conversion path underneath, which is exactly the wiring this offer installs.`
     );
   } else if (audience >= 2) {
     lines.push(
-      `You have a small but real audience. That's the most workable starting point — it's big enough that the funnel has fuel, small enough that you can still hand-touch the early customers and learn from every conversation.`
+      `You have a small but real audience. That's the most workable starting point. It's big enough that the funnel has fuel, small enough that you can still hand-touch the early customers and learn from every conversation.`
     );
   } else {
     lines.push(
-      `The audience is the thinnest input right now. That doesn't change the install — but it does change which content levers I'd pull first. The 90-day runway becomes more important than the funnel polish, because the runway is what fills the funnel.`
+      `The audience is the thinnest input right now. That doesn't change the install, but it does change which content levers I'd pull first. The 90-day runway becomes more important than the funnel polish, because the runway is what fills the funnel.`
     );
   }
 
   // Infrastructure line
   if (infra >= 6) {
     lines.push(
-      `And the infrastructure gap is wide. That actually makes you a fit — when there's nothing to migrate from, the install is faster and the system is purer. We're not patching ClickFunnels and Mailchimp; we're building the right thing the first time.`
+      `And the infrastructure gap is wide. That actually makes you a fit. When there's nothing to migrate from, the install is faster and the system is purer. We're not patching ClickFunnels and Mailchimp; we're building the right thing the first time.`
     );
   } else if (infra >= 3) {
     lines.push(
-      `Your current stack has bones. Some pieces stay (Stripe, your domain, your existing email list), some get retired (drag-and-drop builders that fight you), and the new layer goes on top — a plain-English command system that talks to all of it.`
+      `Your current stack has bones. Some pieces stay (Stripe, your domain, your existing email list), some get retired (drag-and-drop builders that fight you), and the new layer goes on top: a plain-English command system that talks to all of it.`
     );
   }
 
   // Investment readiness — only mention when it matters (red/yellow)
   if (investment <= 4 && tierKey === 'starter') {
     lines.push(
-      `On investment readiness: your answers tell me the full Practice Launcher install isn't where the cash flow is right now, and I respect that more than I respect bravado. The Starter Kit gets you the same wiring at a fraction of the upfront — same first-client guarantee, same funnel, same Stripe — and you bring the content motion you've already built.`
+      `On investment readiness: your answers tell me the full Practice Launcher install isn't where the cash flow is right now, and I respect that more than I respect bravado. The Starter Kit gets you the same wiring at a fraction of the upfront (same first-client guarantee, same funnel, same Stripe) and you bring the content motion you've already built.`
     );
   } else if (investment <= 4 && tierKey === 'revshare') {
     lines.push(
-      `On investment readiness: dropping $9,997 today isn't where the cash flow is — but the audience is. That's exactly the shape Revenue Share was built for. Lower upfront, I take 10% of gross for 12 months, and I only profit if your practice does. Skin in the game on both sides.`
+      `On investment readiness: dropping $9,997 today isn't where the cash flow is, but the audience is. That's exactly the shape Revenue Share was built for. Lower upfront, I take 10% of gross for 12 months, and I only profit if your practice does. Skin in the game on both sides.`
     );
   } else if (investment >= 7 && tierKey === 'launcher') {
     lines.push(
-      `The investment readiness signal is strong — you've put real money behind your business before, and you can move quickly when the right opportunity shows up. That tells me Practice Launcher is the right tier, not the conservative one. We can move at the speed your practice actually needs.`
+      `The investment readiness signal is strong. You've put real money behind your business before, and you can move quickly when the right opportunity shows up. That tells me Practice Launcher is the right tier, not the conservative one. We can move at the speed your practice actually needs.`
     );
   }
 
-  // Values alignment — call out when it's a clear positive signal
+  // Values alignment. Call out when it's a clear positive signal
   if (alignment >= 7 && tierKey !== 'none') {
     lines.push(
-      `One more thing — your answers on approach and AI comfort tell me we're aligned on the foundational stuff. That matters. Practice Launcher isn't a generic install; it's built on a specific way of seeing health and a specific way of using AI. When the worldview matches, the install runs faster and the content sounds like you instead of fighting you.`
+      `One more thing: your answers on approach and AI comfort tell me we're aligned on the foundational stuff. That matters. Practice Launcher isn't a generic install; it's built on a specific way of seeing health and a specific way of using AI. When the worldview matches, the install runs faster and the content sounds like you instead of fighting you.`
     );
   }
 
@@ -1027,7 +1027,7 @@ function NotFound() {
           That diagnostic link expired or wasn't valid.
         </h1>
         <p style={{ color: inkSoft, lineHeight: 1.65, marginBottom: '2rem' }}>
-          No problem — take the 3-minute diagnostic again and I'll personally review the results.
+          No problem. Take the 3-minute diagnostic again and I'll personally review the results.
         </p>
         <Link
           to="/launcher/quiz"

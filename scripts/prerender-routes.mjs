@@ -45,9 +45,9 @@ const shellHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8');
 const STATIC_ROUTES = [
   {
     route: '/about/joel',
-    title: 'Joel Polley, RN — The Blood Pressure Guy | About',
+    title: 'Joel Polley, RN. The Blood Pressure Guy | About',
     description:
-      'Joel Polley, RN — 20 years ICU and emergency medicine, naturopathic practitioner, founder of BraveWorks RN. Author of the BP Triangle Method and the BP Reset Kit. Featured on TikTok @braveworksrn (155K+).',
+      'Joel Polley, RN. 20 years ICU and emergency medicine, naturopathic-trained, founder of BraveWorks RN. Author of the BP Triangle Method and the BP Reset Kit. Featured on TikTok @braveworksrn (155K+).',
     ogType: 'profile',
     jsonLd: {
       '@context': 'https://schema.org',
@@ -56,9 +56,9 @@ const STATIC_ROUTES = [
           '@type': 'Person',
           '@id': 'https://bpquiz.com/about/joel#person',
           name: 'Joel Polley',
-          jobTitle: 'Registered Nurse, Naturopathic Practitioner',
+          jobTitle: 'Registered Nurse, Naturopathic-Trained',
           description:
-            '20 years in ICU and emergency medicine. Founder of BraveWorks RN and The Blood Pressure Guy. Naturopathic practitioner specializing in cardiovascular and metabolic health.',
+            '20 years in ICU and emergency medicine. Founder of BraveWorks RN and The Blood Pressure Guy. Naturopathic-trained educator specializing in cardiovascular and metabolic health.',
           url: 'https://bpquiz.com/about/joel',
           sameAs: [
             'https://www.tiktok.com/@braveworksrn',
@@ -80,14 +80,34 @@ const STATIC_ROUTES = [
           ],
         },
         {
-          '@type': 'MedicalBusiness',
+          '@type': 'EducationalOrganization',
           name: 'BraveWorks RN',
           url: 'https://bpquiz.com',
           founder: { '@id': 'https://bpquiz.com/about/joel#person' },
-          medicalSpecialty: 'Cardiovascular',
         },
       ],
     },
+  },
+  {
+    route: '/disclaimer',
+    title: 'Medical Disclaimer | BPQuiz.com',
+    description:
+      'Educational content only. Not medical advice. Joel Polley is a Registered Nurse and naturopathic-trained educator, not a prescribing physician. Always coordinate with your physician.',
+    ogType: 'website',
+  },
+  {
+    route: '/privacy',
+    title: 'Privacy Policy | BPQuiz.com',
+    description:
+      'Privacy policy for bpquiz.com. What we collect, how we use it, who we share with, and your rights under CCPA and GDPR.',
+    ogType: 'website',
+  },
+  {
+    route: '/terms',
+    title: 'Terms of Service | BPQuiz.com',
+    description:
+      'Terms of service for bpquiz.com. 30-day Feel-It-or-Free refund, no medical advice, Kentucky governing law.',
+    ogType: 'website',
   },
 ];
 
@@ -105,7 +125,7 @@ function loadBlogRoutes() {
     try {
       const post = JSON.parse(fs.readFileSync(path.join(blogDir, slug, 'index.json'), 'utf-8'));
       const title = post.title ? `${post.title} | BraveWorks RN` : `${slug} | BraveWorks RN`;
-      const description = post.excerpt || 'BraveWorks RN — natural blood pressure protocols by Joel Polley, RN.';
+      const description = post.excerpt || 'BraveWorks RN: natural blood pressure protocols by Joel Polley, RN.';
 
       // Pull the JSON-LD <script> block out of the body markdown so we
       // can inject it into <head>. Crawlers find structured data faster

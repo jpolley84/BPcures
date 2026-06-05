@@ -54,12 +54,12 @@ export default function SuccessPage() {
         </p>
 
         <p style={{ color: 'var(--ink-soft)', fontSize: '0.92rem', margin: '0 auto 1.5rem', maxWidth: '48ch' }}>
-          Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email — everything you need is inside.
+          Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email. Everything you need is inside.
         </p>
 
-        {/* 2026-05-20: inline downloads — customers report not getting confirmation emails.
+        {/* 2026-05-20: inline downloads. Customers report not getting confirmation emails.
             Show files immediately on the page so they never have to wait. */}
-        <DownloadsSection title="Your files — download now" />
+        <DownloadsSection title="Your files. Download now" />
 
         <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2rem', maxWidth: '44ch' }}>
           A copy of these links is also being emailed to you from Joel Polley, RN. If you don't see it within 5 minutes, check your spam or promotions folder.

@@ -146,7 +146,7 @@ export default function BlogPostPage() {
               Want <em className="ital-display" style={{ color: 'var(--clay)' }}>yours?</em>
             </h2>
             <p style={{ color: 'var(--ink-soft)', marginBottom: '1.5rem', maxWidth: '48ch', marginInline: 'auto' }}>
-              Take the 90-second assessment to get your personalized protocol — plus the Cook For Life cookbook, free.
+              Take the 90-second assessment to get your personalized protocol, plus the Cook For Life cookbook, free.
             </p>
             <Link to="/" className="btn btn-ink btn-lg">
               Take the assessment <ArrowRight size={16} className="arrow" />

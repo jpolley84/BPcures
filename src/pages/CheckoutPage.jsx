@@ -92,23 +92,24 @@ const CheckoutPage = () => {
   };
 
   const whatIsIncluded = [
-    { name: 'BONUS: Free BP Triangle Quiz, RN-built', description: 'After you buy, take the free quiz with your numbers and meds handy. It maps your loudest Pressure and tells you the one thing to do first. No pitch, just nursing.', value: '$297' },
+    { name: 'BONUS: Free BP Triangle Quiz, RN-built', description: 'After you buy, take the free quiz with your numbers and meds handy. It maps your loudest Pressure and tells you the one thing to do first. No pitch, just nursing.', value: '$97' },
     { name: 'Master Blood Pressure Document', description: 'The full protocol. What to take, when to take it, how much.', value: '$47' },
-    { name: 'Top 10 Herbs Deep Dive', description: 'Each herb matched to the drug it mimics — with dosages your doctor never learned in med school.', value: '$27' },
+    { name: 'Top 10 Herbs Deep Dive', description: 'Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.', value: '$47' },
     // 2026-05-12 naming-taxonomy fix: was "10-Day Blood Pressure Reset Challenge"
     // which collided with /challenge (the actual paid $97 BP Triangle Cohort).
     // Renamed to "Protocol" so each tier has its own distinct noun:
-    // — Inside $17 kit:  "10-Day BP Reset Protocol"   (this bonus, $97 anchor)
-    // — Free email arc:  "30-Day BP Triangle Map"     (lead magnet)
-    // — Paid $97 page:   "30-Day BP Triangle Cohort"  (group coaching)
-    // — $1,297 1:1:      "BP Triangle Premium"        (application)
-    // — $4,997 90-day:   "BP Triangle Freedom Sprint" (flagship)
+    //  Inside $17 kit:  "10-Day BP Reset Protocol"   (this bonus, $97 anchor)
+    //  Free email arc:  "30-Day BP Triangle Map"     (lead magnet)
+    //  Paid $97 page:   "30-Day BP Triangle Cohort"  (group coaching)
+    //  $1,297 1:1:      "BP Triangle Premium"        (application)
+    //  $4,997 90-day:   "BP Triangle Freedom Sprint" (flagship)
     { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
-    { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that move your numbers.', value: '$27' },
-    { name: 'White Coat Syndrome Guide', description: 'Why your readings at the doctor are probably wrong — and the 2-minute trick nurses use to get real numbers.', value: '$17' },
+    { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that move your numbers.', value: '$19' },
+    { name: 'White Coat Syndrome Guide', description: 'Why your readings at the doctor are probably wrong, and the 2-minute trick nurses use to get real numbers.', value: '$17' },
     { name: 'Blood Pressure FAQ', description: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", value: '$12' },
     { name: 'Health & Progress Tracker', description: 'Print it. Stick it on your fridge. Log your numbers. Watch what happens.', value: '$12' },
     { name: 'BONUS: Overmedicated Boomers Book', description: "The book Big Pharma doesn't want on your nightstand. What your generation was never told about the drugs you're taking.", value: '$19' },
+    { name: 'BONUS: BP Cures (10-Day Nurse Reset)', description: "The companion book. Day-by-day breakdown of the herbs, foods, and habits that move the needle.", value: '$80' },
   ];
 
   const timeEffortKillers = [
@@ -157,7 +158,7 @@ const CheckoutPage = () => {
               <source srcSet="/headshot.webp" type="image/webp" />
               <img
                 src="/headshot.jpg"
-                alt="Joel Polley, RN — The Blood Pressure Guy — 20 years ICU & emergency medicine, naturopathic practitioner"
+                alt="Joel Polley, RN. The Blood Pressure Guy. 20 years ICU and emergency medicine, naturopathic-trained"
                 width="180"
                 height="180"
                 fetchpriority="high"
@@ -256,13 +257,13 @@ const CheckoutPage = () => {
             </span>
           </div>
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            Still on BP meds &mdash; and your numbers won't drop?
+            The 10-day plan an ICU nurse built for his own mother.
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            I'm Joel Polley, RN &mdash; 20 years ICU and ER. They call me <strong>The Blood Pressure Guy</strong> because I built the 10-day protocol I'd give my own mother.
+            I'm Joel Polley, RN. 20 years ICU and ER. They call me <strong>The Blood Pressure Guy</strong> because I gave this protocol to my mom first. Now I give it to you.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            7 guides &middot; 47 herbs &middot; Daily checklists &middot; {PRICE} &middot; 7-day refund, no questions
+            7 guides &middot; 47 herbs &middot; Daily checklists &middot; {PRICE} &middot; 30-day Feel-It-or-Free
           </p>
         </div>
       </AnimatedSection>
@@ -275,7 +276,7 @@ const CheckoutPage = () => {
         <div className="container-mobile-first">
           <blockquote className="quote-accent italic pl-5 py-1" style={{ color: 'var(--dark-gray)', fontSize: '20px', lineHeight: '1.5', fontWeight: 500 }}>
             Genetics writes the recipe. Lifestyle bakes the cake.
-            <footer style={{ marginTop: '0.75rem', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, color: 'var(--clay, #B85A36)' }}>&mdash; Joel, RN</footer>
+            <footer style={{ marginTop: '0.75rem', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, color: 'var(--clay, #B85A36)' }}>Joel, RN</footer>
           </blockquote>
         </div>
       </AnimatedSection>
@@ -311,7 +312,7 @@ const CheckoutPage = () => {
           <AnimatedSection>
             <div className="pt-6 mt-2 text-center">
               <div className="inline-block mb-4 px-5 py-2 rounded-full bg-purple-50 border border-purple-100">
-                <span className="line-through text-[#9CA3AF] text-[15px] mr-2">$258 value</span>
+                <span className="line-through text-[#9CA3AF] text-[15px] mr-2">$447 value</span>
                 <span className="font-bold text-[#6C3483] text-[20px]">Just {PRICE}</span>
               </div>
 
@@ -347,16 +348,16 @@ const CheckoutPage = () => {
               </div>
               <p className="mt-2" style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>That's less than one copay.</p>
 
-              {/* Detailed refund block — closes the buy-decision loop with risk reversal */}
+              {/* Detailed refund block. Closes the buy-decision loop with risk reversal. */}
               <div className="mt-5 max-w-[420px] mx-auto p-4 rounded-xl text-left" style={{ background: '#FAF5FF', border: '1px solid #E9D5FF' }}>
                 <div className="flex items-start gap-2.5">
                   <Shield size={18} className="flex-shrink-0 mt-0.5" style={{ color: '#6C3483' }} />
                   <div>
                     <p className="font-semibold mb-1" style={{ color: '#4A2964', fontSize: '14px' }}>
-                      The 7-Day Refund Promise
+                      The Feel-It-or-Free Promise
                     </p>
                     <p style={{ color: '#5B3B6E', fontSize: '13px', lineHeight: '1.55' }}>
-                      Run the protocol for 7 days with honest effort. If your numbers haven't moved, hit reply with the word <strong>"refund"</strong> and your {PRICE} comes back. The kit is yours to keep either way.
+                      Joel's promise: Run the 30-day plan. If you don't feel a difference, reply with the word <strong>REFUND</strong> and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
                     </p>
                   </div>
                 </div>
@@ -370,7 +371,7 @@ const CheckoutPage = () => {
             <div className="flex flex-col md:flex-row gap-5">
               {[
                 { quote: "Followed your directions on TikTok and lost 20 lbs. Off 2 of my meds. Keep it up!", source: 'Linda M., 58 · Phoenix, AZ' },
-                { quote: "Joel explained what my cardiologist never did — in a 60-second video. I started the protocol that same day.", source: 'Maureen K., 62 · Tampa, FL' },
+                { quote: "Joel explained what my cardiologist never did, in a 60-second video. I started the protocol that same day.", source: 'Maureen K., 62 · Tampa, FL' },
                 { quote: "I was scared to go off my meds. This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Deborah R., 54 · Houston, TX' },
               ].map((t, i) => (
                 <div key={i} className="testimonial-card p-5 flex-1 flex flex-col">
@@ -380,7 +381,7 @@ const CheckoutPage = () => {
                     ))}
                   </div>
                   <p className="text-[#4A4A4A] italic text-[15px] mb-4 flex-grow leading-relaxed">"{t.quote}"</p>
-                  <p className="text-[#9CA3AF] text-[13px] font-medium">— {t.source}</p>
+                  <p className="text-[#9CA3AF] text-[13px] font-medium">{t.source}</p>
                 </div>
               ))}
             </div>
@@ -428,7 +429,7 @@ const CheckoutPage = () => {
           <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-10">
             {[
               { icon: Heart, text: '20-Year ICU/ER Nurse' },
-              { icon: Heart, text: 'Naturopathic Practitioner' },
+              { icon: Heart, text: 'Naturopathic-Trained' },
               { icon: Users, text: '402K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
@@ -452,7 +453,7 @@ const CheckoutPage = () => {
               Pills manage output. Protocol fixes input.
             </p>
             <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
-              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance — that's the BraveWorks way. <strong style={{ color: 'var(--dark-gray)' }}>Doctor-cleared independence.</strong>
+              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way. <strong style={{ color: 'var(--dark-gray)' }}>Doctor-cleared independence.</strong>
             </p>
           </div>
         </div>
@@ -476,11 +477,11 @@ const CheckoutPage = () => {
                   <Loader2 className="animate-spin" size={20} /> Processing...
                 </span>
               ) : (
-                `Get the Kit — ${PRICE}`
+                `Get the Kit for ${PRICE}`
               )}
             </button>
             <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
-              Instant access &middot; Secure checkout &middot; 30-day money-back guarantee
+              Instant access &middot; Secure checkout &middot; 30-day Feel-It-or-Free
             </p>
           </AnimatedSection>
         </div>
@@ -521,7 +522,7 @@ const CheckoutPage = () => {
             Take the free 90-second BP Triangle Quiz first.
           </h3>
           <p className="mb-5 max-w-[440px] mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.55' }}>
-            Find out which of the Three Pressures is driving YOUR numbers — Pipe Pressure, Stress Pressure, or Sugar Pressure. RN-built. Free. Instant results.
+            Find out which of the Three Pressures is driving YOUR numbers: Pipe Pressure, Stress Pressure, or Sugar Pressure. RN-built. Free. Instant results.
           </p>
           <Link
             to="/quiz"

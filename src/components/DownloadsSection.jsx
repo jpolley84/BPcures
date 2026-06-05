@@ -17,9 +17,9 @@ const ALL_FILES = [
   { name: 'BP Reset Day 1 + Full Challenge', file: 'bp-reset-day1-and-beyond.pdf', category: 'BP' },
   { name: 'BP Reset Kit (8-PDF zip)', file: 'bp-reset-kit.zip', category: 'BP' },
   { name: 'BP Reset Book (full guide)', file: 'bp-reset-book.pdf', category: 'BP' },
-  { name: 'Blood Pressure Cures — 10-Day Reset', file: 'bp-cures-10-day-reset.pdf', category: 'BP' },
+  { name: 'Blood Pressure Cures: 10-Day Reset', file: 'bp-cures-10-day-reset.pdf', category: 'BP' },
   { name: '10-Day Cortisol Cure', file: 'cortisol-cure-10-day.pdf', category: 'Cortisol' },
-  { name: 'Cortisol Day 1 — Diagnosis', file: 'cortisol-day1-diagnosis.pdf', category: 'Cortisol' },
+  { name: 'Cortisol Day 1: Diagnosis', file: 'cortisol-day1-diagnosis.pdf', category: 'Cortisol' },
   { name: '10-Day Blood Sugar Reset', file: 'blood-sugar-reset-10-day.pdf', category: 'Blood Sugar' },
   { name: 'Blood Sugar Day 1', file: 'blood-sugar-day1.pdf', category: 'Blood Sugar' },
   { name: 'Cook For Life Cookbook', file: 'cook-for-life-cookbook.pdf', category: 'Kitchen' },
@@ -51,7 +51,7 @@ export default function DownloadsSection({ variant = 'compact', title }) {
             margin: 0,
             color: 'var(--ink, #2C3E50)',
           }}>
-            {title || 'Your downloads — grab them now'}
+            {title || 'Your downloads. Grab them now'}
           </h3>
         </div>
         <p style={{
@@ -60,7 +60,7 @@ export default function DownloadsSection({ variant = 'compact', title }) {
           margin: '0 0 1rem',
           lineHeight: 1.5,
         }}>
-          Click any file to save it. You can come back to this page anytime — or visit{' '}
+          Click any file to save it. You can come back to this page anytime, or visit{' '}
           <a href="/library" style={{ color: 'var(--clay, #B85A36)', textDecoration: 'underline', fontWeight: 600 }}>bpquiz.com/library</a>.
         </p>
 

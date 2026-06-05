@@ -42,6 +42,10 @@ const LuveniaIntakePage = lazy(() => import('./pages/LuveniaIntakePage'));
 const BlogListPage = lazy(() => import('./pages/BlogListPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const AboutJoelPage = lazy(() => import('./pages/AboutJoelPage'));
+// Legal pages - added 2026-06-04 podcast-prep audit
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
 
 // Subdomain → page map. When the SPA boots on a vanity subdomain like
 // `wakita.bpquiz.com`, the root route renders that client's intake instead of
@@ -113,11 +117,10 @@ function App() {
               + UTM attribution. */}
           <Route path="/start" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
-          {/* Challenge sales page — restored 2026-05-05 as VIP-focused upsell.
-              Premium ($397) section is hidden inside ChallengePage but the page
-              now serves as the dedicated VIP ($97) upgrade landing surface for
-              email upsells, Skool posts, and the new home-page VIP row. */}
-          <Route path="/challenge" element={<SiteLayout><ChallengePage /></SiteLayout>} />
+          {/* 2026-06-04 PODCAST-PREP: /challenge was a retired $97 Monday cohort
+              with a still-live Stripe link. Redirected to home to prevent paid
+              fulfillment of a product that no longer exists. */}
+          <Route path="/challenge" element={<Navigate to="/" replace />} />
 
           {/* Practice Launcher — three-stage funnel (standalone, no SiteLayout) */}
           <Route path="/launcher" element={<LauncherPage />} />
@@ -167,13 +170,11 @@ function App() {
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
           <Route path="/apply" element={<Navigate to="/1on1" replace />} />
 
-          {/* 2026-06-04: /coaching rebuilt as the 1:1 with Joel landing page.
-              Four tiers, email-only close (joel@bpquiz.com). Replaces both the
-              retired $297 Diagnostic and the paused free-discovery-call page.
-              Brand-as-close posture: AVAILABLE not selling. The $297 Stripe
-              products remain live for existing buyers in their drip; only the
-              public-facing offer here changed. See CoachingPage.jsx. */}
-          <Route path="/coaching" element={<CoachingPage />} />
+          {/* 2026-06-04 PODCAST-PREP: 1:1 tiers all paused. Page was still
+              marketing four tiers up to $50K/yr which contradicts the paused
+              status. Redirected to home until a clean waitlist page ships
+              post-podcast. CoachingPage.jsx preserved for fast revert. */}
+          <Route path="/coaching" element={<Navigate to="/" replace />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
               https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}
@@ -212,8 +213,12 @@ function App() {
               Each client gets a unique URL like /intake/karen-bush?token=... */}
           <Route path="/intake/:clientSlug" element={<IntakeFormPage />} />
 
-          {/* 404 catch-all — unknown URLs (/privacy, /terms, /disclaimer
-              before they're built) redirect to home instead of rendering
+          {/* Legal pages - shipped 2026-06-04 podcast-prep audit. */}
+          <Route path="/privacy" element={<SiteLayout><PrivacyPage /></SiteLayout>} />
+          <Route path="/terms" element={<SiteLayout><TermsPage /></SiteLayout>} />
+          <Route path="/disclaimer" element={<SiteLayout><DisclaimerPage /></SiteLayout>} />
+
+          {/* 404 catch-all. Unknown URLs redirect to home instead of rendering
               an empty <Routes/> that crawlers read as a hung page. */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

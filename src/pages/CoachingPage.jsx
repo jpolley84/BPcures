@@ -49,7 +49,7 @@ const TIERS = [
     name: 'The Inner Circle',
     price: '$1,500 / month',
     cadence: 'Monthly · weekly access',
-    fit: 'For the person who needs ongoing nursing time — not a one-shot — and wants a direct line to me between calls.',
+    fit: 'For the person who needs ongoing nursing time, not a one-shot, and wants a direct line to me between calls.',
     includes: [
       'A weekly 60-minute 1:1 with me. Four calls a month.',
       'Voxer-style voice and text access between calls, Monday through Friday.',

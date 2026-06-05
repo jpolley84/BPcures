@@ -91,7 +91,7 @@ export default function UpsellBpResetKitPage() {
         setProcessing(false);
       }
     } catch {
-      setError('Connection issue — please try again.');
+      setError('Connection issue. Please try again.');
       setProcessing(false);
     }
   }
@@ -150,7 +150,7 @@ export default function UpsellBpResetKitPage() {
       {/* Inline downloads — let customers grab files before deciding on the OTO */}
       <section style={{ padding: '2rem 1.5rem 0', background: 'var(--paper, #FBF8F1)' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <DownloadsSection title="Your files are ready — download now" />
+          <DownloadsSection title="Your files are ready. Download now" />
         </div>
       </section>
 
@@ -180,7 +180,7 @@ export default function UpsellBpResetKitPage() {
             {/* 2026-05-20 funnel-audit: cut the Triangle Method™ brand-architecture
                 paragraph. Customers don't need the lineage; they need the bullets. */}
             <p className="lede" style={{ color: 'var(--ink-soft, #5A5A5A)', margin: '0 auto 2rem', maxWidth: '54ch', lineHeight: 1.6 }}>
-              Add it to your order right now for <strong style={{ color: 'var(--ink, #2C3E50)' }}>$30 today only</strong> (normally $47 — you save $17 because you just bought the starter).
+              Add it to your order right now for <strong style={{ color: 'var(--ink, #2C3E50)' }}>$30 today only</strong> (normally $47, you save $17 because you just bought the starter).
             </p>
 
             <div style={{
@@ -196,14 +196,14 @@ export default function UpsellBpResetKitPage() {
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.7rem' }}>
                 {[
-                  'The Hypertension Guide — every cause, every lever',
-                  'The Supplement Protocol — what to take, what dose, what order',
-                  'The Meal Plan — the BP-specific eating framework',
-                  'The BP Tracker — daily numbers in a binder for your doctor',
-                  'Doctor Conversation Templates — how to ask for deprescribing',
-                  'The Quick Start — 1-page protocol overview',
-                  'The Cheat Sheet — what to do at the week-2 stall',
-                  'The Overmedicated Boomer — full book included',
+                  'The Hypertension Guide: every cause, every lever',
+                  'The Supplement Protocol: what to take, what dose, what order',
+                  'The Meal Plan: the BP-specific eating framework',
+                  'The BP Tracker: daily numbers in a binder for your doctor',
+                  'Doctor Conversation Templates: how to ask for deprescribing',
+                  'The Quick Start: 1-page protocol overview',
+                  'The Cheat Sheet: what to do at the week-2 stall',
+                  'The Overmedicated Boomer: full book included',
                 ].map((line, i) => (
                   <li key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                     <Check size={16} style={{ color: 'var(--sage-deep, #4A6741)', marginTop: '0.2rem', flexShrink: 0 }} />
@@ -223,7 +223,7 @@ export default function UpsellBpResetKitPage() {
               color: '#744210',
               lineHeight: 1.5,
             }}>
-              <strong>Same 7-day refund promise.</strong> Run the kit for 7 days with honest effort. If your numbers haven&rsquo;t moved, hit reply with &ldquo;refund&rdquo; and your $30 comes back &mdash; kit yours to keep.
+              <strong>Same 30-day Feel-It-or-Free promise.</strong> Run the kit for 30 days with honest effort. If you don&rsquo;t feel a difference, hit reply with &ldquo;refund&rdquo; and your $30 comes back. Kit yours to keep.
             </div>
 
             {error && (
@@ -250,7 +250,7 @@ export default function UpsellBpResetKitPage() {
                   gap: '0.5rem',
                 }}
               >
-                {processing ? 'Processing…' : 'Yes — add the Reset Kit for $30'}
+                {processing ? 'Processing…' : 'Yes, add the Reset Kit for $30'}
                 <ArrowRight size={16} />
               </button>
               <button

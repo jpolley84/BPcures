@@ -235,10 +235,10 @@ export default function WaitlistApplicationPage() {
                   Application received.
                 </h2>
                 <p style={{ color: colors.inkSoft, lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto 1rem' }}>
-                  Thanks for sharing all of that — Joel reads every one of these personally.
+                  Thanks for sharing all of that. Joel reads every one of these personally.
                 </p>
                 <p style={{ color: colors.inkSoft, lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto 1.5rem' }}>
-                  The 1:1 cohort is small by design. <strong>We&rsquo;ll be in touch when we have an opening</strong> — typically within 1&ndash;2 weeks. If you don&rsquo;t hear back by then, the cohort is full and you&rsquo;ll be on the list for the next round.
+                  The 1:1 cohort is small by design. <strong>We&rsquo;ll be in touch when we have an opening</strong>, typically within 1 to 2 weeks. If you don&rsquo;t hear back by then, the cohort is full and you&rsquo;ll be on the list for the next round.
                 </p>
                 <p style={{ color: colors.muted, fontSize: '0.85rem', maxWidth: '40ch', margin: '0 auto' }}>
                   In the meantime, keep an eye on your inbox for the BP Triangle starter sequence.

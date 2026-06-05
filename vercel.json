@@ -28,7 +28,9 @@
       "source": "/downloads",
       "destination": "/library",
       "permanent": false
-    }
+    },
+    { "source": "/challenge", "destination": "/", "permanent": false },
+    { "source": "/coaching", "destination": "/", "permanent": false }
   ],
   "crons": [
     {

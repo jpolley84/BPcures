@@ -49,7 +49,7 @@ function HeroSection() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
             <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              Founding Cohort closes May 15 — 5 spots
+              Founding Cohort closes May 15. 5 spots
             </span>
           </div>
 
@@ -60,7 +60,7 @@ function HeroSection() {
           </h1>
 
           <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.82)', margin: '0 0 1.75rem', maxWidth: '56ch' }}>
-            ICU nurse who left the bedside. Built BraveWorks RN by talking to my own system instead of building it. I'll install the same engine in your practice &mdash; 72 hours, in your voice, with your products.
+            ICU nurse who left the bedside. Built BraveWorks RN by talking to my own system instead of building it. I'll install the same engine in your practice in 72 hours, in your voice, with your products.
           </p>
 
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
@@ -92,16 +92,16 @@ function EpiphanyBridge() {
 
           <div style={{ fontSize: 'var(--step-0)', lineHeight: 1.75, color: 'var(--ink-soft)', display: 'grid', gap: '1.25rem' }}>
             <p style={{ margin: 0 }}>
-              I spent two decades watching the same story repeat: patient comes in, blood pressure through the roof, doctor adjusts the meds, patient goes home, nothing changes. I knew — because I'd seen it thousands of times — that the answer wasn't another prescription. It was what they ate, how they moved, what they believed about their own body.
+              I spent two decades watching the same story repeat: patient comes in, blood pressure through the roof, doctor adjusts the meds, patient goes home, nothing changes. I knew (because I'd seen it thousands of times) that the answer wasn't another prescription. It was what they ate, how they moved, what they believed about their own body.
             </p>
             <p style={{ margin: 0 }}>
-              So I left. Built BraveWorks RN. Started making TikToks about herbs and blood pressure from my kitchen. Within months, the emails flooded in — nurses, naturopaths, health coaches — all saying the same thing: <em style={{ color: 'var(--clay)' }}>"I know what you know. I just can't get anyone to listen."</em>
+              So I left. Built BraveWorks RN. Started making TikToks about herbs and blood pressure from my kitchen. Within months, the emails flooded in (nurses, naturopaths, health coaches) all saying the same thing: <em style={{ color: 'var(--clay)' }}>"I know what you know. I just can't get anyone to listen."</em>
             </p>
             <p style={{ margin: 0 }}>
-              They didn't have a knowledge problem. They had a delivery problem. So I built them a delivery system &mdash; the same one running BraveWorks right now. The quiz funnel, the email engine, the AI content team, the Stripe checkout, all of it. The same engine I used to ship <strong style={{ color: 'var(--ink)' }}>8 paid digital products on Gumroad and a Wellness Guide on Amazon</strong> &mdash; books, reset programs, protocols &mdash; all written by talking to my system. And I realized: if I can install this once, I can install it again.
+              They didn't have a knowledge problem. They had a delivery problem. So I built them a delivery system: the same one running BraveWorks right now. The quiz funnel, the email engine, the AI content team, the Stripe checkout, all of it. The same engine I used to ship <strong style={{ color: 'var(--ink)' }}>8 paid digital products on Gumroad and a Wellness Guide on Amazon</strong> (books, reset programs, protocols) all written by talking to my system. And I realized: if I can install this once, I can install it again.
             </p>
             <p style={{ margin: 0, fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', color: 'var(--ink)', fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
-              That's what this page is. Not a course. Not a template. A <strong style={{ color: 'var(--clay)' }}>functioning business</strong> — installed, wired, and generating content before you hang up the setup call.
+              That's what this page is. Not a course. Not a template. A <strong style={{ color: 'var(--clay)' }}>functioning business</strong>, installed, wired, and generating content before you hang up the setup call.
             </p>
           </div>
         </motion.div>
@@ -125,13 +125,13 @@ function VacationSection() {
 
           <div style={{ fontSize: 'var(--step-0)', lineHeight: 1.8, color: 'var(--ink-soft)', display: 'grid', gap: '1.5rem' }}>
             <p style={{ margin: 0 }}>
-              It's a Tuesday morning. She's up before the sun, but not because she has to be — because she wants to. Coffee on the porch, journal open, no laptop in sight. The first email of the day is a Stripe receipt. By breakfast there are three more. She doesn't write them, doesn't send them, doesn't even open them. The system does. She just notices, smiles, and moves on.
+              It's a Tuesday morning. She's up before the sun, but not because she has to be. Because she wants to. Coffee on the porch, journal open, no laptop in sight. The first email of the day is a Stripe receipt. By breakfast there are three more. She doesn't write them, doesn't send them, doesn't even open them. The system does. She just notices, smiles, and moves on.
             </p>
             <p style={{ margin: 0 }}>
-              By 9 AM she's recorded a 60-second TikTok in her own voice, from a script the AI drafted in her cadence. By 10 AM that script has gone live, and the email tied to it has already gone out to 1,700 subscribers. She didn't fight Mailchimp. She didn't drag boxes in Canva. She didn't beg a developer to fix a button. She spoke. It happened. The version of her that has a waitlist doesn't know Mailchimp — she has a team. It just happens to fit inside one conversation.
+              By 9 AM she's recorded a 60-second TikTok in her own voice, from a script the AI drafted in her cadence. By 10 AM that script has gone live, and the email tied to it has already gone out to 1,700 subscribers. She didn't fight Mailchimp. She didn't drag boxes in Canva. She didn't beg a developer to fix a button. She spoke. It happened. The version of her that has a waitlist doesn't know Mailchimp. She has a team. It just happens to fit inside one conversation.
             </p>
             <p style={{ margin: 0 }}>
-              Her afternoon is the part she actually trained for: a one-on-one with a client, fully present, no glance at the calendar, no half-thought about the launch she should be planning. The launch is already running. The income is already arriving. And the impact — the people she's actually helping — is the only thing she has to focus on. <strong style={{ color: 'var(--ink)' }}>That's the version of you this page is here to install.</strong>
+              Her afternoon is the part she actually trained for: a one-on-one with a client, fully present, no glance at the calendar, no half-thought about the launch she should be planning. The launch is already running. The income is already arriving. And the impact, the people she's actually helping, is the only thing she has to focus on. <strong style={{ color: 'var(--ink)' }}>That's the version of you this page is here to install.</strong>
             </p>
           </div>
 
@@ -163,13 +163,13 @@ function FoundingMemberZeroSection() {
 
           <div style={{ fontSize: 'var(--step-0)', lineHeight: 1.8, color: 'var(--ink-soft)', display: 'grid', gap: '1.5rem' }}>
             <p style={{ margin: 0 }}>
-              The Practice Launcher isn't proven yet — not in someone else's business. The only numbers it's earned are mine. So I'm picking one coach to install it for at no cost.
+              The Practice Launcher isn't proven yet, not in someone else's business. The only numbers it's earned are mine. So I'm picking one coach to install it for at no cost.
             </p>
             <p style={{ margin: 0 }}>
-              They get the full <strong style={{ color: 'var(--ink)' }}>$9,997 stack</strong> — custom site, email engine, AI command center, book, content runway, all of it. In exchange: weekly progress published publicly. Full transparency on their Stripe numbers. A Day-60 interview I can use forever. Permission to put their name and face on the proof block of this page when they win.
+              They get the full <strong style={{ color: 'var(--ink)' }}>$9,997 stack</strong>: custom site, email engine, AI command center, book, content runway, all of it. In exchange: weekly progress published publicly. Full transparency on their Stripe numbers. A Day-60 interview I can use forever. Permission to put their name and face on the proof block of this page when they win.
             </p>
             <p style={{ margin: 0 }}>
-              Apply by <strong style={{ color: 'var(--ink)' }}>May 7, 2026.</strong> I pick one. The diagnostic has a checkbox. If you have an audience (any size), if you're willing to be the proof, if your work and mine line up — apply.
+              Apply by <strong style={{ color: 'var(--ink)' }}>May 7, 2026.</strong> I pick one. The diagnostic has a checkbox. If you have an audience (any size), if you're willing to be the proof, if your work and mine line up, apply.
             </p>
           </div>
 
@@ -198,22 +198,22 @@ function FoundingMemberZeroSection() {
    ================================================================ */
 function ProofSection() {
   const stats = [
-    { num: PROOF.daysToFirst500, label: '$0 → $500 in collected revenue. That\'s the guarantee on this page — pre-tested on the founder.' },
-    { num: PROOF.paidCustomers, label: 'paying customers — every one from organic content, zero ad spend.' },
-    { num: PROOF.emailSubscribers, label: 'email subscribers built from a quiz funnel — the same one I install for you.' },
-    { num: PROOF.campaignsRunning, label: 'automated email campaigns running right now — written and optimized by AI.' },
+    { num: PROOF.daysToFirst500, label: '$0 to $500 in collected revenue. That\'s the guarantee on this page, pre-tested on the founder.' },
+    { num: PROOF.paidCustomers, label: 'paying customers. Every one from organic content, zero ad spend.' },
+    { num: PROOF.emailSubscribers, label: 'email subscribers built from a quiz funnel: the same one I install for you.' },
+    { num: PROOF.campaignsRunning, label: 'automated email campaigns running right now, written and optimized by AI.' },
   ];
 
   return (
     <section style={{ padding: 'clamp(2.5rem, 5vw, 4rem) 0' }}>
       <div className="shell" style={{ maxWidth: 780 }}>
         <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>This isn't theory — it's running right now</span>
+          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>This isn't theory. It's running right now</span>
           <h2 className="display-s" style={{ margin: '0 0 0.5rem' }}>
             BraveWorks RN. <em className="ital-display" style={{ color: 'var(--clay)' }}>Same system. Live numbers.</em>
           </h2>
           <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 2rem', lineHeight: 1.6 }}>
-            These are real numbers from my own business &mdash; BPQuiz.com. The $500 first-client guarantee on this page? It took my system <strong>{PROOF.daysToFirst500}</strong> to do that for me. I'm offering you the same engine. Live data, pulled from Stripe on {PROOF.dataAsOfDate}.
+            These are real numbers from my own business, BPQuiz.com. The $500 first-client guarantee on this page? It took my system <strong>{PROOF.daysToFirst500}</strong> to do that for me. I'm offering you the same engine. Live data, pulled from Stripe on {PROOF.dataAsOfDate}.
           </p>
         </motion.div>
 
@@ -246,7 +246,7 @@ function ConvictionSection() {
         <motion.div {...fade}>
           <div style={{ background: 'var(--sage-deep)', borderRadius: 16, padding: 'clamp(1.75rem, 3.5vw, 2.5rem)', color: 'var(--cream)' }}>
             <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', lineHeight: 1.5, margin: 0, fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
-              I believe every health coach who has the knowledge to help people deserves a system that matches their calling. I built this because I watched too many nurses and practitioners give up — not because they couldn't help people, but because they couldn't figure out Mailchimp. <strong style={{ color: 'var(--clay-soft)' }}>That ends here.</strong>
+              I believe every health coach who has the knowledge to help people deserves a system that matches their calling. I built this because I watched too many nurses and practitioners give up, not because they couldn't help people, but because they couldn't figure out Mailchimp. <strong style={{ color: 'var(--clay-soft)' }}>That ends here.</strong>
             </p>
           </div>
 
@@ -276,15 +276,15 @@ function ShortFAQ() {
   const faqs = [
     {
       q: "I'm not technical. Can I really do this?",
-      a: "You don't touch code. Ever. I build everything during setup. After that, you talk to your system in plain English — 'change this headline,' 'write me an email,' 'what should I post today.' If you can send a text message, you can run this system."
+      a: "You don't touch code. Ever. I build everything during setup. After that, you talk to your system in plain English: 'change this headline,' 'write me an email,' 'what should I post today.' If you can send a text message, you can run this system."
     },
     {
       q: "What if the AI doesn't sound like me?",
-      a: "The intake agent spends the first session building your complete brand profile — your voice, your phrases, your philosophy, your tone. Every piece of content it generates pulls from that profile. After 30 days of feedback, it sounds more like you than a hired copywriter ever could."
+      a: "The intake agent spends the first session building your complete brand profile: your voice, your phrases, your philosophy, your tone. Every piece of content it generates pulls from that profile. After 30 days of feedback, it sounds more like you than a hired copywriter ever could."
     },
     {
       q: "Do I need my own content already?",
-      a: "No. The Practice Launcher pre-generates a 90-day content runway — TikTok scripts, email teachings, YouTube outlines, your full challenge sequence — all in your voice, before Day 1. You launch with three months of content already in the chamber."
+      a: "No. The Practice Launcher pre-generates a 90-day content runway (TikTok scripts, email teachings, YouTube outlines, your full challenge sequence) all in your voice, before Day 1. You launch with three months of content already in the chamber."
     },
   ];
 
@@ -348,7 +348,7 @@ function FinalCTA() {
           {/* P.S. */}
           <div style={{ textAlign: 'left', background: 'rgba(247,243,236,0.04)', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid rgba(247,243,236,0.08)', marginBottom: '2rem' }}>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.7, color: 'rgba(247,243,236,0.6)', margin: 0 }}>
-              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> — Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 5 spots in the founding cohort. If you're reading this, one is still open. And there's one Founding Member #0 spot — full install, free, in exchange for being the case study. Closes May 7. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
+              <strong style={{ color: 'rgba(247,243,236,0.8)' }}>P.S.</strong> Applications close May 15, 2026. After that, the price goes to $14,997 and the "First Client" guarantee changes. 5 spots in the founding cohort. If you're reading this, one is still open. And there's one Founding Member #0 spot: full install, free, in exchange for being the case study. Closes May 7. <Link to={QUIZ_LINK} style={{ color: 'var(--clay-soft)', textDecoration: 'underline' }}>Take the diagnostic now.</Link>
             </p>
           </div>
 

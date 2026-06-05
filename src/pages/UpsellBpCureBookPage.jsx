@@ -127,7 +127,7 @@ export default function UpsellBpCureBookPage() {
       {/* Inline downloads — customer can grab files immediately, no waiting for email */}
       <section style={{ padding: '2rem 1.5rem 0', background: 'var(--paper, #FBF8F1)' }}>
         <div style={{ maxWidth: 640, margin: '0 auto' }}>
-          <DownloadsSection title="Your files are ready — download now" />
+          <DownloadsSection title="Your files are ready. Download now" />
         </div>
       </section>
 
@@ -178,7 +178,7 @@ export default function UpsellBpCureBookPage() {
             marginLeft: 'auto',
             marginRight: 'auto',
           }}>
-            <strong style={{ color: 'var(--ink, #2C3E50)' }}>Blood Pressure Cures: The 10-Day Nurse's Reset</strong> &mdash; the book version of what you just bought. Same protocol, but as one continuous read for the Kindle / iPad / couch crowd. $12.99 because you already paid for the protocol.
+            <strong style={{ color: 'var(--ink, #2C3E50)' }}>Blood Pressure Cures: The 10-Day Nurse's Reset</strong>, the book version of what you just bought. Same protocol, but as one continuous read for the Kindle / iPad / couch crowd. $12.99 because you already paid for the protocol.
           </p>
 
           {/* Product card */}
@@ -216,7 +216,7 @@ export default function UpsellBpCureBookPage() {
                 margin: '0 0 0.65rem',
                 color: 'var(--ink, #2C3E50)',
               }}>
-                Blood Pressure Cures — The 10-Day Nurse's Reset
+                Blood Pressure Cures: The 10-Day Nurse's Reset
               </h2>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
                 <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--clay, #B85A36)' }}>$12.99</span>
@@ -238,11 +238,11 @@ export default function UpsellBpCureBookPage() {
             marginRight: 'auto',
           }}>
             <BulletLine text="The master BP protocol document Joel teaches in the clinic" />
-            <BulletLine text="Top 10 herbs deep-dive — each matched to the drug it mimics, with dosages" />
-            <BulletLine text="Full 10-day challenge — day-by-day with checklists" />
-            <BulletLine text="Cook For Life cookbook — plant-based meals built to lower BP" />
+            <BulletLine text="Top 10 herbs deep-dive, each matched to the drug it mimics, with dosages" />
+            <BulletLine text="Full 10-day challenge, day-by-day with checklists" />
+            <BulletLine text="Cook For Life cookbook, plant-based meals built to lower BP" />
             <BulletLine text="White Coat Syndrome guide for cardiology appointments" />
-            <BulletLine text="FAQ — every question Joel gets asked weekly" />
+            <BulletLine text="FAQ, every question Joel gets asked weekly" />
           </div>
 
           {/* Error message */}
@@ -277,7 +277,7 @@ export default function UpsellBpCureBookPage() {
             >
               {processing ? 'Adding to your order...' : (
                 <>
-                  <span>Yes — add the book for $12.99</span>
+                  <span>Yes, add the book for $12.99</span>
                   <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginLeft: '0.5rem', background: 'rgba(255,255,255,0.18)', padding: '0.2rem 0.55rem', borderRadius: 6 }}>1-click</span>
                   <ArrowRight size={18} style={{ marginLeft: 4 }} />
                 </>
@@ -291,7 +291,7 @@ export default function UpsellBpCureBookPage() {
             >
               {processing ? 'Loading checkout...' : (
                 <>
-                  Yes — add the book for $12.99 <ArrowRight size={18} />
+                  Yes, add the book for $12.99 <ArrowRight size={18} />
                 </>
               )}
             </button>

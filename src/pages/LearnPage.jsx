@@ -107,7 +107,7 @@ export default function LearnPage() {
             One essay, <em className="ital-display" style={{ color: 'var(--clay)' }}>once a week.</em>
           </h2>
           <p style={{ color: 'var(--ink-soft)', maxWidth: '52ch', margin: '0 auto 2rem' }}>
-            Take the assessment to receive the journal, your personalized protocol, and the Cook For Life cookbook — free.
+            Take the assessment to receive the journal, your personalized protocol, and the Cook For Life cookbook, free.
           </p>
           <Link to="/" className="btn btn-ink btn-lg">
             Take the assessment <ArrowRight size={16} className="arrow" />
