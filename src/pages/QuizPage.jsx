@@ -673,6 +673,148 @@ function QuizModule({ products }) {
             <div key="results">
               <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>Your assessment · Complete</span>
 
+              {/* 2026-06-04 RESTRUCTURE — Kit stack moved to TOP. The misplaced
+                  "Take the free BP quiz" coaching CTA box was removed (the
+                  quiz-taker just took the quiz, so the CTA was confusing).
+                  Personalized assessment moved BELOW the kit stack so buyers
+                  see the offer first; readers who want the reasoning scroll.
+                  $47 BP Reset Kit upsell at the end was replaced by the
+                  Skool 7-day free trial. */}
+
+              {/* ─── BUY BUTTON FIRST (at the very top) ───────────────────── */}
+              {recommended && (
+                <a
+                  href={recommended.stripe_payment_link}
+                  className="btn btn-lg"
+                  target={addBump ? undefined : "_top"}
+                  rel="noopener"
+                  onClick={handleBuyClick}
+                  style={{
+                    background: 'var(--clay)',
+                    color: 'var(--cream)',
+                    width: '100%',
+                    marginBottom: '1.25rem',
+                    fontSize: '1.05rem',
+                    padding: '1rem',
+                    pointerEvents: bumpLoading ? 'none' : 'auto',
+                    opacity: bumpLoading ? 0.7 : 1,
+                  }}
+                >
+                  {bumpLoading
+                    ? 'Loading checkout…'
+                    : addBump
+                      ? <>Send my plan + Stack — $29 <ArrowRight size={16} className="arrow" /></>
+                      : <>Send me my plan — {recommended?.price ?? '$17'} <ArrowRight size={16} className="arrow" /></>
+                  }
+                </a>
+              )}
+
+              {/* ─── KIT STACK — Vacation-style offer at the top ──────────── */}
+              <div style={{
+                padding: '1.5rem',
+                background: 'var(--cream)',
+                border: '1px solid var(--ink)',
+                borderRadius: 18,
+                marginBottom: '1rem',
+              }}>
+                <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.55, fontWeight: 500, marginBottom: '0.75rem' }}>
+                  Over 1,200 people are already on this path
+                </div>
+                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', lineHeight: 1.2, marginBottom: '0.75rem', fontWeight: 500 }}>
+                  Picture your life <em style={{ color: 'var(--clay)' }}>without</em> blood pressure worry.
+                </h3>
+                <p style={{ fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 1.25rem' }}>
+                  You wake up. Feel good. No pills on the counter. No cuff on the nightstand. No worry in your chest. You check in with your body and it says <strong style={{ color: 'var(--ink)' }}>I'm good.</strong> That is where this plan takes you. No pills. No supplements. No daily blood pressure checks. <strong style={{ color: 'var(--ink)' }}>Just living your life.</strong> Your first step starts today.
+                </p>
+
+                <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                  {[
+                    { icon: '📋', label: 'Your 10-day plan — what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
+                    { icon: '🌿', label: '7 herbs that help blood pressure — names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
+                    { icon: '🗣️', label: 'What to say to your doctor — word for word', sub: 'So they support your plan instead of adding more pills.' },
+                    { icon: '🍽️', label: 'Cook For Life — 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
+                    { icon: '👥', label: 'The community — over 1,200 people on the same path', sub: 'You are not doing this alone.' },
+                  ].map((item, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
+                      <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
+                      <div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>{item.label}</div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--muted)', lineHeight: 1.4, marginTop: '0.1rem' }}>{item.sub}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
+                  One doctor visit: $150 to $300. One month of pills: $80 to $200. Your plan, built for your body, in your inbox today: <strong style={{ color: 'var(--ink)' }}>{recommended?.price ?? '$17'}</strong>. One time. No refills. No monthly cost.
+                </p>
+
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                  <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
+                    {recommended?.price ?? '$17'}
+                  </span>
+                  {recommended?.original_price && (
+                    <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>{recommended.original_price} value</span>
+                  )}
+                </div>
+
+                <div style={{
+                  padding: '0.75rem 1rem',
+                  background: 'rgba(74, 103, 65, 0.08)',
+                  border: '1px solid var(--sage)',
+                  borderRadius: 10,
+                  marginBottom: '0.75rem',
+                }}>
+                  <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
+                    Joel's promise: Follow the 30-day plan. If you and your doctor haven't talked about stepping down a pill by day 30, you get every penny back. No hoops. No fine print.
+                  </p>
+                </div>
+
+                {recommended && (
+                  <a
+                    href={recommended.stripe_payment_link}
+                    className="btn btn-lg"
+                    target={addBump ? undefined : "_top"}
+                    rel="noopener"
+                    onClick={handleBuyClick}
+                    style={{
+                      background: 'var(--ink)',
+                      color: 'var(--cream)',
+                      width: '100%',
+                      pointerEvents: bumpLoading ? 'none' : 'auto',
+                      opacity: bumpLoading ? 0.7 : 1,
+                    }}
+                  >
+                    {bumpLoading
+                      ? 'Loading checkout…'
+                      : addBump
+                        ? <>Yes — send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                        : <>Yes — send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
+                    }
+                  </a>
+                )}
+                <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
+                  In your inbox in 60 seconds · Community included · One-time. No subscription.
+                </p>
+              </div>
+
+              {/* ─── SCROLL PROMPT — bridge from offer to personalized read ── */}
+              <div style={{
+                textAlign: 'center',
+                padding: '1.5rem 1rem',
+                margin: '0.75rem 0 1.25rem',
+                borderTop: '1px dashed var(--line)',
+                borderBottom: '1px dashed var(--line)',
+              }}>
+                <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600, marginBottom: '0.4rem' }}>
+                  Want the full breakdown?
+                </div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', color: 'var(--ink)', lineHeight: 1.3 }}>
+                  Keep scrolling for your personalized assessment ↓
+                </div>
+              </div>
+
+              {/* ─── PERSONALIZED ASSESSMENT (below the offer) ────────────── */}
               {/* Risk score gauge */}
               <div style={{
                 display: 'flex',
@@ -710,46 +852,6 @@ function QuizModule({ products }) {
                   </div>
                 </div>
               </div>
-
-              {/* Coaching CTA — shown only to high-fit takers (explicit "yes"
-                  to the call question, or "maybe" + high coaching-fit score).
-                  Routes them to the FREE discovery call; the $17 plan stays
-                  below as the self-serve alternative. */}
-              {showCoachingCTA && (
-                <div style={{
-                  padding: '1.1rem 1.25rem',
-                  background: 'rgba(63, 90, 60, 0.08)',
-                  border: '1px solid var(--sage)',
-                  borderRadius: 14,
-                  marginBottom: '1.25rem',
-                }}>
-                  <div className="eyebrow-num" style={{ color: 'var(--sage)', marginBottom: '0.35rem' }}>
-                    Based on your answers · you're a strong fit
-                  </div>
-                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.15rem', lineHeight: 1.3, color: 'var(--ink)', marginBottom: '0.5rem' }}>
-                    Your best next step is the <em style={{ color: 'var(--clay)' }}>free BP quiz</em>, then your plan below.
-                  </div>
-                  <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.85rem' }}>
-                    One-on-one calls are paused while I rebuild the 1:1 channel. The free quiz maps your loudest Pressure and the one thing to do next. No cost, no pressure.
-                  </p>
-                  <a
-                    href="https://bpquiz.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                      background: 'var(--sage)', color: 'var(--cream)',
-                      padding: '0.8rem 1.4rem', borderRadius: 10,
-                      textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem',
-                    }}
-                  >
-                    Take the free BP quiz <ArrowRight size={16} />
-                  </a>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0.7rem 0 0' }}>
-                    Prefer to start on your own? Your $17 plan is right below.
-                  </p>
-                </div>
-              )}
 
               <h2 className="display-s" style={{ marginBottom: '0.5rem' }}>
                 {name ? `${name}, your` : 'Your'} <em className="ital-display" style={{ color: 'var(--clay)' }}>plan</em> is ready.
@@ -848,7 +950,7 @@ function QuizModule({ products }) {
                 </div>
               )}
 
-              {/* Buy button FIRST — above the stack */}
+              {/* ─── SECOND BUY CTA — after personalized results ──────────── */}
               {recommended && (
                 <a
                   href={recommended.stripe_payment_link}
@@ -860,7 +962,8 @@ function QuizModule({ products }) {
                     background: 'var(--clay)',
                     color: 'var(--cream)',
                     width: '100%',
-                    marginBottom: '1.25rem',
+                    marginTop: '0.5rem',
+                    marginBottom: '1.5rem',
                     fontSize: '1.05rem',
                     padding: '1rem',
                     pointerEvents: bumpLoading ? 'none' : 'auto',
@@ -870,163 +973,70 @@ function QuizModule({ products }) {
                   {bumpLoading
                     ? 'Loading checkout…'
                     : addBump
-                      ? <>Send my plan + Stack — $29 <ArrowRight size={16} className="arrow" /></>
-                      : <>Send me my plan — {recommended.price} <ArrowRight size={16} className="arrow" /></>
+                      ? <>Yes — solve my {pressureCopy.label} + Stack ($29) <ArrowRight size={16} className="arrow" /></>
+                      : <>Yes — solve my {pressureCopy.label} ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
                   }
                 </a>
               )}
 
-              {/* Vacation-style offer stack — sell the feeling */}
+              {/* ─── SKOOL 7-DAY FREE TRIAL UPSELL ────────────────────────
+                  2026-06-04: Replaced the $47 BP Reset Kit upsell with the
+                  free 7-day Skool trial. The $47 product still exists for
+                  email-driven upsell; on the public results page the next
+                  step is the free community trial — same Wed 7 PM Zoom that
+                  $297 and $1,997 buyers attend. */}
               <div style={{
-                padding: '1.5rem',
-                background: 'var(--cream)',
-                border: '1px solid var(--ink)',
-                borderRadius: 18,
-                marginBottom: '1rem',
+                marginTop: '0.5rem',
+                padding: '1.5rem 1.25rem',
+                background: 'rgba(184, 90, 54, 0.05)',
+                border: '2px solid var(--clay)',
+                borderRadius: 14,
+                textAlign: 'left',
               }}>
-                <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.55, fontWeight: 500, marginBottom: '0.75rem' }}>
-                  Over 1,200 people are already on this path
+                <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>
+                  Or — try the live group coaching free for 7 days
                 </div>
-                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', lineHeight: 1.2, marginBottom: '0.75rem', fontWeight: 500 }}>
-                  Picture your life <em style={{ color: 'var(--clay)' }}>without</em> blood pressure worry.
+                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.2rem', lineHeight: 1.25, margin: '0 0 0.5rem', fontWeight: 500 }}>
+                  Join the <em style={{ color: 'var(--clay)' }}>BraveWorks Skool</em> community — first 7 days free
                 </h3>
-                <p style={{ fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 1.25rem' }}>
-                  You wake up. Feel good. No pills on the counter. No cuff on the nightstand. No worry in your chest. You check in with your body and it says <strong style={{ color: 'var(--ink)' }}>I'm good.</strong> That is where this plan takes you. No pills. No supplements. No daily blood pressure checks. <strong style={{ color: 'var(--ink)' }}>Just living your life.</strong> Your first step starts today.
+                <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 0.8rem', lineHeight: 1.55 }}>
+                  Live group coaching with Joel every <strong>Wednesday at 7 PM ET</strong>. Bring your numbers, your meds, your questions. Plus everything below — included in your trial.
                 </p>
-
-                <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', display: 'grid', gap: '0.4rem' }}>
                   {[
-                    { icon: '📋', label: 'Your 10-day plan — what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
-                    { icon: '🌿', label: '7 herbs that help blood pressure — names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
-                    { icon: '🗣️', label: 'What to say to your doctor — word for word', sub: 'So they support your plan instead of adding more pills.' },
-                    { icon: '🍽️', label: 'Cook For Life — 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
-                    { icon: '👥', label: 'The community — over 1,200 people on the same path', sub: 'You are not doing this alone.' },
-                  ].map((item, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
-                      <span style={{ fontSize: '1.1rem', lineHeight: 1.4, flexShrink: 0 }}>{item.icon}</span>
-                      <div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>{item.label}</div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--muted)', lineHeight: 1.4, marginTop: '0.1rem' }}>{item.sub}</div>
-                      </div>
-                    </div>
+                    'Weekly live coaching call (Wed 7 PM ET)',
+                    'Every Joel Polley ebook — Be There in 30, BP Cures, Cook For Life, Overmedicated Boomers + more',
+                    'Every BP protocol + printable Triangle infographic',
+                    'Daily community feed — over 1,200 members on the path',
+                    'Feel-It-or-Free: 30-day refund + keep every ebook if you don\'t feel a difference',
+                  ].map((line, i) => (
+                    <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.84rem', lineHeight: 1.5, color: 'var(--ink)' }}>
+                      <span style={{ color: 'var(--clay)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      <span>{line}</span>
+                    </li>
                   ))}
-                </div>
-
-                {/* Price anchor — Kennedy 3-number compare. Driven by `recommended.price`. */}
-                <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
-                  One doctor visit: $150 to $300. One month of pills: $80 to $200. Your plan, built for your body, in your inbox today: <strong style={{ color: 'var(--ink)' }}>{recommended?.price ?? '$17'}</strong>. One time. No refills. No monthly cost.
+                </ul>
+                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '0 0 0.85rem', fontStyle: 'italic', lineHeight: 1.45 }}>
+                  $27/month after the trial. Cancel any time inside Skool. No card required to start.
                 </p>
-
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
-                  <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
-                    {recommended?.price ?? '$17'}
-                  </span>
-                  {recommended?.original_price && (
-                    <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>{recommended.original_price} value</span>
-                  )}
-                </div>
-
-                {/* Guarantee — Hormozi + Kennedy */}
-                <div style={{
-                  padding: '0.75rem 1rem',
-                  background: 'rgba(74, 103, 65, 0.08)',
-                  border: '1px solid var(--sage)',
-                  borderRadius: 10,
-                  marginBottom: '0.75rem',
-                }}>
-                  <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
-                    Joel's promise: Follow the 30-day plan. If you and your doctor haven't talked about stepping down a pill by day 30, you get every penny back. No hoops. No fine print.
-                  </p>
-                </div>
-
-                {/* Buy button SECOND — below the stack */}
-                {recommended && (
-                  <a
-                    href={recommended.stripe_payment_link}
-                    className="btn btn-lg"
-                    target={addBump ? undefined : "_top"}
-                    rel="noopener"
-                    onClick={handleBuyClick}
-                    style={{
-                      background: 'var(--ink)',
-                      color: 'var(--cream)',
-                      width: '100%',
-                      pointerEvents: bumpLoading ? 'none' : 'auto',
-                      opacity: bumpLoading ? 0.7 : 1,
-                    }}
-                  >
-                    {bumpLoading
-                      ? 'Loading checkout…'
-                      : addBump
-                        ? <>Yes — send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                        : <>Yes — send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
-                    }
-                  </a>
-                )}
-                <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
-                  In your inbox in 60 seconds · Community included · One-time. No subscription.
-                </p>
+                <a
+                  href="https://www.skool.com/braveworksrn/about"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-block',
+                    fontSize: '0.95rem',
+                    color: 'var(--cream)',
+                    background: 'var(--clay)',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    padding: '0.85rem 1.4rem',
+                    borderRadius: 10,
+                  }}
+                >
+                  Start your free 7 days →
+                </a>
               </div>
-
-              {/* Tier-2 upsell — only the $47 BP Reset Kit appears here. The
-                  $97 cohort offer was pulled from this page 2026-05-11 at
-                  Joel's request; it now surfaces in the post-purchase email
-                  instead. Two clean options on-page: $17 starter or $47
-                  complete kit. */}
-              {upsell && upsell.slug !== recommended?.slug && (
-                <div style={{
-                  marginTop: '0.5rem',
-                  padding: '1.15rem 1.15rem',
-                  background: 'var(--paper-warm)',
-                  border: '2px solid var(--ink)',
-                  borderRadius: 12,
-                  textAlign: 'left',
-                }}>
-                  <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>
-                    Or — the complete kit (most women pick this)
-                  </div>
-                  <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.15rem', lineHeight: 1.25, margin: '0 0 0.5rem', fontWeight: 500 }}>
-                    Step up to <em style={{ color: 'var(--clay)' }}>{upsell.name}</em> — {upsell.price}
-                  </h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', margin: '0 0 0.6rem', lineHeight: 1.5 }}>
-                    Everything in the {recommended?.price ?? '$17'} starter — <strong>plus</strong>:
-                  </p>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 0.85rem', display: 'grid', gap: '0.4rem' }}>
-                    {[
-                      'The full 4-week path — locks in your results for good',
-                      'The pill-conversation script for Day 30 — so your doctor is on board',
-                      'Every herb with exact amounts + what to avoid if you take pills',
-                      'Printable tracker + daily log (the one Linda used)',
-                      'All future updates — for life',
-                    ].map((line, i) => (
-                      <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink)' }}>
-                        <span style={{ color: 'var(--sage-deep)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                        <span>{line}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', margin: '0 0 0.75rem', fontStyle: 'italic', lineHeight: 1.45 }}>
-                    The starter gets you going. The kit gets you all the way to freedom.
-                  </p>
-                  <a
-                    href={upsell.stripe_payment_link}
-                    target="_top"
-                    rel="noopener"
-                    style={{
-                      display: 'inline-block',
-                      fontSize: '0.92rem',
-                      color: 'var(--cream)',
-                      background: 'var(--ink)',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      padding: '0.7rem 1.15rem',
-                      borderRadius: 8,
-                    }}
-                  >
-                    Send the complete kit — {upsell.price} →
-                  </a>
-                </div>
-              )}
             </div>
           )}
         </div>
