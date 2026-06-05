@@ -295,31 +295,45 @@ export default function QuizPage() {
    Hero — editorial layout with integrated assessment quiz
    ------------------------------------------------------------------ */
 
-function InternationalBanner() {
+// 2026-06-04 — Replaced InternationalBanner (Shahidi Gumroad partner referral)
+// with SkoolTrialBanner. The Shahidi link was a partner Gumroad with no easy
+// sales attribution; the Skool 7-day trial is the new top-of-funnel direct CTA
+// for the $27/mo BraveWorks group coaching offer launched 2026-06-04.
+function SkoolTrialBanner() {
   return (
     <a
-      href="https://shahidizvi.gumroad.com/l/pciija"
+      href="https://www.skool.com/braveworksrn/about"
       target="_blank"
       rel="noopener noreferrer"
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '0.5rem',
-        padding: '0.65rem 1rem',
-        background: 'var(--sage)',
+        gap: '0.6rem',
+        padding: '0.85rem 1rem',
+        background: 'var(--clay)',
         color: 'var(--cream)',
-        fontSize: '0.88rem',
-        fontWeight: 600,
+        fontSize: '0.95rem',
+        fontWeight: 700,
         textDecoration: 'none',
         letterSpacing: '0.01em',
         textAlign: 'center',
         lineHeight: 1.4,
       }}
     >
-      <span style={{ fontSize: '1.1rem' }}>🌍</span>
-      <span>Outside the US? Get your plan here</span>
-      <ArrowRight size={14} style={{ flexShrink: 0 }} />
+      <span style={{
+        display: 'inline-block',
+        width: 8,
+        height: 8,
+        borderRadius: '50%',
+        background: '#FFE9C7',
+        boxShadow: '0 0 0 0 rgba(255,233,199,0.7)',
+        animation: 'pulse-dot 2s infinite',
+      }} />
+      <span>
+        <strong>7-Day FREE Trial</strong> · Live group coaching every Wed 7 PM ET · Join the BraveWorks Skool
+      </span>
+      <ArrowRight size={16} style={{ flexShrink: 0 }} />
     </a>
   );
 }
@@ -327,7 +341,7 @@ function InternationalBanner() {
 function Hero({ products }) {
   return (
     <section className="hero-root">
-      <InternationalBanner />
+      <SkoolTrialBanner />
       <div className="shell">
         <div className="hero-grid">
           <HeroCopy />

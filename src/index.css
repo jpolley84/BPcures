@@ -1605,3 +1605,10 @@ a:focus-visible, button:focus-visible, input:focus-visible {
     max-width: 100%;
   }
 }
+
+/* 2026-06-04 — Skool 7-day trial banner pulse-dot animation */
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0    rgba(255, 233, 199, 0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(255, 233, 199, 0);   }
+  100% { box-shadow: 0 0 0 0    rgba(255, 233, 199, 0);   }
+}
