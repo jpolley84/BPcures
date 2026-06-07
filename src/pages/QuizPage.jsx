@@ -1202,7 +1202,7 @@ function QuizModule({ products }) {
                   ))}
                 </ul>
                 <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '0 0 0.85rem', fontStyle: 'italic', lineHeight: 1.45 }}>
-                  $27/month after the trial. Cancel any time inside Skool. No card required to start.
+                  7-day free trial, then $27/month. Cancel anytime before day 8 inside Skool and you are never charged.
                 </p>
                 <a
                   href="https://www.skool.com/braveworksrn/about"
