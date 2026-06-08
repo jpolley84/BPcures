@@ -97,14 +97,18 @@ function App() {
               subdomain (e.g. wakita.bpquiz.com), serve that client's intake
               at the root path instead of the public landing page. See
               SUBDOMAIN_PAGE map above. */}
-          {/* 2026-05-29: homepage IS the quiz again. The sales letter at /
-              was capturing only ~1.7% of 2,436 weekly visitors as emails
-              (60% bounce). The quiz converts ~44% AND its results page still
-              sells the $17 kit + routes high-fit takers to the free call — so
-              we capture the email first without losing the sale. Sales letter
-              preserved at /offer. TO REVERT: swap the two element values below. */}
-          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <SiteLayout><QuizPage /></SiteLayout>} />
-          <Route path="/offer" element={<CheckoutPage />} />
+          {/* 2026-06-07: REVERTED homepage to the direct $17 sales letter
+              (CheckoutPage, the bpcures-modeled page). Rationale: the list
+              diagnosis showed cold email captured by the quiz converts ~0, so
+              optimizing the homepage for immediate $17 sale + a warm-buyer
+              inbox beats optimizing for passive email capture. The quiz still
+              lives at /quiz + /start for bio links and warm traffic who want
+              the diagnostic first. TO RE-REVERT to quiz-first: put
+              <SiteLayout><QuizPage /></SiteLayout> back on `/` and remove the
+              /offer redirect. (CheckoutPage renders standalone — its own
+              header/footer/social bar, no SiteLayout.) */}
+          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <CheckoutPage />} />
+          <Route path="/offer" element={<Navigate to="/" replace />} />
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
               traffic that wants the diagnostic before buying. */}
