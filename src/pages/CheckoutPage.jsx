@@ -394,6 +394,9 @@ const CheckoutPage = () => {
             <p className="text-center mt-6" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: '1.5' }}>
               Results not typical. Most readers see modest results or none. Always work with your doctor.
             </p>
+            <p className="text-center mt-2" style={{ color: 'var(--dark-gray)', fontSize: '15px', fontWeight: 600, lineHeight: '1.5' }}>
+              But most <em>doers</em> see modest to excellent results. The difference is doing the work.
+            </p>
           </AnimatedSection>
         </div>
       </div>
