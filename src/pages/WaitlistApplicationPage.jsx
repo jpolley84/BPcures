@@ -342,7 +342,7 @@ export default function WaitlistApplicationPage() {
                           'Supplements / herbs',
                           'Functional / naturopathic doctor',
                           'Multiple cardiologists',
-                          'BraveWorks materials (BP Cures, Reset Kit, etc.)',
+                          'BraveWorks materials (Reset Companion, Reset Kit, etc.)',
                           'Honestly, not much yet',
                         ].map(o => {
                           const checked = data.triedAlready.includes(o);

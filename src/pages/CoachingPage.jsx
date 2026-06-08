@@ -362,7 +362,7 @@ export default function CoachingPage() {
             </div>
           </div>
           <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.75 }}>
-            Registered Nurse. Eighteen-plus years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Naturopathic practitioner. Founder of BraveWorks RN. Author of the BP Reset Kit and the BP Cures library on KDP. Creator of the BP Triangle Method.
+            Registered Nurse. Eighteen-plus years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Naturopathic practitioner. Founder of BraveWorks RN. Author of the BP Reset Kit and the BP Reset library on KDP. Creator of the BP Triangle Method.
           </p>
           <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.75, fontStyle: 'italic', borderLeft: '3px solid var(--sage-deep)', paddingLeft: '1rem' }}>
             "Pills manage output. Protocol fixes input. That's the whole sentence."

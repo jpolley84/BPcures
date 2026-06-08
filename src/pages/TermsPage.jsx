@@ -52,7 +52,7 @@ export default function TermsPage() {
         <h2 style={h2Style}>2. What we offer</h2>
         <p style={proseStyle}>
           Educational content, paid digital downloads (the $17 BP Reset Kit, the
-          $12 BP Cures book, and other guides), and optional paid community
+          $12 companion book, and other guides), and optional paid community
           access via Skool ($27 per month).
         </p>
 

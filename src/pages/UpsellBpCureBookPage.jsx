@@ -1,6 +1,16 @@
-// Post-purchase upsell #1 — Blood Pressure Cures: The 10-Day Nurse's
-// Reset ebook for $12.99. Inserted between $17 Kit and $47 Reset Kit
-// upsell to mirror bpcures' converting flow.
+// Post-purchase upsell #1: "The 10-Day Nurse's Reset Companion" ebook for
+// $12.99. Inserted between $17 Kit and $47 Reset Kit upsell to mirror the
+// converting flow.
+//
+// 2026-06-08 compliance pass: VISIBLE product name renamed from "Blood
+// Pressure Cures" → "The 10-Day Nurse's Reset Companion" (removed the word
+// "cures"). The drug-mimic / dosage bullet was softened to traditional-use
+// language. Stripe IDs, the /upsell-bp-cure-book route, the bp-cure-book
+// tier, the $12.99 Payment Link, and the bp-cures-cover.png asset are
+// UNCHANGED (copy only).
+// >>> JOEL TODO: rename the product TITLE in the Stripe Dashboard to match
+//     ("The 10-Day Nurse's Reset Companion") so receipts/emails don't say
+//     "Cures". The price/link IDs stay the same. <<<
 //
 // 2026-05-20: upgraded from click-through (Payment Link redirect) to
 // TRUE ONE-CLICK via saved card. Flow:
@@ -178,7 +188,7 @@ export default function UpsellBpCureBookPage() {
             marginLeft: 'auto',
             marginRight: 'auto',
           }}>
-            <strong style={{ color: 'var(--ink, #2C3E50)' }}>Blood Pressure Cures: The 10-Day Nurse's Reset</strong>, the book version of what you just bought. Same protocol, but as one continuous read for the Kindle / iPad / couch crowd. $12.99 because you already paid for the protocol.
+            <strong style={{ color: 'var(--ink, #2C3E50)' }}>The 10-Day Nurse's Reset Companion</strong>, the book version of what you just bought. Same protocol, but as one continuous read for the Kindle / iPad / couch crowd. $12.99 because you already paid for the protocol.
           </p>
 
           {/* Product card */}
@@ -195,7 +205,7 @@ export default function UpsellBpCureBookPage() {
           }}>
             <img
               src="/downloads/bp-cures-cover.png"
-              alt="Blood Pressure Cures book cover"
+              alt="The 10-Day Nurse's Reset Companion book cover"
               style={{
                 width: 100,
                 height: 'auto',
@@ -216,7 +226,7 @@ export default function UpsellBpCureBookPage() {
                 margin: '0 0 0.65rem',
                 color: 'var(--ink, #2C3E50)',
               }}>
-                Blood Pressure Cures: The 10-Day Nurse's Reset
+                The 10-Day Nurse's Reset Companion
               </h2>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
                 <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--clay, #B85A36)' }}>$12.99</span>
@@ -238,7 +248,7 @@ export default function UpsellBpCureBookPage() {
             marginRight: 'auto',
           }}>
             <BulletLine text="The master BP protocol document Joel teaches in the clinic" />
-            <BulletLine text="Top 10 herbs deep-dive, each matched to the drug it mimics, with dosages" />
+            <BulletLine text="Top 10 herbs deep-dive, the herbs most studied for blood pressure and lifestyle support, and how each is traditionally used" />
             <BulletLine text="Full 10-day challenge, day-by-day with checklists" />
             <BulletLine text="Cook For Life cookbook, plant-based meals built to lower BP" />
             <BulletLine text="White Coat Syndrome guide for cardiology appointments" />

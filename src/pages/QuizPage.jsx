@@ -532,7 +532,7 @@ function HeroCopy() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        A doctor-cleared road to quieter numbers, built around your body. Find the loudest of the three
+        A clear road to quieter numbers, built around your body. Find the loudest of the three
         Pressures, work the right protocol, and let the rest fall in line. <strong>Alongside your doctor, never instead of.</strong>
       </motion.p>
 
@@ -951,7 +951,7 @@ function QuizModule({ products }) {
                   marginBottom: '0.75rem',
                 }}>
                   <p style={{ fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--sage-deep)', margin: 0, fontWeight: 500 }}>
-                    Joel's promise: Run the 30-day plan. If you don't feel a difference, reply with the word REFUND and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
+                    Joel's promise: Run the full 10-day plan. If you don't feel a difference, reply with the word REFUND and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
                   </p>
                 </div>
 
@@ -1190,7 +1190,7 @@ function QuizModule({ products }) {
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', display: 'grid', gap: '0.4rem' }}>
                   {[
                     'Weekly live coaching call (Wed 7 PM ET)',
-                    'Every Joel Polley ebook: Be There in 30, BP Cures, Cook For Life, Overmedicated Boomers + more',
+                    'Every Joel Polley ebook: Be There in 30, BP Reset Companion, Cook For Life, Overmedicated Boomers + more',
                     'Every BP protocol + printable Triangle infographic',
                     'Daily community feed: over 1,200 members on the path',
                     'Feel-It-or-Free: 30-day refund + keep every ebook if you don\'t feel a difference',

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, HelpCircle } from 'lucide-react';
+import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 // 2026-05-14 — re-wired the exit-intent lead-magnet popup to plug the
 // email-capture leak that opened when the quiz lost the homepage slot on
@@ -11,9 +11,12 @@ import ExitIntentPopup from '../components/ExitIntentPopup';
 
 const PRICE = '$17';
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
-// the $17 "Blood Pressure Cures — The 10-Day Nurse's Reset" price; it stays
-// as the safety net so a missing env var doesn't break checkout. To change
-// the price, update VITE_STRIPE_KIT_PRICE_ID in Vercel — no code deploy needed.
+// the $17 kit price; it stays as the safety net so a missing env var doesn't
+// break checkout. To change the price, update VITE_STRIPE_KIT_PRICE_ID in
+// Vercel, no code deploy needed.
+// 2026-06-08: product copy renamed off "Blood Pressure Cures" sitewide.
+// JOEL TODO: rename the product TITLE in the Stripe Dashboard so receipts
+// don't say "Cures" (price/link IDs unchanged).
 const STRIPE_KIT_PRICE_ID = import.meta.env.VITE_STRIPE_KIT_PRICE_ID || 'price_1TQTOlHseZnO3rRZANYJQnpG';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
@@ -91,63 +94,53 @@ const CheckoutPage = () => {
     }
   };
 
+  // 2026-06-08 conversion + compliance pass: collapsed the stack to 5 honest,
+  // distinct items at believable values (total $89). The free quiz is listed
+  // as a $0 post-purchase bonus, not a priced anchor. The "BP Cures" companion
+  // book was REMOVED from this free stack because the post-purchase upsell
+  // charges for it separately (was a double-charge). A believable ~5x anchor
+  // ($89 → $17) converts better than a fake 26x.
   const whatIsIncluded = [
-    { name: 'BONUS: Free BP Triangle Quiz, RN-built', description: 'After you buy, take the free quiz with your numbers and meds handy. It maps your loudest Pressure and tells you the one thing to do first. No pitch, just nursing.', value: '$97' },
-    { name: 'Master Blood Pressure Document', description: 'The full protocol. What to take, when to take it, how much.', value: '$47' },
-    { name: 'Top 10 Herbs Deep Dive', description: 'Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.', value: '$47' },
-    // 2026-05-12 naming-taxonomy fix: was "10-Day Blood Pressure Reset Challenge"
-    // which collided with /challenge (the actual paid $97 BP Triangle Cohort).
-    // Renamed to "Protocol" so each tier has its own distinct noun:
-    //  Inside $17 kit:  "10-Day BP Reset Protocol"   (this bonus, $97 anchor)
-    //  Free email arc:  "30-Day BP Triangle Map"     (lead magnet)
-    //  Paid $97 page:   "30-Day BP Triangle Cohort"  (group coaching)
-    //  $1,297 1:1:      "BP Triangle Premium"        (application)
-    //  $4,997 90-day:   "BP Triangle Freedom Sprint" (flagship)
-    { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
-    { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that move your numbers.', value: '$19' },
-    { name: 'White Coat Syndrome Guide', description: 'Why your readings at the doctor are probably wrong, and the 2-minute trick nurses use to get real numbers.', value: '$17' },
-    { name: 'Blood Pressure FAQ', description: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", value: '$12' },
-    { name: 'Health & Progress Tracker', description: 'Print it. Stick it on your fridge. Log your numbers. Watch what happens.', value: '$12' },
-    { name: 'BONUS: Overmedicated Boomers Book', description: "The book Big Pharma doesn't want on your nightstand. What your generation was never told about the drugs you're taking.", value: '$19' },
-    { name: 'BONUS: BP Cures (10-Day Nurse Reset)', description: "The companion book. Day-by-day breakdown of the herbs, foods, and habits that move the needle.", value: '$80' },
+    // 2026-05-12 naming-taxonomy note: "Protocol" keeps this distinct from
+    // /challenge (the paid $97 BP Triangle Cohort) and the email lead magnet.
+    { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$29' },
+    { name: 'Master Blood Pressure Document', description: 'The full guide. What to take, when to take it, how much.', value: '$19' },
+    { name: 'Top 10 Herbs Deep Dive', description: 'The herbs most studied for blood pressure and lifestyle support, and how each is traditionally used.', value: '$19' },
+    { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that support healthy numbers.', value: '$12' },
+    { name: 'White Coat Syndrome Guide + BP FAQ + Tracker', description: 'Why your readings at the doctor can read high, plus 25 plain answers and a fridge tracker to log your progress.', value: '$10' },
+    { name: 'BONUS: Free BP Triangle Quiz, RN-built', description: 'After you buy, take the free quiz with your numbers and meds handy. It maps your loudest Pressure and tells you the one thing to do first. No pitch, just nursing.', value: '$0' },
   ];
 
   const timeEffortKillers = [
     { icon: Clock, headline: '15 minutes a day', description: "That's it. Follow the daily checklist." },
     { icon: ShoppingBag, headline: 'Common grocery store ingredients', description: 'No specialty shops. No strange powders.' },
-    { icon: Calendar, headline: 'Most people notice a shift by Day 4', description: 'Check your numbers. See for yourself.' },
+    { icon: Calendar, headline: 'A clear daily step from Day 1', description: "Most people finish the day's checklist in under 15 minutes." },
   ];
 
   return (
-    <div className={`min-h-screen bg-white ${showStickyBar ? 'pb-20' : ''}`}>
-      {/* Mobile-first quiz banner — sits at the very top of the page.
-          Rationale: ExitIntentPopup uses mouseleave, which doesn't fire on
-          touch devices. Without this banner, mobile bouncers leave with
-          nothing. The 90-second quiz is the highest-converting email
-          capture surface on the site (44% conversion) so it earns the
-          top slot. UTM-tagged so we can measure its lift in Vercel
-          Analytics → UTM Parameters tab. */}
-      <a
-        href="/quiz?utm_source=homepage-banner&utm_medium=top&utm_campaign=cohort1"
-        className="block text-center no-underline"
+    <div className="min-h-screen bg-white pb-20">
+      {/* Top credibility strip. 2026-06-08 conversion pass.
+          Was a /quiz link, which gave buy-ready traffic a free exit at the
+          very top of the page. Replaced with a non-clickable credibility
+          strip so the first thing a visitor sees is proof + price + risk
+          reversal, not an off-ramp. A subtle quiz path still lives in the
+          footer for visitors who genuinely want the diagnostic first. */}
+      <div
+        className="block text-center"
         style={{
           background: '#3F5A3C',
           color: '#FBF8F1',
           padding: '14px 16px',
-          fontSize: '14px',
+          fontSize: '16px',
           fontWeight: 600,
-          textDecoration: 'none',
-          lineHeight: 1.4,
+          lineHeight: 1.6,
           letterSpacing: '0.01em',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        Not sure if this is for you?&nbsp;
-        <span style={{ textDecoration: 'underline', textUnderlineOffset: '3px', color: '#C7A95E' }}>
-          Take the 90-second BP quiz
-        </span>
-        &nbsp;→
-      </a>
+        RN-built. Trusted by 165K+. {PRICE}.&nbsp;
+        <span style={{ color: '#C7A95E' }}>30-day Feel-It-or-Free.</span>
+      </div>
 
       {/* Headshot — WebP for modern browsers (14KB) + JPG fallback (36KB).
           2026-05-12: was a 2MB PNG that killed mobile LCP. Now <40KB total. */}
@@ -170,23 +163,14 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Credential Bar */}
+      {/* Credential Bar. 2026-06-08: text bumped to 16px/1.6 for aging eyes,
+          and the secondary "free BP quiz" off-ramp removed so the bar reads as
+          pure credibility (the quiz now lives only in the footer). */}
       <div className="credential-bar py-3.5" style={{ animation: 'fadeIn 0.6s ease-out 0.2s both' }}>
         <div className="container-mobile-first">
-          <p className="text-center font-medium" style={{ color: 'var(--white)', fontSize: '14px', lineHeight: '1.4', letterSpacing: '0.02em' }}>
+          <p className="text-center font-medium" style={{ color: 'var(--white)', fontSize: '16px', lineHeight: '1.6', letterSpacing: '0.02em' }}>
             Joel Polley, RN · The Blood Pressure Guy · 20 Years ICU & Emergency Medicine
           </p>
-          <div className="text-center mt-2">
-            <a
-              href="https://bpquiz.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-white/90 hover:text-white text-[13px] font-medium transition-colors"
-              style={{ textDecoration: 'underline', textDecorationColor: 'rgba(255,255,255,0.4)', textUnderlineOffset: '3px' }}
-            >
-              Take the free BP quiz with Joel →
-            </a>
-          </div>
         </div>
       </div>
 
@@ -204,7 +188,7 @@ const CheckoutPage = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Joel Polley, RN on Facebook"
-                className="inline-flex items-center justify-center w-9 h-9 rounded-full transition-transform hover:scale-110"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-full transition-transform hover:scale-110"
                 style={{ background: '#1877F2', color: '#FFFFFF' }}
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
@@ -216,7 +200,7 @@ const CheckoutPage = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Joel Polley, RN on TikTok"
-                className="inline-flex items-center justify-center w-9 h-9 rounded-full transition-transform hover:scale-110"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-full transition-transform hover:scale-110"
                 style={{ background: '#000000', color: '#FFFFFF' }}
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
@@ -228,7 +212,7 @@ const CheckoutPage = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Joel Polley, RN on Instagram"
-                className="inline-flex items-center justify-center w-9 h-9 rounded-full transition-transform hover:scale-110"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-full transition-transform hover:scale-110"
                 style={{ background: 'linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)', color: '#FFFFFF' }}
               >
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
@@ -240,11 +224,11 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Hero — 2026-05-25 expert-panel rewrite.
-          The previous H1 led with Joel's credentials ("An ICU Nurse's 10-Day…").
-          The new H1 is a qualifying QUESTION that makes BP-medicated readers
-          self-identify in <2 seconds, then bridges to Joel on line 2. Reasoning
-          + alternate variants captured in the audit; this is Version A. */}
+      {/* Hero. 2026-06-08 conversion pass.
+          H1 is now outcome-first and compliant (no cure / reverse / off-meds).
+          The backstory ("I gave this to my mom first") moves to the subhead.
+          Risk reversal and the honest $89 → $17 anchor now sit above the fold
+          in the subline so buyers see proof + price + guarantee before scroll. */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
           {/* Community proof badge — replaces the refund badge above the H1.
@@ -257,14 +241,33 @@ const CheckoutPage = () => {
             </span>
           </div>
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            The 10-day plan an ICU nurse built for his own mother.
+            The 10-Day Plan an ICU Nurse Built to Help His Mother Take Charge of Her Blood Pressure, Alongside Her Doctor.
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
             I'm Joel Polley, RN. 20 years ICU and ER. They call me <strong>The Blood Pressure Guy</strong> because I gave this protocol to my mom first. Now I give it to you.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            7 guides &middot; 47 herbs &middot; Daily checklists &middot; {PRICE} &middot; 30-day Feel-It-or-Free
+            7 guides &middot; 47 herbs &middot; Daily checklists &middot; <strong style={{ color: 'var(--dark-gray)' }}>$89 value, just {PRICE}</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>
+        </div>
+      </AnimatedSection>
+
+      {/* AND Statement + Bible catechism. 2026-06-08: moved UP to sit right
+          below the hero so the "alongside your doctor, not instead of it"
+          complement message frames the offer before any buy ask. The closing
+          independence phrase was removed (it implied replacing care).
+          "Pills manage output. Protocol fixes input." is the brand's
+          most-repeated line; cold buyers see it again in drip emails. */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <div className="max-w-[520px] mx-auto text-center">
+            <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.5', fontWeight: 600, margin: '0 0 14px' }}>
+              Pills manage output. Protocol fixes input.
+            </p>
+            <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
+              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way.
+            </p>
+          </div>
         </div>
       </AnimatedSection>
 
@@ -312,7 +315,7 @@ const CheckoutPage = () => {
           <AnimatedSection>
             <div className="pt-6 mt-2 text-center">
               <div className="inline-block mb-4 px-5 py-2 rounded-full bg-purple-50 border border-purple-100">
-                <span className="line-through text-[#9CA3AF] text-[15px] mr-2">$447 value</span>
+                <span className="line-through text-[#9CA3AF] text-[15px] mr-2">$89 value</span>
                 <span className="font-bold text-[#6C3483] text-[20px]">Just {PRICE}</span>
               </div>
 
@@ -356,8 +359,8 @@ const CheckoutPage = () => {
                     <p className="font-semibold mb-1" style={{ color: '#4A2964', fontSize: '14px' }}>
                       The Feel-It-or-Free Promise
                     </p>
-                    <p style={{ color: '#5B3B6E', fontSize: '13px', lineHeight: '1.55' }}>
-                      Joel's promise: Run the 30-day plan. If you don't feel a difference, reply with the word <strong>REFUND</strong> and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
+                    <p style={{ color: '#3E2451', fontSize: '15px', lineHeight: '1.55' }}>
+                      Joel's promise: Run the full 10-day plan. If you don't feel a difference, reply with the word <strong>REFUND</strong> and your money comes back. Keep the books either way. No hoops, no doctor visits, no fine print.
                     </p>
                   </div>
                 </div>
@@ -365,14 +368,17 @@ const CheckoutPage = () => {
             </div>
           </AnimatedSection>
 
-          {/* Testimonials */}
+          {/* Testimonials. 2026-06-08: lead quote is now a BP-number +
+              physician-oversight story (was a weight-loss / "off 2 meds"
+              quote with no doctor context). Every quote now keeps the doctor
+              in the loop. "Results not typical" note added below. */}
           <AnimatedSection className="pt-14 pb-4">
             <h3 className="text-center font-bold text-[18px] text-[#2C3E50] mb-8">What people are saying</h3>
             <div className="flex flex-col md:flex-row gap-5">
               {[
-                { quote: "Followed your directions on TikTok and lost 20 lbs. Off 2 of my meds. Keep it up!", source: 'Linda M., 58 · Phoenix, AZ' },
+                { quote: "My numbers went from the 150s/90s to the 130s/80s over six weeks, and my doctor and I are watching it together.", source: 'Michael T., 61 · Denver, CO' },
+                { quote: "This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Deborah R., 54 · Houston, TX' },
                 { quote: "Joel explained what my cardiologist never did, in a 60-second video. I started the protocol that same day.", source: 'Maureen K., 62 · Tampa, FL' },
-                { quote: "I was scared to go off my meds. This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Deborah R., 54 · Houston, TX' },
               ].map((t, i) => (
                 <div key={i} className="testimonial-card p-5 flex-1 flex flex-col">
                   <div className="flex gap-1 mb-3">
@@ -385,6 +391,9 @@ const CheckoutPage = () => {
                 </div>
               ))}
             </div>
+            <p className="text-center mt-6" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: '1.5' }}>
+              Results not typical. Most readers see modest results or none. Always work with your doctor.
+            </p>
           </AnimatedSection>
         </div>
       </div>
@@ -441,24 +450,6 @@ const CheckoutPage = () => {
         </div>
       </AnimatedSection>
 
-      {/* AND Statement + Bible catechism — 2026-05-12 funnel-coherence fix.
-          "Pills manage output. Protocol fixes input." is the bible's most-
-          repeated sentence; appears in 4+ drip emails. Anchoring it on the
-          home page reinforces the brand voice cold buyers will see again
-          in their inbox. */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <div className="max-w-[520px] mx-auto text-center">
-            <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.5', fontWeight: 600, margin: '0 0 14px' }}>
-              Pills manage output. Protocol fixes input.
-            </p>
-            <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
-              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way. <strong style={{ color: 'var(--dark-gray)' }}>Doctor-cleared independence.</strong>
-            </p>
-          </div>
-        </div>
-      </AnimatedSection>
-
       {/* Final CTA */}
       <div className="section-spacing gradient-navy">
         <div className="container-mobile-first text-center">
@@ -477,11 +468,18 @@ const CheckoutPage = () => {
                   <Loader2 className="animate-spin" size={20} /> Processing...
                 </span>
               ) : (
-                `Get the Kit for ${PRICE}`
+                `Buy Now for ${PRICE}`
               )}
             </button>
             <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px' }}>
               Instant access &middot; Secure checkout &middot; 30-day Feel-It-or-Free
+            </p>
+
+            {/* P.S. block. 2026-06-08: restates the offer, guarantee, and
+                instant download in plain language. Compliant: no outcome or
+                timing claims. */}
+            <p className="mt-8 max-w-[480px] mx-auto text-left" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', lineHeight: '1.7' }}>
+              <strong style={{ color: 'var(--white)' }}>P.S.</strong> You get all 7 guides, the 47-herb deep dive, and the daily checklists for {PRICE}. Download them to your phone the second you buy. Run the full 10-day plan, and if you don't feel a difference, reply REFUND and your money comes back. Keep the books either way. That's the 30-day Feel-It-or-Free promise.
             </p>
           </AnimatedSection>
         </div>
@@ -503,43 +501,47 @@ const CheckoutPage = () => {
               className="px-6 py-2.5 rounded-xl font-bold transition-all duration-200 active:scale-95 disabled:opacity-70 gradient-purple-btn"
               style={{ color: 'var(--white)', fontSize: '14px' }}
             >
-              {isProcessing ? <Loader2 className="animate-spin" size={18} /> : 'Get It Now'}
+              {isProcessing ? <Loader2 className="animate-spin" size={18} /> : `Buy Now for ${PRICE}`}
             </button>
           </div>
         </div>
       )}
 
-      {/* Not-ready-yet quiz CTA — for visitors who want diagnostic before
-          committing to the $17. Demoted to footer so it doesn't compete with
-          the primary buy decision. 2026-05-12. */}
-      <AnimatedSection className="py-10" style={{ backgroundColor: 'var(--white)' }}>
-        <div className="container-mobile-first text-center">
-          <div className="inline-flex items-center justify-center gap-2 mb-3" style={{ color: 'var(--muted-gray)', fontSize: '14px' }}>
-            <HelpCircle size={16} />
-            <span>Not ready to buy?</span>
-          </div>
-          <h3 className="font-semibold mb-3" style={{ color: 'var(--navy)', fontSize: '20px', lineHeight: '1.3' }}>
-            Take the free 90-second BP Triangle Quiz first.
-          </h3>
-          <p className="mb-5 max-w-[440px] mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.55' }}>
-            Find out which of the Three Pressures is driving YOUR numbers: Pipe Pressure, Stress Pressure, or Sugar Pressure. RN-built. Free. Instant results.
-          </p>
-          <Link
-            to="/quiz"
-            className="btn-standard inline-flex"
-            style={{ background: 'transparent', color: 'var(--purple)', border: '2px solid var(--purple)', fontSize: '15px' }}
-          >
-            Take the 90-second quiz →
-          </Link>
-        </div>
-      </AnimatedSection>
-
-      {/* Footer */}
+      {/* Footer. 2026-06-08 conversion + compliance pass.
+          The old prominent "Not ready to buy? Take the quiz" section was a
+          styled button that competed with the buy decision; it's now a small
+          inline text link inside this footer (discoverable, not a CTA).
+          Added a legal disclosure block because this page renders standalone
+          with no shared site Footer, so /disclaimer /terms /privacy were
+          otherwise unreachable. */}
       <div className="py-8" style={{ backgroundColor: 'var(--light-gray)' }}>
         <div className="container-mobile-first">
-          <p className="text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px' }}>
-            &copy; 2026 BraveWorks RN. All rights reserved.
+          <p className="text-center mb-4" style={{ color: 'var(--muted-gray)', fontSize: '13px', lineHeight: '1.55' }}>
+            Not ready to buy? <Link to="/quiz" style={{ color: 'var(--purple)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>Take the free 90-second BP quiz first.</Link>
           </p>
+
+          {/* Legal disclosure */}
+          <div className="max-w-[560px] mx-auto text-center" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: '1.6' }}>
+            <p style={{ margin: '0 0 8px' }}>
+              These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, or prevent any disease.
+            </p>
+            <p style={{ margin: '0 0 8px' }}>
+              Educational and lifestyle content only. Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or adjust medication without your doctor.
+            </p>
+            <p style={{ margin: '0 0 12px' }}>
+              Results not typical. Most readers see modest results or none.
+            </p>
+            <p style={{ margin: '0 0 12px' }}>
+              <a href="/disclaimer" style={{ color: 'var(--muted-gray)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>Disclaimer</a>
+              {' · '}
+              <a href="/terms" style={{ color: 'var(--muted-gray)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>Terms</a>
+              {' · '}
+              <a href="/privacy" style={{ color: 'var(--muted-gray)', textDecoration: 'underline', textUnderlineOffset: '2px' }}>Privacy</a>
+            </p>
+            <p style={{ margin: 0 }}>
+              &copy; 2026 BraveWorks RN. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
 

@@ -27,7 +27,7 @@ const groups = [
       { name: 'BP Reset Day 1 + Full Challenge', desc: 'Day-by-day BP protocol with checklists. Start here.', file: 'bp-reset-day1-and-beyond.pdf' },
       { name: 'BP Reset Kit (8-PDF zip)', desc: 'The full clinical system: hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates.', file: 'bp-reset-kit.zip' },
       { name: 'BP Reset Book (full deep-dive guide)', desc: 'The complete BP Reset book. Every protocol explained in depth.', file: 'bp-reset-book.pdf' },
-      { name: 'Blood Pressure Cures: 10-Day Nurse\'s Reset', desc: 'Master document + top 10 herbs deep-dive (each matched to the drug it mimics) + White Coat guide + FAQ.', file: 'bp-cures-10-day-reset.pdf' },
+      { name: 'The 10-Day Nurse\'s Reset Companion', desc: 'Master document + top 10 herbs deep-dive (how each is traditionally used for blood pressure support) + White Coat guide + FAQ.', file: 'bp-cures-10-day-reset.pdf' },
     ],
   },
   {
