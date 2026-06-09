@@ -1,0 +1,27 @@
+# Normalize line endings in the repo to LF, prevent CRLF/LF churn.
+# This is the fix for the "every file shows modified" diff noise.
+* text=auto
+
+# Treat these as binary — never diff or line-ending-normalize them.
+# (The manuscript PDF was being diffed as text, which can corrupt it.)
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary
+
+# Keep shell/JS/JSON/CSS as LF explicitly
+*.mjs text eol=lf
+*.js  text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf

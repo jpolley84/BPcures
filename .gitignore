@@ -27,3 +27,16 @@ dist-ssr
 *.sw?
 .env*.local
 .env.production
+
+# --- Security / hygiene (added 2026-06-07) ---
+# One-off operational scripts contain customer PII (names/emails).
+# Ignore the whole dir so new scripts can never be committed by accident.
+# Already-tracked scripts stay tracked; this only blocks NEW untracked files.
+scripts/
+
+# Scratch / temp work
+tmp/
+
+# Audit artifacts (do not commit into the repo)
+bpquiz_full_sweep_*.pdf
+build_report.py

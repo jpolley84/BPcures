@@ -29,8 +29,13 @@
       "destination": "/library",
       "permanent": false
     },
+    {
+      "source": "/podcast",
+      "destination": "/quiz?utm_source=podcast&utm_medium=spoken",
+      "permanent": false
+    },
     { "source": "/challenge", "destination": "/", "permanent": false },
-    { "source": "/coaching", "destination": "/", "permanent": false }
+    { "source": "/seminar", "destination": "/quiz?utm_source=seminar-legacy", "permanent": false }
   ],
   "crons": [
     {
@@ -40,14 +45,6 @@
     {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
-    },
-    {
-      "path": "/api/cohort-saturday-cron",
-      "schedule": "0 12 16 5 *"
-    },
-    {
-      "path": "/api/cohort-sunday-cron",
-      "schedule": "0 13 17 5 *"
     },
     {
       "path": "/api/reply-agent",

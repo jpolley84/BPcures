@@ -53,8 +53,18 @@ export default function SuccessPage() {
           You took your health into your own hands. That matters more than any single herb or protocol.
         </p>
 
+        {/* 2026-06-09 honesty fix: this promised "Skool community access" to
+            every buyer, but the $17 welcome email grants none — Skool is the
+            next rung ($27/mo, 7-day free trial), pitched below as an offer. */}
+        <p style={{ color: 'var(--ink-soft)', fontSize: '0.92rem', margin: '0 auto 1rem', maxWidth: '48ch' }}>
+          Your protocol kit and 30-day email walkthrough are on their way to your inbox. Check your email. Everything you need is inside.
+        </p>
+
         <p style={{ color: 'var(--ink-soft)', fontSize: '0.92rem', margin: '0 auto 1.5rem', maxWidth: '48ch' }}>
-          Your protocol kit, 30-day challenge enrollment, and Skool community access are all on their way to your inbox. Check your email. Everything you need is inside.
+          Want Joel live every week while you run it? The BraveWorks Skool community is free for your first 7 days —{' '}
+          <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--clay)', fontWeight: 600 }}>
+            join the Wednesday 7 PM ET group coaching call →
+          </a>
         </p>
 
         {/* 2026-05-20: inline downloads. Customers report not getting confirmation emails.

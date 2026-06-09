@@ -32,7 +32,12 @@ export default function CoachingWelcomePage() {
             You're in. Now let's get a time on the calendar.
           </h1>
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Your $297 BP Triangle Diagnostic Session is paid. The next step is booking your 60-minute Zoom with me using the calendar below.
+            Your $297 session is paid. Booked a <strong>Diagnostic Session</strong>? Grab your 60-minute Zoom time on the calendar below.
+          </p>
+          {/* 2026-06-09: the $297 30-Day GROUP payment link also redirects
+              here — its onboarding runs by email, not Calendly. */}
+          <p className="text-sm mt-3" style={{ color: 'var(--muted)', lineHeight: 1.55 }}>
+            Joined the <strong>30-Day Group Coaching</strong> instead? Skip the calendar — your welcome email with intake instructions is already on its way. Reply to it with your numbers and Joel takes it from there.
           </p>
         </div>
       </section>

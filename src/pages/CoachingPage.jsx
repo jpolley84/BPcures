@@ -1,10 +1,18 @@
-// /coaching — 1:1 with Joel Polley, RN.
+// /coaching — work with Joel Polley, RN.
 //
-// 2026-06-04 REWRITE. Replaces the paused free-discovery-call page (which itself
-// replaced the retired $297 BP Triangle Diagnostic). This page lists the four
-// 1:1 tiers Joel will actually take: Triangle Session ($1,500 one-time),
-// Inner Circle ($1,500/mo), Brave Household ($5,000/mo), Pillar Year
-// ($50,000/yr per family).
+// 2026-06-04 REWRITE; 2026-06-09 LADDER REALIGN. Joel's canon ladder (stated
+// 2026-06-09): quiz → $17 → Skool $27/mo → $47 → $297 personalized 30-day
+// GROUP → $1,997 personalized 90-day GROUP. This page now leads with those
+// two group programs (direct Stripe checkout, minimal friction) and keeps the
+// four 1:1 tiers below as the premium "available, not selling" track:
+// Triangle Session ($1,500 one-time), Inner Circle ($1,500/mo), Brave
+// Household ($5,000/mo), Pillar Year ($50,000/yr per family).
+//
+// Group Stripe links (both LIVE, both webhook-mapped as of 2026-06-09):
+//   $297  → buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z (metadata funnel=
+//           group-coaching-30day → TIER_CONFIG['group-30'] welcome)
+//   $1,997 → buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M (199700 → 'coaching',
+//           "You're in the Sprint" welcome)
 //
 // Posture: AVAILABLE not selling. Douglas D. Grant model — brand-as-close, no
 // money-back guarantees, no application forms, no Calendly embeds, no urgency
@@ -101,10 +109,10 @@ export default function CoachingPage() {
             className="mb-6 text-xs font-bold uppercase"
             style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
           >
-            1:1 WITH JOEL POLLEY, RN
+            COACHING WITH JOEL POLLEY, RN
           </div>
           <h1 className="font-serif leading-tight mb-6" style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)', color: 'var(--ink)', fontStyle: 'italic' }}>
-            Four ways to work with me. One inbox to start.
+            Two group programs. One method. Your numbers.
           </h1>
           <p className="text-lg mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: '60ch' }}>
             Twenty years of ICU and emergency-room nursing, then naturopathic practice for the patients the pharmaceutical model wasn't reaching. I built the BP Triangle Method on the floor, one elevated reading at a time.
@@ -169,30 +177,128 @@ export default function CoachingPage() {
             The BP Triangle Method, applied through the Eight Laws of Health.
           </h2>
           <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-            Every elevated reading is being driven by at least one of three corners: vascular, cortisol, or blood sugar. Find the loudest corner and move the right input, the numbers move with it. That is the method, in one sentence. The Eight Laws (nutrition, exercise, water, sunlight, temperance, air, rest, trust) are the inputs we work with.
+            Every elevated reading is being driven by at least one of three pressures: pipe, stress, or sugar. Find the loudest one and move the right input, the numbers move with it. That is the method, in one sentence. The Eight Laws (nutrition, exercise, water, sunlight, temperance, air, rest, trust) are the inputs we work with.
           </p>
           <p className="text-base mb-7" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
             This isn't theory. It's the framework underneath every BraveWorks article, every kit, and every conversation in the Skool community. Over 1,100 people are inside that community. Over 250,000 follow the work across TikTok, Facebook, and Instagram. The protocol is public. The 1:1 is where we apply it to your body.
           </p>
           <div className="flex flex-wrap gap-2 text-xs" style={{ color: 'var(--muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.08em' }}>
-            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>VASCULAR</span>
-            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>CORTISOL</span>
-            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>BLOOD SUGAR</span>
+            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>PIPE PRESSURE</span>
+            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>STRESS PRESSURE</span>
+            <span style={{ padding: '6px 10px', background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 6 }}>SUGAR PRESSURE</span>
           </div>
         </div>
       </section>
 
-      {/* ─── THE FOUR TIERS ─────────────────────────────────────── */}
+      {/* ─── THE GROUP PROGRAMS (canon ladder rungs, 2026-06-09) ──── */}
       <section className="py-16 sm:py-20" style={{ background: 'var(--paper)' }}>
         <div className="max-w-4xl mx-auto px-5">
           <div
             className="mb-3 text-xs font-bold uppercase text-center"
             style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
           >
-            THE FOUR WAYS
+            THE GROUP PROGRAMS
+          </div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+            Personalized protocol. Group momentum.
+          </h2>
+          <p className="text-base mb-12 text-center" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch', margin: '0 auto 3rem' }}>
+            Joel builds YOUR protocol from YOUR numbers, meds, and labs — then you run it with live weekly coaching and people on the same path. Most people start here.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 mb-6">
+            {[
+              {
+                name: '30-Day Personalized Group Coaching',
+                price: '$297',
+                cadence: '30 days · starts when you do',
+                fit: 'For the person ready to run the full protocol with Joel\'s eyes on their numbers, without 1:1 pricing.',
+                includes: [
+                  'Joel personally reads your intake: home BP log, every med and supplement, your labs if you have them.',
+                  'Your personalized 30-day protocol, built for your body, not a template.',
+                  'Live weekly group coaching with Joel. Bring your numbers, get answers.',
+                  'Daily accountability inside the group for the full 30 days.',
+                ],
+                href: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
+                cta: 'Join the 30-Day Group — $297',
+              },
+              {
+                name: '90-Day Personalized Group Coaching',
+                price: '$1,997',
+                cadence: '90 days · the full arc',
+                fit: 'For the person whose numbers took years to climb and who wants Joel adjusting the protocol the whole way down.',
+                includes: [
+                  'Everything in the 30-day group, run for a full 90 days.',
+                  'Kickoff onboarding with Joel: your file read, your Week-1 protocol drafted before you start.',
+                  'Protocol adjustments as your numbers move, month over month.',
+                  'A doctor-conversation script for every medication change you earn.',
+                ],
+                href: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
+                cta: 'Join the 90-Day Group — $1,997',
+              },
+            ].map((g) => (
+              <article
+                key={g.name}
+                style={{
+                  background: 'var(--paper-light)',
+                  border: '2px solid var(--sage-deep)',
+                  borderRadius: 14,
+                  padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <header className="mb-4">
+                  <h3 className="font-serif" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.55rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: '0.5rem' }}>
+                    {g.name}
+                  </h3>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: '1.3rem', fontWeight: 700, color: 'var(--ink)' }}>
+                    {g.price}
+                  </div>
+                  <div className="mt-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+                    {g.cadence}
+                  </div>
+                </header>
+                <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
+                  {g.fit}
+                </p>
+                <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
+                  {g.includes.map((item) => (
+                    <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
+                      <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--sage-deep)' }} />
+                      <span className="text-[0.95rem]" style={{ lineHeight: 1.6 }}>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={g.href}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base transition-all hover:scale-[1.02]"
+                  style={{ background: 'var(--clay)', color: 'var(--cream, #FBF8F1)', textDecoration: 'none' }}
+                >
+                  {g.cta}
+                  <ArrowRight size={16} />
+                </a>
+              </article>
+            ))}
+          </div>
+          <p className="text-sm text-center" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+            Not ready for a program? Start with the <Link to="/quiz" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>free 90-second quiz</Link> or the{' '}
+            <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$27/mo Skool community (7 days free)</a>.
+          </p>
+        </div>
+      </section>
+
+      {/* ─── THE FOUR 1:1 TIERS ─────────────────────────────────── */}
+      <section className="py-16 sm:py-20" style={{ background: 'var(--paper-light)', borderTop: '1px solid var(--border)' }}>
+        <div className="max-w-4xl mx-auto px-5">
+          <div
+            className="mb-3 text-xs font-bold uppercase text-center"
+            style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
+          >
+            BEYOND THE GROUPS — 1:1 WITH JOEL
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-12 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
-            Pick the one that fits the season you're in.
+            Four ways to have me to yourself. One inbox to start.
           </h2>
 
           <div className="grid grid-cols-1 gap-6 sm:gap-7">
