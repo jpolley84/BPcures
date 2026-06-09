@@ -174,11 +174,14 @@ function App() {
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
           <Route path="/apply" element={<Navigate to="/1on1" replace />} />
 
-          {/* 2026-06-04 PODCAST-PREP: 1:1 tiers all paused. Page was still
-              marketing four tiers up to $50K/yr which contradicts the paused
-              status. Redirected to home until a clean waitlist page ships
-              post-podcast. CoachingPage.jsx preserved for fast revert. */}
-          <Route path="/coaching" element={<Navigate to="/" replace />} />
+          {/* 2026-06-08 RELAUNCHED: /coaching is live again, listing Joel's
+              four 1:1 tiers (Triangle Session $1,500 one-time, Inner Circle
+              $1,500/mo, Brave Household $5,000/mo, Pillar Year $50,000/yr).
+              Entry point is a quiet "Ready for 1:1 coaching with Joel?" block
+              near the bottom of the homepage. Close mechanism is mailto
+              concierge@bpquiz.com — that alias MUST forward to Joel or the
+              high-ticket inquiries bounce. */}
+          <Route path="/coaching" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
               https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}

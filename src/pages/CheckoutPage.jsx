@@ -510,6 +510,34 @@ const CheckoutPage = () => {
         </div>
       )}
 
+      {/* Quiet 1:1 entry point. Placed AFTER the $17 close so it never competes
+          with the primary buy. Premium "available, not selling" posture — a
+          single understated line + link to /coaching (the four 1:1 tiers).
+          2026-06-08 relaunch. */}
+      <div className="py-12" style={{ backgroundColor: 'var(--white)', borderTop: '1px solid var(--light-gray)' }}>
+        <div className="container-mobile-first text-center">
+          <AnimatedSection>
+            <p className="mb-2" style={{ color: 'var(--muted-gray)', fontSize: '12px', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700 }}>
+              Work with Joel
+            </p>
+            <h3 className="mb-3" style={{ color: 'var(--navy)', fontSize: '23px', fontWeight: 700, lineHeight: 1.3 }}>
+              Ready for 1:1 coaching with Joel?
+            </h3>
+            <p className="mb-6 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.65, maxWidth: '440px' }}>
+              For the person who wants a nurse's eyes on their own numbers, with a protocol built just for them. A few private tiers, by inquiry only.
+            </p>
+            <Link
+              to="/coaching"
+              className="inline-flex items-center gap-2 font-semibold transition-all duration-200 active:scale-95"
+              style={{ border: '1.5px solid var(--navy)', color: 'var(--navy)', borderRadius: '12px', padding: '13px 26px', fontSize: '15px' }}
+            >
+              See the private 1:1 options
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </AnimatedSection>
+        </div>
+      </div>
+
       {/* Footer. 2026-06-08 conversion + compliance pass.
           The old prominent "Not ready to buy? Take the quiz" section was a
           styled button that competed with the buy decision; it's now a small
