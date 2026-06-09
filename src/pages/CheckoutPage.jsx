@@ -510,30 +510,33 @@ const CheckoutPage = () => {
         </div>
       )}
 
-      {/* Quiet 1:1 entry point. Placed AFTER the $17 close so it never competes
-          with the primary buy. Premium "available, not selling" posture — a
-          single understated line + link to /coaching (the four 1:1 tiers).
-          2026-06-08 relaunch. */}
+      {/* Cross-sell box: hormones (RestoreHER). For homepage visitors whose
+          real struggle is hormonal imbalance, not blood pressure. Links to the
+          sister site. Placed under the kit/close. 2026-06-08. */}
       <div className="py-12" style={{ backgroundColor: 'var(--white)', borderTop: '1px solid var(--light-gray)' }}>
-        <div className="container-mobile-first text-center">
+        <div className="container-mobile-first">
           <AnimatedSection>
-            <p className="mb-2" style={{ color: 'var(--muted-gray)', fontSize: '12px', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700 }}>
-              Work with Joel
-            </p>
-            <h3 className="mb-3" style={{ color: 'var(--navy)', fontSize: '23px', fontWeight: 700, lineHeight: 1.3 }}>
-              Ready for 1:1 coaching with Joel?
-            </h3>
-            <p className="mb-6 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.65, maxWidth: '440px' }}>
-              For the person who wants a nurse's eyes on their own numbers, with a protocol built just for them. A few private tiers, by inquiry only.
-            </p>
-            <Link
-              to="/coaching"
-              className="inline-flex items-center gap-2 font-semibold transition-all duration-200 active:scale-95"
-              style={{ border: '1.5px solid var(--navy)', color: 'var(--navy)', borderRadius: '12px', padding: '13px 26px', fontSize: '15px' }}
-            >
-              See the private 1:1 options
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
+            <div className="mx-auto text-center" style={{ maxWidth: '540px', background: 'var(--light-gray)', borderRadius: '16px', padding: '30px 24px' }}>
+              <p className="mb-2" style={{ color: 'var(--muted-gray)', fontSize: '12px', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700 }}>
+                For women
+              </p>
+              <h3 className="mb-3" style={{ color: 'var(--navy)', fontSize: '23px', fontWeight: 700, lineHeight: 1.3 }}>
+                Is it your hormones, not just your pressure?
+              </h3>
+              <p className="mb-6 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.65, maxWidth: '440px' }}>
+                Hot flashes, weight that will not move, mood swings, the bone-deep tired. If hormonal imbalance is the real story, our sister program <strong>RestoreHER Hormones</strong> was built for you, with a live, in-person event featuring Barbara O'Neill.
+              </p>
+              <a
+                href="https://restoreherhormones.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 font-semibold transition-all duration-200 active:scale-95"
+                style={{ border: '1.5px solid var(--navy)', color: 'var(--navy)', borderRadius: '12px', padding: '13px 26px', fontSize: '15px' }}
+              >
+                Visit RestoreHER Hormones
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
           </AnimatedSection>
         </div>
       </div>

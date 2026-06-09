@@ -17,7 +17,7 @@
 
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Download, FileText, ArrowLeft, BookOpen } from 'lucide-react';
+import { Download, FileText, ArrowLeft, BookOpen, Users, Stethoscope, ArrowRight } from 'lucide-react';
 
 const groups = [
   {
@@ -136,6 +136,83 @@ export default function DownloadsPage() {
             </div>
           </section>
         ))}
+
+        {/* Coaching CTAs. Buyers are the warmest audience for both the $27/mo
+            group (Skool) and Joel's 1:1 tiers (/coaching). Kept off the cold
+            homepage on purpose; this is the right place for them. 2026-06-08. */}
+        <section style={{ marginTop: '1rem', marginBottom: '3rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+            <BookOpen size={16} style={{ color: 'var(--clay)' }} />
+            <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', fontWeight: 500, margin: 0, color: 'var(--ink)' }}>
+              Ready for more support?
+            </h2>
+          </div>
+          <p style={{ color: 'var(--muted)', fontSize: '0.92rem', marginTop: 0, marginBottom: '1rem' }}>
+            The PDFs get you started. These put a nurse in your corner.
+          </p>
+          <div style={{ display: 'grid', gap: '0.65rem' }}>
+            {/* Group coaching -> Skool */}
+            <a
+              href="https://www.skool.com/braveworksrn"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1.1rem', alignItems: 'center',
+                padding: '1.1rem 1.4rem', background: 'var(--cream, #FFFFFF)',
+                border: '1px solid var(--line)', borderRadius: 14, textDecoration: 'none',
+              }}
+            >
+              <div style={{ width: 40, height: 40, display: 'grid', placeItems: 'center', borderRadius: 10, background: 'var(--paper-warm)', border: '1px solid var(--line)' }}>
+                <Users size={16} style={{ color: 'var(--sage-deep)' }} />
+              </div>
+              <div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.02rem', fontWeight: 500, lineHeight: 1.25, color: 'var(--ink)' }}>
+                  Ready for group coaching?
+                </div>
+                <div style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem', lineHeight: 1.45 }}>
+                  Join the BraveWorks RN community: weekly live coaching with Joel, the full library, and a group beside you. $27/mo, first 7 days free.
+                </div>
+              </div>
+              <span className="btn btn-ink btn-sm" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                padding: '0.55rem 0.9rem', borderRadius: 8,
+                background: 'var(--ink, #2C3E50)', color: 'var(--cream, #FBF8F1)',
+                fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap',
+              }}>
+                Join <ArrowRight size={14} />
+              </span>
+            </a>
+            {/* 1:1 coaching -> /coaching */}
+            <Link
+              to="/coaching"
+              style={{
+                display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: '1.1rem', alignItems: 'center',
+                padding: '1.1rem 1.4rem', background: 'var(--cream, #FFFFFF)',
+                border: '1px solid var(--line)', borderRadius: 14, textDecoration: 'none',
+              }}
+            >
+              <div style={{ width: 40, height: 40, display: 'grid', placeItems: 'center', borderRadius: 10, background: 'var(--paper-warm)', border: '1px solid var(--line)' }}>
+                <Stethoscope size={16} style={{ color: 'var(--sage-deep)' }} />
+              </div>
+              <div>
+                <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.02rem', fontWeight: 500, lineHeight: 1.25, color: 'var(--ink)' }}>
+                  Want 1:1 coaching with Joel?
+                </div>
+                <div style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem', lineHeight: 1.45 }}>
+                  A protocol built just for you, with a nurse's eyes on your own numbers. A few private tiers, by inquiry.
+                </div>
+              </div>
+              <span className="btn btn-ink btn-sm" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                padding: '0.55rem 0.9rem', borderRadius: 8,
+                background: 'var(--ink, #2C3E50)', color: 'var(--cream, #FBF8F1)',
+                fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap',
+              }}>
+                See options <ArrowRight size={14} />
+              </span>
+            </Link>
+          </div>
+        </section>
 
         <div style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 14, padding: '1.5rem 1.75rem', marginTop: '3rem' }}>
           <p style={{ margin: 0, color: 'var(--ink-soft)', fontSize: '0.95rem', lineHeight: 1.6 }}>

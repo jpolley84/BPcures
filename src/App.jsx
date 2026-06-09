@@ -177,10 +177,10 @@ function App() {
           {/* 2026-06-08 RELAUNCHED: /coaching is live again, listing Joel's
               four 1:1 tiers (Triangle Session $1,500 one-time, Inner Circle
               $1,500/mo, Brave Household $5,000/mo, Pillar Year $50,000/yr).
-              Entry point is a quiet "Ready for 1:1 coaching with Joel?" block
-              near the bottom of the homepage. Close mechanism is mailto
-              concierge@bpquiz.com — that alias MUST forward to Joel or the
-              high-ticket inquiries bounce. */}
+              Entry points live on the post-purchase /downloads page (a group
+              + a 1:1 CTA), intentionally kept OFF the cold homepage. Close
+              mechanism is mailto concierge@bpquiz.com; that alias MUST forward
+              to Joel or the high-ticket inquiries bounce. */}
           <Route path="/coaching" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
