@@ -13,16 +13,21 @@ export default function Footer() {
       return;
     }
     setStatus('sending');
+    // 2026-06-09: check the response — this form showed "You're on the
+    // list" unconditionally while /api/subscribe didn't even exist, so
+    // every footer subscribe was silently lost with fake success.
     try {
-      await fetch('/api/subscribe', {
+      const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
-      }).catch(() => null);
-    } finally {
+      });
+      if (!res.ok) throw new Error(`subscribe ${res.status}`);
       setStatus('done');
       setEmail('');
       setTimeout(() => setStatus('idle'), 4000);
+    } catch {
+      setStatus('error');
     }
   }
 
@@ -59,7 +64,7 @@ export default function Footer() {
             )}
             {status === 'error' && (
               <p style={{ color: 'var(--clay-soft)', fontSize: '0.82rem', marginTop: '0.75rem' }}>
-                Please enter a valid email.
+                That didn't go through — check your email and try again.
               </p>
             )}
           </div>

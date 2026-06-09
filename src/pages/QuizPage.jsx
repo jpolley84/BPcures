@@ -696,19 +696,40 @@ function QuizModule({ products }) {
     }
     setLoading(true);
     setError('');
-    try {
-      await fetch('/api/lead-magnet', {
+    // 2026-06-09: forward traffic attribution. /tt /ig /fb redirects and the
+    // exit-intent popup all stamp utm params on the URL, but the capture
+    // POST dropped them — every lead landed as bare 'quiz-lead-magnet' and
+    // podcast-vs-TikTok lead quality was unmeasurable. Server already
+    // accepts a tags array (lead-magnet.js extraTags).
+    const utm = new URLSearchParams(window.location.search);
+    const tags = ['utm_source', 'utm_medium', 'utm_campaign']
+      .map((k) => (utm.get(k) ? `${k.replace('utm_', '')}-${utm.get(k)}` : null))
+      .filter(Boolean);
+    const payload = JSON.stringify({
+      email: email.trim(),
+      name: name.trim(),
+      category: concern,   // internal products.json key (back-compat)
+      pressure,            // 2026-05-16: new Three-Pressures id (stress/sugar/pipes/all)
+      riskScore,
+      answers,
+      tags,
+    });
+    // 2026-06-09: check res.ok + one retry. This used to fire-and-forget —
+    // a failed capture showed results normally and the lead was simply gone.
+    // Results still render either way (never block the visitor), but we try
+    // twice before giving up.
+    const post = () =>
+      fetch('/api/lead-magnet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim(),
-          name: name.trim(),
-          category: concern,   // internal products.json key (back-compat)
-          pressure,            // 2026-05-16: new Three-Pressures id (stress/sugar/pipes/all)
-          riskScore,
-          answers,
-        }),
-      }).catch(() => null);
+        body: payload,
+      });
+    try {
+      let res = await post().catch(() => null);
+      if (!res || !res.ok) {
+        res = await post().catch(() => null);
+        if (!res || !res.ok) console.error('lead-magnet capture failed after retry');
+      }
     } finally {
       setLoading(false);
       setPhase('results');
@@ -1192,7 +1213,10 @@ function QuizModule({ products }) {
                     'Weekly live coaching call (Wed 7 PM ET)',
                     'Every Joel Polley ebook: Be There in 30, BP Reset Companion, Cook For Life, Overmedicated Boomers + more',
                     'Every BP protocol + printable Triangle infographic',
-                    'Daily community feed: over 1,200 members on the path',
+                    // 2026-06-09 honesty fix: "1,200 members" is the FREE
+                    // community's count, not this paid group's — a buyer
+                    // joining would see single digits and feel deceived.
+                    'Daily feed: post your numbers, get answers from Joel directly',
                     'Feel-It-or-Free: 30-day refund + keep every ebook if you don\'t feel a difference',
                   ].map((line, i) => (
                     <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.84rem', lineHeight: 1.5, color: 'var(--ink)' }}>

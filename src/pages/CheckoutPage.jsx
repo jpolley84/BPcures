@@ -8,6 +8,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 // Triggers on mouseleave OR 14s dwell, once per visitor (localStorage
 // quizExitPopupShown). Suppressed after purchase. See ExitIntentPopup.jsx.
 import ExitIntentPopup from '../components/ExitIntentPopup';
+import HomepageEmailCapture from '../components/HomepageEmailCapture';
 
 const PRICE = '$17';
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
@@ -540,6 +541,12 @@ const CheckoutPage = () => {
           </AnimatedSection>
         </div>
       </div>
+
+      {/* Inline email capture — 2026-06-09. Podcast/warm traffic that doesn't
+          buy in one pageview had no on-page capture path (only the one-shot
+          exit popup). Sits below the offer + cross-sell so it never competes
+          with the buy decision. Instant Day-1 email keeps the promise. */}
+      <HomepageEmailCapture />
 
       {/* Footer. 2026-06-08 conversion + compliance pass.
           The old prominent "Not ready to buy? Take the quiz" section was a
