@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ArrowRight, Check, Activity } from 'lucide-react';
+import { X, ArrowRight, Check, Compass } from 'lucide-react';
 
-// Mini offer stack for the Skool community (The 30-Day Pressure Reset).
-// Button opens the community in a NEW tab/window. Fresh localStorage key so
-// returning visitors who dismissed the old quiz popup still see this one once.
-const SKOOL_URL = 'https://www.skool.com/braveworksrn';
-const POPUP_KEY = 'skoolOfferPopupShown';
+// Exit-intent / dwell popup. The homepage sells the $17 kit hard; this is the
+// soft landing for a visitor about to bounce. Instead of asking for the sale
+// again, it offers the FREE 90-second quiz (a lower-commitment entry that still
+// captures the email and routes back to the $17 kit on its results page).
+// Same-tab navigation to /quiz. Fresh localStorage key so visitors who saw the
+// prior Skool popup still get this one once.
+const QUIZ_URL = '/quiz?utm_source=exit_intent&utm_medium=popup&utm_campaign=quiz';
+const POPUP_KEY = 'quizExitPopupShown';
 
 const STACK = [
-  'Weekly live group coaching with Joel, RN',
-  'All 3 ten-day Resets: blood pressure, stress, blood sugar',
-  'The full BraveWorks ebook library, always growing',
-  'The Win Wall, a group working on it right beside you',
+  'Which Pressure is loudest for you: Stress, Sugar, or Pipe',
+  'Your personalized first step, built from your answers',
+  '4 questions, about 90 seconds, completely free',
 ];
 
 export default function ExitIntentPopup() {
@@ -39,9 +41,8 @@ export default function ExitIntentPopup() {
 
   const close = () => setVisible(false);
 
-  const joinSkool = () => {
-    window.open(SKOOL_URL, '_blank', 'noopener,noreferrer');
-    close();
+  const goToQuiz = () => {
+    window.location.href = QUIZ_URL;
   };
 
   return (
@@ -74,20 +75,20 @@ export default function ExitIntentPopup() {
                 background: 'linear-gradient(135deg, var(--sage-soft) 0%, var(--clay-soft, #f4e8e1) 100%)',
                 display: 'grid', placeItems: 'center',
               }}>
-                <Activity size={30} style={{ color: 'var(--clay)' }} />
+                <Compass size={30} style={{ color: 'var(--clay)' }} />
               </div>
 
-              <span className="kicker kicker-dot" style={{ color: 'var(--clay)' }}>Nurse-led group coaching</span>
+              <span className="kicker kicker-dot" style={{ color: 'var(--clay)' }}>Before you go</span>
 
               <h2 className="display-s" style={{ marginTop: '0.6rem', marginBottom: '0.5rem', lineHeight: 1.2 }}>
-                The <em className="ital-display" style={{ color: 'var(--clay)' }}>30-Day Pressure Reset</em>
+                Find your loudest <em className="ital-display" style={{ color: 'var(--clay)' }}>Pressure</em>
               </h2>
 
               <p style={{
                 color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.5,
                 marginBottom: '1.1rem', maxWidth: '34ch', marginInline: 'auto',
               }}>
-                A nurse and a group in your corner, helping you move your numbers one small step a day.
+                Not sure where to start? Take the free 90-second quiz and see which of the 3 Pressures is driving your numbers.
               </p>
 
               <ul style={{
@@ -111,17 +112,17 @@ export default function ExitIntentPopup() {
                 borderRadius: 12, padding: '0.85rem 1rem', marginBottom: '1.1rem',
               }}>
                 <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--ink)', lineHeight: 1.5 }}>
-                  <strong>$700+ of help for just $27 a month.</strong><br />
-                  Your first 7 days are free.
+                  <strong>100% free.</strong><br />
+                  Your result on the very next screen.
                 </p>
               </div>
 
               <button
-                onClick={joinSkool}
+                onClick={goToQuiz}
                 className="btn btn-ink"
                 style={{ width: '100%', fontSize: '1.05rem', padding: '1rem 1.5rem' }}
               >
-                Start free for 7 days
+                Take the free quiz
                 <ArrowRight size={18} className="arrow" />
               </button>
 
@@ -129,7 +130,7 @@ export default function ExitIntentPopup() {
                 fontSize: '0.75rem', color: 'var(--muted)',
                 textAlign: 'center', marginTop: '0.75rem', lineHeight: 1.5,
               }}>
-                Feel a difference in 30 days or your money back. AND not instead of your doctor.
+                Free and private. AND not instead of your doctor.
               </p>
             </div>
           </motion.div>
