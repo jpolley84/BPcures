@@ -155,15 +155,37 @@ export async function runStateCron({
         continue;
       }
 
-      // Match day to email
-      const email = daysMap[daysSince];
+      // Match day to email. 2026-06-09: exact-day matching permanently
+      // dropped emails whenever a cron outage spanned a send day (the May
+      // 29-31 KEYS() outage silently cost ~455 leads their Day-1 email).
+      // If today isn't a send day, look back up to CATCHUP_WINDOW days for
+      // the most recent due-but-unsent email and send it late instead of
+      // never. Stop looking back at the first already-sent day — that means
+      // the record is caught up, not behind.
+      const CATCHUP_WINDOW = 3;
+      let sendDay = daysSince;
+      let email = daysMap[sendDay];
+      if (!email) {
+        email = null;
+        for (let back = 1; back <= CATCHUP_WINDOW; back++) {
+          const d = daysSince - back;
+          if (d < 0) break;
+          if (daysMap[d]) {
+            if (!sub[sentFlag(d)]) {
+              sendDay = d;
+              email = daysMap[d];
+            }
+            break; // nearest send-day found (sent or not) — stop looking
+          }
+        }
+      }
       if (!email) {
         summary.skippedNoMatchingDay++;
         continue;
       }
 
       // Idempotency — never re-send a day already sent
-      const flagName = sentFlag(daysSince);
+      const flagName = sentFlag(sendDay);
       if (sub[flagName]) {
         summary.skippedAlreadySent++;
         continue;
@@ -177,7 +199,7 @@ export async function runStateCron({
       const textBody = email.textBody(ctx);
 
       if (DRY_RUN) {
-        console.log(`[DRY] ${label}: would send Day ${daysSince} to ${sub.email} — "${email.subject}"`);
+        console.log(`[DRY] ${label}: would send Day ${sendDay} to ${sub.email} — "${email.subject}"${sendDay !== daysSince ? ` (catch-up, actual day ${daysSince})` : ''}`);
       } else {
         await resend.emails.send({
           from,
@@ -201,7 +223,7 @@ export async function runStateCron({
         });
       }
 
-      summary.sentByDay[daysSince] = (summary.sentByDay[daysSince] || 0) + 1;
+      summary.sentByDay[sendDay] = (summary.sentByDay[sendDay] || 0) + 1;
       await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
     } catch (err) {
       summary.errors++;

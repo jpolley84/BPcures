@@ -146,13 +146,22 @@ function labelTier(amount) {
 // ─── KV: drip-record scan ─────────────────────────────────────────────
 
 async function scanDripRecords() {
-  // Use kv.keys for the full set, then mget in chunks for value pulls.
-  // mget returns null for missing keys but is much faster than per-key get.
+  // 2026-06-09 — Upstash disabled KEYS() at our scale ("ERR too many keys
+  // to fetch, please use SCAN"). The Jun-1 3c5381b fix covered the state
+  // crons but missed this file, so the digest's drip pane silently showed
+  // zeros from Jun 1–9 (error swallowed into the JSON response only).
+  // Same SCAN-cursor drain as _state-cron.js.
   if (!process.env.KV_REST_API_URL) {
     return { error: 'KV_REST_API_URL missing', records: [] };
   }
   try {
-    const keys = await kv.keys('drip:*');
+    const keys = [];
+    let scanCursor = 0;
+    do {
+      const [next, batch] = await kv.scan(scanCursor, { match: 'drip:*', count: 500 });
+      keys.push(...batch);
+      scanCursor = next;
+    } while (String(scanCursor) !== '0');
     const records = [];
     const BATCH = 100;
     for (let i = 0; i < keys.length; i += BATCH) {
@@ -468,7 +477,15 @@ export default async function handler(req, res) {
     scannedCount: (dripRes.records || []).length,
   };
 
-  const html = renderHtml(data);
+  let html = renderHtml(data);
+  // 2026-06-09 — data-source failures must be VISIBLE in the email, not
+  // buried in the cron's JSON response nobody reads. The KEYS() outage
+  // showed 8 days of zeros with no banner; never again.
+  if (errors.length) {
+    html = `<div style="background:#B3261E;color:#fff;padding:12px 16px;border-radius:8px;font-family:Arial,sans-serif;font-size:14px;margin-bottom:16px;">
+      ⚠️ DIGEST DATA INCOMPLETE — the numbers below are missing sources:<br>${errors.map((e) => `&bull; ${e}`).join('<br>')}
+    </div>` + html;
+  }
 
   try {
     const r = await getResend().emails.send({

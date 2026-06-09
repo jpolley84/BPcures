@@ -53,6 +53,11 @@ const DOWNLOADS = {
 };
 
 const SKOOL_URL = 'https://www.skool.com/braveworksrn/about';
+// The FREE ~1,200-member community. Paid buyers ($97 vip / Sprint) join here
+// first (no card), then DM Joel who grants their included VIP/coaching access
+// in the paid braveworksrn group. Do NOT send included-access buyers straight
+// to SKOOL_URL — its About page asks for a card + $27/mo trial.
+const FREE_SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 
 // ─────────────────────────────────────────────────────────────────────────
 // VERIFIED CATEGORY-AWARE — do not flag as "BP-only for all tiers"
@@ -188,11 +193,13 @@ export const TIER_CONFIG = {
     ],
     includesCoaching: false,
     includesChallenge: true,
-    // 2026-05-09 reprice: $97 tier = BP Triangle Challenge + Skool.
-    upgradeUrl: 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H',
-    upgradeLabel: 'Upgrade to the 30-Day BP Triangle Challenge ($97)',
-    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The $97 Challenge layer adds 30 days of daily email walkthrough + the "How to Be Your Own Doctor" Skool community + weekly group coaching in Skool. Same triple guarantee.',
-    upgradeCta: 'Upgrade to BP Triangle Challenge ($97) →',
+    // 2026-06-09 ladder realign: the $97 Challenge was retired 2026-06-04
+    // (its plink survived in this email only — paid fulfillment of a dead
+    // product). Canon rung after $47 is the $297 30-Day Personalized Group.
+    upgradeUrl: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
+    upgradeLabel: 'Next step: 30-Day Personalized Group Coaching ($297)',
+    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The 30-Day Group is where Joel looks at YOUR numbers, YOUR meds, and YOUR protocol — live weekly group coaching, daily accountability, and a personalized 30-day plan built with you. Same triple guarantee.',
+    upgradeCta: 'Join the 30-Day Group ($297) →',
   },
   // 2026-05-09 RESTRUCTURE: vip slot ($97 = 9700) is now the canonical
   // "30-Day BP Triangle Challenge + Skool" tier. Replaces the prior
@@ -296,6 +303,25 @@ export const TIER_CONFIG = {
     upgradeDesc: 'Pick a time on Joel\'s calendar that works for you. The diagnostic is a single Zoom call where Joel looks at your home BP log, your meds, your stress, your supplements, and writes you a custom 30-day protocol live on screen. You also get a 30-day email-coaching follow-up window — reply to Joel each Sunday with your numbers and he\'ll adjust as needed.',
     upgradeCta: 'Book my diagnostic call →',
   },
+
+  // ── 2026-06-09: $297 30-Day Personalized Group Coaching ──────────────
+  // Canon ladder rung between the $47 kit and the $1,997 90-day group.
+  // Sold via payment link buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z (metadata
+  // funnel=group-coaching-30day, tier=group-30). Shares the 29700 amount
+  // with the diagnostic — stripe-webhook.js routes by metadata BEFORE the
+  // amount fallback. No drip sequence yet (purchaseToState returns null);
+  // Joel onboards group members personally from this welcome email.
+  'group-30': {
+    product: '30-Day Personalized Group Coaching with Joel Polley, RN',
+    subject: 'You\'re in — your 30-Day Group Coaching starts here',
+    downloads: [], // the group IS the deliverable
+    includesCoaching: false,
+    includesChallenge: false,
+    upgradeUrl: 'mailto:braveworksrn@gmail.com?subject=My%2030-Day%20Group%20intake',
+    upgradeLabel: 'Step 1: Send Joel your intake',
+    upgradeDesc: 'Reply to this email (or tap the button) with three things: your last 3 home BP readings, every medication and supplement you take, and the one thing you most want different 30 days from now. Joel reads every intake personally and replies with your group access + your personalized starting protocol.',
+    upgradeCta: 'Send my intake →',
+  },
 };
 
 // Map Stripe amount_total (cents) → tier key
@@ -324,6 +350,12 @@ export const AMOUNT_TO_TIER = {
   // these entries prevent the next one.)
   199700: 'coaching',  // founding cohort ($1,997)
   699700: 'coaching',  // regular price  ($6,997)
+  // 2026-06-09: these two Sprint variants are ACTIVELY SOLD in the live
+  // lead-drip (_tier-lead-emails.js, "3 payments of $697") and diagnostic-
+  // drip ("$1,700 with your diagnostic credit") — both amounts were
+  // unmapped, so a buyer paid and got NO welcome (the May $12-bug class).
+  69700: 'coaching',   // Sprint 3-pay — first $697 payment (subscription)
+  170000: 'coaching',  // Sprint $1,700 diagnostic-credit variant
 
   // ── 2026-05-18: BP Triangle Diagnostic Session ($297 mid-tier) ──────
   // Bridges the $17 Kit → $1,997 Sprint jump. Two prices:
@@ -425,7 +457,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
             <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0 0 12px;">
               <strong style="color:#FFFFFF;">Step 1.</strong> Join &ldquo;How to Be Your Own Doctor&rdquo; — Joel&rsquo;s free Skool community. Ask anything, post progress, and connect with people on the same path.
             </p>
-            <a href="${SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#4A6741;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+            <a href="${FREE_SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#4A6741;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
               Join the Skool community &rarr;
             </a>
             <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:16px 0 0;border-top:1px solid rgba(255,255,255,0.18);padding-top:14px;">
@@ -516,7 +548,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
             <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,0.9);margin:0 0 12px;">
               Join the &ldquo;How to Be Your Own Doctor&rdquo; community. Once you're in, DM me &mdash; I grant Sprint clients VIP access where the weekly group calls + protocol library live.
             </p>
-            <a href="${SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+            <a href="${FREE_SKOOL_URL}" style="display:inline-block;background:#FFFFFF;color:#3F5A3C;padding:11px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
               Join the Skool community →
             </a>
           </div>

@@ -52,10 +52,16 @@ import {
 //   $1,997 + $6,997   → tier-4  (Sprint / 1:1 — onboarding, never sells)
 function purchaseToState(kitTier) {
   const t = String(kitTier || '').toLowerCase();
-  if (t === '1' || t === '2') return 'tier-1';
+  // 2026-06-09: prefix match — the webhook refines tier 1 to '1-cortisol' /
+  // '1-blood-sugar' BEFORE this runs, so exact-match left 18 of 21 category
+  // buyers stuck in 'lead' state being pitched the kit they already own.
+  if (t === '1' || t === '2' || t.startsWith('1-') || t.startsWith('2-')) return 'tier-1';
   if (t === 'vip') return 'tier-2';
   if (t === 'diagnostic') return 'tier-3';
   if (t === 'coaching') return 'tier-4';
+  // group-30 ($297 30-day group) deliberately returns null: the tier-3
+  // sequence is diagnostic→Sprint copy. Group buyers get the group-30
+  // welcome email only until a group sequence is written.
   return null; // unknown tier — preserve existing state
 }
 
@@ -488,7 +494,9 @@ async function processCheckoutCompleted(event) {
   // buyer got the Engine email). Skip any session explicitly stamped as a
   // FOREIGN funnel. bpquiz's own purchases (payment links, Amazon Pay,
   // Checkout Sessions) carry no foreign marker, so they pass through.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz']);
+  // 2026-06-09: added 'event-sales-page' — the 5/15 RestoreHER $497 GA ticket
+  // passed the guard and fired a false unmapped-amount alert.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page']);
   if (FOREIGN_FUNNELS.has(session.metadata?.funnel)) {
     return { action: 'skipped', reason: `foreign_funnel:${session.metadata.funnel}` };
   }
@@ -529,6 +537,12 @@ curl -X POST https://bpquiz.com/api/test-purchase-email \\
     // session.amount_total. This is the single delivery rail for all
     // non-launcher purchases — keeps us on one webhook + one secret.
     let kitTier = AMOUNT_TO_TIER[amountCents];
+    // 2026-06-09: the "$297 30-Day Group Coaching" payment link shares the
+    // diagnostic's 29700 amount. Route by the link's metadata stamp so a
+    // group buyer gets the group welcome, not the Calendly diagnostic email.
+    if (session.metadata?.funnel === 'group-coaching-30day' || session.metadata?.tier === 'group-30') {
+      kitTier = 'group-30';
+    }
     if (!kitTier) {
       console.log('stripe-webhook: unrecognized amount, ignoring', session.id, 'amount', amountCents);
       // Loud alert — silent skip is what missed Dora's $97 VIP on 4/30 before
@@ -674,17 +688,17 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       const existing = await kv.get(dripKey);
       const purchaseTags = ['bpquiz-purchaser', `tier-${kitTier}-buyer`];
 
-      // 2026-05-18: Diagnostic-tier buyers get a SEPARATE 14-day post-
-      // purchase sequence (diagnostic-prospect cohort, see api/diagnostic-
-      // drip-cron.js — TODO #43). To prevent the standard Days 1-7 drip
-      // from also firing at them, we set `paused: true` so the main
-      // drip-cron skips. The diagnostic sequence is engagement-gated +
-      // ends with the Sprint upsell.
+      // 2026-05-18 (amended 2026-06-09): Diagnostic-tier buyers were stamped
+      // `paused: true` to shield them from the LEGACY drip-cron — but that
+      // cron is no longer scheduled, and the live _state-cron engine skips
+      // paused records, so tier-3/tier-4 sequences NEVER sent a single email
+      // (verified: the only $297 and $1,997 buyers both sat paused with zero
+      // sends). State isolation is now handled by the state machine itself;
+      // do not pause.
       const isDiagnostic = kitTier === 'diagnostic';
       const diagnosticFields = isDiagnostic ? {
-        paused: true,                    // main drip-cron skips paused records
-        inDiagnosticSequence: true,      // diagnostic cron picks these up
-        diagnosticSequenceDay: 0,        // diagnostic-drip-cron uses this counter
+        inDiagnosticSequence: true,      // legacy marker, kept for reporting
+        diagnosticSequenceDay: 0,
         diagnosticEnrolledAt: new Date().toISOString(),
       } : {};
 

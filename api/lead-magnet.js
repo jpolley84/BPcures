@@ -441,32 +441,15 @@ export default async function handler(req, res) {
 
   const cat = CATEGORIES[category];
 
-  if (!isDuplicate) {
-    const html = renderEmail({ name, category, tier, tiers });
-    // RFC 8058 one-click unsubscribe via /api/unsubscribe (CAN-SPAM compliance).
-    // The token is HMAC-signed so addresses can't be forged. Token format
-    // matches signUnsubToken in api/unsubscribe.js.
-    const unsubToken = signUnsubTokenInline(email.trim().toLowerCase());
-    const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
-    try {
-      await getResend().emails.send({
-        from: 'Joel Polley, RN <joel@bpquiz.com>',
-        to: email.trim(),
-        replyTo: 'braveworksrn@gmail.com',
-        subject: cat.subject_a,
-        html,
-        headers: {
-          'List-Unsubscribe': `<${unsubUrl}>`,
-          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-        },
-      });
-    } catch (err) {
-      console.error('lead-magnet: resend failed', err.message);
-      return res.status(500).json({ error: 'Failed to send email' });
-    }
-  } else {
-    console.log(`lead-magnet: dedupe skipped duplicate send to ${email.trim()} (within 5min window)`);
-  }
+  // ── ENROLL FIRST, SEND SECOND (2026-06-09 reorder) ────────────────────
+  // The Resend send used to run first and `return 500` on failure, so a
+  // Resend outage (quota, key rotation, API blip) lost the capture ENTIRELY
+  // — no KV record, no email — and the quiz client fire-and-forgets, so
+  // nobody would notice. Same silent-loss class as the May 14-17
+  // MAILCHIMP_API_KEY incident. The captured email is the asset: save it
+  // before attempting delivery, and alert Joel on partial failure.
+  let enrolled = false;
+  let enrollError = null;
 
   // 2026-05-14: Beehiiv retired. List storage + segmentation tags now live
   // entirely in the Vercel KV drip:* record. This block:
@@ -497,12 +480,17 @@ export default async function handler(req, res) {
 
       if (existing) {
         // Refresh tags + answers metadata, preserve enrollment date.
-        // State-machine rule (2026-05-17 spec): never downgrade a paying
-        // buyer back to 'lead' if they re-take the quiz. Only set state
-        // if it isn't already set (fresh capture OR pre-state-machine record).
-        const stateFields = existing.state ? {} : {
+        // State-machine rule (2026-05-17, amended 2026-06-09): never
+        // downgrade a paying buyer back to 'lead' — but a fresh quiz take
+        // IS a re-opt-in, so records parked in 'newsletter' re-enter the
+        // lead arc at Day 0 (they were getting nothing: newsletter-cron
+        // isn't scheduled, so 'newsletter' state is a dead end today).
+        const reEnterLead = !existing.state || existing.state === 'newsletter';
+        const stateFields = !reEnterLead ? {} : {
           state: 'lead',
-          stateEnteredAt: existing.stateEnteredAt || existing.enrolledAt || nowIso,
+          stateEnteredAt: existing.state === 'newsletter'
+            ? nowIso
+            : (existing.stateEnteredAt || existing.enrolledAt || nowIso),
         };
         await kv.set(dripKey, {
           ...existing,
@@ -562,11 +550,62 @@ export default async function handler(req, res) {
       } catch (tErr) {
         console.warn('lead-magnet: triangles-today incr failed (non-fatal)', tErr.message);
       }
+      enrolled = true;
     } catch (err) {
-      console.warn('lead-magnet: drip-kv enroll failed', err.message);
-      // Non-blocking — PDF already shipped, drip is a bonus
+      enrollError = err.message;
+      console.error('lead-magnet: drip-kv enroll failed', err.message);
     }
   }
 
-  return res.status(200).json({ success: true, category, tier, deduped: isDuplicate });
+  // ── SEND (a failure here no longer loses the lead) ────────────────────
+  let sent = false;
+  let sendError = null;
+  if (!isDuplicate) {
+    const html = renderEmail({ name, category, tier, tiers });
+    // RFC 8058 one-click unsubscribe via /api/unsubscribe (CAN-SPAM compliance).
+    // The token is HMAC-signed so addresses can't be forged. Token format
+    // matches signUnsubToken in api/unsubscribe.js.
+    const unsubToken = signUnsubTokenInline(email.trim().toLowerCase());
+    const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
+    try {
+      await getResend().emails.send({
+        from: 'Joel Polley, RN <joel@bpquiz.com>',
+        to: email.trim(),
+        replyTo: 'braveworksrn@gmail.com',
+        subject: cat.subject_a,
+        html,
+        headers: {
+          'List-Unsubscribe': `<${unsubUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      });
+      sent = true;
+    } catch (err) {
+      sendError = err.message;
+      console.error('lead-magnet: resend failed', err.message);
+    }
+  } else {
+    console.log(`lead-magnet: dedupe skipped duplicate send to ${email.trim()} (within 5min window)`);
+  }
+
+  // ── ALERT on partial failure — never lose a capture silently again ────
+  if (enrollError || sendError) {
+    try {
+      await getResend().emails.send({
+        from: 'BraveWorks Ops <noreply@bpquiz.com>',
+        to: ['braveworksrn@gmail.com'],
+        subject: `[ALERT] lead-magnet partial failure for ${email.trim()}`,
+        text: `A quiz lead hit a partial capture failure.\n\nEmail: ${email.trim()}\nCategory: ${category}\nKV enroll: ${enrollError ? `FAILED — ${enrollError}` : 'ok'}\nDay-1 send: ${sendError ? `FAILED — ${sendError}` : (isDuplicate ? 'skipped (5-min dedupe)' : 'ok')}\n\nIf the enroll failed, re-enroll manually (the lead-cron won't know this person exists). If only the send failed, the lead-cron picks them up at Day 0 tomorrow — no action needed.`,
+      });
+    } catch (alertErr) {
+      console.error('lead-magnet: alert send also failed', alertErr.message);
+    }
+  }
+
+  // Hard-fail only when BOTH rails died — if either the KV record or the
+  // Day-1 email made it, the lead is recoverable.
+  if (!enrolled && !sent && !isDuplicate) {
+    return res.status(500).json({ error: 'Capture failed' });
+  }
+  return res.status(200).json({ success: true, category, tier, deduped: isDuplicate, enrolled, emailSent: sent });
 }
