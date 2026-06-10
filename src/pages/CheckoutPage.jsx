@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap } from 'lucide-react';
+import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 // 2026-06-08 — exit-intent / dwell popup now drives the about-to-bounce
 // visitor to the FREE quiz (lower-commitment than the $17 ask; the quiz
 // captures the email and routes back to the kit on its results page).
 // Triggers on mouseleave OR 14s dwell, once per visitor (localStorage
 // quizExitPopupShown). Suppressed after purchase. See ExitIntentPopup.jsx.
-import ExitIntentPopup from '../components/ExitIntentPopup';
+// 2026-06-09 perf: lazy-load so the homepage stops eagerly pulling
+// framer-motion (~11KB gz) for a popup that can't fire for 14s. Streams
+// during idle; drops vendor-motion from the homepage's critical path.
+import { lazy, Suspense } from 'react';
+const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
 import HomepageEmailCapture from '../components/HomepageEmailCapture';
 
 const PRICE = '$17';
@@ -33,6 +37,28 @@ function AnimatedSection({ children, className = '', delay = 0 }) {
       }}
     >
       {children}
+    </div>
+  );
+}
+
+// 2026-06-09: the BP Triangle method-mark — the brand's signature, proprietary
+// visual (drawn on the quiz, previously invisible on the homepage). CSS-only
+// draw-on-scroll (.in toggled by the same IntersectionObserver hook); the
+// global reduced-motion query renders the final state. No framer-motion on
+// this page (React-19 compat + bundle).
+function BpTriangle() {
+  const [ref, isVisible] = useScrollAnimation(0.3);
+  return (
+    <div ref={ref} style={{ margin: '26px auto 0', width: 200 }}>
+      <svg className={`bp-tri ${isVisible ? 'in' : ''}`} viewBox="0 0 200 174" width="200" height="174" role="img" aria-label="The BP Triangle: Pipe, Stress, and Sugar Pressure">
+        <polygon points="100,28 36,140 164,140" />
+        <circle className="tri-dot d1" cx="100" cy="28" r="4.5" fill="#C8A252" />
+        <circle className="tri-dot d2" cx="36" cy="140" r="4.5" fill="#4A5D4E" />
+        <circle className="tri-dot d3" cx="164" cy="140" r="4.5" fill="#B85A36" />
+        <text className="tri-lab" x="100" y="18" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Pipe</text>
+        <text className="tri-lab" x="22" y="157" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Stress</text>
+        <text className="tri-lab" x="178" y="157" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Sugar</text>
+      </svg>
     </div>
   );
 }
@@ -167,7 +193,7 @@ const CheckoutPage = () => {
       {/* Credential Bar. 2026-06-08: text bumped to 16px/1.6 for aging eyes,
           and the secondary "free BP quiz" off-ramp removed so the bar reads as
           pure credibility (the quiz now lives only in the footer). */}
-      <div className="credential-bar py-3.5" style={{ animation: 'fadeIn 0.6s ease-out 0.2s both' }}>
+      <div className="credential-bar py-3.5" style={{ animation: 'softRise 0.5s cubic-bezier(0.22,1,0.36,1)' }}>
         <div className="container-mobile-first">
           <p className="text-center font-medium" style={{ color: 'var(--white)', fontSize: '16px', lineHeight: '1.6', letterSpacing: '0.02em' }}>
             Joel Polley, RN · The Blood Pressure Guy · 20 Years ICU & Emergency Medicine
@@ -175,9 +201,18 @@ const CheckoutPage = () => {
         </div>
       </div>
 
+      {/* 2026-06-09 UI: ECG heartbeat brand-rule — the medical-system
+          signature, drawn from the asset already in index.css. Decorative,
+          aria-hidden, animation neutralized by the global reduced-motion query. */}
+      <div aria-hidden="true" style={{ padding: '6px 0 2px', background: '#F8F9FA' }}>
+        <svg className="ecg-rule" viewBox="0 0 600 28" preserveAspectRatio="none">
+          <path d="M0,14 L250,14 L262,14 L270,3 L279,25 L288,6 L296,14 L600,14" />
+        </svg>
+      </div>
+
       {/* Social Proof Strip — 2026-05-25: clickable FB/TikTok/IG icons +
           400K subscriber count. Inline SVG for TikTok (not in lucide). */}
-      <div className="py-5 bg-[#F8F9FA]" style={{ animation: 'fadeIn 0.6s ease-out 0.4s both' }}>
+      <div className="py-5 bg-[#F8F9FA]" style={{ animation: 'softRise 0.5s cubic-bezier(0.22,1,0.36,1)' }}>
         <div className="container-mobile-first">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
             <span className="text-[13px] text-[#555] font-medium uppercase" style={{ letterSpacing: '0.08em' }}>
@@ -268,6 +303,7 @@ const CheckoutPage = () => {
             <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
               This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way.
             </p>
+            <BpTriangle />
           </div>
         </div>
       </AnimatedSection>
@@ -422,9 +458,9 @@ const CheckoutPage = () => {
               const IconComponent = item.icon;
               return (
                 <AnimatedSection key={index} delay={index * 120}>
-                  <div className="text-center p-6 rounded-2xl bg-white border border-gray-100 hover:shadow-lg hover:border-purple-100 transition-all duration-300">
-                    <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-4">
-                      <IconComponent size={28} style={{ color: 'var(--purple)' }} />
+                  <div className="text-center p-6 rounded-2xl bg-white border border-gray-100 hover:shadow-lg transition-all duration-300">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(74,93,78,0.09)', border: '1px solid rgba(74,93,78,0.18)' }}>
+                      <IconComponent size={28} style={{ color: '#3F5A3C' }} />
                     </div>
                     <p className="font-bold mb-2" style={{ color: 'var(--dark-gray)', fontSize: '18px' }}>{item.headline}</p>
                     <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>{item.description}</p>
@@ -441,12 +477,12 @@ const CheckoutPage = () => {
         <div className="container-mobile-first">
           <div className="flex flex-col md:flex-row items-center justify-center gap-5 md:gap-10">
             {[
-              { icon: Heart, text: '20-Year ICU/ER Nurse' },
-              { icon: Heart, text: 'Naturopathic-Trained' },
+              { icon: Stethoscope, text: '20-Year ICU/ER Nurse' },
+              { icon: Leaf, text: 'Naturopathic-Trained' },
               { icon: Users, text: '402K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
-                <item.icon size={20} style={{ color: 'var(--purple)' }} />
+                <item.icon size={20} style={{ color: '#B85A36' }} />
                 <span className="font-medium" style={{ color: 'var(--dark-gray)', fontSize: '15px' }}>{item.text}</span>
               </div>
             ))}
@@ -489,10 +525,21 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Sticky Mobile Buy Bar */}
-      {showStickyBar && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 sticky-bar" style={{ height: '64px' }}>
-          <div className="h-full flex items-center justify-between px-4 max-w-[640px] mx-auto">
+      {/* Sticky Mobile Buy Bar. 2026-06-09: always rendered, slides up via
+          transform instead of hard-popping at scrollY>600 (read as a glitch).
+          Same showStickyBar flag + 600px threshold (tuned — do not change).
+          iOS safe-area padding so it clears the home-gesture zone. */}
+      <div
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 sticky-bar"
+        style={{
+          minHeight: '64px',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          transform: showStickyBar ? 'translateY(0)' : 'translateY(110%)',
+          transition: 'transform 0.35s cubic-bezier(0.22,1,0.36,1)',
+        }}
+        aria-hidden={!showStickyBar}
+      >
+        <div className="flex items-center justify-between px-4 max-w-[640px] mx-auto" style={{ height: '64px' }}>
             <div>
               <p className="font-bold truncate max-w-[140px]" style={{ color: 'var(--white)', fontSize: '15px' }}>
                 BP Reset Kit
@@ -502,14 +549,13 @@ const CheckoutPage = () => {
             <button
               onClick={handleBuyNow}
               disabled={isProcessing}
-              className="px-6 py-2.5 rounded-xl font-bold transition-all duration-200 active:scale-95 disabled:opacity-70 gradient-purple-btn"
-              style={{ color: 'var(--white)', fontSize: '14px' }}
+              className="px-6 rounded-xl font-bold transition-all duration-200 active:scale-95 disabled:opacity-70 gradient-purple-btn"
+              style={{ color: 'var(--white)', fontSize: '14px', minHeight: '44px' }}
             >
               {isProcessing ? <Loader2 className="animate-spin" size={18} /> : `Buy Now for ${PRICE}`}
             </button>
           </div>
         </div>
-      )}
 
       {/* Cross-sell box: hormones (RestoreHER). For homepage visitors whose
           real struggle is hormonal imbalance, not blood pressure. Links to the
@@ -590,7 +636,7 @@ const CheckoutPage = () => {
           absolutely-positioned overlay; tree position doesn't matter for layout.
           One-shot per visitor (localStorage quizExitPopupShown). Suppressed
           after purchase (localStorage purchaseCompleted). */}
-      <ExitIntentPopup />
+      <Suspense fallback={null}><ExitIntentPopup /></Suspense>
     </div>
   );
 };

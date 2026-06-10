@@ -22,13 +22,20 @@
 
 .container-mobile-first { width: 100%; max-width: 640px; margin-left: auto; margin-right: auto; padding-left: 1.25rem; padding-right: 1.25rem; }
 .section-spacing { padding-top: 4rem; padding-bottom: 4rem; }
-.btn-standard { height: 56px; padding-left: 2rem; padding-right: 2rem; font-weight: 600; border-radius: 0.5rem; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 0; }
-.btn-standard:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.btn-standard { height: 56px; padding-left: 2rem; padding-right: 2rem; font-weight: 600; border-radius: 0.5rem; transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s cubic-bezier(0.22,1,0.36,1); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; border: 0; }
+.btn-standard:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+.btn-standard:active:not(:disabled) { transform: scale(0.985); }
+/* 2026-06-09 UI polish: arrow nudges on hover (matches the premium /quiz .btn). */
+.btn-standard .btn-arrow { display: inline-block; transition: transform 0.2s cubic-bezier(0.22,1,0.36,1); }
+.btn-standard:hover:not(:disabled) .btn-arrow { transform: translateX(3px); }
+/* Starts-VISIBLE hero rise — replaces the old `fadeIn ... both` that left
+   the credential + social-proof strips invisible for 200-400ms on load. */
+@keyframes softRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .btn-cta { box-shadow: 0 4px 14px rgba(108, 52, 131, 0.25); }
 .gradient-purple-btn { background: linear-gradient(135deg, #6C3483 0%, #8E44AD 100%); }
 .gradient-navy { background: linear-gradient(135deg, #2C3E50 0%, #34495E 100%); }
 .gradient-divider { height: 1px; border: 0; background: linear-gradient(90deg, transparent, #E8E2D4 50%, transparent); margin: 0; }
-.headshot-ring { padding: 4px; border-radius: 50%; background: linear-gradient(135deg, #F39C12 0%, #6C3483 100%); }
+.headshot-ring { padding: 4px; border-radius: 50%; background: linear-gradient(135deg, #C8A252 0%, #4A5D4E 100%); }
 .credential-bar { background-color: var(--navy); }
 .proof-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #FFFFFF; border-radius: 999px; border: 1px solid #E5E7EB; }
 .testimonial-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -841,7 +848,9 @@ em.ital-display {
   border-color: var(--ink);
   background: var(--paper-warm);
   transform: translateY(-1px);
+  box-shadow: 0 8px 20px -12px rgba(46,58,48,0.25);
 }
+.quiz-option:active { transform: scale(0.99); }
 .quiz-option.selected {
   border-color: var(--sage-deep);
   background: var(--sage-soft);
@@ -861,8 +870,8 @@ em.ital-display {
 }
 
 .quiz-option .q-marker {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 1px solid var(--line);
   display: grid;
@@ -920,6 +929,37 @@ em.ital-display {
 @keyframes pulseTrace {
   to { stroke-dashoffset: 0; }
 }
+
+/* ============================================================
+   2026-06-09 signature medical-system motion (homepage + quiz)
+   ECG brand-rule · BP Triangle method mark · results monitor gauge.
+   All transform/opacity/stroke only (GPU-cheap); the global
+   prefers-reduced-motion query above neutralizes every one.
+   ============================================================ */
+.ecg-rule { width: 100%; height: 28px; display: block;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.ecg-rule path { fill: none; stroke: var(--clay); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  animation: ecgSweep 3.6s linear infinite; }
+@keyframes ecgSweep { 0% { stroke-dasharray: 90 700; stroke-dashoffset: 790; } 100% { stroke-dasharray: 90 700; stroke-dashoffset: 0; } }
+
+/* BP Triangle (homepage CSS-only draw on scroll; .in toggled by IO) */
+.bp-tri path, .bp-tri polygon { fill: none; stroke: var(--clay); stroke-width: 2; stroke-linejoin: round;
+  stroke-dasharray: 460; stroke-dashoffset: 460; }
+.bp-tri.in polygon { animation: triDraw 1.4s var(--ease-out) forwards; }
+.bp-tri .tri-dot { opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; }
+.bp-tri.in .tri-dot { animation: triDot 0.5s var(--ease-out) forwards; }
+.bp-tri.in .tri-dot.d2 { animation-delay: 0.3s; } .bp-tri.in .tri-dot.d3 { animation-delay: 0.55s; }
+.bp-tri .tri-lab { opacity: 0; } .bp-tri.in .tri-lab { animation: triLab 0.6s var(--ease-out) 0.6s forwards; }
+@keyframes triDraw { to { stroke-dashoffset: 0; } }
+@keyframes triDot { to { opacity: 1; transform: scale(1); } }
+@keyframes triLab { to { opacity: 1; } }
+/* Quiz Triangle "breathing" — reads as a living monitor, not a static logo. */
+.tri-breathe { animation: triBreathe 3.6s ease-in-out 1.8s infinite; }
+@keyframes triBreathe { 0%, 100% { stroke-opacity: 0.62; } 50% { stroke-opacity: 1; } }
+
+/* Results score gauge (quiz) — ring sweep set inline via stroke-dashoffset. */
+.score-ring { transition: stroke-dashoffset 1.1s var(--ease-out); transform: rotate(-90deg); transform-origin: center; }
 
 /* ============================================================
    Featured grid / product cards

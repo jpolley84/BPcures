@@ -1032,17 +1032,10 @@ function QuizModule({ products }) {
                 borderRadius: 14,
                 marginBottom: '1.25rem',
               }}>
-                <div style={{
-                  display: 'grid', placeItems: 'center',
-                  width: 64, height: 64, flexShrink: 0,
-                  borderRadius: '50%',
-                  background: urgency.tone === 'urgent' ? 'var(--clay)' : urgency.tone === 'moderate' ? 'var(--gold)' : 'var(--sage)',
-                  color: 'var(--cream)',
-                  fontFamily: 'Fraunces, serif',
-                }}>
-                  <div style={{ fontSize: '1.6rem', lineHeight: 1, fontWeight: 500 }}>{riskScore}</div>
-                  <div style={{ fontSize: '0.55rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginTop: '0.1rem' }}>/ 10</div>
-                </div>
+                <ScoreGauge
+                  score={riskScore}
+                  fill={urgency.tone === 'urgent' ? 'var(--clay)' : urgency.tone === 'moderate' ? 'var(--gold)' : 'var(--sage)'}
+                />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>Your dominant corner · {pressureCopy.label}</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
@@ -1270,6 +1263,34 @@ const inputStyle = {
    Triangle visual — the BP Triangle Method™ above-fold marker
    ------------------------------------------------------------------ */
 
+// 2026-06-09: results score gauge — keeps the proven filled disc + number and
+// adds a sweeping progress ring around it (reads like a BP monitor settling on
+// your reading). Additive; sits BELOW the top CTA so it can never delay the
+// offer. Reduced-motion renders the ring filled to the score.
+function ScoreGauge({ score, fill }) {
+  const C = 213.6; // 2·π·34
+  const clamped = Math.min(Math.max(Number(score) || 0, 0), 10);
+  const target = C * (1 - clamped / 10);
+  const [off, setOff] = useState(C);
+  useEffect(() => {
+    if (PREFERS_REDUCED_MOTION) { setOff(target); return; }
+    const t = setTimeout(() => setOff(target), 250);
+    return () => clearTimeout(t);
+  }, [target]);
+  return (
+    <div style={{ position: 'relative', width: 72, height: 72, flexShrink: 0, display: 'grid', placeItems: 'center' }}>
+      <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true" style={{ position: 'absolute', inset: 0 }}>
+        <circle cx="36" cy="36" r="34" fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="3" />
+        <circle className="score-ring" cx="36" cy="36" r="34" fill="none" stroke={fill} strokeWidth="3" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={off} />
+      </svg>
+      <div style={{ display: 'grid', placeItems: 'center', width: 56, height: 56, borderRadius: '50%', background: fill, color: 'var(--cream)', fontFamily: 'Fraunces, serif' }}>
+        <div style={{ fontSize: '1.45rem', lineHeight: 1, fontWeight: 500 }}>{score}</div>
+        <div style={{ fontSize: '0.5rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.85, marginTop: '0.08rem' }}>/ 10</div>
+      </div>
+    </div>
+  );
+}
+
 function TriangleVisual() {
   return (
     <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
@@ -1281,6 +1302,7 @@ function TriangleVisual() {
         {/* Three sides of the triangle */}
         <motion.line
           x1="300" y1="55" x2="90" y2="245"
+          className="tri-breathe"
           stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
@@ -1289,6 +1311,7 @@ function TriangleVisual() {
         />
         <motion.line
           x1="300" y1="55" x2="510" y2="245"
+          className="tri-breathe"
           stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
@@ -1297,6 +1320,7 @@ function TriangleVisual() {
         />
         <motion.line
           x1="90" y1="245" x2="510" y2="245"
+          className="tri-breathe"
           stroke="var(--clay)" strokeWidth="1.5" strokeLinecap="round"
           initial={{ pathLength: 0 }}
           whileInView={{ pathLength: 1 }}
