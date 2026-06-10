@@ -182,13 +182,13 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    // 2026-05-09 reprice: $97 tier is now the 30-Day BP Triangle Challenge
-    // + Skool, replacing the prior VIP-only flavor. Link points to new
-    // canonical $97 plink_1TVOTWHseZnO3rRZIiqWNlXa.
-    upgradeUrl: 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H',
-    upgradeLabel: 'Upgrade to the 30-Day BP Triangle Challenge ($97)',
-    upgradeDesc: 'Adds the full BraveWorks bonus stack (every cortisol and blood sugar protocol PDF), 30 days of daily email walkthrough, AND access to the "How to Be Your Own Doctor" Skool community with weekly group coaching. Same triple guarantee. One-time price.',
-    upgradeCta: 'Upgrade to BP Triangle Challenge ($97) →',
+    // 2026-06-09 ladder realign: the $97 Challenge is retired and its Stripe
+    // link deactivated. A $47 kit buyer's next canon rung is the $297 30-Day
+    // Personalized Group (same target as the '2+pt-stack' entry below).
+    upgradeUrl: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
+    upgradeLabel: 'Next step: 30-Day Personalized Group Coaching ($297)',
+    upgradeDesc: 'You have the full kit. The 30-Day Group is where Joel reads YOUR numbers, YOUR meds, and builds you a personalized 30-day protocol, with live weekly group coaching (Wednesdays 7 PM ET) and daily accountability. Same triple guarantee.',
+    upgradeCta: 'Join the 30-Day Group ($297) →',
   },
   // DEPRECATED 2026-05-09 streamline pass — same reason as 1+pt-stack.
   // Kept for in-flight buyers; no new sales possible.
