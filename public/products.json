@@ -1,9 +1,9 @@
 [
   {
     "slug": "blood-pressure-cures",
-    "name": "Blood Pressure Cures",
-    "headline": "The 10-Day Nurse's Reset — your starting protocol for elevated BP.",
-    "description": "A focused, plain-English guide written by Joel Polley, RN — twenty years ICU and emergency medicine. The fastest, lowest-friction way to start moving your numbers. Daily steps, the herbs Joel actually trusts, and the lifestyle levers that move blood pressure most. No fluff. No prescriptions. Just the protocol Joel gives friends and family who ask.",
+    "name": "The 10-Day Nurse's Reset",
+    "headline": "The 10-Day Nurse's Reset, your starting protocol for elevated BP.",
+    "description": "A focused, plain-English guide written by Joel Polley, RN, twenty years ICU and emergency medicine. The fastest, lowest-friction way to start moving your numbers. Daily steps, the herbs Joel actually trusts, and the lifestyle levers that move blood pressure most. No fluff. No prescriptions. Just the protocol Joel gives friends and family who ask.",
     "category": "blood_pressure",
     "tier": 1,
     "tier_label": "Starter",
@@ -17,7 +17,7 @@
     "rating": 4.9,
     "review_count": 127,
     "featured": true,
-    "who_for": "Anyone whose readings are creeping up — or already elevated — and who wants a nurse-vetted starting point that takes 10 days, not a year.",
+    "who_for": "Anyone whose readings are creeping up, or already elevated, and who wants a nurse-vetted starting point that takes 10 days, not a year.",
     "what_inside": [
       "10-day daily-action plan (PDF)",
       "Joel's 7 most-trusted BP herbs with safe dosing ranges",
@@ -40,7 +40,7 @@
   {
     "slug": "bp-reset-kit",
     "name": "The BP Reset Kit",
-    "headline": "The complete blood pressure system — the one Joel reaches for first.",
+    "headline": "The complete blood pressure system, the one Joel reaches for first.",
     "description": "Everything in the starter guide, plus the full nurse-designed system: the 10-Day BP Reset Challenge, the Full-Stack BP Activation, the BP Reset Graduation phase, and Joel's complete herb-and-lifestyle library. This is the kit Joel built for the readers who said 'just give me the whole thing.' Daily PDFs, dosing charts, a printable tracker, and the same explanations Joel gives at the bedside.",
     "category": "blood_pressure",
     "tier": 2,
@@ -55,7 +55,7 @@
     "rating": 4.9,
     "review_count": 184,
     "featured": true,
-    "who_for": "You want the complete system — not just one guide. You want to understand why each step works, you want every herb dose laid out, and you want a tracker so you can see the numbers move.",
+    "who_for": "You want the complete system, not just one guide. You want to understand why each step works, you want every herb dose laid out, and you want a tracker so you can see the numbers move.",
     "what_inside": [
       "10-Day BP Reset Challenge (full daily PDFs)",
       "Full-Stack BP Activation protocol",
@@ -80,8 +80,8 @@
   {
     "slug": "bp-premium-coaching",
     "name": "The 30-Day BP Triangle Challenge",
-    "headline": "The complete BP system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the BP Reset Kit, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every Cortisol and Blood Sugar kit included so you can address all Three Pressures: Pipe Pressure (vascular), Stress Pressure (cortisol), and Sugar Pressure (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the BP Reset Kit, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every Cortisol and Blood Sugar kit included so you can address all Three Pressures: Pipe Pressure (vascular), Stress Pressure (cortisol), and Sugar Pressure (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "blood_pressure",
     "tier": 3,
     "tier_label": "30-Day Challenge",
@@ -95,20 +95,20 @@
     "rating": 5,
     "review_count": 12,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to address all three pillars of BP at once.",
+    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to address all three pillars of BP at once.",
     "what_inside": [
       "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 BP materials (full kit included)",
-      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Daily emails for 30 days, one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack — every Cortisol and Blood Sugar kit included (BP Triangle approach)",
+      "Full BraveWorks bonus stack, every Cortisol and Blood Sugar kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach — all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete — with the community to hold you to it"
+      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
+      "A proven reset you'll actually complete, with the community to hold you to it"
     ],
     "related_slugs": [
       "bp-reset-kit",
@@ -120,7 +120,7 @@
     "slug": "cortisol-healing-blueprint",
     "name": "The Cortisol Healing Blueprint",
     "headline": "The starter protocol for chronically wired-tired stress hormones.",
-    "description": "Joel's entry-level cortisol guide — the one he sends people who say 'I'm tired but I can't sleep.' A focused walk through the cortisol curve, why yours is broken, the four daily moves that flatten the spikes, and the herbs Joel trusts for adrenal recovery. Written for the reader who needs a starting point, not the whole library.",
+    "description": "Joel's entry-level cortisol guide, the one he sends people who say 'I'm tired but I can't sleep.' A focused walk through the cortisol curve, why yours is broken, the four daily moves that flatten the spikes, and the herbs Joel trusts for adrenal recovery. Written for the reader who needs a starting point, not the whole library.",
     "category": "cortisol",
     "tier": 1,
     "tier_label": "Starter",
@@ -134,7 +134,7 @@
     "rating": 4.8,
     "review_count": 64,
     "featured": true,
-    "who_for": "You feel wired-tired. You sleep but don't feel rested. You crash at 3 PM and get a second wind at 10. You want to understand what cortisol is doing — and how to start fixing it.",
+    "who_for": "You feel wired-tired. You sleep but don't feel rested. You crash at 3 PM and get a second wind at 10. You want to understand what cortisol is doing, and how to start fixing it.",
     "what_inside": [
       "The Cortisol Healing Blueprint (PDF)",
       "Joel's 4 daily moves to flatten the cortisol curve",
@@ -157,8 +157,8 @@
   {
     "slug": "cortisol-reset-kit",
     "name": "The Cortisol Reset Kit",
-    "headline": "The complete cortisol & stress system — sleep, HRV, weight, and BP.",
-    "description": "The 10-Day Cortisol Cure plus the full library: Cortisol Healing Blueprint, the Cortisol Movement Protocol, herb dosing charts, the sleep-and-HRV tracker, and the same explanations Joel gives readers who say 'just give me everything.' Cortisol pulls blood pressure, blood sugar, sleep, and weight — fix it once and the rest gets easier.",
+    "headline": "The complete cortisol & stress system, sleep, HRV, weight, and BP.",
+    "description": "The 10-Day Cortisol Reset plus the full library: Cortisol Healing Blueprint, the Cortisol Movement Protocol, herb dosing charts, the sleep-and-HRV tracker, and the same explanations Joel gives readers who say 'just give me everything.' Cortisol pulls blood pressure, blood sugar, sleep, and weight, fix it once and the rest gets easier.",
     "category": "cortisol",
     "tier": 2,
     "tier_label": "Most Popular",
@@ -172,11 +172,11 @@
     "rating": 4.9,
     "review_count": 142,
     "featured": true,
-    "who_for": "You want the whole cortisol system — sleep, stress, HRV, weight, and the way it pulls your blood pressure with it. You want a 10-day reset that actually fits a life.",
+    "who_for": "You want the whole cortisol system, sleep, stress, HRV, weight, and the way it pulls your blood pressure with it. You want a 10-day reset that actually fits a life.",
     "what_inside": [
-      "10-Day Cortisol Cure (daily PDFs)",
+      "10-Day Cortisol Reset (daily PDFs)",
       "Cortisol Healing Blueprint (the Tier 1 starter)",
-      "Cortisol Movement Protocol — the 12-min daily routine",
+      "Cortisol Movement Protocol, the 12-min daily routine",
       "Joel's complete adrenal herb formulary with dosing",
       "Sleep + HRV tracker (printable)",
       "The cortisol-blood-pressure feedback loop guide",
@@ -196,9 +196,9 @@
   },
   {
     "slug": "cortisol-premium-coaching",
-    "name": "The 30-Day BP Triangle Challenge — Cortisol Focus",
-    "headline": "The complete Cortisol system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Blood Sugar kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "name": "The 30-Day BP Triangle Challenge, Cortisol Focus",
+    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Blood Sugar kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "cortisol",
     "tier": 3,
     "tier_label": "30-Day Challenge",
@@ -212,20 +212,20 @@
     "rating": 5,
     "review_count": 9,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to fix cortisol AND the two pillars it pulls along with it.",
+    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to fix cortisol AND the two pillars it pulls along with it.",
     "what_inside": [
       "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 Cortisol materials (full kit included)",
-      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Daily emails for 30 days, one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack — every BP and Blood Sugar kit included (BP Triangle approach)",
+      "Full BraveWorks bonus stack, every BP and Blood Sugar kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach — all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete — with the community to hold you to it"
+      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
+      "A proven reset you'll actually complete, with the community to hold you to it"
     ],
     "related_slugs": [
       "cortisol-reset-kit",
@@ -235,9 +235,9 @@
   },
   {
     "slug": "blood-sugar-starter-kit",
-    "name": "Blood Sugar Cures",
+    "name": "Blood Sugar Reset",
     "headline": "The starter protocol for crashes, cravings, and creeping A1C.",
-    "description": "Joel's entry-level glucose guide. The fastest, simplest way to start understanding insulin resistance — what your fasting number actually means, the four moves that flatten glucose curves, and the herbs Joel trusts for early metabolic dysfunction. Plain English. Built for the reader who's pre-diabetic or just sick of the 3 PM crash.",
+    "description": "Joel's entry-level glucose guide. The fastest, simplest way to start understanding insulin resistance, what your fasting number actually means, the four moves that flatten glucose curves, and the herbs Joel trusts for early metabolic dysfunction. Plain English. Built for the reader who's pre-diabetic or just sick of the 3 PM crash.",
     "category": "blood_sugar",
     "tier": 1,
     "tier_label": "Starter",
@@ -251,9 +251,9 @@
     "rating": 4.8,
     "review_count": 58,
     "featured": true,
-    "who_for": "Your A1C is creeping up. Your doctor said 'pre-diabetes.' You want to know what to do — without going on metformin yet — and you want a nurse-vetted starting point.",
+    "who_for": "Your A1C is creeping up. Your doctor said 'pre-diabetes.' You want to know what to do, without going on metformin yet, and you want a nurse-vetted starting point.",
     "what_inside": [
-      "Blood Sugar Cures starter PDF",
+      "Blood Sugar Reset starter PDF",
       "What your fasting glucose actually means",
       "Joel's 4 daily moves to flatten glucose curves",
       "The 5 metabolic herbs Joel actually trusts",
@@ -274,8 +274,8 @@
   {
     "slug": "blood-sugar-reset-kit",
     "name": "The Blood Sugar 10-Day Reset",
-    "headline": "The complete glucose system — A1C, insulin, energy, and weight.",
-    "description": "The 10-Day Blood Sugar Reset plus the complete glucose library. Daily PDFs, the metabolic herb formulary, the glucose-curve tracker, and the same explanations Joel gives readers who want the whole system. The drivers your doctor never tests for — and what to do about each one.",
+    "headline": "The complete glucose system, A1C, insulin, energy, and weight.",
+    "description": "The 10-Day Blood Sugar Reset plus the complete glucose library. Daily PDFs, the metabolic herb formulary, the glucose-curve tracker, and the same explanations Joel gives readers who want the whole system. The drivers your doctor never tests for, and what to do about each one.",
     "category": "blood_sugar",
     "tier": 2,
     "tier_label": "Most Popular",
@@ -289,10 +289,10 @@
     "rating": 4.9,
     "review_count": 96,
     "featured": true,
-    "who_for": "You want the whole glucose system — A1C, insulin, energy, weight. You want a 10-day reset, the herb dosing, and a tracker so you can see your fasting number actually drop.",
+    "who_for": "You want the whole glucose system, A1C, insulin, energy, weight. You want a 10-day reset, the herb dosing, and a tracker so you can see your fasting number actually drop.",
     "what_inside": [
       "10-Day Blood Sugar Reset (daily PDFs)",
-      "Blood Sugar Cures starter (the Tier 1 guide)",
+      "Blood Sugar Reset starter (the Tier 1 guide)",
       "Joel's complete metabolic herb formulary with dosing",
       "Printable glucose curve + fasting tracker",
       "The drivers your doctor never tests for (full guide)",
@@ -313,9 +313,9 @@
   },
   {
     "slug": "blood-sugar-premium-coaching",
-    "name": "The 30-Day BP Triangle Challenge — Blood Sugar Focus",
-    "headline": "The complete Blood Sugar system — daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day BP Triangle Challenge — daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Cortisol kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "name": "The 30-Day BP Triangle Challenge, Blood Sugar Focus",
+    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
+    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Cortisol kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
     "category": "blood_sugar",
     "tier": 3,
     "tier_label": "30-Day Challenge",
@@ -329,20 +329,20 @@
     "rating": 5,
     "review_count": 7,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability — daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C while also addressing the BP and cortisol that drive it.",
+    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C while also addressing the BP and cortisol that drive it.",
     "what_inside": [
       "The 30-Day BP Triangle Challenge protocol (digital book)",
       "All Tier 1 + Tier 2 Blood Sugar materials (full kit included)",
-      "Daily emails for 30 days — one chapter walkthrough per day",
+      "Daily emails for 30 days, one chapter walkthrough per day",
       "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack — every BP and Cortisol kit included (BP Triangle approach)",
+      "Full BraveWorks bonus stack, every BP and Cortisol kit included (BP Triangle approach)",
       "Access to the 'How to Be Your Own Doctor' Skool community"
     ],
     "outcomes": [
       "30 days of daily guidance walking through every chapter of the protocol",
       "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach — all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete — with the community to hold you to it"
+      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
+      "A proven reset you'll actually complete, with the community to hold you to it"
     ],
     "related_slugs": [
       "blood-sugar-reset-kit",

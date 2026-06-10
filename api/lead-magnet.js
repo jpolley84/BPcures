@@ -53,36 +53,38 @@ const CATEGORIES = {
     label: 'blood pressure',
     short: 'BP',
     pdf_file: 'bp-reset-day1-and-beyond.pdf',
-    pdf_name: 'The 10-Day BP Reset — Day 1 and the full challenge',
-    subject_a: 'Your BP protocol is inside — Day 1 attached',
-    subject_b: "I've watched this move numbers — here's Day 1",
+    pdf_name: 'The 10-Day BP Reset: Day 1 and the full reset',
+    subject_a: 'Your BP protocol is inside. Day 1 attached',
+    subject_b: "I've watched this move numbers. Here's Day 1",
     preview: 'Day 1 of the 10-Day BP Reset, plus the 3 next steps Joel would tell you to pick between.',
     quick_win:
-      "Day 1 is the easiest one. It's the move I tell family to try first — and the one most people feel within 72 hours.",
+      "Day 1 is the easiest one. It's the move I tell family to try first, and the one many people notice within a few days.",
     category_key: 'blood_pressure',
   },
   cortisol: {
     label: 'cortisol',
     short: 'cortisol',
+    // pdf_file keeps the legacy filename until the asset on disk is renamed
+    // (the URL must keep resolving) — the customer-facing name is below.
     pdf_file: 'cortisol-day1-diagnosis.pdf',
-    pdf_name: 'Cortisol Cure — Day 1: Wired-and-Tired Diagnosis',
-    subject_a: 'Your cortisol protocol — Day 1 inside',
-    subject_b: 'Wired-tired? Day 1 of the fix is here',
-    preview: 'Day 1 of the Cortisol Cure — diagnose your pattern first, then the three paths forward.',
+    pdf_name: 'The Cortisol Reset: Day 1, the Wired-and-Tired Check',
+    subject_a: 'Your cortisol protocol, Day 1 inside',
+    subject_b: 'Wired-tired? Day 1 is here',
+    preview: 'Day 1 of the Cortisol Reset. Find your pattern first, then the three paths forward.',
     quick_win:
-      "Day 1 is the diagnosis step. Before you try a single supplement, you want to know which cortisol pattern is actually yours. Most people are wrong about this.",
+      "Day 1 is the pattern-finding step. Before you try a single supplement, you want to know which cortisol pattern is actually yours. Most people are wrong about this.",
     category_key: 'cortisol',
   },
   blood_sugar: {
     label: 'blood sugar',
     short: 'glucose',
     pdf_file: 'blood-sugar-day1.pdf',
-    pdf_name: 'Blood Sugar Reset — Day 1',
-    subject_a: 'Your glucose protocol — Day 1 inside',
-    subject_b: "Your A1C is creeping up — here's Day 1",
+    pdf_name: 'Blood Sugar Reset: Day 1',
+    subject_a: 'Your glucose protocol, Day 1 inside',
+    subject_b: 'Worried your A1C is creeping up? Day 1 is here',
     preview: 'Day 1 of the 10-Day Blood Sugar Reset, plus the three next-step options matched to you.',
     quick_win:
-      "Day 1 is about what actually drives a flat glucose curve — which is almost never the thing people focus on first.",
+      "Day 1 is about what actually drives a flat glucose curve, which is almost never the thing people focus on first.",
     category_key: 'blood_sugar',
   },
 };
@@ -91,15 +93,15 @@ const TIPS = {
   blood_pressure: [
     {
       title: 'Reduce sodium to under 2,000mg/day',
-      body: 'Most people consume 3,400mg without realizing it. Even a two-week reduction moves systolic numbers in most people — and it\'s the fastest single lever you have.',
+      body: 'Most people consume 3,400mg without realizing it. Even a two-week reduction moves systolic numbers for many people, and it is the fastest single lever you have.',
     },
     {
       title: 'Walk 20 minutes daily',
-      body: 'Not for weight loss — for vasodilation. Evening walks move systolic numbers fastest. Consistency matters more than pace. This is the one I tell family to start the same day.',
+      body: 'Not for weight loss. For vasodilation. Evening walks move systolic numbers fastest. Consistency matters more than pace. This is the one I tell family to start the same day.',
     },
     {
       title: 'Prioritize 7+ hours of sleep',
-      body: 'Poor sleep raises cortisol, which raises blood pressure. This one compounds everything else you do — fix the sleep and the other levers work better.',
+      body: 'Poor sleep raises cortisol, which raises blood pressure. This one compounds everything else you do. Fix the sleep and the other levers work better.',
     },
   ],
   cortisol: [
@@ -109,7 +111,7 @@ const TIPS = {
     },
     {
       title: 'Practice slow, deep breathing for 5 minutes daily',
-      body: 'Diaphragmatic breathing activates the vagus nerve, which directly lowers cortisol. Five minutes once a day — morning or evening — shifts your baseline within two weeks.',
+      body: 'Diaphragmatic breathing activates the vagus nerve, which directly lowers cortisol. Five minutes once a day, morning or evening, shifts your baseline within two weeks.',
     },
     {
       title: 'Eat a balanced meal every 4 hours',
@@ -119,11 +121,11 @@ const TIPS = {
   blood_sugar: [
     {
       title: 'Eat fiber before carbohydrates',
-      body: 'Starting a meal with vegetables or another fiber-rich food slows glucose absorption and flattens the post-meal spike by 20–30% in most people. Order matters.',
+      body: 'Starting a meal with vegetables or another fiber-rich food slows glucose absorption and flattens the post-meal spike by 20 to 30% in published studies. Order matters.',
     },
     {
       title: 'Walk 10 minutes after every meal',
-      body: 'A short walk after eating drives glucose into muscle cells without insulin. This is the most consistent single intervention I\'ve seen move post-meal numbers — even a slow stroll counts.',
+      body: 'A short walk after eating drives glucose into muscle cells without insulin. This is the most consistent single intervention I\'ve seen move post-meal numbers. Even a slow stroll counts.',
     },
     {
       title: 'Stay hydrated with water throughout the day',
@@ -154,19 +156,27 @@ function loadProducts() {
 
 function tiersForCategory(category) {
   const all = loadProducts();
+  // 2026-06-09: tier capped at 2. products.json tier-3 entries (all three
+  // categories) still carry the retired $97 BP Triangle Challenge with the
+  // retired Stripe link 9B67sL7fZ6PI8bp9ZvfnO0H — a dead checkout this
+  // email must never render. Tier 3 awaits Joel's Sprint decision; lift
+  // the cap only after products.json tier 3 is replaced.
   return all
-    .filter((p) => p.category === category)
+    .filter((p) => p.category === category && p.tier <= 2)
     .sort((a, b) => a.tier - b.tier);
 }
 
-// 2026-05-14: tier bands match QuizPage.jsx tierForScore. Tier 1/2/3 maps
-// to the 3 active BP products. Coaching ($1,997/$6,997 at /coaching) is
-// surfaced via the Day-12 drip universally, not via this tier function.
+// Tier bands match QuizPage.jsx tierForScore. Tier 1 = $17 starter guide,
+// Tier 2 = $47 reset kit. Tier 3 must point at a LIVE products.json entry;
+// the $97 BP Triangle Challenge and the /coaching Day-12 drip described
+// here before 2026-06 are retired. 2026-06-09: capped at 2 so the instant
+// email never recommends or badges the dead tier — tier 3 awaits Joel's
+// Sprint decision; restore the 3-band logic only after products.json
+// tier 3 is replaced.
 function recommendedTier(riskScore) {
   const s = Number(riskScore) || 0;
   if (s <= 3) return 1;  // $17 BP Starter
-  if (s <= 6) return 2;  // $47 BP Reset Kit
-  return 3;              // $97 BP Triangle Challenge
+  return 2;              // $47 BP Reset Kit
 }
 
 function normalizeCategory(c) {
@@ -192,7 +202,7 @@ function normalizeCategory(c) {
 // duration-X/barrier-X — the same taxonomy beehiiv was tracking, kept
 // inline.
 
-function renderEmail({ name, category, tier, tiers }) {
+function renderEmail({ name, category, tier, tiers, unsubUrl }) {
   const cat = CATEGORIES[category];
   const firstName = (name || '').trim().split(/\s+/)[0] || '';
   const greeting = firstName ? `${firstName},` : 'Friend,';
@@ -209,12 +219,9 @@ function renderEmail({ name, category, tier, tiers }) {
       .map((w) => `<li style="margin:4px 0;color:${accentFg};opacity:0.9;">${w}</li>`)
       .join('');
     const outcome = (t.outcomes || [])[0] || '';
-    const coachingLine = t.tier === 3
-      ? `<div style="margin:12px 0 14px;padding:10px 12px;background:${isRecommended ? 'rgba(255,255,255,0.12)' : 'rgba(108,52,131,0.08)'};border-radius:8px;">
-          <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:${accentFg};opacity:0.8;margin-bottom:4px;">Premium bonuses included</div>
-          <div style="font-size:13px;color:${accentFg};opacity:0.95;line-height:1.5;">🎤 Barbara O'Neill LIVE virtual ticket — June 24–25, 2026 ($297 value)<br/>👥 30-Day Challenge + weekly group coaching — kicks off May 1</div>
-        </div>`
-      : '';
+    // 2026-06-09: the old tier-3 "Premium bonuses" block (virtual ticket +
+    // "kicks off May 1" challenge) was deleted — both claims belonged to
+    // retired offers. Do not reinstate without a live bonus.
     const priceLine = t.original_price
       ? `<span style="font-family:Georgia,serif;font-size:28px;font-weight:500;">${t.price}</span> <span style="text-decoration:line-through;opacity:0.5;font-size:15px;margin-left:6px;">${t.original_price}</span>`
       : `<span style="font-family:Georgia,serif;font-size:28px;font-weight:500;">${t.price}</span>`;
@@ -228,10 +235,9 @@ function renderEmail({ name, category, tier, tiers }) {
           <div style="font-size:14px;line-height:1.5;color:${accentFg};opacity:0.9;margin-bottom:12px;">${t.headline}</div>
           <ul style="font-size:13px;line-height:1.45;padding-left:18px;margin:8px 0 14px;">${what}</ul>
           ${outcome ? `<div style="font-size:13px;color:${accentFg};opacity:0.85;margin-bottom:10px;"><em>Outcome:</em> ${outcome}</div>` : ''}
-          ${coachingLine}
           <div style="margin:10px 0 14px;">${priceLine}</div>
           <a href="${t.stripe_payment_link}" style="display:inline-block;background:${isRecommended ? '#FFFFFF' : '#2C3E50'};color:${isRecommended ? '#6C3483' : '#FFFFFF'};padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
-            ${t.tier === 3 ? 'Get the kit + coaching' : t.tier === 2 ? 'Get the complete kit' : 'Start with the guide'}
+            ${t.tier === 3 ? 'Get the full program' : t.tier === 2 ? 'Get the complete kit' : 'Start with the guide'}
           </a>
         </td></tr>
       </table>
@@ -271,7 +277,7 @@ function renderEmail({ name, category, tier, tiers }) {
       <tr><td style="padding:6px 28px 10px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F1E8;border-radius:14px;">
           <tr><td style="padding:22px 22px;">
-            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6C3483;margin-bottom:8px;">Start here — free</div>
+            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6C3483;margin-bottom:8px;">Start here · free</div>
             <div style="font-family:Georgia,serif;font-size:19px;color:#2C3E50;margin-bottom:6px;">${cat.pdf_name}</div>
             <p style="font-size:14px;line-height:1.55;color:#3A3A3A;margin:0 0 14px;">${cat.quick_win}</p>
             <a href="${pdfUrl}" style="display:inline-block;background:#6C3483;color:#FFFFFF;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
@@ -288,7 +294,7 @@ function renderEmail({ name, category, tier, tiers }) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#2C3E50;border-radius:14px;">
           <tr><td style="padding:22px 24px;">
             <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:8px;">Most popular</div>
-            <div style="font-family:Georgia,serif;font-size:21px;color:#FFFFFF;margin-bottom:6px;font-weight:500;">${featured.name} — ${featured.price}</div>
+            <div style="font-family:Georgia,serif;font-size:21px;color:#FFFFFF;margin-bottom:6px;font-weight:500;">${featured.name} · ${featured.price}</div>
             <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0 0 16px;">
               ${featured.headline}
             </p>
@@ -306,7 +312,7 @@ function renderEmail({ name, category, tier, tiers }) {
             Want the full protocol? Pick the level that fits.
           </h2>
           <p style="font-size:14px;line-height:1.55;color:#5A5A5A;margin:0 0 6px;">
-            Three paths. Same nurse. Read all three and trust your gut.
+            Two paths. Same nurse. Read both and trust your gut.
           </p>
         </div>
       </td></tr>
@@ -316,9 +322,9 @@ function renderEmail({ name, category, tier, tiers }) {
       <tr><td style="padding:14px 28px 24px;">
         <div style="background:#FBF8F1;border-radius:12px;padding:18px 20px;border:1px dashed rgba(0,0,0,0.12);">
           <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#6C3483;margin-bottom:8px;">Bonus · free</div>
-          <div style="font-family:Georgia,serif;font-size:17px;color:#2C3E50;margin-bottom:6px;">Cook For Life — plant-based cookbook</div>
+          <div style="font-family:Georgia,serif;font-size:17px;color:#2C3E50;margin-bottom:6px;">Cook For Life: plant-based cookbook</div>
           <p style="font-size:13px;line-height:1.5;color:#3A3A3A;margin:0 0 10px;">
-            Forty-five plant-based recipes, a 14-day meal plan, and the shopping lists I give family. Built around the foods that move the numbers — not the ones that fight the protocol.
+            Forty-five plant-based recipes, a 14-day meal plan, and the shopping lists I give family. Built around the foods that move the numbers, not the ones that fight the protocol.
           </p>
           <a href="${COOKBOOK_URL}" style="color:#6C3483;font-weight:600;font-size:14px;text-decoration:underline;">Download the cookbook →</a>
         </div>
@@ -329,7 +335,7 @@ function renderEmail({ name, category, tier, tiers }) {
           Reply to this email if you have a question about your score, your meds, or which level to start with. I read what you send.
         </p>
         <p style="font-size:13px;color:#3A3A3A;line-height:1.55;margin:0 0 14px;">
-          — Joel
+          Joel
         </p>
       </td></tr>
 
@@ -337,8 +343,9 @@ function renderEmail({ name, category, tier, tiers }) {
         <hr style="border:none;border-top:1px solid rgba(0,0,0,0.08);margin:20px 0;" />
         <p style="font-size:11px;color:#9A9A9A;line-height:1.5;margin:0;">
           BraveWorks RN · Joel Polley, RN · Naturopathic practitioner · <a href="${SITE_URL}" style="color:#9A9A9A;">${SITE_URL.replace(/^https?:\/\//, '')}</a>
-          <br/>Educational content only. Not medical advice. Always complement — never replace — care from your physician.
-          <br/>You received this because you completed the BPQuiz assessment.
+          <br/>Educational content only. Not medical advice. Always complement, never replace, care from your physician.
+          <br/>You received this because you completed the BPQuiz assessment.${unsubUrl ? ` <a href="${unsubUrl}" style="color:#9A9A9A;">Unsubscribe</a>` : ''}
+          <br/>${`BraveWorks RN${process.env.BUSINESS_POSTAL_ADDRESS ? ' · ' + process.env.BUSINESS_POSTAL_ADDRESS : ''}` /* CAN-SPAM requires a physical postal address — Joel must set BUSINESS_POSTAL_ADDRESS in Vercel. */}
         </p>
       </td></tr>
     </table>
@@ -561,12 +568,13 @@ export default async function handler(req, res) {
   let sent = false;
   let sendError = null;
   if (!isDuplicate) {
-    const html = renderEmail({ name, category, tier, tiers });
     // RFC 8058 one-click unsubscribe via /api/unsubscribe (CAN-SPAM compliance).
     // The token is HMAC-signed so addresses can't be forged. Token format
-    // matches signUnsubToken in api/unsubscribe.js.
+    // matches signUnsubToken in api/unsubscribe.js. Computed BEFORE render so
+    // the in-body unsubscribe link (16 CFR 316.5) renders too.
     const unsubToken = signUnsubTokenInline(email.trim().toLowerCase());
     const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
+    const html = renderEmail({ name, category, tier, tiers, unsubUrl });
     try {
       await getResend().emails.send({
         from: 'Joel Polley, RN <joel@bpquiz.com>',
