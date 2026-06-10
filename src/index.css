@@ -964,9 +964,11 @@ em.ital-display {
 .ecg-rule { width: 100%; height: 28px; display: block;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+/* Draws ONCE on load (forwards) — not a perpetual loop (review spec: never
+   loop near a CTA; saves mobile battery). */
 .ecg-rule path { fill: none; stroke: var(--clay); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
-  animation: ecgSweep 3.6s linear infinite; }
-@keyframes ecgSweep { 0% { stroke-dasharray: 90 700; stroke-dashoffset: 790; } 100% { stroke-dasharray: 90 700; stroke-dashoffset: 0; } }
+  stroke-dasharray: 820; stroke-dashoffset: 820; animation: ecgDraw 2.6s var(--ease-out) 0.3s forwards; }
+@keyframes ecgDraw { to { stroke-dashoffset: 0; } }
 
 /* BP Triangle (homepage CSS-only draw on scroll; .in toggled by IO) */
 .bp-tri path, .bp-tri polygon { fill: none; stroke: var(--clay); stroke-width: 2; stroke-linejoin: round;
