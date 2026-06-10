@@ -79,42 +79,41 @@
   },
   {
     "slug": "bp-premium-coaching",
-    "name": "The 30-Day BP Triangle Challenge",
-    "headline": "The complete BP system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the BP Reset Kit, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every Cortisol and Blood Sugar kit included so you can address all Three Pressures: Pipe Pressure (vascular), Stress Pressure (cortisol), and Sugar Pressure (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "name": "The 30-Day Personalized Sprint",
+    "headline": "A 30-day plan Joel writes for your numbers, walked day by day, with 4 live group coaching sessions included.",
+    "description": "For the person who wants it built with them, not alone. You send your numbers and your intake. Joel Polley, RN writes your personalized 30-day plan, then walks you through it day by day, with live group coaching every week and the full BraveWorks library included. Education and coaching alongside your doctor, never instead of your doctor. Joel takes 5 new Sprint readers a month, because that is what the writing takes.",
     "category": "blood_pressure",
     "tier": 3,
-    "tier_label": "30-Day Challenge",
-    "price": "$97",
-    "price_cents": 9700,
-    "original_price": "$497",
-    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
+    "tier_label": "Personalized Sprint",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": null,
+    "stripe_payment_link": "https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O",
     "gumroad_link": null,
     "cover_image": "/products/blood-pressure__bp-reset-graduation/cover.png",
-    "badge": "BP Triangle",
-    "rating": 5,
-    "review_count": 12,
+    "badge": "Built For You",
+    "rating": null,
+    "review_count": null,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to address all three pillars of BP at once.",
+    "who_for": "You want a plan with your name on it, not a generic PDF. You want a nurse's eyes on your numbers, a clear day-by-day path, and live sessions where your questions get answered. Alongside your doctor, never instead of your doctor.",
     "what_inside": [
-      "The 30-Day BP Triangle Challenge protocol (digital book)",
-      "All Tier 1 + Tier 2 BP materials (full kit included)",
-      "Daily emails for 30 days, one chapter walkthrough per day",
-      "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack, every Cortisol and Blood Sugar kit included (BP Triangle approach)",
-      "Access to the 'How to Be Your Own Doctor' Skool community"
+      "A personalized 30-day plan written from your numbers and intake",
+      "Day-by-day walkthrough, so you are never guessing what comes next",
+      "4 live group coaching sessions a month, Wednesdays at 7 PM ET",
+      "The full BraveWorks ebook library and the community",
+      "The pre-read promise: if your case needs a different kind of help, Joel tells you before writing a word and refunds every dollar"
     ],
     "outcomes": [
-      "30 days of daily guidance walking through every chapter of the protocol",
-      "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete, with the community to hold you to it"
+      "A 30-day path built around your readings, your med list, and your life",
+      "Live answers to your questions every week",
+      "A clear record to bring to your next doctor visit",
+      "Structure and a group beside you so you actually finish"
     ],
     "related_slugs": [
       "bp-reset-kit",
       "blood-pressure-cures"
     ],
-    "updated_at": "2026-05-09T22:00:00.000000+00:00"
+    "updated_at": "2026-06-09T00:00:00.000000+00:00"
   },
   {
     "slug": "cortisol-healing-blueprint",
@@ -196,42 +195,41 @@
   },
   {
     "slug": "cortisol-premium-coaching",
-    "name": "The 30-Day BP Triangle Challenge, Cortisol Focus",
-    "headline": "The complete Cortisol system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the Cortisol Reset Kit, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Blood Sugar kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "name": "The 30-Day Personalized Sprint",
+    "headline": "A 30-day plan Joel writes for your numbers, walked day by day, with 4 live group coaching sessions included.",
+    "description": "For the person who wants it built with them, not alone. You send your numbers and your intake. Joel Polley, RN writes your personalized 30-day plan, then walks you through it day by day, with live group coaching every week and the full BraveWorks library included. Education and coaching alongside your doctor, never instead of your doctor. Joel takes 5 new Sprint readers a month, because that is what the writing takes.",
     "category": "cortisol",
     "tier": 3,
-    "tier_label": "30-Day Challenge",
-    "price": "$97",
-    "price_cents": 9700,
-    "original_price": "$497",
-    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
+    "tier_label": "Personalized Sprint",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": null,
+    "stripe_payment_link": "https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O",
     "gumroad_link": null,
     "cover_image": "/products/cortisol-challenge-kit/cover.png",
-    "badge": "BP Triangle",
-    "rating": 5,
-    "review_count": 9,
+    "badge": "Built For You",
+    "rating": null,
+    "review_count": null,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to fix cortisol AND the two pillars it pulls along with it.",
+    "who_for": "You want a plan with your name on it, not a generic PDF. You want a nurse's eyes on your numbers, a clear day-by-day path, and live sessions where your questions get answered. Alongside your doctor, never instead of your doctor.",
     "what_inside": [
-      "The 30-Day BP Triangle Challenge protocol (digital book)",
-      "All Tier 1 + Tier 2 Cortisol materials (full kit included)",
-      "Daily emails for 30 days, one chapter walkthrough per day",
-      "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack, every BP and Blood Sugar kit included (BP Triangle approach)",
-      "Access to the 'How to Be Your Own Doctor' Skool community"
+      "A personalized 30-day plan written from your numbers and intake",
+      "Day-by-day walkthrough, so you are never guessing what comes next",
+      "4 live group coaching sessions a month, Wednesdays at 7 PM ET",
+      "The full BraveWorks ebook library and the community",
+      "The pre-read promise: if your case needs a different kind of help, Joel tells you before writing a word and refunds every dollar"
     ],
     "outcomes": [
-      "30 days of daily guidance walking through every chapter of the protocol",
-      "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete, with the community to hold you to it"
+      "A 30-day path built around your readings, your med list, and your life",
+      "Live answers to your questions every week",
+      "A clear record to bring to your next doctor visit",
+      "Structure and a group beside you so you actually finish"
     ],
     "related_slugs": [
       "cortisol-reset-kit",
       "cortisol-healing-blueprint"
     ],
-    "updated_at": "2026-05-09T22:00:00.000000+00:00"
+    "updated_at": "2026-06-09T00:00:00.000000+00:00"
   },
   {
     "slug": "blood-sugar-starter-kit",
@@ -313,41 +311,40 @@
   },
   {
     "slug": "blood-sugar-premium-coaching",
-    "name": "The 30-Day BP Triangle Challenge, Blood Sugar Focus",
-    "headline": "The complete Blood Sugar system, daily email coaching, weekly live group sessions in Skool, plus the full BraveWorks bonus stack.",
-    "description": "Everything in the Blood Sugar 10-Day Reset, plus the 30-Day BP Triangle Challenge, daily emails for 30 days walking you through each chapter, weekly group coaching LIVE in the Skool community, and the full BraveWorks bonus stack (every BP and Cortisol kit included so you can address all Three Pressures: Pipe (vascular), Stress (cortisol), and Sugar (insulin)). Joel's complete nurse-built system in one package, with structure and accountability. Cohort-based with weekly live calls.",
+    "name": "The 30-Day Personalized Sprint",
+    "headline": "A 30-day plan Joel writes for your numbers, walked day by day, with 4 live group coaching sessions included.",
+    "description": "For the person who wants it built with them, not alone. You send your numbers and your intake. Joel Polley, RN writes your personalized 30-day plan, then walks you through it day by day, with live group coaching every week and the full BraveWorks library included. Education and coaching alongside your doctor, never instead of your doctor. Joel takes 5 new Sprint readers a month, because that is what the writing takes.",
     "category": "blood_sugar",
     "tier": 3,
-    "tier_label": "30-Day Challenge",
-    "price": "$97",
-    "price_cents": 9700,
-    "original_price": "$497",
-    "stripe_payment_link": "https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H",
+    "tier_label": "Personalized Sprint",
+    "price": "$297",
+    "price_cents": 29700,
+    "original_price": null,
+    "stripe_payment_link": "https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O",
     "gumroad_link": null,
     "cover_image": "/products/diabetes-reversal-kit/cover.png",
-    "badge": "BP Triangle",
-    "rating": 5,
-    "review_count": 7,
+    "badge": "Built For You",
+    "rating": null,
+    "review_count": null,
     "featured": false,
-    "who_for": "You want the complete system with structure and accountability, daily email guidance through every chapter, weekly live group coaching in Skool, and a community that holds you to the protocol. This is for the person who is done dabbling and ready to move their A1C while also addressing the BP and cortisol that drive it.",
+    "who_for": "You want a plan with your name on it, not a generic PDF. You want a nurse's eyes on your numbers, a clear day-by-day path, and live sessions where your questions get answered. Alongside your doctor, never instead of your doctor.",
     "what_inside": [
-      "The 30-Day BP Triangle Challenge protocol (digital book)",
-      "All Tier 1 + Tier 2 Blood Sugar materials (full kit included)",
-      "Daily emails for 30 days, one chapter walkthrough per day",
-      "Weekly group coaching LIVE in Skool (every week for 30 days)",
-      "Full BraveWorks bonus stack, every BP and Cortisol kit included (BP Triangle approach)",
-      "Access to the 'How to Be Your Own Doctor' Skool community"
+      "A personalized 30-day plan written from your numbers and intake",
+      "Day-by-day walkthrough, so you are never guessing what comes next",
+      "4 live group coaching sessions a month, Wednesdays at 7 PM ET",
+      "The full BraveWorks ebook library and the community",
+      "The pre-read promise: if your case needs a different kind of help, Joel tells you before writing a word and refunds every dollar"
     ],
     "outcomes": [
-      "30 days of daily guidance walking through every chapter of the protocol",
-      "Weekly live group coaching with accountability and real questions answered",
-      "Full BP Triangle approach, all Three Pressures covered (Pipe, Stress, Sugar)",
-      "A proven reset you'll actually complete, with the community to hold you to it"
+      "A 30-day path built around your readings, your med list, and your life",
+      "Live answers to your questions every week",
+      "A clear record to bring to your next doctor visit",
+      "Structure and a group beside you so you actually finish"
     ],
     "related_slugs": [
       "blood-sugar-reset-kit",
       "blood-sugar-starter-kit"
     ],
-    "updated_at": "2026-05-09T22:00:00.000000+00:00"
+    "updated_at": "2026-06-09T00:00:00.000000+00:00"
   }
 ]

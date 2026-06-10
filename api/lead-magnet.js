@@ -156,27 +156,23 @@ function loadProducts() {
 
 function tiersForCategory(category) {
   const all = loadProducts();
-  // 2026-06-09: tier capped at 2. products.json tier-3 entries (all three
-  // categories) still carry the retired $97 BP Triangle Challenge with the
-  // retired Stripe link 9B67sL7fZ6PI8bp9ZvfnO0H — a dead checkout this
-  // email must never render. Tier 3 awaits Joel's Sprint decision; lift
-  // the cap only after products.json tier 3 is replaced.
+  // 2026-06-09 (later same day): tier-3 cap LIFTED. products.json tier 3 is
+  // now the $297 30-Day Personalized Sprint (Joel-approved) in all three
+  // categories; the retired $97 Challenge entries are gone.
   return all
-    .filter((p) => p.category === category && p.tier <= 2)
+    .filter((p) => p.category === category)
     .sort((a, b) => a.tier - b.tier);
 }
 
 // Tier bands match QuizPage.jsx tierForScore. Tier 1 = $17 starter guide,
-// Tier 2 = $47 reset kit. Tier 3 must point at a LIVE products.json entry;
-// the $97 BP Triangle Challenge and the /coaching Day-12 drip described
-// here before 2026-06 are retired. 2026-06-09: capped at 2 so the instant
-// email never recommends or badges the dead tier — tier 3 awaits Joel's
-// Sprint decision; restore the 3-band logic only after products.json
-// tier 3 is replaced.
+// Tier 2 = $47 reset kit, Tier 3 = $297 30-Day Personalized Sprint
+// (personalized plan + 4 live group sessions; replaced the retired $97
+// Challenge on 2026-06-09).
 function recommendedTier(riskScore) {
   const s = Number(riskScore) || 0;
-  if (s <= 3) return 1;  // $17 BP Starter
-  return 2;              // $47 BP Reset Kit
+  if (s <= 3) return 1;  // $17 starter
+  if (s <= 6) return 2;  // $47 reset kit
+  return 3;              // $297 Personalized Sprint
 }
 
 function normalizeCategory(c) {
