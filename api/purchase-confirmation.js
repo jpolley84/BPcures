@@ -93,7 +93,7 @@ export const TIER_CONFIG = {
   // stale discovery-call block killed; $47 OTO demoted to honest optional
   // add-on (no fake urgency).
   1: {
-    product: 'Blood Pressure Cures, Starter Protocol Kit',
+    product: 'The 10-Day Nurse\'s Reset, Starter Protocol Kit',
     subject: 'Joel here. Your BP Reset Kit is inside (download links below)',
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
@@ -143,7 +143,7 @@ export const TIER_CONFIG = {
   // still delivers properly. No new sales should hit this — frontend
   // checkbox is hidden in QuizPage.jsx.
   '1+pt-stack': {
-    product: 'Blood Pressure Cures + Pressure Triangle Stack (legacy bump)',
+    product: 'The 10-Day Nurse\'s Reset + Pressure Triangle Stack (legacy bump)',
     subject: 'You\'re in. Your BP kit + Pressure Triangle Stack (4 bonus books) inside',
     downloads: [
       DOWNLOADS.bp_day1,

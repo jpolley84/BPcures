@@ -30,7 +30,7 @@ const UPSELL_TIERS = {
   'bp-cure-book': {
     priceId: 'price_1TNGMuHseZnO3rRZSIMPnPaO',
     amount: 1299,
-    description: 'Blood Pressure Cures — The 10-Day Nurse\'s Reset',
+    description: 'The 10-Day Nurse\'s Reset Companion',
     nextStep: '/upsell-bp-reset-kit',
   },
   'bp-reset-kit-oto': {
