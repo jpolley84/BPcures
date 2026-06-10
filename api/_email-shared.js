@@ -1,11 +1,17 @@
 // api/_email-shared.js — shared email components imported by all 5 tier
-// sequences (_tier-lead/1/2/3/4-emails.js). One source of truth for the
-// YouTube-first footer + 3-tier Skool ladder CTAs.
+// sequences (_tier-lead/1/2/3/4-emails.js) + newsletter. One source of
+// truth for the YouTube CTA + the Weekly Reset community footer.
 //
-// 2026-05-24: Joel directive — YouTube is now primary social driver
-// ("free content can get you off pills"). Skool free → Premium $9/m →
-// VIP $47/m is the new value ladder. These two blocks appear at the
-// bottom of EVERY tier email.
+// 2026-06-09: panel-approved realignment. The old 3-tier Skool ladder
+// (Standard Free / Premium $9 / VIP $47, Monday Hot Seat) described a
+// group that does not exist at skool.com/braveworksrn — killed. Every
+// block now sells the single real offer: The Weekly Reset, $27/month,
+// first 7 days free, four live group sessions a month (Wednesdays at
+// 7 pm ET), full ebook library + community included.
+// Export names kept (skoolTiersFooter, premiumVipBodyPitch) so importing
+// tier files don't break; only the rendered content changed.
+// The "get people off pills" line in youtubePrimaryCTA was an unwrapped
+// medication-cessation claim rendered in every tier — deleted (stop-ship).
 
 // Match the canonical /about marketing URL used in tier email files.
 // Internal-only — tier files keep their own SKOOL_URL export to avoid
@@ -24,20 +30,14 @@ const PALETTE = {
 };
 
 // ─── Block 1: YouTube primary CTA ─────────────────────────────────────
-// Placed at the BOTTOM of every email body, but ABOVE the Skool tier
-// ladder. This is the "trust-first" exit ramp for readers not ready to
-// spend a dollar. Kennedy: lower perceived self-interest = higher trust.
-//
-// Copy is intentionally non-pushy. "Watch a free video" is the lowest-
-// friction CTA in the entire ladder.
+// "Trust-first" exit ramp for readers not ready to spend a dollar.
+// Copy is intentionally non-pushy and carries NO outcome claims —
+// footers cannot carry riders, so they cannot carry claims that need them.
 export function youtubePrimaryCTA() {
   return `<div style="margin:36px 0 20px;padding:28px 26px;background:#FFFFFF;border:2px solid ${PALETTE.accentClay};border-radius:14px;">
     <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${PALETTE.accentClay};font-weight:700;margin-bottom:10px;">Not ready to spend a dollar yet?</div>
-    <p style="font-size:16px;line-height:1.6;color:${PALETTE.text};margin:0 0 16px;font-weight:500;">
-      That's completely fine. The same protocols I run with my private clients I teach on my YouTube — free, no signup, no email required.
-    </p>
-    <p style="font-size:15px;line-height:1.55;color:${PALETTE.textSoft};margin:0 0 20px;">
-      I've watched these protocols get people off pills who thought they'd be on them for life. Your move.
+    <p style="font-size:16px;line-height:1.6;color:${PALETTE.text};margin:0 0 20px;font-weight:500;">
+      That's completely fine. The same protocols I teach inside the paid programs are on my YouTube. Free, no signup, no email required.
     </p>
     <a href="${YOUTUBE_URL}" style="display:inline-block;background:${PALETTE.accentClay};color:#FFFFFF;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.02em;">
       Check out the latest video →
@@ -45,86 +45,45 @@ export function youtubePrimaryCTA() {
   </div>`;
 }
 
-// ─── Block 2: Skool 3-tier ladder footer ──────────────────────────────
-// Placed AFTER the YouTube CTA. Lists all three Skool tiers — Free /
-// Premium $9 / VIP $47 — so every email exposes the upgrade path.
-// Hormozi: "5-7x more offers than you think." Every email should
-// expose every rung of the ladder, not just the next one.
-//
-// All three tiers route to the same community URL — Skool's UI shows
-// the subscribe option once they're inside. We explain in copy.
+// ─── Block 2: Weekly Reset footer (export name kept for importers) ────
+// Was the 3-tier Skool ladder. Now the single Weekly Reset offer.
 export function skoolTiersFooter() {
   return `<div style="margin:0 0 28px;padding:24px 22px;background:${PALETTE.outerBg};border-radius:12px;border-left:4px solid ${PALETTE.accentSage};">
-    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:14px;">3 ways to go deeper inside the community</div>
-
-    <div style="margin:0 0 14px;">
-      <p style="font-size:14.5px;line-height:1.5;color:${PALETTE.text};margin:0 0 4px;font-weight:600;">
-        → <a href="${SKOOL_URL}" style="color:${PALETTE.text};text-decoration:none;">Standard · Free</a>
-      </p>
-      <p style="font-size:13.5px;line-height:1.5;color:${PALETTE.textSoft};margin:0 0 0 16px;">
-        The 10-Day Challenge, the BP Reset Kit, the community.
-      </p>
-    </div>
-
-    <div style="margin:0 0 14px;">
-      <p style="font-size:14.5px;line-height:1.5;color:${PALETTE.text};margin:0 0 4px;font-weight:600;">
-        → <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};text-decoration:none;">Premium · $9/mo</a>
-      </p>
-      <p style="font-size:13.5px;line-height:1.5;color:${PALETTE.textSoft};margin:0 0 0 16px;">
-        Private Zoom Hot-Seat room every Monday at 10 PM ET. Hand goes up first. Skip the chat queue.
-      </p>
-    </div>
-
-    <div>
-      <p style="font-size:14.5px;line-height:1.5;color:${PALETTE.text};margin:0 0 4px;font-weight:600;">
-        → <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};text-decoration:none;">VIP · $47/mo</a>
-      </p>
-      <p style="font-size:13.5px;line-height:1.5;color:${PALETTE.textSoft};margin:0 0 0 16px;">
-        1-on-1 live consults · Personal protocol reviews · Classroom courses · WhatsApp Office Hours.
-      </p>
-    </div>
-
-    <p style="font-size:12px;line-height:1.55;color:#999;margin:18px 0 0;font-style:italic;">
-      Inside Skool: Settings → Subscription → pick your tier.
+    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:10px;">The Weekly Reset</div>
+    <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 14px;">
+      Four live group sessions a month with me, Wednesdays at 7 pm ET. Bring your numbers, your med list, your questions. Full ebook library and the community included. $27 a month, first 7 days free.
     </p>
+    <a href="${SKOOL_URL}" style="display:inline-block;font-size:13px;color:${PALETTE.accentClay};text-decoration:none;font-weight:700;border-bottom:2px solid ${PALETTE.accentClay};padding-bottom:1px;">Start your free week →</a>
   </div>`;
 }
 
-// ─── Block 3: In-body Premium/VIP pitch (for B-list days only) ────────
-// Used in lead-cron Days 5/7 + tier-1-cron Days 3/7/14 — the engaged-
-// but-not-ready-for-$297 stage where Premium ($9) and VIP ($47) are
-// the right next rungs.
-//
-// This is a STRONGER pitch than the footer ladder. Goes inline in the
-// email body, not in the footer.
+// ─── Block 3: In-body Weekly Reset pitch (export name kept) ──────────
+// Was the Premium/VIP dark card. Now the Weekly Reset dark card.
+// Stronger than the footer block; goes inline in the email body.
 export function premiumVipBodyPitch() {
   return `<div style="margin:32px 0;padding:28px 26px;background:#2C3E50;border-radius:14px;color:#FFFFFF;">
-    <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#FFD700;font-weight:700;margin-bottom:12px;">A real clinician in your corner — without the $297 commitment</div>
+    <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#FFD700;font-weight:700;margin-bottom:12px;">A live room, every week</div>
 
-    <p style="font-size:17px;line-height:1.55;color:#FFFFFF;margin:0 0 18px;font-weight:500;">
-      Two new ways to get me on the phone with you Monday nights:
+    <p style="font-size:16px;line-height:1.6;color:#FFFFFF;margin:0 0 20px;">
+      Four live group sessions a month with me, Wednesdays at 7 pm ET. Bring your numbers, your med list, your questions. Works alongside your doctor's plan, never instead of it. $27 a month, first 7 days free.
     </p>
 
-    <div style="margin:0 0 16px;padding:16px 18px;background:rgba(255,255,255,0.06);border-radius:10px;">
-      <p style="font-size:15px;line-height:1.5;color:#FFFFFF;margin:0 0 6px;font-weight:600;">
-        Premium · $9/month — the Monday Hot Seat
-      </p>
-      <p style="font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0;">
-        Private Zoom room. Hand goes up first. Real answers about YOUR numbers, not "ask your doctor."
-      </p>
-    </div>
-
-    <div style="margin:0 0 22px;padding:16px 18px;background:rgba(255,255,255,0.06);border-radius:10px;">
-      <p style="font-size:15px;line-height:1.5;color:#FFFFFF;margin:0 0 6px;font-weight:600;">
-        VIP · $47/month — the closest thing to private client
-      </p>
-      <p style="font-size:13.5px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0;">
-        Everything in Premium + 1-on-1 consults + personal protocol reviews + WhatsApp Office Hours.
-      </p>
-    </div>
-
     <a href="${SKOOL_URL}" style="display:inline-block;background:${PALETTE.accentClay};color:#FFFFFF;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.02em;">
-      See both tiers in Skool →
+      Start your free week →
     </a>
+  </div>`;
+}
+
+// mondayCallReminder — imported by _newsletter-emails.js since 2026-05-24 but
+// never defined here (latent import crash, caught 2026-06-08). The "Monday
+// 10pm" call it referenced is retired; the live call is the Weekly Reset
+// group session, Wednesdays 7 PM ET. Renders the honest current reminder.
+// (Name kept so the newsletter import keeps working.)
+export function mondayCallReminder() {
+  return `<div style="margin:24px 0;padding:16px 20px;background:#FBF8F1;border-radius:12px;border:1px solid #E8E2D4;">
+    <p style="font-size:14px;line-height:1.6;color:#3A3A3A;margin:0;">
+      <strong style="color:#2C3E50;">Live this week:</strong> the Weekly Reset group session, Wednesday at 7 PM ET. Bring your numbers, your med list, your questions. First 7 days free.
+      <a href="${SKOOL_URL}" style="color:#B85A36;font-weight:700;text-decoration:none;">Join here →</a>
+    </p>
   </div>`;
 }
