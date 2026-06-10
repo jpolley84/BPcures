@@ -28,6 +28,7 @@ const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
+const ApplyPage = lazy(() => import('./pages/ApplyPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
@@ -172,7 +173,13 @@ function App() {
 
           {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}
           <Route path="/1on1" element={<WaitlistApplicationPage />} />
-          <Route path="/apply" element={<Navigate to="/1on1" replace />} />
+          {/* /apply — private coaching application questionnaire (2026-06-09,
+              replaces the old redirect to /1on1). Serves the $1,997 90-Day
+              Group + the four 1:1 tiers; ?tier=<slug> preselects (ninety /
+              triangle / inner-circle / household / pillar). POSTs to
+              /api/coaching-apply with source: 'apply-page'. Standalone, no
+              SiteLayout — matches /coaching's quiet-luxury posture. */}
+          <Route path="/apply" element={<ApplyPage />} />
 
           {/* 2026-06-08 RELAUNCHED: /coaching is live again, listing Joel's
               four 1:1 tiers (Triangle Session $1,500 one-time, Inner Circle

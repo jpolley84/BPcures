@@ -8,6 +8,17 @@
 //   3. Auto-acknowledged to the applicant
 //
 // 2026-05-12 — initial cohort price $4,997 / 5 slots.
+//
+// 2026-06-09 — EXTENDED for the new /apply questionnaire (ApplyPage.jsx).
+// Same endpoint now serves two payload shapes, switched on
+// `source: 'apply-page'`:
+//   - legacy (/cohort2): name/email/whyNow/ageRange/investmentRange/whenStart
+//     — validation, scoring, emails unchanged. Backward compatible.
+//   - apply-page: tier-based application for the $1,997 90-Day Group and the
+//     four 1:1 tiers. Tier slug validated against APPLY_TIERS (server-side
+//     canonical name/price — client copy is not trusted). Tier name + price
+//     go in Joel's notify subject + body; tier stored in the KV record;
+//     applicant ack names the tier with the 48-hour promise.
 
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
@@ -31,6 +42,17 @@ function getResend() {
 // if a different routing is needed for any specific environment.
 const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM = 'BP Triangle Freedom Sprint <coaching@bpquiz.com>';
+
+// 2026-06-09: canonical tier catalog for the /apply questionnaire. The page
+// sends tierName/tierPrice too, but we resolve from the slug server-side so
+// a tampered client can't rewrite prices in Joel's notify email.
+const APPLY_TIERS = {
+  'ninety': { name: 'The 90-Day Personalized Group', price: '$1,997' },
+  'triangle': { name: 'The Triangle Session', price: '$1,500 one-time' },
+  'inner-circle': { name: 'The Inner Circle', price: '$1,500/month' },
+  'household': { name: 'The Brave Household', price: '$5,000/month' },
+  'pillar': { name: 'The Pillar Year', price: '$50,000/year' },
+};
 
 // 2026-05-14 hardening (audit P0-2): per-IP rate limit, mirrors the
 // lead-magnet.js + challenge-signup.js pattern. Each apply triggers
@@ -79,13 +101,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid body — expected JSON' });
   }
 
+  // 2026-06-09: /apply questionnaire submissions identify themselves with
+  // source: 'apply-page'. They follow the tier-based path below and are NOT
+  // subject to the Cohort 2 window (the 1:1 tiers are evergreen).
+  const isApplyPage = req.body.source === 'apply-page';
+
   // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
   // closed; this endpoint is now serving Cohort 2 applications (the
   // 90-day group program opening May 24, 2026). Window stays open
   // through Aug 31 to allow rolling enrollment + waitlist conversion.
-  // Update when rolling Cohort 3.
+  // Update when rolling Cohort 3. (Legacy path only — see isApplyPage.)
   const COHORT_2_CLOSE_ISO = '2026-08-31T23:59:59Z';
-  if (Date.now() >= new Date(COHORT_2_CLOSE_ISO).getTime()) {
+  if (!isApplyPage && Date.now() >= new Date(COHORT_2_CLOSE_ISO).getTime()) {
     return res.status(410).json({
       error: 'Cohort 2 applications closed. Email braveworksrn@gmail.com with subject "Next cohort" to be added to the waitlist for Cohort 3.',
     });
@@ -103,25 +130,48 @@ export default async function handler(req, res) {
     bpRange, bpMeds, healthScore, sleepScore, stressScore,
     costOfInaction, commitment, pastAttempts, successLook,
     decisionMaker, foundMe,
+    // 2026-06-09 apply-page fields
+    tier, bpReading, bpDuration, bpMedsCount, materialsUsed,
+    winning90, triedAlready, investmentAck, anythingElse,
   } = req.body;
 
-  // Required-field validation — mirrors the page's 7-field form.
+  // Required-field validation. Shared: name + email.
   if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ error: 'Name is required' });
   }
   if (!looksLikeValidEmail(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
-  if (!whyNow || typeof whyNow !== 'string' || !whyNow.trim()) {
-    return res.status(400).json({ error: '"Why now?" is required — Joel uses it to screen for fit' });
-  }
-  for (const [key, label] of [
-    ['ageRange', 'Age range'],
-    ['investmentRange', 'Investment range'],
-    ['whenStart', 'When could you start'],
-  ]) {
-    if (!req.body[key] || !String(req.body[key]).trim()) {
-      return res.status(400).json({ error: `${label} is required` });
+
+  let applyTier = null;
+  if (isApplyPage) {
+    // ---- /apply questionnaire path ----
+    applyTier = APPLY_TIERS[tier];
+    if (!applyTier) {
+      return res.status(400).json({ error: 'Unknown program tier. Reload the page and try again.' });
+    }
+    if (!winning90 || typeof winning90 !== 'string' || !winning90.trim()) {
+      return res.status(400).json({ error: 'The "what winning looks like" answer is required. Joel uses it to screen for fit.' });
+    }
+    if (!whenStart || !String(whenStart).trim()) {
+      return res.status(400).json({ error: 'When you want to start is required' });
+    }
+    if (investmentAck !== true) {
+      return res.status(400).json({ error: 'The investment acknowledgment is required' });
+    }
+  } else {
+    // ---- legacy /cohort2 path — unchanged validation ----
+    if (!whyNow || typeof whyNow !== 'string' || !whyNow.trim()) {
+      return res.status(400).json({ error: '"Why now?" is required — Joel uses it to screen for fit' });
+    }
+    for (const [key, label] of [
+      ['ageRange', 'Age range'],
+      ['investmentRange', 'Investment range'],
+      ['whenStart', 'When could you start'],
+    ]) {
+      if (!req.body[key] || !String(req.body[key]).trim()) {
+        return res.status(400).json({ error: `${label} is required` });
+      }
     }
   }
 
@@ -133,17 +183,30 @@ export default async function handler(req, res) {
   // applicants in the email subject without reading the body. Higher
   // score = stronger fit signal.
   let fitScore = 0;
-  if (commitment && commitment.startsWith('10')) fitScore += 4;
-  else if (commitment && commitment.startsWith('8')) fitScore += 3;
-  else if (commitment && commitment.startsWith('6')) fitScore += 1;
-  if (investmentRange === '$5,000–$10,000' || investmentRange === '$10,000+') fitScore += 4;
-  else if (investmentRange === '$2,000–$5,000') fitScore += 2;
-  if (decisionMaker && decisionMaker.startsWith('Yes')) fitScore += 2;
-  if (whenStart === 'This week' || whenStart === 'Within 30 days') fitScore += 2;
-  if (bpMeds && (bpMeds === '2' || bpMeds === '3+' || bpMeds === 'I want OFF')) fitScore += 1;
-  if (safe(costOfInaction).length > 80) fitScore += 1;
-  if (safe(successLook).length > 60) fitScore += 1;
-  // Max possible ~15. >=10 = hot. 7-9 = warm. <7 = needs more screening.
+  if (isApplyPage) {
+    // Apply-page scoring: tier weight + readiness + signal depth.
+    if (tier === 'pillar' || tier === 'household') fitScore += 6;
+    else if (tier === 'inner-circle' || tier === 'triangle') fitScore += 4;
+    else fitScore += 3; // ninety
+    if (whenStart === 'This week') fitScore += 3;
+    else if (whenStart === 'Within 30 days') fitScore += 2;
+    if (investmentAck === true) fitScore += 2;
+    if (bpMedsCount === '2-3' || bpMedsCount === '4 or more') fitScore += 1;
+    if (safe(winning90).length > 60) fitScore += 1;
+    if (safe(phone).length > 6) fitScore += 1;
+  } else {
+    if (commitment && commitment.startsWith('10')) fitScore += 4;
+    else if (commitment && commitment.startsWith('8')) fitScore += 3;
+    else if (commitment && commitment.startsWith('6')) fitScore += 1;
+    if (investmentRange === '$5,000–$10,000' || investmentRange === '$10,000+') fitScore += 4;
+    else if (investmentRange === '$2,000–$5,000') fitScore += 2;
+    if (decisionMaker && decisionMaker.startsWith('Yes')) fitScore += 2;
+    if (whenStart === 'This week' || whenStart === 'Within 30 days') fitScore += 2;
+    if (bpMeds && (bpMeds === '2' || bpMeds === '3+' || bpMeds === 'I want OFF')) fitScore += 1;
+    if (safe(costOfInaction).length > 80) fitScore += 1;
+    if (safe(successLook).length > 60) fitScore += 1;
+  }
+  // Max possible ~15 (legacy) / ~14 (apply-page). >=10 hot, 7-9 warm.
   const fitTier = fitScore >= 10 ? 'HOT' : fitScore >= 7 ? 'WARM' : 'COLD';
 
   const application = {
@@ -169,9 +232,28 @@ export default async function handler(req, res) {
     fitTier,
     submittedAt,
     status: 'pending-review',
-    program: 'BP Triangle Freedom Sprint',
-    price: '$1,997 (founding) · regular $6,997',
-    cohort: 'founding-cohort-1',
+    // 2026-06-09: apply-page records carry the coaching tier (slug + canonical
+    // name/price); legacy records keep the original Sprint program fields.
+    ...(isApplyPage
+      ? {
+          source: 'apply-page',
+          tier: tier,
+          program: applyTier.name,
+          price: applyTier.price,
+          bpReading: safe(bpReading),
+          bpDuration: safe(bpDuration),
+          bpMedsCount: safe(bpMedsCount),
+          materialsUsed: Array.isArray(materialsUsed) ? materialsUsed.map((m) => safe(String(m))).filter(Boolean) : [],
+          winning90: safe(winning90),
+          triedAlready: safe(triedAlready),
+          investmentAck: true,
+          anythingElse: safe(anythingElse),
+        }
+      : {
+          program: 'BP Triangle Freedom Sprint',
+          price: '$1,997 (founding) · regular $6,997',
+          cohort: 'founding-cohort-1',
+        }),
   };
 
   // 2026-05-14 hardening (audit P0-3): reordered. Joel's notification email
@@ -185,12 +267,51 @@ export default async function handler(req, res) {
   // 1. Email notification to Joel — FIRST, mandatory. If this fails, the
   // applicant has not actually applied as far as the funnel is concerned.
   try {
-    const subject = `[App ${application.fitTier} ${application.fitScore}] ${application.name} — ${application.investmentRange || 'no $ range'}`;
     const tierColor = application.fitTier === 'HOT' ? '#3F5A3C' : application.fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
     const row = (label, value) =>
       `<tr><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#9C9485;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;width:180px;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#2C2A26;font-size:13px;line-height:1.55;white-space:pre-wrap;">${escapeHtml(value) || '<em style="color:#9C9485;">(blank)</em>'}</td></tr>`;
 
-    const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
+    let subject;
+    let html;
+    if (isApplyPage) {
+      // Tier name + price lead the subject so Joel can triage from the
+      // inbox list without opening. Fit tier rides along.
+      subject = `[APPLICATION] ${applyTier.name} (${applyTier.price}) - ${application.name} [${application.fitTier} ${application.fitScore}]`;
+      html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
+      <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Coaching application · fit ${application.fitTier} · score ${application.fitScore}/14</div>
+        <div style="font-size:22px;font-weight:700;margin-top:6px;">${escapeHtml(applyTier.name)} · ${escapeHtml(applyTier.price)}</div>
+        <div style="font-size:16px;font-weight:600;margin-top:4px;">${escapeHtml(application.name)}</div>
+        <div style="font-size:13px;opacity:0.85;">${escapeHtml(application.email)} · ${escapeHtml(application.phone) || 'no phone'}</div>
+      </div>
+      <div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 8px;">Program</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Tier', `${applyTier.name} (${tier})`)}
+          ${row('Investment', applyTier.price)}
+          ${row('Investment acknowledged', 'Yes')}
+          ${row('When they want to start', application.whenStart)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Numbers</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Age range', application.ageRange)}
+          ${row('Most recent BP reading', application.bpReading)}
+          ${row('Elevated for', application.bpDuration)}
+          ${row('BP medications', application.bpMedsCount)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Their words</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('BraveWorks materials used', (application.materialsUsed || []).join(', '))}
+          ${row('Winning in 90 days', application.winning90)}
+          ${row('Already tried', application.triedAlready)}
+          ${row('Anything else', application.anythingElse)}
+        </table>
+        <p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ${escapeHtml(application.email)}. Auto-ack with the 48-hour promise already sent to applicant.</p>
+      </div>
+    </body></html>`;
+    } else {
+      subject = `[App ${application.fitTier} ${application.fitScore}] ${application.name} — ${application.investmentRange || 'no $ range'}`;
+      html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
       <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
         <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Fit tier — ${application.fitTier} · score ${application.fitScore}/15</div>
         <div style="font-size:20px;font-weight:700;margin-top:4px;">${escapeHtml(application.name)}</div>
@@ -224,6 +345,7 @@ export default async function handler(req, res) {
         <p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ${escapeHtml(application.email)} when ready to schedule the fit call. Auto-ack already sent to applicant.</p>
       </div>
     </body></html>`;
+    }
     await getResend().emails.send({
       from: FROM,
       to: NOTIFY_EMAIL,
@@ -258,6 +380,7 @@ export default async function handler(req, res) {
       const dripKey = `drip:${trimmedEmail}`;
       const existing = await kv.get(dripKey);
       const applicantTags = ['coaching-applicant', `fit-${application.fitTier.toLowerCase()}`];
+      if (isApplyPage) applicantTags.push(`tier-${tier}`);
       if (existing) {
         await kv.set(dripKey, {
           ...existing,
@@ -286,8 +409,27 @@ export default async function handler(req, res) {
 
   // 3. Auto-acknowledgement to applicant
   try {
-    const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
-      <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(application.name.split(' ')[0] || 'there')},</p>
+    const firstName = application.name.split(' ')[0] || 'there';
+    let ackSubject;
+    let ackHtml;
+    if (isApplyPage) {
+      // 2026-06-09 apply-page ack: tier named, 48-hour promise, Joel Polley RN
+      // signature, education-only footer. No em dashes in copy.
+      ackSubject = `Your application is in, ${firstName}`;
+      ackHtml = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
+      <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
+      <p style="margin:0 0 16px;">Your application for <strong>${escapeHtml(applyTier.name)}</strong> just landed in my inbox. Thank you for putting your real picture in front of me.</p>
+      <p style="margin:0 0 16px;">I read every application personally. You will hear from me within 48 hours, usually sooner. If I can help, I will tell you exactly how. If I cannot, I will tell you that too, and point you somewhere honest.</p>
+      <p style="margin:0 0 16px;">No payment is collected until we have talked and we both say yes.</p>
+      <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever we build together works alongside your doctor, never instead of.</p>
+      <p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel Polley</p>
+      <p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RN, BraveWorks</p>
+      <p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>
+    </body></html>`;
+    } else {
+      ackSubject = 'Got your application — what happens next';
+      ackHtml = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
+      <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
       <p style="margin:0 0 16px;">Your application for the <strong>BP Triangle Freedom Sprint</strong> just landed in my inbox. Thank you for putting your real picture in front of me.</p>
       <p style="margin:0 0 16px;">Here's what happens next:</p>
       <ol style="margin:0 0 16px;padding-left:20px;">
@@ -300,12 +442,13 @@ export default async function handler(req, res) {
       <p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel</p>
       <p style="margin:0;font-size:14px;color:#4A4A4A;font-style:italic;">RN, BraveWorks</p>
     </body></html>`;
+    }
     await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
-      subject: 'Got your application — what happens next',
-      html,
+      subject: ackSubject,
+      html: ackHtml,
     });
   } catch (err) {
     console.error('coaching-apply: applicant ack failed', err.message);

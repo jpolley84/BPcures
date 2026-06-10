@@ -43,6 +43,13 @@
 // Added quiet-luxury treatment: framer-motion scroll reveals, hero gradient
 // wash + gold hairline draw, Fraunces display prices, gold card-hover borders,
 // gold gradient section dividers. Zero copy/price/link changes.
+//
+// 2026-06-09 later: APPLICATION FLOW wired in. The $1,997 90-day card and all
+// four 1:1 tiers now route to the /apply questionnaire (ApplyPage.jsx) with
+// ?tier=<slug> preselection (ninety / triangle / inner-circle / household /
+// pillar). /apply POSTs to /api/coaching-apply. The concierge@ mailto remains
+// on each 1:1 card as a quiet secondary path ("Prefer email?") for people who
+// would rather write than fill a form. concierge@ alias must still forward.
 
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -54,6 +61,8 @@ const EASE = [0.22, 1, 0.36, 1];
 const TIERS = [
   {
     name: 'The Triangle Session',
+    slug: 'triangle',
+    shortName: 'the Triangle Session',
     price: '$1,500',
     cadence: 'One-time · 90 minutes',
     fit: 'For the person who needs a nurse\'s eyes on their numbers once, with a written protocol they can act on the next morning.',
@@ -67,6 +76,8 @@ const TIERS = [
   },
   {
     name: 'The Inner Circle',
+    slug: 'inner-circle',
+    shortName: 'the Inner Circle',
     price: '$1,500 / month',
     cadence: 'Monthly · weekly access',
     fit: 'For the person who needs ongoing nursing time, not a one-shot, and wants a direct line to me between calls.',
@@ -80,6 +91,8 @@ const TIERS = [
   },
   {
     name: 'The Brave Household',
+    slug: 'household',
+    shortName: 'the Brave Household',
     price: '$5,000 / month',
     cadence: 'Monthly · whole-family',
     fit: 'For the head of a household who runs their family\'s health like a CEO and wants the protocol installed across everyone living under the roof.',
@@ -93,6 +106,8 @@ const TIERS = [
   },
   {
     name: 'The Pillar Year',
+    slug: 'pillar',
+    shortName: 'the Pillar Year',
     price: '$50,000 / year',
     cadence: 'Annual · per family · concierge',
     fit: 'For the family that wants me on call and is finished outsourcing their health to twelve-minute appointments.',
@@ -363,7 +378,7 @@ export default function CoachingPage() {
                   'Protocol adjustments as your numbers move, month over month.',
                   'A doctor-conversation script for every medication change you earn.',
                 ],
-                href: 'mailto:concierge@bpquiz.com?subject=90-Day%20Group%20application%20(NINETY)',
+                to: '/apply?tier=ninety',
                 cta: 'Apply for the 90-Day Group',
               },
             ].map((g, i) => (
@@ -416,14 +431,25 @@ export default function CoachingPage() {
                     </li>
                   ))}
                 </ul>
-                <a
-                  href={g.href}
-                  className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
-                  style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
-                >
-                  {g.cta}
-                  <ArrowRight size={16} className="coach-cta-arrow" />
-                </a>
+                {g.to ? (
+                  <Link
+                    to={g.to}
+                    className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
+                    style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
+                  >
+                    {g.cta}
+                    <ArrowRight size={16} className="coach-cta-arrow" />
+                  </Link>
+                ) : (
+                  <a
+                    href={g.href}
+                    className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
+                    style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
+                  >
+                    {g.cta}
+                    <ArrowRight size={16} className="coach-cta-arrow" />
+                  </a>
+                )}
               </motion.article>
             ))}
           </div>
@@ -532,17 +558,16 @@ export default function CoachingPage() {
                     How to inquire
                   </div>
                   <p className="text-sm mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-                    Email me with the subject line below. I read every one.
+                    A short application. I read every one.
                   </p>
-                  <a
-                    href={mailtoFor(tier.subject)}
+                  <Link
+                    to={`/apply?tier=${tier.slug}`}
                     className="coach-cta coach-cta-ink inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold text-sm"
                     style={{ background: 'var(--ink)', color: 'var(--cream)', textDecoration: 'none' }}
                   >
-                    <Mail size={16} />
-                    {EMAIL}
+                    Apply for {tier.shortName}
                     <ArrowRight size={14} className="coach-cta-arrow" />
-                  </a>
+                  </Link>
                   <div
                     className="mt-3 text-xs"
                     style={{
@@ -551,7 +576,14 @@ export default function CoachingPage() {
                       letterSpacing: '0.04em',
                     }}
                   >
-                    SUBJECT: {tier.subject}
+                    Prefer email?{' '}
+                    <a
+                      href={mailtoFor(tier.subject)}
+                      style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
+                    >
+                      {EMAIL}
+                    </a>{' '}
+                    with subject {tier.subject}
                   </div>
                 </div>
               </motion.article>
