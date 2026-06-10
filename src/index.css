@@ -51,6 +51,31 @@
    end bpcures-clone block
    ============================================================ */
 
+/* ============================================================
+   2026-06-09 Homepage A/B — "cream" variant skin.
+   Applied ONLY when CheckoutPage's root carries data-hpvariant="cream"
+   (the useHomeVariant hook; ships DISABLED — control for everyone until
+   AB_CREAM_ENABLED). Overrides COLOR + FONT tokens only — no layout, no
+   copy, no CTA destination. Un-layered so it beats Tailwind's layered
+   utilities. To kill: set AB_CREAM_ENABLED=false and push.
+   ============================================================ */
+[data-hpvariant="cream"] {
+  --navy: #2E3A30;        /* sage-ink: credential + sticky bars */
+  --purple: #B85A36;      /* clay: every accent that was purple */
+  --gold: #C8A252;        /* antique gold: price + highlights */
+  --light-gray: #EFE8DB;  /* warm band */
+  --dark-gray: #2B2824;
+  --muted-gray: #7A7061;
+}
+[data-hpvariant="cream"].min-h-screen { background-color: #FBF8F1; }
+[data-hpvariant="cream"] .gradient-purple-btn { background: linear-gradient(135deg, #B85A36 0%, #A44B28 100%); }
+[data-hpvariant="cream"] .gradient-navy { background: linear-gradient(135deg, #2E3A30 0%, #3F5A3C 100%); }
+[data-hpvariant="cream"] .headshot-ring { background: linear-gradient(135deg, #C8A252 0%, #4A5D4E 100%); }
+[data-hpvariant="cream"] .quote-accent { border-left-color: #B85A36; }
+/* Fraunces display on the big sell headings — already loaded, 0 LCP cost. */
+[data-hpvariant="cream"] h1,
+[data-hpvariant="cream"] h2 { font-family: 'Fraunces', Georgia, serif; font-weight: 500; letter-spacing: -0.01em; }
+
 
 /* ============================================================
    BraveWorks RN — Design System

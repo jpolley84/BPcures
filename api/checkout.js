@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid request body — expected JSON' });
   }
 
-  const { priceId, addOnPriceId, successUrl, cancelUrl, saveCard } = req.body;
+  const { priceId, addOnPriceId, successUrl, cancelUrl, saveCard, homepageVariant } = req.body;
 
   if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'Missing priceId' });
@@ -50,6 +50,14 @@ export default async function handler(req, res) {
       success_url: successUrl || `${siteUrl}/success`,
       cancel_url: cancelUrl || siteUrl,
     };
+
+    // 2026-06-09 homepage A/B: stamp which skin the buyer saw onto the session
+    // so conversion-by-variant is exact in Stripe. Only 'control'/'cream' are
+    // accepted (ignore anything else); does not affect the BP cross-funnel
+    // guard (no `funnel` key) so the webhook still treats this as a bpquiz sale.
+    if (homepageVariant === 'control' || homepageVariant === 'cream') {
+      sessionParams.metadata = { homepage_variant: homepageVariant };
+    }
 
     if (saveCard) {
       sessionParams.customer_creation = 'always';

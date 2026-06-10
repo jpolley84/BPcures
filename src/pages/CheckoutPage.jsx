@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
+import { useHomeVariant } from '@/hooks/useHomeVariant';
 // 2026-06-08 — exit-intent / dwell popup now drives the about-to-bounce
 // visitor to the FREE quiz (lower-commitment than the $17 ask; the quiz
 // captures the email and routes back to the kit on its results page).
@@ -67,6 +68,9 @@ const CheckoutPage = () => {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
+  // Homepage A/B skin (control = proven purple; cream = quiz premium system).
+  // Disabled by default — returns 'control' for everyone until AB_CREAM_ENABLED.
+  const hpVariant = useHomeVariant();
 
   useEffect(() => {
     // 2026-05-20 funnel-audit: dropped threshold 2000 → 600 so the sticky
@@ -86,8 +90,8 @@ const CheckoutPage = () => {
     // give Meta the full attribution signal for ad optimization.
     try {
       if (typeof window !== 'undefined' && window.fbq) {
-        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Reset Kit' });
-        window.fbq('track', 'InitiateCheckout', { value: 17.00, currency: 'USD' });
+        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Reset Kit', homepage_variant: hpVariant });
+        window.fbq('track', 'InitiateCheckout', { value: 17.00, currency: 'USD', homepage_variant: hpVariant });
       }
     } catch { /* pixel errors must never block checkout */ }
 
@@ -106,6 +110,10 @@ const CheckoutPage = () => {
           successUrl: `${window.location.origin}/upsell-bp-cure-book?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: window.location.href,
           saveCard: true,
+          // A/B instrumentation: which homepage skin this buyer saw. Server
+          // stamps it onto the Stripe session metadata so conversion-by-variant
+          // is exact (assignment is 50/50, so views are ~even).
+          homepageVariant: hpVariant,
         }),
       });
       const data = await res.json();
@@ -145,7 +153,7 @@ const CheckoutPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-20" data-hpvariant={hpVariant}>
       {/* Top credibility strip. 2026-06-08 conversion pass.
           Was a /quiz link, which gave buy-ready traffic a free exit at the
           very top of the page. Replaced with a non-clickable credibility
