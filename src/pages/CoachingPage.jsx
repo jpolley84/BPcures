@@ -1,18 +1,21 @@
 // /coaching — work with Joel Polley, RN.
 //
-// 2026-06-04 REWRITE; 2026-06-09 LADDER REALIGN. Joel's canon ladder (stated
-// 2026-06-09): quiz → $17 → Skool $27/mo → $47 → $297 personalized 30-day
-// GROUP → $1,997 personalized 90-day GROUP. This page now leads with those
-// two group programs (direct Stripe checkout, minimal friction) and keeps the
-// four 1:1 tiers below as the premium "available, not selling" track:
-// Triangle Session ($1,500 one-time), Inner Circle ($1,500/mo), Brave
-// Household ($5,000/mo), Pillar Year ($50,000/yr per family).
+// 2026-06-04 REWRITE; 2026-06-09 LADDER REALIGN (v2 canon reconcile, evening).
+// Canon ladder (ladder-canon-2026-06-09-v2): quiz → $17 → $27/mo Weekly Reset →
+// $297 "30-Day Personalized SPRINT" → $1,997 90-day group (NINETY reply-gate
+// only) → 1:1 tiers below. This page leads with the Sprint, then the four 1:1
+// tiers as the premium "available, not selling" track (Triangle Session $1,500
+// one-time, Inner Circle $1,500/mo, Brave Household $5,000/mo, Pillar Year
+// $50,000/yr).
 //
-// Group Stripe links (both LIVE, both webhook-mapped as of 2026-06-09):
-//   $297  → buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z (metadata funnel=
-//           group-coaching-30day → TIER_CONFIG['group-30'] welcome)
-//   $1,997 → buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M (199700 → 'coaching',
-//           "You're in the Sprint" welcome)
+// 2026-06-09 evening: retired the afternoon "$297 Group" fork (link
+// dRm5kD0RBgqi0IXdbHfnO0Z, tier group-30) that conflicted with the settled
+// Sprint canon. Now uses the canon links:
+//   $297 Sprint (cold/lead traffic, flat) → buy.stripe.com/00weVddEnca2ajx0oVfnO0O
+//   ($280 kit-credit variant 7sY9ATeIra1Uajx9ZvfnO0P is for $17/$47 BUYERS, used
+//    in their receipts/drip — not on this cold page.)
+//   $1,997 90-day group → by application (reply NINETY / concierge@bpquiz.com),
+//   not a public impulse-buy button (canon: reply-gate only).
 //
 // Posture: AVAILABLE not selling. Douglas D. Grant model — brand-as-close, no
 // money-back guarantees, no application forms, no Calendly embeds, no urgency
@@ -209,9 +212,9 @@ export default function CoachingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 mb-6">
             {[
               {
-                name: '30-Day Personalized Group Coaching',
+                name: 'The 30-Day Personalized Sprint',
                 price: '$297',
-                cadence: '30 days · starts when you do',
+                cadence: '30 days · only 5 spots a month',
                 fit: 'For the person ready to run the full protocol with Joel\'s eyes on their numbers, without 1:1 pricing.',
                 includes: [
                   'Joel personally reads your intake: home BP log, every med and supplement, your labs if you have them.',
@@ -219,22 +222,22 @@ export default function CoachingPage() {
                   'Live weekly group coaching with Joel. Bring your numbers, get answers.',
                   'Daily accountability inside the group for the full 30 days.',
                 ],
-                href: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
-                cta: 'Join the 30-Day Group — $297',
+                href: 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O',
+                cta: 'Start the 30-Day Sprint — $297',
               },
               {
-                name: '90-Day Personalized Group Coaching',
+                name: 'The 90-Day Personalized Group',
                 price: '$1,997',
-                cadence: '90 days · the full arc',
+                cadence: '90 days · by application',
                 fit: 'For the person whose numbers took years to climb and who wants Joel adjusting the protocol the whole way down.',
                 includes: [
-                  'Everything in the 30-day group, run for a full 90 days.',
+                  'Everything in the 30-Day Sprint, run for a full 90 days.',
                   'Kickoff onboarding with Joel: your file read, your Week-1 protocol drafted before you start.',
                   'Protocol adjustments as your numbers move, month over month.',
                   'A doctor-conversation script for every medication change you earn.',
                 ],
-                href: 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M',
-                cta: 'Join the 90-Day Group — $1,997',
+                href: 'mailto:concierge@bpquiz.com?subject=90-Day%20Group%20application%20(NINETY)',
+                cta: 'Apply for the 90-Day Group',
               },
             ].map((g) => (
               <article

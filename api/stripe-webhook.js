@@ -57,11 +57,8 @@ function purchaseToState(kitTier) {
   // buyers stuck in 'lead' state being pitched the kit they already own.
   if (t === '1' || t === '2' || t.startsWith('1-') || t.startsWith('2-')) return 'tier-1';
   if (t === 'vip') return 'tier-2';
-  if (t === 'diagnostic') return 'tier-3';
+  if (t === 'diagnostic') return 'tier-3'; // diagnostic = the $297 Sprint
   if (t === 'coaching') return 'tier-4';
-  // group-30 ($297 30-day group) deliberately returns null: the tier-3
-  // sequence is diagnostic→Sprint copy. Group buyers get the group-30
-  // welcome email only until a group sequence is written.
   return null; // unknown tier — preserve existing state
 }
 
@@ -537,12 +534,10 @@ curl -X POST https://bpquiz.com/api/test-purchase-email \\
     // session.amount_total. This is the single delivery rail for all
     // non-launcher purchases — keeps us on one webhook + one secret.
     let kitTier = AMOUNT_TO_TIER[amountCents];
-    // 2026-06-09: the "$297 30-Day Group Coaching" payment link shares the
-    // diagnostic's 29700 amount. Route by the link's metadata stamp so a
-    // group buyer gets the group welcome, not the Calendly diagnostic email.
-    if (session.metadata?.funnel === 'group-coaching-30day' || session.metadata?.tier === 'group-30') {
-      kitTier = 'group-30';
-    }
+    // 2026-06-09 evening (v2 canon reconcile): removed the 'group-30' metadata
+    // route. The $297 rung is now ONE product — the 'diagnostic' tier renamed
+    // "30-Day Personalized Sprint" — so 29700/28000 → 'diagnostic' is the only
+    // path. The afternoon group-30 fork (link dRm5kD, deactivated) is retired.
     if (!kitTier) {
       console.log('stripe-webhook: unrecognized amount, ignoring', session.id, 'amount', amountCents);
       // Loud alert — silent skip is what missed Dora's $97 VIP on 4/30 before

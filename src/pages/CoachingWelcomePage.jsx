@@ -11,8 +11,13 @@
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Calendar, ClipboardList, Clock, Phone } from 'lucide-react';
 
-const CALENDLY_URL = import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL
-  || 'https://bpquiz.com';
+// 2026-06-09: only treat the env var as a real booking URL if it's actually
+// set to a Calendly link. The old `|| 'https://bpquiz.com'` fallback rendered
+// a broken, recursive bpquiz.com iframe whenever the env var was unset.
+const RAW_CALENDLY = import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL || '';
+const HAS_CALENDLY = /calendly\.com/i.test(RAW_CALENDLY);
+const CALENDLY_URL = RAW_CALENDLY;
+const SKOOL_URL = 'https://www.skool.com/braveworksrn/about';
 
 export default function CoachingWelcomePage() {
   const [searchParams] = useSearchParams();
@@ -29,43 +34,54 @@ export default function CoachingWelcomePage() {
             Payment confirmed
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl mb-4" style={{ color: 'var(--ink)', lineHeight: 1.15 }}>
-            You're in. Now let's get a time on the calendar.
+            You're in the 30-Day Sprint. Two steps to start.
           </h1>
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            Your $297 session is paid. Booked a <strong>Diagnostic Session</strong>? Grab your 60-minute Zoom time on the calendar below.
+            Your <strong>30-Day Personalized Sprint</strong> is paid. {HAS_CALENDLY
+              ? 'Step 1: book your kickoff call below. Step 2: join the group where your 4 live coaching sessions a month happen.'
+              : 'Your welcome email is on its way with your kickoff-call booking link. Step 2: join the group where your 4 live coaching sessions a month happen.'}
           </p>
-          {/* 2026-06-09: the $297 30-Day GROUP payment link also redirects
-              here — its onboarding runs by email, not Calendly. */}
-          <p className="text-sm mt-3" style={{ color: 'var(--muted)', lineHeight: 1.55 }}>
-            Joined the <strong>30-Day Group Coaching</strong> instead? Skip the calendar — your welcome email with intake instructions is already on its way. Reply to it with your numbers and Joel takes it from there.
-          </p>
+          <a href={SKOOL_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-sm font-semibold" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+            Join the group at skool.com/braveworksrn →
+          </a>
         </div>
       </section>
 
-      {/* Calendly embed */}
+      {/* Kickoff-call booking — only render the embed when a real Calendly URL
+          is configured; otherwise the booking link arrives by welcome email. */}
       <section className="py-10" style={{ background: 'var(--paper)' }}>
         <div className="max-w-3xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-2 text-center" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
-            Step 1 of 1
+            Step 1
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl mb-7 text-center" style={{ color: 'var(--ink)' }}>
-            Pick a time that works for you.
+            Book your kickoff call.
           </h2>
-          <div style={{ background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, minHeight: 700 }}>
-            <iframe
-              src={CALENDLY_URL + '?hide_event_type_details=0&hide_gdpr_banner=1'}
-              width="100%"
-              height="700"
-              frameBorder="0"
-              title="Book your BP Triangle Diagnostic Session"
-              style={{ borderRadius: 10, display: 'block' }}
-            />
-          </div>
-          <div className="text-center mt-4">
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="text-sm" style={{ color: 'var(--sage-deep)', textDecoration: 'underline' }}>
-              Or open the calendar in a new tab →
-            </a>
-          </div>
+          {HAS_CALENDLY ? (
+            <>
+              <div style={{ background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, minHeight: 700 }}>
+                <iframe
+                  src={CALENDLY_URL + '?hide_event_type_details=0&hide_gdpr_banner=1'}
+                  width="100%"
+                  height="700"
+                  frameBorder="0"
+                  title="Book your 30-Day Sprint kickoff call"
+                  style={{ borderRadius: 10, display: 'block' }}
+                />
+              </div>
+              <div className="text-center mt-4">
+                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="text-sm" style={{ color: 'var(--sage-deep)', textDecoration: 'underline' }}>
+                  Or open the calendar in a new tab →
+                </a>
+              </div>
+            </>
+          ) : (
+            <div className="text-center" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)', borderRadius: 12, padding: '2rem 1.5rem' }}>
+              <p className="text-base" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
+                Your kickoff-call booking link is in the welcome email Joel is sending you right now (within a few minutes). Check your inbox, and your spam folder just in case.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

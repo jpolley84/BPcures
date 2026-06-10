@@ -182,13 +182,14 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
     includesCoaching: false,
     includesChallenge: true,
-    // 2026-06-09 ladder realign: the $97 Challenge is retired and its Stripe
-    // link deactivated. A $47 kit buyer's next canon rung is the $297 30-Day
-    // Personalized Group (same target as the '2+pt-stack' entry below).
-    upgradeUrl: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
-    upgradeLabel: 'Next step: 30-Day Personalized Group Coaching ($297)',
-    upgradeDesc: 'You have the full kit. The 30-Day Group is where Joel reads YOUR numbers, YOUR meds, and builds you a personalized 30-day protocol, with live weekly group coaching (Wednesdays 7 PM ET) and daily accountability. Same triple guarantee.',
-    upgradeCta: 'Join the 30-Day Group ($297) →',
+    // 2026-06-09 v2 canon reconcile: a $47 kit buyer's next rung is the
+    // $297 30-Day Personalized SPRINT. As a BUYER they get the $280
+    // kit-credit Sprint link (7sY9ATe), not the cold flat-$297 link.
+    // (Retired the afternoon "$297 Group" fork link dRm5kD.)
+    upgradeUrl: 'https://buy.stripe.com/7sY9ATeIra1Uajx9ZvfnO0P',
+    upgradeLabel: 'Next step: the 30-Day Personalized Sprint ($280 with your kit credit)',
+    upgradeDesc: 'You have the full kit. The 30-Day Sprint is where Joel reads YOUR numbers, YOUR meds, and builds you a personalized 30-day protocol, with live weekly group coaching (Wednesdays 7 PM ET) and daily accountability. Your kit counts as credit, so it is $280, not $297. Only 5 spots a month.',
+    upgradeCta: 'Start the 30-Day Sprint ($280) →',
   },
   // DEPRECATED 2026-05-09 streamline pass — same reason as 1+pt-stack.
   // Kept for in-flight buyers; no new sales possible.
@@ -204,13 +205,12 @@ export const TIER_CONFIG = {
     ],
     includesCoaching: false,
     includesChallenge: true,
-    // 2026-06-09 ladder realign: the $97 Challenge was retired 2026-06-04
-    // (its plink survived in this email only — paid fulfillment of a dead
-    // product). Canon rung after $47 is the $297 30-Day Personalized Group.
-    upgradeUrl: 'https://buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z',
-    upgradeLabel: 'Next step: 30-Day Personalized Group Coaching ($297)',
-    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The 30-Day Group is where Joel looks at YOUR numbers, YOUR meds, and YOUR protocol: live weekly group coaching, daily accountability, and a personalized 30-day plan built with you.',
-    upgradeCta: 'Join the 30-Day Group ($297) →',
+    // 2026-06-09 v2 canon reconcile: $97 Challenge retired; next rung is the
+    // $297 30-Day Personalized SPRINT at the $280 buyer kit-credit link.
+    upgradeUrl: 'https://buy.stripe.com/7sY9ATeIra1Uajx9ZvfnO0P',
+    upgradeLabel: 'Next step: the 30-Day Personalized Sprint ($280 with your kit credit)',
+    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The 30-Day Sprint is where Joel looks at YOUR numbers, YOUR meds, and YOUR protocol: live weekly group coaching, daily accountability, and a personalized 30-day plan built with you. Your kit counts as credit, so it is $280. Only 5 spots a month.',
+    upgradeCta: 'Start the 30-Day Sprint ($280) →',
   },
   // 2026-05-09 RESTRUCTURE: vip slot ($97 = 9700) is now the canonical
   // "30-Day BP Triangle Challenge + Skool" tier. Replaces the prior
@@ -320,24 +320,13 @@ export const TIER_CONFIG = {
     upgradeCta: 'Book my kickoff call →',
   },
 
-  // ── 2026-06-09: $297 30-Day Personalized Group Coaching ──────────────
-  // Canon ladder rung between the $47 kit and the $1,997 90-day group.
-  // Sold via payment link buy.stripe.com/dRm5kD0RBgqi0IXdbHfnO0Z (metadata
-  // funnel=group-coaching-30day, tier=group-30). Shares the 29700 amount
-  // with the diagnostic — stripe-webhook.js routes by metadata BEFORE the
-  // amount fallback. No drip sequence yet (purchaseToState returns null);
-  // Joel onboards group members personally from this welcome email.
-  'group-30': {
-    product: '30-Day Personalized Group Coaching with Joel Polley, RN',
-    subject: 'You\'re in. Your 30-Day Group Coaching starts here',
-    downloads: [], // the group IS the deliverable
-    includesCoaching: false,
-    includesChallenge: false,
-    upgradeUrl: 'mailto:braveworksrn@gmail.com?subject=My%2030-Day%20Group%20intake',
-    upgradeLabel: 'Step 1: Send Joel your intake',
-    upgradeDesc: 'Reply to this email (or tap the button) with three things: your last 3 home BP readings, every medication and supplement you take, and the one thing you most want different 30 days from now. Joel reads every intake personally and replies with your group access + your personalized starting protocol.',
-    upgradeCta: 'Send my intake →',
-  },
+  // 2026-06-09 evening (v2 canon reconcile): RETIRED the 'group-30' fork.
+  // It was an afternoon duplicate of the $297 rung wearing a different link
+  // (dRm5kD…) and a different welcome. The settled canon is ONE $297 product:
+  // the 'diagnostic' tier above, renamed "30-Day Personalized Sprint". All
+  // $297 surfaces (/coaching flat 00weVdd, buyer $280 credit 7sY9ATe) map to
+  // 29700/28000 → 'diagnostic'. The group-30 metadata route was removed from
+  // stripe-webhook.js and the dRm5kD link deactivated in Stripe.
 };
 
 // Map Stripe amount_total (cents) → tier key
