@@ -31,6 +31,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, ArrowRight, BookOpen, ShieldCheck, Loader } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
+import { track } from '../utils/analytics.js';
 
 const BOOK_PAYMENT_LINK = 'https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02';
 
@@ -42,6 +43,8 @@ export default function UpsellBpCureBookPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
+
+  useEffect(() => { track('upsell_viewed', { upsell: 'bp-cure-book' }); }, []);
 
   // On mount: probe the session for a saved payment method. If found,
   // we'll do one-click. Otherwise fall back to Payment Link redirect.
@@ -70,6 +73,7 @@ export default function UpsellBpCureBookPage() {
   }, [sessionId]);
 
   async function buyBookOneClick() {
+    track('upsell_accepted', { upsell: 'bp-cure-book', method: 'one_click', value: 12.99 });
     setProcessing(true);
     setChargeError('');
     try {
@@ -103,11 +107,13 @@ export default function UpsellBpCureBookPage() {
   // Fallback path: customer arrived via a Payment Link (no saved card on
   // session) — send them through the existing $12.99 Payment Link.
   function buyBookFallback() {
+    track('upsell_accepted', { upsell: 'bp-cure-book', method: 'payment_link', value: 12.99 });
     setProcessing(true);
     window.location.href = BOOK_PAYMENT_LINK;
   }
 
   function skipBook() {
+    track('upsell_declined', { upsell: 'bp-cure-book' });
     const next = sessionId
       ? `/upsell-bp-reset-kit?session_id=${encodeURIComponent(sessionId)}&from=book-declined`
       : '/upsell-bp-reset-kit?from=book-declined';

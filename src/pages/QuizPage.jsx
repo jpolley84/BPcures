@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import {
   ArrowRight, ArrowUpRight, Star, Quote, AlertCircle,
 } from 'lucide-react';
+import { track, identify } from '../utils/analytics.js';
 
 // 2026-06-04 — prefers-reduced-motion guard, computed once. Confetti + the
 // typewriter both honor this so the celebration never fights accessibility.
@@ -613,10 +614,12 @@ function QuizModule({ products }) {
   useEffect(() => {
     if (phase === 'results' && !confettiFired.current) {
       confettiFired.current = true;
+      track('quiz_results_viewed', { pressure, risk_score: riskScore });
       // small delay lets the panel paint before the burst
       const id = setTimeout(fireResultsConfetti, 280);
       return () => clearTimeout(id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   const q = QUESTIONS[step];
@@ -625,10 +628,15 @@ function QuizModule({ products }) {
 
   function choose(value) {
     const next = { ...answers, [q.id]: value };
+    if (Object.keys(answers).length === 0) track('quiz_started');
+    track('quiz_question_answered', { question: q.id, step: step + 1, value: String(value) });
     setAnswers(next);
     setTimeout(() => {
       if (step < TOTAL_STEPS - 1) setStep(s => s + 1);
-      else setPhase('email');
+      else {
+        track('quiz_completed', { answers: next });
+        setPhase('email');
+      }
     }, 280);
   }
 
@@ -642,6 +650,9 @@ function QuizModule({ products }) {
   // with both the $17 Starter and the $12 Pressure Triangle Stack add-on,
   // then redirect to the returned Stripe Checkout session URL ($29 total).
   async function handleBuyClick(e) {
+    // Fires on both paths: bump-checked (intercepted POST below) and
+    // unchecked (default <a href> to the Stripe Payment Link).
+    track('checkout_clicked', { product: recommended?.id ?? 'bp-starter', bump: addBump });
     if (!addBump) return; // unchecked → let the default <a href> work
     e.preventDefault();
     if (bumpLoading) return;
@@ -696,6 +707,9 @@ function QuizModule({ products }) {
     }
     setLoading(true);
     setError('');
+    // Tie this device's anonymous events to the lead for funnel analysis.
+    identify(email, name.trim() ? { name: name.trim() } : undefined);
+    track('quiz_email_submitted', { pressure, risk_score: riskScore });
     // 2026-06-09: forward traffic attribution. /tt /ig /fb redirects and the
     // exit-intent popup all stamp utm params on the URL, but the capture
     // POST dropped them — every lead landed as bare 'quiz-lead-magnet' and

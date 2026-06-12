@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Download, ArrowRight } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
+import { track } from '../utils/analytics.js';
 
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
@@ -11,10 +12,11 @@ export default function SuccessPage() {
   // Value/currency are static $17 baseline; if the buyer took the $30 OTO
   // upsell, the success URL carries ?upsell=accepted so we boost the value.
   useEffect(() => {
+    const upsellAccepted = searchParams.get('upsell') === 'accepted';
+    const purchaseValue = upsellAccepted ? 47.00 : 17.00;
+    track('purchase_completed', { value: purchaseValue, currency: 'USD', upsell_accepted: upsellAccepted });
     try {
       if (typeof window === 'undefined' || !window.fbq) return;
-      const upsellAccepted = searchParams.get('upsell') === 'accepted';
-      const purchaseValue = upsellAccepted ? 47.00 : 17.00;
       window.fbq('track', 'Purchase', { value: purchaseValue, currency: 'USD' });
     } catch { /* pixel errors never block UX */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps

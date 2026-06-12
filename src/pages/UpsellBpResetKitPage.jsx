@@ -19,6 +19,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
+import { track } from '../utils/analytics.js';
 
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
 // the $30 OTO BP Reset Kit upsell price; it stays as the safety net so a
@@ -41,6 +42,8 @@ export default function UpsellBpResetKitPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
+
+  useEffect(() => { track('upsell_viewed', { upsell: 'bp-reset-kit-oto' }); }, []);
 
   // 2026-05-20: probe for saved card so we can do one-click if available.
   // If session arrived via a Stripe Payment Link (no saveCard:true on the
@@ -123,11 +126,17 @@ export default function UpsellBpResetKitPage() {
   // a saved card. The bpcures-style one-click experience when possible,
   // graceful card re-entry otherwise.
   function addKit() {
+    track('upsell_accepted', {
+      upsell: 'bp-reset-kit-oto',
+      method: sessionInfo?.has_saved_card ? 'one_click' : 'payment_link',
+      value: 30.00,
+    });
     if (sessionInfo?.has_saved_card) return addKitOneClick();
     return addKitFallback();
   }
 
   function declineUpsell() {
+    track('upsell_declined', { upsell: 'bp-reset-kit-oto' });
     navigate(FALLBACK_DOWNLOADS);
   }
 
