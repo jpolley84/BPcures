@@ -16,6 +16,11 @@ const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
 import HomepageEmailCapture from '../components/HomepageEmailCapture';
 
 const PRICE = '$17';
+
+// RestoreHER live event (Barbara O'Neill, Galt House, Louisville). Event
+// promos on this page stop rendering after the event ends, midnight ET
+// June 26, so the evergreen homepage never advertises a past event.
+const RESTOREHER_EVENT_OVER = Date.now() > Date.parse('2026-06-26T04:00:00Z');
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
 // the $17 kit price; it stays as the safety net so a missing env var doesn't
 // break checkout. To change the price, update VITE_STRIPE_KIT_PRICE_ID in
@@ -160,6 +165,48 @@ const CheckoutPage = () => {
           strip so the first thing a visitor sees is proof + price + risk
           reversal, not an off-ramp. A subtle quiz path still lives in the
           footer for visitors who genuinely want the diagnostic first. */}
+      {/* RestoreHER live-event ribbon. Date-gated: stops rendering after the
+          event ends (June 25, 2026) so the evergreen page never advertises a
+          past event. Subtle gold shimmer for eye-catch; links to the event. */}
+      {!RESTOREHER_EVENT_OVER && (
+        <>
+          <style>{`
+            @keyframes rhShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+            .rh-ribbon-shine {
+              background: linear-gradient(100deg, #C7A95E 20%, #FFF3D6 40%, #C7A95E 60%);
+              background-size: 200% auto;
+              -webkit-background-clip: text;
+              background-clip: text;
+              -webkit-text-fill-color: transparent;
+              animation: rhShimmer 3.5s linear infinite;
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .rh-ribbon-shine { animation: none; -webkit-text-fill-color: #C7A95E; }
+            }
+          `}</style>
+          <a
+            href="https://restoreherhormones.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-center"
+            style={{
+              background: 'linear-gradient(135deg, #5C1A2E 0%, #7A2238 55%, #5C1A2E 100%)',
+              padding: '12px 16px',
+              fontSize: '15px',
+              fontWeight: 700,
+              lineHeight: 1.5,
+              letterSpacing: '0.02em',
+              color: '#F9EFE2',
+              textDecoration: 'none',
+            }}
+          >
+            <span className="rh-ribbon-shine" style={{ fontWeight: 800, letterSpacing: '0.08em' }}>LIVE EVENT</span>
+            &nbsp; Barbara O&rsquo;Neill in Louisville &middot; June 24 &amp; 25 &middot; Restore Your Hormones&nbsp;
+            <span style={{ textDecoration: 'underline', textUnderlineOffset: '3px', color: '#F2D49B', whiteSpace: 'nowrap' }}>Get tickets &rarr;</span>
+          </a>
+        </>
+      )}
+
       <div
         className="block text-center"
         style={{
@@ -579,16 +626,33 @@ const CheckoutPage = () => {
                 Is it your hormones, not just your pressure?
               </h3>
               <p className="mb-6 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.65, maxWidth: '440px' }}>
-                Hot flashes, weight that will not move, mood swings, the bone-deep tired. If hormonal imbalance is the real story, our sister program <strong>RestoreHER Hormones</strong> was built for you, with a live, in-person event featuring Barbara O'Neill.
+                Hot flashes, weight that will not move, mood swings, the bone-deep tired. If hormonal imbalance is the real story, our sister program <strong>RestoreHER Hormones</strong> was built for you{RESTOREHER_EVENT_OVER ? '.' : ', and Barbara O\'Neill is teaching it live, in person, this month.'}
               </p>
+              {!RESTOREHER_EVENT_OVER && (
+                <a href="https://restoreherhormones.com" target="_blank" rel="noopener noreferrer" className="block mb-3 mx-auto" style={{ maxWidth: '420px' }}>
+                  <img
+                    src="/images/restoreher-flyer.jpg"
+                    alt="Restore Your Hormones. Featuring Barbara O'Neill, internationally acclaimed speaker and natural health expert. PCOS, perimenopause, menopause, feel like yourself again. June 24 and 25, 2026, two powerful days. The Galt House Hotel, Louisville, Kentucky. Register today at restoreherhormones.com"
+                    loading="lazy"
+                    style={{ width: '100%', borderRadius: '12px', boxShadow: '0 8px 28px rgba(92,26,46,0.25)' }}
+                  />
+                </a>
+              )}
+              {!RESTOREHER_EVENT_OVER && (
+                <p className="mb-5 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.6, maxWidth: '440px' }}>
+                  <strong>VIP Platinum perk:</strong> buy a VIP Platinum ticket, get a friend to grab her VIP Platinum ticket too, and your hotel room at the Galt House is on us.
+                </p>
+              )}
               <a
                 href="https://restoreherhormones.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 font-semibold transition-all duration-200 active:scale-95"
-                style={{ border: '1.5px solid var(--navy)', color: 'var(--navy)', borderRadius: '12px', padding: '13px 26px', fontSize: '15px' }}
+                style={RESTOREHER_EVENT_OVER
+                  ? { border: '1.5px solid var(--navy)', color: 'var(--navy)', borderRadius: '12px', padding: '13px 26px', fontSize: '15px' }
+                  : { background: '#7A2238', color: '#FFFFFF', borderRadius: '12px', padding: '14px 28px', fontSize: '15px', fontWeight: 700 }}
               >
-                Visit RestoreHER Hormones
+                {RESTOREHER_EVENT_OVER ? 'Visit RestoreHER Hormones' : 'Register today'}
                 <span aria-hidden="true">&rarr;</span>
               </a>
             </div>
