@@ -165,9 +165,11 @@ const CheckoutPage = () => {
           strip so the first thing a visitor sees is proof + price + risk
           reversal, not an off-ramp. A subtle quiz path still lives in the
           footer for visitors who genuinely want the diagnostic first. */}
-      {/* RestoreHER live-event ribbon. Date-gated: stops rendering after the
-          event ends (June 25, 2026) so the evergreen page never advertises a
-          past event. Subtle gold shimmer for eye-catch; links to the event. */}
+      {/* RestoreHER live-event banner. The FIRST thing a visitor sees:
+          colorful urgency-style ad with both ticket paths (in-person +
+          virtual). Date-gated: stops rendering after the event ends
+          (June 25, 2026) so the evergreen page never advertises a past
+          event. 2026-06-11: upgraded from the slim ribbon per Joel. */}
       {!RESTOREHER_EVENT_OVER && (
         <>
           <style>{`
@@ -180,30 +182,89 @@ const CheckoutPage = () => {
               -webkit-text-fill-color: transparent;
               animation: rhShimmer 3.5s linear infinite;
             }
+            @keyframes rhPulse {
+              0%, 100% { box-shadow: 0 0 0 0 rgba(242, 212, 155, 0.55); }
+              50% { box-shadow: 0 0 0 7px rgba(242, 212, 155, 0); }
+            }
+            .rh-urgency-chip { animation: rhPulse 2s ease-in-out infinite; }
+            .rh-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+            .rh-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.28); }
             @media (prefers-reduced-motion: reduce) {
               .rh-ribbon-shine { animation: none; -webkit-text-fill-color: #C7A95E; }
+              .rh-urgency-chip { animation: none; }
             }
           `}</style>
-          <a
-            href="https://restoreherhormones.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-center"
+          <div
+            className="text-center"
             style={{
-              background: 'linear-gradient(135deg, #5C1A2E 0%, #7A2238 55%, #5C1A2E 100%)',
-              padding: '12px 16px',
-              fontSize: '15px',
-              fontWeight: 700,
-              lineHeight: 1.5,
-              letterSpacing: '0.02em',
-              color: '#F9EFE2',
-              textDecoration: 'none',
+              background: 'linear-gradient(135deg, #4A1224 0%, #7A2238 45%, #93283F 70%, #5C1A2E 100%)',
+              padding: '18px 16px 20px',
+              borderBottom: '3px solid #C7A95E',
             }}
           >
-            <span className="rh-ribbon-shine" style={{ fontWeight: 800, letterSpacing: '0.08em' }}>LIVE EVENT</span>
-            &nbsp; Barbara O&rsquo;Neill in Louisville &middot; June 24 &amp; 25 &middot; Restore Your Hormones&nbsp;
-            <span style={{ textDecoration: 'underline', textUnderlineOffset: '3px', color: '#F2D49B', whiteSpace: 'nowrap' }}>Get tickets &rarr;</span>
-          </a>
+            <div
+              className="rh-urgency-chip"
+              style={{
+                display: 'inline-block',
+                background: '#F2D49B',
+                color: '#4A1224',
+                fontSize: '12px',
+                fontWeight: 800,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                borderRadius: '999px',
+                padding: '5px 14px',
+                marginBottom: '10px',
+              }}
+            >
+              🔥 Live event · Tickets going fast
+            </div>
+            <div style={{ color: '#FDF6EA', fontSize: 'clamp(19px, 3.4vw, 26px)', fontWeight: 800, lineHeight: 1.25, letterSpacing: '0.01em' }}>
+              <span className="rh-ribbon-shine">Barbara O&rsquo;Neill</span> LIVE in Louisville &mdash; Restore Your Hormones
+            </div>
+            <div style={{ color: '#E9C8A6', fontSize: '15px', fontWeight: 600, marginTop: '4px', marginBottom: '14px' }}>
+              June 24 &amp; 25 &middot; The Galt House Hotel &middot; in-person seats are limited
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="https://restoreherhormones.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rh-btn inline-flex items-center justify-center gap-2"
+                style={{
+                  background: '#F2D49B',
+                  color: '#4A1224',
+                  fontWeight: 800,
+                  fontSize: '15px',
+                  borderRadius: '12px',
+                  padding: '13px 24px',
+                  textDecoration: 'none',
+                  minWidth: '220px',
+                }}
+              >
+                🎟 In-Person Tickets <span aria-hidden="true">&rarr;</span>
+              </a>
+              <a
+                href="https://www.everydaynurse.com/event-virtual"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rh-btn inline-flex items-center justify-center gap-2"
+                style={{
+                  background: 'transparent',
+                  color: '#FDF6EA',
+                  border: '2px solid #C7A95E',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  borderRadius: '12px',
+                  padding: '11px 24px',
+                  textDecoration: 'none',
+                  minWidth: '220px',
+                }}
+              >
+                💻 Virtual Tickets <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div>
         </>
       )}
 
