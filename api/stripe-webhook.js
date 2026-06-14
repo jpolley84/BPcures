@@ -38,6 +38,7 @@ import {
   AMOUNT_TO_TIER,
   TIER_CONFIG,
 } from './purchase-confirmation.js';
+import { capturePurchase } from './_posthog.js';
 
 // State-machine mapping (Phase 1 spec, 2026-05-17). Purchase events
 // transition the drip:* record's `state` field, which the new per-state
@@ -760,6 +761,18 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       status: mcTagged ? 'email_sent_tag_ok' : 'email_sent_tag_missing',
     });
 
+    // PostHog revenue attribution — the canonical `purchase` event. Keyed
+    // to the buyer's email so it joins the quiz funnel person. Covers every
+    // Checkout-session path (homepage, quiz results, /shop, email links).
+    await capturePurchase({
+      email: customerEmail,
+      amountCents,
+      tier: kitTier,
+      product: TIER_CONFIG[kitTier]?.product,
+      source: 'checkout',
+      sessionId: session.id,
+    });
+
     return {
       action: 'kit_confirmation_sent',
       tier: kitTier,
@@ -843,6 +856,16 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
   } catch (err) {
     console.error('stripe-webhook: activity-event send failed', err.message);
   }
+
+  // PostHog revenue attribution for Practice Launcher closes ($2,997–$14,997).
+  await capturePurchase({
+    email: customerEmail,
+    amountCents,
+    tier: tierSlug,
+    product: tier.name,
+    source: 'launcher',
+    sessionId: session.id,
+  });
 
   return {
     action: 'welcome_sent',

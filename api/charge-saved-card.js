@@ -21,6 +21,7 @@
 
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
+import { capturePurchase } from './_posthog.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -155,10 +156,10 @@ export default async function handler(req, res) {
   // for the webhook because a direct PaymentIntent doesn't trigger
   // checkout.session.completed. Use the same code path the webhook
   // uses so the customer gets the proper download email.
+  const customerEmail = originalSession.customer_details?.email
+    || (typeof originalSession.customer === 'object' ? originalSession.customer?.email : null);
   try {
     const { sendPurchaseConfirmation } = await import('./purchase-confirmation.js');
-    const customerEmail = originalSession.customer_details?.email
-      || (typeof originalSession.customer === 'object' ? originalSession.customer?.email : null);
     if (customerEmail) {
       // sendPurchaseConfirmation signature: { email, name, tier, apologyMode }
       // Tier maps to TIER_CONFIG entries we added: 'bp-cure-book' or
@@ -178,6 +179,19 @@ export default async function handler(req, res) {
     // been billed. Log + continue. Manual reconciliation can recover.
     console.error('charge-saved-card: confirmation email failed (charge OK)', err.message);
   }
+
+  // PostHog revenue attribution for the one-click upsell ($12.99 book /
+  // $30 reset-kit OTO). These are direct PaymentIntents — they never hit
+  // the checkout.session.completed webhook, so without this the upsell
+  // revenue would be invisible to PostHog.
+  await capturePurchase({
+    email: customerEmail,
+    amountCents: tierConfig.amount,
+    tier,
+    product: tierConfig.description,
+    source: 'one_click_upsell',
+    sessionId: session_id,
+  });
 
   return res.status(200).json({
     ok: true,

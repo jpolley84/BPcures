@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { fetchProducts, getProductBySlug, getRelatedProducts } from '../utils/productLoader';
 import ProductCard from '../components/ProductCard';
+import { track } from '../utils/analytics.js';
 
 const CATEGORY_LABEL = {
   blood_pressure: 'Blood pressure',
@@ -219,7 +220,16 @@ export default function ProductDetailPage() {
                 </div>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
                   {paymentLink ? (
-                    <a href={paymentLink} className="btn btn-ink btn-lg" style={{ flex: 1, minWidth: 200 }}>
+                    <a
+                      href={paymentLink}
+                      className="btn btn-ink btn-lg"
+                      style={{ flex: 1, minWidth: 200 }}
+                      onClick={() => !isFree && track('checkout_clicked', {
+                        product: product.slug || product.id,
+                        value: product.price_cents != null ? product.price_cents / 100 : null,
+                        source: 'product-detail',
+                      })}
+                    >
                       {isFree ? 'Download free' : 'Secure checkout'}
                       <ArrowUpRight size={16} className="arrow" />
                     </a>

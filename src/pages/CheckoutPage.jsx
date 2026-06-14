@@ -14,6 +14,7 @@ import { useHomeVariant } from '@/hooks/useHomeVariant';
 import { lazy, Suspense } from 'react';
 const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
 import HomepageEmailCapture from '../components/HomepageEmailCapture';
+import { track } from '../utils/analytics.js';
 
 const PRICE = '$17';
 
@@ -89,6 +90,10 @@ const CheckoutPage = () => {
   const handleBuyNow = async () => {
     setIsProcessing(true);
     setCheckoutError('');
+
+    // PostHog purchase-intent signal (the authoritative `purchase` event
+    // fires server-side from the Stripe webhook once payment confirms).
+    track('checkout_clicked', { product: 'bp-reset-kit', value: 17.00, source: 'checkout-page', homepage_variant: hpVariant });
 
     // Meta Pixel AddToCart event — fires when buyer initiates checkout. The
     // Purchase event fires on /success after webhook confirms. Together they
@@ -392,15 +397,48 @@ const CheckoutPage = () => {
               Read by 1,100+ in the BraveWorks community
             </span>
           </div>
+          {/* Hero hook (2026-06-12): dropped the "mom" headline for Joel's
+              avatar callout — name the meds, then sell the 10-day kit. The page
+              stays a direct $17 sales letter (no quiz CTA); buy section below. */}
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            The 10-Day Plan an ICU Nurse Built to Help His Mother Take Charge of Her Blood Pressure, Alongside Her Doctor.
+            On amlodipine, Lopressor, hydrochlorothiazide &mdash; or any blood pressure medication? This is the 10-day plan an ICU nurse built to help you take charge of your numbers, alongside your doctor.
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            I'm Joel Polley, RN. 20 years ICU and ER. They call me <strong>The Blood Pressure Guy</strong> because I gave this protocol to my mom first. Now I give it to you.
+            I'm Joel Polley, RN. 20 years in the ICU and ER. They call me <strong>The Blood Pressure Guy</strong>. This protocol works alongside your medication and your doctor, never instead of them.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
             7 guides &middot; 47 herbs &middot; Daily checklists &middot; <strong style={{ color: 'var(--dark-gray)' }}>$89 value, just {PRICE}</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>
+        </div>
+      </AnimatedSection>
+
+      {/* Reframe hook (Joel's copy, 2026-06-12). Redefines the problem from
+          "blood pressure" to "the Triangle" right before the Triangle diagram
+          pays it off. Bold band so it reads as the page's big idea. */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <div
+            className="max-w-[600px] mx-auto text-center rounded-2xl"
+            style={{
+              background: 'linear-gradient(180deg, #FBF8F1 0%, #F3E8FF 100%)',
+              border: '1px solid #E9D5FF',
+              padding: 'clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px)',
+            }}
+          >
+            <p
+              className="font-extrabold text-balance"
+              style={{ color: 'var(--navy)', fontSize: 'clamp(22px, 4.5vw, 28px)', lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0 }}
+            >
+              You don't have a blood pressure problem.{' '}
+              <span style={{ color: 'var(--purple, #6C3483)' }}>You have a Triangle problem.</span>
+            </p>
+            <p
+              className="text-balance"
+              style={{ color: 'var(--dark-gray)', fontSize: 'clamp(16px, 3.2vw, 19px)', lineHeight: 1.6, margin: '14px 0 0', fontWeight: 600 }}
+            >
+              Fix the Triangle and your BP fixes itself — under your doctor's supervision, without pills, without herbs, for life.
+            </p>
+          </div>
         </div>
       </AnimatedSection>
 
