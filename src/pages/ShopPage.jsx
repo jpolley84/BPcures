@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ExternalLink, Phone, Star, ShieldCheck, Users } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Phone, Star, ShieldCheck, Users } from 'lucide-react';
 import {
   fetchProducts,
   getTierLadder,
@@ -26,12 +26,12 @@ const TIER_META = {
     tagline: "You're tired of adding pills that don't fix the problem. This is the complete protocol — herbs, foods, and the daily plan to start seeing real numbers.",
   },
   3: {
-    label: 'Level 03 · 30-Day Challenge',
-    eyebrow: 'Group Coaching + Live Event · Starts May 1',
-    cta: 'Join the 30-Day Challenge — Starts May 1',
+    label: 'Level 03 · Personalized Sprint',
+    eyebrow: 'Built For You · Live Weekly Coaching',
+    cta: 'Start the 30-Day Sprint',
     surface: 'var(--sage-deep)',
     border: 'var(--sage-deep)',
-    tagline: "You're on 3–5 medications and you're done guessing. 30 days of guided coaching, daily emails, weekly live sessions, and a nurse in your corner. This is where transformation happens.",
+    tagline: "You're done guessing. Joel writes a 30-day plan around your numbers and walks it with you day by day, with live group coaching every week. This is where the real change happens.",
   },
 };
 
@@ -392,7 +392,7 @@ export default function ShopPage() {
                 return (
                   <div key={product.slug} className={`tier-card t-${t}`}>
                     {t === 2 && <span className="tier-ribbon">★ Most Popular</span>}
-                    {t === 3 && <span className="tier-ribbon">★ STARTS MAY 1 · Live Event Ticket ($297 Value) Included</span>}
+                    {t === 3 && <span className="tier-ribbon">★ Built For You · 5 Spots / Month</span>}
 
                     <div className="tier-tagline-block">
                       <p className="tier-tagline">{TIER_META[t].tagline}</p>
@@ -407,13 +407,10 @@ export default function ShopPage() {
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.55rem' }}>
                           <Star size={14} fill="currentColor" stroke="none" style={{ color: 'var(--clay-soft)', flexShrink: 0, marginTop: '0.15rem' }} />
                           <div>
-                            <div className="tier-bonus-title">BONUS: FREE Virtual Ticket to Barbara O'Neill LIVE</div>
-                            <p className="tier-bonus-sub">$297 value INCLUDED · June 24–25, 2026</p>
-                            <a href="https://everydaynurse.com/event-virtual" target="_blank" rel="noopener noreferrer" className="tier-event-link">
-                              View event details <ExternalLink size={10} />
-                            </a>
+                            <div className="tier-bonus-title">Joel takes 5 new Sprint readers a month</div>
+                            <p className="tier-bonus-sub">Live group coaching every Wednesday · 7 PM ET</p>
                             <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer" className="tier-skool-link">
-                              <Users size={10} /> Join community on Skool
+                              <Users size={10} /> See the community on Skool
                             </a>
                           </div>
                         </div>

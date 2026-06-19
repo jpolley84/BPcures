@@ -3,6 +3,7 @@ import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-d
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import ScrollToTop from './components/ScrollToTop';
+import SabbathGate from './components/SabbathGate';
 // ExitIntentPopup (free-cookbook lead-magnet) — pulled 2026-05-11 at Joel's
 // request. Component preserved in src/components/ExitIntentPopup.jsx if we
 // want it back. ChallengeBanner — also pulled (2026-05-10).
@@ -87,6 +88,10 @@ function App() {
       <Analytics />
       <SpeedInsights />
       <ScrollToTop />
+      {/* Sabbath closure — overlays the storefront from sundown Fri → sundown
+          Sat (Fordsville KY local sunset). Renders nothing outside those hours.
+          Fails open. See components/SabbathGate.jsx. */}
+      <SabbathGate />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           {/* Single-page sales letter at / — the new landing for cold TikTok

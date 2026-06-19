@@ -328,10 +328,10 @@ const issue4 = {
     ${joelSignoff()}
     ${psBox(`I made a 12-min YouTube video that walks the 3:1 ratio at the grocery store with my own basket. <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Watch on YouTube →</a> If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up.`)}
     ${upsellFooter({
-      kicker: 'The next rung up',
-      body: 'If you already have the $17 starter kit, the natural upgrade is the $47 BP Reset Kit — the full 30-day Reset Challenge, the Graduation phase (weeks 2-4), the complete herb formulary with safe dosing, and the printable BP tracker. Same protocol, full system.',
-      ctaLabel: 'Upgrade for $47',
-      ctaUrl: RESET_KIT_URL,
+      kicker: 'The patient protocol in one PDF',
+      body: 'The same 3-input reset I hand patients on their way out of the hospital lives inside the $17 BP Reset Kit — eighteen pages, the daily plan, the foundation moves, and the starter herb list, ready to start tonight. The cheapest day you will ever spend on your numbers.',
+      ctaLabel: 'Get the kit for $17',
+      ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -365,9 +365,9 @@ RN, BraveWorks
 P.S. On a potassium-sparing diuretic? Check with your prescriber first.
 
 —
-The next rung up:
-The $47 BP Reset Kit adds the full 30-day plan, the Graduation phase (weeks 2-4), the complete herb formulary, and the printable BP tracker.
-→ ${RESET_KIT_URL}
+The patient protocol in one PDF:
+The $17 BP Reset Kit — eighteen pages, the daily plan, the foundation moves, the starter herb list. Start tonight.
+→ ${KIT_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -533,10 +533,10 @@ const issue7 = {
     ${joelSignoff()}
     ${psBox(`If you'd rather stop here, no hard feelings. The work is yours either way.`)}
     ${upsellFooter({
-      kicker: 'Want it all in one PDF?',
-      body: 'The $47 BP Reset Kit consolidates the foundation moves, the herb formulary, the breathing protocols, and the daily plan into one printable system. Walk it on your own schedule.',
-      ctaLabel: 'Get the $47 Reset Kit',
-      ctaUrl: RESET_KIT_URL,
+      kicker: 'Want it in one place?',
+      body: 'The $17 BP Reset Kit puts the foundation moves, the starter herb list, the breathing protocols, and the daily plan into one printable PDF — eighteen pages you can walk on your own schedule, the same document I hand patients.',
+      ctaLabel: 'Get the kit for $17',
+      ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -564,9 +564,9 @@ Joel
 RN, BraveWorks
 
 —
-Want it all in one PDF?
-The $47 BP Reset Kit — foundation, herbs, breathing protocols, daily plan.
-→ ${RESET_KIT_URL}
+Want it in one place?
+The $17 BP Reset Kit — foundation moves, starter herbs, breathing protocols, daily plan.
+→ ${KIT_URL}
 
 —
 → Skool: ${SKOOL_URL}

@@ -104,8 +104,8 @@ export const TIER_CONFIG = {
     // last week's streamline pass). Repointed to the canonical $47 BP Reset
     // Kit (cNieVdeIrca2fDR1sZfnO0k) — same category, the natural ladder rung.
     upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
-    upgradeLabel: 'Want the complete clinical kit? (one-time add-on)',
-    upgradeDesc: 'Optional. If you want the complete clinical kit, you can add it once for $47. It includes Joel\'s full 8-PDF stack: hypertension guide, supplement protocol, meal plan, BP tracker, doctor-conversation templates, quick-start, and cheat sheet. Totally optional. What you already downloaded stands on its own.',
+    upgradeLabel: 'Want the complete clinical kit? (standard add-on)',
+    upgradeDesc: 'Optional. The complete clinical kit is $47, its standard one-time price (the discounted one-click version is only offered on the checkout page right after purchase). It includes Joel\'s full 8-PDF stack: hypertension guide, supplement protocol, meal plan, BP tracker, doctor-conversation templates, quick-start, and cheat sheet. Totally optional. What you already downloaded stands on its own.',
     upgradeCta: 'Add the complete kit ($47) →',
   },
   '1-cortisol': {

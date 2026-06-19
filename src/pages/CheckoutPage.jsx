@@ -332,12 +332,12 @@ const CheckoutPage = () => {
       </div>
 
       {/* Social Proof Strip — 2026-05-25: clickable FB/TikTok/IG icons +
-          400K subscriber count. Inline SVG for TikTok (not in lucide). */}
+          500K subscriber count. Inline SVG for TikTok (not in lucide). */}
       <div className="py-5 bg-[#F8F9FA]" style={{ animation: 'softRise 0.5s cubic-bezier(0.22,1,0.36,1)' }}>
         <div className="container-mobile-first">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
             <span className="text-[13px] text-[#555] font-medium uppercase" style={{ letterSpacing: '0.08em' }}>
-              Trusted by over 400K subscribers
+              Trusted by over 500K subscribers
             </span>
             <div className="flex items-center gap-3">
               <a
@@ -397,81 +397,17 @@ const CheckoutPage = () => {
               Read by 1,100+ in the BraveWorks community
             </span>
           </div>
-          {/* Hero hook (2026-06-12): dropped the "mom" headline for Joel's
-              avatar callout — name the meds, then sell the 10-day kit. The page
-              stays a direct $17 sales letter (no quiz CTA); buy section below. */}
+          {/* Hero hook (2026-06-18): viral callout style — name the meds,
+              stop the scroll, short punch. Detail moves to subhead. */}
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            On amlodipine, Lopressor, hydrochlorothiazide &mdash; or any blood pressure medication? This is the 10-day plan an ICU nurse built to help you take charge of your numbers, alongside your doctor.
+            Amlodipine. Lopressor. HCTZ.<br />If you take any of these &mdash; stop scrolling.
           </h1>
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            I'm Joel Polley, RN. 20 years in the ICU and ER. They call me <strong>The Blood Pressure Guy</strong>. This protocol works alongside your medication and your doctor, never instead of them.
+            A 20-year ICU nurse built a 10-day plan for people on blood pressure meds. It works <em>alongside</em> your doctor, never instead of them. They call him <strong>The Blood Pressure Guy</strong>.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
             7 guides &middot; 47 herbs &middot; Daily checklists &middot; <strong style={{ color: 'var(--dark-gray)' }}>$89 value, just {PRICE}</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>
-        </div>
-      </AnimatedSection>
-
-      {/* Reframe hook (Joel's copy, 2026-06-12). Redefines the problem from
-          "blood pressure" to "the Triangle" right before the Triangle diagram
-          pays it off. Bold band so it reads as the page's big idea. */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <div
-            className="max-w-[600px] mx-auto text-center rounded-2xl"
-            style={{
-              background: 'linear-gradient(180deg, #FBF8F1 0%, #F3E8FF 100%)',
-              border: '1px solid #E9D5FF',
-              padding: 'clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px)',
-            }}
-          >
-            <p
-              className="font-extrabold text-balance"
-              style={{ color: 'var(--navy)', fontSize: 'clamp(22px, 4.5vw, 28px)', lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0 }}
-            >
-              You don't have a blood pressure problem.{' '}
-              <span style={{ color: 'var(--purple, #6C3483)' }}>You have a Triangle problem.</span>
-            </p>
-            <p
-              className="text-balance"
-              style={{ color: 'var(--dark-gray)', fontSize: 'clamp(16px, 3.2vw, 19px)', lineHeight: 1.6, margin: '14px 0 0', fontWeight: 600 }}
-            >
-              Fix the Triangle and your BP fixes itself — under your doctor's supervision, without pills, without herbs, for life.
-            </p>
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* AND Statement + Bible catechism. 2026-06-08: moved UP to sit right
-          below the hero so the "alongside your doctor, not instead of it"
-          complement message frames the offer before any buy ask. The closing
-          independence phrase was removed (it implied replacing care).
-          "Pills manage output. Protocol fixes input." is the brand's
-          most-repeated line; cold buyers see it again in drip emails. */}
-      <AnimatedSection className="section-spacing">
-        <div className="container-mobile-first">
-          <div className="max-w-[520px] mx-auto text-center">
-            <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.5', fontWeight: 600, margin: '0 0 14px' }}>
-              Pills manage output. Protocol fixes input.
-            </p>
-            <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
-              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way.
-            </p>
-            <BpTriangle />
-          </div>
-        </div>
-      </AnimatedSection>
-
-      {/* Gradient Divider */}
-      <hr className="gradient-divider" />
-
-      {/* Gut Punch Quote */}
-      <AnimatedSection className="section-spacing" style={{ backgroundColor: 'var(--light-gray)' }}>
-        <div className="container-mobile-first">
-          <blockquote className="quote-accent italic pl-5 py-1" style={{ color: 'var(--dark-gray)', fontSize: '20px', lineHeight: '1.5', fontWeight: 500 }}>
-            Genetics writes the recipe. Lifestyle bakes the cake.
-            <footer style={{ marginTop: '0.75rem', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, color: 'var(--clay, #B85A36)' }}>Joel, RN</footer>
-          </blockquote>
         </div>
       </AnimatedSection>
 
@@ -591,6 +527,112 @@ const CheckoutPage = () => {
           </AnimatedSection>
         </div>
       </div>
+
+      {/* ===== THE METHOD — relocated BELOW the offer (2026-06-12, Joel:
+          "offer stack as close to the top as possible; method under it").
+          Flow: reframe → mechanism (Triangle) → destination (the path) →
+          punchline. ===== */}
+      <hr className="gradient-divider" />
+
+      {/* Reframe band — the big idea */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <p className="text-center" style={{ color: 'var(--clay, #B85A36)', fontSize: '13px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', margin: '0 0 18px' }}>
+            The BP Triangle Method
+          </p>
+          <div
+            className="max-w-[600px] mx-auto text-center rounded-2xl"
+            style={{
+              background: 'linear-gradient(180deg, #FBF8F1 0%, #F3E8FF 100%)',
+              border: '1px solid #E9D5FF',
+              padding: 'clamp(24px, 5vw, 36px) clamp(20px, 4vw, 32px)',
+            }}
+          >
+            <p
+              className="font-extrabold text-balance"
+              style={{ color: 'var(--navy)', fontSize: 'clamp(22px, 4.5vw, 28px)', lineHeight: 1.25, letterSpacing: '-0.02em', margin: 0 }}
+            >
+              You don't have a blood pressure problem.{' '}
+              <span style={{ color: 'var(--purple, #6C3483)' }}>You have a Triangle problem.</span>
+            </p>
+            <p
+              className="text-balance"
+              style={{ color: 'var(--dark-gray)', fontSize: 'clamp(16px, 3.2vw, 19px)', lineHeight: 1.6, margin: '14px 0 0', fontWeight: 600 }}
+            >
+              Fix the Triangle and your BP fixes itself — under your doctor's supervision, without pills, without herbs, for life.
+            </p>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* AND Statement + Triangle diagram — the mechanism */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <div className="max-w-[520px] mx-auto text-center">
+            <p style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.5', fontWeight: 600, margin: '0 0 14px' }}>
+              Pills manage output. Protocol fixes input.
+            </p>
+            <p className="italic" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.7', margin: 0 }}>
+              This works alongside your doctor's care, not instead of it. Natural support AND medical guidance. That's the BraveWorks way.
+            </p>
+            <BpTriangle />
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Where this is headed — the destination/"vacation". Every medication
+          step doctor-led + explicit "never stop on your own" guardrail. */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <div className="max-w-[600px] mx-auto">
+            <p className="text-center" style={{ color: 'var(--clay, #B85A36)', fontSize: '13px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+              Where this is headed
+            </p>
+            <h2 className="font-bold text-balance text-center" style={{ color: 'var(--navy)', fontSize: '24px', lineHeight: 1.25, margin: '0 0 8px' }}>
+              The goal was never more pills. It's freedom.
+            </h2>
+            <p className="text-center" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 24px' }}>
+              Here is the whole path, in plain words. You walk it <strong>with your doctor</strong>, one step at a time.
+            </p>
+
+            <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                ['1', 'We find the cause.', 'Most plans just chase the number. We look for what is pushing it up: your Pipe, your Stress, your Sugar. Fix the cause, and the number follows.'],
+                ['2', 'We build you up, naturally.', 'While your body gets stronger, we lean on real food, simple daily habits, and natural supports. This walks with your doctor’s care, never instead of it.'],
+                ['3', 'Your doctor may lower your medicine.', 'As your numbers steady, many people work with their doctor to step their pills down. Only your doctor makes that call. Never start, stop, or change a medicine on your own.'],
+                ['4', 'The extra supports wind down.', 'Once the cause stays fixed, your body needs less help. Fewer things to take. Fewer things to think about.'],
+                ['5', 'You put the cuff away.', 'The dream: a steady, healthy number you trust, and a cuff that lives in a drawer. Some folks toss it in the trash.'],
+              ].map(([n, title, body]) => (
+                <li key={n} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-gray-100">
+                  <span className="flex-shrink-0 inline-flex items-center justify-center rounded-full font-bold" style={{ width: 30, height: 30, background: 'var(--navy)', color: '#fff', fontSize: 15 }}>{n}</span>
+                  <div className="flex-1">
+                    <p style={{ color: 'var(--navy)', fontSize: 17, fontWeight: 700, lineHeight: 1.3, margin: '0 0 3px' }}>{title}</p>
+                    <p style={{ color: 'var(--dark-gray)', fontSize: 15, lineHeight: 1.6, margin: 0 }}>{body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            <p className="text-center font-bold" style={{ color: 'var(--navy)', fontSize: 18, lineHeight: 1.5, margin: '24px 0 0' }}>
+              Find the cause. Heal it. Walk free, with your doctor beside you the whole way.
+            </p>
+
+            <p style={{ color: 'var(--muted-gray)', fontSize: 13, lineHeight: 1.6, margin: '16px 0 0', textAlign: 'center', fontStyle: 'italic' }}>
+              This is education, not medical advice, and not a promise of any result. Your doctor guides every step that involves your medication. Never start, stop, or change any medicine on your own.
+            </p>
+          </div>
+        </div>
+      </AnimatedSection>
+
+      {/* Gut Punch Quote — closes the method */}
+      <AnimatedSection className="section-spacing" style={{ backgroundColor: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <blockquote className="quote-accent italic pl-5 py-1" style={{ color: 'var(--dark-gray)', fontSize: '20px', lineHeight: '1.5', fontWeight: 500 }}>
+            Genetics writes the recipe. Lifestyle bakes the cake.
+            <footer style={{ marginTop: '0.75rem', fontSize: '14px', fontStyle: 'normal', fontWeight: 600, color: 'var(--clay, #B85A36)' }}>Joel, RN</footer>
+          </blockquote>
+        </div>
+      </AnimatedSection>
 
       {/* Supporting Text */}
       <AnimatedSection className="section-spacing">

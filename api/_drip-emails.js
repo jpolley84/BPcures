@@ -17,8 +17,9 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 // ─── URLs (single source of truth) ────────────────────────────────────
 // Active product Stripe links — verified live 2026-05-14, mirrors
 // purchase-confirmation.js + products.json. Ladder positions:
-//   $17  → entry (Days 1-3)
-//   $47  → upgrade (Days 5-6)
+//   $17  → entry (Days 1-3, 5-6) — cold leads route to $17 ONLY
+//   ($47 retired from the cold drip 2026-06-14: it converted 0% as a naked
+//    Stripe link to non-buyers. $47 is now a post-purchase one-click upsell.)
 //   $97  → Monday live + Skool VIP (Day 10)
 //   /coaching → 90-Day Freedom Sprint application (Days 8 + 12)
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
@@ -364,10 +365,10 @@ const day4 = {
     ${joelSignoff()}
     ${psBox(`I made a 12-min YouTube video that walks the 3:1 ratio at the grocery store with my own basket. <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Watch on YouTube →</a> If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up.`)}
     ${upsellFooter({
-      kicker: 'The next rung up',
-      body: 'If you already have the $17 starter kit, the natural upgrade is the $47 BP Reset Kit — the full 30-day Reset Challenge, the Graduation phase (weeks 2-4), the complete herb formulary with safe dosing, and the printable BP tracker. Same protocol, full system.',
-      ctaLabel: 'Upgrade for $47',
-      ctaUrl: RESET_KIT_URL,
+      kicker: 'Want it all in one place?',
+      body: 'Everything I teach in these emails — the cardiologist conversation script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life plant-based cookbook — lives in the BP Reset Kit. The same document I hand patients on their way out of the hospital. $105 of nurse-vetted protocol, $17 today.',
+      ctaLabel: 'Get the BP Reset Kit for $17',
+      ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
   `,
@@ -403,9 +404,9 @@ RN, BraveWorks
 P.S. On a potassium-sparing diuretic? Check with your prescriber first.
 
 —
-The next rung up:
-The $47 BP Reset Kit adds the full 30-day plan, the Graduation phase (weeks 2-4), the complete herb formulary, and the printable BP tracker.
-→ ${RESET_KIT_URL}
+Want it all in one place?
+The $17 BP Reset Kit has the cardiologist script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life cookbook — the same document I hand patients. $105 of protocol, $17 today.
+→ ${KIT_URL}
 
 —
 → Skool: ${SKOOL_URL}
@@ -1142,8 +1143,8 @@ P.S. If you've followed this far, you already know more about the BP Triangle th
 // day with a brief mechanism note + clear next step + rotated CTA.
 //
 // Upsell footer rotation (per-day-strategic, not random):
-//   Kit ($17)        → days 14, 17, 22  (mechanism days; entry-point pitch)
-//   Reset Kit ($47)  → days 13, 19, 24, 30  (extended bonus pitch)
+//   Kit ($17)        → days 13, 14, 17, 19, 22, 24, 30  (entry-point pitch;
+//                       $47 retired from cold drip 2026-06-14 — 0% converter)
 //   Challenge ($97)  → days 16, 21, 26  (community + 30-day pitch)
 //   Diagnostic ($297)→ days 15, 18, 20, 23, 25, 27, 28, 29  (highest-leverage
 //                       days, the ones where a buyer can self-identify as
@@ -1169,7 +1170,7 @@ const day13 = {
     ${p(`<strong>Tomorrow: magnesium glycinate.</strong> The single most underrated mineral for blood pressure. I take it. Annie takes it. Most cardiologists never bring it up.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you want me looking at YOUR specific case before adding inputs randomly — the BP Triangle Diagnostic Session is the door. 60 minutes, $297, written 30-day protocol that's yours. Three slots open this week.`)}
-    ${upsellFooter({ kicker: 'WEEK 2 ANCHOR — $47 BP RESET KIT', body: 'Now that the framework makes sense, the Reset Kit gives you the dosing details and supplement protocols laid out by Pressure. 8 PDFs. $47 one-time.', ctaLabel: 'Get the BP Reset Kit →', ctaUrl: RESET_KIT_URL })}
+    ${upsellFooter({ kicker: 'WEEK 2 ANCHOR — $17 BP RESET KIT', body: 'Now that the framework makes sense, the BP Reset Kit gives you the dosing details and supplement protocols laid out by Pressure — the same document I hand patients. $17 one-time.', ctaLabel: 'Get the BP Reset Kit →', ctaUrl: KIT_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1194,7 +1195,7 @@ RN, BraveWorks
 P.S. Not sure which input to add first? The free BP quiz shows your loudest Pressure and where to start: ${COACHING_URL}
 
 —
-→ Get the Reset Kit ($47): ${RESET_KIT_URL}
+→ Get the BP Reset Kit ($17): ${KIT_URL}
 → Skool: ${SKOOL_URL}
 `,
 };
@@ -1494,7 +1495,7 @@ Tomorrow: the 25-gratitudes practice — single best cortisol intervention I've 
 Joel
 RN, BraveWorks
 
-P.S. $47 BP Reset Kit lays out the breathing + gratitude + sleep + supplement protocols in order: ${RESET_KIT_URL}
+P.S. The $17 BP Reset Kit lays out the breathing + gratitude + sleep + supplement protocols in order: ${KIT_URL}
 `,
 };
 
@@ -1723,7 +1724,7 @@ Tomorrow: meal sequencing — same food, different order, 30-40% less insulin re
 Joel
 RN, BraveWorks
 
-P.S. $47 Reset Kit has the Cook For Life cookbook built on mineral-salt + meal sequencing: ${RESET_KIT_URL}
+P.S. The $17 BP Reset Kit has the Cook For Life cookbook built on mineral-salt + meal sequencing: ${KIT_URL}
 `,
 };
 
@@ -2028,7 +2029,7 @@ RN, BraveWorks
 P.S. Moved your numbers? Hit reply. I read every one.
 
 —
-→ $47 BP Reset Kit (the consolidated reference library): ${RESET_KIT_URL}
+→ $17 BP Reset Kit (the consolidated reference library): ${KIT_URL}
 → Skool: ${SKOOL_URL}
 `,
 };
