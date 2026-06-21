@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf } from 'lucide-react';
+import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useHomeVariant } from '@/hooks/useHomeVariant';
 // 2026-06-08 — exit-intent / dwell popup now drives the about-to-bounce
@@ -527,6 +527,32 @@ const CheckoutPage = () => {
           </AnimatedSection>
         </div>
       </div>
+
+      {/* Mid-page quiz CTA (2026-06-18): captures scrollers who aren't
+          ready to buy. Positioned BELOW the offer + testimonials so it
+          never competes with the buy decision — only catches people who
+          scrolled past it. Soft tone, no competing button style. */}
+      <AnimatedSection>
+        <div className="py-8 text-center" style={{ background: '#FAFAFA' }}>
+          <div className="container-mobile-first">
+            <p style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.6', maxWidth: '420px', margin: '0 auto 10px' }}>
+              Not sure if this kit is right for you?
+            </p>
+            <Link
+              to="/quiz"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full transition-all hover:shadow-md"
+              style={{ background: '#F3E8FF', border: '1px solid #E9D5FF', color: '#6C3483', fontSize: '15px', fontWeight: 600, textDecoration: 'none' }}
+            >
+              <Activity size={16} />
+              Take the free 90-second BP quiz
+              <ArrowRight size={15} />
+            </Link>
+            <p style={{ color: '#B0B0B0', fontSize: '12px', marginTop: '8px' }}>
+              No email required. See where your numbers stand.
+            </p>
+          </div>
+        </div>
+      </AnimatedSection>
 
       {/* ===== THE METHOD — relocated BELOW the offer (2026-06-12, Joel:
           "offer stack as close to the top as possible; method under it").
