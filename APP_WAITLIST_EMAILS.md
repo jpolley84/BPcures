@@ -13,7 +13,10 @@ Length: 5 emails (1 automated + 4 sent via /send-campaign)
 Timing: instant → day 2 → day 5 → launch day → launch +3
 Exit Conditions: reply "remove" (Email 0 offer), unsubscribe link on campaign
   sends, or launch +3 sent (sequence complete)
-Segment source: KV set `waitlist:app:members` (records at `waitlist:app:<email>`)
+Segment source: KV set `waitlist:app:members` (records at `waitlist:app:<email>`).
+  Mirrored into Resend audience "BraveWorksRN App Waitlist"
+  (id bf8e34e2-3656-4bf8-8916-41d95ac39f40, env RESEND_APP_WAITLIST_AUDIENCE_ID),
+  so launch emails can also go out as a Resend Broadcast against that audience.
 ```
 
 **Sending mechanics.** Email 0 is transactional and fires automatically from

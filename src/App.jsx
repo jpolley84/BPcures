@@ -73,6 +73,9 @@ const AppWaitlistPage = lazy(() => import('./pages/AppWaitlistPage'));
 // vercel.json edit needed (Vercel routes both apex + subdomains to this SPA).
 const SUBDOMAIN_PAGE = {
   'wakita.bpquiz.com': WakitaIntakePage,
+  // App waitlist vanity subdomain (2026-07-05). Same page as /waitlist on
+  // the apex; the subdomain serves it at its root.
+  'waitlist.bpquiz.com': AppWaitlistPage,
 };
 const subdomainPage =
   typeof window !== 'undefined' ? SUBDOMAIN_PAGE[window.location.hostname] : null;

@@ -139,6 +139,23 @@ async function handleSignup(req, res) {
     console.warn('app-waitlist: sadd failed (non-fatal)', err.message);
   }
 
+  // Mirror the signup into the Resend audience "BraveWorksRN App Waitlist"
+  // (RESEND_APP_WAITLIST_AUDIENCE_ID) so Joel can segment/broadcast from the
+  // Resend dashboard too. KV stays the source of truth; this is non-fatal.
+  if (process.env.RESEND_API_KEY && process.env.RESEND_APP_WAITLIST_AUDIENCE_ID) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.contacts.create({
+        audienceId: process.env.RESEND_APP_WAITLIST_AUDIENCE_ID,
+        email,
+        firstName: firstName || undefined,
+        unsubscribed: false,
+      });
+    } catch (err) {
+      console.warn('app-waitlist: Resend audience add failed (non-fatal)', err.message);
+    }
+  }
+
   // Confirmation email — non-fatal if it bounces or Resend hiccups.
   if (process.env.RESEND_API_KEY) {
     try {
