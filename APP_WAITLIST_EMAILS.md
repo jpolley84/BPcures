@@ -1,4 +1,4 @@
-# BraveWorks BP App Waitlist — Email Sequence
+# BraveWorksRN App Waitlist — Email Sequence
 
 *Authored 2026-07-05 per the Corey Haines `emails` skill (marketingskills). Voice: Joel,
 4th-grade plain, no health claims, AND-not-INSTEAD-OF framing. No em dashes in body copy.*
@@ -32,7 +32,7 @@ emails · every email moves them one step.
 
 ```
 Send: instantly on signup (api/app-waitlist.js)
-Subject: You're #{position} in line for BraveWorks BP
+Subject: You're #{position} in line for the BraveWorksRN app
 Job: confirm + set expectations + one useful next step (quiz)
 CTA: Take the quiz → bpquiz.com/quiz
 ```
@@ -59,7 +59,7 @@ Quick story about the app you're waiting on.
 Every health app I've ever downloaded wanted three things before I logged a single
 number. My email. An account. A subscription.
 
-So when we built BraveWorks BP, I made one rule: **the app never phones home.**
+So when we built the BraveWorksRN app, I made one rule: **the app never phones home.**
 
 No account. No cloud. No password to forget. Your readings live on your phone and
 nowhere else. There's even a "Clear my data" button in Settings that wipes everything,
@@ -97,7 +97,7 @@ doctor waits. A page. Dates, readings, pattern. Doctors are trained to read data
 and when you hand it over, the whole conversation changes. You stop being a
 complaint and become a chart.
 
-That's the feature I'm proudest of in BraveWorks BP. You log your readings as you
+That's the feature I'm proudest of in the BraveWorksRN app. You log your readings as you
 go. Before your appointment, you tap **Doctor Report** and the app builds a clean
 one-page PDF: your readings, your trend, ready to print, email, or AirDrop.
 
@@ -117,17 +117,21 @@ Joel Polley, RN
 
 ```
 Send: launch day (via /send-campaign, Joel triggers)
-Subject: It's live. BraveWorks BP is on the App Store
+Subject: It's live. The BraveWorksRN app is on the App Store
 Preview: You waited in line. The doors just opened.
 Job: convert the waitlist to installs. One CTA, no detours.
-CTA: Download BraveWorks BP → {APP_STORE_URL}
+CTA: Get the BraveWorksRN app → {APP_STORE_URL}
 ```
 
 {firstName|Friend}, it's live.
 
-BraveWorks BP is on the App Store right now. Free, like I promised.
+The BraveWorksRN app is on the App Store right now.
 
-[Download BraveWorks BP] → {APP_STORE_URL}
+{PRICING_LINE — fill at launch. Waitlist promise: they hear the price first.
+Examples: "It's {PRICE}, and waitlist members are seeing that before anyone
+else." / "It's {PRICE} for everyone, {WAITLIST_PRICE} for you through Friday."}
+
+[Get the BraveWorksRN app] → {APP_STORE_URL}
 
 Three things to do in your first five minutes:
 
@@ -154,17 +158,17 @@ Send: launch +3 days (via /send-campaign; segment: no click on Email L if
 Subject: Still holding your spot
 Preview: Two taps tonight. That's the whole start.
 Job: catch the busy ones. Short.
-CTA: Download BraveWorks BP → {APP_STORE_URL}
+CTA: Get the BraveWorksRN app → {APP_STORE_URL}
 ```
 
 Hi {firstName|friend},
 
 Life gets loud, so one nudge and I'll hush.
 
-The BraveWorks BP app is out. Free, on the App Store, no account needed. Tonight,
-before bed: download it, log one reading. Two taps. That's the whole start.
+The BraveWorksRN app is out on the App Store. No account needed. Tonight,
+before bed: grab it, log one reading. Two taps. That's the whole start.
 
-[Download BraveWorks BP] → {APP_STORE_URL}
+[Get the BraveWorksRN app] → {APP_STORE_URL}
 
 Joel Polley, RN
 

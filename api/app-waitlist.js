@@ -1,4 +1,4 @@
-// api/app-waitlist.js — BraveWorks BP iPhone-app waitlist signup.
+// api/app-waitlist.js — BraveWorksRN iPhone-app waitlist signup.
 //
 // Contract:
 //   POST { email, firstName?, source? }
@@ -72,10 +72,10 @@ function confirmationEmail({ firstName, position }) {
     : '';
   return `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#2C3E50;line-height:1.6;background:#FBF8F1;">
-<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin:0 0 1rem;">BraveWorks BP &middot; iPhone app</p>
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;font-weight:700;margin:0 0 1rem;">The BraveWorksRN app &middot; iPhone</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">You're #${position} in line, ${name}.</h2>
-<p>The BraveWorks BP app is in its final stretch before the App Store. You'll get one email from me the day it goes live, and your spot means you hear first.</p>
-<p><strong>What the app does:</strong> log your blood pressure in seconds, watch your 30-day pattern, and print a one-page Doctor Report for your next appointment. Everything stays on your phone. No account. Free.</p>
+<p>The BraveWorksRN app is in its final stretch before the App Store. You'll get one email from me the day it goes live, and your spot means you hear first, including the launch price, before anyone else sees it.</p>
+<p><strong>What the app does:</strong> log your blood pressure in seconds, watch your 30-day pattern, and print a one-page Doctor Report for your next appointment. Everything stays on your phone. No account.</p>
 <p><strong>While you wait:</strong> if you haven't taken the BP quiz yet, that's the best 2 minutes you can spend today &mdash; it tells you which of the Three Pressures is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B85A36;">Take it here</a>.</p>
 <p>Questions? Just reply. I read these myself.</p>
 <p style="margin-top:2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
@@ -147,7 +147,7 @@ async function handleSignup(req, res) {
         from: FROM_ADDRESS,
         to: email,
         reply_to: REPLY_TO,
-        subject: `You're #${position} in line for BraveWorks BP`,
+        subject: `You're #${position} in line for the BraveWorksRN app`,
         html: confirmationEmail({ firstName, position }),
       });
     } catch (err) {

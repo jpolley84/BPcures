@@ -1,4 +1,4 @@
-// /waitlist — BraveWorks BP iPhone-app waitlist.
+// /waitlist — BraveWorksRN iPhone-app waitlist.
 //
 // Standalone page (no SiteLayout, like the other conversion pages): one job,
 // capture the email above the fold. POSTs to /api/app-waitlist which returns
@@ -25,7 +25,7 @@ function PhonePreview() {
       <div className="wl-phone">
         <div className="wl-screen">
           <div className="wl-screen-top">
-            <span className="wl-screen-brand">BraveWorks BP</span>
+            <span className="wl-screen-brand">BraveWorksRN</span>
             <span className="wl-screen-date">Today</span>
           </div>
           <div className="wl-reading">
@@ -106,12 +106,12 @@ export default function AppWaitlistPage() {
   const [already, setAlready] = useState(false);
 
   useEffect(() => {
-    document.title = 'BraveWorks BP iPhone App · Join the Waitlist | BPQuiz.com';
+    document.title = 'The BraveWorksRN App · Join the Waitlist | BPQuiz.com';
     const meta = document.querySelector('meta[name="description"]');
     const prev = meta ? meta.getAttribute('content') : null;
     if (meta) {
       meta.setAttribute('content',
-        'BraveWorks BP: log your blood pressure in seconds, see your 30-day pattern, and bring your doctor a one-page report. Free on iPhone. Join the waitlist.');
+        'The BraveWorksRN app: log your blood pressure in seconds, see your 30-day pattern, and bring your doctor a one-page report. Coming first to iPhone. Join the waitlist.');
     }
     track('waitlist_viewed');
     return () => { if (meta && prev !== null) meta.setAttribute('content', prev); };
@@ -165,11 +165,13 @@ export default function AppWaitlistPage() {
         {/* ── Hero: the one job. Form is above the fold on every viewport. ── */}
         <section className="wl-hero">
           <div className="wl-hero-copy">
-            <p className="wl-eyebrow">BraveWorks BP · iPhone app · launching soon</p>
-            <h1 className="wl-h1">Know your numbers. Show your doctor.</h1>
+            <h1 className="wl-h1">
+              <span className="wl-h1-brand">The BraveWorksRN app.</span>
+              Know your numbers. Show your doctor.
+            </h1>
             <p className="wl-sub">
               Log your pressure in seconds, see your 30-day pattern, and hand your
-              doctor a one-page report. Free on iPhone.
+              doctor a one-page report. Coming first to iPhone.
             </p>
             <WaitlistForm id="hero" {...formProps} />
           </div>
@@ -227,7 +229,7 @@ export default function AppWaitlistPage() {
             <dt>When does it come out?</dt>
             <dd>It's in final review for the App Store. Waitlist members get the email the day it's live.</dd>
             <dt>What does it cost?</dt>
-            <dd>Nothing. The app is free.</dd>
+            <dd>Pricing gets announced at launch. Waitlist members hear it first, before anyone else.</dd>
             <dt>Does it replace my doctor or my medication?</dt>
             <dd>No. It's a tracking and reporting tool you use alongside your doctor, never instead of one.</dd>
           </dl>
@@ -242,8 +244,8 @@ export default function AppWaitlistPage() {
 
       <footer className="wl-footer">
         <p className="wl-disclaimer">
-          BraveWorks BP is an educational tracking tool. It does not diagnose or
-          treat anything. Use it alongside your doctor, never instead of one.
+          The BraveWorksRN app is an educational tracking tool. It does not diagnose
+          or treat anything. Use it alongside your doctor, never instead of one.
         </p>
         <nav className="wl-footer-links">
           <Link to="/privacy">Privacy</Link>
@@ -294,22 +296,23 @@ const waitlistCss = `
   margin: 0 auto;
   padding-block: clamp(2.25rem, 6vh, 4.5rem);
 }
-.wl-eyebrow {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--clay);
-  margin: 0 0 1rem;
-}
 .wl-h1 {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.6rem);
+  font-size: clamp(2.1rem, 1.4rem + 3.2vw, 3.4rem);
   font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.05;
   margin: 0 0 1rem;
   text-wrap: balance;
+}
+/* Brand line inside the H1: part of the headline, sized as its kicker so the
+   value line keeps display scale and the whole block stays 3 visual lines. */
+.wl-h1-brand {
+  display: block;
+  font-size: 0.52em;
+  color: var(--clay);
+  margin-bottom: 0.35em;
+  letter-spacing: -0.005em;
 }
 .wl-sub {
   font-size: var(--step-1);
