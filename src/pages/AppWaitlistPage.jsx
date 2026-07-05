@@ -575,6 +575,9 @@ const waitlistCss = `
   .wl-phone-wrap { margin-top: 0.5rem; }
   .wl-proof { flex-direction: row; }
   .wl-form-row { flex-direction: column; }
+  /* In column direction the 220px flex-basis becomes HEIGHT — reset it, or
+     the email input renders 220px tall. */
+  .wl-input { flex: 0 0 auto; width: 100%; }
   .wl-btn { width: 100%; }
 }
 `;
