@@ -1,7 +1,13 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!assets|downloads|headshot|favicon).*)", "destination": "/index.html" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/((?!assets|downloads|headshot|favicon).*)",
+      "destination": "/index.html"
+    }
   ],
   "redirects": [
     {
@@ -34,7 +40,11 @@
       "destination": "/quiz?utm_source=podcast&utm_medium=spoken",
       "permanent": false
     },
-    { "source": "/seminar", "destination": "/quiz?utm_source=seminar-legacy", "permanent": false }
+    {
+      "source": "/seminar",
+      "destination": "/quiz?utm_source=seminar-legacy",
+      "permanent": false
+    }
   ],
   "crons": [
     {
@@ -52,34 +62,6 @@
     {
       "path": "/api/daily-digest",
       "schedule": "0 13 * * *"
-    },
-    {
-      "path": "/api/tier-1-cron",
-      "schedule": "45 12 * * *"
-    },
-    {
-      "path": "/api/tier-2-cron",
-      "schedule": "30 13 * * *"
-    },
-    {
-      "path": "/api/tier-3-cron",
-      "schedule": "45 13 * * *"
-    },
-    {
-      "path": "/api/tier-4-cron",
-      "schedule": "30 14 * * *"
-    },
-    {
-      "path": "/api/triangle-lead-cron",
-      "schedule": "0 15 * * *"
-    },
-    {
-      "path": "/api/triangle-buyer-cron",
-      "schedule": "30 15 * * *"
-    },
-    {
-      "path": "/api/newsletter-cron",
-      "schedule": "0 16 * * 2"
     }
   ]
 }
