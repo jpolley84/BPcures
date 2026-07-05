@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>The Sodium Corner, 10-Day Reset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #4A5D4E; }
+  * { box-sizing: border-box; }
+
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 19mm;
+    @bottom-center {
+      content: "BraveWorks BP    .    Education alongside your doctor, never instead.";
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      color: #7A7061;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #7A7061;
+    }
+  }
+  /* The cover prints full-bleed-ish with no running footer or number. */
+  @page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+  /* The one page doctor sheet: tighter margins so it stays on a single page,
+     and no page number (it is a printable hand-out, not a booklet). */
+  @page plain { margin: 14mm 15mm 12mm; @bottom-right { content: ""; } @bottom-center { content: ""; } }
+
+  html { background: #F7F3EC; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #2B2824;
+    line-height: 1.62;
+    font-size: 11.3pt;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover page ───────────────────────────────────────────────── */
+  .cover {
+    page: cover;
+    position: relative;
+    height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% 8%, #FBF8F1 0%, #F7F3EC 55%, #EFE8DB 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26mm 22mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .cover::before {
+    /* a hairline frame, inset, like a fine book jacket */
+    content: "";
+    position: absolute;
+    inset: 11mm;
+    border: 1px solid var(--accent);
+    opacity: 0.32;
+    border-radius: 3px;
+  }
+  .cover__kicker {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  .cover__tri { margin: 4px 0 30px; }
+  .cover__title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #121110;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .cover__rule {
+    width: 54px;
+    height: 2px;
+    background: var(--accent);
+    margin: 6px auto 18px;
+    border: 0;
+  }
+  .cover__subtitle {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14pt;
+    line-height: 1.5;
+    color: #2B2824;
+    max-width: 34ch;
+    margin: 0 auto 30px;
+  }
+  .cover__author {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    letter-spacing: 0.04em;
+    color: #121110;
+    font-weight: 600;
+  }
+  .cover__author small {
+    display: block;
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7A7061;
+    margin-top: 6px;
+  }
+  .cover__brand {
+    position: absolute;
+    bottom: 17mm;
+    left: 0;
+    right: 0;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7A7061;
+  }
+
+  /* ── Body / interior ──────────────────────────────────────────── */
+  .doc { padding-top: 2mm; }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 21pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #121110;
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 15.5pt;
+    line-height: 1.2;
+    color: #121110;
+    margin: 26px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid #D8CFBD;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 18px 0 6px;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 11px; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  li::marker { color: var(--accent); }
+  strong { color: #121110; font-weight: 700; }
+  em { color: #2B2824; }
+  a { color: var(--accent); text-decoration: none; }
+  hr { border: 0; border-top: 1px solid #E8E1D1; margin: 22px 0; }
+
+  /* The intro kicker line at the very top of the interior. */
+  .eyebrow {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8.5pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  /* ── Day card: each "## Day N" becomes a bordered card with a big
+       accent number and a phase tag. The transform tags these. ── */
+  .daycard {
+    border: 1px solid #D8CFBD;
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 18px 22px 6px;
+    margin: 22px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .daycard > h2 {
+    border-top: 0;
+    padding-top: 0;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .daycard .dnum {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 30pt;
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .daycard .dlabel { font-size: 15pt; }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, #FBF8F1);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, #D8CFBD);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin: 2px 0 12px;
+  }
+
+  /* ── "Today's action" callout box (the transform wraps the action line). ── */
+  .action {
+    border: 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 9%, #FBF8F1);
+    border-left: 4px solid var(--accent);
+    padding: 13px 17px;
+    margin: 13px 0 15px;
+    page-break-inside: avoid;
+  }
+  .action .action__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 5px;
+  }
+  .action .action__b {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 10.8pt;
+    line-height: 1.5;
+    color: #121110;
+    margin: 0;
+  }
+  .action .action__b strong { color: #121110; }
+
+  /* ── Pull-quote (villain / loop / Barbara O'Neill lines). ── */
+  blockquote, .pullquote {
+    margin: 18px 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14.5pt;
+    line-height: 1.4;
+    color: #121110;
+    page-break-inside: avoid;
+  }
+  blockquote p, .pullquote p { margin: 0; }
+
+  /* ── Tables (formulary + doctor-sheet question grids). ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.4pt;
+    line-height: 1.5;
+    page-break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th {
+    background: var(--accent);
+    color: #FBF8F1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 8.6pt;
+    letter-spacing: 0.04em;
+    padding: 9px 11px;
+    vertical-align: top;
+  }
+  td {
+    border-bottom: 1px solid #E8E1D1;
+    padding: 9px 11px;
+    vertical-align: top;
+    color: #2B2824;
+  }
+  tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--accent) 4%, #FBF8F1); }
+  td strong { color: #121110; }
+
+  /* ── Generic accent panel (intro frames, safety notes, finale rungs). ── */
+  .panel {
+    background: #EFE8DB;
+    border: 1px solid #D8CFBD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .panel--accent { border-left: 4px solid var(--accent); }
+  .panel__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 7px;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .lede {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0 0 16px;
+  }
+
+  /* ── Closing "About Joel" page. ── */
+  .about {
+    page-break-before: always;
+    margin-top: 6mm;
+  }
+  .about__card {
+    background: #121110;
+    color: #F7F3EC;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .about__card .cover__kicker { color: #C8A252; }
+  .about__card h2 {
+    color: #F7F3EC;
+    border-top: 0;
+    padding-top: 0;
+    margin: 6px 0 14px;
+    font-size: 19pt;
+  }
+  .about__card p { color: #E6DECD; font-size: 10.6pt; }
+  .about__card .sig {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 16pt;
+    color: #C8A252;
+    margin-top: 18px;
+  }
+  .about__tri { margin: 8px auto 18px; }
+
+  /* ── Fine print / compliance footer line at the document foot. ── */
+  .finePrint {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid #E8E1D1;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #7A7061;
+  }
+
+  /* ── Doctor-sheet specifics: a tight, single-page, fill-in feel. ──
+     Everything in here is scoped to .sheet so the protocol + formulary
+     layouts are untouched; the rhythm is compressed to hold one Letter page. */
+  .sheet { page: plain; font-size: 10.4pt; line-height: 1.46; }
+  .sheet h1 { font-size: 18pt; margin-bottom: 4px; }
+  .sheet .eyebrow { margin-bottom: 8px; }
+  .sheet .lede { font-size: 10.6pt !important; line-height: 1.4; margin-bottom: 9px !important; }
+  .sheet .qlist + p { margin-top: 5px !important; }
+  .sheet .field {
+    border: 1px solid #D8CFBD;
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin: 8px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .sheet .field__label {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .sheet .writeline {
+    border-bottom: 1px solid #D8CFBD;
+    height: 13px;
+    margin-top: 7px;
+  }
+  .sheet .qlist { list-style: none; padding: 0; margin: 4px 0 0; }
+  .sheet .qlist li {
+    position: relative;
+    padding-left: 17px;
+    margin-bottom: 5px;
+    font-size: 9.5pt;
+    line-height: 1.38;
+  }
+  .sheet .qlist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .sheet .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .sheet .colhead {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 12pt;
+    color: #121110;
+    margin: 11px 0 5px;
+    padding-top: 9px;
+    border-top: 2px solid var(--accent);
+  }
+  .sheet .two-col { gap: 16px; }
+  .sheet .finePrint { margin-top: 10px; padding-top: 8px; font-size: 7.5pt; line-height: 1.42; }
+  .sheet .panel { margin: 8px 0; padding: 9px 13px; }
+  .sheet .panel p { font-size: 9.3pt !important; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover__kicker">Corner three of the BP Triangle</div>
+    <div class="cover__tri"><svg viewBox="0 0 200 184" width="232" height="213.44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <circle cx="100" cy="32" r="17" fill="#4A5D4E" opacity="0.16" />
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="8.5" fill="#4A5D4E" opacity="1"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="0.32"/>
+    <circle cx="172" cy="152" r="5" fill="#B85A36" opacity="0.32"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="1">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="0.32">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="0.32">Sugar</text>
+    </g>
+  </svg></div>
+    <h1 class="cover__title">The Sodium Corner, 10-Day Reset</h1>
+    <hr class="cover__rule"/>
+    <p class="cover__subtitle">Drain the lake where stress and sugar both empty out, plus the salt on your plate.</p>
+    <div class="cover__author">by Joel Polley, RN<small>BraveWorks RN  .  Registered Nurse, Naturopathic Practitioner</small></div>
+    <div class="cover__brand">The BP Triangle  .  Stress  .  Sugar  .  Sodium</div>
+  </section>
+<div class="doc"><p class="eyebrow">The BP Triangle Reset  .  Sodium corner</p>
+<h1>The SODIUM Corner (10 Days)</h1>
+<p class="lede">Part of The BP Triangle Reset. This is one of three corners. The quiz may have started you here, or you may have arrived after walking the Stress and Sugar corners first. Either way, welcome. I am glad you are here.</p>
+<hr>
+<h2>The physiology, in plain English</h2>
+<p>Here is the simplest way I know to say it. Sodium pulls water. Where sodium goes, water follows. So when there is too much sodium sitting in your bloodstream, your body holds onto extra water to keep everything in balance. More water in the pipes means more volume. More volume means more pressure pushing against your artery walls. That is the reading on your cuff going up.</p>
+<p>But sodium is not only about the salt shaker. This is the corner where the whole triangle comes together, and I want you to see it clearly. Remember the other two corners:</p>
+<ul>
+<li><strong>Stress</strong> sends out cortisol, and one of the things cortisol does is tell your kidneys to <strong>hold onto sodium.</strong></li>
+<li><strong>Sugar</strong> spikes insulin, and one of the things insulin does is tell your kidneys to <strong>hold onto sodium.</strong></li>
+</ul>
+<p>So sodium retention is not just what you sprinkle on your food. It is the downstream meeting point where stress and sugar both empty out, plus the salt you actually eat. Three rivers, one lake. That is why you cannot fix high blood pressure by attacking one corner alone, and it is why this corner closes the loop. When you walk sodium back down, you are draining the lake that the other two corners keep filling.</p>
+<p>There is one more piece. Your kidneys have a natural partner to sodium, and it is <strong>potassium.</strong> Sodium and potassium work like a seesaw. When potassium is high, your kidneys flush sodium out. When potassium is low (which it is for most people eating a modern diet), sodium stays put. The famous truth in the research is this: the <em>ratio</em> of sodium to potassium matters more than sodium alone. Most people are not just eating too much sodium. They are also eating far too little potassium. We are going to fix both ends of that seesaw.</p>
+<h2>What you will do in these 10 days</h2>
+<p>You will find where sodium is hiding (it is almost never the salt shaker). You will walk it back down. You will rebalance the sodium-potassium seesaw with water and whole plant foods. You will add the vascular herbs I trust to help your vessels relax. You will watch your body respond. And on Day 10, you will see how lingering sodium retention keeps the entire triangle spinning, and you will hand off to the next corner to finish closing the loop.</p>
+<p>A reminder before we begin, because it matters more than anything else on this page: <strong>this is education to walk alongside your doctor, never instead of your doctor.</strong> Nothing here is a reason to change a single one of your medications. If your numbers come down, that is wonderful news you bring <em>to</em> your doctor so they can make the call. We never touch blood pressure medication on our own. Ever.</p>
+<hr>
+<div class="daycard"><h2><span class="dnum">1</span><span class="dlabel">Day 1</span></h2><span class="phase-tag">FIND</span>
+
+<p><strong>Today&#39;s action:</strong> Take a baseline reading, then become a label detective for one day. Do not change anything yet. Just look.</p>
+<p>This morning, sit quietly for five minutes (no talking, no phone), feet flat, back supported, arm at heart level. Take two or three readings a minute apart and write down the average. Same arm every time. This is your starting line for the sodium corner, and we will measure everything against it.</p>
+<p>Now here is the eye-opener. For the rest of today, read the sodium line on the label of everything you eat. Just read it. Do not throw anything away. I want you to discover something most people never realize: <strong>the salt shaker is almost never the problem.</strong> Studies consistently find that the large majority of the sodium people eat is already baked into packaged and processed food before it ever reaches the table. The shaker is a rounding error next to the bread, the canned soup, the deli meat, the sauces, the frozen dinners, the cheese, the condiments.</p>
+<p>The why, in plain English: sodium pulls water into your bloodstream. More water means more blood volume, and more volume means more pressure on your artery walls. So every milligram you are eating without knowing it is quietly turning up the dial on your cuff. You cannot walk back down what you cannot see. Today is about seeing it.</p>
+<p>As you read labels, keep a simple number in your head: <strong>about 300mg of sodium per serving</strong> is a useful line in the sand. Above that, a food is a meaningful sodium source. You are going to be surprised. A single serving of deli meat can carry 500 to 800mg. A cup of canned soup can carry more than that. Foods that do not even taste salty, like bread and breakfast cereal, add up fast across a day because you eat so much of them.</p>
+<p>Write down the three highest-sodium foods you found today. Those three are your targets. You are not removing them yet. You are just naming the cause, the way we always do first. Tomorrow we start walking it back.</p>
+<p>One gentle note: if you have been told you have kidney disease or heart failure, your sodium and fluid targets may be set specifically by your doctor. Follow their numbers over any general guidance here. This corner is for the everyday person whose pressure crept up from a modern diet, not a replacement for individualized medical instructions.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">2</span><span class="dlabel">Day 2</span></h2><span class="phase-tag">ELIMINATE</span>
+
+<p><strong>Today&#39;s action:</strong> Remove the single biggest hidden sodium source you found yesterday, and replace it with a whole-food version.</p>
+<p>Look at your list of three. Pick the number one offender, the food that was both high in sodium and something you eat often. That is usually one of these: deli or processed meat, canned soup, frozen meals, salty snack foods, or jarred sauces. Today, that one goes, and something real takes its place.</p>
+<p>Here is exactly how to handle the most common ones:</p>
+<ul>
+<li><strong>Deli meat and processed meat:</strong> swap for beans, lentils, or other whole-plant proteins on your sandwich or in your meal. A single serving of deli meat can carry close to half a day&#39;s sodium for someone watching their pressure.</li>
+<li><strong>Canned soup:</strong> make a simple pot from whole ingredients, or choose a no-salt-added version and season it yourself with herbs.</li>
+<li><strong>Frozen dinners:</strong> cook one simple meal from scratch tonight. It does not have to be fancy. A sweet potato, some greens, a can of rinsed beans.</li>
+<li><strong>Jarred sauces and dressings:</strong> these are sodium bombs. Use olive oil, lemon, vinegar, garlic, and herbs instead.</li>
+</ul>
+<p>The why, in plain English: the moment you stop pouring sodium in, your kidneys can start letting the extra water go. That is why one of the first things people notice in these days is more frequent trips to the bathroom. That is not a side effect to worry about. That is your body releasing the fluid it was holding, and your blood volume coming back down toward normal. It usually settles within a couple of days.</p>
+<p>Now, the most important reframe of this whole corner. When you cook from whole ingredients, <strong>season boldly</strong>, just not with salt. Reach for garlic, onion, lemon, lime, vinegar, fresh and dried herbs, black pepper, and a pinch of cayenne. Here is the encouraging part backed by experience: your taste buds recalibrate in about five to seven days. Right now, low-sodium food tastes flat because your palate is adapted to a very high baseline. Give it a week and the opposite happens. Food starts tasting <em>more</em> alive, more flavorful, because you can finally taste the actual ingredients instead of a wall of salt. You are not signing up for bland food for life. You are signing up for one week of adjustment and then a richer palate on the other side.</p>
+<p>Take your reading today and write it next to Day 1. Keep that water bottle close.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">3</span><span class="dlabel">Day 3</span></h2><span class="phase-tag">ELIMINATE</span>
+
+<p><strong>Today&#39;s action:</strong> Strip out the secondary hidden sodium sources. The removal phase is complete after today.</p>
+<p>Yesterday you took out the biggest offender. Today we get the rest of the hidden salt, the smaller streams that add up. Go after the other two foods on your list, plus the everyday sneaky sources almost everyone has:</p>
+<ul>
+<li><strong>Bread and baked goods.</strong> They rarely taste salty, but because you eat so much of them, they are often a person&#39;s single largest sodium source over a day. Choose lower-sodium bread, or have less of it.</li>
+<li><strong>Condiments.</strong> Ketchup, soy sauce, salad dressings, and many spice blends (anything with &quot;salt&quot; near the top of the list). Swap to oil, vinegar, lemon, and salt-free seasoning blends.</li>
+<li><strong>Cheese and salty dairy.</strong> Already on the way out as part of the whole triangle, and a major sodium source on top of the saturated fat.</li>
+<li><strong>Restaurant and fast food.</strong> A single restaurant meal can carry an entire day&#39;s worth of sodium. When you eat out, ask for sauces and dressings on the side and choose simple grilled vegetables and whole foods.</li>
+</ul>
+<p>The why, in plain English: sodium reduction works in a dose-response way. The more of these hidden sources you clear, the more room your kidneys have to flush the backlog. Research on lifestyle change consistently shows that sodium reduction is one of the reliable, repeatable levers for bringing systolic pressure down. You are not chasing one magic food. You are lowering the whole tide.</p>
+<p>Here is the mindset that makes this stick: you are not depriving yourself. You are taking back control of what goes into your body. For years, food companies decided how much salt you ate without asking you. Today you are the one deciding. That is not restriction. That is ownership.</p>
+<p>A practical tip to make tomorrow easier: this is a great day to do a quick kitchen sweep. Move the high-sodium items to a back shelf or out of the house, and put the whole foods (the potassium-rich ones we add next) right at eye level. Your environment will carry the habit further than willpower ever can.</p>
+<p>Take your reading. The removal phase is done. Tomorrow we stop subtracting and start adding.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">4</span><span class="dlabel">Day 4</span></h2><span class="phase-tag">ADD (the keystone practice)</span>
+
+<p><strong>Today&#39;s action:</strong> Add the keystone hydration practice. Drink your body weight in ounces of water, starting with 16 ounces first thing this morning, water only. Then, if your doctor has cleared you, add a round of contrast hydrotherapy (hot and cold water alternated, ending on cold).</p>
+<p>Now we shift from removing to adding, and the first thing we add is the practice that does the most work in this corner: real hydration. Here is your number. Take your body weight in pounds, and drink that many ounces of water across the day. If you weigh 180 pounds, that is 180 ounces. Start with about 16 ounces the moment you wake up, before anything else, because you are mildly dehydrated after a night of sleep.</p>
+<p>This must be <strong>water only.</strong> Not juice, not sports drinks, not flavored sweet drinks. Those carry sugar or sodium that work against the very thing we are doing. If you want flavor, add lemon, cucumber, or fresh mint. (And per our whole-program rule, no caffeine. Cutting it is a win for your pressure, not a loss.)</p>
+<p>The why, in plain English, because this is one of the most counterintuitive truths in blood pressure. People assume drinking more water makes you hold more water. The opposite is true. Here is what actually happens:</p>
+<ul>
+<li>When you are even mildly dehydrated, your body releases a hormone called <strong>vasopressin</strong> (also called antidiuretic hormone, or ADH). Vasopressin tells your kidneys to hold onto water, and it also directly squeezes your blood vessels tighter. Drinking enough water turns that signal down, so your vessels relax and your kidneys stop hoarding.</li>
+<li>Proper hydration also gives your kidneys the fluid they need to <strong>flush excess sodium.</strong> A well-watered kidney is an efficient kidney. A dehydrated kidney goes into conservation mode and clings to both sodium and water, which is exactly the wrong direction.</li>
+<li>Water also thins your blood to its healthy viscosity. Thicker, dehydrated blood is harder to push, which forces your heart to generate more pressure. Thinner blood moves with less force required.</li>
+</ul>
+<p>So hydration is not separate from the sodium story. It is the tool that lets your body act on everything you removed in the last three days. Carry a measured bottle so you know exactly how much you have had. A simple gauge: if your urine is pale yellow to clear, you are on track. Dark yellow means drink more. Taper off in the last couple of hours before bed so you sleep through the night.</p>
+<h3>The second keystone practice: contrast hydrotherapy (the &quot;Water&quot; law in action)</h3>
+<p>There is a second way to use water in this corner, and it is one of the oldest natural practices there is. It is called contrast hydrotherapy, and it is simply alternating hot and cold water on the body. Barbara O&#39;Neill teaches it, the NEWSTART health program teaches it, and the herbalist Walt Cross teaches it. When three independent natural-health sources land on the same practice, I pay attention. This is the NEWSTART &quot;Water&quot; law working on the outside of your body, not just the inside.</p>
+<p><strong>Before I give you the protocol, the one caveat that matters most.</strong> Please read this fully. If you have any known cardiovascular disease, a heart rhythm problem, or blood pressure that is not yet stable, do <strong>not</strong> start contrast hydrotherapy until your doctor has cleared you for it. The cold phase causes a real, sudden tightening of the vessels that can spike blood pressure acutely. For a healthy circulatory system that is the whole point and it is safe. For a fragile one it is a risk, and your doctor is the only one who can tell you which you are. This is a circulation and wellbeing practice. It is not a blood pressure treatment, and I am not offering it as one.</p>
+<p>If you are cleared, here is the simple protocol. You can do it in your shower:</p>
+<ul>
+<li><strong>Hot water, about 102 to 110 F, for roughly 3 minutes.</strong></li>
+<li><strong>Then cold, about 55 to 70 F, for 30 to 60 seconds.</strong></li>
+<li><strong>Repeat for about 3 rounds.</strong></li>
+<li><strong>Always end on cold.</strong></li>
+</ul>
+<p>The why, in plain English. Hot water dilates your vessels and pulls blood toward the surface of your skin. Cold water constricts them and drives that blood back deep into the body. When you alternate the two, you are making the vessels open and close over and over, and that is the whole mechanism. You are pumping the circulation. You are exercising the vessel walls the way you would exercise a muscle, gently and on purpose. It is free, it uses no drugs, and it asks nothing of your body that your body was not built to do. Ending on cold leaves the vessels toned rather than flushed.</p>
+<p>Take your reading. You are now removing the cause and adding the first support.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">5</span><span class="dlabel">Day 5</span></h2><span class="phase-tag">ADD (the healing foods)</span>
+
+<p><strong>Today&#39;s action:</strong> Add potassium-rich whole plant foods at every meal. Aim for several servings today. This is the other half of the seesaw.</p>
+<p>Yesterday you added water to help the kidneys flush. Today you add the mineral that tells them to flush in the first place: <strong>potassium.</strong> Remember the seesaw. Sodium and potassium balance each other, and when potassium goes up, your kidneys release sodium. Most people are walking around with the seesaw stuck on the wrong side, too much sodium and not nearly enough potassium. We fix that with food, not pills.</p>
+<p>Here are the potassium-rich whole foods to build your plate around today (all plant-forward, all in line with how I believe we are designed to eat):</p>
+<ul>
+<li><strong>Leafy greens:</strong> spinach, Swiss chard, kale, collards</li>
+<li><strong>Sweet potatoes</strong> (one of the richest, easy and filling)</li>
+<li><strong>Beans and legumes:</strong> white beans, lentils, black beans, kidney beans</li>
+<li><strong>Avocado</strong></li>
+<li><strong>Bananas</strong></li>
+<li><strong>Tomatoes</strong> and tomato-based dishes (unsalted)</li>
+<li><strong>Coconut water</strong> (a naturally potassium-rich drink, no added sugar)</li>
+<li><strong>Winter squash, beets, and oranges</strong></li>
+</ul>
+<p>The why, in plain English: potassium does two helpful things at once. First, it signals your kidneys to excrete sodium, draining the extra fluid volume that raises pressure. Second, potassium helps relax the walls of your blood vessels directly. So you get the volume coming down and the vessels easing open at the same time. This is the natural counterweight your body was built to use, and a modern packaged diet simply does not provide it. Whole plants do, in abundance.</p>
+<p>Notice the beautiful overlap here. The same beans and lentils that replaced your deli meat on Day 2 are potassium powerhouses. The sweet potato that replaced your frozen dinner is one of the best potassium foods there is. Every swap you made to <em>lower</em> sodium was secretly also <em>raising</em> potassium. The two halves of the seesaw move together when you eat real food. That is not a coincidence. That is the design working the way it was meant to.</p>
+<p>One quiet partner makes this seesaw work better: <strong>magnesium.</strong> Potassium and magnesium are teammates inside your cells, and many of the same whole plant foods you are leaning on today (leafy greens, beans, avocado) carry both. You met magnesium in the Stress corner as the relaxation mineral. It returns tomorrow on the supplement day for a reason: it helps potassium do its job of walking sodium back down, and it relaxes your vessel walls on its own. Keep that name in mind. It is the throughline of the whole triangle.</p>
+<p>One important safety note. If you have kidney disease, or you take a medication that raises potassium (some blood pressure drugs do, especially the potassium-sparing kind), do not load up on potassium without your doctor&#39;s guidance. For most people, potassium from whole food is exactly what is missing. For a smaller group, it needs to be monitored. Know which one you are, and when in doubt, ask your doctor before making potassium a focus.</p>
+<p>Take your reading. Your plate is now part of the protocol.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">6</span><span class="dlabel">Day 6</span></h2><span class="phase-tag">SUPPLEMENT</span>
+
+<p><strong>Today&#39;s action:</strong> Introduce the vascular herbs that help your vessels relax and your kidneys release fluid. Start with one or two, with food, at the dosing below.</p>
+<p>You have removed the hidden sodium and rebalanced the seesaw with water and potassium-rich plants. Now we add gentle, well-studied botanical support to help your vessels relax and assist your kidneys. These are foods and herbs, used the way people have used them for generations, and they map onto the same pathways the prescription drugs target.</p>
+<p>Start with one or two of these, not all at once. Take them with food. See how you feel, then build.</p>
+<ul>
+<li><strong>Hibiscus tea, 2 to 3 cups daily.</strong> This is my first pick for this corner. The deep red anthocyanins act as a gentle natural ACE inhibitor (the same family of mechanism as a drug like lisinopril) and a mild diuretic, and notably it does <em>not</em> flush potassium the way pharmaceutical water pills do. Steep dried hibiscus or a tea bag in hot water 5 to 10 minutes. Drink warm or over ice.</li>
+<li><strong>Garlic, 2 raw cloves daily, crushed and rested 10 minutes.</strong> This step is non-negotiable: crush the cloves with the flat of a knife and let them sit 10 minutes before eating. That rest activates the enzyme that converts the garlic into its active compound. Eat them raw with food, chase with water or a spoonful of honey if the taste is strong. Garlic supports nitric oxide (the body&#39;s own vessel-relaxer) and the research on aged and raw garlic for blood pressure is some of the most encouraging in the natural space.</li>
+<li><strong>Cayenne pepper, about 1/4 teaspoon daily.</strong> Stir into a glass of warm water or sprinkle on food. Start with 1/8 teaspoon if you are not used to spice and work up. The warmth you feel is the compound capsaicin prompting nitric oxide release and supporting circulation. Take with food, not on an empty stomach.</li>
+<li><strong>Magnesium, 400 mg daily</strong> (glycinate or citrate, the best-absorbed forms), or an Epsom-salt bath (about 2 cups, soak 20 minutes). You already met magnesium back in the Stress corner, where I called it the relaxation mineral. It earns a place here too, for a different reason: magnesium acts as a natural calcium channel relaxant, easing the smooth muscle in your blood-vessel walls so the pipes open wider. Most people are running low on it. Reduce the dose if you get loose stools, and if you have kidney disease, ask your doctor first, since the kidneys regulate magnesium.</li>
+</ul>
+<blockquote>
+<p><strong>The throughline mineral of the whole triangle.</strong> Notice that magnesium has now shown up in two corners. In Stress it calmed your nervous system and helped lower cortisol. Here in Sodium it relaxes your vessel walls directly and partners with potassium to walk sodium back down. That is not a coincidence. Magnesium is the single mineral that quietly works every side of this triangle at once, which is exactly why it is so often the one most people are missing. If you carry one supplement forward from the whole program, this is a strong candidate.</p>
+</blockquote>
+<p>The why, in plain English: these are vasodilators and gentle diuretics. They help the smooth muscle in your vessel walls relax (wider pipes, lower pressure) and help your kidneys let go of the fluid sodium was holding (less volume, lower pressure). They work <em>with</em> everything you have already done. The herbs are scaffolding to help the body do its own job, not a second prescription to depend on forever.</p>
+<p>The most important rule on this page: <strong>herbs and medications can interact, and that is the doctor&#39;s territory, not ours.</strong> Several of these can add to the effect of blood pressure or blood-thinning medication. Garlic in particular can increase the effect of blood thinners. Hibiscus can lower pressure further and may interact with certain drugs. If you take any prescription medication, especially for blood pressure, blood thinning, or your heart, talk to your doctor or pharmacist before adding these. We never stack a supplement on top of a medication blind. We loop in the professional. (See the full Formulary at the bottom for doses and cautions.)</p>
+<p>Take your reading. Start gently.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">7</span><span class="dlabel">Day 7</span></h2><span class="phase-tag">SUPPLEMENT + MONITOR</span>
+
+<p><strong>Today&#39;s action:</strong> Your full sodium-corner stack is now in place. Keep everything running, and begin tracking your body&#39;s response, the readings and the felt signals.</p>
+<p>Today nothing new gets added. Instead, you lock in the full protocol and start paying close attention. As of today you have all of it working together:</p>
+<ul>
+<li>Hidden sodium removed (the label detective work, the swaps, the bold no-salt seasoning)</li>
+<li>Hydration to your body weight in ounces, water only</li>
+<li>Potassium-rich whole plants at every meal</li>
+<li>Vascular herbs from yesterday, at safe doses, with food</li>
+</ul>
+<p>If yesterday&#39;s one or two herbs felt fine, you can add a second now and bring the stack to its full form. Keep it gentle and keep it with food.</p>
+<p>Now, the monitoring. This is where you become the scientist of your own body. Take your reading at the same time each day, ideally morning, before food. But the cuff is not the only signal, and in this corner it is often not even the first one to move. Watch for these felt signs that your body is responding:</p>
+<ul>
+<li><strong>More frequent urination in the first days, then settling.</strong> This is the single clearest sign that sodium retention is breaking and your blood volume is normalizing. It is exactly what we want.</li>
+<li><strong>Rings, shoes, and waistbands feeling looser.</strong> Sodium holds water in your tissues, not only your blood. As it releases, that puffiness (especially in the hands, feet, and around the eyes) tends to ease. Many people notice this before the cuff moves.</li>
+<li><strong>Less bloating, a lighter feeling, sometimes a small drop on the scale.</strong> That early weight change is water, not fat, and it is a good sign here.</li>
+</ul>
+<p>The why, in plain English: blood volume responds faster than artery stiffness does. The fluid your body was holding can come down within days of cutting the sodium load and hydrating properly, so the volume part of your pressure equation often improves first. The deeper vessel changes take longer. So if the felt signals are moving but the number is still catching up, that is completely normal and on track.</p>
+<p>Write down both the number and the felt signals today. You are building the story your own body is telling.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">8</span><span class="dlabel">Day 8</span></h2><span class="phase-tag">MONITOR</span>
+
+<p><strong>Today&#39;s action:</strong> Read the signals. Look at the trend, not a single number, and learn what is moving first and why.</p>
+<p>Today is about interpretation. Pull out your readings from Day 1 through today and look at them as a line, not as single dots. One reading on one morning means very little. Blood pressure naturally bounces around through the day based on what you ate, how you slept, whether you were rushing. The <em>trend</em> is the truth.</p>
+<p>Here is how to read what you are seeing:</p>
+<ul>
+<li><strong>If the numbers are trending down, even a little:</strong> that is your removed sodium and your added potassium and water draining the volume. The body responds to volume changes relatively quickly, so an early movement here is the most common first win in this corner.</li>
+<li><strong>If the number is flat but the felt signals are clearly better</strong> (looser rings, more bathroom trips, less puffiness, lighter feeling): your body <em>is</em> responding. Tissue fluid is shifting before the cuff catches up. Stay the course. The reading tends to follow the felt signals, not lead them.</li>
+<li><strong>If nothing has moved yet:</strong> do not be discouraged, and do not abandon ship. Check the honest questions. Are you truly hitting your water number? Are there hidden sodium sources you have not caught (sauces, bread, eating out)? Are the potassium foods actually on the plate every meal? This corner rewards thoroughness. Often the missing movement is a missing gram of hidden salt.</li>
+</ul>
+<p>The why, in plain English: you removed a cause, sodium overload, and you added the supports that help your body clear it. Cause and effect is not optional. When the cause genuinely comes down and stays down, the effect follows. Your job on a monitoring day is not to panic at any single reading. It is to confirm the direction and trust the process you have built.</p>
+<p>A word of grace, because I mean it: this is not about a perfect number by Day 8. It is about direction. Every day you held the lower sodium and hit your water was a day your body got to drain the lake a little more. Imperfect and consistent beats perfect and brief, every single time.</p>
+<p>Take your reading. Read the trend. Adjust what is loose.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">9</span><span class="dlabel">Day 9</span></h2><span class="phase-tag">WATCH IT HEAL</span>
+
+<p><strong>Today&#39;s action:</strong> See the change and understand <em>why</em> it moved. Connect the number to the cause you removed.</p>
+<p>Today I want you to step back and actually take in what has happened over these days. Look at your Day 1 reading next to today&#39;s. Look at the felt signals: the rings, the bathroom, the bloating, the energy, the lighter feeling. Something has shifted. And here is the part that matters most for the rest of your life: I want you to understand <em>why</em>, so you never have to take anyone&#39;s word for it again.</p>
+<p>Walk the chain with me, in plain English:</p>
+<ul>
+<li>You <strong>removed the hidden sodium.</strong> Less sodium coming in means your body stops being told to hold extra water.</li>
+<li>You <strong>added water to your body weight in ounces.</strong> That turned down the vasopressin signal that was tightening your vessels, and gave your kidneys the fluid to flush the sodium backlog.</li>
+<li>You <strong>added potassium-rich plants.</strong> That flipped the seesaw, signaling your kidneys to release sodium, while relaxing your vessel walls directly.</li>
+<li>You <strong>added the vascular herbs.</strong> Hibiscus, garlic, and cayenne nudged the same relax-and-release pathways the medications target, gently.</li>
+</ul>
+<p>The result is your blood volume coming down and your vessels easing open. Lower volume plus wider pipes equals lower pressure. That is not wishful thinking. That is the plumbing. Your reading moved because you changed the inputs, and the body did exactly what it was designed to do when you give it the right environment.</p>
+<p>This is the deepest lesson of the sodium corner and maybe of the whole triangle: <strong>your blood pressure is an effect, not a mystery.</strong> It went up because of specific causes, and it responds when you remove them. A pill manages the effect while the cause keeps running underneath. What you did this week is different. You walked the cause itself back down.</p>
+<p>And you are not the only one to see this. The way of eating you have been building toward this week, more potassium-rich plants and less processed sodium, has been measured in careful studies. In a landmark randomized trial, the DASH eating pattern lowered blood pressure by about <strong>11 mmHg systolic and 5.5 mmHg diastolic in eight weeks</strong> in people who started with high blood pressure (Appel and colleagues, <em>New England Journal of Medicine</em>, 1997). Across controlled trials, vegetarian eating patterns lower systolic pressure by about <strong>5 mmHg</strong> on their own. I share those numbers carefully and honestly: that is risk-factor improvement seen in studies, not a cure and not a promise about your specific reading. But it tells you the lever you have been pulling is real, and that what you felt this week has solid ground under it.</p>
+<p>Sit with that today. Be encouraged by it. You did not get lucky. You changed the cause, and the effect followed, exactly the way it is supposed to.</p>
+<p>Take your reading. Notice how far you have come from Day 1.</p>
+<hr>
+</div><div class="daycard"><h2><span class="dnum">10</span><span class="dlabel">Day 10</span></h2><span class="phase-tag">CLOSE + LOOP BRIDGE</span>
+
+<p><strong>Today&#39;s action:</strong> Lock in your one keystone habit from this corner. Then learn how lingering sodium retention keeps the whole triangle spinning, and hand off to the Stress corner to finish closing the loop.</p>
+<p>You made it through the sodium corner. Before anything else, choose <strong>one keystone habit</strong> to carry forward for life, not for ten days, for life. Pick the one you can honestly see yourself doing at seventy years old. For most people in this corner it is one of two things:</p>
+<ol>
+<li><strong>Drink your body weight in ounces of water, water only, every day.</strong> Simple, free, and it does more quiet work than people ever realize.</li>
+<li><strong>Cook from whole ingredients and season with herbs instead of salt.</strong> This single habit takes the largest source of hidden sodium out of your life permanently.</li>
+</ol>
+<p>Whichever you choose, make it the non-negotiable. Stack the rest around it.</p>
+<h3>The bridge: how sodium keeps the whole loop spinning</h3>
+<p>Now I want to close the triangle for you, because this is the corner where the loop becomes visible. You have been walking sodium <em>down</em>. But here is the catch, and it is the reason we never fix just one corner: <strong>stress and sugar keep refilling the sodium lake from upstream.</strong></p>
+<p>Walk it with me one more time:</p>
+<ul>
+<li>Every time <strong>stress</strong> spikes cortisol, cortisol tells your kidneys to <strong>hold sodium.</strong> Even with a perfect low-salt diet, an unmanaged stress load keeps pushing sodium retention back up. The lake refills from the cortisol river.</li>
+<li>Every time <strong>sugar</strong> spikes insulin, insulin tells your kidneys to <strong>hold sodium</strong> too. A diet still riddled with refined sugar keeps the seesaw stuck, no matter how little you sprinkle on your food. The lake refills from the insulin river.</li>
+</ul>
+<p>So if you only ever fixed sodium and never touched stress or sugar, you would be bailing water out of a boat with two holes still open. Your kidneys would keep getting the &quot;hold sodium&quot; order from cortisol and insulin, and your pressure would creep back. <strong>This is exactly why everyone travels all three corners.</strong> You cannot close a loop by fixing one point on it.</p>
+<p>That is the hand-off. The triangle&#39;s order runs Stress to Sugar to Sodium and back around, and from here the loop points home to the <strong>Stress corner.</strong> If you started in Sodium, Stress is where you go next to shut off the cortisol tap that keeps telling your kidneys to hold the very sodium you just worked so hard to release. If you have already walked Stress and Sugar and Sodium is your last corner, then you have now sealed every side of the triangle, and the Freedom Finale is waiting to teach you how to step back and let your body hold these gains on its own.</p>
+<p>Calm all three and your numbers come home. That is the whole promise, and you just finished one of its three sides.</p>
+<p>Take your final reading for this corner. Write it next to Day 1. Be proud of it. You did real work, and your body answered.</p>
+<p><em>Education to walk alongside your doctor, never instead. If your numbers have come down, that is the good news you bring to your provider so they, and only they, can decide anything about your medication. We never change a blood pressure medication on our own.</em></p>
+<hr>
+</div><h2>Formulary</h2>
+<p class="muted" style="color:#7A7061;font-size:9.5pt;">A quick reference. Add ONE at a time, check your blood pressure daily, and tell your doctor everything you are taking.</p>
+<p><em>The vascular and BP-supportive herbs and nutrients for this corner, with the dosing ranges and cautions from Joel&#39;s vetted BP material. These are educational. They are not a prescription, and they are not a substitute for the medication your doctor has you on. Talk to your doctor or pharmacist before combining any of these with prescription medication, especially blood pressure, blood-thinning, or heart medication.</em></p>
+<table>
+<thead>
+<tr>
+<th>Support</th>
+<th>Typical use / range</th>
+<th>How it helps (plain English)</th>
+<th>Caution</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Hibiscus tea</strong></td>
+<td>2 to 3 cups daily; steep dried flower or tea bag 5 to 10 min</td>
+<td>Acts as a gentle natural ACE inhibitor (anthocyanins) plus a mild diuretic, and does <strong>not</strong> deplete potassium the way pharmaceutical water pills do. A first-choice for this corner.</td>
+<td>Can lower blood pressure further; use caution if already on BP medication. Talk to your doctor if pregnant or on any prescription.</td>
+</tr>
+<tr>
+<td><strong>Garlic (raw)</strong></td>
+<td>2 cloves daily, crushed and rested 10 minutes before eating, taken with food</td>
+<td>Supports nitric oxide (the body&#39;s own vessel-relaxer) and circulation. One of the more strongly supported natural options for blood pressure.</td>
+<td>Can increase the effect of blood thinners and may add to BP medication. Clear it with your doctor or pharmacist first if you take either.</td>
+</tr>
+<tr>
+<td><strong>Cayenne pepper (capsaicin)</strong></td>
+<td>About 1/4 tsp daily (start at 1/8 tsp), in warm water or on food, with food</td>
+<td>Capsaicin prompts nitric oxide release and supports vasodilation and circulation.</td>
+<td>Take with food, not on an empty stomach. Go slow if you have reflux or a sensitive stomach.</td>
+</tr>
+<tr>
+<td><strong>Magnesium</strong></td>
+<td>400 mg daily; glycinate or citrate (best absorbed). Or an Epsom-salt bath (about 2 cups, soak 20 min)</td>
+<td>Acts as a natural calcium channel blocker, relaxing the smooth muscle in vessel walls. Most people are deficient. Supports the same relax-the-vessel pathway as a whole class of BP drugs.</td>
+<td>Avoid magnesium oxide (poorly absorbed). Reduce dose if you get loose stools. <strong>If you have kidney disease, ask your doctor first</strong>, since kidneys regulate magnesium.</td>
+</tr>
+<tr>
+<td><strong>Potassium (from whole food)</strong></td>
+<td>Several servings of potassium-rich plants daily (leafy greens, sweet potato, beans, avocado, banana, tomato, coconut water)</td>
+<td>Flips the sodium-potassium seesaw: signals the kidneys to excrete sodium and relaxes vessel walls. The natural counterweight a modern diet is missing.</td>
+<td>Get it from food, not pills, unless your doctor directs otherwise. <strong>If you have kidney disease or take a potassium-sparing or potassium-raising medication, do not load potassium without medical guidance.</strong></td>
+</tr>
+<tr>
+<td><strong>Hawthorn berry</strong></td>
+<td>Commonly used as a tea or standardized supplement per product directions</td>
+<td>Traditionally used to support heart-rate regulation and cardiac function, in the spirit of a gentle beta-blocker-type support.</td>
+<td>Can interact with heart and blood pressure medications. Clear it with your doctor before use if you take any cardiac drug.</td>
+</tr>
+<tr>
+<td><strong>Cardamom</strong></td>
+<td>Used culinarily, or as a powder per traditional use</td>
+<td>Inhibits calcium movement in vessel walls (calcium-channel-blocker-type action) with a mild diuretic effect.</td>
+<td>Generally well tolerated as a food; discuss concentrated/supplemental use with your doctor if on BP medication.</td>
+</tr>
+</tbody></table>
+<p><strong>Hydration (the practice that makes the rest work):</strong> body weight in pounds = daily ounces of water, water only, starting with about 16 oz on waking, tapered before bed. Not a supplement, but the keystone of this corner: it suppresses the vasopressin signal that constricts vessels and gives the kidneys the fluid to flush sodium. (Individuals with heart failure or kidney disease on a fluid restriction should follow their doctor&#39;s fluid target instead.)</p>
+<p><strong>The non-negotiable safety rule for the whole corner:</strong> none of the above is a reason to change, reduce, or stop any prescribed medication. If your readings improve, document them and bring them to your doctor. Your doctor makes every call about your medication. We are building you into an informed partner in your own care, never a patient acting alone.</p>
+
+  <section class="about">
+    <div class="about__card">
+      <div class="about__tri"><svg viewBox="0 0 200 184" width="150" height="138" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <circle cx="100" cy="32" r="17" fill="#4A5D4E" opacity="0.16" />
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="8.5" fill="#4A5D4E" opacity="1"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="0.32"/>
+    <circle cx="172" cy="152" r="5" fill="#B85A36" opacity="0.32"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="1">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="0.32">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="0.32">Sugar</text>
+    </g>
+  </svg></div>
+      <div class="cover__kicker">A word from your nurse</div>
+      <h2>Joel Polley, RN</h2>
+      <p>I spent twenty years at the ICU and ER bedside, managing blood pressure and blood sugar from the crash-cart side of medicine. What I learned is simple, and it is why BraveWorks exists: when you remove the cause, the effect changes. That is not a health tip. It is a law of physics.</p>
+      <p>I am a registered nurse and a naturopathic practitioner, and I built the Triangle to put the why back in your hands, so a blood pressure reading stops being a verdict and starts being a conversation you understand. Everything here walks alongside your doctor, never instead of your doctor. Your data is your power. Your doctor is your ally.</p>
+      <div class="sig">Keep the loop closed. Go live it.</div>
+    </div>
+    <div class="finePrint">
+      &copy; BraveWorks RN  .  Joel Polley, RN  .  bpquiz.com.
+      For educational purposes only. This is not medical advice, not a diagnosis, and not a prescription.
+      Always consult your healthcare provider before making any change to your medications or treatment plan.
+    </div>
+  </section></div>
+</body></html>

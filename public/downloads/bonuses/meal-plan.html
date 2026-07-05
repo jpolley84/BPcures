@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>The BraveWorks Triangle Meal Plan</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #B85A36; }
+  * { box-sizing: border-box; }
+
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 19mm;
+    @bottom-center {
+      content: "BraveWorks BP    .    Education alongside your doctor, never instead.";
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      color: #7A7061;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #7A7061;
+    }
+  }
+  @page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+
+  html { background: #F7F3EC; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #2B2824;
+    line-height: 1.62;
+    font-size: 11.3pt;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover page ───────────────────────────────────────────────── */
+  .cover {
+    page: cover;
+    position: relative;
+    height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% 8%, #FBF8F1 0%, #F7F3EC 55%, #EFE8DB 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26mm 22mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: "";
+    position: absolute;
+    inset: 11mm;
+    border: 1px solid var(--accent);
+    opacity: 0.32;
+    border-radius: 3px;
+  }
+  .cover__kicker {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  .cover__tri { margin: 4px 0 30px; }
+  .cover__title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #121110;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .cover__rule {
+    width: 54px;
+    height: 2px;
+    background: var(--accent);
+    margin: 6px auto 18px;
+    border: 0;
+  }
+  .cover__subtitle {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 13.5pt;
+    line-height: 1.5;
+    color: #2B2824;
+    max-width: 40ch;
+    margin: 0 auto 30px;
+  }
+  .cover__author {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    letter-spacing: 0.04em;
+    color: #121110;
+    font-weight: 600;
+  }
+  .cover__author small {
+    display: block;
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7A7061;
+    margin-top: 6px;
+  }
+  .cover__brand {
+    position: absolute;
+    bottom: 17mm;
+    left: 0;
+    right: 0;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7A7061;
+  }
+
+  /* ── Body / interior ──────────────────────────────────────────── */
+  .doc { padding-top: 2mm; }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 21pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #121110;
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 15.5pt;
+    line-height: 1.2;
+    color: #121110;
+    margin: 26px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid #D8CFBD;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 18px 0 6px;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 11px; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  li::marker { color: var(--accent); }
+  strong { color: #121110; font-weight: 700; }
+  em { color: #2B2824; }
+  hr { border: 0; border-top: 1px solid #E8E1D1; margin: 22px 0; }
+
+  /* The intro kicker line at the very top of the interior. */
+  .eyebrow {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8.5pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  .lede {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0 0 16px;
+  }
+
+  /* ── Day card: each of the 7 days is a bordered card with an accent left
+       edge, a big serif "Day N" header, and three labeled meal rows. ── */
+  .day {
+    border: 1px solid #D8CFBD;
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 15px 22px 16px;
+    margin: 14px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .day__head {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 16pt;
+    line-height: 1;
+    color: var(--accent);
+    margin: 0 0 10px;
+    padding-bottom: 9px;
+    border-bottom: 1px solid color-mix(in srgb, var(--accent) 26%, #D8CFBD);
+  }
+  .meal-row { margin: 9px 0 0; }
+  .meal-row:first-of-type { margin-top: 0; }
+  .meal-row__label {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 2px;
+  }
+  .meal-row__body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 10.6pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0;
+  }
+
+  /* ── Generic accent panel (the pattern frame, the two-meal-day box). ── */
+  .panel {
+    background: #EFE8DB;
+    border: 1px solid #D8CFBD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .panel--accent { border-left: 4px solid var(--accent); }
+  .panel__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 7px;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+
+  /* ── The "Important, please read" CAVEAT box: the most visually prominent
+       element on the page. A tinted fill, a bold full border in the accent,
+       a warning eyebrow, and generous padding so it cannot be skimmed past. ── */
+  .caveat {
+    border: 2.5px solid var(--accent);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--accent) 9%, #FBF8F1);
+    padding: 20px 24px;
+    margin: 24px 0;
+    page-break-inside: avoid;
+  }
+  .caveat__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 9px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .caveat__k::before {
+    content: "!";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #FBF8F1;
+    font-weight: 800;
+    font-size: 11pt;
+    line-height: 1;
+  }
+  .caveat p {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.55;
+    color: #121110;
+    margin: 0;
+  }
+
+  /* ── The "short version" recap list, set a touch larger. ── */
+  .recap li { font-size: 11.6pt; margin-bottom: 8px; color: #121110; }
+
+  /* ── Closing "About Joel" card. ── */
+  .about { page-break-before: always; margin-top: 6mm; }
+  .about__card {
+    background: #121110;
+    color: #F7F3EC;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .about__card .cover__kicker { color: #C8A252; }
+  .about__card h2 {
+    color: #F7F3EC;
+    border-top: 0;
+    padding-top: 0;
+    margin: 6px 0 14px;
+    font-size: 19pt;
+  }
+  .about__card p { color: #E6DECD; font-size: 10.6pt; }
+  .about__card .sig {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 16pt;
+    color: #C8A252;
+    margin-top: 18px;
+  }
+  .about__tri { margin: 8px auto 18px; }
+
+  /* ── Fine print / compliance footer line. ── */
+  .finePrint {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid #E8E1D1;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #7A7061;
+  }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover__kicker">A BraveWorks BP bonus</div>
+    <div class="cover__tri"><svg viewBox="0 0 200 184" width="232" height="213.44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5.5" fill="#4A5D4E"/>
+    <circle cx="28" cy="152" r="5.5" fill="#6B4A58"/>
+    <circle cx="172" cy="152" r="5.5" fill="#B85A36"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36">Sugar</text>
+    </g>
+  </svg></div>
+    <h1 class="cover__title">The BraveWorks Triangle Meal Plan</h1>
+    <hr class="cover__rule"/>
+    <p class="cover__subtitle">Big breakfast. Lighter as the day goes. Plant-based, high-fiber, mostly raw. Built to feed all three corners, Stress, Sugar, and Sodium, at once.</p>
+    <div class="cover__author">by Joel Polley, RN<small>BraveWorks RN  .  Registered Nurse, Naturopathic Practitioner</small></div>
+    <div class="cover__brand">The BP Triangle  .  Stress  .  Sugar  .  Sodium</div>
+  </section>
+<div class="doc">
+    <p class="eyebrow">The BP Triangle  .  Bonus meal plan</p>
+    <h1>The BraveWorks Triangle Meal Plan</h1>
+    <p class="lede">Big breakfast. Lighter as the day goes. Plant-based, high-fiber, mostly raw. Built to feed all three corners, Stress, Sugar, and Sodium, at once.</p>
+
+    <h2>The pattern (this is the whole secret)</h2>
+    <p>Front-load your food. Eat your biggest meal at breakfast, a medium lunch, and a light supper, or no supper at all. You eat with the sun and rest your body at night, the way it was designed to run. Between meals, water only. No snacking, no grazing. Giving your stomach four to five hours of rest between meals is half of why this works.</p>
+    <div class="panel panel--accent">
+      <div class="panel__k">Why it works for your numbers:</div>
+      <ul style="margin-bottom:0;"><li>Front-loading food early supports a healthy weight and steadier blood sugar, the Sugar corner.</li><li>High fiber, especially raw and from beans and oats, slows sugar, fills you up, and helps your body let go of what it does not need.</li><li>Whole plant foods are naturally rich in potassium and low in sodium, which is exactly the balance the Sodium corner needs.</li><li>Eating calmly, earlier, and lighter at night supports rest and lowers the evening stress load, the Stress corner.</li></ul>
+    </div>
+    <p>Start every meal with something raw. Raw fruit or a raw salad first primes digestion. Then the cooked portion.</p>
+
+    <h2>Your 7-Day Plan (repeat it each week)</h2>
+    <p>Repeat the week as long as you like. Swap days around to fit your schedule, just keep the shape: big breakfast, medium lunch, light or no supper.</p>
+    
+      <div class="day">
+        <div class="day__head">Day 1</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">A bowl of fresh fruit (berries, banana, orange), then steel-cut oats with ground flaxseed, chia, walnuts, and cinnamon.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A large raw salad (leafy greens, tomato, cucumber, carrot, beet, red cabbage, lemon and olive oil), then lentils over brown rice.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">A fresh apple and a handful of berries.</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 2</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">Sliced melon and grapes, then sprouted whole-grain toast with mashed avocado, tomato, and lemon.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A raw cabbage and apple slaw, then a baked sweet potato with black beans, salsa, and avocado.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">Raw vegetable sticks (celery, carrot, cucumber, pepper) with hummus.</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 3</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">A fresh fruit bowl, then overnight oats with chia, ground flax, blueberries, and chopped almonds.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A big green salad, then a bowl of white-bean and vegetable soup with a slice of whole-grain sourdough.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">A green smoothie (spinach, banana, frozen berries, ground flax).</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 4</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">Sliced banana and berries, then a tofu scramble with turmeric, spinach, onion, and peppers, plus whole-grain toast.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A raw salad first, then a quinoa bowl with chickpeas, roasted vegetables, cucumber, and lemon-tahini.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">A fresh pear and an orange.</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 5</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">Orange and kiwi, then millet or buckwheat porridge with dates, pumpkin seeds, and cinnamon, topped with fresh fruit.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A large mixed-greens salad, then a lentil and vegetable stew over brown rice.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">Raw carrot and cucumber with guacamole.</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 6</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">A big fruit bowl, then whole-grain porridge with walnuts, ground flax, banana, and cinnamon.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A raw cabbage and carrot slaw, then a baked potato with steamed broccoli, chickpeas, and a lemon-tahini drizzle.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">A handful of grapes and an apple.</p>
+        </div>
+      </div>
+      <div class="day">
+        <div class="day__head">Day 7</div>
+        <div class="meal-row">
+          <div class="meal-row__label">Big breakfast</div>
+          <p class="meal-row__body">Sliced papaya or melon and berries, then oatmeal with chia, ground flax, almonds, and cinnamon.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Medium lunch</div>
+          <p class="meal-row__body">A large raw salad, then black-bean and vegetable chili over brown rice or quinoa.</p>
+        </div>
+        <div class="meal-row">
+          <div class="meal-row__label">Light supper or skip</div>
+          <p class="meal-row__body">A green smoothie or fresh fruit.</p>
+        </div>
+      </div>
+    <p>Between meals, water only, six to eight glasses a day, mostly between meals rather than during them. Herbal teas are fine. No coffee, no energy drinks.</p>
+
+    <h2>For maximum weight loss and blood pressure control: the two-meal day</h2>
+    <p>When you are ready, drop supper entirely. Eat a hearty breakfast and a medium lunch, finish your last bite by early afternoon, and take only water or herbal tea until breakfast the next morning. This long nightly rest is one of the most powerful, and most overlooked, levers for both weight and blood pressure. Build up to it gradually. Do not force it on day one.</p>
+
+    <div class="caveat">
+      <div class="caveat__k">Important, please read</div>
+      <p>If you take medication for blood pressure or blood sugar, talk to your doctor before you cut to two meals or skip supper. As your eating changes, your numbers can fall, and your doctor may need to adjust your medication so they do not fall too far. This plan is education to bring to your doctor and to use alongside their care, never instead of it.</p>
+    </div>
+
+    <h2>The short version</h2>
+    <ul class="recap"><li>Big breakfast, medium lunch, light or no supper.</li><li>Plant foods only, whole and unprocessed. Lots of raw.</li><li>High fiber every meal: fruit, vegetables, beans, oats, nuts, seeds.</li><li>No added salt, no refined sugar, no snacking, no caffeine.</li><li>Water between meals.</li><li>Finish eating early.</li></ul>
+
+    <div class="finePrint">
+      Joel Polley, RN. Education and lifestyle support, alongside your doctor, never instead of your doctor.<br/>
+      &copy; BraveWorks RN  .  Joel Polley, RN  .  bpquiz.com.
+      For educational purposes only. This is not medical advice, not a diagnosis, and not a prescription.
+      Always consult your healthcare provider before making any change to your medications or treatment plan.
+    </div>
+  </div>
+
+  <section class="about">
+    <div class="about__card">
+      <div class="about__tri"><svg viewBox="0 0 200 184" width="150" height="138" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5.5" fill="#4A5D4E"/>
+    <circle cx="28" cy="152" r="5.5" fill="#6B4A58"/>
+    <circle cx="172" cy="152" r="5.5" fill="#B85A36"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36">Sugar</text>
+    </g>
+  </svg></div>
+      <div class="cover__kicker">A word from your nurse</div>
+      <h2>Joel Polley, RN</h2>
+      <p>I spent twenty years at the ICU and ER bedside, watching what food does to a blood pressure reading and a blood sugar over a single day. This plan is the pattern I trust: eat with the sun, front-load your plate, stay plant-based and high-fiber, and give your body the long nightly rest it was built for.</p>
+      <p>Everything here walks alongside your doctor, never instead of your doctor. Bring it to your next visit. As your eating changes your numbers can move, and that is a conversation to have together.</p>
+      <div class="sig">Eat with the sun. Go live it.</div>
+    </div>
+  </section>
+</body></html>

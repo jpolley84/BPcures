@@ -94,6 +94,7 @@ async function unsubscribeInKV({ email, tag }) {
       }
       // Full unsubscribe — set flag, keep enrollment data for audit
       await kv.set(key, { ...existing, unsubscribed: true, unsubscribedAt: unsubAt });
+      await tombstoneTriangleRecord({ kv, cleanEmail, unsubAt });
       return { ok: true, scope: 'full' };
     }
     // No existing record — create a tombstone so a future re-enrollment
@@ -105,10 +106,37 @@ async function unsubscribeInKV({ email, tag }) {
       source: 'unsubscribe-tombstone',
       lastSentDay: 0,
     });
+    await tombstoneTriangleRecord({ kv, cleanEmail, unsubAt });
     return { ok: true, scope: 'tombstone' };
   } catch (err) {
     console.error('unsubscribe: KV update failed', err.message);
     return { ok: false, reason: err.message };
+  }
+}
+
+// 2026-07-03 — CROSS-MACHINE UNSUBSCRIBE (CAN-SPAM). The same address can
+// live in BOTH email machines: the legacy drip:* store (this endpoint) and
+// the triangle bwbp:drip:* store (triangle-unsubscribe.js). One click must
+// stop ALL mail, so a full unsubscribe here also tombstones the triangle
+// record. Best-effort: a failure here never blocks the primary unsubscribe.
+async function tombstoneTriangleRecord({ kv, cleanEmail, unsubAt }) {
+  try {
+    const triKey = `bwbp:drip:${cleanEmail}`;
+    const triExisting = await kv.get(triKey);
+    if (triExisting) {
+      if (!triExisting.unsubscribed) {
+        await kv.set(triKey, { ...triExisting, unsubscribed: true, unsubscribedAt: unsubAt });
+      }
+    } else {
+      await kv.set(triKey, {
+        email: cleanEmail,
+        unsubscribed: true,
+        unsubscribedAt: unsubAt,
+        source: 'unsubscribe-cross-tombstone',
+      });
+    }
+  } catch (err) {
+    console.error('unsubscribe: triangle cross-tombstone failed', err.message);
   }
 }
 

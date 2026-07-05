@@ -1,0 +1,6 @@
+# public/downloads/ — rendered kit PDFs (served as static files; this folder
+# name intentionally shadows the SPA /downloads route — the React page lives
+# at /library).
+# TODO: Phase 2 (agent #4 — Email + delivery): render the four module markdown
+# files from bpquiz-site/content/triangle-reset/{stress,sugar,sodium,freedom-finale}.md
+# into PDFs here, then link them from the buyer delivery email + /library.

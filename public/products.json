@@ -346,5 +346,86 @@
       "blood-sugar-starter-kit"
     ],
     "updated_at": "2026-06-09T00:00:00.000000+00:00"
+  },
+  {
+    "slug": "bp-corner-reset",
+    "name": "Your Corner Reset",
+    "tier": "corner",
+    "tier_level": 1,
+    "headline": "Ten mornings from now, you stop bracing before the cuff. You wake up knowing exactly what to do that day, with a nurse walking the loudest corner beside you.",
+    "description": "Ten days where the dread comes out of your morning. No more guessing, no more pile of information you never get through. You wake up, you open the day's step, and you do the one thing in front of you, with Joel Polley, RN, twenty years ICU and emergency medicine, in your corner the whole way. It is built around the single corner driving your number most, Stress, Sugar, or Sodium, and it hands you something to bring to your next visit so you can lead a real conversation with your doctor instead of nodding along. Education and lifestyle support, alongside your doctor, never instead of your doctor.",
+    "price": "$17",
+    "price_cents": 1700,
+    "stripe_price_id": "price_1ToBlWHseZnO3rRZtv4lbw2m",
+    "stripe_payment_link": "https://buy.stripe.com/cNieVdcAj3Dw3V9fjPfnO1o",
+    "env_var": "VITE_STRIPE_CORNER_PRICE_ID",
+    "delivers": [
+      "entry-corner-set"
+    ],
+    "includes": [
+      "Ten days told exactly what to do, one step each morning instead of a pile of information to sort out, built on your loudest corner",
+      "The herbs Joel actually trusts for that corner, each with safe amounts, what it is for, and the cautions, so you are never guessing alone",
+      "A one-page read you bring to your next visit, so you walk in with your own data and lead the conversation instead of nodding along",
+      "Bonus: a printable Blood Pressure Tracker to log your readings and walk a clean trend into your doctor",
+      "Bonus: a plant-based, high-fiber Triangle Meal Plan, big breakfast tapering to a light supper, that feeds all three corners"
+    ],
+    "featured": false
+  },
+  {
+    "slug": "bp-top-two",
+    "name": "Your Top 2 Corners",
+    "tier": "top2",
+    "tier_level": 2,
+    "headline": "You calm the loudest corner, then the second one stops tugging it back. And you are not doing it alone, Joel and a room of people walking the same path are right there with you.",
+    "description": "Walk into your next appointment with a doctor-ready packet: your Doctor Conversation Kit, 30 days of readings, and your second corner's full plan. Most people nod along at the doctor's office. This is built so you lead that visit instead. Your two highest-scoring corners get worked one after the other, because quieting the loudest one only to watch the second pull it back is the thing that wears people down. Here you close both, with the same told-exactly-what-to-do-each-day path, written by Joel Polley, RN, twenty years ICU and emergency medicine. You also step into the community where Joel teaches the Triangle live, so the nurse in your pocket comes with a room of people doing the same work. Education and lifestyle support, alongside your doctor, never instead of your doctor.",
+    "price": "$47",
+    "price_cents": 4700,
+    "stripe_price_id": "price_1TmONNHseZnO3rRZeozMZ3O2",
+    "stripe_payment_link": "https://buy.stripe.com/28E7sLfMv7TMezN7RnfnO1f",
+    "env_var": "VITE_STRIPE_TOP2_PRICE_ID",
+    "delivers": [
+      "top-two-corner-sets",
+      "skool-trial"
+    ],
+    "includes": [
+      "Everything in Your Corner Reset, every bonus included",
+      "The Doctor Conversation Kit: ready-to-use templates that turn your tracker readings and your plan into a packet your doctor can read in one minute, so you lead the visit instead of nodding along",
+      "Your second-loudest corner's full plan, walked the same one-step-each-morning way, so the corner you just calmed stops getting tugged back up the moment you relax",
+      "Two corners closed in sequence, the felt difference being a number that holds steadier instead of bouncing back on you",
+      "A free trial of the Skool community, where Joel teaches the Triangle live and you are no longer doing this on your own"
+    ],
+    "featured": true
+  },
+  {
+    "slug": "bp-complete-triangle",
+    "name": "The Complete Triangle Reset",
+    "tier": "complete",
+    "tier_level": 3,
+    "headline": "Thirty days from now you reach for the cuff out of curiosity, not dread, and you walk into your next visit holding your own data, ready to lead the conversation. Then Joel teaches you to let go of the daily policing and trust the body you rebuilt.",
+    "description": "The whole loop closed, with a nurse in your pocket for all thirty days. You are never left to figure out the next step, you wake up and the day's move is already in front of you, all three corners worked in the order Joel walks them at the bedside. By the end you are not white-knuckling a checklist, the Freedom Finale teaches you to step back and trust the body you rebuilt, so this becomes how you live and not one more thing to manage. You keep it for life, every future update included, and Joel and the community walk it with you the whole way. Written by Joel Polley, RN. Education and lifestyle support, alongside your doctor.",
+    "price": "$97",
+    "price_cents": 9700,
+    "stripe_price_id": "price_1TmONOHseZnO3rRZidQTqdAH",
+    "stripe_payment_link": "https://buy.stripe.com/cNiaEX7fZb5YgHVb3zfnO1g",
+    "env_var": "VITE_STRIPE_COMPLETE_PRICE_ID",
+    "delivers": [
+      "all-corner-sets",
+      "freedom-finale",
+      "skool-trial"
+    ],
+    "includes": [
+      "Everything in Your Top 2 Corners, every bonus included",
+      "Your third corner walked too, so none of the three is left to quietly pull your number back when you are not looking",
+      "Every herb Joel trusts for all three corners, each with safe amounts and cautions, so you are never guessing what to take",
+      "A one-page read for each corner you bring to your visits, so every conversation with your doctor is one you can actually lead",
+      "The Freedom Finale, where Joel walks you out of daily policing and into trusting the body you rebuilt, so the gains hold without the white-knuckling",
+      "The full 30-day path, told exactly what to do each morning in the order Joel walks it at the bedside",
+      "A free trial of the Skool community, where Joel teaches the Triangle live and answers you directly",
+      "Yours to keep for life, every future update included, so you can come back to it any time the cuff starts to worry you again",
+      "An email walks your first 10 days with you, then check-ins through Day 30, like a nurse looking in on you along the way",
+      "Bonus: the Cook for Life cookbook, whole-food meals you can cook for years that quietly feed all three corners"
+    ],
+    "featured": false,
+    "best_value": true
   }
 ]

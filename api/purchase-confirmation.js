@@ -188,7 +188,7 @@ export const TIER_CONFIG = {
     // (Retired the afternoon "$297 Group" fork link dRm5kD.)
     upgradeUrl: 'https://buy.stripe.com/7sY9ATeIra1Uajx9ZvfnO0P',
     upgradeLabel: 'Next step: the 30-Day Personalized Sprint ($280 with your kit credit)',
-    upgradeDesc: 'You have the full kit. The 30-Day Sprint is where Joel reads YOUR numbers, YOUR meds, and builds you a personalized 30-day protocol, with live weekly group coaching (Wednesdays 7 PM ET) and daily accountability. Your kit counts as credit, so it is $280, not $297. Only 5 spots a month.',
+    upgradeDesc: 'You have the full kit. The 30-Day Sprint is where Joel reads YOUR numbers, YOUR meds, and builds you a personalized 30-day protocol, with live weekly group coaching (Wednesdays 7 PM EST) and daily accountability. Your kit counts as credit, so it is $280, not $297.',
     upgradeCta: 'Start the 30-Day Sprint ($280) →',
   },
   // DEPRECATED 2026-05-09 streamline pass — same reason as 1+pt-stack.
@@ -209,14 +209,15 @@ export const TIER_CONFIG = {
     // $297 30-Day Personalized SPRINT at the $280 buyer kit-credit link.
     upgradeUrl: 'https://buy.stripe.com/7sY9ATeIra1Uajx9ZvfnO0P',
     upgradeLabel: 'Next step: the 30-Day Personalized Sprint ($280 with your kit credit)',
-    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The 30-Day Sprint is where Joel looks at YOUR numbers, YOUR meds, and YOUR protocol: live weekly group coaching, daily accountability, and a personalized 30-day plan built with you. Your kit counts as credit, so it is $280. Only 5 spots a month.',
+    upgradeDesc: 'You already have the Kit + the Pressure Triangle PDFs. The 30-Day Sprint is where Joel looks at YOUR numbers, YOUR meds, and YOUR protocol: live weekly group coaching, daily accountability, and a personalized 30-day plan built with you. Your kit counts as credit, so it is $280.',
     upgradeCta: 'Start the 30-Day Sprint ($280) →',
   },
   // 2026-05-09 RESTRUCTURE: vip slot ($97 = 9700) is now the canonical
   // "30-Day BP Triangle Challenge + Skool" tier. Replaces the prior
   // standalone VIP product. Delivers the FULL BraveWorks bonus stack
   // (every BP/cortisol/BS PDF) + Skool access + weekly group coaching.
-  // Upgrade path: $1,297 1:1 application at /1on1 (Apply, no direct buy).
+  // 2026-06-23 Phase 1: top of the ladder is the $1,997 90-Day Group
+  // (Cohort 2), not the retired $1,297 1:1. Upgrade points there.
   vip: {
     product: '30-Day BP Triangle Challenge + Skool',
     subject: 'You\'re in. Your BP Triangle Challenge + full bonus stack inside',
@@ -231,16 +232,16 @@ export const TIER_CONFIG = {
     ],
     // Coaching for $97 BP Triangle Challenge happens entirely in Skool —
     // the challengeBlock above contains a 2-step Skool join + DM-Joel-
-    // for-VIP-access flow. No separate Mondays-Zoom coaching panel; that
+    // for-VIP-access flow. No separate Wednesday-Zoom coaching panel; that
     // was the prior VIP product. Setting includesCoaching:false to skip
     // the redundant coaching block.
     includesCoaching: false,
     includesChallenge: true,
     coachingFlavor: 'vip',
-    upgradeUrl: `${SITE_URL}/1on1`,
-    upgradeLabel: 'Want 1:1 with Joel? Apply for the BP Triangle Premium ($1,297, application-gated)',
-    upgradeDesc: 'For people on 4+ medications who need direct deprescribing support, 90 days of 1:1 work with Joel, weekly check-ins, full medication picture review, plan designed with your prescriber. Application-gated; Joel reads each one personally.',
-    upgradeCta: 'Apply for 1:1 with Joel →',
+    upgradeUrl: `${SITE_URL}/cohort2`,
+    upgradeLabel: 'Ready for the deeper room? The 90-Day Group Sprint ($1,997, application-gated)',
+    upgradeDesc: 'For people who want Joel on their numbers for the next 90 days: weekly live group coaching, WhatsApp office hours, a full deprescribing plan worked alongside your prescriber, and your spouse included free. Application-gated; Joel reads each one personally and caps the cohort at 5.',
+    upgradeCta: 'Apply for the 90-Day Group →',
   },
   // DEPRECATED 2026-05-09: $397 / $297 Premium tiers retired in funnel
   // restructure (canonical-ladder.md). Stripe links deactivated. Kept in
@@ -262,10 +263,10 @@ export const TIER_CONFIG = {
     includesCoaching: true,
     includesChallenge: true,
     coachingFlavor: 'premium',
-    upgradeUrl: `${SITE_URL}/1on1`,
-    upgradeLabel: 'Want 1:1 with Joel? Apply for the BP Triangle Premium 1:1',
-    upgradeDesc: 'Application-gated 90-day 1:1 program. $1,297 single-pay. Apply at bpquiz.com/1on1.',
-    upgradeCta: 'Apply for 1:1 →',
+    upgradeUrl: `${SITE_URL}/cohort2`,
+    upgradeLabel: 'Ready for the deeper room? Apply for the 90-Day Group Sprint',
+    upgradeDesc: 'Application-gated 90-day group program. $1,997. Apply at bpquiz.com/cohort2.',
+    upgradeCta: 'Apply for the 90-Day Group →',
   },
   // 2026-05-15: Coaching tier — the 90-Day BP Triangle Freedom Sprint.
   // Two price points: $1,997 founding cohort + $6,997 regular. Application-
@@ -299,10 +300,12 @@ export const TIER_CONFIG = {
   // credit = $1,700; only mentioned inside that private email sequence,
   // never on the public /coaching page).
   //
-  // Two AMOUNT_TO_TIER entries hit this tier:
+  // AMOUNT_TO_TIER entries that hit this tier:
   //   - 29700 ($297 standard)
-  //   - 28000 ($280 kit-credit variant — for $17 Kit buyers via the
-  //            Day 10/14/17 buyer-drip upsell emails)
+  //   - 28000 ($280 kit-credit variant — legacy $17-kit credit, live link
+  //            7sY9ATe until Stripe is updated)
+  //   - 27000 ($270 kit-credit variant — 2026-06-23 Phase 1: front kit is
+  //            now $27, so the credited Sprint is $297 − $27 = $270)
   // 2026-06-09: Stripe product renamed "30-Day Personalized Sprint (4 Group
   // Coaching Sessions Included)". Welcome reframed to the two-step start:
   // book the kickoff call (Calendly env var, unchanged mechanism) + join the
@@ -335,14 +338,19 @@ export const TIER_CONFIG = {
 // per panel consensus (each additional offer = ~30% conversion drop per
 // Kennedy; future-self version of this op has 5 SKUs not 11 per Hardy).
 //
-// Active ladder: $17 → $30 OTO → $47 → $97 → $1,297 (application).
+// Active ladder: $27 → $47 → $97 → $297 Sprint → $1,997 90-Day Group.
 // Legacy entries kept ONLY for in-flight buyers; no frontend path.
 //
 // tier=1 is the default starter (BP-flavored). stripe-webhook.js refines
 // to '1-cortisol' / '1-blood-sugar' by inspecting line item product name.
 export const AMOUNT_TO_TIER = {
   // ── Active tiers (canonical) ────────────────────────────────────────
-  1700: 1,        // $17 starter (BP / Cortisol / Blood Sugar)
+  // 2026-06-23 Phase 1: front kit moved $17 → $27 (2700). BOTH amounts map to
+  // tier-1 — 1700 stays live for legacy sessions + the $17/$27 A/B. If a $27
+  // buyer's amount isn't recognized they get no welcome email and never enter
+  // the tier-1 drip, so every 1700 combo below has a mirrored 2700 combo.
+  1700: 1,        // $17 starter (legacy / A-side) (BP / Cortisol / Blood Sugar)
+  2700: 1,        // $27 starter (new Phase 1 front price) (BP / Cortisol / Blood Sugar)
   3000: 2,        // $30 BP Reset Kit OTO (post-checkout upgrade from $17)
   4700: 2,        // $47 BP Reset Kit (standalone)
   9700: 'vip',    // $97 BP Triangle Challenge + Skool (canonical post-restructure)
@@ -363,14 +371,18 @@ export const AMOUNT_TO_TIER = {
   170000: 'coaching',  // Sprint $1,700 diagnostic-credit variant
 
   // ── 2026-05-18: BP Triangle Diagnostic Session ($297 mid-tier) ──────
-  // Bridges the $17 Kit → $1,997 Sprint jump. Two prices:
+  // Bridges the front kit → $1,997 Sprint jump. Prices:
   //   29700 — standard $297 (sold publicly via /coaching)
-  //   28000 — $280 kit-credit variant (sold only via Day 10/14/17
-  //           buyer-drip upsell emails to existing $17 Kit buyers)
-  // Both map to the 'diagnostic' tier so they get the same welcome
+  //   28000 — $280 kit-credit variant (legacy $17-kit credit; live link
+  //           7sY9ATe still charges $280 until Joel updates Stripe)
+  //   27000 — $270 kit-credit variant (2026-06-23 Phase 1: front kit is now
+  //           $27, so the credited Sprint is $297 − $27 = $270; mapped now so
+  //           a $270 buyer is recognized the moment Stripe is updated)
+  // All map to the 'diagnostic' tier so they get the same welcome
   // email + Calendly link + diagnostic-prospect drip enrollment.
   29700: 'diagnostic',
   28000: 'diagnostic',
+  27000: 'diagnostic',
 
   // ── 2026-05-20: BP Cures ebook upsell ($12.99 post-purchase) ────────
   // Inserted between $17 Kit and $47 Reset Kit upsell. Mirror of bpcures'
@@ -386,6 +398,14 @@ export const AMOUNT_TO_TIER = {
   // (bp-cures-10-day-reset.pdf) → same tier. ~17 buyers affected in May;
   // backfilled manually via /api/test-purchase-email.
   1200: 'bp-cure-book',
+
+  // ── 2026-06-23 Phase 1: $27 front + Companion bump combos ───────────
+  // Mirror of the $17 combos for the new $27 front price. A $27 buyer who
+  // adds the $12.99 Companion (1299) or the legacy $12 book (1200) at
+  // checkout still owns the kit, so route them to tier-1 (standard kit
+  // welcome + tier-1 drip) — never leave a $27+bump buyer unmapped.
+  3900: 1,        // $27 + $12 book bump  (2700 + 1200)
+  3999: 1,        // $27 + $12.99 Companion bump (2700 + 1299)
 
   // ── Legacy / in-flight only (no active payment links) ───────────────
   // Kept so any webhook replay against historical charges still delivers.
@@ -518,8 +538,14 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
     </td></tr>
     <tr><td style="padding:0 28px 18px;">
       <p style="font-size:13px;line-height:1.6;color:#5A5A5A;margin:8px 0 0;">
-        Prefer it built with you, not on your own? My 30-Day Personalized Sprint is the 4 live sessions plus a day-by-day plan I write for your numbers and walk you through. It is education and coaching, alongside your doctor, never instead of your doctor. Your $17 kit purchase applies as a credit, so you pay $280, not $297.
+        Prefer it built with you, not on your own? My 30-Day Personalized Sprint is the 4 live sessions plus a day-by-day plan I write for your numbers and walk you through. It is education and coaching, alongside your doctor, never instead of your doctor. Your kit purchase applies as a credit, so you pay $280, not $297.
         <a href="https://buy.stripe.com/7sY9ATeIra1Uajx9ZvfnO0P" style="color:#B85A36;font-weight:600;">See the Personalized Sprint &rarr;</a>
+      </p>
+    </td></tr>
+    <tr><td style="padding:0 28px 18px;">
+      <p style="font-size:13px;line-height:1.6;color:#5A5A5A;margin:0;">
+        And if you want the research behind every remedy in the kit, my book, The 10-Day Nurse's Reset Companion, lays out the claim, the dose, and the exact question to take to your prescriber for each one. It is $12.99, about the price of one supplement bottle you might have wasted on a guess.
+        <a href="https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02" style="color:#B85A36;font-weight:600;">Get the Companion ($12.99) &rarr;</a>
       </p>
     </td></tr>
   ` : '';
@@ -535,7 +561,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
   ` : '';
 
   // Coaching block content varies by tier flavor:
-  //   'vip'      → weekly group coaching only (Mondays 10pm EST)
+  //   'vip'      → weekly group coaching only (Wednesdays 7 PM EST)
   //   'premium'  → Barbara O'Neill LIVE + group coaching
   //   'sprint'   → 90-Day 1:1 Sprint kickoff (Joel + Annie, weekly Zoom,
   //                daily WhatsApp, Skool VIP, partner inclusion)
@@ -616,7 +642,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
 
           <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.15);">
             <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px;">Live Group Coaching</div>
-            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Mondays at 10pm EST, every week of the challenge</div>
+            <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Wednesdays at 7 PM EST, every week of the challenge</div>
             <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.9);margin:0;">
               Bring your numbers, your medications list, your questions. Joel walks you through the protocol live and answers anything in real time. The Zoom link arrives in a separate email before each call.
             </p>

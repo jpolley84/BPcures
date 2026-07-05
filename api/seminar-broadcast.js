@@ -135,6 +135,14 @@ You're on the BraveWorks RN list at ${email}.`;
 }
 
 export default async function handler(req, res) {
+  // 2026-06-23 SAFETY GUARD: this one-shot seminar blast is DISABLED. It is a
+  // stale "Annie's on in 5 minutes" / daily-1-PM-seminar invitation to ~4,000
+  // records and it pulls recipients via kv.keys() (disabled at our scale on
+  // Upstash, so it would throw anyway). Hard guard prevents an accidental
+  // manual fire. Re-enable only for a real, current live event.
+  if (process.env.SEMINAR_BROADCAST_ENABLED !== '1') {
+    return res.status(200).json({ ok: true, disabled: true, reason: 'seminar-broadcast disabled (stale one-shot)' });
+  }
   if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'unauthorized' });
   }

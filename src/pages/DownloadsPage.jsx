@@ -10,11 +10,19 @@
 // guide.pdf). All links 404'd. New version mirrors the actual files
 // on disk + adds the new bp-cures-10-day-reset.pdf book.
 //
+// 2026-07-03: "Your Triangle Kit" section added ABOVE the legacy list.
+// Buyer emails point here as "your library", but the page listed only the
+// legacy PDFs and ZERO Triangle kit files. The section is built from
+// public/downloads/manifest.json (written by the bundle build script) so it
+// never drifts from what is actually on disk. If the manifest fetch fails,
+// the section simply does not render; the legacy list below is unaffected.
+//
 // Files are public — security model is "URL-knowledge gate" (same as
 // before). The customer reaches /downloads only via post-purchase
 // redirects and the email confirmation link. We don't authenticate
 // downloads because the existing pattern doesn't either.
 
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, FileText, ArrowLeft, BookOpen, Users, Stethoscope, ArrowRight } from 'lucide-react';
@@ -32,7 +40,7 @@ const groups = [
   },
   {
     title: 'Cortisol',
-    desc: 'For the stress corner of the Pressure Triangle.',
+    desc: 'For the stress corner of the Triangle: Stress, Sugar, Sodium.',
     files: [
       { name: '10-Day Cortisol Cure (full protocol)', desc: 'Day-by-day cortisol reset with adrenal-recovery guide.', file: 'cortisol-cure-10-day.pdf' },
       { name: 'Cortisol Day 1: Wired and Tired Diagnosis', desc: 'Self-diagnose your cortisol pattern. Day 1 of the protocol.', file: 'cortisol-day1-diagnosis.pdf' },
@@ -56,7 +64,123 @@ const groups = [
   },
 ];
 
+// Corners of the Triangle, in canonical order, for the manifest-driven section.
+const TRIANGLE_CORNERS = [
+  { key: 'stress', label: 'Stress' },
+  { key: 'sugar', label: 'Sugar' },
+  { key: 'sodium', label: 'Sodium' },
+];
+
+// Build the "Your Triangle Kit" groups from the manifest. Same {title, desc,
+// files:[{name, desc, href}]} shape the legacy groups use, except each file
+// carries an explicit href (bundle ZIPs live under /downloads/bundles/).
+function buildTriangleGroups(manifest) {
+  if (!manifest || !Array.isArray(manifest.modules) || manifest.modules.length === 0) return [];
+  const rowFor = (m) => ({
+    name: m.title,
+    desc: m.blurb,
+    href: m.url || `/downloads/${m.file}`,
+    file: m.file,
+  });
+  const built = TRIANGLE_CORNERS.map(({ key, label }) => ({
+    title: `The ${label} Corner`,
+    desc: `Your ${label} corner of the Triangle: the 10-day protocol, the herb formulary, and the bring-to-your-doctor sheet.`,
+    files: [
+      ...manifest.modules.filter((m) => m.corner === key).map(rowFor),
+      {
+        name: `The ${label} Corner, one file`,
+        desc: 'The whole corner set plus the kit bonuses, zipped into one download.',
+        href: `/downloads/bundles/bundle-corner-${key}.zip`,
+        file: `bundle-corner-${key}.zip`,
+      },
+    ],
+  }));
+  const finale = manifest.modules.find((m) => m.file === 'freedom-finale.pdf');
+  built.push({
+    title: 'The Complete Triangle',
+    desc: 'All three corners plus the Freedom Finale, the whole loop closed.',
+    files: [
+      ...(finale ? [rowFor(finale)] : []),
+      {
+        name: 'The Complete Triangle Reset, one file',
+        desc: 'Every corner set, the Freedom Finale, and every bonus in one download.',
+        href: '/downloads/bundles/bundle-complete.zip',
+        file: 'bundle-complete.zip',
+      },
+    ],
+  });
+  built.push({
+    title: 'Two-Corner Bundles',
+    desc: 'For Top 2 Corners buyers: your pair, zipped into one file. Grab the pair that matches your kit.',
+    files: [
+      { name: 'Stress + Sugar', desc: 'Both corner sets plus your bonuses, one download.', href: '/downloads/bundles/bundle-top2-stress-sugar.zip', file: 'bundle-top2-stress-sugar.zip' },
+      { name: 'Stress + Sodium', desc: 'Both corner sets plus your bonuses, one download.', href: '/downloads/bundles/bundle-top2-stress-sodium.zip', file: 'bundle-top2-stress-sodium.zip' },
+      { name: 'Sugar + Sodium', desc: 'Both corner sets plus your bonuses, one download.', href: '/downloads/bundles/bundle-top2-sugar-sodium.zip', file: 'bundle-top2-sugar-sodium.zip' },
+    ],
+  });
+  return built;
+}
+
+// One download row card — the exact visual style the legacy groups use.
+function FileRow({ f, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto',
+        gap: '1.1rem',
+        alignItems: 'center',
+        padding: '1.1rem 1.4rem',
+        background: 'var(--cream, #FFFFFF)',
+        border: '1px solid var(--line)',
+        borderRadius: 14,
+      }}
+    >
+      <div style={{
+        width: 40, height: 40,
+        display: 'grid', placeItems: 'center',
+        borderRadius: 10,
+        background: 'var(--paper-warm)',
+        border: '1px solid var(--line)',
+      }}>
+        <FileText size={16} style={{ color: 'var(--sage-deep)' }} />
+      </div>
+      <div>
+        <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.02rem', fontWeight: 500, lineHeight: 1.25 }}>
+          {f.name}
+        </div>
+        <div style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem', lineHeight: 1.45 }}>
+          {f.desc}
+        </div>
+      </div>
+      <a href={f.href || `/downloads/${f.file}`} download className="btn btn-ink btn-sm" style={{
+        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+        padding: '0.55rem 0.9rem', borderRadius: 8,
+        background: 'var(--ink, #2C3E50)', color: 'var(--cream, #FBF8F1)',
+        textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600,
+      }}>
+        <Download size={14} /> {String(f.file || '').endsWith('.zip') ? 'ZIP' : 'PDF'}
+      </a>
+    </motion.div>
+  );
+}
+
 export default function DownloadsPage() {
+  // Manifest for the current Triangle kit line. null = not loaded (or failed);
+  // the section renders only when we have real modules to show.
+  const [triangleGroups, setTriangleGroups] = useState([]);
+  useEffect(() => {
+    let alive = true;
+    fetch('/downloads/manifest.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((m) => { if (alive && m) setTriangleGroups(buildTriangleGroups(m)); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', paddingBlock: 'clamp(3rem, 6vw, 5rem)' }}>
       <div className="shell-tight">
@@ -77,6 +201,39 @@ export default function DownloadsPage() {
           Bookmark this page. Your access never expires.
         </p>
 
+        {/* ---- Your Triangle Kit (the current product line, manifest-driven) ---- */}
+        {triangleGroups.length > 0 && (
+          <>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <span className="kicker kicker-dot">Your Triangle Kit</span>
+              <p style={{ color: 'var(--muted)', fontSize: '0.92rem', margin: '0.5rem 0 0' }}>
+                The BP Triangle kits: Stress, Sugar, and Sodium. If your purchase email sent you here,
+                your files are below. Start with your loudest corner.
+              </p>
+            </div>
+            {triangleGroups.map((group, gi) => (
+              <section key={group.title} style={{ marginBottom: '3rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
+                  <BookOpen size={16} style={{ color: 'var(--clay)' }} />
+                  <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.35rem', fontWeight: 500, margin: 0, color: 'var(--ink)' }}>
+                    {group.title}
+                  </h2>
+                </div>
+                <p style={{ color: 'var(--muted)', fontSize: '0.92rem', marginTop: 0, marginBottom: '1rem' }}>
+                  {group.desc}
+                </p>
+                <div style={{ display: 'grid', gap: '0.65rem' }}>
+                  {group.files.map((f, i) => (
+                    <FileRow key={f.file} f={f} delay={(gi * 4 + i) * 0.04} />
+                  ))}
+                </div>
+              </section>
+            ))}
+            <div style={{ borderTop: '1px dashed var(--line)', margin: '0 0 3rem' }} />
+          </>
+        )}
+
+        {/* ---- Legacy library (kept: earlier buyers' links still work) ---- */}
         {groups.map((group, gi) => (
           <section key={group.title} style={{ marginBottom: '3rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
@@ -90,48 +247,7 @@ export default function DownloadsPage() {
             </p>
             <div style={{ display: 'grid', gap: '0.65rem' }}>
               {group.files.map((f, i) => (
-                <motion.div
-                  key={f.file}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: (gi * group.files.length + i) * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'auto 1fr auto',
-                    gap: '1.1rem',
-                    alignItems: 'center',
-                    padding: '1.1rem 1.4rem',
-                    background: 'var(--cream, #FFFFFF)',
-                    border: '1px solid var(--line)',
-                    borderRadius: 14,
-                  }}
-                >
-                  <div style={{
-                    width: 40, height: 40,
-                    display: 'grid', placeItems: 'center',
-                    borderRadius: 10,
-                    background: 'var(--paper-warm)',
-                    border: '1px solid var(--line)',
-                  }}>
-                    <FileText size={16} style={{ color: 'var(--sage-deep)' }} />
-                  </div>
-                  <div>
-                    <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.02rem', fontWeight: 500, lineHeight: 1.25 }}>
-                      {f.name}
-                    </div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--muted)', marginTop: '0.2rem', lineHeight: 1.45 }}>
-                      {f.desc}
-                    </div>
-                  </div>
-                  <a href={`/downloads/${f.file}`} download className="btn btn-ink btn-sm" style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
-                    padding: '0.55rem 0.9rem', borderRadius: 8,
-                    background: 'var(--ink, #2C3E50)', color: 'var(--cream, #FBF8F1)',
-                    textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600,
-                  }}>
-                    <Download size={14} /> PDF
-                  </a>
-                </motion.div>
+                <FileRow key={f.file} f={f} delay={(gi * group.files.length + i) * 0.04} />
               ))}
             </div>
           </section>

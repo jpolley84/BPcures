@@ -47,9 +47,9 @@ import { capturePurchase } from './_posthog.js';
 // Phase 7 cutover — additive only.
 //
 // Mapping:
-//   $17  + $47        → tier-1  (kit buyer → $297 Diagnostic upsell)
+//   $27  + $47        → tier-1  (kit buyer → $297 Sprint upsell)
 //   $97               → tier-2  (Challenge cohort — fulfills 30-day promise)
-//   $297              → tier-3  (Diagnostic buyer → Cohort 2 upsell)
+//   $297              → tier-3  (Sprint buyer → Cohort 2 upsell)
 //   $1,997 + $6,997   → tier-4  (Sprint / 1:1 — onboarding, never sells)
 function purchaseToState(kitTier) {
   const t = String(kitTier || '').toLowerCase();
@@ -494,18 +494,37 @@ async function processCheckoutCompleted(event) {
   // Checkout Sessions) carry no foreign marker, so they pass through.
   // 2026-06-09: added 'event-sales-page' — the 5/15 RestoreHER $497 GA ticket
   // passed the guard and fired a false unmapped-amount alert.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page']);
-  if (FOREIGN_FUNNELS.has(session.metadata?.funnel)) {
-    return { action: 'skipped', reason: `foreign_funnel:${session.metadata.funnel}` };
+  // 2026-06-24: added 'chinhair' + a RestoreHER signal guard. Alicia Terry's
+  // $97 RestoreHER virtual-recordings purchase (metadata {funnel:'chinhair',
+  // tier:'recordings'} — NO brand key) slipped the funnel-only guard, hit
+  // AMOUNT_TO_TIER[9700] → tier-2, and wrongly fired the BraveWorks BP Triangle
+  // Challenge confirmation while she never got her recordings. Amount-only
+  // routing collides once two brands share one Stripe account, so skip on ANY
+  // RestoreHER marker, not just an enumerated funnel.
+  // 2026-06-26: added 'braveworks-bp' — the clean-room BPQuiz rebuild
+  // (braveworks-bp.vercel.app, future bpquiz.com) shares this Stripe account and
+  // runs its OWN webhook for delivery. Its tier + $297 case-review + upgrade
+  // sales stamp {funnel:'braveworks-bp'} and its amounts (2700/4700/9700/29700
+  // plus 2000/5000/7000 upgrades) collide with bpquiz's ladder and diagnostic
+  // tier, so bpquiz must skip them or it double-emails the buyer.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp']);
+  const md = session.metadata || {};
+  const isRestoreHer =
+    md.brand === 'restoreher' ||
+    md.tier === 'recordings' ||
+    /^restoreher/i.test(md.event || '') ||
+    /restoreher|everydaynurse/i.test(md.source || '');
+  if (FOREIGN_FUNNELS.has(md.funnel) || isRestoreHer) {
+    return { action: 'skipped', reason: `foreign:${md.funnel || md.brand || md.tier || 'restoreher'}` };
   }
 
   const customerEmail = session.customer_details?.email;
   const customerName = session.customer_details?.name;
   // 2026-05-10: route by amount_subtotal (pre-discount) so promotion-code
   // buyers still resolve to the right tier. amount_total is post-discount —
-  // a SORRY30 buyer on $17 sends amount_total=1190 which maps to no tier and
-  // the buyer pays but gets nothing. Subtotal stays at the canonical pre-
-  // discount amount (1700 / 4700 / 9700 etc.) which IS in AMOUNT_TO_TIER.
+  // a SORRY30 buyer on $27 sends a discounted amount_total which maps to no
+  // tier and the buyer pays but gets nothing. Subtotal stays at the canonical
+  // pre-discount amount (2700 / 4700 / 9700 etc.) which IS in AMOUNT_TO_TIER.
   // Fall back to amount_total only if subtotal is missing.
   const amountCents = session.amount_subtotal ?? session.amount_total;
 
@@ -1051,7 +1070,7 @@ You started a checkout for the BP Reset Kit but didn't finish. No worries — li
 The kit's still here whenever you're ready:
 https://bpquiz.com/
 
-It's a $17 protocol I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step pressure-triangle reset.
+It's a $17 protocol I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step reset that calms all three corners of the Triangle: Stress, Sugar, and Sodium.
 
 If you had a question that stopped you, hit reply — I read every email myself.
 
@@ -1113,7 +1132,7 @@ function renderCartRecoveryEmail() {
             </a>
           </p>
           <p style="font-size:15px;margin:0 0 14px;">
-            It's a <strong>$17 protocol</strong> I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step pressure-triangle reset.
+            It's a <strong>$17 protocol</strong> I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step reset that calms all three corners of the Triangle: Stress, Sugar, and Sodium.
           </p>
           <p style="font-size:15px;margin:0 0 14px;">
             If you had a question that stopped you, hit reply — I read every email myself.

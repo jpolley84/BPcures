@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>The Sugar Corner, 10-Day Reset</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #B85A36; }
+  * { box-sizing: border-box; }
+
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 19mm;
+    @bottom-center {
+      content: "BraveWorks BP    .    Education alongside your doctor, never instead.";
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      color: #7A7061;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #7A7061;
+    }
+  }
+  /* The cover prints full-bleed-ish with no running footer or number. */
+  @page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+  /* The one page doctor sheet: tighter margins so it stays on a single page,
+     and no page number (it is a printable hand-out, not a booklet). */
+  @page plain { margin: 14mm 15mm 12mm; @bottom-right { content: ""; } @bottom-center { content: ""; } }
+
+  html { background: #F7F3EC; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #2B2824;
+    line-height: 1.62;
+    font-size: 11.3pt;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover page ───────────────────────────────────────────────── */
+  .cover {
+    page: cover;
+    position: relative;
+    height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% 8%, #FBF8F1 0%, #F7F3EC 55%, #EFE8DB 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26mm 22mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .cover::before {
+    /* a hairline frame, inset, like a fine book jacket */
+    content: "";
+    position: absolute;
+    inset: 11mm;
+    border: 1px solid var(--accent);
+    opacity: 0.32;
+    border-radius: 3px;
+  }
+  .cover__kicker {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  .cover__tri { margin: 4px 0 30px; }
+  .cover__title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #121110;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .cover__rule {
+    width: 54px;
+    height: 2px;
+    background: var(--accent);
+    margin: 6px auto 18px;
+    border: 0;
+  }
+  .cover__subtitle {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14pt;
+    line-height: 1.5;
+    color: #2B2824;
+    max-width: 34ch;
+    margin: 0 auto 30px;
+  }
+  .cover__author {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    letter-spacing: 0.04em;
+    color: #121110;
+    font-weight: 600;
+  }
+  .cover__author small {
+    display: block;
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7A7061;
+    margin-top: 6px;
+  }
+  .cover__brand {
+    position: absolute;
+    bottom: 17mm;
+    left: 0;
+    right: 0;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7A7061;
+  }
+
+  /* ── Body / interior ──────────────────────────────────────────── */
+  .doc { padding-top: 2mm; }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 21pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #121110;
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 15.5pt;
+    line-height: 1.2;
+    color: #121110;
+    margin: 26px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid #D8CFBD;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 18px 0 6px;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 11px; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  li::marker { color: var(--accent); }
+  strong { color: #121110; font-weight: 700; }
+  em { color: #2B2824; }
+  a { color: var(--accent); text-decoration: none; }
+  hr { border: 0; border-top: 1px solid #E8E1D1; margin: 22px 0; }
+
+  /* The intro kicker line at the very top of the interior. */
+  .eyebrow {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8.5pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  /* ── Day card: each "## Day N" becomes a bordered card with a big
+       accent number and a phase tag. The transform tags these. ── */
+  .daycard {
+    border: 1px solid #D8CFBD;
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 18px 22px 6px;
+    margin: 22px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .daycard > h2 {
+    border-top: 0;
+    padding-top: 0;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .daycard .dnum {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 30pt;
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .daycard .dlabel { font-size: 15pt; }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, #FBF8F1);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, #D8CFBD);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin: 2px 0 12px;
+  }
+
+  /* ── "Today's action" callout box (the transform wraps the action line). ── */
+  .action {
+    border: 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 9%, #FBF8F1);
+    border-left: 4px solid var(--accent);
+    padding: 13px 17px;
+    margin: 13px 0 15px;
+    page-break-inside: avoid;
+  }
+  .action .action__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 5px;
+  }
+  .action .action__b {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 10.8pt;
+    line-height: 1.5;
+    color: #121110;
+    margin: 0;
+  }
+  .action .action__b strong { color: #121110; }
+
+  /* ── Pull-quote (villain / loop / Barbara O'Neill lines). ── */
+  blockquote, .pullquote {
+    margin: 18px 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14.5pt;
+    line-height: 1.4;
+    color: #121110;
+    page-break-inside: avoid;
+  }
+  blockquote p, .pullquote p { margin: 0; }
+
+  /* ── Tables (formulary + doctor-sheet question grids). ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.4pt;
+    line-height: 1.5;
+    page-break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th {
+    background: var(--accent);
+    color: #FBF8F1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 8.6pt;
+    letter-spacing: 0.04em;
+    padding: 9px 11px;
+    vertical-align: top;
+  }
+  td {
+    border-bottom: 1px solid #E8E1D1;
+    padding: 9px 11px;
+    vertical-align: top;
+    color: #2B2824;
+  }
+  tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--accent) 4%, #FBF8F1); }
+  td strong { color: #121110; }
+
+  /* ── Generic accent panel (intro frames, safety notes, finale rungs). ── */
+  .panel {
+    background: #EFE8DB;
+    border: 1px solid #D8CFBD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .panel--accent { border-left: 4px solid var(--accent); }
+  .panel__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 7px;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .lede {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0 0 16px;
+  }
+
+  /* ── Closing "About Joel" page. ── */
+  .about {
+    page-break-before: always;
+    margin-top: 6mm;
+  }
+  .about__card {
+    background: #121110;
+    color: #F7F3EC;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .about__card .cover__kicker { color: #C8A252; }
+  .about__card h2 {
+    color: #F7F3EC;
+    border-top: 0;
+    padding-top: 0;
+    margin: 6px 0 14px;
+    font-size: 19pt;
+  }
+  .about__card p { color: #E6DECD; font-size: 10.6pt; }
+  .about__card .sig {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 16pt;
+    color: #C8A252;
+    margin-top: 18px;
+  }
+  .about__tri { margin: 8px auto 18px; }
+
+  /* ── Fine print / compliance footer line at the document foot. ── */
+  .finePrint {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid #E8E1D1;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #7A7061;
+  }
+
+  /* ── Doctor-sheet specifics: a tight, single-page, fill-in feel. ──
+     Everything in here is scoped to .sheet so the protocol + formulary
+     layouts are untouched; the rhythm is compressed to hold one Letter page. */
+  .sheet { page: plain; font-size: 10.4pt; line-height: 1.46; }
+  .sheet h1 { font-size: 18pt; margin-bottom: 4px; }
+  .sheet .eyebrow { margin-bottom: 8px; }
+  .sheet .lede { font-size: 10.6pt !important; line-height: 1.4; margin-bottom: 9px !important; }
+  .sheet .qlist + p { margin-top: 5px !important; }
+  .sheet .field {
+    border: 1px solid #D8CFBD;
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin: 8px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .sheet .field__label {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .sheet .writeline {
+    border-bottom: 1px solid #D8CFBD;
+    height: 13px;
+    margin-top: 7px;
+  }
+  .sheet .qlist { list-style: none; padding: 0; margin: 4px 0 0; }
+  .sheet .qlist li {
+    position: relative;
+    padding-left: 17px;
+    margin-bottom: 5px;
+    font-size: 9.5pt;
+    line-height: 1.38;
+  }
+  .sheet .qlist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .sheet .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .sheet .colhead {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 12pt;
+    color: #121110;
+    margin: 11px 0 5px;
+    padding-top: 9px;
+    border-top: 2px solid var(--accent);
+  }
+  .sheet .two-col { gap: 16px; }
+  .sheet .finePrint { margin-top: 10px; padding-top: 8px; font-size: 7.5pt; line-height: 1.42; }
+  .sheet .panel { margin: 8px 0; padding: 9px 13px; }
+  .sheet .panel p { font-size: 9.3pt !important; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover__kicker">Corner two of the BP Triangle</div>
+    <div class="cover__tri"><svg viewBox="0 0 200 184" width="232" height="213.44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <circle cx="172" cy="152" r="17" fill="#B85A36" opacity="0.16" />
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5" fill="#4A5D4E" opacity="0.32"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="0.32"/>
+    <circle cx="172" cy="152" r="8.5" fill="#B85A36" opacity="1"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="0.32">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="0.32">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="1">Sugar</text>
+    </g>
+  </svg></div>
+    <h1 class="cover__title">The Sugar Corner, 10-Day Reset</h1>
+    <hr class="cover__rule"/>
+    <p class="cover__subtitle">Steady the insulin that quietly tells your kidneys to hold on to sodium.</p>
+    <div class="cover__author">by Joel Polley, RN<small>BraveWorks RN  .  Registered Nurse, Naturopathic Practitioner</small></div>
+    <div class="cover__brand">The BP Triangle  .  Stress  .  Sugar  .  Sodium</div>
+  </section>
+<div class="doc"><p class="eyebrow">The BP Triangle Reset  .  Sugar corner</p>
+<h1>The SUGAR Corner (10 days)</h1>
+<p class="lede">Part of The BP Triangle Reset. Author: Joel Polley, RN, naturopathic practitioner. Education alongside your doctor, never instead of your doctor.</p>
+<p>First, thank you for trusting me with these ten days. I spent twenty years at the ICU and ER bedside managing blood sugar and blood pressure from the crash-cart side of the equation. What I learned is simple, and it is the reason this corner exists: when you remove the cause, the effect changes. That is not a health tip. That is a law of physics.</p>
+<h2>The physiology, in plain English</h2>
+<p>Here is the chain that ties sugar to your blood pressure, and I want you to be able to explain it to a friend by Day 10.</p>
+<p>You eat refined sugar or refined carbs. Your blood sugar spikes. Your pancreas answers the spike by pouring out insulin. Insulin does two things that lift your pressure. First, it signals your kidneys to hold on to sodium instead of releasing it, and where sodium goes, water follows, so your blood volume rises and the pressure in the pipes climbs. Second, chronically high insulin drives fat storage and adds strain to the vessel walls themselves. On top of that, high insulin keeps your stress hormone, cortisol, dysregulated, and a dysregulated cortisol rhythm tells the body to cling to salt even harder. That is the hand-off. Sugar does not stay in its own lane. It feeds the sodium corner directly, which is exactly where these three corners converge, and it is why you will travel all three.</p>
+<p>The good news is the part most people are never told. Insulin resistance is reversible. The 2018 Lancet DiRECT trial put 58 percent of type 2 diabetes cases into remission through lifestyle change alone, no new drugs and no surgery, as the pancreatic cells recovered once the metabolic stress was removed. Your body was engineered to regulate this. It is waiting for permission to heal.</p>
+<h2>What you will do in these 10 days</h2>
+<p>We do not do everything on Day 1. That causes overwhelm and quitting. Instead we stack changes a little at a time, the way I coached patients who actually stuck with it. You will find your cause and take a baseline. You will remove the two biggest inputs feeding your blood sugar. You will add a keystone morning practice and a plate of healing foods. You will layer in Joel&#39;s metabolic herbs at safe doses. Then you will monitor, watch the number respond, and lock in the one habit that holds the gain, before we hand you to the sodium corner where this loop converges.</p>
+<p>One promise I will keep all the way through: I will never tell you to stop or change a medication. If you take diabetes medication or insulin, that dial belongs to your doctor and only your doctor. Your job is to give the body what it needs and bring the improving numbers to your doctor so they can make the calls that are theirs to make. The data leads. The doctor decides.</p>
+<hr>
+<div class="daycard"><h2><span class="dnum">1</span><span class="dlabel">Day 1</span></h2>
+<p><strong>Phase: FIND</strong></p>
+<p>Today you do two things. You name the cause, and you take your baseline.</p>
+<p>The cause of high blood sugar, for most people reading this, is not a mystery and it is not bad luck. It is a steady stream of refined sugar and refined carbohydrate landing on a body that, between sedentary hours and stress, has lost some of its insulin sensitivity. Picture a lock and a key. Insulin is the key. Your cells are the locks. When the locks get jammed from years of constant insulin, the key stops turning smoothly, glucose cannot get into the cells, and it backs up in the blood. That backup is the number your meter shows you. We are going to un-jam the locks by removing what jams them and adding what frees them.</p>
+<p>A reframe I want you to carry the whole way: try not to say &quot;I am a diabetic.&quot; Say &quot;I have high blood sugar because of my current habits.&quot; The first sentence is a fixed identity that quietly tells your brain nothing will change. The second is a temporary situation you have leverage over. Language creates identity, identity creates behavior, behavior creates the outcome. This is not positive thinking. It is how sustained change actually works.</p>
+<p>Today&#39;s action: write down your baseline numbers and keep this page. You will compare against it on Day 5 and Day 10, and numbers do not lie.</p>
+<ul>
+<li>Fasting blood sugar (the morning reading, before food)</li>
+<li>Post-meal glucose, one hour after a normal meal, if you have a meter</li>
+<li>Your last A1C, if you know it</li>
+<li>Current medications (write them down, change nothing)</li>
+<li>Energy level, 1 to 10</li>
+<li>Sleep quality, 1 to 10</li>
+</ul>
+<p>If you want one more anchor, write a short letter from yourself ninety days out. What is your fasting glucose, how do your clothes fit, are you the person your family worries about or the one inspiring them. A brain that knows the destination finds the route. That is the whole job of Day 1: know the cause, mark the starting line, and decide where you are going.</p>
+</div><div class="daycard"><h2><span class="dnum">2</span><span class="dlabel">Day 2</span></h2>
+<p><strong>Phase: ELIMINATE</strong></p>
+<p>Today we pull the single biggest trigger: refined sugar and artificial sweeteners. This is elimination number one, and on its own it changes more than any supplement you could buy.</p>
+<p>Here is what removing it does inside you. It stops the glucose spikes that force your pancreas to slam out insulin, which over years is what exhausts the system in the first place. It also halts the disruption that artificial sweeteners cause to your gut bacteria, and your gut matters more than most people realize, because those bacteria manufacture GLP-1, the exact appetite-and-glucose hormone the expensive injections imitate. Cut the sweeteners and you stop sabotaging a hormone factory you already own.</p>
+<p>Today&#39;s action: remove added refined sugar and artificial sweeteners from your day. That means sodas and diet sodas, candy, pastries, sweetened coffee drinks (and if you are cutting caffeine too, count that as a double win for your nervous system and your pressure), flavored yogurts, and the sweeteners hiding in sauces and dressings. Read two or three labels today and you will be surprised where sugar is parked.</p>
+<p>What to reach for instead so you are not white-knuckling it: whole fruit, which brings its own fiber brake so the sugar arrives slowly, a handful of berries, or a date if you need something sweet. You are not removing sweetness from your life. You are removing the refined, fiber-stripped version that spikes you, and replacing it with the version that comes wrapped in fiber the way it was designed to.</p>
+<p>Your body is not broken. It is responding to what you gave it. Change the input, and you watch the output change. That is not hope. That is physics.</p>
+</div><div class="daycard"><h2><span class="dnum">3</span><span class="dlabel">Day 3</span></h2>
+<p><strong>Phase: ELIMINATE</strong></p>
+<p>Yesterday you cut the obvious sugar. Today we strip the secondary input that spikes you just as hard while wearing a healthier disguise: processed and refined carbohydrates. With this removal, your elimination phase is complete.</p>
+<p>The reason this one matters is the fiber brake. Whole plant carbohydrates arrive with fiber, and fiber is the brake pedal that slows how fast glucose is absorbed. Refined carbs have had that brake pedal stripped out at the factory. White bread, white rice, most boxed cereal, crackers, chips, pasta from refined flour, and anything built on white flour all dump their glucose load fast, with nothing to slow the rush. To your bloodstream and your pancreas, a bagel behaves a lot like a candy bar.</p>
+<p>Today&#39;s action: remove refined and processed carbohydrates and swap them for their whole, intact versions. This is a swap, not a starvation plan.</p>
+<ul>
+<li>White bread becomes 100 percent whole grain or sprouted grain bread</li>
+<li>White rice becomes brown rice, quinoa, or steel-cut oats</li>
+<li>Refined pasta becomes legume or whole grain pasta, or simply more beans and lentils</li>
+<li>Chips and crackers become nuts, seeds, or raw vegetables</li>
+</ul>
+<p>Notice the pattern. Every swap puts the fiber back. Beans, lentils, oats, whole grains, vegetables, and fruit all carry their fiber with them, so the glucose releases slowly and your insulin does not have to spike to chase it. You are not going low-carb. You are going whole-carb, which is exactly how the body was built to eat. Two inputs are now removed. Tomorrow we start adding.</p>
+</div><div class="daycard"><h2><span class="dnum">4</span><span class="dlabel">Day 4</span></h2>
+<p><strong>Phase: ADD</strong></p>
+<p>Removal phase is behind you. Today you add the keystone practice of this entire corner, the one I would keep if I could keep only one: a morning walk, about 20 minutes, within an hour of waking.</p>
+<p>This single habit pulls two levers at once. First, walking activates something called GLUT4, a kind of back door on your muscle cells that lets glucose move out of your blood and into the muscle without needing insulin to unlock it. When you sit for long stretches, that door deactivates and glucose uptake can drop by as much as 90 percent. Movement props the door back open. Second, morning light and morning movement help reset your cortisol rhythm, and since cortisol and insulin are tangled together, calming one helps calm the other. That is the sugar corner already reaching toward the stress and sodium corners.</p>
+<p>Here is the picture I want you to carry, the way the herbalist Walt Cross teaches it. A 20-minute walk can lower your blood sugar more than one insulin shot, and four walks spread across the day are like four shots, no needle required. Hold that as a teaching illustration, not a number you will see printed on your meter, but let it tell you the truth: your legs are a glucose-lowering tool you already own and can use as many times a day as you like. And here is why it works at the root. Insulin is a key, but the keyhole on your cells is the insulin receptor, and when your cells get clogged with fat, those receptors stop working and the key cannot turn. This is why the locks felt jammed on Day 1. Movement, and the steady removal of the fat clogging the receptors, lets the cell clean its own locks so insulin starts working again. You are not forcing the number down. You are clearing the cause so the body unlocks on its own.</p>
+<p>Today&#39;s action: within 60 minutes of waking, get outside and walk for 20 minutes. Outside matters. The morning sunlight on your skin and in your eyes is part of the medicine here, helping anchor the same cortisol rhythm and supporting healthy sleep tonight. If 20 minutes is too much today, walk 10. If the weather is impossible, walk indoors. The non-negotiable is that you move your body in the morning, on purpose, every day from here forward.</p>
+<p>The why in one sentence: you are giving your blood sugar a second exit that does not depend on insulin, and you are doing it at the hour of day that resets the most hormones. This is the habit that, more than any pill, tends to move the morning fasting number. Lace up. Tomorrow we feed the body the foods that finish the job.</p>
+</div><div class="daycard"><h2><span class="dnum">5</span><span class="dlabel">Day 5</span></h2>
+<p><strong>Phase: ADD</strong></p>
+<p>You are moving in the morning now. Today we add the healing foods, and we add them in a specific order that quietly changes everything: fiber first.</p>
+<p>The fiber-first idea is simple and backed by how digestion actually works. When you lead a meal with fiber and vegetables before the starch, you slow gastric emptying, which blunts the glucose spike that meal would otherwise cause, by a meaningful margin. Eat the salad and the vegetables and the beans before the grain, and the same plate hits your bloodstream as a gentle rise instead of a spike. Your gut bacteria also ferment that fiber and produce GLP-1, the same hormone we protected on Day 2. You are feeding the factory now, not just sparing it.</p>
+<p>Today&#39;s action: build today&#39;s plates plant-forward and whole-food, and start each meal with the fiber.</p>
+<ul>
+<li>Lead with non-starchy vegetables: leafy greens, broccoli, peppers, cucumber, tomato, cabbage</li>
+<li>Anchor protein and staying power with legumes: beans, lentils, chickpeas, split peas</li>
+<li>Add intact whole grains after the vegetables, not before: oats, quinoa, brown rice</li>
+<li>Use nuts, seeds, and avocado for healthy fat that further steadies the curve</li>
+<li>Whole fruit for sweetness, eaten with or after fiber, never as a lone sugar hit</li>
+</ul>
+<p>This is plant-forward, whole-food eating, and it is the way of eating that the long-lived populations of the world quietly practice. Compare your Day 5 numbers to your Day 1 baseline now. Five days in, with sugar and refined carbs out and walking and fiber in, many people already see the morning number soften. That is not a coincidence. That is cause and effect.</p>
+<h3>The lever almost no one teaches: meal timing</h3>
+<p>Notice something about everything you have done so far. It is all about what is on the plate. Now I want to add the lever that the blood-pressure world almost completely ignores: not what you eat, but when. Every program teaches meal content. Almost none teach meal timing. This corner does both, and the timing piece may be the quietest powerhouse of the ten days.</p>
+<p>The NEWSTART tradition, the plant-based health heritage this whole reset is built on, taught this generations ago in simple language: two meals a day, eaten about five to six hours apart, no snacking in between, and no late supper. A good breakfast, an early afternoon meal, and then the kitchen closes for the night. That is the whole rule, and people followed it long before anyone gave it a modern name.</p>
+<p>The modern name is time-restricted eating, and the science has caught up to the heritage. When you stop grazing all day and you close the kitchen early, two things happen that land squarely on the lever this corner targets. First, every time you eat, insulin rises. Snacking from morning until bedtime means insulin almost never gets to come back down, and an insulin level that never rests is exactly what keeps the receptors jammed. Give your body a long, clean stretch with no food and insulin finally falls, the receptors get a rest, and insulin sensitivity improves. Second, skipping the late supper extends your overnight fast, the longest naturally low-insulin window you have, and that extended fast is where a lot of the metabolic repair quietly happens. Remember the chain from Day 1: lower insulin means your kidneys hold on to less sodium, and that is the sugar corner easing its grip on the sodium corner before you ever get there.</p>
+<p>Today&#39;s action: alongside your fiber-first plates, begin shaping your day toward two meals, roughly five to six hours apart, with the kitchen closed after supper and the overnight fast left long. Eat enough at those meals so you are genuinely satisfied and not white-knuckling. This is a gentle on-ramp, not a fast and not a starvation plan, so ease into it at whatever pace your body allows.</p>
+<p>One important caution, and please read it carefully. If you take diabetes medication or insulin, do not change your meal timing or skip meals on your own. Glucose-lowering medication taken on top of skipped or delayed meals can drop your blood sugar dangerously low. This is exactly the kind of change to bring to your doctor first, so they can decide whether anything about your medication needs adjusting before you shift your eating window. The timing belongs to you. The medication belongs to your doctor. Clear it with them before you begin.</p>
+</div><div class="daycard"><h2><span class="dnum">6</span><span class="dlabel">Day 6</span></h2>
+<p><strong>Phase: SUPPLEMENT</strong></p>
+<p>Your foundation is set: two inputs removed, a morning walk in place, fiber-first plates underway. Now, and only now, we add the herbs. Supplements work because the foundation is already doing the heavy lifting. They are the assist, not the engine.</p>
+<p>Joel&#39;s vetted metabolic stack is three botanicals that work together. Berberine, an alkaloid found in plants like goldenseal and Oregon grape, activates an enzyme called AMPK, which is the same metabolic pathway the drug metformin works on, helping your cells take up glucose and improving insulin sensitivity. Cinnamon supports steadier post-meal glucose and adds to insulin receptor sensitivity. Chromium is a trace mineral that helps insulin do its job at the cell. Together they sensitize the lock to the key, which is precisely the jam we have been working to clear since Day 1.</p>
+<p>Today&#39;s action: begin the stack at a sensible starting dose, with food, and read the cautions below carefully.</p>
+<ul>
+<li><strong>Berberine:</strong> a common range is 500 mg, one to three times daily, taken with meals. Many people start at 500 mg once daily with the largest meal and build up over several days to let the gut adjust.</li>
+<li><strong>Cinnamon:</strong> roughly 1 to 2 grams daily, or a standardized supplement per its label. Ceylon cinnamon is the gentler choice for daily use.</li>
+<li><strong>Chromium (as chromium picolinate):</strong> commonly 200 to 400 mcg daily with food.</li>
+</ul>
+<p>Read this twice. Berberine, cinnamon, and chromium can all lower blood sugar, which is the point, but if you take diabetes medication or insulin, that combined effect can drop your blood sugar too low. This is exactly the kind of improvement your doctor needs to know about so they, not you, can adjust your medication. Do not start this stack without telling your prescriber, and never change a medication dose on your own. Berberine can also interact with a long list of common prescriptions because it affects the same liver pathway many drugs use. If you are pregnant or nursing, skip berberine entirely. The herbs support the body. The doctor steers the medication. Always.</p>
+</div><div class="daycard"><h2><span class="dnum">7</span><span class="dlabel">Day 7</span></h2>
+<p><strong>Phase: SUPPLEMENT and MONITOR</strong></p>
+<p>The full stack is in place today. Every lever you are going to pull is now pulled: sugar and refined carbs out, walk and fiber in, and the herb stack live. Today the job shifts from adding to watching.</p>
+<p>Why monitor now and not sooner. For the first six days you were installing the machine. Today the machine is fully assembled and running, and the only way to know an engine is working is to read the gauges. We are not policing numbers out of anxiety. We are gathering evidence, the way I taught patients to walk into a doctor&#39;s visit holding proof instead of hope.</p>
+<p>Today&#39;s action: take your readings and write down both the number and the feeling.</p>
+<ul>
+<li>Fasting blood sugar this morning, next to your Day 1 baseline</li>
+<li>Post-meal glucose one hour after your largest meal, if you have a meter</li>
+<li>The felt signals: your energy at mid-afternoon, your cravings, your sleep, your mental clarity</li>
+<li>A simple note on how the morning walk felt and whether 20 minutes is getting easier</li>
+</ul>
+<p>The felt signal matters as much as the meter here. The earliest thing most people notice is not the fasting number, it is steadier energy and quieter cravings, because the glucose roller coaster has flattened out. That steadiness is the GLP-1 and the fiber and the missing sugar spikes all showing up in how you feel. Keep this page next to your Day 1 page. Tomorrow we read what the signals are telling us.</p>
+</div><div class="daycard"><h2><span class="dnum">8</span><span class="dlabel">Day 8</span></h2>
+<p><strong>Phase: MONITOR</strong></p>
+<p>Today we read the signals together and learn what moves first, because the order things improve in tells you the machine is working from the inside out.</p>
+<p>Here is the sequence to expect, so you know what you are looking at. Energy and cravings usually settle first, often within the first several days, because flattening the glucose spikes calms the roller coaster fast. Post-meal glucose tends to improve next, because fiber-first eating and the walk and the herbs all attack the after-meal spike directly. The fasting morning number is often the last to move and the most stubborn, because it reflects deeper insulin sensitivity that takes longer to rebuild. If your cravings are down and your afternoons are steadier but the fasting number has barely budged, that is not failure. That is exactly the expected order. The slow one is coming.</p>
+<p>Today&#39;s action: compare today&#39;s readings to Day 1 and Day 7, and read the pattern rather than any single number.</p>
+<ul>
+<li>Is fasting glucose trending down, flat, or down on some mornings and not others (early progress is often uneven)</li>
+<li>Is your one-hour post-meal number lower than it was</li>
+<li>Are energy, cravings, sleep, and clarity better than Day 1</li>
+<li>Which changed first for you, and what does that tell you about what your body needed most</li>
+</ul>
+<p>One honest note on reading your meter: a single number is a snapshot, not the story. Sleep, stress, and even a hard workout can nudge a morning reading up for a day. That is why we watch the trend across days, not one reading in isolation. You are learning to read your own body now, which is a skill that outlasts this challenge. Tomorrow you get to watch it heal.</p>
+</div><div class="daycard"><h2><span class="dnum">9</span><span class="dlabel">Day 9</span></h2>
+<p><strong>Phase: WATCH IT HEAL</strong></p>
+<p>Today is the day the why clicks into place. You have the numbers and the felt changes in front of you. Now I want you to understand exactly why they moved, because understanding is what makes this permanent instead of temporary.</p>
+<p>Nothing that improved this week was luck or a quirk of the meter. Every change has a mechanism you can name. The spikes calmed because you removed the refined sugar and refined carbs that caused them, so your pancreas stopped getting slammed and your insulin stopped flooding the system. Glucose started leaving your blood more easily because the morning walk opened the GLUT4 door in your muscles, the exit that does not need insulin. Your after-meal numbers softened because fiber-first eating put the brake pedal back on absorption, and your gut bacteria started producing more of your own GLP-1. And the herbs sensitized the lock to the key so insulin finally turned smoothly again. You did not manage a number. You removed its drivers, and the body did what it was engineered to do.</p>
+<p>You are not the only one seeing this, either. When researchers pool the randomized trials, eating the plant-predominant way you ate this week tends to improve the risk-factor numbers measurably: roughly a 0.29 percent drop in HbA1c, the three-month average blood-sugar marker, and about a 12 to 13 mg/dL drop in LDL cholesterol. Those are risk-factor improvements, not a cure, and your own doctor is the one who reads them in context. But it tells you the changes you felt this week are the same ones that show up across thousands of people in the studies. The mechanism is real, and now it is yours.</p>
+<p>Today&#39;s action: look at your Day 1 page and your Day 8 page side by side and write one or two sentences naming what moved and why. For example: &quot;My afternoon crash is gone because the sugar spikes are gone.&quot; Or: &quot;My post-meal number dropped because I eat fiber first and walk every morning.&quot; Put the cause next to the effect in your own words.</p>
+<p>This is the heart of my whole method, and it is the opposite of how the system usually works. The conventional approach tapes over the warning light and manages the number for thirty years. You opened the hood and fixed the trigger. Remember the pancreas: roughly a million clusters, each with hundreds of beta cells, making a hundred thousand glucose decisions a day, all without your awareness. That system was built to heal the moment the interference is removed. This week, you removed the interference. Tomorrow we lock it in and I show you where this corner connects to the next.</p>
+</div><div class="daycard"><h2><span class="dnum">10</span><span class="dlabel">Day 10</span></h2>
+<p><strong>Phase: CLOSE and LOOP BRIDGE</strong></p>
+<p>You made it. Ten days ago this was a number you policed. Today it is a system you understand and have started to heal. Thank you for doing the work. Before we close, two things: lock in the keystone, and see where this corner hands off.</p>
+<p>Lock in the keystone. If everything else fell away and you kept one habit from this corner, keep the morning walk. Twenty minutes, within an hour of waking, outside. It is the single highest-leverage thing you did, because it opens the insulin-independent glucose door and resets your cortisol rhythm at the same time, every single day, for free. Build the rest of your life around protecting that walk and the gains tend to hold. The fiber-first plate is your close second. Those two habits are your sugar-corner anchors for life.</p>
+<p>Today&#39;s action: write down the one keystone habit you are committing to keep, and take your Day 10 readings next to your Day 1 baseline so you can see the full ten-day arc in one glance. Keep that comparison. It is your proof.</p>
+<h3>The loop bridge: from SUGAR to SODIUM</h3>
+<p>Here is why you are not finished, and why the next corner is sodium specifically. Remember what insulin does. Every time your blood sugar spiked these past weeks, the insulin that answered it did not only store fat, it reached over to your kidneys and told them to hold on to sodium. Sodium holds water. Water raises your blood volume. Blood volume raises your pressure. So your sugar problem has been quietly feeding a sodium problem the entire time, through insulin, behind the scenes. You can calm this sugar corner beautifully and still have your pressure tugged upward by the salt your own insulin told your body to keep.</p>
+<p>That is the loop. The three corners feed each other, and sugar empties directly into sodium. You have lowered the insulin signal that drives the salt-holding. Now we go to the sodium corner itself and close that side of the loop, the place where the sugar corner and the stress corner both converge. Calm all three and your numbers come home. I will see you there.</p>
+<hr>
+</div><h2>Formulary</h2>
+<p class="muted" style="color:#7A7061;font-size:9.5pt;">A quick reference. Add ONE at a time, check your blood pressure daily, and tell your doctor everything you are taking.</p>
+<p><em>Joel&#39;s metabolic herbs for the sugar corner, with safe starting ranges and the cautions that matter. Harvested from Joel&#39;s vetted 10-Day Blood Sugar Reset. This is education to discuss with your doctor or pharmacist, not a prescription, and it is meant to work alongside your medical care, never instead of it.</em></p>
+<p><strong>Before you start any of these:</strong> if you take diabetes medication or insulin, talk to your prescriber first. These botanicals lower blood sugar on purpose, and stacked on top of medication they can push it too low. That is a conversation for your doctor, who can watch your improving numbers and decide whether your medication needs adjusting. That decision is theirs, never yours, and never made by stopping a medication on your own.</p>
+<table>
+<thead>
+<tr>
+<th>Herb / Nutrient</th>
+<th>What it does (plain English)</th>
+<th>Common starting range</th>
+<th>Cautions and interactions</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Berberine</strong></td>
+<td>Activates AMPK, the same cellular pathway the drug metformin works on; helps cells take up glucose and improves insulin sensitivity.</td>
+<td>500 mg, 1 to 3 times daily, with meals. Many start at 500 mg once daily with the largest meal and build up over several days.</td>
+<td>Strong glucose-lowering effect; combine-with-medication risk of going too low (tell your doctor). Interacts with many prescriptions because it shares a liver metabolism pathway (the CYP3A4 system) used by common drugs. Can cause loose stools or cramping at first; take with food and build up slowly. Avoid in pregnancy and while nursing.</td>
+</tr>
+<tr>
+<td><strong>Cinnamon</strong></td>
+<td>Supports steadier post-meal glucose and adds to insulin receptor sensitivity.</td>
+<td>About 1 to 2 grams daily, or a standardized supplement per its label.</td>
+<td>Choose Ceylon cinnamon for daily use; the cheaper cassia type contains coumarin, which in large daily amounts can stress the liver. Mild additive glucose-lowering effect with diabetes medication.</td>
+</tr>
+<tr>
+<td><strong>Chromium (chromium picolinate)</strong></td>
+<td>Trace mineral that helps insulin work more effectively at the cell.</td>
+<td>200 to 400 mcg daily, with food.</td>
+<td>Generally well tolerated. Mild additive glucose-lowering effect with diabetes medication. Talk to your doctor if you have kidney concerns.</td>
+</tr>
+</tbody></table>
+<h3>A note on this formulary</h3>
+<p>Joel&#39;s source document for this corner names exactly <strong>three</strong> botanicals in the metabolic stack: berberine, cinnamon, and chromium. The kit brief referenced &quot;Joel&#39;s 5 metabolic herbs,&quot; so there is a gap of two. Rather than invent two herbs and doses that Joel has not vetted, this formulary ships the three that are sourced and verified. If Joel intends a five-herb stack, the two additions (and their doses) need to come from him before they go in. Common naturopathic candidates that round out a metabolic stack are alpha-lipoic acid, gymnema, fenugreek, and magnesium, but none of those appear in the source PDF, so none are listed here as a recommendation. Flagged for Joel&#39;s call.</p>
+
+  <section class="about">
+    <div class="about__card">
+      <div class="about__tri"><svg viewBox="0 0 200 184" width="150" height="138" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <circle cx="172" cy="152" r="17" fill="#B85A36" opacity="0.16" />
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5" fill="#4A5D4E" opacity="0.32"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="0.32"/>
+    <circle cx="172" cy="152" r="8.5" fill="#B85A36" opacity="1"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="0.32">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="0.32">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="1">Sugar</text>
+    </g>
+  </svg></div>
+      <div class="cover__kicker">A word from your nurse</div>
+      <h2>Joel Polley, RN</h2>
+      <p>I spent twenty years at the ICU and ER bedside, managing blood pressure and blood sugar from the crash-cart side of medicine. What I learned is simple, and it is why BraveWorks exists: when you remove the cause, the effect changes. That is not a health tip. It is a law of physics.</p>
+      <p>I am a registered nurse and a naturopathic practitioner, and I built the Triangle to put the why back in your hands, so a blood pressure reading stops being a verdict and starts being a conversation you understand. Everything here walks alongside your doctor, never instead of your doctor. Your data is your power. Your doctor is your ally.</p>
+      <div class="sig">Keep the loop closed. Go live it.</div>
+    </div>
+    <div class="finePrint">
+      &copy; BraveWorks RN  .  Joel Polley, RN  .  bpquiz.com.
+      For educational purposes only. This is not medical advice, not a diagnosis, and not a prescription.
+      Always consult your healthcare provider before making any change to your medications or treatment plan.
+    </div>
+  </section></div>
+</body></html>

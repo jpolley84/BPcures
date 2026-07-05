@@ -27,8 +27,16 @@ const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
 const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
+// Inline Stripe embedded checkout for the new Triangle kits (no buy.stripe.com
+// redirect). Ported from braveworks-bp; charges via /api/create-embedded-checkout.
+const PayPage = lazy(() => import('./pages/PayPage'));
+// Post-purchase landing for the Triangle inline checkout. create-embedded-
+// checkout.js sets return_url to /welcome; ported from braveworks-bp.
+const WelcomePage = lazy(() => import('./pages/WelcomePage'));
 const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
-const WaitlistApplicationPage = lazy(() => import('./pages/WaitlistApplicationPage'));
+// WaitlistApplicationPage (the stale $1,297 /1on1 page) is no longer routed:
+// /1on1 now redirects to /coaching (2026-07-03). The file is preserved at
+// src/pages/WaitlistApplicationPage.jsx if we ever want it back.
 const ApplyPage = lazy(() => import('./pages/ApplyPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
@@ -48,6 +56,12 @@ const AboutJoelPage = lazy(() => import('./pages/AboutJoelPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
+// $297 "Joel's Eyes On Your Case" — sales page + the post-purchase landing the
+// Stripe payment link redirects to (2026-07-03; the redirect used to 404).
+const CaseReviewPage = lazy(() => import('./pages/CaseReviewPage'));
+const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPage'));
+// /score — tokenized "see my saved result" page for email links (2026-07-03).
+const ScorePage = lazy(() => import('./pages/ScorePage'));
 
 // Subdomain → page map. When the SPA boots on a vanity subdomain like
 // `wakita.bpquiz.com`, the root route renders that client's intake instead of
@@ -127,9 +141,11 @@ function App() {
               + UTM attribution. */}
           <Route path="/start" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
-          {/* 2026-06-04 PODCAST-PREP: /challenge was a retired $97 Monday cohort
-              with a still-live Stripe link. Redirected to home to prevent paid
-              fulfillment of a product that no longer exists. */}
+          {/* 2026-07-04: /challenge RETIRED. The page was the May pre-launch
+              build (price-jump countdowns, 50-seat caps, Monday 10 PM copy,
+              expired RestoreHER ticket bonus, signup form whose endpoint now
+              410s) — fake scarcity on a trust brand. The $97 shadow seat is
+              sold by direct Stripe link from the tier-1 Day-20 email instead. */}
           <Route path="/challenge" element={<Navigate to="/" replace />} />
 
           {/* Practice Launcher — three-stage funnel (standalone, no SiteLayout) */}
@@ -160,6 +176,16 @@ function App() {
           <Route path="/about/joel" element={<SiteLayout><AboutJoelPage /></SiteLayout>} />
           <Route path="/about" element={<Navigate to="/about/joel" replace />} />
 
+          {/* Inline checkout for the new Triangle kits. Every BP buy CTA points
+              at /pay?tier=corner&corner=<corner>; charges inline (no redirect).
+              Wrapped in SiteLayout for the nav/footer. */}
+          <Route path="/pay" element={<SiteLayout><PayPage /></SiteLayout>} />
+
+          {/* Post-purchase Triangle landing. The inline checkout's return_url is
+              /welcome?tier=<tier>. Shows the buyer's unlocked kit + locked higher
+              tiers with difference-priced upgrade CTAs. Wrapped in SiteLayout. */}
+          <Route path="/welcome" element={<SiteLayout><WelcomePage /></SiteLayout>} />
+
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/upsell-bp-reset-kit" element={<UpsellBpResetKitPage />} />
@@ -176,8 +202,24 @@ function App() {
               before SPA fallback runs). */}
           <Route path="/library" element={<DownloadsPage />} />
 
-          {/* 1:1 BP Triangle Premium waitlist application — $1,297 tier, application-gated */}
-          <Route path="/1on1" element={<WaitlistApplicationPage />} />
+          {/* $297 case review — "Joel's Eyes On Your Case". Sales page with a
+              live capacity read (/api/case-review-slots) + the post-purchase
+              landing the Stripe payment link redirects to. The confirmed page
+              used to 404 (no route), dumping fresh $297 buyers back on the
+              homepage sales letter. Both wrapped in SiteLayout. */}
+          <Route path="/case-review" element={<SiteLayout><CaseReviewPage /></SiteLayout>} />
+          <Route path="/case-review-confirmed" element={<SiteLayout><CaseReviewConfirmedPage /></SiteLayout>} />
+
+          {/* /score — tokenized saved-result page for email links:
+              /score?e=<email>&t=<token> → GET /api/score-get. Gentle fallback
+              to /quiz when the token is invalid or expired. */}
+          <Route path="/score" element={<SiteLayout><ScorePage /></SiteLayout>} />
+
+          {/* /1on1 — 2026-07-03: redirects to /coaching. The old
+              WaitlistApplicationPage quoted a stale $1,297 single-pay price
+              while /coaching lists the live $1,500+ tiers; two conflicting
+              prices were reachable at once. File kept for history. */}
+          <Route path="/1on1" element={<Navigate to="/coaching" replace />} />
           {/* /apply — private coaching application questionnaire (2026-06-09,
               replaces the old redirect to /1on1). Serves the $1,997 90-Day
               Group + the four 1:1 tiers; ?tier=<slug> preselects (ninety /

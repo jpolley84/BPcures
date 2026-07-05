@@ -23,6 +23,14 @@ const BPCURES_STORE_ID = 'store_01KMDAKJZB6N0ZDEJSXWDBRNBN';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
+const THIRTY_DAYS_MS = 30 * ONE_DAY_MS;
+
+// Governing metric target: trailing-30d revenue per captured email.
+const REV_PER_EMAIL_TARGET = 6;
+// Case reviews Joel takes per calendar month (honest capacity, not fake scarcity).
+const CASE_REVIEW_MONTHLY_CAP = 5;
+// SLA: awaiting_review older than this many business days = overdue.
+const CASE_REVIEW_SLA_BUSINESS_DAYS = 2;
 
 let _resend = null;
 function getResend() {
@@ -60,6 +68,48 @@ async function fetchStripeChargesLast24h() {
     startingAfter = data.data[data.data.length - 1]?.id;
   }
   return { charges };
+}
+
+// Trailing-30d charges for the governing metric. Capped at 3 pages (300
+// charges) to stay inside the function budget; current volume is ~140/30d.
+// `truncated: true` means more charges exist beyond the cap.
+async function fetchStripeCharges30d() {
+  const sinceSec = Math.floor((Date.now() - THIRTY_DAYS_MS) / 1000);
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) return { error: 'STRIPE_SECRET_KEY missing', charges: [], truncated: false };
+
+  const charges = [];
+  let startingAfter = null;
+  let truncated = false;
+  for (let i = 0; i < 3; i++) {
+    const url = new URL('https://api.stripe.com/v1/charges');
+    url.searchParams.set('created[gte]', String(sinceSec));
+    url.searchParams.set('limit', '100');
+    if (startingAfter) url.searchParams.set('starting_after', startingAfter);
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (!res.ok) {
+      return { error: `Stripe 30d ${res.status}: ${await res.text()}`, charges, truncated };
+    }
+    const data = await res.json();
+    charges.push(...data.data);
+    if (!data.has_more) break;
+    if (i === 2) truncated = true;
+    startingAfter = data.data[data.data.length - 1]?.id;
+  }
+  return { charges, truncated };
+}
+
+// Detect charges that belong to the OTHER venture on the shared Stripe account
+// (RestoreHER / everydaynurse). Metadata-only disambiguation; anything we
+// cannot detect stays counted, so the metric is labeled accordingly.
+const OTHER_FUNNEL_RE = /restoreher|everydaynurse|hormone|annie/i;
+function isOtherFunnelCharge(c) {
+  const hay = `${c.description || ''} ${c.statement_descriptor || ''} ${Object.values(
+    c.metadata || {}
+  ).join(' ')}`;
+  return OTHER_FUNNEL_RE.test(hay);
 }
 
 async function fetchStripeDisputesLast24h() {
@@ -229,6 +279,145 @@ function classifyDrip(records) {
   };
 }
 
+// ─── KV: generic capped SCAN + fetch (bwbp namespaces) ────────────────
+
+// Same SCAN-cursor drain as scanDripRecords, but generic and hard-capped so a
+// growing namespace can never blow the function budget. `truncated: true`
+// means the cap was hit and the counts below it are a floor, not a total.
+async function scanNamespaceRecords(match, maxKeys) {
+  if (!process.env.KV_REST_API_URL) {
+    return { error: 'KV_REST_API_URL missing', records: [], truncated: false };
+  }
+  try {
+    const keys = [];
+    let scanCursor = 0;
+    let truncated = false;
+    do {
+      const [next, batch] = await kv.scan(scanCursor, { match, count: 500 });
+      keys.push(...batch);
+      scanCursor = next;
+      if (keys.length >= maxKeys) {
+        truncated = String(scanCursor) !== '0';
+        break;
+      }
+    } while (String(scanCursor) !== '0');
+    const capped = keys.slice(0, maxKeys);
+    const records = [];
+    const BATCH = 100;
+    for (let i = 0; i < capped.length; i += BATCH) {
+      const chunk = capped.slice(i, i + BATCH);
+      const values = await kv.mget(...chunk);
+      for (let j = 0; j < values.length; j++) {
+        if (values[j]) records.push(values[j]);
+      }
+    }
+    return { records, truncated };
+  } catch (err) {
+    return { error: err.message, records: [], truncated: false };
+  }
+}
+
+// ─── Governing metric: trailing-30d revenue per captured email ────────
+
+function toMs(iso) {
+  if (!iso) return 0;
+  const t = new Date(iso).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+
+// A "captured email" = a drip record whose signup timestamp falls in the
+// window. Legacy records stamp enrolledAt; triangle (bwbp:drip:) records stamp
+// enrolledAt + stateEnteredAt. This counts new records, which is a slight
+// undercount of raw captures (re-submits do not create records) — labeled as
+// such in the email.
+function countRecentCaptures(records, cutoffMs) {
+  let n = 0;
+  for (const r of records) {
+    if (!r || !r.email) continue;
+    const t = toMs(r.enrolledAt) || toMs(r.stateEnteredAt) || toMs(r.createdAt);
+    if (t && t > cutoffMs) n++;
+  }
+  return n;
+}
+
+function computeGoverningMetric({ stripe30d, legacyRecords, triangleRes }) {
+  const cutoffMs = Date.now() - THIRTY_DAYS_MS;
+  const succeeded = (stripe30d.charges || []).filter(
+    (c) => c.status === 'succeeded' && !c.refunded
+  );
+  const otherFunnel = succeeded.filter(isOtherFunnelCharge);
+  const counted = succeeded.filter((c) => !isOtherFunnelCharge(c));
+  const revenue = counted.reduce((acc, c) => acc + (c.amount || 0), 0) / 100;
+  const excludedRevenue = otherFunnel.reduce((acc, c) => acc + (c.amount || 0), 0) / 100;
+
+  const legacyLeads = countRecentCaptures(legacyRecords || [], cutoffMs);
+  const triangleLeads = countRecentCaptures(triangleRes.records || [], cutoffMs);
+  const leads = legacyLeads + triangleLeads;
+
+  return {
+    revenue,
+    chargeCount: counted.length,
+    excludedCount: otherFunnel.length,
+    excludedRevenue,
+    leads,
+    legacyLeads,
+    triangleLeads,
+    perEmail: leads > 0 ? revenue / leads : null,
+    target: REV_PER_EMAIL_TARGET,
+    stripeTruncated: !!stripe30d.truncated,
+    leadsTruncated: !!triangleRes.truncated,
+  };
+}
+
+// ─── Case-review SLA (bwbp:casereview:*) ──────────────────────────────
+
+// Full business days elapsed since `iso` (UTC days, Mon–Fri). The day of
+// purchase itself does not count; each completed weekday after it does.
+function businessDaysSince(iso) {
+  const startMs = toMs(iso);
+  if (!startMs) return 0;
+  const cursor = new Date(startMs);
+  cursor.setUTCHours(0, 0, 0, 0);
+  cursor.setUTCDate(cursor.getUTCDate() + 1);
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  let count = 0;
+  while (cursor <= today) {
+    const dow = cursor.getUTCDay();
+    if (dow !== 0 && dow !== 6) count++;
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return count;
+}
+
+// Month key in CDT (UTC-5), matching fmtTime's convention.
+function cdtMonthKey(dateLike) {
+  const t = dateLike instanceof Date ? dateLike.getTime() : toMs(dateLike);
+  if (!t) return '';
+  const shifted = new Date(t - 5 * 60 * 60 * 1000);
+  return `${shifted.getUTCFullYear()}-${String(shifted.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+function classifyCaseReviews(records) {
+  const thisMonth = cdtMonthKey(new Date());
+  const awaiting = [];
+  const overdue = [];
+  let monthCount = 0;
+  for (const r of records) {
+    if (!r || !r.email) continue;
+    if (r.confirmedAt && cdtMonthKey(r.confirmedAt) === thisMonth) monthCount++;
+    if (r.status === 'awaiting_review') {
+      awaiting.push(r);
+      const days = businessDaysSince(r.confirmedAt);
+      if (days > CASE_REVIEW_SLA_BUSINESS_DAYS) {
+        overdue.push({ ...r, businessDays: days });
+      }
+    }
+  }
+  overdue.sort((a, b) => toMs(a.confirmedAt) - toMs(b.confirmedAt));
+  return { awaiting, overdue, monthCount };
+}
+
 // ─── KV: coaching-app:* (cohort2 applicants) ──────────────────────────
 
 async function scanCohort2Applicants() {
@@ -292,7 +481,7 @@ function escapeHtml(s) {
 }
 
 function renderHtml(data) {
-  const { stripe, drip, cohort2, cron, scannedCount } = data;
+  const { stripe, drip, cohort2, cron, scannedCount, gov, caseReview } = data;
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
   const buyerRows = stripe.succeeded
@@ -339,6 +528,52 @@ function renderHtml(data) {
         .join('')
     : '<p style="color:#9A9A9A;font-style:italic;margin:0;">No big-ticket purchases ($50+) last 24h.</p>';
 
+  // Governing metric pane. perEmail null = no leads counted (shows n/a).
+  const perEmailStr = gov.perEmail === null ? 'n/a' : fmtMoney(gov.perEmail);
+  const perEmailColor =
+    gov.perEmail === null ? '#7A7A7A' : gov.perEmail >= gov.target ? '#4A6741' : '#B85A36';
+  const govNotes = [
+    `Revenue = Stripe succeeded charges, last 30d (${gov.chargeCount} counted)`,
+    gov.excludedCount > 0
+      ? `${gov.excludedCount} other-funnel charge${gov.excludedCount === 1 ? '' : 's'} excluded (${fmtMoney(gov.excludedRevenue)})`
+      : 'no other-funnel charges detected',
+    gov.stripeTruncated ? '⚠ charge list capped at 300, revenue is a floor' : null,
+    `Leads (proxy) = new drip records last 30d by signup date (legacy ${gov.legacyLeads} + triangle ${gov.triangleLeads}); re-submits not counted`,
+    gov.leadsTruncated ? '⚠ triangle lead scan hit its cap, lead count is a floor' : null,
+  ]
+    .filter(Boolean)
+    .join(' &middot; ');
+
+  const govBlock = `
+        <table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;background:#F5F1E8;border-radius:10px;margin-bottom:10px;">
+          <tr>
+            <td style="padding:12px 14px;font-size:13px;color:#5A5A5A;">Revenue (30d)<br/><span style="font-size:20px;font-weight:700;color:#2C3E50;">${fmtMoney(gov.revenue)}</span></td>
+            <td style="padding:12px 14px;font-size:13px;color:#5A5A5A;">Emails captured (30d)<br/><span style="font-size:20px;font-weight:700;color:#2C3E50;">${gov.leads}</span></td>
+            <td style="padding:12px 14px;font-size:13px;color:#5A5A5A;">$ per email<br/><span style="font-size:20px;font-weight:700;color:${perEmailColor};">${perEmailStr}</span></td>
+            <td style="padding:12px 14px;font-size:13px;color:#5A5A5A;">Target<br/><span style="font-size:20px;font-weight:700;color:#2C3E50;">${fmtMoney(gov.target)}</span></td>
+          </tr>
+        </table>
+        <p style="font-size:11px;color:#9A9A9A;line-height:1.5;margin:0 0 4px;">${govNotes}</p>`;
+
+  // Case-review SLA pane.
+  const slotColor = caseReview.monthCount >= CASE_REVIEW_MONTHLY_CAP ? '#C53030' : '#4A6741';
+  const overdueBlock = caseReview.overdue.length
+    ? caseReview.overdue
+        .map(
+          (r) =>
+            `<div style="background:#FCE7E7;border-left:3px solid #C53030;padding:10px 14px;margin-bottom:8px;border-radius:6px;font-size:13px;">⚠ OVERDUE case review: <a href="mailto:${escapeHtml(r.email)}" style="color:#C53030;font-weight:600;">${escapeHtml(r.email)}</a>, purchased ${escapeHtml((r.confirmedAt || '').slice(0, 10) || 'unknown date')} (${r.businessDays} business days ago)</div>`
+        )
+        .join('')
+    : '<p style="color:#9A9A9A;font-style:italic;margin:0 0 8px;">No overdue case reviews. SLA is 2 business days.</p>';
+  const caseReviewBlock = `
+        ${caseReview.error ? `<p style="font-size:12px;color:#C53030;margin:0 0 8px;">⚠ case-review scan failed: ${escapeHtml(caseReview.error)}</p>` : ''}
+        ${overdueBlock}
+        <table cellpadding="0" cellspacing="0" style="width:100%;font-size:13px;color:#3A3A3A;background:#FAFAFA;border-radius:8px;">
+          <tr><td style="padding:6px 10px;">Slots used this month (cap ${CASE_REVIEW_MONTHLY_CAP})</td><td style="padding:6px 10px;text-align:right;font-weight:600;color:${slotColor};">${caseReview.monthCount} of ${CASE_REVIEW_MONTHLY_CAP}</td></tr>
+          <tr><td style="padding:6px 10px;">Awaiting review (all time)</td><td style="padding:6px 10px;text-align:right;font-weight:600;">${caseReview.awaiting.length}</td></tr>
+          <tr><td style="padding:6px 10px;">Case-review records scanned</td><td style="padding:6px 10px;text-align:right;color:#7A7A7A;">${caseReview.scannedCount}${caseReview.truncated ? ' (capped)' : ''}</td></tr>
+        </table>`;
+
   const cronRows = Object.entries(cron)
     .map(([flag, firedAt]) => {
       const status = firedAt
@@ -357,6 +592,11 @@ function renderHtml(data) {
       <tr><td style="padding:24px 28px 8px;">
         <div style="font-family:Georgia,serif;font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;">BraveWorks Daily Digest</div>
         <div style="font-size:14px;color:#7A7A7A;margin-top:4px;">${escapeHtml(today)} &middot; covers the last 24 hours</div>
+      </td></tr>
+
+      <tr><td style="padding:20px 28px 0;">
+        <h2 style="font-family:Georgia,serif;font-size:22px;font-weight:500;margin:0 0 14px;color:#2C3E50;">🎯 Governing Metric: revenue per captured email (trailing 30d)</h2>
+        ${govBlock}
       </td></tr>
 
       <tr><td style="padding:20px 28px 0;">
@@ -391,6 +631,11 @@ function renderHtml(data) {
               ${stripe.failedCount > 0 ? `<strong>${stripe.failedCount}</strong> failed charge${stripe.failedCount === 1 ? '' : 's'}` : ''}
             </div>`
           : ''}
+      </td></tr>
+
+      <tr><td style="padding:20px 28px 0;">
+        <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin:0 0 10px;color:#2C3E50;">🩹 Case-Review SLA ($297)</h2>
+        ${caseReviewBlock}
       </td></tr>
 
       <tr><td style="padding:20px 28px 0;">
@@ -445,6 +690,8 @@ function renderHtml(data) {
 
 // ─── Handler ──────────────────────────────────────────────────────────
 
+export const config = { maxDuration: 60 };
+
 export default async function handler(req, res) {
   if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'unauthorized' });
@@ -453,21 +700,40 @@ export default async function handler(req, res) {
   const startedAt = Date.now();
   const errors = [];
 
-  // Parallel fetches where possible
-  const [stripeRes, disputesRes, dripRes, cohort2Apps, cronFlags] = await Promise.all([
-    fetchStripeChargesLast24h().catch((e) => ({ error: e.message, charges: [] })),
-    fetchStripeDisputesLast24h().catch(() => []),
-    scanDripRecords().catch((e) => ({ error: e.message, records: [] })),
-    scanCohort2Applicants().catch(() => []),
-    checkCronHealth().catch(() => ({})),
-  ]);
+  // Parallel fetches where possible.
+  // Caps: bwbp:drip:* at 6,000 keys, bwbp:casereview:* at 500 keys — both far
+  // above current volume; truncation is flagged in the email if ever hit.
+  const [stripeRes, disputesRes, dripRes, cohort2Apps, cronFlags, stripe30dRes, triangleRes, caseReviewRes] =
+    await Promise.all([
+      fetchStripeChargesLast24h().catch((e) => ({ error: e.message, charges: [] })),
+      fetchStripeDisputesLast24h().catch(() => []),
+      scanDripRecords().catch((e) => ({ error: e.message, records: [] })),
+      scanCohort2Applicants().catch(() => []),
+      checkCronHealth().catch(() => ({})),
+      fetchStripeCharges30d().catch((e) => ({ error: e.message, charges: [], truncated: false })),
+      scanNamespaceRecords('bwbp:drip:*', 6000).catch((e) => ({ error: e.message, records: [], truncated: false })),
+      scanNamespaceRecords('bwbp:casereview:*', 500).catch((e) => ({ error: e.message, records: [], truncated: false })),
+    ]);
 
   if (stripeRes.error) errors.push(`stripe: ${stripeRes.error}`);
   if (dripRes.error) errors.push(`drip: ${dripRes.error}`);
+  if (stripe30dRes.error) errors.push(`stripe-30d: ${stripe30dRes.error}`);
+  if (triangleRes.error) errors.push(`triangle-drip: ${triangleRes.error}`);
+  if (caseReviewRes.error) errors.push(`case-review: ${caseReviewRes.error}`);
 
   const stripe = classifyCharges(stripeRes.charges || []);
   stripe.disputes = disputesRes;
   const drip = classifyDrip(dripRes.records || []);
+
+  const gov = computeGoverningMetric({
+    stripe30d: stripe30dRes,
+    legacyRecords: dripRes.records || [],
+    triangleRes,
+  });
+  const caseReview = classifyCaseReviews(caseReviewRes.records || []);
+  caseReview.error = caseReviewRes.error || null;
+  caseReview.truncated = !!caseReviewRes.truncated;
+  caseReview.scannedCount = (caseReviewRes.records || []).length;
 
   const data = {
     stripe,
@@ -475,6 +741,8 @@ export default async function handler(req, res) {
     cohort2: cohort2Apps,
     cron: cronFlags,
     scannedCount: (dripRes.records || []).length,
+    gov,
+    caseReview,
   };
 
   let html = renderHtml(data);
@@ -507,6 +775,11 @@ export default async function handler(req, res) {
         newSeminar: drip.newSeminarSignups.length,
         stalled: drip.stalledDrips.length,
         scanned: data.scannedCount,
+        revenue30d: gov.revenue,
+        leads30d: gov.leads,
+        revPerEmail30d: gov.perEmail,
+        caseReviewOverdue: caseReview.overdue.length,
+        caseReviewMonthSlots: caseReview.monthCount,
       },
       errors,
       runtimeMs: Date.now() - startedAt,

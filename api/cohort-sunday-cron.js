@@ -79,6 +79,13 @@ ${ctaButtonHtml('Apply before 11:59 PM tonight →')}
 }
 
 export default async function handler(req, res) {
+  // 2026-06-23 SAFETY GUARD: this one-shot final-call broadcast is DISABLED.
+  // Dated May 17 2026, retired $6,997 price + "Monday 8 PM ET" call. The date
+  // gate below already blocks it; this hard guard prevents any accidental
+  // re-fire. Not scheduled in vercel.json. Leave disabled.
+  if (process.env.COHORT_SUNDAY_CRON_ENABLED !== '1') {
+    return res.status(200).json({ ok: true, disabled: true, reason: 'cohort-sunday-cron disabled (expired one-shot)' });
+  }
   if (!isAuthorizedCron(req)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }

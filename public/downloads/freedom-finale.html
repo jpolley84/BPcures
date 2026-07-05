@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>The Freedom Finale, Days 26 to 30</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #C8A252; }
+  * { box-sizing: border-box; }
+
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 19mm;
+    @bottom-center {
+      content: "BraveWorks BP    .    Education alongside your doctor, never instead.";
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      color: #7A7061;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #7A7061;
+    }
+  }
+  /* The cover prints full-bleed-ish with no running footer or number. */
+  @page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+  /* The one page doctor sheet: tighter margins so it stays on a single page,
+     and no page number (it is a printable hand-out, not a booklet). */
+  @page plain { margin: 14mm 15mm 12mm; @bottom-right { content: ""; } @bottom-center { content: ""; } }
+
+  html { background: #F7F3EC; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #2B2824;
+    line-height: 1.62;
+    font-size: 11.3pt;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover page ───────────────────────────────────────────────── */
+  .cover {
+    page: cover;
+    position: relative;
+    height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% 8%, #FBF8F1 0%, #F7F3EC 55%, #EFE8DB 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26mm 22mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .cover::before {
+    /* a hairline frame, inset, like a fine book jacket */
+    content: "";
+    position: absolute;
+    inset: 11mm;
+    border: 1px solid var(--accent);
+    opacity: 0.32;
+    border-radius: 3px;
+  }
+  .cover__kicker {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  .cover__tri { margin: 4px 0 30px; }
+  .cover__title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #121110;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .cover__rule {
+    width: 54px;
+    height: 2px;
+    background: var(--accent);
+    margin: 6px auto 18px;
+    border: 0;
+  }
+  .cover__subtitle {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14pt;
+    line-height: 1.5;
+    color: #2B2824;
+    max-width: 34ch;
+    margin: 0 auto 30px;
+  }
+  .cover__author {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    letter-spacing: 0.04em;
+    color: #121110;
+    font-weight: 600;
+  }
+  .cover__author small {
+    display: block;
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7A7061;
+    margin-top: 6px;
+  }
+  .cover__brand {
+    position: absolute;
+    bottom: 17mm;
+    left: 0;
+    right: 0;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7A7061;
+  }
+
+  /* ── Body / interior ──────────────────────────────────────────── */
+  .doc { padding-top: 2mm; }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 21pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #121110;
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 15.5pt;
+    line-height: 1.2;
+    color: #121110;
+    margin: 26px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid #D8CFBD;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 18px 0 6px;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 11px; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  li::marker { color: var(--accent); }
+  strong { color: #121110; font-weight: 700; }
+  em { color: #2B2824; }
+  a { color: var(--accent); text-decoration: none; }
+  hr { border: 0; border-top: 1px solid #E8E1D1; margin: 22px 0; }
+
+  /* The intro kicker line at the very top of the interior. */
+  .eyebrow {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8.5pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  /* ── Day card: each "## Day N" becomes a bordered card with a big
+       accent number and a phase tag. The transform tags these. ── */
+  .daycard {
+    border: 1px solid #D8CFBD;
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 18px 22px 6px;
+    margin: 22px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .daycard > h2 {
+    border-top: 0;
+    padding-top: 0;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .daycard .dnum {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 30pt;
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .daycard .dlabel { font-size: 15pt; }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, #FBF8F1);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, #D8CFBD);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin: 2px 0 12px;
+  }
+
+  /* ── "Today's action" callout box (the transform wraps the action line). ── */
+  .action {
+    border: 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 9%, #FBF8F1);
+    border-left: 4px solid var(--accent);
+    padding: 13px 17px;
+    margin: 13px 0 15px;
+    page-break-inside: avoid;
+  }
+  .action .action__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 5px;
+  }
+  .action .action__b {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 10.8pt;
+    line-height: 1.5;
+    color: #121110;
+    margin: 0;
+  }
+  .action .action__b strong { color: #121110; }
+
+  /* ── Pull-quote (villain / loop / Barbara O'Neill lines). ── */
+  blockquote, .pullquote {
+    margin: 18px 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14.5pt;
+    line-height: 1.4;
+    color: #121110;
+    page-break-inside: avoid;
+  }
+  blockquote p, .pullquote p { margin: 0; }
+
+  /* ── Tables (formulary + doctor-sheet question grids). ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.4pt;
+    line-height: 1.5;
+    page-break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th {
+    background: var(--accent);
+    color: #FBF8F1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 8.6pt;
+    letter-spacing: 0.04em;
+    padding: 9px 11px;
+    vertical-align: top;
+  }
+  td {
+    border-bottom: 1px solid #E8E1D1;
+    padding: 9px 11px;
+    vertical-align: top;
+    color: #2B2824;
+  }
+  tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--accent) 4%, #FBF8F1); }
+  td strong { color: #121110; }
+
+  /* ── Generic accent panel (intro frames, safety notes, finale rungs). ── */
+  .panel {
+    background: #EFE8DB;
+    border: 1px solid #D8CFBD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .panel--accent { border-left: 4px solid var(--accent); }
+  .panel__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 7px;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .lede {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0 0 16px;
+  }
+
+  /* ── Closing "About Joel" page. ── */
+  .about {
+    page-break-before: always;
+    margin-top: 6mm;
+  }
+  .about__card {
+    background: #121110;
+    color: #F7F3EC;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .about__card .cover__kicker { color: #C8A252; }
+  .about__card h2 {
+    color: #F7F3EC;
+    border-top: 0;
+    padding-top: 0;
+    margin: 6px 0 14px;
+    font-size: 19pt;
+  }
+  .about__card p { color: #E6DECD; font-size: 10.6pt; }
+  .about__card .sig {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 16pt;
+    color: #C8A252;
+    margin-top: 18px;
+  }
+  .about__tri { margin: 8px auto 18px; }
+
+  /* ── Fine print / compliance footer line at the document foot. ── */
+  .finePrint {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid #E8E1D1;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #7A7061;
+  }
+
+  /* ── Doctor-sheet specifics: a tight, single-page, fill-in feel. ──
+     Everything in here is scoped to .sheet so the protocol + formulary
+     layouts are untouched; the rhythm is compressed to hold one Letter page. */
+  .sheet { page: plain; font-size: 10.4pt; line-height: 1.46; }
+  .sheet h1 { font-size: 18pt; margin-bottom: 4px; }
+  .sheet .eyebrow { margin-bottom: 8px; }
+  .sheet .lede { font-size: 10.6pt !important; line-height: 1.4; margin-bottom: 9px !important; }
+  .sheet .qlist + p { margin-top: 5px !important; }
+  .sheet .field {
+    border: 1px solid #D8CFBD;
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin: 8px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .sheet .field__label {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .sheet .writeline {
+    border-bottom: 1px solid #D8CFBD;
+    height: 13px;
+    margin-top: 7px;
+  }
+  .sheet .qlist { list-style: none; padding: 0; margin: 4px 0 0; }
+  .sheet .qlist li {
+    position: relative;
+    padding-left: 17px;
+    margin-bottom: 5px;
+    font-size: 9.5pt;
+    line-height: 1.38;
+  }
+  .sheet .qlist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .sheet .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .sheet .colhead {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 12pt;
+    color: #121110;
+    margin: 11px 0 5px;
+    padding-top: 9px;
+    border-top: 2px solid var(--accent);
+  }
+  .sheet .two-col { gap: 16px; }
+  .sheet .finePrint { margin-top: 10px; padding-top: 8px; font-size: 7.5pt; line-height: 1.42; }
+  .sheet .panel { margin: 8px 0; padding: 9px 13px; }
+  .sheet .panel p { font-size: 9.3pt !important; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover__kicker">The capstone of the BP Triangle Reset</div>
+    <div class="cover__tri"><svg viewBox="0 0 200 184" width="232" height="213.44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5" fill="#4A5D4E" opacity="1"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="1"/>
+    <circle cx="172" cy="152" r="5" fill="#B85A36" opacity="1"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="1">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="1">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="1">Sugar</text>
+    </g>
+  </svg></div>
+    <h1 class="cover__title">The Freedom Finale, Days 26 to 30</h1>
+    <hr class="cover__rule"/>
+    <p class="cover__subtitle">Graduate from daily policing to a body you trust, with your doctor right beside you.</p>
+    <div class="cover__author">by Joel Polley, RN<small>BraveWorks RN  .  Registered Nurse, Naturopathic Practitioner</small></div>
+    <div class="cover__brand">The BP Triangle  .  Stress  .  Sugar  .  Sodium</div>
+  </section>
+<div class="doc"><p class="eyebrow">The BP Triangle Reset</p>
+<h1>The Freedom Finale (Days 26 to 30)</h1>
+<p class="lede">The capstone of the BP Triangle Reset. The customer has traveled all three corners: they found the cause, eliminated it, and added the supports. Now they learn to graduate. This is the anti-&quot;management&quot; payoff, and the most compliance-sensitive module in the kit. Joel Polley, RN voice. Education alongside your doctor, never instead.</p>
+<p><strong>One line before you read it:</strong> Nothing in this module is permission to change a medication. Medication decisions belong to you and your doctor, together, full stop. What you graduate from here is the fear and the daily policing. Your doctor stays your ally the whole way.</p>
+<hr>
+<h2>F1. The Graduation Mindset</h2>
+<p>Stop for a second and look at what you actually did.</p>
+<p>You did not &quot;try something healthy.&quot; You ran a method. At your loudest corner you found the cause and named it in plain English. Then you eliminated the inputs feeding it. Then you added the practices, the foods, and the herbs that help the body do its own work. Then you did it again at the next corner, and the next, until all three were calm. You closed the loop. The number on the cuff started telling a different story because you changed what was upstream of it.</p>
+<p>That is the whole game, and most people never play it. Most people are handed a different story on day one. The story is: this number is broken, it will always be broken, and your job for the next thirty years is to manage it with a pill and hope it does not get worse. That story has a quiet assumption buried in it, that your body is the problem. It is not. Your body was responding, correctly, to the inputs it was given. Genetics may write the recipe, but lifestyle bakes the cake, and for thirty days you have been baking a different cake.</p>
+<p>Here is the reframe that this entire kit was built to deliver. The system <em>manages an effect.</em> You went after the <em>cause.</em> Management is a treadmill with no exit, a number you watch forever while the thing driving it sits untouched. What you did is the opposite. You did not learn to live with the loop. You learned how the loop works, and then you took the fuel out of it.</p>
+<p>So the mindset for these last five days is not &quot;I finished a program.&quot; It is &quot;I own a method now.&quot; A body that has been given the right inputs starts to lead again. It regulates. It self-corrects. Barbara O&#39;Neill puts it in one sentence: <em>&quot;The body is designed to heal, just stop interrupting it.&quot;</em> That is the whole graduation in nine words. For thirty days you did not force the body to do anything. You removed what was interrupting it, the stress, the sugar, the sodium, and the body did what it was built to do. Your job shifts from <em>running the protocol</em> to <em>trusting the body you rebuilt,</em> and confirming, calmly, that the trust is earned. That shift, from white-knuckle control to earned trust, is what we mean by freedom. Not freedom from your doctor. Not freedom from care. Freedom from the belief that you are broken and the anxiety that belief breeds.</p>
+<p>You are not a patient managing a condition anymore. You are a person who understands their body and gives it what it needs.</p>
+<hr>
+<h2>F2. Wean the Supports</h2>
+<p>Now the practical part, and the part where I need you to slow down and read every word.</p>
+<p>Two different things can come &quot;down&quot; over time, and we treat them in completely different ways. <strong>The herbs and supports WE added</strong> can be stepped down by you, gradually, as the body holds its own numbers, with your doctor kept in the loop. <strong>Your prescription medication is not in that category.</strong> Medication changes are your doctor&#39;s call, full stop, and we will get to exactly how that conversation works. First, the supports.</p>
+<p>Think of the herbs you layered in as scaffolding, not as a replacement prescription. Scaffolding goes up while a wall is repaired, and once the wall holds its own weight, it comes down. You did not do thirty days of work to trade a pharmaceutical crutch for a supplement crutch and lean on a cabinet of capsules forever. The supports were always temporary help while the body relearned how to regulate.</p>
+<p>This is the oldest principle in the health-reform tradition the NEWSTART approach grew out of: you ascertain the cause, you change the unhealthful conditions, and then nature re-establishes right conditions on her own. The same tradition says it plainly, that nature alone is the effectual restorer. Read that the right way around. The herbs never did the restoring. The herbs were assistants, and the body was the healer. That is <em>precisely why</em> we can step the supports down. A crutch you can never set aside was never scaffolding, it was a second dependency. Real scaffolding is built to come off, because the thing it was holding up has learned to stand.</p>
+<p>So how do you step them down? The same way you stepped them up, in reverse, and just as slowly.</p>
+<ul>
+<li><strong>One at a time, never all at once.</strong> Adding herbs, the rule was one new support per week so you always knew which one did what. Weaning obeys the same rule. Lower one support at a time so that if anything shifts, you know exactly which lever moved it.</li>
+<li><strong>Watch the readings, do not guess.</strong> Before you lower a support, your numbers should already be sitting in a stable, improved range for a couple of weeks, not for two good days. Lower the one support and keep taking your readings. If they hold steady over the next week or two, the body is carrying that load on its own. If they drift up, the body still wants that help, so put it back and give it more time. No failure here, only information.</li>
+<li><strong>Keep your doctor informed the entire way.</strong> Your doctor needs the complete picture of everything you take and everything you stop, because supports and medications interact. Bring the list. Be transparent. You are an informed partner in your own care, not a rogue patient going it alone.</li>
+</ul>
+<p>The honest truth: some bodies wean off most supports quickly, and some keep a couple for the long haul because they genuinely help. Both are wins. The win was never an empty shelf. It is a body that needs less propping up than it did thirty days ago.</p>
+<p>And once more, because it matters more than anything else on this page: none of this applies to your prescription. You do not wean your blood pressure medication on your own, ever. That comes last, it comes slowly, and it comes only from your doctor.</p>
+<hr>
+<h2>F3. Step Down the Monitoring</h2>
+<p>For thirty days you have been checking your blood pressure constantly, and that was exactly right. During any change, the numbers are the only truth, feelings lie, and daily readings were how you proved the method was working. But constant cuff-checking is a tool for the build phase. It is not meant to be the rest of your life.</p>
+<p>There is a version of &quot;healthy&quot; that is secretly just anxiety wearing a lab coat. It looks like checking your pressure six times a day, flinching at every reading, re-taking it because the first one felt too high, lying awake doing math on a number. That is not health. That is policing. And here is the cruel twist your body already knows: the stress of obsessively monitoring your blood pressure can raise your blood pressure. The watching becomes one more input feeding the very loop you just closed.</p>
+<p>This is not a new observation. The same health-reform tradition behind everything you just did named it more than a century ago, that one of the surest hindrances to the recovery of the sick is the centering of attention upon themselves. Sit with that. The anxious, hourly self-focus is not a neutral habit and it is certainly not extra diligence. It is, in plain physiology, a hindrance to the very healing you are trying to confirm. So stepping down the cuff is not you getting lazy or careless. Done on purpose, with a plan, it is itself part of the healing. You are removing the last interrupter, the fear, and letting the body keep doing its work in peace.</p>
+<p>The goal is a body you trust, not a number you police. So as your numbers stabilize, you step the monitoring down on purpose, with a plan.</p>
+<p>A simple step-down cadence:</p>
+<ul>
+<li><strong>While stabilizing (roughly the first weeks):</strong> keep taking readings most days, at the same time, in the same calm conditions. You are confirming the new baseline holds.</li>
+<li><strong>Once stable for two to four weeks:</strong> drop to a few times a week. You are no longer proving anything, you are spot-checking a body that has been behaving.</li>
+<li><strong>Once solidly stable:</strong> move to a calm weekly or monthly check-in, plus a reading any time something genuinely changes, a new stress, a new medication, a season of poor sleep. This is the long-term rhythm.</li>
+</ul>
+<p>What to watch for as you back off: a real, sustained climb across several readings (not one spike after a salty meal or a hard day, one reading is a snapshot, not a verdict), or any new symptoms. If your numbers trend up and stay up, that is not a reason to panic and it is not a reason to change a medication on your own. It is a reason to take a few good readings, write them down, and loop your doctor in. Your data is your power. Your doctor is your ally. You let the numbers do the talking.</p>
+<p>Notice the partnership running through all of this. Stepping down the monitoring is not &quot;stop checking your pressure forever&quot; and it is never done behind your doctor&#39;s back. It is moving from frightened daily surveillance to calm, periodic confirmation, in partnership with the doctor who is on your side. You are trading fear for trust, and you keep one calm hand on the wheel.</p>
+<hr>
+<h2>F4. Keep the Loop Closed</h2>
+<p>You do not need to run the full thirty-day protocol for the rest of your life. You need a small handful of keystone habits, one per corner, that keep each side of the triangle from heating back up. Hold these and the loop stays closed. This is the whole method, distilled to what fits in a normal week.</p>
+<p><strong>STRESS corner, keystone: protect your rest and your peace.</strong> Cortisol was the corner that constricted your vessels and told your kidneys to hold sodium. The single habit that holds this corner is guarding your sleep and your nervous system on purpose: a real wind-down before midnight, time outdoors in the morning sunlight, an unhurried walk, prayer or scripture that settles you, and the deliberate choice to hand off worry instead of marinating in it. Trust is not passive. It is, physiologically, the antidote to the stress chemistry that drives pressure up.</p>
+<p><strong>SUGAR corner, keystone: keep the spikes out.</strong> Insulin was the corner that, like stress, pushed your kidneys to hold sodium and strained your vessels. The habit that holds this corner is simply not inviting the big blood-sugar swings back in: keep the refined sugar and processed carbohydrates as the exception rather than the default, lean on whole plant foods and fiber that let your blood sugar rise and fall gently. You do not have to be perfect. You have to keep the spikes from becoming a daily event again.</p>
+<p><strong>SODIUM corner, keystone: cook your own food.</strong> Sodium was where stress and sugar both converged, plus the salt on your plate, adding fluid and vessel strain. The single habit that holds this corner is the one that quietly fixes most of it: prepare your own food more often than not. The overwhelming majority of excess sodium does not come from your salt shaker, it comes from packaged and restaurant food. When your kitchen is the default, your sodium takes care of itself, and you stay hydrated so your body is not holding fluid out of thirst.</p>
+<p>Three habits. One per corner. Sleep and peace, steady blood sugar, your own cooking. That is the maintenance protocol. Calm all three and your numbers stay home. You can always return to a full corner module for a week as a tune-up, quarterly, or any season the loop starts heating up again. The kit does not expire. But day to day, these three keystones are what hold the gains for life.</p>
+<hr>
+<h2>F5. Graduation and Your Next Step</h2>
+<p>You ran the whole method. You found the cause, you eliminated it, you supported the body, you learned to wean the scaffolding and trade fearful watching for calm confidence. You own this now. Nobody can take it from you.</p>
+<p>First, before anything else: thank you. Genuinely. You trusted a nurse on the internet enough to do thirty days of real work on your own health, and you showed up. That is rare. Whatever your numbers did, the fact that you now understand <em>why</em> they do what they do, and that you will never look at a blood pressure reading as a random verdict again, that is the win I most wanted for you.</p>
+<p>So what comes next? That depends on where you are, and there is no wrong answer.</p>
+<ul>
+<li><p><strong>If you only worked one corner so far,</strong> your triangle is not closed yet. You calmed your loudest corner, but it is a loop, and the other two are still quietly feeding it. The full 30-day triangle plus this Freedom Finale is the <strong>$47</strong> kit, and it is the natural next step to finish what you started. No pressure. The method works on one corner. It just works better when the loop is fully closed.</p>
+</li>
+<li><p><strong>If you want company for the long haul,</strong> come into the community. This was never meant to be a thing you do alone with a PDF. We meet in <strong>Skool</strong>, with a live group call every <strong>Wednesday at 7 PM</strong>, where you can ask questions, share a reading, and stand next to people who are exactly where you were on day one. Your story becomes someone else&#39;s proof.</p>
+</li>
+<li><p><strong>And if you want a plan built around your body specifically,</strong> your history, your readings, your situation, that is what working with me one to one is for. It is <strong>$297</strong>, and it is genuinely not for everyone. It is for the person who wants their own numbers reviewed and their own roadmap built. If that is you, the door is open. If not, you already have everything you need.</p>
+</li>
+</ul>
+<p>Whichever you choose, including &quot;none of the above, I&#39;m just going to live this,&quot; you walk out a graduate. You were told this was genetic, that it could not change, that you would manage a number with a pill forever. You learned the cause, you removed it, and you proved there was another way. Keep the loop closed. Trust the body you rebuilt. And keep your doctor right there beside you the whole way.</p>
+<p>You did this. Go live it.</p>
+<p><em>This module is for educational purposes only and is not medical advice. Always consult your healthcare provider before making any change to your medications or treatment plan.</em></p>
+
+  <section class="about">
+    <div class="about__card">
+      <div class="about__tri"><svg viewBox="0 0 200 184" width="150" height="138" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5" fill="#4A5D4E" opacity="1"/>
+    <circle cx="28" cy="152" r="5" fill="#6B4A58" opacity="1"/>
+    <circle cx="172" cy="152" r="5" fill="#B85A36" opacity="1"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="1">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="1">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="1">Sugar</text>
+    </g>
+  </svg></div>
+      <div class="cover__kicker">A word from your nurse</div>
+      <h2>Joel Polley, RN</h2>
+      <p>I spent twenty years at the ICU and ER bedside, managing blood pressure and blood sugar from the crash-cart side of medicine. What I learned is simple, and it is why BraveWorks exists: when you remove the cause, the effect changes. That is not a health tip. It is a law of physics.</p>
+      <p>I am a registered nurse and a naturopathic practitioner, and I built the Triangle to put the why back in your hands, so a blood pressure reading stops being a verdict and starts being a conversation you understand. Everything here walks alongside your doctor, never instead of your doctor. Your data is your power. Your doctor is your ally.</p>
+      <div class="sig">Keep the loop closed. Go live it.</div>
+    </div>
+    <div class="finePrint">
+      &copy; BraveWorks RN  .  Joel Polley, RN  .  bpquiz.com.
+      For educational purposes only. This is not medical advice, not a diagnosis, and not a prescription.
+      Always consult your healthcare provider before making any change to your medications or treatment plan.
+    </div>
+  </section></div>
+</body></html>

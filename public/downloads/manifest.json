@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-06-26T13:43:01.129Z",
+  "modules": [
+    {
+      "file": "stress.pdf",
+      "corner": "stress",
+      "kind": "protocol",
+      "title": "The Stress Corner, 10-Day Reset",
+      "blurb": "Calm the cortisol that tightens your vessels and tells your kidneys to hold sodium.",
+      "url": "/downloads/stress.pdf"
+    },
+    {
+      "file": "stress-formulary.pdf",
+      "corner": "stress",
+      "kind": "formulary",
+      "title": "The Stress Corner Herb Formulary",
+      "blurb": "Your adrenal and calming herbs, each with dose, why it helps, and the cautions that matter.",
+      "url": "/downloads/stress-formulary.pdf"
+    },
+    {
+      "file": "stress-doctor-sheet.pdf",
+      "corner": "stress",
+      "kind": "doctor-sheet",
+      "title": "Bring This To Your Doctor, Stress Corner",
+      "blurb": "A one page sheet to take to your next visit so you and your doctor read your numbers together.",
+      "url": "/downloads/stress-doctor-sheet.pdf"
+    },
+    {
+      "file": "sugar.pdf",
+      "corner": "sugar",
+      "kind": "protocol",
+      "title": "The Sugar Corner, 10-Day Reset",
+      "blurb": "Steady the blood sugar and insulin that quietly drive your kidneys to hold sodium.",
+      "url": "/downloads/sugar.pdf"
+    },
+    {
+      "file": "sugar-formulary.pdf",
+      "corner": "sugar",
+      "kind": "formulary",
+      "title": "The Sugar Corner Herb Formulary",
+      "blurb": "Your metabolic herbs, each with a safe starting range, why it helps, and the cautions that matter.",
+      "url": "/downloads/sugar-formulary.pdf"
+    },
+    {
+      "file": "sugar-doctor-sheet.pdf",
+      "corner": "sugar",
+      "kind": "doctor-sheet",
+      "title": "Bring This To Your Doctor, Sugar Corner",
+      "blurb": "A one page sheet to take to your next visit so you and your doctor read your numbers together.",
+      "url": "/downloads/sugar-doctor-sheet.pdf"
+    },
+    {
+      "file": "sodium.pdf",
+      "corner": "sodium",
+      "kind": "protocol",
+      "title": "The Sodium Corner, 10-Day Reset",
+      "blurb": "Drain the lake where stress and sugar both empty out, plus the salt on your plate.",
+      "url": "/downloads/sodium.pdf"
+    },
+    {
+      "file": "sodium-formulary.pdf",
+      "corner": "sodium",
+      "kind": "formulary",
+      "title": "The Sodium Corner Herb Formulary",
+      "blurb": "Your vascular herbs and the potassium seesaw, each with use, why it helps, and the cautions.",
+      "url": "/downloads/sodium-formulary.pdf"
+    },
+    {
+      "file": "sodium-doctor-sheet.pdf",
+      "corner": "sodium",
+      "kind": "doctor-sheet",
+      "title": "Bring This To Your Doctor, Sodium Corner",
+      "blurb": "A one page sheet to take to your next visit so you and your doctor read your numbers together.",
+      "url": "/downloads/sodium-doctor-sheet.pdf"
+    },
+    {
+      "file": "freedom-finale.pdf",
+      "corner": null,
+      "kind": "protocol",
+      "title": "The Freedom Finale, Days 26 to 30",
+      "blurb": "Graduate from daily policing to a body you trust, with your doctor right beside you.",
+      "url": "/downloads/freedom-finale.pdf"
+    }
+  ],
+  "tiers": {
+    "entry": {
+      "note": "the buyer's ONE quiz corner: protocol + Herb Formulary + Bring-This-To-Your-Doctor sheet",
+      "corners": [
+        "stress",
+        "sugar",
+        "sodium"
+      ]
+    },
+    "triangle": {
+      "note": "all three corner sets (protocol + formulary + doctor sheet) plus the Freedom Finale",
+      "files": [
+        "stress.pdf",
+        "stress-formulary.pdf",
+        "stress-doctor-sheet.pdf",
+        "sugar.pdf",
+        "sugar-formulary.pdf",
+        "sugar-doctor-sheet.pdf",
+        "sodium.pdf",
+        "sodium-formulary.pdf",
+        "sodium-doctor-sheet.pdf",
+        "freedom-finale.pdf"
+      ]
+    }
+  }
+}

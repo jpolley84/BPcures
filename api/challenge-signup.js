@@ -178,6 +178,16 @@ async function enrollInDripKV(email, name) {
 }
 
 export default async function handler(req, res) {
+  // 2026-06-23 SAFETY GUARD: this endpoint is DISABLED. It sends a stale
+  // launch announcement ("Doors open Friday at 8 AM EST" / "FRIDAY 8 AM.
+  // WATCH INBOX.") for the retired free 30-Day Pressure Triangle Challenge.
+  // The Phase 1 $97 shadow seat is a Stripe-link buy page, not this email
+  // capture, so nothing live should POST here. Returning 410 so any stale
+  // caller fails loudly instead of blasting the old Friday announcement.
+  // Re-enable (and rewrite the announcement copy) only for a real launch.
+  if (process.env.CHALLENGE_SIGNUP_ENABLED !== '1') {
+    return res.status(410).json({ error: 'This signup has closed.', disabled: true });
+  }
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

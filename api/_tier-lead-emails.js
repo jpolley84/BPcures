@@ -1,7 +1,7 @@
 // _tier-lead-emails.js — LEAD state sequence ($0, pre-purchase).
 //
 // Audience: just gave email via quiz / lead-magnet / exit-popup. State = `lead`.
-// Goal: teach the BP Triangle (2 emails per corner) while making the $17
+// Goal: teach the BP Triangle (Stress / Sugar / Sodium) while making the $27
 //   Starter Kit the unbroken primary ask. Day 3 carries the $12.99 Reset
 //   Companion, Day 16 the $27/mo Weekly Reset (first 7 days free), Day 19
 //   the flat $297 Sprint ($1,997 cohort reply-gated behind the word NINETY),
@@ -26,8 +26,8 @@ export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
 // Active Stripe links used in this sequence. SPRINT_URL is the flat-$297
-// lead link — NEVER the $280-credit link (that one is for kit buyers only).
-export const KIT_URL        = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A'; // $17 BP Starter Kit
+// lead link — NEVER the $270-credit link (that one is for kit buyers only).
+export const KIT_URL        = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A'; // $27 BP Starter Kit
 export const RESET_KIT_URL  = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k'; // $47 BP Reset Kit (live rung)
 export const COMPANION_URL  = 'https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02'; // $12.99 The 10-Day Nurse's Reset Companion
 export const SPRINT_URL     = 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O'; // $297 30-Day Personalized Sprint, flat
@@ -170,19 +170,20 @@ const day0 = {
     ${bigQuote('Your map: The BP Triangle Method.')}
     ${p(`Here's the picture I want in your head. Imagine a sink that's overflowing. You can mop the floor all day. That's what a medication does, and thank God for it, because it keeps the water from ruining the house. But the sink is still overflowing. Why? Because three faucets are pouring into it.`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The three faucets (the Three Pressures)</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Stress Pressure</strong>: cortisol. Your foot is stuck on the gas. Sleep is light, mornings are tight, the alarm goes off and your shoulders are already at your ears.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Sugar Pressure</strong>: insulin. White bread, cereal, the 3 PM cookie. This faucet spikes your numbers harder than the salt shaker ever will.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Pipe Pressure</strong>: your vessels. Less elastic. Stiff. Constricted. The pipes the water has to push through.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The three faucets: Stress, Sugar, Sodium</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Stress</strong>: cortisol. Your foot is stuck on the gas. Sleep is light, mornings are tight, the alarm goes off and your shoulders are already at your ears. And cortisol tells your kidneys to hold sodium.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Sugar</strong>: insulin. White bread, cereal, the 3 PM cookie. Insulin also tells your kidneys to hold sodium, which is why this faucet spikes your numbers harder than you would think.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Sodium</strong>: the held water. Held sodium pulls extra fluid into the line and strains the vessel walls. More water in the pipe, more pressure on the gauge. Each corner feeds the other two.</p>
     `)}
-    ${p(`Most plans turn down one faucet and wonder why the sink still overflows. The Triangle turns down all three, and it works <strong>alongside</strong> your medication and your doctor, never instead of them. Mop the floor AND turn off the faucets. That's the whole idea.`)}
+    ${p(`See the loop? Stress holds sodium. Sugar holds sodium. Sodium holds water. Calm all three and your numbers come home. Most plans turn down one faucet and wonder why the sink still overflows. The Triangle turns down all three, and it works <strong>alongside</strong> your medication and your doctor, never instead of them. Mop the floor AND turn off the faucets. That's the whole idea.`)}
     ${p(`Almost everyone has one faucet running hardest. Most have two open at once. Once you know which is loudest in you, the work narrows, and so does the worry.`, { margin: '0 0 28px' })}
+    ${p(`And here is the part the system never tells you: the pill hides the number, but it does not touch the loop. That is why blood pressure gets managed for thirty years instead of healed. The Triangle goes after the cause.`)}
     ${p(`Now, you might be thinking: <em>is this just another guru with a "secret"?</em> Fair question. So here's my honest answer: I'm not selling a secret. I'm a nurse who got tired of watching people get mopped and sent home. There's no magic pill in these emails. There's a map, a few small inputs, and proof. You decide.`)}
-    ${p(`Want a head start? The same plan I walk readers through, step by step, is in the BP Starter Kit. Eighteen pages, $17. You could start tonight.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($17)')}
-    ${p(`Here's the rhythm of the next three weeks: a short email every few days. Tomorrow, why I left the ICU. Day 3, a tea that drops 7 systolic points in 6 weeks. Days 5 and 7, your first faucet, the pipes. Read at your own pace. Forward to your daughter, your husband, anyone whose numbers are "creeping up."`, { margin: '0 0 28px' })}
+    ${p(`Want a head start? The same plan I walk readers through, step by step, is in the BP Starter Kit. Eighteen pages, $27. You could start tonight.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($27)')}
+    ${p(`Here's the rhythm of the next three weeks: a short email every few days. Tomorrow, why I left the ICU. Day 3, a tea that drops 7 systolic points in 6 weeks. Days 5 and 7, your first faucet, the sodium and the water in the line. Read at your own pace. Forward to your daughter, your husband, anyone whose numbers are "creeping up."`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Hit reply and tell me which faucet feels loudest in you right now: Stress, Sugar, or Pipe. One word is enough. I read every single reply, and it helps me know what to send you next.`)}
+    ${psBox(`Hit reply and tell me which faucet feels loudest in you right now: Stress, Sugar, or Sodium. One word is enough. I read every single reply, and it helps me know what to send you next.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
   textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
@@ -203,57 +204,59 @@ YOUR MAP: THE BP TRIANGLE METHOD.
 
 Picture a sink that's overflowing. You can mop the floor all day. That's what a medication does, and thank God for it. But the sink keeps overflowing, because THREE FAUCETS pour into it:
 
-- Stress Pressure (cortisol). Foot stuck on the gas. Light sleep, tight mornings.
-- Sugar Pressure (insulin). Bread, cereal, the 3 PM cookie. Spikes numbers harder than the salt shaker.
-- Pipe Pressure (vessels). Stiff, constricted pipes the water pushes through.
+- Stress (cortisol). Foot stuck on the gas. Light sleep, tight mornings. Cortisol tells your kidneys to hold sodium.
+- Sugar (insulin). Bread, cereal, the 3 PM cookie. Insulin also tells your kidneys to hold sodium, which is why it spikes numbers harder than you would think.
+- Sodium (the held water). Held sodium pulls extra fluid into the line and strains the vessel walls. More water in the pipe, more pressure on the gauge.
 
-Most plans turn down ONE faucet. The Triangle turns down all three, alongside your medication and your doctor, never instead. Mop the floor AND turn off the faucets.
+Stress holds sodium. Sugar holds sodium. Sodium holds water. Calm all three and your numbers come home. Most plans turn down ONE faucet. The Triangle turns down all three, alongside your medication and your doctor, never instead. Mop the floor AND turn off the faucets.
+
+And the part the system never tells you: the pill hides the number, but it does not touch the loop. That is why blood pressure gets managed for thirty years instead of healed. The Triangle goes after the cause.
 
 Is this just another guru with a "secret"? Fair question. No secret here. I'm a nurse who got tired of watching people get mopped and sent home. A map, a few small inputs, and proof. You decide.
 
-Want a head start? The same plan I walk readers through, step by step, is in the BP Starter Kit. Eighteen pages, $17. You could start tonight.
+Want a head start? The same plan I walk readers through, step by step, is in the BP Starter Kit. Eighteen pages, $27. You could start tonight.
 → ${KIT_URL}
 
-Next three weeks: a short email every few days. Tomorrow, why I left the ICU. Day 3, a tea that drops 7 points in 6 weeks. Days 5 and 7, the pipes.
+Next three weeks: a short email every few days. Tomorrow, why I left the ICU. Day 3, a tea that drops 7 points in 6 weeks. Days 5 and 7, the sodium and the water in the line.
 
 Joel
 RN, BraveWorks
 
-P.S. Hit reply and tell me which faucet feels loudest: Stress, Sugar, or Pipe. One word is enough. I read every reply.
+P.S. Hit reply and tell me which faucet feels loudest: Stress, Sugar, or Sodium. One word is enough. I read every reply.
 
 ${textFooter(unsubUrl)}
 `,
 };
 
-// ─── DAY 1 — Pipe Pressure #1 (vascular) + ICU origin story ────────────
+// ─── DAY 1 — Sodium #1 (water in the line) + ICU origin story ──────────
 const day1 = {
-  subject: 'A garden hose with crimped walls',
-  subjectB: 'The first faucet: your pipes',
-  preview: 'Why I left the ICU, and what your vessels are doing right now.',
+  subject: 'A garden hose with too much water in it',
+  subjectB: 'The first faucet: sodium and the water in the line',
+  preview: 'Why I left the ICU, and what the water in your vessels is doing right now.',
   htmlBody: ({ firstName, unsubUrl }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Yesterday I showed you the three faucets. Today we open the first one: <strong>Pipe Pressure</strong>, your blood vessels themselves. But first, a quick story, because it's the reason I do this work at all.`)}
+    ${p(`Yesterday I showed you the three faucets. Today we open the first one: <strong>Sodium</strong>, the water in the line. But first, a quick story, because it's the reason I do this work at all.`)}
     ${p(`I spent 20 years as a registered nurse. Most of it in ICU and emergency. I was the person standing over the bed when someone came in at 220 over 130 with a stroke already starting in the brainstem.`)}
     ${p(`Some of those patients came back. Some didn't. But the ones I couldn't stop thinking about weren't the ones who came in dying. Those, we expected.`)}
     ${bigQuote('The ones I couldn\'t shake were the ones we discharged.')}
     ${p(`Stabilized. Handed a new prescription. Told "watch your salt and lose some weight." Walked out the door. We knew they'd be back, and most of them were, inside two years. Nobody had taught them how to use their own bodies.`)}
     ${p(`So I took five years and trained as a naturopath. I learned what nursing school doesn't teach: the herbs, the hydrotherapy, the breathing, the eight laws of health that built sanitariums before there were hospitals. And the first thing I had to relearn was what blood pressure even is.`, { margin: '0 0 28px' })}
     ${bigQuote('Picture a garden hose.')}
-    ${p(`When the hose is new, the walls are soft and springy. Water flows through easy. Now picture that same hose left in the sun for ten summers. The rubber stiffens, the walls get crusty, and somewhere along the line it's crimped. To push the same water through, the pressure has to climb.`)}
-    ${p(`That's Pipe Pressure. Your vessels were once soft and springy. Over the years: inflammation, low nitric oxide, stiffening walls. They crimp and harden. Your heart has to push harder to move the same blood. The number on the cuff goes up. The pill helps relax the hose a little, but it doesn't rebuild the rubber. That part is on the inputs.`)}
+    ${p(`Turn the spigot a little and water trickles through, soft and easy. Now crank the spigot wide open and force far more water through that same hose. It goes stiff and taut in your hand, the walls bulge, and the pressure climbs, even though the hose never changed. More water in the line means more pressure on the line.`)}
+    ${p(`That's the Sodium corner. When your body holds onto sodium, it holds onto water with it, and that extra fluid floods the line. Your heart has to push against a fuller, tighter system. The number on the cuff goes up. The pill helps drain a little water off, but it doesn't change why your body is holding it. That part is on the inputs.`)}
     ${p(`And here's the question I get most: <em>can something natural really be strong enough for a real medical number?</em>`)}
-    ${p(`I understand the doubt. I trained in a hospital, I respect pharmacology. So let me be straight with you. The vessels are living tissue. They respond to what you feed them. Beets and leafy greens raise nitric oxide, the molecule that tells the hose walls to relax. It's the exact same pathway nitroglycerin uses in the ER, just gentler and steadier. Potassium pulls excess sodium out so there's less water in the line. This isn't folklore. It's the same plumbing your medication works on, approached from the other end.`)}
-    ${p(`I'm not anti-medication, far from it. The work I do is <strong>AND, not INSTEAD OF</strong>. Your medication keeps you safe while we rebuild the pipes. When the inputs change, your doctor is the one who tapers. Never you, never me.`, { margin: '0 0 24px' })}
-    ${p(`That woman you pictured yesterday, the one with the lower morning number? Her pipes are softer than they were. That's not a fantasy. That's biology that answers to breakfast. The full pipe protocol, the foods, the dosing, the order, is in the BP Starter Kit.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($17)')}
-    ${p(`Day 3 I'll give you the single cheapest thing you can do for your pipes this week, about three dollars at the grocery store, plus the study behind it.`, { margin: '0 0 28px' })}
+    ${p(`I understand the doubt. I trained in a hospital, I respect pharmacology. So let me be straight with you. Your kidneys decide how much sodium to keep, and they answer to what you feed them. Potassium, from beets and leafy greens and beans, signals the kidneys to let go of excess sodium, so there's less water in the line. It is the exact same job a water pill does in the ER, just gentler and steadier, and without stripping you out. This isn't folklore. It's the same plumbing your medication works on, approached from the other end.`)}
+    ${p(`I'm not anti-medication, far from it. The work I do is <strong>AND, not INSTEAD OF</strong>. Your medication keeps you safe while we calm the loop. When the inputs change, your doctor is the one who tapers. Never you, never me.`, { margin: '0 0 24px' })}
+    ${p(`That woman you pictured yesterday, the one with the lower morning number? There is less water straining her line than there was. That's not a fantasy. That's biology that answers to breakfast. The full sodium-and-potassium protocol, the foods, the dosing, the order, is in the BP Starter Kit.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($27)')}
+    ${p(`Day 3 I'll give you the single cheapest thing you can do for this corner this week, about three dollars at the grocery store, plus the study behind it.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you've ever had a discharge story like the one I described, yours, or someone you love, hit reply and tell me one line. I read every email, and they shape what I send next.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
   textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
 
-Yesterday: the three faucets. Today we open the first one: PIPE PRESSURE, your blood vessels. But first, a quick story, because it's why I do this at all.
+Yesterday: the three faucets. Today we open the first one: SODIUM, the water in the line. But first, a quick story, because it's why I do this at all.
 
 I spent 20 years as an RN. Most of it ICU and emergency. I stood over the bed when someone came in at 220/130 with a stroke already starting.
 
@@ -267,20 +270,20 @@ So I took five years and trained as a naturopath. The herbs, hydrotherapy, breat
 
 PICTURE A GARDEN HOSE.
 
-New hose: soft, springy walls, water flows easy. Same hose after ten summers in the sun: stiff, crusty, crimped. To push the same water through, pressure has to climb.
+Turn the spigot a little: water trickles, soft and easy. Crank it wide open and force far more water through the same hose: it goes stiff and taut, walls bulging, pressure climbing, though the hose never changed. More water in the line means more pressure on the line.
 
-That's Pipe Pressure. Your vessels were soft once. Years of inflammation, low nitric oxide, stiffening walls. They crimp and harden. Your heart pushes harder. The pill relaxes the hose a little; it doesn't rebuild the rubber. That part is on the inputs.
+That's the Sodium corner. When your body holds onto sodium, it holds water with it, and that extra fluid floods the line. Your heart pushes against a fuller, tighter system. The pill drains a little water off; it doesn't change why your body is holding it. That part is on the inputs.
 
 The question I get most: can something natural be strong enough for a real medical number?
 
-Straight answer: the vessels are living tissue. Beets and leafy greens raise nitric oxide, the molecule that tells the walls to relax. Same pathway nitroglycerin uses in the ER, just gentler. Potassium pulls excess sodium out. Not folklore. The same plumbing your med works on, from the other end.
+Straight answer: your kidneys decide how much sodium to keep, and they answer to what you feed them. Potassium, from beets and leafy greens and beans, signals them to let go of excess sodium, so there's less water in the line. Same job a water pill does in the ER, just gentler. Not folklore. The same plumbing your med works on, from the other end.
 
-I'm not anti-medication. The work is AND, not INSTEAD OF. The med keeps you safe while we rebuild the pipes. Your doctor tapers. Never you, never me.
+I'm not anti-medication. The work is AND, not INSTEAD OF. The med keeps you safe while we calm the loop. Your doctor tapers. Never you, never me.
 
-The full pipe protocol, the foods, the dosing, the order, is in the BP Starter Kit.
+The full sodium-and-potassium protocol, the foods, the dosing, the order, is in the BP Starter Kit.
 → ${KIT_URL}
 
-Day 3: the cheapest thing you can do for your pipes this week (about $3) and the study behind it.
+Day 3: the cheapest thing you can do for this corner this week (about $3) and the study behind it.
 
 Joel
 RN, BraveWorks
@@ -291,24 +294,24 @@ ${textFooter(unsubUrl)}
 `,
 };
 
-// ─── DAY 3 — Pipe Pressure #2: proof (hibiscus) + $12.99 Companion ─────
+// ─── DAY 3 — Sodium #2: proof (hibiscus) + $12.99 Companion ────────────
 // SHIP GATE (Joel): confirm the Stripe product behind COMPANION_URL displays
 // "The 10-Day Nurse's Reset Companion" so checkout matches the email.
 const day3 = {
-  subject: 'Rusty pipes, clean pipes, $3 at the store',
+  subject: 'Drain the line, $3 at the store',
   subjectB: 'The study: 7 points lower in 6 weeks',
   preview: 'A falsifiable claim: 7.2 points, six weeks, one red box.',
   htmlBody: ({ firstName, unsubUrl }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Two days ago: the crimped garden hose. Today: how you start cleaning it out, and the proof it works.`)}
-    ${p(`Think of two pipes under a kitchen sink. One is old galvanized steel, rusted on the inside, the opening narrowed to half its size by years of buildup. The other is clean copper. Same water pressure at the street, but only a trickle comes out of the rusty one, while the clean one runs full. Your vessels are pipes. Rust narrows them. Cleaning them out widens the channel and the pressure drops.`)}
-    ${bigQuote('The cheapest pipe-cleaner I know: hibiscus tea.')}
+    ${p(`Two days ago: the garden hose with too much water forced through it. Today: how you start draining the line, and the proof it works.`)}
+    ${p(`Think of two garden hoses. One has the spigot cranked wide open, swollen and taut with too much water. The other runs at an easy flow. Same hose, but only the swollen one strains and bulges. Your vessels carry the same load. When your kidneys let go of held sodium, the water in the line eases, the strain comes off, and the pressure drops.`)}
+    ${bigQuote('The cheapest way to ease the line that I know: hibiscus tea.')}
     ${p(`Yes, the deep red flower tea your grandmother probably drank. The red boxes: Tazo, Celestial Seasonings "Red Zinger," or any plain hibiscus or "sorrel" tea in the grocery aisle. About three dollars.`)}
     ${p(`Now, I already know what some of you are thinking, because you've told me: <em>"I've tried herbs. They didn't do a thing."</em> I believe you. Most people try a herb the way they'd take a breath mint: once, casually, no dose, no consistency, no measuring. Then they conclude "herbs don't work." That's not a fair test. So let me give you a fair one, a claim you can actually check.`)}
     ${bigQuote('Here is the falsifiable claim.')}
     ${p(`A study at Tufts University put adults with mild hypertension on three cups of hibiscus tea a day for six weeks. The hibiscus group dropped an average of <strong>7.2 mmHg off their systolic number.</strong> The placebo group dropped 1.3. That's it. No fine print. Three cups, six weeks, measure before and after.`)}
     ${p(`Seven points doesn't sound dramatic, until you know it's the gap between Stage 1 hypertension and pre-hypertension for a lot of readers, and it's the same drop most people get from losing ten pounds, which is a far harder ask.`)}
-    ${p(`Why it works: hibiscus is rich in anthocyanins, the deep-red cousins of what colors blueberries blue. They help the vessel walls relax (cleaning the rust off the pipe) and gently nudge sodium out through the kidneys (less water in the line). Mild vasorelaxant, mild diuretic, no prescription.`, { margin: '0 0 28px' })}
+    ${p(`Why it works: hibiscus is rich in anthocyanins, the deep-red cousins of what colors blueberries blue. They help the vessel walls relax and gently nudge sodium out through the kidneys, which drains water off the line. Mild vasorelaxant, mild diuretic, no prescription.`, { margin: '0 0 28px' })}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The fair test.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Cuff your arm in the morning. Write it down. Then drink three cups of hibiscus a day: one at breakfast, one at lunch, one in the afternoon. No sugar. Six weeks. Cuff again.</p>
@@ -316,20 +319,20 @@ const day3 = {
     `)}
     ${outcomeRider()}
     ${p(`A safety note: if you're on a thiazide diuretic (hydrochlorothiazide) or a potassium-sparing one (spironolactone), check with your prescriber first. Hibiscus is mildly diuretic and the math may need adjusting. Your safety comes first, always.`, { margin: '0 0 24px' })}
-    ${p(`Hibiscus is one pipe-cleaner. There are more. Beets, garlic, hawthorn, magnesium, the contrast shower. I put the claim and the dose behind every one of them in my book, <strong>The 10-Day Nurse's Reset Companion</strong>. Not opinions. The studies, the amounts, and the exact interaction questions to take to your prescriber or pharmacist before you add anything alongside your medication. It is $12.99, about the price of one supplement bottle you might have wasted on a guess.`, { margin: '0 0 24px' })}
+    ${p(`Hibiscus is one way to ease the line. There are more. Beets, garlic, hawthorn, magnesium, the contrast shower. I put the claim and the dose behind every one of them in my book, <strong>The 10-Day Nurse's Reset Companion</strong>. Not opinions. The studies, the amounts, and the exact interaction questions to take to your prescriber or pharmacist before you add anything alongside your medication. It is $12.99, about the price of one supplement bottle you might have wasted on a guess.`, { margin: '0 0 24px' })}
     ${ctaButton(COMPANION_URL, 'Get the Reset Companion ($12.99)')}
-    ${p(`In two days we open the second faucet: Sugar Pressure. It's the one most people swear they don't have, and most people do.`, { margin: '0 0 28px' })}
+    ${p(`In two days we open the second faucet: Sugar. It's the one most people swear they don't have, and most people do.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you pick up a box of hibiscus, snap a photo at the store and reply with it. I will cheer for you. Small wins are how big numbers move. And if you already grabbed the $17 Starter Kit, the Companion is the research shelf behind it. They are built to sit side by side.`)}
+    ${psBox(`If you pick up a box of hibiscus, snap a photo at the store and reply with it. I will cheer for you. Small wins are how big numbers move. And if you already grabbed the $27 Starter Kit, the Companion is the research shelf behind it. They are built to sit side by side.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
   textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
 
-Two days ago: the crimped garden hose. Today: how you start cleaning it out, and the proof.
+Two days ago: the garden hose with too much water forced through it. Today: how you start draining the line, and the proof.
 
-Picture two pipes under a sink. One is old galvanized steel, rusted inside, the opening narrowed to half its size. The other is clean copper. Same water pressure at the street, but only a trickle comes out of the rusty one. Your vessels are pipes. Cleaning out the rust widens the channel and the pressure drops.
+Picture two garden hoses. One has the spigot cranked wide open, swollen and taut with too much water. The other runs at an easy flow. Same hose, but only the swollen one strains. Your vessels carry the same load. When your kidneys let go of held sodium, the water in the line eases, the strain comes off, and the pressure drops.
 
-THE CHEAPEST PIPE-CLEANER I KNOW: HIBISCUS TEA.
+THE CHEAPEST WAY TO EASE THE LINE THAT I KNOW: HIBISCUS TEA.
 
 The deep red flower tea. Red boxes: Tazo, Celestial Seasonings "Red Zinger," any "sorrel" tea. About $3.
 
@@ -341,7 +344,7 @@ Tufts University study. Adults with mild hypertension. Three cups of hibiscus a 
 
 Seven points is the gap between Stage 1 and pre-hypertension for many, and the same drop as losing ten pounds, a far harder ask.
 
-Why: anthocyanins (the red cousins of what colors blueberries) relax the vessel walls and nudge sodium out through the kidneys. Mild vasorelaxant, mild diuretic, no prescription.
+Why: anthocyanins (the red cousins of what colors blueberries) relax the vessel walls and nudge sodium out through the kidneys, draining water off the line. Mild vasorelaxant, mild diuretic, no prescription.
 
 THE FAIR TEST: Cuff in the morning, write it down. Three cups a day, no sugar, six weeks. Cuff again. Let the number judge, not your memory of "that time herbs didn't work."
 
@@ -349,15 +352,15 @@ ${OUTCOME_RIDER_TEXT}
 
 Safety: on a thiazide (HCTZ) or potassium-sparing (spironolactone) diuretic? Check with your prescriber first. Hibiscus is mildly diuretic.
 
-Hibiscus is one pipe-cleaner. There are more. Beets, garlic, hawthorn, magnesium, the contrast shower. I put the claim and the dose behind every one of them in my book, THE 10-DAY NURSE'S RESET COMPANION. Not opinions. The studies, the amounts, and the exact interaction questions to take to your prescriber or pharmacist before you add anything alongside your medication. It is $12.99, about the price of one supplement bottle you might have wasted on a guess.
+Hibiscus is one way to ease the line. There are more. Beets, garlic, hawthorn, magnesium, the contrast shower. I put the claim and the dose behind every one of them in my book, THE 10-DAY NURSE'S RESET COMPANION. Not opinions. The studies, the amounts, and the exact interaction questions to take to your prescriber or pharmacist before you add anything alongside your medication. It is $12.99, about the price of one supplement bottle you might have wasted on a guess.
 → ${COMPANION_URL}
 
-In two days: the second faucet, Sugar Pressure. The one most swear they don't have, and most do.
+In two days: the second faucet, Sugar. The one most swear they don't have, and most do.
 
 Joel
 RN, BraveWorks
 
-P.S. Pick up a box? Snap a photo at the store and reply with it. I will cheer for you. Small wins are how big numbers move. And if you already grabbed the $17 Starter Kit, the Companion is the research shelf behind it. They are built to sit side by side.
+P.S. Pick up a box? Snap a photo at the store and reply with it. I will cheer for you. Small wins are how big numbers move. And if you already grabbed the $27 Starter Kit, the Companion is the research shelf behind it. They are built to sit side by side.
 
 ${textFooter(unsubUrl)}
 `,
@@ -447,18 +450,18 @@ const day7 = {
     ${p(`Linda is 62. (Not her real name. I protect everyone in these stories. The numbers are real.) Retired schoolteacher, married 38 years, reads the label on everything, and still couldn't figure out why her numbers kept climbing.`)}
     ${bigQuote('Before.')}
     ${p(`Home reading: <strong>148/94.</strong> On lisinopril 20mg for four years, amlodipine 5mg added two years ago, and at her last visit the cardiologist floated a third medication.`)}
-    ${p(`Pipe Pressure was loud for her, but Sugar was the runner-up nobody had flagged: the afternoon crashes, the softening middle. So she worked both faucets at once. Here's exactly what she did:`, { margin: '0 0 18px' })}
+    ${p(`Sodium was loud for her, but Sugar was the runner-up nobody had flagged: the afternoon crashes, the softening middle. So she worked both faucets at once. Here's exactly what she did:`, { margin: '0 0 18px' })}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Linda's first 11 days.</p>
-      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Pipes:</strong> Hibiscus tea, three cups a day. Garlic: one fresh clove crushed, rested 10 minutes, added at the end of cooking. A walk after dinner. End-of-day contrast shower, 30 seconds cold to finish.</p>
+      <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Sodium (drain the line):</strong> Hibiscus tea, three cups a day. Garlic: one fresh clove crushed, rested 10 minutes, added at the end of cooking. Potassium-rich plates, beans and leafy greens, to pull the held sodium out. A walk after dinner. End-of-day contrast shower, 30 seconds cold to finish.</p>
       <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 10px;"><strong>Sugar (the rollercoaster brakes):</strong> Swapped store-bought sandwich bread for a homemade alternative her granddaughter helped her bake. Ate protein and fiber <em>before</em> any starch. Walked ten minutes after lunch to burn the glucose before it spiked. The 3 PM cookie became an apple with peanut butter.</p>
       <p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Every day:</strong> Cuffed each morning, same time, sitting, both feet flat, no coffee yet. Wrote the number down.</p>
     `)}
     ${bigQuote('After.')}
     ${p(`Eleven days in, her morning reading was <strong>128/82.</strong> Twenty systolic points. Twelve diastolic. Same medications, same doses, no new prescription. At her follow-up the cardiologist looked at the log, looked at her, and asked one question: <em>"What did you do?"</em> He didn't add the third drug. He told her to keep going and come back in 90 days.`, { margin: '0 0 12px' })}
     ${outcomeRider()}
-    ${p(`Everything Linda did in those 11 days came from one place. The hibiscus, the garlic, the food order, the walk after lunch, the morning cuff routine. It is all laid out day by day in the BP Starter Kit. Eighteen pages, $17. You could start your own 11 days tomorrow morning.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($17)')}
+    ${p(`Everything Linda did in those 11 days came from one place. The hibiscus, the garlic, the food order, the walk after lunch, the morning cuff routine. It is all laid out day by day in the BP Starter Kit. Eighteen pages, $27. You could start your own 11 days tomorrow morning.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Get the BP Starter Kit ($27)')}
     ${p(`Now, here is the objection that stops most people from ever starting. Not "will it work." It is quieter than that. It is: <em>"I can't do this alone."</em> And you are right. You should not have to.`)}
     ${p(`And if doing it alone is the part that worries you, you do not have to be alone for it. Four live group sessions a month with me, Wednesdays at 7 pm ET. Bring your numbers, your med list, your questions. Full ebook library and the community included. $27 a month, first 7 days free. Linda had a granddaughter in the kitchen. This is your version of that. <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Start your free week</a>.`, { margin: '0 0 28px' })}
     ${p(`Next week we open the third and quietest faucet, Stress Pressure, and I will show you the hormone connection almost nobody explains. Today, sit with this: 20 points in 11 days, and she did not do it alone.`, { margin: '0 0 28px' })}
@@ -480,9 +483,9 @@ Linda is 62. (Not her real name. The numbers are real.) Retired teacher, married
 
 BEFORE: 148/94. Lisinopril 20mg four years, amlodipine 5mg two years, cardiologist floating a third.
 
-Pipe Pressure was loud; Sugar was the runner-up nobody flagged. She worked both:
+Sodium was loud; Sugar was the runner-up nobody flagged. She worked both:
 
-PIPES: Hibiscus, 3 cups/day. Garlic (fresh clove crushed, rested, added late). Walk after dinner. Contrast shower, 30 sec cold to finish.
+SODIUM (drain the line): Hibiscus, 3 cups/day. Garlic (fresh clove crushed, rested, added late). Potassium-rich plates (beans, leafy greens) to pull held sodium out. Walk after dinner. Contrast shower, 30 sec cold to finish.
 
 SUGAR (the brakes): Swapped store bread for homemade. Protein and fiber BEFORE starch. Ten-minute walk after lunch. The 3 PM cookie became apple + peanut butter.
 
@@ -492,7 +495,7 @@ AFTER: Day 11, morning reading 128/82. Twenty systolic, twelve diastolic. Same m
 
 ${OUTCOME_RIDER_TEXT}
 
-Everything Linda did in those 11 days came from one place. The hibiscus, the garlic, the food order, the walk after lunch, the morning cuff routine. It is all laid out day by day in the BP Starter Kit. Eighteen pages, $17. You could start your own 11 days tomorrow morning.
+Everything Linda did in those 11 days came from one place. The hibiscus, the garlic, the food order, the walk after lunch, the morning cuff routine. It is all laid out day by day in the BP Starter Kit. Eighteen pages, $27. You could start your own 11 days tomorrow morning.
 → ${KIT_URL}
 
 Now, here is the objection that stops most people from ever starting. Not "will it work." It is quieter than that. It is: "I can't do this alone." And you are right. You should not have to.
@@ -521,7 +524,7 @@ const day10 = {
     ${p(`We've turned down the pipes. We've thinned the syrup. Today we reach the third faucet, the quiet one, the one almost no cardiologist measures: <strong>Stress Pressure</strong>. Cortisol.`)}
     ${bigQuote('Imagine your foot stuck on the gas pedal.')}
     ${p(`Engine revving in the driveway. You're not going anywhere, but the motor is roaring, burning fuel, wearing itself down. That's your body under chronic cortisol. Your nervous system is flooring the accelerator, heart faster, vessels tighter, bracing for a threat that never actually comes. And it does this all day, even while you sleep.`)}
-    ${p(`That's why this faucet is so sneaky. Pipe and Sugar Pressure you can sometimes feel. Stress Pressure runs in the background. The tells: you wake between 2 and 4 AM and can't drop back off. Mornings are "wired but tired." Coffee feels mandatory. Weight settles around the middle. And, the giveaway, your readings are always highest at the doctor's office. That's not white-coat nerves being silly. That's your foot mashing the pedal on cue.`, { margin: '0 0 28px' })}
+    ${p(`That's why this faucet is so sneaky. Sodium and Sugar you can sometimes feel. Stress runs in the background. The tells: you wake between 2 and 4 AM and can't drop back off. Mornings are "wired but tired." Coffee feels mandatory. Weight settles around the middle. And, the giveaway, your readings are always highest at the doctor's office. That's not white-coat nerves being silly. That's your foot mashing the pedal on cue.`, { margin: '0 0 28px' })}
     ${p(`Now the belief I have to gently dismantle, because it stops almost everyone: <em>"Stress is just life at my age. I can't fix that."</em>`)}
     ${p(`I hear you. You can't fire your family, undo a loss, or add hours to the day. But here's the bridge I want you to walk across: you are not trying to remove stress. You are trying to take your foot off the gas, to teach the nervous system it's allowed to idle. Those are completely different jobs. You don't need a calmer life. You need a body that stops revving when the driveway is empty.`)}
     ${p(`And that part is absolutely trainable. Five minutes of morning sunlight resets the cortisol curve so it peaks in the morning instead of at 2 AM. A slow 4-7-8 breath drops cortisol faster than any supplement I've measured. Magnesium glycinate at night lifts the foot off the pedal while you sleep. If you take BP medication, ask your prescriber first so everything works together. None of that requires your life to get easier. It just requires the gas pedal to come up.`, { margin: '0 0 28px' })}
@@ -558,7 +561,7 @@ IMAGINE YOUR FOOT STUCK ON THE GAS PEDAL.
 
 Engine revving in the driveway. You're going nowhere, but the motor's roaring, burning fuel, wearing down. That's chronic cortisol: your nervous system flooring it, heart faster, vessels tighter, bracing for a threat that never comes. All day. Even while you sleep.
 
-That's why it's sneaky. Pipe and Sugar you can sometimes feel. Stress runs in the background. Tells: waking 2-4 AM and can't drop off, "wired but tired" mornings, mandatory coffee, weight around the middle, and readings always highest at the doctor's office. That's not silly nerves. That's your foot mashing the pedal on cue.
+That's why it's sneaky. Sodium and Sugar you can sometimes feel. Stress runs in the background. Tells: waking 2-4 AM and can't drop off, "wired but tired" mornings, mandatory coffee, weight around the middle, and readings always highest at the doctor's office. That's not silly nerves. That's your foot mashing the pedal on cue.
 
 The belief that stops everyone: "Stress is just life at my age. I can't fix that."
 
@@ -686,7 +689,7 @@ const day16 = {
     ${p(`Your first week costs nothing. Come to one Wednesday call. Ask me the question you have been sitting on. If it is not for you, leave before day seven and you pay nothing.`)}
     ${p(`One thing said plainly: the Weekly Reset is education and accountability, not medical care. Nothing in the room replaces your own doctor.`, { margin: '0 0 24px' })}
     ${ctaButton(SKOOL_URL, 'Start your free week')}
-    ${p(`<span style="color:#999;font-size:14px;">Not ready for a live room? <a href="${KIT_URL}" style="color:${PALETTE.accentClay};">The $17 Starter Kit</a> is still the smallest honest step.</span>`, { margin: '0 0 28px' })}
+    ${p(`<span style="color:#999;font-size:14px;">Not ready for a live room? <a href="${KIT_URL}" style="color:${PALETTE.accentClay};">The $27 Starter Kit</a> is still the smallest honest step.</span>`, { margin: '0 0 28px' })}
     ${p(`In three days I will tell you about the one thing I make that has your name on it.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Wednesday at 7 pm ET is the night. If you start your free week today, bring this week's numbers to the call.`)}
@@ -723,7 +726,7 @@ One thing said plainly: the Weekly Reset is education and accountability, not me
 
 → Start your free week: ${SKOOL_URL}
 
-Not ready for a live room? The $17 Starter Kit is still the smallest honest step.
+Not ready for a live room? The $27 Starter Kit is still the smallest honest step.
 → ${KIT_URL}
 
 In three days I will tell you about the one thing I make that has your name on it.
@@ -770,7 +773,7 @@ const day19 = {
     ${p(`And if you want 90 days working directly with me in a small group, that exists too. Reply with the word NINETY and I will send the details.`, { margin: '0 0 28px' })}
     ${p(`In two days, the last email of this series. The whole map in one place.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If the honest wall is money, hit reply and tell me. The $17 Starter Kit and the free week in the Weekly Reset both exist for exactly that. I read every reply and I will not pressure you.`)}
+    ${psBox(`If the honest wall is money, hit reply and tell me. The $27 Starter Kit and the free week in the Weekly Reset both exist for exactly that. I read every reply and I will not pressure you.`)}
     ${upsellFooter({
       kicker: 'A plan with your name on it',
       body: 'The 30-Day Personalized Sprint. You send your log and your intake, I write your 30 days, and we walk it together in the live sessions. $297, flat. I take 5 new Sprint readers a month, because that is what the writing actually takes.',
@@ -813,7 +816,7 @@ In two days, the last email of this series. The whole map in one place.
 Joel
 RN, BraveWorks
 
-P.S. If the honest wall is money, hit reply and tell me. The $17 Starter Kit and the free week in the Weekly Reset both exist for exactly that. I read every reply and I will not pressure you.
+P.S. If the honest wall is money, hit reply and tell me. The $27 Starter Kit and the free week in the Weekly Reset both exist for exactly that. I read every reply and I will not pressure you.
 
 ${textFooter(unsubUrl)}
 `,
@@ -833,7 +836,7 @@ const day21 = {
     ${p(`So before the emails slow down, let me lay out every road on the map. Pick the one that fits where you actually are:`)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The whole ladder, in one place.</p>
-      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Just starting?</strong> <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The BP Starter Kit</a>, $17. The same plan I walk readers through.</p>
+      <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Just starting?</strong> <a href="${KIT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The BP Starter Kit</a>, $27. The same plan I walk readers through.</p>
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Want the research behind every remedy?</strong> <a href="${COMPANION_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The 10-Day Nurse's Reset Companion</a>, $12.99. The claim and the dose behind every one.</p>
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Don't want to do it alone?</strong> <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The Weekly Reset</a>. Four live group sessions a month with me, Wednesdays at 7 pm ET. $27 a month, first 7 days free.</p>
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Is it the hormones?</strong> ${restoreHerLive()
@@ -842,16 +845,16 @@ const day21 = {
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Want me to write your plan?</strong> <a href="${SPRINT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The 30-Day Personalized Sprint</a>, $297 flat. I write your 30 days from your numbers and we walk them together. I take 5 new readers a month.</p>
     `)}
     ${p(`And if you want 90 days working directly with me in a small group, reply with the word NINETY and I will send the details.`, { margin: '0 0 24px' })}
-    ${p(`Not sure? Then take the smallest honest step, the $17 kit.`, { margin: '0 0 24px' })}
-    ${ctaButton(KIT_URL, 'Start with the BP Starter Kit ($17)')}
+    ${p(`Not sure? Then take the smallest honest step, the $27 kit.`, { margin: '0 0 24px' })}
+    ${ctaButton(KIT_URL, 'Start with the BP Starter Kit ($27)')}
     ${p(`<span style="color:#999;font-size:14px;">You can read the whole Starter Kit story at <a href="https://bpquiz.com" style="color:${PALETTE.accentClay};">bpquiz.com</a>.</span>`, { margin: '0 0 28px' })}
     ${p(`And if today the answer is "not yet," that is genuinely okay. There is no door closing and no countdown clock. The emails slow down from here, but <strong>the door stays open</strong>. I will be here when you are ready.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Wherever you are at the fork, hit reply and tell me one thing you are taking with you from these 21 days. I read every single one. The work is slow and the conversation is long. That is how real change is built, not in 21 days, but in the year that follows.`)}
     ${upsellFooter({
       kicker: 'The door stays open',
-      body: 'No deadline, no clock. Every rung is here when you are ready. The $17 Starter Kit, the $12.99 Companion, the Weekly Reset free week, and the $297 Sprint. Take the step that fits where you are.',
-      ctaLabel: 'Start with the $17 kit',
+      body: 'No deadline, no clock. Every rung is here when you are ready. The $27 Starter Kit, the $12.99 Companion, the Weekly Reset free week, and the $297 Sprint. Take the step that fits where you are.',
+      ctaLabel: 'Start with the $27 kit',
       ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs(unsubUrl)}
@@ -868,7 +871,7 @@ Both women start at this fork, today. What decides which one you become isn't ta
 
 THE WHOLE LADDER, IN ONE PLACE. Pick the road that fits you:
 
-Just starting? The BP Starter Kit, $17. The same plan I walk readers through.
+Just starting? The BP Starter Kit, $27. The same plan I walk readers through.
 → ${KIT_URL}
 
 Want the research behind every remedy? The 10-Day Nurse's Reset Companion, $12.99. The claim and the dose behind every one.
@@ -887,7 +890,7 @@ Want me to write your plan? The 30-Day Personalized Sprint, $297 flat. I write y
 
 And if you want 90 days working directly with me in a small group, reply with the word NINETY and I will send the details.
 
-Not sure? Then take the smallest honest step, the $17 kit.
+Not sure? Then take the smallest honest step, the $27 kit.
 → ${KIT_URL}
 
 You can read the whole Starter Kit story at bpquiz.com.

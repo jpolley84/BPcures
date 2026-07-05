@@ -23,16 +23,32 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-export const COACHING_URL  = 'https://bpquiz.com';
-export const COHORT2_URL   = `${SITE_URL}/cohort2`;
+export const COACHING_URL  = `${SITE_URL}/coaching`;
+export const COHORT2_URL   = `${SITE_URL}/apply?tier=ninety`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
 export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 
 // Tier-4-only URLs
-export const INTAKE_FORM_URL = process.env.VITE_TIER4_INTAKE_FORM_URL || `${SITE_URL}/cohort2/intake`;
+// 2026-07-03: the old intake fallback (/cohort2/intake) 404'd — a $1,997
+// buyer with the env unset dead-ended. If the env var is not set, the CTA
+// becomes "reply and Joel sends your intake" (mailto), never a dead page.
+const INTAKE_FORM_ENV = process.env.VITE_TIER4_INTAKE_FORM_URL || '';
+export const INTAKE_FORM_URL = INTAKE_FORM_ENV
+  || 'mailto:braveworksrn@gmail.com?subject=Please%20send%20my%20intake%20form';
+const INTAKE_CTA_LABEL = INTAKE_FORM_ENV
+  ? 'Open the intake form →'
+  : 'Email me for your intake form →';
+const INTAKE_STEP_TEXT = INTAKE_FORM_ENV
+  ? 'The intake form, 12 minutes. I read every word before Wednesday. The deeper you go, the deeper I can go on the call.'
+  : 'The intake form, I send it to you myself. Reply to this email (or use the button below) and I will send your intake today. I read every word before Wednesday.';
+const INTAKE_STEP_HTML = INTAKE_FORM_ENV
+  ? '<strong style="color:#2C3E50;">1. The intake form</strong>, 12 minutes. I read every word before Wednesday. The deeper you go, the deeper I can go on the call.'
+  : '<strong style="color:#2C3E50;">1. The intake form</strong>, I send it to you myself. Reply to this email (or use the button below) and I will send your intake today. I read every word before Wednesday.';
 export const SKOOL_VIP_URL   = process.env.VITE_TIER4_SKOOL_VIP_URL  || 'https://www.skool.com/braveworksrn/about';
-export const BARBARA_EVENT_URL = 'https://everydaynurse.com/event-virtual';
-export const SUNDAY_ZOOM_URL = process.env.VITE_TIER4_SUNDAY_ZOOM_URL || 'https://us06web.zoom.us/j/2548856205?pwd=6G4RrvnybablMQJciQlOJdsh1jtHjo.1';
+// 2026-07-03: renamed from SUNDAY_ZOOM_URL — the call is (and always was)
+// Wednesday 7 PM EST. The env var keeps its legacy name so no Vercel env
+// change is needed.
+export const WEDNESDAY_ZOOM_URL = process.env.VITE_TIER4_SUNDAY_ZOOM_URL || 'https://us06web.zoom.us/j/2548856205?pwd=6G4RrvnybablMQJciQlOJdsh1jtHjo.1';
 
 // Brand palette
 const PALETTE = {
@@ -112,77 +128,77 @@ function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
   </div>`;
 }
 
-// ─── DAY 0 — Welcome + Monday kickoff + intake form ───────────────────
+// ─── DAY 0 — Welcome + Wednesday kickoff + intake form ───────────────────
 const day0 = {
-  subject: 'You\'re in. Monday at 10 PM ET — here\'s everything.',
-  subjectB: 'Welcome — your 90-day journey starts Monday',
-  preview: 'Your intake form, the Monday Zoom link, and what to bring.',
+  subject: 'You\'re in. Wednesday at 7 PM EST: here\'s everything.',
+  subjectB: 'Welcome, your 90-day journey starts Wednesday',
+  preview: 'Your intake form, the Wednesday Zoom link, and what to bring.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.`)}
-    ${p(`This email has the four things you need to start the right way. Read it once today and once Saturday — that's the only homework before we meet.`, { margin: '0 0 28px' })}
-    ${bigQuote('Monday, 10:00 PM Eastern.')}
-    ${p(`That's our kickoff. Sixty minutes on Zoom — me, you, and the others in this cohort. Bring a notebook and a beverage. We're not on camera the whole time; this is working, not performing.`, { margin: '0 0 28px' })}
+    ${p(`This email has the four things you need to start the right way. Read it once today and once Saturday, that's the only homework before we meet.`, { margin: '0 0 28px' })}
+    ${bigQuote('Wednesday, 7:00 PM EST.')}
+    ${p(`That's our kickoff. Sixty minutes on Zoom, me, you, and the others in this cohort. Bring a notebook and a beverage. We're not on camera the whole time; this is working, not performing.`, { margin: '0 0 28px' })}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The four pieces of your Week 1:</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">1. The intake form</strong> — 12 minutes. I read every word before Monday. The deeper you go, the deeper I can go on the call.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. Monday kickoff</strong> — 10 PM ET. Zoom link below. Full Triangle map, your weeks 1-2 plan, and what we're doing first.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly group Zoom</strong> — same time every week, twelve weeks. Small cohort, real face time. Once we meet Monday I'll lock the recurring slot on your calendar.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. WhatsApp office hours</strong> — Sun-Thu, 9 AM-5 PM ET. My number drops Monday on the call. Once it's in your phone, text me direct — same-day answers in the cohort thread.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">${INTAKE_STEP_HTML}</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. Wednesday kickoff</strong>, 7 PM EST. Zoom link below. Full Triangle map, your weeks 1-2 plan, and what we're doing first.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly group Zoom</strong>, same time every week, twelve weeks. Small cohort, real face time. Once we meet Wednesday I'll lock the recurring slot on your calendar.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. WhatsApp office hours</strong>, Sun-Thu, 9 AM-5 PM ET. My number drops Wednesday on the call. Once it's in your phone, text me direct, same-day answers in the cohort thread.</p>
     `)}
-    ${p(`Fill out the intake first. Everything else flows from there.`, { margin: '0 0 18px' })}
-    ${ctaButton(INTAKE_FORM_URL, 'Open the intake form →')}
-    ${clayBlock('Monday — Zoom link (same one all 12 weeks)', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">10:00 PM ET. Bookmark it. Calendar invite is coming separately.</p>
-      <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;word-break:break-all;"><a href="${SUNDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">${SUNDAY_ZOOM_URL}</a></p>
+    ${p(`Get the intake done first. Everything else flows from there.`, { margin: '0 0 18px' })}
+    ${ctaButton(INTAKE_FORM_URL, INTAKE_CTA_LABEL)}
+    ${clayBlock('Wednesday, Zoom link (same one all 12 weeks)', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">7:00 PM EST. Bookmark it. Calendar invite is coming separately.</p>
+      <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;word-break:break-all;"><a href="${WEDNESDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">${WEDNESDAY_ZOOM_URL}</a></p>
     `)}
-    ${p(`<strong style="color:${PALETTE.text};">Three things you can do before Monday:</strong>`)}
+    ${p(`<strong style="color:${PALETTE.text};">Three things you can do before Wednesday:</strong>`)}
     ${p(`1. Take your blood pressure today, write the number + time. Do it again Saturday morning. We'll talk through both on the call.`)}
-    ${p(`2. Pull every supplement bottle out of the cabinet onto the counter. Take a phone photo. Bring the photo — we're going through them together.`)}
-    ${p(`3. Loop in your partner. Husband, daughter, whoever lives with you and is going to see this work happen. They don't need to do the protocol — they just need to know what you're doing so they can hand you the cuff instead of the cookies.`, { margin: '0 0 28px' })}
-    ${p(`I'm spending part of this weekend reading your intake and writing your Week 1 personally. By Monday I'll know your numbers better than anyone except you.`)}
-    ${p(`See you at 10 PM ET on Monday.`, { margin: '0 0 28px' })}
+    ${p(`2. Pull every supplement bottle out of the cabinet onto the counter. Take a phone photo. Bring the photo, we're going through them together.`)}
+    ${p(`3. Loop in your partner. Husband, daughter, whoever lives with you and is going to see this work happen. They don't need to do the protocol, they just need to know what you're doing so they can hand you the cuff instead of the cookies.`, { margin: '0 0 28px' })}
+    ${p(`I'm spending part of this week reading your intake and writing your Week 1 personally. By Wednesday I'll know your numbers better than anyone except you.`)}
+    ${p(`See you at 7 PM EST on Wednesday.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If anything in this email doesn't land — confusion about the Zoom, can't find the intake link, anything — hit reply right now and tell me. I read every one. We start clean.`)}
+    ${psBox(`If anything in this email doesn't land, confusion about the Zoom, can't find the intake link, anything, hit reply right now and tell me. I read every one. We start clean.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
 You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.
 
-This email has the four things you need to start the right way. Read it once today and once Saturday — that's the only homework before we meet.
+This email has the four things you need to start the right way. Read it once today and once Saturday, that's the only homework before we meet.
 
-MONDAY, 10:00 PM EASTERN.
+WEDNESDAY, 7:00 PM EST.
 
-That's our kickoff. Sixty minutes on Zoom — me, you, and the others in this cohort. Bring a notebook and a beverage.
+That's our kickoff. Sixty minutes on Zoom, me, you, and the others in this cohort. Bring a notebook and a beverage.
 
 THE FOUR PIECES OF YOUR WEEK 1:
 
-1. The intake form — 12 minutes. I read every word before Monday.
-2. Monday kickoff — 10 PM ET. Zoom link below.
-3. Weekly group Zoom — same time every week, twelve weeks. Small cohort, real face time.
-4. WhatsApp office hours — Sun-Thu, 9 AM-5 PM ET. Same-day answers in the cohort thread.
+1. ${INTAKE_STEP_TEXT}
+2. Wednesday kickoff, 7 PM EST. Zoom link below.
+3. Weekly group Zoom, same time every week, twelve weeks. Small cohort, real face time.
+4. WhatsApp office hours, Sun-Thu, 9 AM-5 PM ET. Same-day answers in the cohort thread.
 
-OPEN THE INTAKE FORM:
-${INTAKE_FORM_URL}
+YOUR INTAKE:
+${INTAKE_FORM_ENV ? INTAKE_FORM_URL : 'Reply to this email and I will send your intake today (braveworksrn@gmail.com).'}
 
-SUNDAY ZOOM LINK (same for all 12 weeks):
-${SUNDAY_ZOOM_URL}
+WEDNESDAY ZOOM LINK (same for all 12 weeks):
+${WEDNESDAY_ZOOM_URL}
 
-THREE THINGS BEFORE SUNDAY:
+THREE THINGS BEFORE WEDNESDAY:
 
-1. Take your BP today. Write number + time. Repeat Saturday morning.
+1. Take your BP today. Write number + time. Repeat tomorrow morning.
 2. Pull every supplement bottle onto the counter. Photo it. Bring the photo.
-3. Loop in your partner — they don't need to do the protocol, they just need to know what you're doing.
+3. Loop in your partner, they don't need to do the protocol, they just need to know what you're doing.
 
-I'm spending part of this weekend reading your intake and writing your Week 1 personally. By Monday I'll know your numbers better than anyone except you.
+I'm spending part of this week reading your intake and writing your Week 1 personally. By Wednesday I'll know your numbers better than anyone except you.
 
-See you at 10 PM ET on Monday.
+See you at 7 PM EST on Wednesday.
 
 Joel
 RN, BraveWorks
 
-P.S. If anything in this email doesn't land — confusion about the Zoom, can't find the intake link, anything — hit reply right now. I read every one. We start clean.
+P.S. If anything in this email doesn't land, confusion about the Zoom, can't find the intake link, anything, hit reply right now. I read every one. We start clean.
 
 —
 → Skool: ${SKOOL_URL}
@@ -192,38 +208,38 @@ P.S. If anything in this email doesn't land — confusion about the Zoom, can't 
 
 // ─── DAY 1 — Week 1 agenda + partner-support framing ───────────────────
 const day1 = {
-  subject: 'Your Week 1 — bite-sized, with your partner',
+  subject: 'Your Week 1, bite-sized, with your partner',
   subjectB: 'What to expect in the first 7 days',
-  preview: 'The map for Week 1 — and why your partner matters more than you think.',
+  preview: 'The map for Week 1, and why your partner matters more than you think.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`A note before Monday: Week 1 is not what most people expect.`)}
-    ${p(`Most BP programs throw a wall of protocol at you on Day 1 — supplements, food rules, exercise mandates, breathwork timers. You read the binder, you panic, you do half of it for three days, and by Day 5 you're back where you started.`)}
+    ${p(`A note before Wednesday: Week 1 is not what most people expect.`)}
+    ${p(`Most BP programs throw a wall of protocol at you on Day 1, supplements, food rules, exercise mandates, breathwork timers. You read the binder, you panic, you do half of it for three days, and by Day 5 you're back where you started.`)}
     ${p(`That's not what we do.`, { margin: '0 0 28px' })}
     ${bigQuote('Week 1 is foundation. Not stacking.')}
     ${p(`The first seven days have three jobs. That's it. Three.`)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Your Week 1 agenda:</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Days 1-2 — Baseline.</strong> Two cuff readings a day (morning + evening). Same arm, same chair, same time. We're catching what your body actually does, not what it does at the doctor's office.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Days 3-5 — Hydration + Trust pillars.</strong> Up to a gallon of filtered water with Celtic salt under the tongue every 8 oz. Twenty-five gratitudes morning, twenty-five at night. Nothing else changes.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Days 6-7 — Reflection.</strong> What feels easier? What feels tight? You write me one paragraph by the Monday after. I read it before our call.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Days 1-2, Baseline.</strong> Two cuff readings a day (morning + evening). Same arm, same chair, same time. We're catching what your body actually does, not what it does at the doctor's office.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Days 3-5, Hydration + Trust pillars.</strong> Up to a gallon of filtered water with Celtic salt under the tongue every 8 oz. Twenty-five gratitudes morning, twenty-five at night. Nothing else changes.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Days 6-7: Reflection.</strong> What feels easier? What feels tight? You write me one paragraph by the Wednesday after. I read it before our call.</p>
     `)}
-    ${p(`That's it. No supplements added yet. No new food rules. No exercise prescription. We're letting Stress Pressure soften and Pipe Pressure get its first proper drink of water before we touch anything else.`)}
-    ${p(`Most clients drop 4-8 systolic points in Week 1 doing exactly that. Some drop more. That's the loop responding — not a "treatment." Your body remembering what it knew before life broke seven of the eight inputs.`, { margin: '0 0 28px' })}
-    ${bigQuote('Now — your partner.')}
+    ${p(`That's it. No supplements added yet. No new food rules. No exercise prescription. We're letting Stress soften and the Sodium corner start to drain, the line getting its first proper flush, before we touch anything else.`)}
+    ${p(`Most clients drop 4-8 systolic points in Week 1 doing exactly that. Some drop more. That's the loop responding, not a "treatment." Your body remembering what it knew before life broke seven of the eight inputs.`, { margin: '0 0 28px' })}
+    ${bigQuote('Now, your partner.')}
     ${p(`This is the part most programs skip. We don't.`)}
     ${p(`The reason 90% of health programs fail at Day 14 isn't willpower. It's environment. And the single biggest piece of your environment is the person who lives with you.`)}
-    ${p(`<strong style="color:${PALETTE.text};">Husbands matter most.</strong> A husband who hands you the cuff at 7 AM is worth more than three new supplements. A husband who keeps Pop-Tarts in the cabinet is the reason your Sugar Pressure stays stuck. We are doing this with your partner — not around them.`)}
-    ${p(`On Monday's call I'll give you the three sentences to say to him. They're not "stop eating cookies" sentences. They're "here's how to help me win" sentences. Most husbands say yes the first time they hear them framed right.`)}
-    ${p(`If you live alone — a daughter, a sister, a best friend on text. One person who knows what you're doing and will ask Wednesday "did you get your gallon in today?" That's the whole job.`, { margin: '0 0 28px' })}
-    ${p(`See you Monday.`, { margin: '0 0 28px' })}
+    ${p(`<strong style="color:${PALETTE.text};">Husbands matter most.</strong> A husband who hands you the cuff at 7 AM is worth more than three new supplements. A husband who keeps Pop-Tarts in the cabinet is the reason your Sugar Pressure stays stuck. We are doing this with your partner, not around them.`)}
+    ${p(`On Wednesday's call I'll give you the three sentences to say to him. They're not "stop eating cookies" sentences. They're "here's how to help me win" sentences. Most husbands say yes the first time they hear them framed right.`)}
+    ${p(`If you live alone, a daughter, a sister, a best friend on text. One person who knows what you're doing and will ask midweek "did you get your gallon in today?" That's the whole job.`, { margin: '0 0 28px' })}
+    ${p(`See you Wednesday.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you have a partner and they're skeptical — let them read this email. Half of them flip when they realize the ask is "help her, don't change yourself." The other half flip by Day 30 when they see her numbers move.`)}
+    ${psBox(`If you have a partner and they're skeptical, let them read this email. Half of them flip when they realize the ask is "help her, don't change yourself." The other half flip by Day 30 when they see her numbers move.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-A note before Monday: Week 1 is not what most people expect.
+A note before Wednesday: Week 1 is not what most people expect.
 
 Most BP programs throw a wall of protocol at you on Day 1. You panic, you do half of it for three days, and by Day 5 you're back where you started.
 
@@ -233,35 +249,35 @@ WEEK 1 IS FOUNDATION. NOT STACKING.
 
 The first seven days have three jobs:
 
-DAYS 1-2 — BASELINE
+DAYS 1-2, BASELINE
 Two cuff readings a day (morning + evening). Same arm, same chair, same time.
 
-DAYS 3-5 — HYDRATION + TRUST
+DAYS 3-5, HYDRATION + TRUST
 Up to a gallon of filtered water with Celtic salt under the tongue every 8 oz. Twenty-five gratitudes morning, twenty-five at night. Nothing else.
 
-DAYS 6-7 — REFLECTION
-What feels easier? What feels tight? Write me one paragraph by the Monday after.
+DAYS 6-7, REFLECTION
+What feels easier? What feels tight? Write me one paragraph by the Wednesday after.
 
 No supplements added yet. No new food rules. No exercise prescription.
 
 Most clients drop 4-8 systolic in Week 1 doing exactly that.
 
-NOW — YOUR PARTNER.
+NOW, YOUR PARTNER.
 
 The reason 90% of health programs fail at Day 14 isn't willpower. It's environment. And the biggest piece of your environment is the person who lives with you.
 
 Husbands matter most. A husband who hands you the cuff at 7 AM is worth more than three new supplements.
 
-On Monday I'll give you the three sentences to say to him. Most husbands say yes the first time they hear them framed right.
+On Wednesday I'll give you the three sentences to say to him. Most husbands say yes the first time they hear them framed right.
 
-If you live alone — one person. Daughter, sister, best friend on text. One person who knows what you're doing and asks Wednesday "did you get your gallon in?" That's the job.
+If you live alone, one person. Daughter, sister, best friend on text. One person who knows what you're doing and asks midweek "did you get your gallon in?" That's the job.
 
-See you Monday.
+See you Wednesday.
 
 Joel
 RN, BraveWorks
 
-P.S. If you have a partner and they're skeptical — let them read this email. Half flip when they realize the ask is "help her, don't change yourself." The other half flip by Day 30 when her numbers move.
+P.S. If you have a partner and they're skeptical, let them read this email. Half flip when they realize the ask is "help her, don't change yourself." The other half flip by Day 30 when her numbers move.
 
 —
 → Skool: ${SKOOL_URL}
@@ -272,16 +288,16 @@ P.S. If you have a partner and they're skeptical — let them read this email. H
 // ─── DAY 3 — Skool VIP room access ─────────────────────────────────────
 const day3 = {
   subject: 'Your VIP Skool room is open',
-  subjectB: 'Meet your cohort — introduce yourself here',
+  subjectB: 'Meet your cohort, introduce yourself here',
   preview: 'A small, private room. Just the people on this journey with you.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Your VIP Skool room is live. Walk in.`, { margin: '0 0 28px' })}
     ${ctaButton(SKOOL_VIP_URL, 'Open your VIP Skool room →')}
-    ${p(`This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me — and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
+    ${p(`This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me, and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
     ${p(`That's intentional. The reason most online communities don't move the needle is they're noisy. Ninety percent of the room is shopping, ten percent is working. In here it's reversed.`, { margin: '0 0 28px' })}
     ${bigQuote('One ask today.')}
-    ${p(`Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here — introduce yourself" — drop your reply on that thread.`)}
+    ${p(`Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here, introduce yourself", drop your reply on that thread.`)}
     ${p(`<strong style="color:${PALETTE.text};">What to include:</strong>`)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">First name + where you live.</strong> Time zones help us help each other.</p>
@@ -289,13 +305,13 @@ const day3 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Why now.</strong> One sentence. The thing that made you say yes this year and not last year.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">One question.</strong> The thing you're hoping Week 1 answers. Doesn't have to be smart. Has to be real.</p>
     `)}
-    ${p(`You'll see Wakita's intro pinned near the top — she went first and shared her starting number and her "why now" honestly. Read hers before you write yours. It'll show you how much depth this room can hold.`, { margin: '0 0 28px' })}
+    ${p(`You'll see Wakita's intro pinned near the top, she went first and shared her starting number and her "why now" honestly. Read hers before you write yours. It'll show you how much depth this room can hold.`, { margin: '0 0 28px' })}
     ${bigQuote('How to use this room day-to-day.')}
     ${p(`I check it every weekday at 11 AM ET and 4 PM ET. WhatsApp is faster for emergencies; Skool is for the questions that benefit the whole room. If you post a Stress Pressure win in here, the next person reading is going to lift from it. That's the math.`)}
-    ${p(`No notifications by default. You opt in to what you want. I recommend "all posts in this room" turned on for the first 14 days — it's a small room, you won't get blasted, and you'll feel the cohort the way it's meant to be felt.`, { margin: '0 0 28px' })}
+    ${p(`No notifications by default. You opt in to what you want. I recommend "all posts in this room" turned on for the first 14 days, it's a small room, you won't get blasted, and you'll feel the cohort the way it's meant to be felt.`, { margin: '0 0 28px' })}
     ${p(`See you in there. I'll comment on your intro within 24 hours of you posting it.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you can't get the Skool link to open — hit reply right now with the email address you used for Skool. Sometimes the invite goes to the wrong inbox. I'll get you in inside an hour during office hours.`)}
+    ${psBox(`If you can't get the Skool link to open, hit reply right now with the email address you used for Skool. Sometimes the invite goes to the wrong inbox. I'll get you in inside an hour during office hours.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -308,7 +324,7 @@ This is not the public Skool community. This room is locked. It holds you, the o
 
 ONE ASK TODAY.
 
-Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here — introduce yourself" — drop your reply on that thread.
+Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here, introduce yourself", drop your reply on that thread.
 
 WHAT TO INCLUDE:
 
@@ -338,72 +354,71 @@ P.S. Can't get the Skool link to open? Hit reply with the email address you used
 `,
 };
 
-// ─── DAY 5 — Barbara O'Neill ticket bonus delivery ─────────────────────
+// ─── DAY 5 — VIP room habits + what to bring to your week-1 call ───────
+// 2026-07-03: replaced the old Barbara O'Neill ticket email. That email
+// pitched a ticket to the June 24-25, 2026 virtual event, which is over —
+// sending it now would promise a bonus that no longer exists. This is the
+// evergreen replacement: how to actually use the VIP space, and what to
+// bring to the first Wednesday call. Onboarding only, never selling.
 const day5 = {
-  subject: 'Your Barbara O\'Neill ticket is inside',
-  subjectB: 'June 24-25 — the virtual event details',
-  preview: 'Your seat is bought. Here\'s what to put on the calendar.',
+  subject: 'Two habits that make the 90 days work',
+  subjectB: 'Your VIP room, and what to bring Wednesday',
+  preview: 'How to use the VIP space day to day, and what to bring to your first call.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Quick one today. I'm buying your Barbara O'Neill virtual event ticket personally — and I want you to put the dates on your calendar before they sneak up on you.`, { margin: '0 0 28px' })}
-    ${bigQuote('June 24-25, 2026.')}
-    ${p(`Two days. Virtual. You watch from your living room.`)}
-    ${p(`Barbara is the closest thing the natural-health world has to a saint. Eighty-something years old, still teaching three days a week, still drawing the same crowds she did twenty years ago. The first time I heard her speak I drove four hours to Pennsylvania and bought every book on her table.`)}
-    ${p(`She and I cross at the foundation — NEWSTART, plant-based, hours-before-midnight sleep, gratitude as the cortisol intervention, every herb she names is in my bench. Most of what I teach you these 90 days she has been teaching for forty years. You are getting both of us this season.`, { margin: '0 0 28px' })}
+    ${p(`Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.`, { margin: '0 0 28px' })}
+    ${bigQuote('Habit 1: Use the VIP room like a logbook, not a library.')}
+    ${p(`Most people treat an online space like a library. They walk in quietly, read what's on the shelves, and leave without a word. That's the wrong way to use yours.`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">What you need to know:</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Dates:</strong> Wednesday June 24 + Thursday June 25, 2026.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Format:</strong> Virtual. Stream to phone, laptop, or TV. Replays available 30 days after.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Who pays:</strong> Me. This bonus is included in your tier. Your seat is being registered under your name.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">Where to look:</strong> <a href="${BARBARA_EVENT_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">everydaynurse.com/event-virtual</a> — the full speaker list and topics live here.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The VIP room rhythm that works:</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Post your numbers once a week.</strong> Morning average, one line about sleep, one line about how you felt. Two minutes. The act of writing it down is half the medicine, and it lets me spot a pattern before it becomes a problem.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Ask one real question a week.</strong> Not the polished version. The actual one. "Why is my reading higher on Mondays?" beats "any general tips?" every time.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">Answer one person.</strong> When you see someone three weeks behind you asking a question you've lived through, tell them what you saw. Teaching a thing once locks it in better than reading it five times.</p>
     `)}
-    ${p(`<strong style="color:${PALETTE.text};">What I need from you today:</strong>`)}
-    ${p(`Reply to this email and confirm the name you want on the registration. I default to the first name on your purchase, but some of you go by a different name and I want it right. One word, one reply, done.`)}
-    ${p(`Once you reply I buy the ticket, the confirmation lands in your inbox from the event team, and I drop your name on a list I keep so I can text you on June 23 with the streaming link.`, { margin: '0 0 28px' })}
-    ${bigQuote('How to make the most of it.')}
-    ${p(`<strong style="color:${PALETTE.text};">Watch with your husband.</strong> Barbara converts more skeptical husbands than anyone else in this space — she's a grandmother teaching plain truth, no aggression, no salesmanship. He'll lean in.`)}
-    ${p(`<strong style="color:${PALETTE.text};">Take notes by hand.</strong> Two days is a lot. The notes you write down by hand are the ones you'll actually use in Week 4 and 5. The notes you screenshot will sit in your phone unopened.`)}
-    ${p(`<strong style="color:${PALETTE.text};">Bring questions to our next group call.</strong> When you hear Barbara say something that lands, write the timestamp and ask me about it on the Monday call — or drop it in the WhatsApp thread. That's how the two streams of teaching weave together.`, { margin: '0 0 28px' })}
-    ${p(`See you on the call this week.`, { margin: '0 0 28px' })}
+    ${p(`I check the room every weekday at 11 AM ET and 4 PM ET. WhatsApp is faster for same-day questions; the room is for the questions that help everyone.`, { margin: '0 0 28px' })}
+    ${ctaButton(SKOOL_VIP_URL, 'Open your VIP room →')}
+    ${bigQuote('Habit 2: Walk into Wednesday with three things in hand.')}
+    ${sageBlock(`
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Bring to your week-1 call:</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Your readings so far.</strong> Even two or three. Paper, phone note, whatever you have. We work from real numbers, not memory.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">The photo of your supplement bottles.</strong> The one from your welcome email. We go through them together, and about half of clients find something worth dropping in the first month.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">One question you've been sitting on.</strong> Write it down before the call. The calls where a client shows up with their real question are the calls that move their whole month.</p>
+    `)}
+    ${p(`That's it. No new protocol today. Two habits, three things in a bag. See you Wednesday at 7 PM EST.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Wakita is going to be on the June stream too. If you want a watch-buddy from the cohort, post in Skool the day-of — half this room watches it live together with a shared chat thread running.`)}
+    ${psBox(`If you haven't posted your introduction in the VIP room yet (from the Day 3 email), do that first. It takes five minutes, and I comment on every intro within a day. The room works better when it knows you're in it.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Quick one today. I'm buying your Barbara O'Neill virtual event ticket personally — and I want you to put the dates on your calendar before they sneak up on you.
+Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.
 
-JUNE 24-25, 2026.
+HABIT 1: USE THE VIP ROOM LIKE A LOGBOOK, NOT A LIBRARY.
 
-Two days. Virtual. You watch from your living room.
+Most people treat an online space like a library. They walk in quietly, read what's on the shelves, and leave without a word. That's the wrong way to use yours.
 
-Barbara is the closest thing the natural-health world has to a saint. Eighty-something years old, still teaching three days a week. We cross at the foundation — NEWSTART, plant-based, hours-before-midnight sleep, gratitude as the cortisol intervention. Most of what I teach you these 90 days she's been teaching for forty years. You are getting both of us this season.
+THE VIP ROOM RHYTHM THAT WORKS:
+→ Post your numbers once a week. Morning average, one line about sleep, one line about how you felt. Two minutes. Writing it down is half the medicine, and it lets me spot a pattern before it becomes a problem.
+→ Ask one real question a week. Not the polished version. The actual one. "Why is my reading higher on Mondays?" beats "any general tips?" every time.
+→ Answer one person. When someone three weeks behind you asks a question you've lived through, tell them what you saw. Teaching a thing once locks it in better than reading it five times.
 
-WHAT YOU NEED TO KNOW:
+I check the room every weekday at 11 AM ET and 4 PM ET. WhatsApp is faster for same-day questions; the room is for the questions that help everyone.
 
-→ Dates: Wednesday June 24 + Thursday June 25, 2026
-→ Format: Virtual. Phone, laptop, or TV. Replays 30 days after.
-→ Who pays: Me. Bonus included in your tier. Seat registered under your name.
-→ Where to look: ${BARBARA_EVENT_URL}
+→ Open your VIP room: ${SKOOL_VIP_URL}
 
-WHAT I NEED FROM YOU TODAY:
+HABIT 2: WALK INTO WEDNESDAY WITH THREE THINGS IN HAND.
 
-Reply to this email and confirm the name you want on the registration. I default to the first name on your purchase, but some of you go by a different name. One word, one reply, done.
+Bring to your week-1 call:
+→ Your readings so far. Even two or three. Paper, phone note, whatever you have. We work from real numbers, not memory.
+→ The photo of your supplement bottles (from your welcome email). We go through them together, and about half of clients find something worth dropping in the first month.
+→ One question you've been sitting on. Write it down before the call. The calls where a client shows up with their real question are the calls that move their whole month.
 
-Once you reply I buy the ticket, confirmation lands in your inbox from the event team, and I drop your name on a list so I can text you on June 23 with the streaming link.
-
-HOW TO MAKE THE MOST OF IT.
-
-→ Watch with your husband. Barbara converts skeptical husbands.
-→ Take notes by hand. Two days is a lot. Handwritten notes get used.
-→ Bring questions to our next group call. Hear something that lands, write the timestamp, ask me on the Monday call or in the WhatsApp thread.
-
-See you on the call this week.
+That's it. No new protocol today. Two habits, three things in a bag. See you Wednesday at 7 PM EST.
 
 Joel
 RN, BraveWorks
 
-P.S. Wakita is going to be on the June stream too. If you want a watch-buddy from the cohort, post in Skool the day-of — half this room watches it live together with a shared chat thread.
+P.S. If you haven't posted your introduction in the VIP room yet (from the Day 3 email), do that first. It takes five minutes, and I comment on every intro within a day. The room works better when it knows you're in it.
 
 —
 → Skool: ${SKOOL_URL}
@@ -413,28 +428,28 @@ P.S. Wakita is going to be on the June stream too. If you want a watch-buddy fro
 
 // ─── DAY 7 — Week 1 reflection ────────────────────────────────────────
 const day7 = {
-  subject: 'Week 1 reflection — how are you feeling?',
+  subject: 'Week 1 reflection, how are you feeling?',
   subjectB: 'What\'s working, what\'s tight?',
-  preview: 'Two questions I want you to sit with before Monday.',
+  preview: 'Two questions I want you to sit with before Wednesday.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Week 1 closes today. You've been on the protocol for seven days. The body has had its first proper drink of water, the brain has spent the first morning of its life listing twenty-five things it's grateful for, and the cuff has watched you a little more carefully than it did last week.`)}
     ${p(`Today I don't ask you for action. I ask you for reflection.`, { margin: '0 0 28px' })}
     ${bigQuote('Two questions.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Sit with both. Write the answers down — phone notes, journal, scrap paper. External expression is stronger than purely mental.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. What's working?</strong> Anything you've noticed shift. Sleep onset 20 minutes earlier. Morning headache gone Wednesday. Husband said something different over coffee. The 3 PM crash didn't crash. Cuff reading in the 130s when it usually sits in the 140s. Bigger than that or smaller than that — anything you wouldn't have written down last week.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. What's tight?</strong> Where is friction showing up? Can't get the full gallon. Forgetting evening gratitudes. The salt taste under the tongue is harder than expected. Your husband's snacks. Three PM cravings sharper, not duller. Be specific. Be honest. There is no answer that disappoints me — only the ones you don't tell me.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Sit with both. Write the answers down, phone notes, journal, scrap paper. External expression is stronger than purely mental.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. What's working?</strong> Anything you've noticed shift. Sleep onset 20 minutes earlier. Morning headache gone Wednesday. Husband said something different over coffee. The 3 PM crash didn't crash. Cuff reading in the 130s when it usually sits in the 140s. Bigger than that or smaller than that, anything you wouldn't have written down last week.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. What's tight?</strong> Where is friction showing up? Can't get the full gallon. Forgetting evening gratitudes. The salt taste under the tongue is harder than expected. Your husband's snacks. Three PM cravings sharper, not duller. Be specific. Be honest. There is no answer that disappoints me, only the ones you don't tell me.</p>
     `)}
-    ${p(`When you have both answers, reply to this email. One paragraph. I read every word before Monday's call and I will adjust your Week 2 around what you write — that's the whole point of the small-group structure with WhatsApp office hours that you bought.`)}
+    ${p(`When you have both answers, reply to this email. One paragraph. I read every word before Wednesday's call and I will adjust your Week 2 around what you write, that's the whole point of the small-group structure with WhatsApp office hours that you bought.`)}
     ${p(`If you want to post your reflection in Skool instead so the cohort can read it, do that. Either way I see it.`, { margin: '0 0 28px' })}
     ${bigQuote('Why the reflection matters more than the numbers.')}
-    ${p(`A lot of clients want me to look at their cuff readings and tell them whether they're winning. I do look at the cuff. But the cuff is the lagging indicator — the body changes underneath it for two or three weeks before the number catches up.`)}
+    ${p(`A lot of clients want me to look at their cuff readings and tell them whether they're winning. I do look at the cuff. But the cuff is the lagging indicator, the body changes underneath it for two or three weeks before the number catches up.`)}
     ${p(`The reflection IS the leading indicator. Sleep moving first. Cravings softening before the cuff softens. The husband asking different questions. Those changes are the engine starting. The cuff is just the dashboard light catching up.`)}
     ${p(`Wakita's Week 1 reflection was three sentences long. One of them was "I forgot what it felt like to want breakfast in the morning." That sentence told me more about her Stress Pressure than her cuff did. We built her Week 2 around it.`, { margin: '0 0 28px' })}
     ${p(`Send me yours.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If Week 1 has been hard — really hard — that's information too. Reply with "hard" and one sentence about which piece is hardest. I'd rather pull a piece off your plate in Week 2 than have you white-knuckle through.`)}
+    ${psBox(`If Week 1 has been hard, really hard, that's information too. Reply with "hard" and one sentence about which piece is hardest. I'd rather pull a piece off your plate in Week 2 than have you white-knuckle through.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -445,7 +460,7 @@ Today I don't ask you for action. I ask you for reflection.
 
 TWO QUESTIONS.
 
-Sit with both. Write them down — phone notes, journal, scrap paper. External expression is stronger than purely mental.
+Sit with both. Write them down, phone notes, journal, scrap paper. External expression is stronger than purely mental.
 
 1. WHAT'S WORKING?
 Anything you've noticed shift. Sleep 20 min earlier. Morning headache gone Wednesday. Husband said something different. The 3 PM crash didn't crash. Cuff reading in the 130s when it usually sits in the 140s.
@@ -453,7 +468,7 @@ Anything you've noticed shift. Sleep 20 min earlier. Morning headache gone Wedne
 2. WHAT'S TIGHT?
 Where is friction showing up? Can't get the full gallon. Forgetting evening gratitudes. Salt taste under the tongue. Husband's snacks. Three PM cravings sharper. Be specific. Be honest.
 
-When you have both answers, reply. One paragraph. I read every word before Monday's call and adjust your Week 2 around what you write — that's the whole point of the small-group structure with WhatsApp office hours that you bought.
+When you have both answers, reply. One paragraph. I read every word before Wednesday's call and adjust your Week 2 around what you write, that's the whole point of the small-group structure with WhatsApp office hours that you bought.
 
 If you want to post in Skool instead so the cohort can read it, do that. Either way I see it.
 
@@ -470,7 +485,7 @@ Send me yours.
 Joel
 RN, BraveWorks
 
-P.S. If Week 1 has been hard — really hard — that's information too. Reply with "hard" and one sentence about which piece is hardest. I'd rather pull a piece off your plate in Week 2 than have you white-knuckle through.
+P.S. If Week 1 has been hard, really hard, that's information too. Reply with "hard" and one sentence about which piece is hardest. I'd rather pull a piece off your plate in Week 2 than have you white-knuckle through.
 
 —
 → Skool: ${SKOOL_URL}
@@ -480,21 +495,21 @@ P.S. If Week 1 has been hard — really hard — that's information too. Reply w
 
 // ─── DAY 10 — Plateau-buster (the Day 14 dip) ─────────────────────────
 const day10 = {
-  subject: 'Day 14 is the hardest day — read this now',
+  subject: 'Day 14 is the hardest day, read this now',
   subjectB: 'Why your numbers might pause this week',
   preview: 'It happens to almost everyone. Here\'s the why and the move.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I'm writing this on Day 10 because I want to put a flag in the ground before you walk over the cliff.`, { margin: '0 0 28px' })}
     ${bigQuote('The Day 14 dip is coming.')}
-    ${p(`Almost every client I have ever walked through this protocol hits a wall somewhere between Day 12 and Day 16. The cuff number stalls. Or worse — it goes up a few points after a run of dropping. The hydration that felt natural in Week 1 starts feeling like a chore. The gratitudes feel rote. Your husband stops being curious and starts being normal.`)}
+    ${p(`Almost every client I have ever walked through this protocol hits a wall somewhere between Day 12 and Day 16. The cuff number stalls. Or worse, it goes up a few points after a run of dropping. The hydration that felt natural in Week 1 starts feeling like a chore. The gratitudes feel rote. Your husband stops being curious and starts being normal.`)}
     ${p(`That's not failure. That's the protocol working exactly the way I expect it to. I want you to recognize it when it shows up so you don't quit the day before the numbers move.`, { margin: '0 0 28px' })}
     ${bigQuote('Why it happens.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Three things happen at once around Day 14:</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Stress Pressure rebounds before it settles.</strong> Cortisol doesn't drop on a clean slope. It drops, plateaus, sometimes rebounds for 48-72 hours, then drops again. The rebound usually shows up around Day 12-14. The body is reorganizing.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Novelty wears off.</strong> Week 1 was new. The water tasted different. The gratitudes felt loud. By Day 12 the brain has stopped scoring the protocol as "exciting" and started filing it under "chore." Your motivation drops not because the protocol stopped working but because your brain stopped giving you the dopamine kick of doing something new.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Pipe Pressure hasn't caught up yet.</strong> Stress and Sugar respond to the protocol fast. The pipes themselves — the vascular tone — take 3-6 weeks to soften. Around Day 14 you're between those two timelines. The fast levers have already delivered. The slow ones haven't started yet.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. The Sodium corner hasn't caught up yet.</strong> Stress and Sugar respond to the protocol fast. Draining a line that's been overfull for years, and letting the vessel walls relax, takes 3-6 weeks. Around Day 14 you're between those two timelines. The fast levers have already delivered. The slow ones haven't started yet.</p>
     `)}
     ${p(`So the cuff numbers sit. Sometimes climb back two or three systolic points. And the new client, alone, looks at the cuff and thinks "this isn't working."`)}
     ${p(`<strong style="color:${PALETTE.text};">It IS working. The cuff is the lagging indicator. The reflection is the leading one.</strong>`, { margin: '0 0 28px' })}
@@ -508,7 +523,7 @@ const day10 = {
     ${p(`I write this email on Day 10 every cohort. Half of you will text me Day 13 and say "Joel I'm in it." A few will text me Day 17 and say "Joel I thought I was in it but I just had my best cuff reading of the protocol." Both are correct.`, { margin: '0 0 28px' })}
     ${p(`You bought a coach. The whole reason you bought a coach is for moments like this one. Use me.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you've already noticed the dip starting — congratulations, you're early. Text me the word "dip" right now and I'll add you to a thread of three other clients currently inside it. Sometimes the cohort sees you out before I do.`)}
+    ${psBox(`If you've already noticed the dip starting, congratulations, you're early. Text me the word "dip" right now and I'll add you to a thread of three other clients currently inside it. Sometimes the cohort sees you out before I do.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -517,7 +532,7 @@ I'm writing this on Day 10 because I want to put a flag in the ground before you
 
 THE DAY 14 DIP IS COMING.
 
-Almost every client I have ever walked through this protocol hits a wall somewhere between Day 12 and Day 16. The cuff number stalls. Or worse — it goes up a few points after a run of dropping. The hydration starts feeling like a chore. The gratitudes feel rote.
+Almost every client I have ever walked through this protocol hits a wall somewhere between Day 12 and Day 16. The cuff number stalls. Or worse, it goes up a few points after a run of dropping. The hydration starts feeling like a chore. The gratitudes feel rote.
 
 That's not failure. That's the protocol working exactly the way I expect it to.
 
@@ -529,8 +544,8 @@ Cortisol doesn't drop on a clean slope. Drops, plateaus, rebounds 48-72 hours, t
 2. NOVELTY WEARS OFF.
 Week 1 was new. By Day 12 the brain has filed the protocol under "chore." Motivation drops not because the protocol stopped working but because the dopamine kick of doing something new is gone.
 
-3. PIPE PRESSURE HASN'T CAUGHT UP.
-Stress and Sugar respond fast. The pipes take 3-6 weeks. Around Day 14 you're between those timelines.
+3. THE SODIUM CORNER HASN'T CAUGHT UP.
+Stress and Sugar respond fast. Draining a line that's been overfull for years takes 3-6 weeks. Around Day 14 you're between those timelines.
 
 The cuff sits. Sometimes climbs back two or three. The new client looks at the cuff and thinks "this isn't working."
 
@@ -563,34 +578,34 @@ P.S. Already noticed the dip starting? You're early. Text me the word "dip" righ
 
 // ─── DAY 14 — First numbers check-in + adjustment ─────────────────────
 const day14 = {
-  subject: 'Halfway to Day 30 — pulse check',
+  subject: 'Halfway to Day 30, pulse check',
   subjectB: 'What the data is telling us',
   preview: 'Two weeks in. Here\'s what I need to see before we adjust.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Halfway to the Day 30 mark. Time for the first real pulse check.`)}
-    ${p(`Whether or not the Day 14 dip showed up for you — and for a third of this cohort it doesn't, you're built different — I want a clean look at the data before we make the first real adjustment to your protocol.`, { margin: '0 0 28px' })}
+    ${p(`Whether or not the Day 14 dip showed up for you, and for a third of this cohort it doesn't, you're built different, I want a clean look at the data before we make the first real adjustment to your protocol.`, { margin: '0 0 28px' })}
     ${bigQuote('What I want from you today.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Reply with five lines. That's the whole ask.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 1 — morning BP average, past 7 days.</strong> Add the seven AM readings, divide by 7. Give me systolic over diastolic. If you missed a day, that's fine — average what you have.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 2 — evening BP average, past 7 days.</strong> Same math, evening readings.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 3 — your sleep number.</strong> Best honest estimate of nightly hours, past 7 days. If you're on a tracker, use that. If not, your gut.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 4 — gallon adherence, past 7 days.</strong> How many days you hit close to the full gallon. 7/7, 5/7, 3/7. Be honest. The honesty IS the protocol working.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Line 5 — the thing.</strong> One sentence: what changed in your body that nobody else has noticed.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 1, morning BP average, past 7 days.</strong> Add the seven AM readings, divide by 7. Give me systolic over diastolic. If you missed a day, that's fine, average what you have.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 2, evening BP average, past 7 days.</strong> Same math, evening readings.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 3, your sleep number.</strong> Best honest estimate of nightly hours, past 7 days. If you're on a tracker, use that. If not, your gut.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">Line 4, gallon adherence, past 7 days.</strong> How many days you hit close to the full gallon. 7/7, 5/7, 3/7. Be honest. The honesty IS the protocol working.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Line 5, the thing.</strong> One sentence: what changed in your body that nobody else has noticed.</p>
     `)}
-    ${p(`Reply to this email with the five lines. Or post them in Skool — whichever you prefer. The cohort benefits from seeing each other's numbers; it's the fastest way for someone three weeks behind you to know what's possible.`, { margin: '0 0 28px' })}
+    ${p(`Reply to this email with the five lines. Or post them in Skool, whichever you prefer. The cohort benefits from seeing each other's numbers; it's the fastest way for someone three weeks behind you to know what's possible.`, { margin: '0 0 28px' })}
     ${bigQuote('What I do with the data.')}
     ${p(`Once I have your five lines I look at three things you can't easily see:`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">1. The gap between your morning and evening averages.</strong> A wide gap (more than 12 mmHg apart) tells me Stress Pressure is still the loudest corner. A narrow gap tells me we're more in Pipe Pressure territory. That determines which lever I add next.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">1. The gap between your morning and evening averages.</strong> A wide gap (more than 12 mmHg apart) tells me Stress is still the loudest corner. A narrow gap tells me we're more in Sodium territory. That determines which lever I add next.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. The relationship between sleep and the morning number.</strong> If your morning BP drops the day after a 7-hour night and climbs the day after a 5-hour night, sleep is your highest-leverage move. That single relationship determines whether I add a magnesium glycinate tweak or hold steady.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Gallon adherence vs. systolic.</strong> If your hydration days correlate with lower readings, water is doing the heavy lifting and we don't introduce a new herb yet. If they don't correlate, Pipe Pressure has stiffer roots and we lean into hibiscus earlier.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Gallon adherence vs. systolic.</strong> If your hydration days correlate with lower readings, water is doing the heavy lifting and we don't introduce a new herb yet. If they don't correlate, the held sodium has deeper roots and we lean into hibiscus earlier.</p>
     `)}
     ${p(`This is the whole reason the small-group + WhatsApp-office-hours structure costs what it costs. I'm not running a curriculum at you. I'm reading your specific case and adjusting in real time.`, { margin: '0 0 28px' })}
     ${p(`Send me the five lines by tomorrow night and I'll have your Week 3 adjustment in your inbox before your next group call.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If your numbers haven't moved at all in two weeks — and a small number of clients fit this — that's the most useful data of all. It tells me there's a hidden cause behind the loud one (sleep apnea, medication side effect, a thyroid drift). Reply "stuck" and we'll add that conversation to your next call.`)}
+    ${psBox(`If your numbers haven't moved at all in two weeks, and a small number of clients fit this, that's the most useful data of all. It tells me there's a hidden cause behind the loud one (sleep apnea, medication side effect, a thyroid drift). Reply "stuck" and we'll add that conversation to your next call.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -601,23 +616,23 @@ WHAT I WANT FROM YOU TODAY.
 
 Reply with five lines.
 
-LINE 1 — Morning BP average, past 7 days. Add the seven AM readings, divide by 7. Systolic over diastolic.
+LINE 1, Morning BP average, past 7 days. Add the seven AM readings, divide by 7. Systolic over diastolic.
 
-LINE 2 — Evening BP average, past 7 days. Same math.
+LINE 2, Evening BP average, past 7 days. Same math.
 
-LINE 3 — Your sleep number. Best honest estimate of nightly hours, past 7 days.
+LINE 3, Your sleep number. Best honest estimate of nightly hours, past 7 days.
 
-LINE 4 — Gallon adherence, past 7 days. 7/7, 5/7, 3/7. Be honest. The honesty IS the protocol working.
+LINE 4, Gallon adherence, past 7 days. 7/7, 5/7, 3/7. Be honest. The honesty IS the protocol working.
 
-LINE 5 — The thing. One sentence: what changed in your body that nobody else has noticed.
+LINE 5, The thing. One sentence: what changed in your body that nobody else has noticed.
 
-Reply with the five lines. Or post in Skool — whichever you prefer. Cohort benefits from seeing each other's numbers.
+Reply with the five lines. Or post in Skool, whichever you prefer. Cohort benefits from seeing each other's numbers.
 
 WHAT I DO WITH THE DATA.
 
 Once I have your five lines I look at three things you can't easily see:
 
-1. THE GAP BETWEEN MORNING AND EVENING. Wide gap (>12 mmHg) = Stress Pressure still loudest. Narrow gap = Pipe Pressure territory. Determines next lever.
+1. THE GAP BETWEEN MORNING AND EVENING. Wide gap (>12 mmHg) = Stress still loudest. Narrow gap = Sodium territory. Determines next lever.
 
 2. SLEEP VS. MORNING NUMBER. Morning BP drops after 7-hour nights, climbs after 5-hour nights = sleep is highest leverage. Determines magnesium glycinate timing.
 
@@ -641,128 +656,128 @@ P.S. Numbers haven't moved at all in two weeks? That's the most useful data of a
 // ─── DAY 17 — The 7-herb formulary deep dive ──────────────────────────
 const day17 = {
   subject: 'The 7 herbs I\'m prescribing this cohort',
-  subjectB: 'Your herb stack — week by week',
+  subjectB: 'Your herb stack, week by week',
   preview: 'Five anchors plus two supports. Why each, how to dose, when to add.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Today is the herb-stack deep dive. Three weeks in — you have the foundation. We start layering the accelerators.`)}
-    ${p(`A note on language first. <strong style="color:${PALETTE.text};">I don't prescribe.</strong> I'm a Registered Nurse and a naturopathic practitioner — these are educational recommendations within a coaching relationship, and every adjustment you make to your medication or supplement stack is a conversation with your physician. The Doctor Conversation Script in your kit is the bridge for that. Day 21 we walk through it together.`, { margin: '0 0 28px' })}
+    ${p(`Today is the herb-stack deep dive. Three weeks in, you have the foundation. We start layering the accelerators.`)}
+    ${p(`A note on language first. <strong style="color:${PALETTE.text};">I don't prescribe.</strong> I'm a Registered Nurse and a naturopathic practitioner, these are educational recommendations within a coaching relationship, and every adjustment you make to your medication or supplement stack is a conversation with your physician. The Doctor Conversation Script in your kit is the bridge for that. Day 21 we walk through it together.`, { margin: '0 0 28px' })}
     ${bigQuote('The Five Anchors plus two supports.')}
     ${p(`This is the stack I am building you toward over Weeks 3-8. We don't add them all at once. We sequence them based on which Pressure was loudest in your intake.`, { margin: '0 0 28px' })}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 1 — Hibiscus Tea (Pipe Pressure)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Hibiscus sabdariffa — loose-leaf or pure tea bags. Not blends.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Dose:</strong> 2-3 cups per day. Brew 6-10 minutes. Hot or iced — doesn't matter.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> A natural ACE inhibitor — same pathway as lisinopril, gentler hand. Tufts published 7.2 mmHg systolic reduction in six weeks. The most-cited herb in the bench.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 1: Hibiscus Tea (Sodium)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Hibiscus sabdariffa, loose-leaf or pure tea bags. Not blends.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Dose:</strong> 2-3 cups per day. Brew 6-10 minutes. Hot or iced, doesn't matter.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> A natural ACE inhibitor, same pathway as lisinopril, gentler hand. Tufts published 7.2 mmHg systolic reduction in six weeks. The most-cited herb in the bench.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Most of you start this week if you weren't already.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 2 — Garlic (Pipe Pressure)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form A (food):</strong> 2 fresh cloves daily, crushed. Wait 10 minutes after crushing — that's the allicin conversion. Then eat raw or stir into food after cooking is done.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form B (capsule):</strong> Aged Garlic Extract — Kyolic brand most-studied. 600-1,200 mg daily. For clients who can't tolerate raw.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Allicin converts to hydrogen sulfide in the vessel wall — true vasodilation. 2019 meta-analysis: 8.3 systolic and 5.5 diastolic across 550 patients.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 2: Garlic (Sodium)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form A (food):</strong> 2 fresh cloves daily, crushed. Wait 10 minutes after crushing, that's the allicin conversion. Then eat raw or stir into food after cooking is done.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form B (capsule):</strong> Aged Garlic Extract, Kyolic brand most-studied. 600-1,200 mg daily. For clients who can't tolerate raw.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Allicin converts to hydrogen sulfide in the vessel wall, the walls relax and the line widens, so the same water presses less. 2019 meta-analysis: 8.3 systolic and 5.5 diastolic across 550 patients.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Alongside hibiscus, this week or next.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 3 — Magnesium (Stress + Pipe)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form 1:</strong> Magnesium glycinate — 200 mg at bedtime. Sleep + cortisol.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form 2:</strong> Magnesium taurate — 200 mg with dinner. Vascular-specific.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 3: Magnesium (Stress + Sodium)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form 1:</strong> Magnesium glycinate, 200 mg at bedtime. Sleep + cortisol.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form 2:</strong> Magnesium taurate, 200 mg with dinner. Helps the vessel walls relax.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>What to avoid:</strong> Magnesium oxide. 4% absorption. Near-useless. Read the label.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Bedtime glycinate is in most of your Week 2 already. Dinner taurate joins around Week 4.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 4 — Ashwagandha (Stress Pressure)</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 4, Ashwagandha (Stress Pressure)</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> KSM-66 standardized extract. 300 mg.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Dose:</strong> Morning or with lunch. Not at night for most people — paradoxically energizing for some.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Dose:</strong> Morning or with lunch. Not at night for most people, paradoxically energizing for some.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> HPA-axis adaptogen. Meta-analyses show ~28% cortisol reduction over 8 weeks. The cortisol lever that pairs cleanly with the 25-and-25 gratitude practice.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Week 4-5 for most of you. We let the gratitude practice do its work first, then layer.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 5 — Holy Basil / Tulsi (Stress + Sugar)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Tea (most popular) or 300 mg standardized capsule. Tea preferred — the ritual matters.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Anchor 5, Holy Basil / Tulsi (Stress + Sugar)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Tea (most popular) or 300 mg standardized capsule. Tea preferred, the ritual matters.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Dose:</strong> One cup evening, around 7-8 PM.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Dual action — cortisol softening plus blood-sugar regulation. Replaces the evening coffee or wine. The cortisol stack with ashwagandha is one of the most-evidenced combinations in the bench.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Same window as ashwagandha — Weeks 4-5.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Dual action, cortisol softening plus blood-sugar regulation. Replaces the evening coffee or wine. The cortisol stack with ashwagandha is one of the most-evidenced combinations in the bench.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Same window as ashwagandha, Weeks 4-5.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Support 1 — Hawthorn Berry (Pipe Pressure)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Tea or standardized extract — 250-500 mg.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> A classic cardiac tonic in European herbal medicine. Mild vasodilator, gentle on the system, pairs beautifully when hibiscus is moving the needle but the cuff still feels tight.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Support 1: Hawthorn Berry (Sodium)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Tea or standardized extract, 250-500 mg.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> A classic cardiac tonic in European herbal medicine. Helps the vessel walls relax, gentle on the system, pairs beautifully when hibiscus is moving the needle but the cuff still feels tight.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Optional. Some of you, not all. We decide on your Week 6 call.</p>
     `)}
     ${sageBlock(`
-      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Support 2 — Cinnamon (Sugar Pressure)</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Ceylon cinnamon (true cinnamon) — NOT cassia. Powder or capsule. 1-3 g.</p>
+      <p style="font-size:18px;line-height:1.4;color:${PALETTE.text};margin:0 0 8px;font-family:Georgia,serif;font-weight:600;">Support 2, Cinnamon (Sugar Pressure)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Form:</strong> Ceylon cinnamon (true cinnamon), NOT cassia. Powder or capsule. 1-3 g.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;"><strong>Why this one:</strong> Insulin sensitivity. The Sugar Pressure lever for clients whose A1c sits above 5.7 and whose morning fasting glucose runs above 95.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong>When you add it:</strong> Optional. Determined by your morning fasting numbers in Week 5.</p>
     `)}
-    ${p(`<strong style="color:${PALETTE.text};">Read once. Save the email. Don't act on it yet — your specific sequence comes through your Monday group call or the WhatsApp office hours thread.</strong>`)}
+    ${p(`<strong style="color:${PALETTE.text};">Read once. Save the email. Don't act on it yet, your specific sequence comes through your Wednesday group call or the WhatsApp office hours thread.</strong>`)}
     ${p(`If you go to the supplement store this weekend, the only one I'd green-light on your own is hibiscus tea. The rest we sequence on the call.`, { margin: '0 0 28px' })}
-    ${p(`Day 21 — the doctor conversation. Saving the most important Week 4 piece for then.`, { margin: '0 0 28px' })}
+    ${p(`Day 21, the doctor conversation. Saving the most important Week 4 piece for then.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you're already taking any of these — even one — reply with the name and dose. I want to know what's already in your stack before I sequence the rest. The intake captured what was on the counter; sometimes the bottle in the suitcase from last year isn't on the form.`)}
+    ${psBox(`If you're already taking any of these, even one, reply with the name and dose. I want to know what's already in your stack before I sequence the rest. The intake captured what was on the counter; sometimes the bottle in the suitcase from last year isn't on the form.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
-Today is the herb-stack deep dive. Three weeks in — you have the foundation. We start layering the accelerators.
+Today is the herb-stack deep dive. Three weeks in, you have the foundation. We start layering the accelerators.
 
-A note on language: I don't prescribe. I'm an RN and naturopathic practitioner — these are educational recommendations within a coaching relationship, and every adjustment to your medication or supplement stack is a conversation with your physician. The Doctor Conversation Script in your kit is the bridge. Day 21 we walk through it together.
+A note on language: I don't prescribe. I'm an RN and naturopathic practitioner, these are educational recommendations within a coaching relationship, and every adjustment to your medication or supplement stack is a conversation with your physician. The Doctor Conversation Script in your kit is the bridge. Day 21 we walk through it together.
 
 THE FIVE ANCHORS PLUS TWO SUPPORTS.
 
 This is the stack I'm building you toward over Weeks 3-8. We don't add them all at once. We sequence based on which Pressure was loudest in your intake.
 
-ANCHOR 1 — HIBISCUS TEA (Pipe Pressure)
+ANCHOR 1: HIBISCUS TEA (Sodium)
 Form: Hibiscus sabdariffa. Not blends.
 Dose: 2-3 cups daily. Brew 6-10 min.
-Why: Natural ACE inhibitor. Tufts study: 7.2 mmHg systolic in 6 weeks.
+Why: Natural ACE inhibitor, helps the line let go of held water. Tufts study: 7.2 mmHg systolic in 6 weeks.
 When: Most of you start this week.
 
-ANCHOR 2 — GARLIC (Pipe Pressure)
+ANCHOR 2: GARLIC (Sodium)
 Form A: 2 fresh cloves daily, crushed, wait 10 minutes for allicin conversion.
 Form B: Kyolic Aged Garlic Extract 600-1,200 mg.
-Why: Allicin → hydrogen sulfide → vasodilation. 8.3 systolic / 5.5 diastolic across 550 patients (2019 meta).
+Why: Allicin → hydrogen sulfide → the walls relax and the line widens, so the same water presses less. 8.3 systolic / 5.5 diastolic across 550 patients (2019 meta).
 When: Alongside hibiscus, this week or next.
 
-ANCHOR 3 — MAGNESIUM (Stress + Pipe)
+ANCHOR 3: MAGNESIUM (Stress + Sodium)
 Form 1: Glycinate 200 mg bedtime. Sleep + cortisol.
-Form 2: Taurate 200 mg dinner. Vascular.
+Form 2: Taurate 200 mg dinner. Helps the vessel walls relax.
 Avoid: Magnesium oxide. 4% absorption.
 When: Bedtime glycinate in Week 2 already. Dinner taurate joins Week 4.
 
-ANCHOR 4 — ASHWAGANDHA (Stress Pressure)
+ANCHOR 4, ASHWAGANDHA (Stress Pressure)
 Form: KSM-66 standardized.
 Dose: 300 mg AM or with lunch. Not at night.
 Why: HPA-axis adaptogen. ~28% cortisol reduction over 8 weeks.
 When: Week 4-5 for most.
 
-ANCHOR 5 — HOLY BASIL / TULSI (Stress + Sugar)
+ANCHOR 5, HOLY BASIL / TULSI (Stress + Sugar)
 Form: Tea preferred. Or 300 mg capsule.
 Dose: One cup evening, 7-8 PM.
 Why: Cortisol + blood-sugar regulation. The cortisol stack with ashwagandha is one of the most-evidenced combinations.
 When: Weeks 4-5.
 
-SUPPORT 1 — HAWTHORN BERRY (Pipe Pressure)
+SUPPORT 1: HAWTHORN BERRY (Sodium)
 Form: Tea or 250-500 mg extract.
-Why: Classic cardiac tonic. Mild vasodilator.
+Why: Classic cardiac tonic. Helps the vessel walls relax.
 When: Optional. Some of you. Decide on Week 6 call.
 
-SUPPORT 2 — CINNAMON (Sugar Pressure)
-Form: Ceylon — NOT cassia. 1-3 g.
+SUPPORT 2, CINNAMON (Sugar Pressure)
+Form: Ceylon, NOT cassia. 1-3 g.
 Why: Insulin sensitivity. For A1c >5.7 and fasting glucose >95.
 When: Optional. Determined by Week 5 numbers.
 
-READ ONCE. SAVE THE EMAIL. DON'T ACT YET — your specific sequence comes through your Monday group call or the WhatsApp office hours thread.
+READ ONCE. SAVE THE EMAIL. DON'T ACT YET, your specific sequence comes through your Wednesday group call or the WhatsApp office hours thread.
 
 If you go to the supplement store this weekend, the only one I'd green-light on your own is hibiscus tea. The rest we sequence on the call.
 
-Day 21 — the doctor conversation. Saving the most important Week 4 piece for then.
+Day 21, the doctor conversation. Saving the most important Week 4 piece for then.
 
 Joel
 RN, BraveWorks
 
-P.S. Already taking any of these — even one — reply with the name and dose. I want to know what's already in your stack before I sequence the rest.
+P.S. Already taking any of these, even one, reply with the name and dose. I want to know what's already in your stack before I sequence the rest.
 
 —
 → Skool: ${SKOOL_URL}
@@ -772,7 +787,7 @@ P.S. Already taking any of these — even one — reply with the name and dose. 
 
 // ─── DAY 21 — Doctor conversation prep + script ───────────────────────
 const day21 = {
-  subject: 'Your next doctor visit — the script',
+  subject: 'Your next doctor visit, the script',
   subjectB: 'How to talk to your cardiologist',
   preview: 'The four sentences. The data you bring. The answer you\'re asking for.',
   htmlBody: ({ firstName }) => `
@@ -781,22 +796,22 @@ const day21 = {
     ${p(`Most of you have a cardiology or primary-care appointment somewhere between Week 4 and Week 8. I want you walking into that room with the right data and the right four sentences. Read this email today. Reread it the morning of your appointment.`, { margin: '0 0 28px' })}
     ${bigQuote('Pills manage output. Protocol fixes input.')}
     ${p(`I write this sentence on a piece of paper at the start of every coaching relationship. Most clients tape it to the refrigerator.`)}
-    ${p(`Your medication does one thing well: it lowers the number on the cuff. That's what it was designed to do. That's what your doctor measures it by. <strong style="color:${PALETTE.text};">It doesn't fix what's making the number high in the first place.</strong> Pipe Pressure, Stress Pressure, Sugar Pressure — those keep grinding underneath the pill. Which is why most patients end up on a second pill in three years, a third in five, a fourth by 65.`)}
+    ${p(`Your medication does one thing well: it lowers the number on the cuff. That's what it was designed to do. That's what your doctor measures it by. <strong style="color:${PALETTE.text};">It doesn't fix what's making the number high in the first place.</strong> Stress, Sugar, Sodium, those keep grinding underneath the pill. The system treats your symptom, the pill hides the number. The Triangle heals the loop, the cause. Which is why most patients end up on a second pill in three years, a third in five, a fourth by 65, blood pressure managed for thirty years instead of healed.`)}
     ${p(`The protocol you're running fixes the inputs. The pills are still in the picture. They are running underneath the protocol. We are not against your medication. <strong style="color:${PALETTE.text};">We are AND not INSTEAD OF.</strong>`)}
     ${p(`That is the frame. Now the script.`, { margin: '0 0 28px' })}
     ${bigQuote('The four sentences.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Print these. Bring them to your appointment. Read them if you need to.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. The opener (the partnership frame).</strong></p>
-      <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"Doctor, I've been working with a registered nurse and naturopathic practitioner on lifestyle changes that target the root causes of my high blood pressure — sleep, hydration, nutrition, stress management. I'm taking my medication exactly as you prescribed. I've been tracking my readings twice daily for the past three weeks. Here's the log."</p>
+      <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"Doctor, I've been working with a registered nurse and naturopathic practitioner on lifestyle changes that target the root causes of my high blood pressure, sleep, hydration, nutrition, stress management. I'm taking my medication exactly as you prescribed. I've been tracking my readings twice daily for the past three weeks. Here's the log."</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. The data hand-off.</strong></p>
       <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"My morning average has moved from [your Week 1 number] to [your Week 3 number]. My evening average from [Week 1] to [Week 3]. I'd like this in my chart as a baseline for what we're tracking together."</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">3. The ask.</strong></p>
-      <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"I'd like to discuss whether my numbers support a conversation about gradually tapering my medication under your supervision over the next 60-90 days. I'm not asking to stop anything on my own — I want this to be your call, with my data. Can we set a follow-up in 4 weeks to look at numbers again and decide?"</p>
+      <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"I'd like to discuss whether my numbers support a conversation about gradually tapering my medication under your supervision over the next 60-90 days. I'm not asking to stop anything on my own, I want this to be your call, with my data. Can we set a follow-up in 4 weeks to look at numbers again and decide?"</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">4. The boundary + the fallback.</strong></p>
       <p style="font-size:15.5px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;font-style:italic;padding-left:14px;border-left:2px solid ${PALETTE.accentSage};">"I understand you may want to repeat labs, check kidney function, and monitor closely. I'm committed to that. If you'd prefer I stay at the current dose while we monitor more, I'd like to revisit this in 4-6 weeks with continued data."</p>
     `)}
-    ${p(`Four sentences. Three minutes of the appointment. Most cardiologists I've seen this script used on say some version of yes by the third sentence — because you've removed every adversarial element. You've given them data. You've made them the lead.`, { margin: '0 0 28px' })}
+    ${p(`Four sentences. Three minutes of the appointment. Most cardiologists I've seen this script used on say some version of yes by the third sentence, because you've removed every adversarial element. You've given them data. You've made them the lead.`, { margin: '0 0 28px' })}
     ${bigQuote('What to bring with you.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Your full BP log.</strong> Twenty-one days of morning + evening readings. Print it on one page if you can. The single page is the visual proof.</p>
@@ -805,12 +820,12 @@ const day21 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">A notebook.</strong> Write down whatever the doctor says. The notes prevent the "wait, did he actually agree?" loop on the drive home.</p>
     `)}
     ${bigQuote('If the doctor says no.')}
-    ${p(`Some will. Not most, but some. If yours does, that's information — not failure.`)}
+    ${p(`Some will. Not most, but some. If yours does, that's information, not failure.`)}
     ${p(`The right response in the moment: <em>"I appreciate that. I'll keep tracking the data, I'll stay on the medication exactly as prescribed, and I'd like to revisit this conversation in six weeks with another month of readings. Will you put that in the schedule for me?"</em>`)}
     ${p(`Then text me on WhatsApp when you leave the parking lot. We talk strategy. Sometimes that's a second-opinion conversation, sometimes it's a "give him one more cycle of data" conversation. Always it's with respect for your doctor.`, { margin: '0 0 28px' })}
     ${p(`Practice the four sentences out loud this week. With your husband if you can. The first time you say them shouldn't be in the appointment.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with if I were you. We also rehearse the conversation on the Monday group call or in WhatsApp whenever you want one.`)}
+    ${psBox(`Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note, your specific numbers, your specific corner, the sentence I'd lead with if I were you. We also rehearse the conversation on the Wednesday group call or in WhatsApp whenever you want one.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -821,7 +836,7 @@ Most of you have a cardiology or primary-care appointment somewhere between Week
 
 PILLS MANAGE OUTPUT. PROTOCOL FIXES INPUT.
 
-Your medication lowers the number on the cuff. It doesn't fix what's making the number high — Pipe Pressure, Stress Pressure, Sugar Pressure keep grinding underneath. Which is why most patients end up on a second pill in three years, a third in five.
+Your medication lowers the number on the cuff. It doesn't fix what's making the number high. Stress, Sugar, Sodium keep grinding underneath. The system treats your symptom, the pill hides the number. The Triangle heals the loop, the cause. Which is why most patients end up on a second pill in three years, a third in five.
 
 The protocol fixes the inputs. The pills are still in the picture. We are AND not INSTEAD OF.
 
@@ -830,13 +845,13 @@ That is the frame. Now the script.
 THE FOUR SENTENCES.
 
 1. THE OPENER (the partnership frame).
-"Doctor, I've been working with a registered nurse and naturopathic practitioner on lifestyle changes targeting the root causes of my high blood pressure — sleep, hydration, nutrition, stress management. I'm taking my medication exactly as you prescribed. I've been tracking my readings twice daily for the past three weeks. Here's the log."
+"Doctor, I've been working with a registered nurse and naturopathic practitioner on lifestyle changes targeting the root causes of my high blood pressure, sleep, hydration, nutrition, stress management. I'm taking my medication exactly as you prescribed. I've been tracking my readings twice daily for the past three weeks. Here's the log."
 
 2. THE DATA HAND-OFF.
 "My morning average has moved from [Week 1] to [Week 3]. Evening average from [Week 1] to [Week 3]. I'd like this in my chart as a baseline for what we're tracking together."
 
 3. THE ASK.
-"I'd like to discuss whether my numbers support a conversation about gradually tapering my medication under your supervision over the next 60-90 days. I'm not asking to stop anything on my own — I want this to be your call, with my data. Can we set a follow-up in 4 weeks?"
+"I'd like to discuss whether my numbers support a conversation about gradually tapering my medication under your supervision over the next 60-90 days. I'm not asking to stop anything on my own, I want this to be your call, with my data. Can we set a follow-up in 4 weeks?"
 
 4. THE BOUNDARY + FALLBACK.
 "I understand you may want to repeat labs, check kidney function, monitor closely. I'm committed to that. If you'd prefer I stay at the current dose while we monitor more, I'd like to revisit in 4-6 weeks with continued data."
@@ -852,7 +867,7 @@ WHAT TO BRING.
 
 IF THE DOCTOR SAYS NO.
 
-Some will. Not most. That's information — not failure.
+Some will. Not most. That's information, not failure.
 
 The right response: "I appreciate that. I'll keep tracking the data. I'll stay on the medication exactly as prescribed. And I'd like to revisit this conversation in six weeks with another month of readings. Will you put that in the schedule for me?"
 
@@ -863,7 +878,7 @@ Practice the four sentences out loud this week. With your husband if you can. Th
 Joel
 RN, BraveWorks
 
-P.S. Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note — your specific numbers, your specific Pressure, the sentence I'd lead with. We also rehearse the conversation on the Monday group call or in WhatsApp whenever you want one.
+P.S. Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note, your specific numbers, your specific corner, the sentence I'd lead with. We also rehearse the conversation on the Wednesday group call or in WhatsApp whenever you want one.
 
 —
 → Skool: ${SKOOL_URL}
@@ -873,58 +888,58 @@ P.S. Tell me the date of your next appointment when you book it. I block 15 minu
 
 // ─── DAY 30 — First-month check-in + 60/90 day preview ────────────────
 const day30 = {
-  subject: '30 days in — what\'s working, what to adjust',
+  subject: '30 days in, what\'s working, what to adjust',
   subjectB: 'Your first taper conversation',
   preview: 'Where we\'ve been. What changes in the next 60 days.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Thirty days. That's a milestone.`)}
-    ${p(`Most BP protocols on the internet are 30-day programs. They are designed to deliver a "before and after" result — a small win, a screenshot, a testimonial that makes them buyable. <strong style="color:${PALETTE.text};">You are not on a 30-day program. You are 30 days into a 90-day repatterning.</strong> The work you've done is the foundation. The next 60 days are where it becomes a body.`, { margin: '0 0 28px' })}
+    ${p(`Most BP protocols on the internet are 30-day programs. They are designed to deliver a "before and after" result, a small win, a screenshot, a testimonial that makes them buyable. <strong style="color:${PALETTE.text};">You are not on a 30-day program. You are 30 days into a 90-day repatterning.</strong> The work you've done is the foundation. The next 60 days are where it becomes a body.`, { margin: '0 0 28px' })}
     ${bigQuote('Where we\'ve been.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month one — Foundation laid. Look at what's true now that wasn't true 30 days ago:</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month one, Foundation laid. Look at what's true now that wasn't true 30 days ago:</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Hydration is automatic. Water is muscle memory now, not a chore.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Twenty-five gratitudes have become a rhythm. Cortisol is softer than it was.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ The cuff has watched you for 30 days. We have real data now — not theory.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ The herb stack is started — hibiscus, garlic, magnesium glycinate at minimum, more for some of you.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ The cuff has watched you for 30 days. We have real data now, not theory.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ The herb stack is started, hibiscus, garlic, magnesium glycinate at minimum, more for some of you.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ You walked through the Day 14 dip and came out the other side.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ You have a script for your doctor. Some of you have already had the conversation.</p>
     `)}
     ${p(`That is not a small list. That is a body that does not look like the one that bought this program 30 days ago.`, { margin: '0 0 28px' })}
     ${bigQuote('What changes in the next 60 days.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month two — Replace. Days 31-60.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">The herb stack completes. Anti-BP Plate becomes the default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch Pipe Pressure soften and the morning-evening gap close.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month three — Stabilize + Negotiate. Days 61-90.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">The doctor conversation happens for everyone who hasn't already had it. We move from "tracking" to "tapering" under your physician. For some of you, the first dose reduction lands inside the 90 days. For some it lands in month four — that's normal. The point isn't the dose number. The point is that you are on the road off, with your doctor's signature on the path.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month two, Replace. Days 31-60.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">The herb stack completes. Anti-BP Plate becomes the default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch the Sodium corner drain and the morning-evening gap close.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month three, Stabilize + Negotiate. Days 61-90.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">The doctor conversation happens for everyone who hasn't already had it. We move from "tracking" to "tapering" under your physician. For some of you, the first dose reduction lands inside the 90 days. For some it lands in month four, that's normal. The point isn't the dose number. The point is that you are on the road off, with your doctor's signature on the path.</p>
     `)}
-    ${p(`After Day 90 the structure changes. The cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship doesn't end — it changes shape.`, { margin: '0 0 28px' })}
+    ${p(`After Day 90 the structure changes. The cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship doesn't end, it changes shape.`, { margin: '0 0 28px' })}
     ${bigQuote('What I need from you today.')}
     ${p(`Three things, simple to do this week.`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Send me your Day 30 numbers.</strong> Same five lines as Day 14 — morning average, evening average, sleep, gallon adherence, the thing your body did that nobody else noticed. Reply to this email by Saturday.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Tell me one woman you'd want in this room.</strong> I'm not asking you to sell anything. I'm asking who you think would benefit from the work you've done. If a name pops, that's the right one — text or email me her first name. I send her a personal note from you, no sales pitch attached. Half the women in this cohort came in because someone like you said a name.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Send me your Day 30 numbers.</strong> Same five lines as Day 14, morning average, evening average, sleep, gallon adherence, the thing your body did that nobody else noticed. Reply to this email by Saturday.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Tell me one woman you'd want in this room.</strong> I'm not asking you to sell anything. I'm asking who you think would benefit from the work you've done. If a name pops, that's the right one, text or email me her first name. I send her a personal note from you, no sales pitch attached. Half the women in this cohort came in because someone like you said a name.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Post a 30-day reflection in Skool.</strong> One paragraph. What's different. The person three weeks behind you lifts every word.</p>
     `)}
-    ${p(`See you on the call this week. We're not slowing down — we're laying the next 60 on top of the first 30.`, { margin: '0 0 28px' })}
+    ${p(`See you on the call this week. We're not slowing down, we're laying the next 60 on top of the first 30.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If your Day 30 numbers haven't moved as much as you hoped — read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.`)}
+    ${psBox(`If your Day 30 numbers haven't moved as much as you hoped, read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
 Thirty days. That's a milestone.
 
-Most BP protocols on the internet are 30-day programs. They're designed to deliver a "before and after" — a small win, a screenshot, a buyable testimonial. You are not on a 30-day program. You are 30 days into a 90-day repatterning. The work you've done is the foundation. The next 60 days are where it becomes a body.
+Most BP protocols on the internet are 30-day programs. They're designed to deliver a "before and after", a small win, a screenshot, a buyable testimonial. You are not on a 30-day program. You are 30 days into a 90-day repatterning. The work you've done is the foundation. The next 60 days are where it becomes a body.
 
 WHERE WE'VE BEEN.
 
-Month one — Foundation laid. Look at what's true now that wasn't 30 days ago:
+Month one, Foundation laid. Look at what's true now that wasn't 30 days ago:
 
 → Hydration is automatic. Muscle memory, not a chore.
 → Twenty-five gratitudes are a rhythm. Cortisol is softer.
 → The cuff has watched you for 30 days. Real data, not theory.
-→ The herb stack is started — hibiscus, garlic, magnesium glycinate at minimum.
+→ The herb stack is started, hibiscus, garlic, magnesium glycinate at minimum.
 → You walked through the Day 14 dip and came out the other side.
 → You have a script for your doctor. Some of you have already had the conversation.
 
@@ -932,11 +947,11 @@ That is not a small list. That is a body that does not look like the one that bo
 
 WHAT CHANGES IN THE NEXT 60 DAYS.
 
-MONTH TWO — REPLACE. Days 31-60.
-The herb stack completes. Anti-BP Plate is default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch Pipe Pressure soften and the morning-evening gap close.
+MONTH TWO, REPLACE. Days 31-60.
+The herb stack completes. Anti-BP Plate is default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch the Sodium corner drain and the morning-evening gap close.
 
-MONTH THREE — STABILIZE + NEGOTIATE. Days 61-90.
-Doctor conversation for everyone who hasn't had it. From "tracking" to "tapering" under your physician. For some, first dose reduction inside the 90 days. For some, month four — normal. The point isn't the dose number. The point is you are on the road off, with your doctor's signature on the path.
+MONTH THREE, STABILIZE + NEGOTIATE. Days 61-90.
+Doctor conversation for everyone who hasn't had it. From "tracking" to "tapering" under your physician. For some, first dose reduction inside the 90 days. For some, month four, normal. The point isn't the dose number. The point is you are on the road off, with your doctor's signature on the path.
 
 After Day 90 the structure changes. Cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship changes shape, doesn't end.
 
@@ -944,16 +959,16 @@ WHAT I NEED FROM YOU TODAY.
 
 1. SEND ME YOUR DAY 30 NUMBERS. Same five lines as Day 14. Reply by Saturday.
 
-2. TELL ME ONE WOMAN YOU'D WANT IN THIS ROOM. Not selling. Who would benefit. If a name pops, that's the right one — text or email her first name. I send a personal note from you, no sales pitch. Half this cohort came in because someone like you said a name.
+2. TELL ME ONE WOMAN YOU'D WANT IN THIS ROOM. Not selling. Who would benefit. If a name pops, that's the right one, text or email her first name. I send a personal note from you, no sales pitch. Half this cohort came in because someone like you said a name.
 
 3. POST A 30-DAY REFLECTION IN SKOOL. One paragraph. The person three weeks behind you lifts every word.
 
-See you on the call this week. We're not slowing down — we're laying the next 60 on top of the first 30.
+See you on the call this week. We're not slowing down, we're laying the next 60 on top of the first 30.
 
 Joel
 RN, BraveWorks
 
-P.S. If your Day 30 numbers haven't moved as much as you hoped — read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.
+P.S. If your Day 30 numbers haven't moved as much as you hoped, read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.
 
 —
 → Skool: ${SKOOL_URL}

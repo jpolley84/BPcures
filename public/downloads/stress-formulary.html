@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>The Stress Corner Herb Formulary</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #6B4A58; }
+  * { box-sizing: border-box; }
+
+  @page {
+    size: Letter;
+    margin: 20mm 17mm 19mm;
+    @bottom-center {
+      content: "BraveWorks BP    .    Education alongside your doctor, never instead.";
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 7.5pt;
+      letter-spacing: 0.04em;
+      color: #7A7061;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      font-size: 8pt;
+      color: #7A7061;
+    }
+  }
+  /* The cover prints full-bleed-ish with no running footer or number. */
+  @page cover { margin: 0; @bottom-center { content: ""; } @bottom-right { content: ""; } }
+  /* The one page doctor sheet: tighter margins so it stays on a single page,
+     and no page number (it is a printable hand-out, not a booklet). */
+  @page plain { margin: 14mm 15mm 12mm; @bottom-right { content: ""; } @bottom-center { content: ""; } }
+
+  html { background: #F7F3EC; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #2B2824;
+    line-height: 1.62;
+    font-size: 11.3pt;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Cover page ───────────────────────────────────────────────── */
+  .cover {
+    page: cover;
+    position: relative;
+    height: 100vh;
+    background:
+      radial-gradient(120% 80% at 50% 8%, #FBF8F1 0%, #F7F3EC 55%, #EFE8DB 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 26mm 22mm;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .cover::before {
+    /* a hairline frame, inset, like a fine book jacket */
+    content: "";
+    position: absolute;
+    inset: 11mm;
+    border: 1px solid var(--accent);
+    opacity: 0.32;
+    border-radius: 3px;
+  }
+  .cover__kicker {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 26px;
+  }
+  .cover__tri { margin: 4px 0 30px; }
+  .cover__title {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #121110;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .cover__rule {
+    width: 54px;
+    height: 2px;
+    background: var(--accent);
+    margin: 6px auto 18px;
+    border: 0;
+  }
+  .cover__subtitle {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14pt;
+    line-height: 1.5;
+    color: #2B2824;
+    max-width: 34ch;
+    margin: 0 auto 30px;
+  }
+  .cover__author {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 11pt;
+    letter-spacing: 0.04em;
+    color: #121110;
+    font-weight: 600;
+  }
+  .cover__author small {
+    display: block;
+    font-weight: 500;
+    font-size: 8.5pt;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7A7061;
+    margin-top: 6px;
+  }
+  .cover__brand {
+    position: absolute;
+    bottom: 17mm;
+    left: 0;
+    right: 0;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7A7061;
+  }
+
+  /* ── Body / interior ──────────────────────────────────────────── */
+  .doc { padding-top: 2mm; }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 21pt;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #121110;
+    margin: 0 0 6px;
+  }
+  h2 {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 15.5pt;
+    line-height: 1.2;
+    color: #121110;
+    margin: 26px 0 10px;
+    padding-top: 14px;
+    border-top: 1px solid #D8CFBD;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 11.5pt;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    margin: 18px 0 6px;
+    page-break-after: avoid;
+  }
+  p { margin: 0 0 11px; }
+  ul, ol { margin: 0 0 12px; padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  li::marker { color: var(--accent); }
+  strong { color: #121110; font-weight: 700; }
+  em { color: #2B2824; }
+  a { color: var(--accent); text-decoration: none; }
+  hr { border: 0; border-top: 1px solid #E8E1D1; margin: 22px 0; }
+
+  /* The intro kicker line at the very top of the interior. */
+  .eyebrow {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8.5pt;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 1.5px; background: var(--accent); display: inline-block; }
+
+  /* ── Day card: each "## Day N" becomes a bordered card with a big
+       accent number and a phase tag. The transform tags these. ── */
+  .daycard {
+    border: 1px solid #D8CFBD;
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 18px 22px 6px;
+    margin: 22px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .daycard > h2 {
+    border-top: 0;
+    padding-top: 0;
+    margin: 0 0 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .daycard .dnum {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 30pt;
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .daycard .dlabel { font-size: 15pt; }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, #FBF8F1);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, #D8CFBD);
+    border-radius: 999px;
+    padding: 3px 11px;
+    margin: 2px 0 12px;
+  }
+
+  /* ── "Today's action" callout box (the transform wraps the action line). ── */
+  .action {
+    border: 0;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 9%, #FBF8F1);
+    border-left: 4px solid var(--accent);
+    padding: 13px 17px;
+    margin: 13px 0 15px;
+    page-break-inside: avoid;
+  }
+  .action .action__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 5px;
+  }
+  .action .action__b {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 10.8pt;
+    line-height: 1.5;
+    color: #121110;
+    margin: 0;
+  }
+  .action .action__b strong { color: #121110; }
+
+  /* ── Pull-quote (villain / loop / Barbara O'Neill lines). ── */
+  blockquote, .pullquote {
+    margin: 18px 0;
+    padding: 4px 0 4px 20px;
+    border-left: 3px solid var(--accent);
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 14.5pt;
+    line-height: 1.4;
+    color: #121110;
+    page-break-inside: avoid;
+  }
+  blockquote p, .pullquote p { margin: 0; }
+
+  /* ── Tables (formulary + doctor-sheet question grids). ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 9.4pt;
+    line-height: 1.5;
+    page-break-inside: auto;
+  }
+  thead { display: table-header-group; }
+  tr { page-break-inside: avoid; }
+  th {
+    background: var(--accent);
+    color: #FBF8F1;
+    text-align: left;
+    font-weight: 700;
+    font-size: 8.6pt;
+    letter-spacing: 0.04em;
+    padding: 9px 11px;
+    vertical-align: top;
+  }
+  td {
+    border-bottom: 1px solid #E8E1D1;
+    padding: 9px 11px;
+    vertical-align: top;
+    color: #2B2824;
+  }
+  tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--accent) 4%, #FBF8F1); }
+  td strong { color: #121110; }
+
+  /* ── Generic accent panel (intro frames, safety notes, finale rungs). ── */
+  .panel {
+    background: #EFE8DB;
+    border: 1px solid #D8CFBD;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+  .panel--accent { border-left: 4px solid var(--accent); }
+  .panel__k {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 7px;
+  }
+  .panel p:last-child { margin-bottom: 0; }
+
+  .lede {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-size: 13pt;
+    line-height: 1.5;
+    color: #2B2824;
+    margin: 0 0 16px;
+  }
+
+  /* ── Closing "About Joel" page. ── */
+  .about {
+    page-break-before: always;
+    margin-top: 6mm;
+  }
+  .about__card {
+    background: #121110;
+    color: #F7F3EC;
+    border-radius: 16px;
+    padding: 30px 32px;
+    text-align: center;
+  }
+  .about__card .cover__kicker { color: #C8A252; }
+  .about__card h2 {
+    color: #F7F3EC;
+    border-top: 0;
+    padding-top: 0;
+    margin: 6px 0 14px;
+    font-size: 19pt;
+  }
+  .about__card p { color: #E6DECD; font-size: 10.6pt; }
+  .about__card .sig {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 16pt;
+    color: #C8A252;
+    margin-top: 18px;
+  }
+  .about__tri { margin: 8px auto 18px; }
+
+  /* ── Fine print / compliance footer line at the document foot. ── */
+  .finePrint {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid #E8E1D1;
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    line-height: 1.5;
+    color: #7A7061;
+  }
+
+  /* ── Doctor-sheet specifics: a tight, single-page, fill-in feel. ──
+     Everything in here is scoped to .sheet so the protocol + formulary
+     layouts are untouched; the rhythm is compressed to hold one Letter page. */
+  .sheet { page: plain; font-size: 10.4pt; line-height: 1.46; }
+  .sheet h1 { font-size: 18pt; margin-bottom: 4px; }
+  .sheet .eyebrow { margin-bottom: 8px; }
+  .sheet .lede { font-size: 10.6pt !important; line-height: 1.4; margin-bottom: 9px !important; }
+  .sheet .qlist + p { margin-top: 5px !important; }
+  .sheet .field {
+    border: 1px solid #D8CFBD;
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin: 8px 0;
+    background: #FBF8F1;
+    page-break-inside: avoid;
+  }
+  .sheet .field__label {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .sheet .writeline {
+    border-bottom: 1px solid #D8CFBD;
+    height: 13px;
+    margin-top: 7px;
+  }
+  .sheet .qlist { list-style: none; padding: 0; margin: 4px 0 0; }
+  .sheet .qlist li {
+    position: relative;
+    padding-left: 17px;
+    margin-bottom: 5px;
+    font-size: 9.5pt;
+    line-height: 1.38;
+  }
+  .sheet .qlist li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+  .sheet .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .sheet .colhead {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: 12pt;
+    color: #121110;
+    margin: 11px 0 5px;
+    padding-top: 9px;
+    border-top: 2px solid var(--accent);
+  }
+  .sheet .two-col { gap: 16px; }
+  .sheet .finePrint { margin-top: 10px; padding-top: 8px; font-size: 7.5pt; line-height: 1.42; }
+  .sheet .panel { margin: 8px 0; padding: 9px 13px; }
+  .sheet .panel p { font-size: 9.3pt !important; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover__kicker">Stress corner  .  Herb Formulary</div>
+    <div class="cover__tri"><svg viewBox="0 0 200 184" width="232" height="213.44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The Blood Pressure Triangle: Stress, Sugar, and Sodium.">
+    <defs>
+      <linearGradient id="triEdge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#4A5D4E"/>
+        <stop offset="50%" stop-color="#6B4A58"/>
+        <stop offset="100%" stop-color="#B85A36"/>
+      </linearGradient>
+    </defs>
+    <polygon points="100,32 28,152 172,152" fill="#FBF8F1" stroke="none"/>
+    <circle cx="28" cy="152" r="17" fill="#6B4A58" opacity="0.16" />
+    <path d="M 100 32 L 28 152 L 172 152 Z" fill="none" stroke="url(#triEdge)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="100" cy="32" r="5" fill="#4A5D4E" opacity="0.32"/>
+    <circle cx="28" cy="152" r="8.5" fill="#6B4A58" opacity="1"/>
+    <circle cx="172" cy="152" r="5" fill="#B85A36" opacity="0.32"/>
+    <g font-family="'Fraunces', Georgia, 'Times New Roman', serif" font-size="12.5" font-weight="600">
+      <text x="100" y="20" text-anchor="middle" fill="#4A5D4E" opacity="0.32">Sodium</text>
+      <text x="27" y="174" text-anchor="middle" fill="#6B4A58" opacity="1">Stress</text>
+      <text x="173" y="174" text-anchor="middle" fill="#B85A36" opacity="0.32">Sugar</text>
+    </g>
+  </svg></div>
+    <h1 class="cover__title">The Stress Corner Herb Formulary</h1>
+    <hr class="cover__rule"/>
+    <p class="cover__subtitle">The herbs I trust for this corner, each with its dose, why it helps, and the cautions that matter.</p>
+    <div class="cover__author">by Joel Polley, RN<small>BraveWorks RN  .  Registered Nurse, Naturopathic Practitioner</small></div>
+    <div class="cover__brand">The BP Triangle  .  Stress  .  Sugar  .  Sodium</div>
+  </section>
+<div class="doc">
+    <p class="eyebrow">The BP Triangle Reset  .  Stress corner</p>
+    <h1>The Stress Corner Herb Formulary</h1>
+    <p class="lede">These are the adrenal and calming herbs for the stress corner, where the goal is to bring an overworked cortisol system back down. They are educational and meant to work alongside your doctor, never instead. The universal rule lives at the top of every formulary in this kit: add ONE at a time, check your blood pressure daily, and tell your doctor everything you are taking.</p>
+
+    <div class="panel panel--accent">
+      <div class="panel__k">The one rule that governs every herb here</div>
+      <p style="margin:0;"><strong>Add ONE at a time. Check your blood pressure daily. Tell your doctor everything you are taking.</strong> If you are on BP medication these can lower your pressure further, which is the goal under monitoring; if readings run consistently below about 110/70 or you feel dizzy, call your doctor about your medication dose. Never stop or change a prescription on your own.</p>
+    </div>
+
+    <h2>The Formulary</h2>
+    <table>
+      <thead><tr><th style="width:21%;">Herb / nutrient</th><th style="width:25%;">Dose / use</th><th style="width:30%;">Why it helps</th><th style="width:24%;">Caution</th></tr></thead>
+      <tbody><tr>
+        <td><strong>Ashwagandha (Withania somnifera)</strong><br/><span style="color:#7A7061;font-size:8.4pt;">The keystone cortisol reducer</span></td>
+        <td>300 to 600 mg daily of a KSM-66 or Sensoril standardized extract, with food, morning or early afternoon. Start at 300 mg for the first week, increase to 600 mg if tolerated.</td>
+        <td>An adaptogen that calms the HPA axis, the master stress-response system, and reduces cortisol output. In a gold-standard randomized trial it lowered serum cortisol by 28 to 30 percent. The full effect builds over 2 to 4 weeks; calmer mood and better sleep often appear within days.</td>
+        <td>Avoid if pregnant or nursing. May raise thyroid hormone, so use caution and check with your doctor if you have a thyroid condition. Tell your doctor if you take any sedative or thyroid medication.</td>
+      </tr><tr>
+        <td><strong>Magnesium glycinate</strong><br/><span style="color:#7A7061;font-size:8.4pt;">The relaxation mineral, the throughline of the whole triangle</span></td>
+        <td>300 to 400 mg daily, with dinner or before bed. Glycinate is the gold-standard form for absorption and calm. Taurate is also excellent for cardiovascular support. Avoid magnesium oxide (only about 4 percent absorbed). An evening Epsom-salt bath (a cup or two, soak about 20 minutes) adds magnesium through the skin.</td>
+        <td>Barbara O&#39;Neill calls magnesium the relaxation mineral, and it earns the name. Chronic stress drains it fast, and replacing it calms the nervous system through the GABA pathway, supports sleep, and relaxes blood vessels. The one supplement that works in more than one corner: here it calms the nerves, in the sodium corner it relaxes vessel walls.</td>
+        <td>If you take a calcium-channel blocker such as amlodipine, the mechanisms add up, so monitor daily. Citrate forms can loosen stools. Magnesium is cleared by the kidneys, so if you have reduced kidney function, talk with your doctor first and let your readings guide the dose.</td>
+      </tr><tr>
+        <td><strong>Tart cherry</strong><br/><span style="color:#7A7061;font-size:8.4pt;">The sleep restorer</span></td>
+        <td>Taken in the evening. The source lists tart cherry as the sleep-support pairing with magnesium glycinate and does not specify a milligram dose for this corner. Follow product labeling and your doctor&#39;s guidance for the exact amount.</td>
+        <td>A natural source of melatonin that supports sleep onset and quality. Better sleep means a deeper overnight blood-pressure dip and more vascular repair, exactly the window chronic cortisol steals.</td>
+        <td>Generally gentle. As with all of these, introduce it on its own and tell your doctor.</td>
+      </tr><tr>
+        <td><strong>Passionflower</strong><br/><span style="color:#7A7061;font-size:8.4pt;">The sympathetic calmer</span></td>
+        <td>The source describes passionflower&#39;s use for anxiety-related blood pressure but does not specify a milligram dose. Follow product labeling and your doctor&#39;s guidance, and add it only after your foundation herbs are steady.</td>
+        <td>Works on GABA receptors to calm the fight-or-flight nervous system and ease the adrenaline surge that drives pressure up. Calming without heavy sedation, listed as the natural counterpart to the beta-blocker pathway.</td>
+        <td>Can add to the effect of sedatives and blood-pressure medication. Introduce alone, monitor daily, and tell your doctor, especially if you take any calming or sleep medication.</td>
+      </tr><tr>
+        <td><strong>Lemon balm (Melissa officinalis)</strong><br/><span style="color:#7A7061;font-size:8.4pt;">The gentle settler</span></td>
+        <td>The source names lemon balm as a calming natural counterpart but does not specify a milligram dose for this corner. Follow product labeling and your doctor&#39;s guidance.</td>
+        <td>A gentle calming herb that pairs well with passionflower for a keyed-up, cannot-settle feeling.</td>
+        <td>Generally gentle; may add to sedative effects. As always, one at a time, monitor, and tell your doctor.</td>
+      </tr></tbody>
+    </table>
+
+    <h2>Daily supports (free, and the backbone)</h2>
+    <p>Free, and the backbone of this corner: box breathing (4-4-4-4) mid-afternoon and long-exhale breathing (in 4, hold 4, out 6) at bedtime to activate the vagus nerve; a 20-minute unhurried walk in morning sunlight; an evening gratitude practice; prayer and Scripture to strengthen the cortisol brake (&quot;Cast all your anxiety on Him, because He cares for you,&quot; 1 Peter 5:7); no caffeine (swap to chamomile or hibiscus tea), screens off by 9 PM, a cool dark room.</p>
+
+    
+
+    <div class="finePrint">
+      &copy; BraveWorks RN  .  Joel Polley, RN  .  bpquiz.com.
+      For educational purposes only. Not medical advice, not a diagnosis, not a prescription.
+      Always consult your healthcare provider before combining any herb or supplement with prescription medication,
+      and never change a medication on your own.
+    </div>
+  </div>
+</body></html>

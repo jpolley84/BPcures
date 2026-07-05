@@ -34,7 +34,6 @@
       "destination": "/quiz?utm_source=podcast&utm_medium=spoken",
       "permanent": false
     },
-    { "source": "/challenge", "destination": "/", "permanent": false },
     { "source": "/seminar", "destination": "/quiz?utm_source=seminar-legacy", "permanent": false }
   ],
   "crons": [
@@ -55,10 +54,6 @@
       "schedule": "0 13 * * *"
     },
     {
-      "path": "/api/lead-cron",
-      "schedule": "30 12 * * *"
-    },
-    {
       "path": "/api/tier-1-cron",
       "schedule": "45 12 * * *"
     },
@@ -73,6 +68,18 @@
     {
       "path": "/api/tier-4-cron",
       "schedule": "30 14 * * *"
+    },
+    {
+      "path": "/api/triangle-lead-cron",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/triangle-buyer-cron",
+      "schedule": "30 15 * * *"
+    },
+    {
+      "path": "/api/newsletter-cron",
+      "schedule": "0 16 * * 2"
     }
   ]
 }

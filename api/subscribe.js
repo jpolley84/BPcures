@@ -81,6 +81,42 @@ export default async function handler(req, res) {
     } catch (logErr) {
       console.warn('subscribe: lead-log write failed (non-fatal)', logErr.message);
     }
+
+  // ── TRIANGLE DUAL-WRITE (2026-07-04) ──────────────────────────────────
+  // The legacy lead-cron is unscheduled; nurture now runs on the triangle
+  // machine (bwbp:drip:* + triangle-lead-cron). Mirror lead-magnet.js:
+  // upsert the bwbp record, enrich-only, never demote a buyer. Corner is
+  // unknown for this channel (no quiz) so it defaults null and the lead
+  // arc's stress-default CTA covers it. Best-effort, never fails the request.
+  try {
+    const legacyRec = await kv.get(dripKey);
+    if (!(legacyRec && legacyRec.unsubscribed)) {
+      const triKey = `bwbp:drip:${emailLower}`;
+      const triExisting = await kv.get(triKey);
+      if (triExisting) {
+        await kv.set(triKey, {
+          ...triExisting,
+          firstName: triExisting.firstName || '',
+          lastCaptureAt: nowIso,
+        });
+      } else {
+        await kv.set(triKey, {
+          email: emailLower,
+          firstName: '',
+          corner: null,
+          readiness: null,
+          scores: null,
+          state: 'lead',
+          stateEnteredAt: nowIso,
+          enrolledAt: nowIso,
+          source: 'footer-newsletter',
+        });
+      }
+    }
+  } catch (triErr) {
+    console.warn('subscribe: triangle dual-write failed (non-fatal)', triErr.message);
+  }
+
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('subscribe: KV enroll failed', err.message);

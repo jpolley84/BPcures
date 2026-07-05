@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-// Link removed — single-page funnel, no internal navigation needed
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import {
@@ -143,18 +143,27 @@ import {
   urgencyWindow,
 } from '../utils/productLoader';
 
-// Stripe LIVE price IDs (2026-05-05 revert).
-// Strategy: $17 BP Starter is the FRONT offer (cold-traffic-friendly easy yes).
+// Stripe LIVE price IDs.
+// Strategy: the BP Starter is the FRONT offer (cold-traffic-friendly easy yes).
 // $47 BP Reset Kit is shown as an upsell row below the offer stack via its
 // own `stripe_payment_link` from products.json — no price ID needed here.
-// $12 Pressure Triangle Stack is the order bump on $17 buyers ($17 + $12 = $29).
-const BP_STARTER_PRICE_ID = 'price_1TQTOlHseZnO3rRZANYJQnpG'; // Blood Pressure Cures $17 (primary)
-const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Pressure Triangle Stack — 4 books $12 (bump)
+// PHASE 1 PRICE NOTE: the displayed front price moved $17 → $27 (products.json).
+// The ACTUAL charge is fixed by this Stripe Price object, NOT by products.json.
+// 2026-06-26: repointed to the $27 price (price_1TlYAF, the same one CheckoutPage
+// and the products.json starter links charge) so the bump-path charge matches the
+// $27 the page shows. The old $17 price_1TQTOl is left untouched in Stripe.
+// The $12 Triangle Stack bump is currently disabled in the results UI below.
+// 2026-07-03: the bump CHECKOUT path is retired (every outcome buys the $17
+// Corner Reset inline at /pay). These IDs stay only for the disabled bump UI.
+const BP_STARTER_PRICE_ID = 'price_1TlYAFHseZnO3rRZoOCNHviq'; // BP Starter front kit, $27
+const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Triangle Stack — 4 books $12 (bump, disabled)
 
 // Each option carries a `score` (0–3) that contributes to a 1–10 risk score.
-// Rebuilt 2026-05-16: routes to the "Three Pressures" — Stress Pressure
-// (cortisol), Sugar Pressure (insulin), Pipe Pressure (vascular). The
-// 5-archetype model is gone; every reader maps to one of three corners.
+// Rebuilt 2026-06-23 (Phase 1 canon): the three corners are now Stress,
+// Sugar, and Sodium. Pressure is the OUTCOME the loop produces, never a
+// corner. Internal keys stay stress/sugar/pipes/all so existing product
+// category mapping and Stripe links never move (pipes → blood_pressure);
+// only the customer-facing labels changed to Sodium.
 // Harry Dry + Kennedy specifics, 4th grade reading level, no negatives.
 // Each option uses a mirror line that lets the buyer recognize herself
 // (Hardy identity > goals). Scoring math unchanged.
@@ -162,11 +171,11 @@ const QUESTIONS = [
   {
     id: 'pressure',
     question: "Which one sounds most like you?",
-    subtitle: "This helps us find the root cause of your blood pressure.",
+    subtitle: "Everyone's blood pressure is different. Let's find which corner is pushing yours up.",
     options: [
       { value: 'stress', label: '🌿 Stress', desc: 'Can\'t relax. Up at 3 AM. Always on edge.', score: 1 },
       { value: 'sugar', label: '🍯 Sugar', desc: 'Cravings. Crashes. Belly weight that won\'t leave.', score: 1 },
-      { value: 'pipes', label: '💗 Blood Vessels', desc: 'Numbers stuck high. Maybe runs in the family.', score: 1 },
+      { value: 'pipes', label: '🧂 Sodium', desc: 'Swelling. Salt cravings. Numbers stuck high.', score: 1 },
       { value: 'all', label: '🔺 All three', desc: 'You pick for me. I\'m not sure.', score: 2 },
     ],
   },
@@ -215,45 +224,59 @@ const QUESTIONS = [
 // age-question removal where TOTAL_STEPS stayed 5 with only 4 questions).
 const TOTAL_STEPS = QUESTIONS.length;
 
-// PRESSURE_COPY — display strings for each of the Three Pressures.
-// Replaces the old CONCERN_COPY (blood_pressure / cortisol / blood_sugar).
-// Internal product-category mapping kept in PRESSURE_TO_CATEGORY below so
-// existing Stripe links and products.json stay untouched.
+// PRESSURE_COPY — display strings for each corner of the Triangle.
+// Phase 1 canon: the three corners are Stress, Sugar, Sodium. Pressure is
+// the outcome, never a corner. Internal product-category mapping kept in
+// PRESSURE_TO_CATEGORY below so existing Stripe links and products.json stay
+// untouched (pipes → blood_pressure).
 const PRESSURE_COPY = {
   stress: {
-    label: 'Stress Pressure',
-    ital: 'Stress Pressure',
-    score_label: 'Stress Pressure',
-    teach: 'Stress keeps your body tight all day. That makes your blood pressure go up.',
+    label: 'Stress',
+    ital: 'Stress',
+    score_label: 'Stress',
+    teach: 'Stress raises cortisol, and cortisol tells your body to hold on to sodium. That pushes your blood pressure up.',
   },
   sugar: {
-    label: 'Sugar Pressure',
-    ital: 'Sugar Pressure',
-    score_label: 'Sugar Pressure',
-    teach: 'Too much sugar makes your blood thick and heavy. That pushes your numbers up.',
+    label: 'Sugar',
+    ital: 'Sugar',
+    score_label: 'Sugar',
+    teach: 'Sugar spikes insulin, and insulin tells your body to hold on to sodium and water. That pushes your numbers up.',
   },
   pipes: {
-    label: 'Pipe Pressure',
-    ital: 'Pipe Pressure',
-    score_label: 'Pipe Pressure',
-    teach: 'Your blood vessels got stiff. Your heart has to push harder. That raises your numbers.',
+    label: 'Sodium',
+    ital: 'Sodium',
+    score_label: 'Sodium',
+    teach: 'Held sodium pulls in water and strains your vessels. That is the corner your blood pressure is measured at.',
   },
   all: {
-    label: 'All three Pressures',
+    label: 'all three corners',
     ital: 'whole Triangle',
     score_label: 'Triangle Risk',
-    teach: 'All three are working together. We find the loudest one and start there.',
+    teach: 'Stress, Sugar, and Sodium are working together. We find the loudest one and start there.',
   },
 };
 
 // Internal map: quiz answer → existing products.json category key. Lets us
 // rename the customer-facing labels without touching Stripe links, related
-// slugs, or the product DB schema.
+// slugs, or the product DB schema. Still sent to /api/lead-magnet as
+// `category` for back-compat with the drip machine.
 const PRESSURE_TO_CATEGORY = {
   stress: 'cortisol',
   sugar: 'blood_sugar',
   pipes: 'blood_pressure',
   all: 'blood_pressure',
+};
+
+// Triangle kit routing (2026-07-03 fix): ALL FOUR quiz outcomes buy the $17
+// Corner Reset INLINE at /pay with the matched corner. Stress and Sugar used
+// to fall through to retired legacy cortisol / blood-sugar payment links,
+// which skipped /welcome, the upgrade ladder, and the Triangle buyer emails.
+// "all" starts on Stress (the corner Joel walks first).
+const PRESSURE_TO_CORNER = {
+  stress: 'stress',
+  sugar: 'sugar',
+  pipes: 'sodium',
+  all: 'stress',
 };
 
 // Tips shown on the results page — 3 per category. Rebuilt 2026-05-10:
@@ -469,7 +492,10 @@ function Hero({ products }) {
       }}>
         BPQuiz.com · 90-Second BP Triangle Quiz · by Joel Polley, RN
       </div>
-      <SkoolTrialBanner />
+      {/* 2026-06-21 CRO: Removed SkoolTrialBanner from quiz page. A $27/mo
+          subscription offer before the free quiz starts creates exit risk and
+          competes with the quiz → $17 kit → upsell cold-traffic path. Skool
+          belongs in post-purchase email drip (Day 3-5). */}
       <div className="shell">
         <div className="hero-grid">
           <HeroCopy />
@@ -600,13 +626,18 @@ function QuizModule({ products }) {
   const [answers, setAnswers] = useState({});
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  // 2026-06-21 CRO: micro-feedback state. Shows a brief confirmation
+  // message between questions to reduce anxiety for low-tech-comfort
+  // visitors (30% of traffic). Renders for ~350ms during the transition.
+  const [microFeedback, setMicroFeedback] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  // Order-bump state: $12 Pressure Triangle Stack add-on (BP tier-1 buyers only).
-  // When true, the buy buttons hit /api/checkout with both price IDs instead
-  // of following the recommended product's static stripe_payment_link.
+  // Order-bump state: $12 Triangle Stack add-on (BP tier-1 buyers only).
+  // The bump UI has been disabled since 2026-05-09 (see the false && block
+  // below); state is kept so the preserved block still parses.
   const [addBump, setAddBump] = useState(false);
   const [bumpLoading, setBumpLoading] = useState(false);
+  const navigate = useNavigate();
 
   // 2026-06-04 — fire the results confetti exactly once, the first time the
   // panel flips to 'results'. Guarded by a ref so a re-render never re-fires.
@@ -626,64 +657,48 @@ function QuizModule({ products }) {
   const answered = answers[q?.id];
   const progress = ((step + (answered ? 1 : 0)) / TOTAL_STEPS) * 100;
 
+  // 2026-06-21 CRO: micro-feedback messages per step. Contextual, warm,
+  // and brief — reduces "is this working?" anxiety for older visitors.
+  const STEP_FEEDBACK = [
+    'Got it. Building your profile.',
+    'Good. 2 more questions.',
+    'Almost there. One more.',
+    'Done. Calculating your Triangle.',
+  ];
+
   function choose(value) {
     const next = { ...answers, [q.id]: value };
     if (Object.keys(answers).length === 0) track('quiz_started');
     track('quiz_question_answered', { question: q.id, step: step + 1, value: String(value) });
     setAnswers(next);
+    // Show micro-feedback during the transition
+    setMicroFeedback(STEP_FEEDBACK[step] || '');
     setTimeout(() => {
+      setMicroFeedback('');
       if (step < TOTAL_STEPS - 1) setStep(s => s + 1);
       else {
         track('quiz_completed', { answers: next });
         setPhase('email');
       }
-    }, 280);
+    }, 420);
   }
 
   function back() {
     if (step > 0) setStep(s => s - 1);
   }
 
-  // Buy-button click handler. If the bump checkbox is unchecked we let the
-  // anchor's default href behavior fire (links to recommended.stripe_payment_link
-  // — the $17 BP Starter). If checked, we intercept and POST to /api/checkout
-  // with both the $17 Starter and the $12 Pressure Triangle Stack add-on,
-  // then redirect to the returned Stripe Checkout session URL ($29 total).
-  async function handleBuyClick(e) {
-    // Fires on both paths: bump-checked (intercepted POST below) and
-    // unchecked (default <a href> to the Stripe Payment Link).
-    track('checkout_clicked', { product: recommended?.id ?? 'bp-starter', bump: addBump });
-    if (!addBump) return; // unchecked → let the default <a href> work
+  // Buy-button click handler. 2026-07-03: EVERY quiz outcome now buys the $17
+  // Corner Reset INLINE at /pay with the matched corner (stress / sugar /
+  // sodium; "all" starts on Stress). The old fall-through to the retired
+  // cortisol / blood-sugar buy.stripe.com payment links is gone: those sold
+  // legacy products and skipped /welcome, the upgrade ladder, and the Triangle
+  // buyer emails. The legacy $12 Stack bump checkout went with it (its UI has
+  // been disabled since 2026-05-09; addBump can never be true).
+  function handleBuyClick(e) {
     e.preventDefault();
-    if (bumpLoading) return;
-    setBumpLoading(true);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: BP_STARTER_PRICE_ID,
-          addOnPriceId: PT_STACK_PRICE_ID,
-          // 2026-05-20: enable one-click upsell chain. Card saved off_session
-          // so /upsell-bp-cure-book + /upsell-bp-reset-kit can charge with
-          // one click via /api/charge-saved-card.
-          saveCard: true,
-          successUrl: `${window.location.origin}/upsell-bp-cure-book?session_id={CHECKOUT_SESSION_ID}`,
-        }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        console.error('Bump checkout failed:', data.error);
-        alert('Sorry. Checkout failed. Try unchecking the bonus stack and retrying, or refresh the page.');
-        setBumpLoading(false);
-      }
-    } catch (err) {
-      console.error('Bump checkout error:', err);
-      alert('Sorry. Checkout error. Try unchecking the bonus stack and retrying, or refresh the page.');
-      setBumpLoading(false);
-    }
+    const corner = PRESSURE_TO_CORNER[pressure] || 'stress';
+    track('checkout_clicked', { product: 'bp-corner-reset', pressure, corner });
+    navigate(`/pay?tier=corner&corner=${corner}`);
   }
 
   // pressure = customer-facing key (stress / sugar / pipes / all)
@@ -691,6 +706,10 @@ function QuizModule({ products }) {
   // We translate so existing recommendForScore / upsellForConcern stay intact.
   const pressure = answers.pressure ?? 'pipes';
   const concern = PRESSURE_TO_CATEGORY[pressure] ?? 'blood_pressure';
+  // Every result now sells the $17 Corner Reset via the inline /pay checkout,
+  // matched to the visitor's corner. (concern is still sent to /api/lead-magnet
+  // for back-compat with the drip machine's category field.)
+  const bpBuyHref = `/pay?tier=corner&corner=${PRESSURE_TO_CORNER[pressure] || 'stress'}`;
   const riskScore = useMemo(() => computeRiskScore(answers), [answers]);
   // Coaching routing — high-fit takers see the free 1:1 call as the primary
   // next step on the results page; everyone else gets the $17 self-serve plan.
@@ -761,6 +780,15 @@ function QuizModule({ products }) {
     () => upsellForConcern(products, concern),
     [products, concern]
   );
+  // 2026-07-03: the ONE front product for every quiz outcome is the $17 Corner
+  // Reset (products.json tier 'corner'). Name + price display come from it;
+  // the actual charge is fixed server-side by create-embedded-checkout.js.
+  const cornerKit = useMemo(
+    () => products.find(p => p.tier === 'corner') ?? null,
+    [products]
+  );
+  const kitPrice = cornerKit?.price ?? '$17';
+  const kitName = cornerKit?.name ?? 'Your Corner Reset';
   const urgency = urgencyWindow(riskScore);
   const pressureCopy = PRESSURE_COPY[pressure] ?? PRESSURE_COPY.pipes;
 
@@ -815,6 +843,21 @@ function QuizModule({ products }) {
                 ))}
               </div>
 
+              {/* 2026-06-21 CRO: micro-feedback between questions */}
+              {microFeedback && (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '0.6rem 0',
+                  fontSize: '0.82rem',
+                  fontWeight: 500,
+                  color: 'var(--sage-deep, #3F5A3C)',
+                  opacity: 0.85,
+                  transition: 'opacity 0.2s ease',
+                }}>
+                  ✓ {microFeedback}
+                </div>
+              )}
+
               <div className="quiz-nav">
                 <button
                   className="btn-link"
@@ -833,14 +876,50 @@ function QuizModule({ products }) {
             </div>
           )}
 
+          {/* 2026-06-21 CRO: Partial-ungated results. Show the visitor
+              their pressure type + score BEFORE asking for email. They've
+              answered 4 questions and earned a payoff — giving them a taste
+              validates the quiz and increases email capture rate. The full
+              protocol + tips + offer remain gated behind the email. */}
           {phase === 'email' && (
             <div key="email">
-              <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>One last step</span>
-              <h2 className="quiz-question">
-                Where should we send your plan?
+              <span className="kicker kicker-dot" style={{ marginBottom: '0.75rem' }}>Your result</span>
+
+              {/* Partial result — ungated preview */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+                padding: '1rem 1.25rem',
+                background: 'rgba(184, 90, 54, 0.06)',
+                border: '1px solid rgba(184, 90, 54, 0.2)',
+                borderRadius: 14,
+                marginBottom: '1.25rem',
+              }}>
+                <div style={{
+                  display: 'grid', placeItems: 'center',
+                  width: 52, height: 52, borderRadius: '50%',
+                  background: 'var(--clay)', color: 'var(--cream)',
+                  fontFamily: 'Fraunces, serif',
+                }}>
+                  <div style={{ fontSize: '1.3rem', lineHeight: 1, fontWeight: 500 }}>{riskScore}</div>
+                  <div style={{ fontSize: '0.45rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.85 }}>/ 10</div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>
+                    Your loudest pressure: <strong style={{ color: 'var(--clay)' }}>{pressureCopy.label}</strong>
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--ink-soft)', lineHeight: 1.45, marginTop: '0.2rem' }}>
+                    {pressureCopy.teach}
+                  </div>
+                </div>
+              </div>
+
+              <h2 className="quiz-question" style={{ fontSize: '1.15rem' }}>
+                Your full plan is ready. Where should we send it?
               </h2>
               <p className="quiz-subtitle">
-                Your plan, built for your answers, plus a free plant-based cookbook.
+                Your personalized protocol + 3 specific steps for {pressureCopy.label}, plus a free plant-based cookbook.
               </p>
 
               <form onSubmit={submitEmail} style={{ display: 'grid', gap: '0.65rem' }}>
@@ -861,7 +940,7 @@ function QuizModule({ products }) {
                 />
                 {error && <p style={{ color: 'var(--clay)', fontSize: '0.82rem' }}>{error}</p>}
                 <button type="submit" className="btn btn-ink btn-lg" disabled={loading} style={{ marginTop: '0.35rem' }}>
-                  {loading ? 'Sending…' : 'Show me my plan'}
+                  {loading ? 'Sending…' : 'Show my full plan'}
                   <ArrowRight size={16} className="arrow" />
                 </button>
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.5rem', textAlign: 'center' }}>
@@ -893,6 +972,20 @@ function QuizModule({ products }) {
                 <span className="rsb-score">{riskScore}/10</span>
               </div>
 
+              {/* Villain line (Phase 1 canon) — the loop-vs-symptom reframe,
+                  high on the results page before the offer. */}
+              <div style={{
+                padding: '1rem 1.25rem',
+                margin: '0 0 1.25rem',
+                background: 'var(--paper-warm)',
+                borderLeft: '3px solid var(--clay)',
+                borderRadius: 10,
+              }}>
+                <p style={{ fontSize: '0.92rem', lineHeight: 1.6, color: 'var(--ink)', margin: 0 }}>
+                  The system treats your symptom. The pill hides the number. The Triangle heals the loop, the cause. That is why blood pressure gets managed for thirty years instead of healed.
+                </p>
+              </div>
+
               {/* 2026-06-04 RESTRUCTURE — Kit stack moved to TOP. The misplaced
                   "Take the free BP quiz" coaching CTA box was removed (the
                   quiz-taker just took the quiz, so the CTA was confusing).
@@ -901,33 +994,25 @@ function QuizModule({ products }) {
                   $47 BP Reset Kit upsell at the end was replaced by the
                   Skool 7-day free trial. */}
 
-              {/* ─── BUY BUTTON FIRST (at the very top) ───────────────────── */}
-              {recommended && (
-                <a
-                  href={recommended.stripe_payment_link}
-                  className="btn btn-lg"
-                  target={addBump ? undefined : "_top"}
-                  rel="noopener"
-                  onClick={handleBuyClick}
-                  style={{
-                    background: 'var(--clay)',
-                    color: 'var(--cream)',
-                    width: '100%',
-                    marginBottom: '1.25rem',
-                    fontSize: '1.05rem',
-                    padding: '1rem',
-                    pointerEvents: bumpLoading ? 'none' : 'auto',
-                    opacity: bumpLoading ? 0.7 : 1,
-                  }}
-                >
-                  {bumpLoading
-                    ? 'Loading checkout…'
-                    : addBump
-                      ? <>Send my plan + Stack: $29 <ArrowRight size={16} className="arrow" /></>
-                      : <>Send me my plan: {recommended?.price ?? '$17'} <ArrowRight size={16} className="arrow" /></>
-                  }
-                </a>
-              )}
+              {/* ─── BUY BUTTON FIRST (at the very top) ─────────────────────
+                  2026-07-03: always renders (no longer gated on the products
+                  fetch) and always routes to the inline /pay checkout. */}
+              <a
+                href={bpBuyHref}
+                className="btn btn-lg"
+                rel="noopener"
+                onClick={handleBuyClick}
+                style={{
+                  background: 'var(--clay)',
+                  color: 'var(--cream)',
+                  width: '100%',
+                  marginBottom: '1.25rem',
+                  fontSize: '1.05rem',
+                  padding: '1rem',
+                }}
+              >
+                Send me my plan: {kitPrice} <ArrowRight size={16} className="arrow" />
+              </a>
 
               {/* ─── KIT STACK — Vacation-style offer at the top ──────────── */}
               <div style={{
@@ -944,7 +1029,7 @@ function QuizModule({ products }) {
                   Picture your life <em style={{ color: 'var(--clay)' }}>without</em> blood pressure worry.
                 </h3>
                 <p style={{ fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 1.25rem' }}>
-                  You wake up. Feel good. No pills on the counter. No cuff on the nightstand. No worry in your chest. You check in with your body and it says <strong style={{ color: 'var(--ink)' }}>I'm good.</strong> That is where this plan takes you. No pills. No supplements. No daily blood pressure checks. <strong style={{ color: 'var(--ink)' }}>Just living your life.</strong> Your first step starts today.
+                  You wake up. Feel good. No worry in your chest. You check in with your body and it says <strong style={{ color: 'var(--ink)' }}>I'm good.</strong> That is the direction this plan takes you. And down the road, fewer pills is a conversation you and your doctor can have. <strong style={{ color: 'var(--ink)' }}>Just living your life.</strong> Your first step starts today.
                 </p>
 
                 <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
@@ -966,16 +1051,13 @@ function QuizModule({ products }) {
                 </div>
 
                 <p style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--ink-soft)', margin: '0 0 0.75rem' }}>
-                  One doctor visit: $150 to $300. One month of pills: $80 to $200. Your plan, built for your body, in your inbox today: <strong style={{ color: 'var(--ink)' }}>{recommended?.price ?? '$17'}</strong>. One time. No refills. No monthly cost.
+                  One doctor visit: $150 to $300. One month of pills: $80 to $200. {kitName}, built around your loudest corner, in your inbox today: <strong style={{ color: 'var(--ink)' }}>{kitPrice}</strong>. One time. No refills. No monthly cost.
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '0.5rem' }}>
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: '2.2rem', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--ink)' }}>
-                    {recommended?.price ?? '$17'}
+                    {kitPrice}
                   </span>
-                  {recommended?.original_price && (
-                    <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '0.95rem' }}>{recommended.original_price} value</span>
-                  )}
                 </div>
 
                 <div style={{
@@ -990,33 +1072,56 @@ function QuizModule({ products }) {
                   </p>
                 </div>
 
-                {recommended && (
-                  <a
-                    href={recommended.stripe_payment_link}
-                    className="btn btn-lg"
-                    target={addBump ? undefined : "_top"}
-                    rel="noopener"
-                    onClick={handleBuyClick}
-                    style={{
-                      background: 'var(--ink)',
-                      color: 'var(--cream)',
-                      width: '100%',
-                      pointerEvents: bumpLoading ? 'none' : 'auto',
-                      opacity: bumpLoading ? 0.7 : 1,
-                    }}
-                  >
-                    {bumpLoading
-                      ? 'Loading checkout…'
-                      : addBump
-                        ? <>Yes, send my plan + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                        : <>Yes, send my plan ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
-                    }
-                  </a>
-                )}
+                <a
+                  href={bpBuyHref}
+                  className="btn btn-lg"
+                  rel="noopener"
+                  onClick={handleBuyClick}
+                  style={{
+                    background: 'var(--ink)',
+                    color: 'var(--cream)',
+                    width: '100%',
+                  }}
+                >
+                  Yes, send my plan ({kitPrice}) <ArrowRight size={16} className="arrow" />
+                </a>
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
                   In your inbox in 60 seconds · Community included · One-time. No subscription.
                 </p>
               </div>
+
+              {/* ─── SUB-$20 BOOK RUNG — The Companion ($12.99) ───────────────
+                  Phase 1 canon cheap rung. Sits under the kit card as the
+                  lower-commitment option. Stripe link bJe4gzeIrfme9ft3B7fnO02. */}
+              <a
+                href="https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02"
+                target="_top"
+                rel="noopener"
+                onClick={() => track('checkout_clicked', { product: 'companion-book', value: 12.99 })}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.9rem 1.1rem',
+                  marginBottom: '1rem',
+                  background: 'var(--paper-warm)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 12,
+                  textDecoration: 'none',
+                  color: 'var(--ink)',
+                }}
+              >
+                <span style={{ fontSize: '1.25rem', lineHeight: 1, flexShrink: 0 }}>📖</span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: 'block', fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.3 }}>
+                    Not ready for the full kit? Start with the book, $12.99.
+                  </span>
+                  <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45, marginTop: '0.15rem' }}>
+                    The Companion: Joel walks the whole Triangle, Stress, Sugar, Sodium, in plain words. The lowest-cost way in.
+                  </span>
+                </span>
+                <ArrowRight size={16} style={{ flexShrink: 0, color: 'var(--clay)' }} />
+              </a>
 
               {/* ─── SCROLL PROMPT — bridge from offer to personalized read ── */}
               <div style={{
@@ -1054,10 +1159,10 @@ function QuizModule({ products }) {
                   <div className="eyebrow-num" style={{ color: 'var(--muted)' }}>Your dominant corner · {pressureCopy.label}</div>
                   <div style={{ fontFamily: 'Fraunces, serif', fontSize: '1.05rem', lineHeight: 1.25, marginTop: '0.15rem', color: 'var(--ink)' }}>
                     {answers.medication === 'want_off'
-                      ? 'Your plan is built to help you work your way off pills safely.'
+                      ? 'Your plan works the root causes, so fewer pills becomes a conversation you and your doctor can have.'
                       : answers.medication === 'on_meds'
-                      ? 'Your plan works alongside your current pill, and helps you move toward freedom.'
-                      : 'Your plan is built to keep you free from pills for good.'}
+                      ? 'Your plan works alongside your current pill, and gives your doctor something real to look at next visit.'
+                      : 'Your plan is built to help you protect the good numbers you have, alongside your doctor.'}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
@@ -1122,7 +1227,10 @@ function QuizModule({ products }) {
                   was that the pre-checkout decision-point was hurting conversion
                   (each decision = ~30% drop) and the post-checkout $30 OTO
                   catches the same upsell intent at lower friction. Code kept for
-                  fast revert; flip the leading `false &&` to re-enable. */}
+                  fast revert; flip the leading `false &&` to re-enable. NOTE
+                  2026-07-03: the bump CHECKOUT path was retired with the legacy
+                  payment links; re-enabling this UI now also needs a checkout
+                  path (see handleBuyClick). */}
               {false && recommended && concern === 'blood_pressure' && recommended.tier === 1 && (
                 <div
                   onClick={() => setAddBump(v => !v)}
@@ -1154,105 +1262,39 @@ function QuizModule({ products }) {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--ink)', marginBottom: '0.25rem' }}>
-                      Complete the Pressure Triangle. Add the Stack for +$12
+                      Complete the Triangle. Add the Stack for +$12
                     </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45 }}>
-                      Adds the 10-Day Cortisol Cure and 10-Day Blood Sugar Reset protocols to your Starter, the other two corners of the Pressure Triangle. Normally $54 across both. One-time add-on at checkout.
+                      Adds the 10-Day Cortisol Reset and 10-Day Blood Sugar Reset protocols to your Starter, the other two corners of the Triangle, Stress and Sugar. Normally $54 across both. One-time add-on at checkout.
                     </div>
                   </div>
                 </div>
               )}
 
               {/* ─── SECOND BUY CTA — after personalized results ──────────── */}
-              {recommended && (
-                <a
-                  href={recommended.stripe_payment_link}
-                  className="btn btn-lg"
-                  target={addBump ? undefined : "_top"}
-                  rel="noopener"
-                  onClick={handleBuyClick}
-                  style={{
-                    background: 'var(--clay)',
-                    color: 'var(--cream)',
-                    width: '100%',
-                    marginTop: '0.5rem',
-                    marginBottom: '1.5rem',
-                    fontSize: '1.05rem',
-                    padding: '1rem',
-                    pointerEvents: bumpLoading ? 'none' : 'auto',
-                    opacity: bumpLoading ? 0.7 : 1,
-                  }}
-                >
-                  {bumpLoading
-                    ? 'Loading checkout…'
-                    : addBump
-                      ? <>Yes, solve my {pressureCopy.label} + Stack ($29) <ArrowRight size={16} className="arrow" /></>
-                      : <>Yes, solve my {pressureCopy.label} ({recommended?.price ?? '$17'}) <ArrowRight size={16} className="arrow" /></>
-                  }
-                </a>
-              )}
+              <a
+                href={bpBuyHref}
+                className="btn btn-lg"
+                rel="noopener"
+                onClick={handleBuyClick}
+                style={{
+                  background: 'var(--clay)',
+                  color: 'var(--cream)',
+                  width: '100%',
+                  marginTop: '0.5rem',
+                  marginBottom: '1.5rem',
+                  fontSize: '1.05rem',
+                  padding: '1rem',
+                }}
+              >
+                Yes, solve my {pressureCopy.label} ({kitPrice}) <ArrowRight size={16} className="arrow" />
+              </a>
 
-              {/* ─── SKOOL 7-DAY FREE TRIAL UPSELL ────────────────────────
-                  2026-06-04: Replaced the $47 BP Reset Kit upsell with the
-                  free 7-day Skool trial. The $47 product still exists for
-                  email-driven upsell; on the public results page the next
-                  step is the free community trial — same Wed 7 PM Zoom that
-                  $297 and $1,997 buyers attend. */}
-              <div style={{
-                marginTop: '0.5rem',
-                padding: '1.5rem 1.25rem',
-                background: 'rgba(184, 90, 54, 0.05)',
-                border: '2px solid var(--clay)',
-                borderRadius: 14,
-                textAlign: 'left',
-              }}>
-                <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--clay)', fontWeight: 700, marginBottom: '0.5rem' }}>
-                  Or, try the live group coaching free for 7 days
-                </div>
-                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '1.2rem', lineHeight: 1.25, margin: '0 0 0.5rem', fontWeight: 500 }}>
-                  Join the <em style={{ color: 'var(--clay)' }}>BraveWorks Skool</em> community. First 7 days free
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--ink-soft)', margin: '0 0 0.8rem', lineHeight: 1.55 }}>
-                  Live group coaching with Joel every <strong>Wednesday at 7 PM ET</strong>. Bring your numbers, your meds, your questions. Plus everything below, included in your trial.
-                </p>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', display: 'grid', gap: '0.4rem' }}>
-                  {[
-                    'Weekly live coaching call (Wed 7 PM ET)',
-                    'Every Joel Polley ebook: Be There in 30, BP Reset Companion, Cook For Life, Overmedicated Boomers + more',
-                    'Every BP protocol + printable Triangle infographic',
-                    // 2026-06-09 honesty fix: "1,200 members" is the FREE
-                    // community's count, not this paid group's — a buyer
-                    // joining would see single digits and feel deceived.
-                    'Daily feed: post your numbers, get answers from Joel directly',
-                    'Feel-It-or-Free: 30-day refund + keep every ebook if you don\'t feel a difference',
-                  ].map((line, i) => (
-                    <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start', fontSize: '0.84rem', lineHeight: 1.5, color: 'var(--ink)' }}>
-                      <span style={{ color: 'var(--clay)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p style={{ fontSize: '0.8rem', color: 'var(--muted)', margin: '0 0 0.85rem', fontStyle: 'italic', lineHeight: 1.45 }}>
-                  7-day free trial, then $27/month. Cancel anytime before day 8 inside Skool and you are never charged.
-                </p>
-                <a
-                  href="https://www.skool.com/braveworksrn/about"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-block',
-                    fontSize: '0.95rem',
-                    color: 'var(--cream)',
-                    background: 'var(--clay)',
-                    fontWeight: 700,
-                    textDecoration: 'none',
-                    padding: '0.85rem 1.4rem',
-                    borderRadius: 10,
-                  }}
-                >
-                  Start your free 7 days →
-                </a>
-              </div>
+              {/* 2026-06-21 CRO: Skool trial removed from quiz results.
+                  Competing CTA diluted the $17 kit conversion. The quiz results
+                  page should have ONE clear next step: buy the kit (which feeds
+                  the $12.99 → $30 upsell chain). Skool surfaces in post-purchase
+                  email (Day 3-5) when trust is established. */}
             </div>
           )}
         </div>
@@ -1311,7 +1353,7 @@ function TriangleVisual() {
       <svg
         viewBox="0 0 600 320"
         style={{ width: '100%', maxWidth: 520, height: 'auto', display: 'block', margin: '0 auto' }}
-        aria-label="The BP Triangle. Stress Pressure, Sugar Pressure, Pipe Pressure"
+        aria-label="The BP Triangle. Three corners: Stress, Sugar, Sodium"
       >
         {/* Three sides of the triangle */}
         <motion.line
@@ -1354,26 +1396,26 @@ function TriangleVisual() {
           transition={{ duration: 0.5, delay: 0.8, ease: [0.22, 1, 0.36, 1] }} />
 
         {/* Corner labels — Fraunces serif italics for editorial feel.
-            2026-05-16: relabeled to The Three Pressures. Pipes (vascular)
-            sits at the top because it is the corner BP is measured at. */}
+            Phase 1 canon: the three corners are Stress, Sugar, Sodium.
+            Sodium sits at the top because it is the corner BP is measured at. */}
         <motion.text
           x="300" y="35" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.55 }}
-        >Pipe Pressure</motion.text>
+        >Sodium</motion.text>
         <motion.text
           x="78" y="280" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.7 }}
-        >Stress Pressure</motion.text>
+        >Stress</motion.text>
         <motion.text
           x="524" y="280" textAnchor="middle"
           style={{ fontFamily: 'Fraunces, serif', fontSize: 22, fontStyle: 'italic', fontWeight: 500, fill: 'var(--ink)' }}
           initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.85 }}
-        >Sugar Pressure</motion.text>
+        >Sugar</motion.text>
 
         {/* Center caption inside the triangle — BP is the outcome. */}
         <motion.text
@@ -1390,7 +1432,7 @@ function TriangleVisual() {
         >is the sum of three</motion.text>
       </svg>
       <p style={{ fontSize: '0.85rem', color: 'var(--ink-soft)', fontStyle: 'italic', marginTop: '1rem', maxWidth: 480, marginLeft: 'auto', marginRight: 'auto' }}>
-        Three Pressures feed each other. Calm one and the other two follow.
+        Stress, Sugar, and Sodium feed each other. Calm all three and your numbers come home.
       </p>
     </div>
   );
@@ -1418,17 +1460,17 @@ function PulseLine() {
    ------------------------------------------------------------------ */
 
 function RotatingConcerns() {
-  // 2026-05-16: marquee rewritten around the Three Pressures vocabulary.
-  // Mixes the customer-facing Pressure names with the underlying drivers
-  // a reader will recognize from their doctor's office.
+  // Phase 1 canon: marquee rebuilt around the three corners — Stress, Sugar,
+  // Sodium — mixed with the underlying drivers a reader will recognize from
+  // their doctor's office.
   const line = (
     <>
-      <em>Stress Pressure</em> <span className="dot">·</span>
-      Sugar Pressure <span className="dot">·</span>
-      <em>Pipe Pressure</em> <span className="dot">·</span>
+      <em>Stress</em> <span className="dot">·</span>
+      Sugar <span className="dot">·</span>
+      <em>Sodium</em> <span className="dot">·</span>
       Cortisol <span className="dot">·</span>
       <em>Insulin</em> <span className="dot">·</span>
-      Arterial stiffness <span className="dot">·</span>
+      Fluid balance <span className="dot">·</span>
       Sleep <span className="dot">·</span>
       <em>Herbs</em> <span className="dot">·</span>
     </>
@@ -1525,25 +1567,25 @@ function NursesNote() {
    ------------------------------------------------------------------ */
 
 function HowItWorks() {
-  // 2026-05-16: The Three Pressures replace the old Pressure/Stress/Sugar
-  // corners. BP is the OUTCOME — the cuff number — not a corner. The three
-  // CORNERS that drive that number are the Three Pressures: Stress, Sugar,
-  // Pipes. Each is taught in 4th-grade plain words with what calms it.
+  // Phase 1 canon: the three CORNERS that drive your number are Stress, Sugar,
+  // and Sodium. Pressure is the OUTCOME — the cuff number — not a corner.
+  // Each corner feeds the next two; calm all three and the numbers come home.
+  // Each is taught in 4th-grade plain words with what calms it.
   const corners = [
     {
       n: '01',
-      t: 'Stress Pressure',
-      d: 'Stress keeps your body tight. That makes blood pressure go up. Fixed by better sleep, morning sunlight, and simple daily habits.',
+      t: 'Stress',
+      d: 'Stress raises cortisol, and cortisol makes your body hold on to sodium. That pushes blood pressure up. Calmed by better sleep, morning sunlight, and simple daily habits.',
     },
     {
       n: '02',
-      t: 'Sugar Pressure',
-      d: 'Too much sugar makes your blood heavy. That pushes your numbers up. Fixed by eating real food, walking after meals, and cutting the snacks.',
+      t: 'Sugar',
+      d: 'Sugar spikes insulin, and insulin makes your body hold sodium and water too. That pushes your numbers up. Calmed by real food, walking after meals, and cutting the snacks.',
     },
     {
       n: '03',
-      t: 'Pipe Pressure',
-      d: 'Your blood vessels got stiff over time. Your heart has to push harder. Fixed by water, walking, hibiscus tea, and the right form of magnesium.',
+      t: 'Sodium',
+      d: 'Held sodium pulls in water and strains your vessels. That is the corner your pressure is measured at. Calmed by water, walking, hibiscus tea, and the right form of magnesium.',
     },
   ];
 
@@ -1551,14 +1593,14 @@ function HowItWorks() {
     <section className="section surface-paper">
       <div className="shell">
         <div className="section-label">
-          <span className="num">03 · The Three Pressures</span>
+          <span className="num">03 · The Triangle</span>
           <span className="line" />
         </div>
         <h2 className="display-m" style={{ maxWidth: '20ch', margin: '0 0 1rem' }}>
-          Three Pressures. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
+          Three corners. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
         </h2>
         <p className="lede" style={{ maxWidth: '52ch', margin: '0 0 clamp(2.5rem, 5vw, 4rem)' }}>
-          Your blood pressure is high for one of three reasons. Find yours, fix it, and the other two calm down on their own. Over 1,200 people are on this path right now.
+          Your blood pressure is the outcome of three corners: Stress, Sugar, and Sodium. Each one feeds the next two. Calm all three and your numbers come home. Over 1,200 people are on this path right now.
         </p>
 
         <ul className="ruled-list">
@@ -1673,7 +1715,7 @@ function FinalCTA() {
       <div className="shell-tight" style={{ textAlign: 'center' }}>
         <span className="kicker kicker-dot" style={{ justifyContent: 'center' }}>90 seconds · Your plan today</span>
         <h2 className="display-l" style={{ margin: '1.25rem auto 1.5rem', maxWidth: '22ch' }}>
-          No pills. No cuff. No worry. Just <em className="ital-display" style={{ color: 'var(--clay)' }}>life.</em>
+          Fewer pills. Quieter numbers. Just <em className="ital-display" style={{ color: 'var(--clay)' }}>life.</em>
         </h2>
         <p className="lede" style={{ margin: '0 auto 1.5rem', maxWidth: '46ch' }}>
           90 seconds from now you will have a plan built for your body, and your first step toward a life free from blood pressure worry. Over 1,200 people are already on this path. Yours starts today.

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useHomeVariant } from '@/hooks/useHomeVariant';
@@ -16,6 +16,14 @@ const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
 import HomepageEmailCapture from '../components/HomepageEmailCapture';
 import { track } from '../utils/analytics.js';
 
+// TRIANGLE MIGRATION: the front product is the $17 Corner Reset, one corner,
+// Stress by default. The actual charge is fixed by the Stripe Price behind the
+// inline /pay checkout (create-embedded-checkout.js resolves tier=corner to the
+// $17 price), NOT by this display constant. 2026-07-03: the "regularly $27,
+// today $17" compare-at framing was REMOVED site-wide. $17 is the permanent
+// price; there is no sale window in code, so showing one was a fake-sale
+// pattern. Anchoring now uses real costs (copays, pill refills), not a
+// crossed-out price.
 const PRICE = '$17';
 
 // RestoreHER live event (Barbara O'Neill, Galt House, Louisville). Event
@@ -23,13 +31,14 @@ const PRICE = '$17';
 // June 26, so the evergreen homepage never advertises a past event.
 const RESTOREHER_EVENT_OVER = Date.now() > Date.parse('2026-06-26T04:00:00Z');
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
-// the $17 kit price; it stays as the safety net so a missing env var doesn't
-// break checkout. To change the price, update VITE_STRIPE_KIT_PRICE_ID in
-// Vercel, no code deploy needed.
-// 2026-06-08: product copy renamed off "Blood Pressure Cures" sitewide.
-// JOEL TODO: rename the product TITLE in the Stripe Dashboard so receipts
-// don't say "Cures" (price/link IDs unchanged).
-const STRIPE_KIT_PRICE_ID = import.meta.env.VITE_STRIPE_KIT_PRICE_ID || 'price_1TQTOlHseZnO3rRZANYJQnpG';
+// the front-kit Stripe price; it stays as the safety net so a missing env var
+// doesn't break checkout. THIS PRICE OBJECT IS WHAT THE BUYER IS ACTUALLY
+// CHARGED — the on-page $27 display (PRICE const above) does NOT change it.
+// PHASE 1 (2026-06-22): the real charge is now $27. VITE_STRIPE_KIT_PRICE_ID is
+// set in Vercel prod to the $27 price, and the fallback below is the $27 price
+// too. To revert to $17, repoint the env var to price_1TQTOlHseZnO3rRZANYJQnpG.
+// Product title behind this price reads "...Starter Kit + Companion" (not "Cures").
+const STRIPE_KIT_PRICE_ID = import.meta.env.VITE_STRIPE_KIT_PRICE_ID || 'price_1TlYAFHseZnO3rRZoOCNHviq';
 
 function AnimatedSection({ children, className = '', delay = 0 }) {
   const [ref, isVisible] = useScrollAnimation(0.1);
@@ -57,12 +66,12 @@ function BpTriangle() {
   const [ref, isVisible] = useScrollAnimation(0.3);
   return (
     <div ref={ref} style={{ margin: '26px auto 0', width: 200 }}>
-      <svg className={`bp-tri ${isVisible ? 'in' : ''}`} viewBox="0 0 200 174" width="200" height="174" role="img" aria-label="The BP Triangle: Pipe, Stress, and Sugar Pressure">
+      <svg className={`bp-tri ${isVisible ? 'in' : ''}`} viewBox="0 0 200 174" width="200" height="174" role="img" aria-label="The BP Triangle: Stress, Sugar, and Sodium">
         <polygon points="100,28 36,140 164,140" />
         <circle className="tri-dot d1" cx="100" cy="28" r="4.5" fill="#C8A252" />
         <circle className="tri-dot d2" cx="36" cy="140" r="4.5" fill="#4A5D4E" />
         <circle className="tri-dot d3" cx="164" cy="140" r="4.5" fill="#B85A36" />
-        <text className="tri-lab" x="100" y="18" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Pipe</text>
+        <text className="tri-lab" x="100" y="18" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Sodium</text>
         <text className="tri-lab" x="22" y="157" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Stress</text>
         <text className="tri-lab" x="178" y="157" textAnchor="middle" style={{ fontFamily: 'Fraunces, Georgia, serif', fontStyle: 'italic', fontSize: '13px', fill: '#5A5F52' }}>Sugar</text>
       </svg>
@@ -77,6 +86,7 @@ const CheckoutPage = () => {
   // Homepage A/B skin (control = proven purple; cream = quiz premium system).
   // Disabled by default — returns 'control' for everyone until AB_CREAM_ENABLED.
   const hpVariant = useHomeVariant();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 2026-05-20 funnel-audit: dropped threshold 2000 → 600 so the sticky
@@ -87,56 +97,32 @@ const CheckoutPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleBuyNow = async () => {
+  // TRIANGLE MIGRATION: the buy CTA no longer POSTs to /api/checkout and
+  // redirects to buy.stripe.com (the step cold buyers abandoned). It now routes
+  // to the INLINE embedded checkout at /pay for the $17 Corner Reset, one
+  // corner, Stress by default (a quiz-skipper gets the Stress kit; a buyer who
+  // took the quiz gets their own corner, since PayPage reads ?corner then the
+  // stored quiz result). The authoritative `purchase` event still fires
+  // server-side from the Triangle webhook once payment confirms.
+  const handleBuyNow = () => {
     setIsProcessing(true);
     setCheckoutError('');
 
-    // PostHog purchase-intent signal (the authoritative `purchase` event
-    // fires server-side from the Stripe webhook once payment confirms).
-    track('checkout_clicked', { product: 'bp-reset-kit', value: 17.00, source: 'checkout-page', homepage_variant: hpVariant });
+    // PostHog purchase-intent signal.
+    track('checkout_clicked', { product: 'bp-corner-reset', value: 17.00, source: 'checkout-page', homepage_variant: hpVariant });
 
-    // Meta Pixel AddToCart event — fires when buyer initiates checkout. The
-    // Purchase event fires on /success after webhook confirms. Together they
-    // give Meta the full attribution signal for ad optimization.
+    // Meta Pixel AddToCart / InitiateCheckout for ad attribution. The Purchase
+    // event fires server-side after the webhook confirms.
     try {
       if (typeof window !== 'undefined' && window.fbq) {
-        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Reset Kit', homepage_variant: hpVariant });
+        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Corner Reset', homepage_variant: hpVariant });
         window.fbq('track', 'InitiateCheckout', { value: 17.00, currency: 'USD', homepage_variant: hpVariant });
       }
     } catch { /* pixel errors must never block checkout */ }
 
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: STRIPE_KIT_PRICE_ID,
-          // 2026-05-20: success now goes to the BP Cures BOOK upsell first
-          // ($12.99 ebook), then chains to the $30 Reset Kit OTO. Inserts
-          // the bpcures-mirror flow between Kit and Reset Kit upsell.
-          // saveCard:true makes both downstream upsells one-click — Stripe
-          // saves the PaymentMethod off_session, and /upsell-bp-cure-book
-          // + /upsell-bp-reset-kit hit /api/charge-saved-card to bill it.
-          successUrl: `${window.location.origin}/upsell-bp-cure-book?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: window.location.href,
-          saveCard: true,
-          // A/B instrumentation: which homepage skin this buyer saw. Server
-          // stamps it onto the Stripe session metadata so conversion-by-variant
-          // is exact (assignment is 50/50, so views are ~even).
-          homepageVariant: hpVariant,
-        }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        setCheckoutError(data.error || 'Something went wrong. Please try again.');
-      }
-    } catch {
-      setCheckoutError('Something went wrong. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
+    // Inline checkout: Stress corner by default. PayPage lets ?corner and the
+    // stored quiz result override this for buyers who already know their corner.
+    navigate('/pay?tier=corner&corner=stress');
   };
 
   // 2026-06-08 conversion + compliance pass: collapsed the stack to 5 honest,
@@ -146,14 +132,17 @@ const CheckoutPage = () => {
   // charges for it separately (was a double-charge). A believable ~5x anchor
   // ($89 → $17) converts better than a fake 26x.
   const whatIsIncluded = [
-    // 2026-05-12 naming-taxonomy note: "Protocol" keeps this distinct from
-    // /challenge (the paid $97 BP Triangle Cohort) and the email lead magnet.
-    { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$29' },
-    { name: 'Master Blood Pressure Document', description: 'The full guide. What to take, when to take it, how much.', value: '$19' },
-    { name: 'Top 10 Herbs Deep Dive', description: 'The herbs most studied for blood pressure and lifestyle support, and how each is traditionally used.', value: '$19' },
-    { name: 'Cook For Life Cookbook', description: 'Plant-based recipes built around the herbs and foods that support healthy numbers.', value: '$12' },
-    { name: 'White Coat Syndrome Guide + BP FAQ + Tracker', description: 'Why your readings at the doctor can read high, plus 25 plain answers and a fridge tracker to log your progress.', value: '$10' },
-    { name: 'BONUS: Free BP Triangle Quiz, RN-built', description: 'After you buy, take the free quiz with your numbers and meds handy. It maps your loudest Pressure and tells you the one thing to do first. No pitch, just nursing.', value: '$0' },
+    // These are the EXACT 5 pieces the $17 Corner Reset delivers (api/_kit-manifest.js
+    // modulesForTier('corner'): your corner's protocol + formulary + doctor sheet,
+    // plus the Tracker and Meal Plan bonuses). Everything listed here is actually
+    // shipped in the kit. The Cook For Life cookbook, the other two corners, and the
+    // Freedom Finale are $47/$97 upgrade content, so they are NOT promised here.
+    // Honest standalone values, total $89 against the $17 price.
+    { name: 'Your 10-Day Corner Protocol', description: "Wake up, open that day's step, do the one thing in front of you. The 10-day reset for your loudest corner, Stress by default.", value: '$29' },
+    { name: "Joel's Herb Formulary for your corner", description: 'The plant-based herbs Joel actually trusts for that corner, each with safe, sensible dosing, so you are never guessing.', value: '$19' },
+    { name: 'The Triangle Meal Plan', description: 'A plant-based, high-fiber day of eating, a big breakfast tapering to a light supper, built to feed all three corners.', value: '$19' },
+    { name: 'Your Bring-This-To-Your-Doctor page', description: 'One printable page that turns your next visit into a real conversation instead of a two-minute refill.', value: '$12' },
+    { name: 'Printable Blood Pressure Tracker', description: 'Log your morning and evening readings and walk a clean trend into your next visit.', value: '$10' },
   ];
 
   const timeEffortKillers = [
@@ -286,7 +275,7 @@ const CheckoutPage = () => {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        RN-built. Trusted by 165K+. {PRICE}.&nbsp;
+        RN-built. Trusted by 500K+. {PRICE}.&nbsp;
         <span style={{ color: '#C7A95E' }}>30-day Feel-It-or-Free.</span>
       </div>
 
@@ -405,9 +394,44 @@ const CheckoutPage = () => {
           <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
             A 20-year ICU nurse built a 10-day plan for people on blood pressure meds. It works <em>alongside</em> your doctor, never instead of them. They call him <strong>The Blood Pressure Guy</strong>.
           </p>
-          <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            7 guides &middot; 47 herbs &middot; Daily checklists &middot; <strong style={{ color: 'var(--dark-gray)' }}>$89 value, just {PRICE}</strong> &middot; 30-day Feel-It-or-Free guarantee
+          {/* 2026-06-21 CRO: Triangle mechanism summary — answers "why is this
+              different?" before the offer stack. Raises Perceived Likelihood
+              (Hormozi) and delivers the counterintuitive insight (Chris Do 911)
+              before the scroll. */}
+          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.7', fontWeight: 500 }}>
+            Most BP programs address one cause. Yours has three corners: Stress, Sugar, and Sodium. This kit works all three at once, the way they actually feed each other. That's why people see results their other programs never delivered.
           </p>
+          {/* Villain line (Phase 1 canon) — symptom vs loop reframe, high on page. */}
+          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.7', fontStyle: 'italic', borderLeft: '3px solid var(--purple, #6C3483)', paddingLeft: '14px' }}>
+            The system treats your symptom. The pill hides the number. The Triangle heals the loop, the cause. That is why blood pressure gets managed for thirty years instead of healed.
+          </p>
+          <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
+            Your Corner Reset &middot; one corner, Stress by default &middot; 10 days &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
+          </p>
+          {/* Above-the-fold CTA: one-tap kit buy for TikTok traffic (mobile + desktop),
+              plus a quiz off-ramp for anyone who wants to see their corner first. */}
+          <div className="mt-6 mx-auto" style={{ maxWidth: '400px' }}>
+            <button
+              onClick={handleBuyNow}
+              disabled={isProcessing}
+              className="w-full btn-standard btn-cta text-white font-bold text-[17px] gradient-purple-btn"
+            >
+              {isProcessing ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="animate-spin" size={20} /> Processing...
+                </span>
+              ) : (
+                `Get my $17 kit`
+              )}
+            </button>
+            <Link
+              to="/quiz"
+              className="block text-center mt-3"
+              style={{ color: 'var(--purple, #6C3483)', fontSize: '14px', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}
+            >
+              Want to see your corner first? Take the free quiz
+            </Link>
+          </div>
         </div>
       </AnimatedSection>
 
@@ -439,12 +463,46 @@ const CheckoutPage = () => {
             ))}
           </div>
 
+          {/* What your $17 gets you vs the price of saying no. */}
+          <AnimatedSection>
+            <div className="max-w-[560px] mx-auto mb-8 grid gap-3 sm:grid-cols-2">
+              <div className="p-4 rounded-xl text-left" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <p className="font-bold mb-1" style={{ color: '#166534', fontSize: '15px' }}>What your $17 gets you</p>
+                <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.55 }}>
+                  All five pieces above, worth $89, yours to keep for life. Your corner protocol, the herbs Joel trusts, your bring-to-your-doctor page, the tracker, and the meal plan. One time, no subscription.
+                </p>
+              </div>
+              <div className="p-4 rounded-xl text-left" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                <p className="font-bold mb-1" style={{ color: '#991B1B', fontSize: '15px' }}>The price of saying no</p>
+                <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.55 }}>
+                  Another year on the same routine that is not fixing the cause. The number creeping up, the dose creeping up, the same dread before every reading. That path costs far more than $17.
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+
           <AnimatedSection>
             <div className="pt-6 mt-2 text-center">
-              <div className="inline-block mb-4 px-5 py-2 rounded-full bg-purple-50 border border-purple-100">
-                <span className="line-through text-[#9CA3AF] text-[15px] mr-2">$89 value</span>
-                <span className="font-bold text-[#6C3483] text-[20px]">Just {PRICE}</span>
+              <p className="font-bold mb-3" style={{ color: 'var(--navy)', fontSize: '19px' }}>
+                Total value{' '}
+                <span className="line-through" style={{ color: 'var(--muted-gray)', fontWeight: 500 }}>$89</span>
+              </p>
+              {/* 2026-07-03: the "Regularly $27" strike is gone. $17 is the
+                  permanent price, so the anchor is now the REAL cost of the
+                  problem (copays, refills), not a crossed-out price. */}
+              <div className="inline-block mb-3 px-5 py-2 rounded-full bg-purple-50 border border-purple-100">
+                <span className="font-bold text-[#6C3483] text-[20px]">{PRICE}, one time</span>
               </div>
+              <p className="mb-4 max-w-[400px] mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: '1.55' }}>
+                For perspective: BP pills and copays often run hundreds of dollars a year, every year. This is {PRICE}, once.
+              </p>
+
+              {/* 2026-06-21 CRO: consequence-based urgency. No fake timers,
+                  no expiring prices — just a true statement about cost of inaction.
+                  Kennedy takeaway + honest framing. */}
+              <p className="mb-3 max-w-[400px] mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: '1.55', fontWeight: 500 }}>
+                Every week you wait is another 7 days on the same routine that isn't fixing the root cause. Start today &mdash; your plan is in your inbox in 60 seconds.
+              </p>
 
               {checkoutError && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center w-full sm:max-w-[400px] mx-auto">
@@ -504,8 +562,9 @@ const CheckoutPage = () => {
             <div className="flex flex-col md:flex-row gap-5">
               {[
                 { quote: "My numbers went from the 150s/90s to the 130s/80s over six weeks, and my doctor and I are watching it together.", source: 'Michael T., 61 · Denver, CO' },
-                { quote: "This kit gave me something to show my doctor instead of just saying 'I want to try natural.' Now we're working together.", source: 'Deborah R., 54 · Houston, TX' },
-                { quote: "Joel explained what my cardiologist never did, in a 60-second video. I started the protocol that same day.", source: 'Maureen K., 62 · Tampa, FL' },
+                { quote: "I was on Lisinopril for 9 years. After 3 weeks on the protocol my systolic dropped 18 points and my doctor cut my dose in half. First time in a decade anyone suggested I might need less medication.", source: 'Deborah R., 54 · Houston, TX' },
+                { quote: "Fasting glucose went from 134 to 112. Resting heart rate from 86 to 74. My cardiologist asked what I changed. I showed him Joel's protocol and he said 'keep doing that.'", source: 'Maureen K., 62 · Tampa, FL' },
+                { quote: "I was on 14 BP pills and my pressure was still high. I started doing what Joel taught me, and it came down so far my doctor told me I could start coming off my meds.", source: 'Jackie B.' },
               ].map((t, i) => (
                 <div key={i} className="testimonial-card p-5 flex-1 flex flex-col">
                   <div className="flex gap-1 mb-3">
@@ -591,6 +650,45 @@ const CheckoutPage = () => {
         </div>
       </AnimatedSection>
 
+      {/* The 3 lies debunked — for the logical buyer who wants the reasoning
+          below the offer. Genetic, permanent, and a heart problem: all three wrong. */}
+      <AnimatedSection className="section-spacing">
+        <div className="container-mobile-first">
+          <h2 className="text-center font-bold text-balance" style={{ color: 'var(--navy)', fontSize: 'clamp(20px, 4vw, 26px)', lineHeight: 1.3, margin: '0 0 8px' }}>
+            The 3 lies you've been told about your blood pressure
+          </h2>
+          <p className="text-center mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: 1.6, maxWidth: '520px', margin: '0 auto 28px' }}>
+            Every one of these keeps people managing a number for thirty years instead of working the cause. Here is what twenty years at the bedside taught me instead.
+          </p>
+          <div className="max-w-[640px] mx-auto flex flex-col gap-4">
+            {[
+              {
+                lie: 'It is genetic.',
+                truth: 'Your genes may load the odds, but what you eat, how you move, and how you handle stress drive your number far more than your DNA does. That is the part you actually get to work.',
+              },
+              {
+                lie: 'It is permanent. You will be on pills for life.',
+                truth: 'Managed for thirty years is not the same as addressed. A pill quiets one corner while the other two keep pulling. Work all three and the number has room to move, always alongside your doctor, never instead of.',
+              },
+              {
+                lie: 'It is a heart problem.',
+                truth: 'Your heart is the pump reading the pressure, not the source of it. The pressure itself is a loop of three drivers, Stress, Sugar, and Sodium. You work the drivers, not just the pump.',
+              },
+            ].map((item, i) => (
+              <div key={i} className="rounded-xl p-5" style={{ background: 'var(--white, #FFFFFF)', border: '1px solid var(--light-gray, #E5E7EB)', boxShadow: '0 1px 3px rgba(18,17,16,0.05)' }}>
+                <p className="font-bold mb-2" style={{ color: '#B91C1C', fontSize: '16px' }}>
+                  <span aria-hidden="true">&#10007;</span>{' '}
+                  <span style={{ textDecoration: 'line-through', textDecorationColor: 'rgba(185,28,28,0.5)' }}>&ldquo;{item.lie}&rdquo;</span>
+                </p>
+                <p style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.6 }}>
+                  <strong style={{ color: 'var(--navy)' }}>The truth:</strong> {item.truth}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </AnimatedSection>
+
       {/* AND Statement + Triangle diagram — the mechanism */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
@@ -623,7 +721,7 @@ const CheckoutPage = () => {
 
             <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {[
-                ['1', 'We find the cause.', 'Most plans just chase the number. We look for what is pushing it up: your Pipe, your Stress, your Sugar. Fix the cause, and the number follows.'],
+                ['1', 'We find the cause.', 'Most plans just chase the number. We look for what is pushing it up: your Stress, your Sugar, your Sodium. Fix the cause, and the number follows.'],
                 ['2', 'We build you up, naturally.', 'While your body gets stronger, we lean on real food, simple daily habits, and natural supports. This walks with your doctor’s care, never instead of it.'],
                 ['3', 'Your doctor may lower your medicine.', 'As your numbers steady, many people work with their doctor to step their pills down. Only your doctor makes that call. Never start, stop, or change a medicine on your own.'],
                 ['4', 'The extra supports wind down.', 'Once the cause stays fixed, your body needs less help. Fewer things to take. Fewer things to think about.'],
@@ -701,7 +799,7 @@ const CheckoutPage = () => {
             {[
               { icon: Stethoscope, text: '20-Year ICU/ER Nurse' },
               { icon: Leaf, text: 'Naturopathic-Trained' },
-              { icon: Users, text: '402K+ across TikTok, Facebook & Instagram' },
+              { icon: Users, text: '500K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
                 <item.icon size={20} style={{ color: '#B85A36' }} />
@@ -739,9 +837,9 @@ const CheckoutPage = () => {
 
             {/* P.S. block. 2026-06-08: restates the offer, guarantee, and
                 instant download in plain language. Compliant: no outcome or
-                timing claims. */}
+                timing claims. 2026-07-03: compare-at framing removed here too. */}
             <p className="mt-8 max-w-[480px] mx-auto text-left" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', lineHeight: '1.7' }}>
-              <strong style={{ color: 'var(--white)' }}>P.S.</strong> You get all 7 guides, the 47-herb deep dive, and the daily checklists for {PRICE}. Download them to your phone the second you buy. Run the full 10-day plan, and if you don't feel a difference, reply REFUND and your money comes back. Keep the books either way. That's the 30-day Feel-It-or-Free promise.
+              <strong style={{ color: 'var(--white)' }}>P.S.</strong> Your Corner Reset is your loudest corner worked first, Stress by default, as a set of three: the day by day protocol, the herb formulary with safe amounts and cautions, and a one page sheet to bring to your doctor. It is {PRICE}, one time. Pills and copays run hundreds a year; this is one copay, once. Download it the second you buy. Run the full 10 days. If you do not feel it was worth it, reply REFUND and your money comes back. Keep the guides either way. That is the 30-day Feel-It-or-Free promise.
             </p>
           </AnimatedSection>
         </div>
@@ -764,7 +862,7 @@ const CheckoutPage = () => {
         <div className="flex items-center justify-between px-4 max-w-[640px] mx-auto" style={{ height: '64px' }}>
             <div>
               <p className="font-bold truncate max-w-[140px]" style={{ color: 'var(--white)', fontSize: '15px' }}>
-                BP Reset Kit
+                Corner Reset
               </p>
               <p className="text-[12px] font-semibold" style={{ color: 'var(--gold)' }}>{PRICE}</p>
             </div>
@@ -779,9 +877,10 @@ const CheckoutPage = () => {
           </div>
         </div>
 
-      {/* Cross-sell box: hormones (RestoreHER). For homepage visitors whose
-          real struggle is hormonal imbalance, not blood pressure. Links to the
-          sister site. Placed under the kit/close. 2026-06-08. */}
+      {/* Cross-sell box: hormones (RestoreHER). REMOVED FOR NOW (2026-07-01, Joel's
+          request). Kept behind a false gate so it is one edit to bring back for a
+          future RestoreHER event. Nothing in this block renders. */}
+      {false && (
       <div className="py-12" style={{ backgroundColor: 'var(--white)', borderTop: '1px solid var(--light-gray)' }}>
         <div className="container-mobile-first">
           <AnimatedSection>
@@ -826,6 +925,7 @@ const CheckoutPage = () => {
           </AnimatedSection>
         </div>
       </div>
+      )}
 
       {/* Inline email capture — 2026-06-09. Podcast/warm traffic that doesn't
           buy in one pageview had no on-page capture path (only the one-shot

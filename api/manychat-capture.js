@@ -96,6 +96,42 @@ export default async function handler(req, res) {
       await kv.sadd(`lead-log:${dayKey}`, emailLower);
       await kv.expire(`lead-log:${dayKey}`, 90 * 86400);
     } catch { /* non-fatal */ }
+
+  // ── TRIANGLE DUAL-WRITE (2026-07-04) ──────────────────────────────────
+  // The legacy lead-cron is unscheduled; nurture now runs on the triangle
+  // machine (bwbp:drip:* + triangle-lead-cron). Mirror lead-magnet.js:
+  // upsert the bwbp record, enrich-only, never demote a buyer. Corner is
+  // unknown for this channel (no quiz) so it defaults null and the lead
+  // arc's stress-default CTA covers it. Best-effort, never fails the request.
+  try {
+    const legacyRec = await kv.get(dripKey);
+    if (!(legacyRec && legacyRec.unsubscribed)) {
+      const triKey = `bwbp:drip:${emailLower}`;
+      const triExisting = await kv.get(triKey);
+      if (triExisting) {
+        await kv.set(triKey, {
+          ...triExisting,
+          firstName: triExisting.firstName || fname,
+          lastCaptureAt: nowIso,
+        });
+      } else {
+        await kv.set(triKey, {
+          email: emailLower,
+          firstName: fname,
+          corner: null,
+          readiness: null,
+          scores: null,
+          state: 'lead',
+          stateEnteredAt: nowIso,
+          enrolledAt: nowIso,
+          source: 'manychat-dm',
+        });
+      }
+    }
+  } catch (triErr) {
+    console.warn('manychat-capture: triangle dual-write failed (non-fatal)', triErr.message);
+  }
+
     enrolled = true;
   } catch (err) {
     await alert('[ALERT] manychat-capture: KV enroll failed', `${emailLower}\n${err.message}`);

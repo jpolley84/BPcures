@@ -23,6 +23,19 @@ function getResend() {
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const COOKBOOK_URL = `${SITE_URL}/downloads/cook-for-life-cookbook.pdf`;
+
+// 2026-07-04: the BP ladder's legacy Stripe links are retired (Cures purge
+// 06-09; premium link dead 05-09). BP cards route to the live funnel;
+// cortisol / blood-sugar categories keep their still-active links.
+function liveTierLink(t) {
+  if (!t) return SITE_URL;
+  const id = String(t.id || '');
+  if (id === 'blood-pressure-cures' || id === 'bp-reset-kit') {
+    return `${SITE_URL}/pay?tier=corner&corner=stress`;
+  }
+  if (id.endsWith('premium-coaching')) return `${SITE_URL}/case-review`;
+  return t.stripe_payment_link || SITE_URL;
+}
 // 2026-05-14: Mailchimp retired. The env vars + dead `mailchimpUpsert_DEPRECATED`
 // function removed in this commit. Vercel KV drip:* is the canonical
 // subscriber store; Resend is the sending engine.
@@ -164,13 +177,13 @@ function tiersForCategory(category) {
     .sort((a, b) => a.tier - b.tier);
 }
 
-// Tier bands match QuizPage.jsx tierForScore. Tier 1 = $17 starter guide,
+// Tier bands match QuizPage.jsx tierForScore. Tier 1 = $27 starter guide,
 // Tier 2 = $47 reset kit, Tier 3 = $297 30-Day Personalized Sprint
 // (personalized plan + 4 live group sessions; replaced the retired $97
 // Challenge on 2026-06-09).
 function recommendedTier(riskScore) {
   const s = Number(riskScore) || 0;
-  if (s <= 3) return 1;  // $17 starter
+  if (s <= 3) return 1;  // $27 starter
   if (s <= 6) return 2;  // $47 reset kit
   return 3;              // $297 Personalized Sprint
 }
@@ -232,7 +245,7 @@ function renderEmail({ name, category, tier, tiers, unsubUrl }) {
           <ul style="font-size:13px;line-height:1.45;padding-left:18px;margin:8px 0 14px;">${what}</ul>
           ${outcome ? `<div style="font-size:13px;color:${accentFg};opacity:0.85;margin-bottom:10px;"><em>Outcome:</em> ${outcome}</div>` : ''}
           <div style="margin:10px 0 14px;">${priceLine}</div>
-          <a href="${t.stripe_payment_link}" style="display:inline-block;background:${isRecommended ? '#FFFFFF' : '#2C3E50'};color:${isRecommended ? '#6C3483' : '#FFFFFF'};padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
+          <a href="${liveTierLink(t)}" style="display:inline-block;background:${isRecommended ? '#FFFFFF' : '#2C3E50'};color:${isRecommended ? '#6C3483' : '#FFFFFF'};padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
             ${t.tier === 3 ? 'Get the full program' : t.tier === 2 ? 'Get the complete kit' : 'Start with the guide'}
           </a>
         </td></tr>
@@ -294,7 +307,7 @@ function renderEmail({ name, category, tier, tiers, unsubUrl }) {
             <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,0.85);margin:0 0 16px;">
               ${featured.headline}
             </p>
-            <a href="${featured.stripe_payment_link}" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
+            <a href="${liveTierLink(featured)}" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">
               Get the kit →
             </a>
           </td></tr>
@@ -314,6 +327,18 @@ function renderEmail({ name, category, tier, tiers, unsubUrl }) {
       </td></tr>
 
       <tr><td style="padding:0 20px 6px;">${tierHtml}</td></tr>
+
+      ${category === 'blood_pressure' ? `
+      <tr><td style="padding:14px 28px 6px;">
+        <div style="background:#F5F1E8;border-radius:12px;padding:18px 20px;">
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;margin-bottom:8px;">The cheapest rung · $12.99</div>
+          <div style="font-family:Georgia,serif;font-size:17px;color:#2C3E50;margin-bottom:6px;">The 10-Day Nurse's Reset Companion</div>
+          <p style="font-size:13px;line-height:1.55;color:#3A3A3A;margin:0 0 10px;">
+            The research shelf behind the kit. The claim, the dose, and the exact question to take to your prescriber for every remedy I teach: hibiscus, beets, garlic, magnesium, and the rest. About the price of one supplement bottle you might have wasted on a guess.
+          </p>
+          <a href="https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02" style="color:#B85A36;font-weight:600;font-size:14px;text-decoration:underline;">Get the Companion ($12.99) →</a>
+        </div>
+      </td></tr>` : ''}
 
       <tr><td style="padding:14px 28px 24px;">
         <div style="background:#FBF8F1;border-radius:12px;padding:18px 20px;border:1px dashed rgba(0,0,0,0.12);">
@@ -420,7 +445,7 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  const { email, name, category: rawCategory, riskScore, answers, tags: extraTags } = req.body || {};
+  const { email, name, category: rawCategory, pressure, riskScore, answers, tags: extraTags } = req.body || {};
 
   // 2026-05-13 hardening: tightened from `.includes('@')` to the shared
   // looksLikeValidEmail() which also blocks CRLF header-injection.
@@ -453,6 +478,9 @@ export default async function handler(req, res) {
   // before attempting delivery, and alert Joel on partial failure.
   let enrolled = false;
   let enrollError = null;
+  // Captured inside the legacy enroll block so the triangle dual-write below
+  // can respect a legacy unsubscribe without a second KV read.
+  let legacyRecord = null;
 
   // 2026-05-14: Beehiiv retired. List storage + segmentation tags now live
   // entirely in the Vercel KV drip:* record. This block:
@@ -473,6 +501,7 @@ export default async function handler(req, res) {
     }
     try {
       const existing = await kv.get(dripKey);
+      legacyRecord = existing;
       const nowIso = new Date().toISOString();
       // YYYY-MM-DD in UTC for the daily lead-log set. UTC is the right
       // bucket key here — we want "what happened in this 24h window" not
@@ -557,6 +586,69 @@ export default async function handler(req, res) {
     } catch (err) {
       enrollError = err.message;
       console.error('lead-magnet: drip-kv enroll failed', err.message);
+    }
+  }
+
+  // ── TRIANGLE DUAL-WRITE (2026-07-03) ──────────────────────────────────
+  // The triangle lead machine (bwbp:drip:* + triangle-lead-cron) was orphaned:
+  // nothing on the live site called capture-lead.js, so no new lead ever
+  // entered it. We now dual-write: every quiz/homepage capture ALSO upserts
+  // the bwbp:drip:<email> record in the EXACT shape capture-lead.js writes
+  // (email, firstName, corner, readiness, scores, state, stateEnteredAt,
+  // enrolledAt, source). Quiz pressure keys map to triangle corners:
+  //   stress → stress · sugar → sugar · pipes → sodium · all → stress
+  // Idempotent like capture-lead: never demote a buyer, never reset an
+  // existing record's state/stateEnteredAt — enrich missing fields only.
+  // Best-effort: a failure here never fails the request.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      const PRESSURE_TO_TRIANGLE_CORNER = {
+        stress: 'stress',
+        sugar: 'sugar',
+        pipes: 'sodium',
+        all: 'stress',
+      };
+      const corner = PRESSURE_TO_TRIANGLE_CORNER[pressure] || null;
+      const emailLower = email.trim().toLowerCase();
+
+      // Respect a legacy unsubscribe: if drip:<email> is opted out, do not
+      // open a second mail rail for the same address (CAN-SPAM).
+      if (legacyRecord && legacyRecord.unsubscribed) {
+        console.log(`lead-magnet: skipped triangle dual-write for ${emailLower} (legacy unsubscribed)`);
+      } else {
+        const triKey = `bwbp:drip:${emailLower}`;
+        const triExisting = await kv.get(triKey);
+        const nowIso = new Date().toISOString();
+        if (triExisting) {
+          // Enrich only. Never clobber an in-flight sequence's state/timer,
+          // and never demote a buyer back to a lead.
+          await kv.set(triKey, {
+            ...triExisting,
+            firstName: triExisting.firstName || (name || ''),
+            corner: triExisting.corner || corner,
+            riskScore: triExisting.riskScore || riskScore || '',
+            answers: triExisting.answers || answers || null,
+            lastCaptureAt: nowIso,
+          });
+        } else {
+          await kv.set(triKey, {
+            email: emailLower,
+            firstName: name || '',
+            corner,
+            readiness: null,
+            scores: null,
+            riskScore: riskScore || '',
+            answers: answers || null,
+            state: 'lead',
+            stateEnteredAt: nowIso,
+            enrolledAt: nowIso,
+            source: 'quiz-lead-magnet',
+          });
+        }
+      }
+    } catch (triErr) {
+      // Non-fatal: the legacy rail already captured the lead.
+      console.warn('lead-magnet: triangle dual-write failed (non-fatal)', triErr.message);
     }
   }
 
