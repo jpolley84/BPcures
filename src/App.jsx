@@ -62,6 +62,10 @@ const CaseReviewPage = lazy(() => import('./pages/CaseReviewPage'));
 const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPage'));
 // /score — tokenized "see my saved result" page for email links (2026-07-03).
 const ScorePage = lazy(() => import('./pages/ScorePage'));
+// /waitlist — BraveWorks BP iPhone-app waitlist (2026-07-05). Standalone
+// conversion page (own header/footer, no Navbar); /app redirects there for
+// bio links. Signup endpoint: api/app-waitlist.js.
+const AppWaitlistPage = lazy(() => import('./pages/AppWaitlistPage'));
 
 // Subdomain → page map. When the SPA boots on a vanity subdomain like
 // `wakita.bpquiz.com`, the root route renders that client's intake instead of
@@ -214,6 +218,11 @@ function App() {
               /score?e=<email>&t=<token> → GET /api/score-get. Gentle fallback
               to /quiz when the token is invalid or expired. */}
           <Route path="/score" element={<SiteLayout><ScorePage /></SiteLayout>} />
+
+          {/* BraveWorks BP iPhone-app waitlist. Standalone; /app is the
+              short alias for bio links + the app's own marketing. */}
+          <Route path="/waitlist" element={<AppWaitlistPage />} />
+          <Route path="/app" element={<Navigate to="/waitlist" replace />} />
 
           {/* /1on1 — 2026-07-03: redirects to /coaching. The old
               WaitlistApplicationPage quoted a stale $1,297 single-pay price

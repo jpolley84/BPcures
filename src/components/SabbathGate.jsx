@@ -35,6 +35,8 @@ const EXEMPT_PREFIXES = [
   '/success', '/upsell', '/library', '/downloads',
   '/coaching-welcome', '/sprint-welcome', '/seminar-welcome',
   '/ops', '/wakita', '/luvenia', '/intake', '/apply',
+  // App waitlist — email capture, not commerce. Nothing is sold there.
+  '/waitlist', '/app',
 ];
 
 function isStoreHost(hostname) {
