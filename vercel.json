@@ -5,7 +5,7 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon).*)",
+      "source": "/((?!assets|downloads|headshot|favicon|tea).*)",
       "destination": "/index.html"
     }
   ],
@@ -23,6 +23,11 @@
     {
       "source": "/fb",
       "destination": "/?utm_source=facebook&utm_medium=profile&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/tea",
+      "destination": "/?utm_source=manychat&utm_medium=comment-dm&utm_campaign=tea",
       "permanent": false
     },
     {
