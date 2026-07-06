@@ -35,7 +35,10 @@ const groups = [
       { name: 'BP Reset Day 1 + Full Challenge', desc: 'Day-by-day BP protocol with checklists. Start here.', file: 'bp-reset-day1-and-beyond.pdf' },
       { name: 'BP Reset Kit (8-PDF zip)', desc: 'The full clinical system: hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates.', file: 'bp-reset-kit.zip' },
       { name: 'BP Reset Book (full deep-dive guide)', desc: 'The complete BP Reset book. Every protocol explained in depth.', file: 'bp-reset-book.pdf' },
-      { name: 'The 10-Day Nurse\'s Reset Companion', desc: 'Master document + top 10 herbs deep-dive (how each is traditionally used for blood pressure support) + White Coat guide + FAQ.', file: 'bp-cures-10-day-reset.pdf' },
+      { name: 'Master Blood Pressure Document', desc: 'The full protocol. What to take, when to take it, how much.', file: 'master-blood-pressure-document.pdf' },
+      { name: 'Top 10 Herbs Deep Dive', desc: 'Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.', file: 'top-10-herbs-deep-dive.pdf' },
+      { name: 'White Coat Syndrome Guide', desc: 'Why your readings at the doctor are probably wrong, and the 2-minute trick nurses use to get real numbers.', file: 'white-coat-syndrome-guide.pdf' },
+      { name: 'Blood Pressure FAQ', desc: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", file: 'blood-pressure-faq.pdf' },
     ],
   },
   {

@@ -52,6 +52,29 @@ const DOWNLOADS = {
     label: 'The 10-Day Nurse\'s Reset Companion (full ebook)',
     file: 'bp-cures-10-day-reset.pdf',
   },
+  // 2026-07-06: the 4 original BP Reset Kit PDFs restored as distinct downloads
+  // to match the 8-item value stack on CheckoutPage. Sourced from Joel's original
+  // kit (~/Downloads/Skool-Upload/Attach-These/1 - BP Reset).
+  master_bp_doc: {
+    label: 'Master Blood Pressure Document',
+    file: 'master-blood-pressure-document.pdf',
+  },
+  top_10_herbs: {
+    label: 'Top 10 Herbs Deep Dive',
+    file: 'top-10-herbs-deep-dive.pdf',
+  },
+  white_coat: {
+    label: 'White Coat Syndrome Guide',
+    file: 'white-coat-syndrome-guide.pdf',
+  },
+  bp_faq: {
+    label: 'Blood Pressure FAQ',
+    file: 'blood-pressure-faq.pdf',
+  },
+  tracker: {
+    label: 'Health &amp; Progress Tracker',
+    file: 'bonuses/bp-tracker.pdf',
+  },
 };
 
 // SKOOL_URL = The Weekly Reset, the paid braveworksrn group ($27/mo, first
@@ -95,7 +118,16 @@ export const TIER_CONFIG = {
   1: {
     product: 'The 10-Day Nurse\'s Reset, Starter Protocol Kit',
     subject: 'Joel here. Your BP Reset Kit is inside (download links below)',
-    downloads: [DOWNLOADS.bp_kit_zip, DOWNLOADS.bp_day1, DOWNLOADS.cookbook],
+    downloads: [
+      DOWNLOADS.master_bp_doc,
+      DOWNLOADS.top_10_herbs,
+      DOWNLOADS.bp_day1,
+      DOWNLOADS.cookbook,
+      DOWNLOADS.white_coat,
+      DOWNLOADS.bp_faq,
+      DOWNLOADS.tracker,
+      DOWNLOADS.overmedicated_boomers,
+    ],
     includesCoaching: false,
     includesChallenge: true,
     includesWeeklyResetHero: true,

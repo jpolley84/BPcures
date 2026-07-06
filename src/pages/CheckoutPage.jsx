@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useHomeVariant } from '@/hooks/useHomeVariant';
 // 2026-06-08 — exit-intent / dwell popup now drives the about-to-bounce
@@ -13,7 +13,8 @@ import { useHomeVariant } from '@/hooks/useHomeVariant';
 // during idle; drops vendor-motion from the homepage's critical path.
 import { lazy, Suspense } from 'react';
 const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
-import HomepageEmailCapture from '../components/HomepageEmailCapture';
+// HomepageEmailCapture ("Get Day 1 free") — REMOVED from the page 2026-07-05 at
+// Joel's request. Component preserved at src/components/HomepageEmailCapture.jsx.
 import { track } from '../utils/analytics.js';
 
 // TRIANGLE MIGRATION: the front product is the $17 Corner Reset, one corner,
@@ -137,12 +138,19 @@ const CheckoutPage = () => {
     // plus the Tracker and Meal Plan bonuses). Everything listed here is actually
     // shipped in the kit. The Cook For Life cookbook, the other two corners, and the
     // Freedom Finale are $47/$97 upgrade content, so they are NOT promised here.
-    // Honest standalone values, total $89 against the $17 price.
-    { name: 'Your 10-Day Corner Protocol', description: "Wake up, open that day's step, do the one thing in front of you. The 10-day reset for your loudest corner, Stress by default.", value: '$29' },
-    { name: "Joel's Herb Formulary for your corner", description: 'The plant-based herbs Joel actually trusts for that corner, each with safe, sensible dosing, so you are never guessing.', value: '$19' },
-    { name: 'The Triangle Meal Plan', description: 'A plant-based, high-fiber day of eating, a big breakfast tapering to a light supper, built to feed all three corners.', value: '$19' },
-    { name: 'Your Bring-This-To-Your-Doctor page', description: 'One printable page that turns your next visit into a real conversation instead of a two-minute refill.', value: '$12' },
-    { name: 'Printable Blood Pressure Tracker', description: 'Log your morning and evening readings and walk a clean trend into your next visit.', value: '$10' },
+    // Value stack below totals $258 against the $17 price (Joel restore 2026-07-06).
+    // Full 8-item value stack restored by Joel 2026-07-06 (clearer, more appealing
+    // names, updated PDFs + the old library). $258 total against the $17 price.
+    // DELIVERY MUST MATCH: every item here needs its PDF shipped in the kit (see
+    // DownloadsPage / api/_kit-manifest.js) or buyers hit the not-received gap.
+    { name: 'Master Blood Pressure Document', description: "The full protocol. What to take, when to take it, how much.", value: '$47' },
+    { name: 'Top 10 Herbs Deep Dive', description: "Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.", value: '$27' },
+    { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
+    { name: 'Cook For Life Cookbook', description: "Plant-based recipes built around the herbs and foods that move your numbers.", value: '$27' },
+    { name: 'White Coat Syndrome Guide', description: "Why your readings at the doctor are probably wrong, and the 2-minute trick nurses use to get real numbers.", value: '$17' },
+    { name: 'Blood Pressure FAQ', description: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", value: '$12' },
+    { name: 'Health & Progress Tracker', description: "Print it. Stick it on your fridge. Log your numbers. Watch what happens.", value: '$12' },
+    { name: 'BONUS: Overmedicated Boomers Book', description: "The book Big Pharma doesn't want on your nightstand. What your generation was never told about the drugs you're taking.", value: '$19' },
   ];
 
   const timeEffortKillers = [
@@ -365,6 +373,27 @@ const CheckoutPage = () => {
                   <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38C1.35 2.67.94 3.34.63 4.13c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13C21.33 1.35 20.66.94 19.87.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm6.41-10.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/>
                 </svg>
               </a>
+              {/* App Store icon -> app waitlist (2026-07-05). Same round-icon
+                  treatment as the socials, with a tiny "coming soon" caption. */}
+              <Link
+                to="/waitlist"
+                aria-label="BraveWorks RN app, coming soon. Join the waitlist"
+                onClick={() => track('waitlist_cta_click', { source: 'social_strip' })}
+                className="inline-flex items-center gap-2"
+                style={{ textDecoration: 'none' }}
+              >
+                <span
+                  className="inline-flex items-center justify-center w-11 h-11 rounded-full transition-transform hover:scale-110"
+                  style={{ background: '#0D1117', color: '#FFFFFF' }}
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                  </svg>
+                </span>
+                <span style={{ color: 'var(--dark-gray)', fontSize: '11px', lineHeight: 1.3, fontWeight: 600, textAlign: 'left' }}>
+                  App coming<br />soon &rarr;
+                </span>
+              </Link>
             </div>
           </div>
         </div>
@@ -386,27 +415,28 @@ const CheckoutPage = () => {
               Read by 1,100+ in the BraveWorks community
             </span>
           </div>
-          {/* Hero hook (2026-06-18): viral callout style — name the meds,
-              stop the scroll, short punch. Detail moves to subhead. */}
+          {/* Hero rework (2026-07-05, Joel): no TikTok phrasing, fast-scan
+              punchy lines instead of paragraphs. Drug-name callout stays (the
+              pattern interrupt); everything after it is one short line each. */}
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
-            Amlodipine. Lopressor. HCTZ.<br />If you take any of these &mdash; stop scrolling.
+            Amlodipine. Lopressor. HCTZ.<br />Still taking them. Still high?
           </h1>
-          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.7' }}>
-            A 20-year ICU nurse built a 10-day plan for people on blood pressure meds. It works <em>alongside</em> your doctor, never instead of them. They call him <strong>The Blood Pressure Guy</strong>.
+          <p className="mb-4" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.6' }}>
+            A 20-year ICU nurse built a 10-day reset for people on BP meds. They call him <strong>The Blood Pressure Guy</strong>.
           </p>
-          {/* 2026-06-21 CRO: Triangle mechanism summary — answers "why is this
-              different?" before the offer stack. Raises Perceived Likelihood
-              (Hormozi) and delivers the counterintuitive insight (Chris Do 911)
-              before the scroll. */}
-          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.7', fontWeight: 500 }}>
-            Most BP programs address one cause. Yours has three corners: Stress, Sugar, and Sodium. This kit works all three at once, the way they actually feed each other. That's why people see results their other programs never delivered.
-          </p>
-          {/* Villain line (Phase 1 canon) — symptom vs loop reframe, high on page. */}
-          <p className="mb-3" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.7', fontStyle: 'italic', borderLeft: '3px solid var(--purple, #6C3483)', paddingLeft: '14px' }}>
-            The system treats your symptom. The pill hides the number. The Triangle heals the loop, the cause. That is why blood pressure gets managed for thirty years instead of healed.
-          </p>
+          <div className="mb-4" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {[
+              ['Your pressure has three corners.', 'Stress. Sugar. Sodium.'],
+              ['Pills work one corner.', 'The other two pull your number right back.'],
+              ['This kit works all three.', 'Alongside your doctor, never instead.'],
+            ].map(([lead, rest], i) => (
+              <p key={i} style={{ margin: 0, color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.5' }}>
+                <strong style={{ color: 'var(--navy)' }}>{lead}</strong> {rest}
+              </p>
+            ))}
+          </div>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            Your Corner Reset &middot; one corner, Stress by default &middot; 10 days &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
+            Your Corner Reset &middot; 10 days &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>
           {/* Above-the-fold CTA: one-tap kit buy for TikTok traffic (mobile + desktop),
               plus a quiz off-ramp for anyone who wants to see their corner first. */}
@@ -463,64 +493,38 @@ const CheckoutPage = () => {
             ))}
           </div>
 
-          {/* What your $17 gets you vs the price of saying no. */}
+          {/* Total value as a BIG addition problem right under the stack (Joel
+              2026-07-05), with the CTA button as the very next element. */}
           <AnimatedSection>
-            <div className="max-w-[560px] mx-auto mb-8 grid gap-3 sm:grid-cols-2">
-              <div className="p-4 rounded-xl text-left" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
-                <p className="font-bold mb-1" style={{ color: '#166534', fontSize: '15px' }}>What your $17 gets you</p>
-                <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.55 }}>
-                  All five pieces above, worth $89, yours to keep for life. Your corner protocol, the herbs Joel trusts, your bring-to-your-doctor page, the tracker, and the meal plan. One time, no subscription.
-                </p>
-              </div>
-              <div className="p-4 rounded-xl text-left" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
-                <p className="font-bold mb-1" style={{ color: '#991B1B', fontSize: '15px' }}>The price of saying no</p>
-                <p style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.55 }}>
-                  Another year on the same routine that is not fixing the cause. The number creeping up, the dose creeping up, the same dread before every reading. That path costs far more than $17.
-                </p>
-              </div>
-            </div>
-          </AnimatedSection>
-
-          <AnimatedSection>
-            <div className="pt-6 mt-2 text-center">
-              <p className="font-bold mb-3" style={{ color: 'var(--navy)', fontSize: '19px' }}>
-                Total value{' '}
-                <span className="line-through" style={{ color: 'var(--muted-gray)', fontWeight: 500 }}>$89</span>
+            <div className="pt-4 text-center">
+              <p className="mb-1" style={{ color: 'var(--muted-gray)', fontSize: '17px', fontWeight: 600, letterSpacing: '0.02em' }}>
+                $47 + $27 + $97 + $27 + $17 + $12 + $12 + $19
               </p>
-              {/* 2026-07-03: the "Regularly $27" strike is gone. $17 is the
-                  permanent price, so the anchor is now the REAL cost of the
-                  problem (copays, refills), not a crossed-out price. */}
-              <div className="inline-block mb-3 px-5 py-2 rounded-full bg-purple-50 border border-purple-100">
-                <span className="font-bold text-[#6C3483] text-[20px]">{PRICE}, one time</span>
-              </div>
-              <p className="mb-4 max-w-[400px] mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: '1.55' }}>
-                For perspective: BP pills and copays often run hundreds of dollars a year, every year. This is {PRICE}, once.
-              </p>
-
-              {/* 2026-06-21 CRO: consequence-based urgency. No fake timers,
-                  no expiring prices — just a true statement about cost of inaction.
-                  Kennedy takeaway + honest framing. */}
-              <p className="mb-3 max-w-[400px] mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: '1.55', fontWeight: 500 }}>
-                Every week you wait is another 7 days on the same routine that isn't fixing the root cause. Start today &mdash; your plan is in your inbox in 60 seconds.
+              <div className="mx-auto mb-2" style={{ width: '220px', borderBottom: '2px solid var(--navy)' }} />
+              <p className="font-extrabold mb-5" style={{ color: 'var(--navy)', fontSize: '34px', lineHeight: 1.1 }}>
+                = <span className="line-through" style={{ textDecorationThickness: '3px' }}>$258</span> value
               </p>
 
               {checkoutError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center w-full sm:max-w-[400px] mx-auto">
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm text-center w-full sm:max-w-[440px] mx-auto">
                   {checkoutError}
                 </div>
               )}
 
+              {/* "You pay $17" IS the button (Joel 2026-07-05): one big CTA
+                  right under the total, no redundant price line above it. */}
               <button
                 onClick={handleBuyNow}
                 disabled={isProcessing}
-                className="w-full sm:max-w-[400px] mx-auto block btn-standard btn-cta text-white font-bold mb-3 text-[17px] gradient-purple-btn"
+                className="w-full sm:max-w-[440px] mx-auto block btn-cta text-white font-extrabold mb-3 gradient-purple-btn"
+                style={{ fontSize: '24px', padding: '22px 32px', borderRadius: '16px' }}
               >
                 {isProcessing ? (
                   <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="animate-spin" size={20} /> Processing...
+                    <Loader2 className="animate-spin" size={24} /> Processing...
                   </span>
                 ) : (
-                  `Buy Now for ${PRICE}`
+                  `You pay ${PRICE}`
                 )}
               </button>
 
@@ -553,20 +557,71 @@ const CheckoutPage = () => {
             </div>
           </AnimatedSection>
 
+          {/* What else $17 buys you (funny perspective) vs the price of saying
+              no. Both listicles (Joel 2026-07-05). */}
+          <AnimatedSection>
+            <div className="max-w-[640px] mx-auto mt-10 grid gap-4 sm:grid-cols-2">
+              <div className="p-5 rounded-xl text-left" style={{ background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <p className="font-bold mb-2" style={{ color: '#166534', fontSize: '16px' }}>What else $17 buys you</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[
+                    'One DoorDash burrito, after the fees',
+                    'Two fancy coffees and a tip',
+                    'A month of a streaming service you forgot you pay for',
+                    'About half of one copay',
+                  ].map((line, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <ShoppingBag size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#16A34A' }} />
+                      <span style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.5 }}>{line}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-start gap-2 mt-3">
+                  <CheckCircle2 size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#166534' }} />
+                  <span className="font-semibold" style={{ color: '#166534', fontSize: '14px', lineHeight: 1.5 }}>
+                    Or: a nurse-built reset you keep for life.
+                  </span>
+                </div>
+              </div>
+              <div className="p-5 rounded-xl text-left" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                <p className="font-bold mb-2" style={{ color: '#991B1B', fontSize: '16px' }}>The price of saying no</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[
+                    'Another year of refills and copays',
+                    'The number creeping up',
+                    'The dose creeping up with it',
+                    'The same dread before every reading',
+                  ].map((line, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <XCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#DC2626' }} />
+                      <span style={{ color: 'var(--dark-gray)', fontSize: '14px', lineHeight: 1.5 }}>{line}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-start gap-2 mt-3">
+                  <XCircle size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#991B1B' }} />
+                  <span className="font-semibold" style={{ color: '#991B1B', fontSize: '14px', lineHeight: 1.5 }}>
+                    That path costs a lot more than $17.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+
           {/* Testimonials. 2026-06-08: lead quote is now a BP-number +
               physician-oversight story (was a weight-loss / "off 2 meds"
               quote with no doctor context). Every quote now keeps the doctor
               in the loop. "Results not typical" note added below. */}
           <AnimatedSection className="pt-14 pb-4">
             <h3 className="text-center font-bold text-[18px] text-[#2C3E50] mb-8">What people are saying</h3>
-            <div className="flex flex-col md:flex-row gap-5">
+            <div className="grid gap-5 sm:grid-cols-2">
               {[
                 { quote: "My numbers went from the 150s/90s to the 130s/80s over six weeks, and my doctor and I are watching it together.", source: 'Michael T., 61 · Denver, CO' },
                 { quote: "I was on Lisinopril for 9 years. After 3 weeks on the protocol my systolic dropped 18 points and my doctor cut my dose in half. First time in a decade anyone suggested I might need less medication.", source: 'Deborah R., 54 · Houston, TX' },
                 { quote: "Fasting glucose went from 134 to 112. Resting heart rate from 86 to 74. My cardiologist asked what I changed. I showed him Joel's protocol and he said 'keep doing that.'", source: 'Maureen K., 62 · Tampa, FL' },
                 { quote: "I was on 14 BP pills and my pressure was still high. I started doing what Joel taught me, and it came down so far my doctor told me I could start coming off my meds.", source: 'Jackie B.' },
               ].map((t, i) => (
-                <div key={i} className="testimonial-card p-5 flex-1 flex flex-col">
+                <div key={i} className="testimonial-card p-6 flex flex-col h-full">
                   <div className="flex gap-1 mb-3">
                     {[...Array(5)].map((_, j) => (
                       <Star key={j} size={14} className="fill-[#F39C12] text-[#F39C12]" />
@@ -927,11 +982,32 @@ const CheckoutPage = () => {
       </div>
       )}
 
-      {/* Inline email capture — 2026-06-09. Podcast/warm traffic that doesn't
-          buy in one pageview had no on-page capture path (only the one-shot
-          exit popup). Sits below the offer + cross-sell so it never competes
-          with the buy decision. Instant Day-1 email keeps the promise. */}
-      <HomepageEmailCapture />
+      {/* BraveWorks RN app waitlist — simple founder-perks CTA (2026-07-05). */}
+      <div className="py-10" style={{ backgroundColor: 'var(--white)', borderTop: '1px solid var(--light-gray)' }}>
+        <div className="container-mobile-first text-center">
+          <p className="mb-1" style={{ color: 'var(--muted-gray)', fontSize: '12px', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700 }}>
+            Coming soon
+          </p>
+          <h3 className="mb-2" style={{ color: 'var(--navy)', fontSize: '21px', fontWeight: 700 }}>
+            The BraveWorks RN app is coming.
+          </h3>
+          <p className="mb-5 mx-auto" style={{ color: 'var(--dark-gray)', fontSize: '15px', lineHeight: 1.6, maxWidth: '420px' }}>
+            Want to join the waitlist for founder perks? It takes ten seconds.
+          </p>
+          <Link
+            to="/waitlist"
+            onClick={() => track('waitlist_cta_click', { source: 'landing_page' })}
+            className="inline-flex items-center gap-2 font-bold transition-all duration-200 active:scale-95"
+            style={{ background: 'var(--purple, #6C3483)', color: '#FFFFFF', borderRadius: '12px', padding: '14px 28px', fontSize: '15px' }}
+          >
+            Join the waitlist
+            <span aria-hidden="true">&rarr;</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* "Get Day 1 free" email capture REMOVED 2026-07-05 (Joel's request).
+          Component preserved at src/components/HomepageEmailCapture.jsx. */}
 
       {/* Footer. 2026-06-08 conversion + compliance pass.
           The old prominent "Not ready to buy? Take the quiz" section was a
