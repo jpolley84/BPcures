@@ -93,6 +93,7 @@
   .tier .now{ font-family:'Cormorant Garamond'; font-weight:600; font-size:24px; color:var(--ink);}
   .tier .was{ font-size:12px; color:var(--muted); text-decoration:line-through; display:block;}
   .tier .percup{ display:block; font-size:11px; color:var(--sage-deep); font-weight:500;}
+  .tier .permo{ font-family:'Montserrat',sans-serif; font-size:13px; font-weight:500; color:var(--muted);}
   .tier .flag{ position:absolute; top:-10px; right:14px; background:var(--ruby); color:#fff; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:3px 10px; border-radius:20px;}
   .tier .flag.sage{ background:var(--sage-deep);}
   .tier .flag.gold{ background:var(--gold); color:var(--ink);} /* reserved: CUSTOMER FAVORITE — see comment in #tierbox */
@@ -191,6 +192,20 @@
   .scicard p{ font-size:14.5px; color:var(--brown); margin-bottom:14px;}
   .reflink{ font-size:13px; font-weight:600; color:var(--ruby); text-decoration:none; letter-spacing:.02em; cursor:pointer;}
   .reflink:hover{ text-decoration:underline;}
+
+  /* ---- Every-herb research list — all 8 botanicals, each with a real study link ---- */
+  .reslist{ margin:44px auto 0; max-width:860px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px 26px;}
+  .resrow{ display:grid; grid-template-columns:130px 1fr auto; gap:16px; align-items:center; padding:16px 0; border-bottom:1px solid var(--line);}
+  .resrow:last-child{ border-bottom:none;}
+  .resrow .rname{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:20px; color:var(--ink);}
+  .resrow .rname small{ display:block; font-family:'Montserrat',sans-serif; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--sage-deep); font-weight:600; margin-top:2px;}
+  .resrow .rwhat{ font-size:14px; color:var(--brown); line-height:1.5;}
+  .resrow .rlink{ font-size:12.5px; font-weight:600; color:var(--ruby); text-decoration:none; white-space:nowrap;}
+  .resrow .rlink:hover{ text-decoration:underline;}
+  @media(max-width:640px){
+    .resrow{ grid-template-columns:1fr auto; gap:6px 14px;}
+    .resrow .rwhat{ grid-column:1 / -1; order:3;}
+  }
 
   .term{ border-bottom:1.5px dotted var(--ruby); cursor:pointer; color:var(--ruby-deep); font-weight:500; position:relative;}
   .pop{ display:none; position:absolute; bottom:130%; left:50%; transform:translateX(-50%); width:240px; background:var(--ink); color:var(--cream); font-size:12.5px; line-height:1.5; padding:12px 14px; border-radius:8px; z-index:var(--z-pop); box-shadow:0 10px 30px rgba(59,49,40,.3); font-weight:400; text-transform:none; text-align:left;}
@@ -420,35 +435,37 @@
       <div class="herowhisper"><span class="fill">[FILL — one real sensory/ritual customer quote, e.g. "the 4 p.m. glass replaced my second coffee" — hidden until a verified review exists]</span></div>
 
       <div class="tiers" id="tierbox">
-        <div class="tier sel" data-price="120" data-label="The Steady Ritual · 3 pouches" data-cta="Add to Cart — $120" data-link="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x" data-pay="or 4 interest-free payments of $30 — [FILL: confirm provider at checkout]" data-ship="Ships free — and it covers the window the studies actually ran.">
-          <span class="flag">Best value · save $24</span>
+        <!-- Tier 1: 1-Week entry ($17). FILL NOTE for Joel: fill this starter pouch to
+             ~25-30g so "one honest week" is true at the everyday 1-2 cups/day rhythm
+             (the same rhythm that makes the 100g pouch a month). Stripe product name
+             updated to "Steady — 1-Week Supply". -->
+        <div class="tier" data-price="17" data-label="1-Week Supply" data-cta="Add to Cart — $17" data-link="https://buy.stripe.com/aFa8wPgQz0rk63hfjPfnO1B" data-pay="" data-ship="Orders over $50 ship free — add a full month and shipping's on us.">
           <span class="radio"></span>
-          <span class="info"><span class="tname">The Steady Ritual · 3 pouches</span><span class="tsub">Three months of the daily cup — the window the studies ran · ships free</span></span>
-          <span class="tprice"><span class="was">$144</span><span class="now">$120</span><span class="percup">$40/pouch · ~$0.80 a cup</span></span>
+          <span class="info"><span class="tname">1-Week Supply · the starter</span><span class="tsub">One honest week of the daily cup — try it on, low commitment</span></span>
+          <span class="tprice"><span class="now">$17</span><span class="percup">about a week of daily cups</span></span>
         </div>
-        <div class="tier" data-price="42" data-label="The Steady Circle · monthly" data-cta="Subscribe — $42/month" data-link="https://buy.stripe.com/cNicN543Nde60IX2x3fnO1y" data-pay="" data-ship="Add a Sampler ($17) to your first delivery and the whole order ships free.">
-          <span class="flag sage">Joel's pick · Save $6/mo</span>
+        <!-- Tier 2: 1-Month one-time ($48). Pre-selected default: a clear, honest,
+             non-recurring choice (no subscription dark-pattern on a cold visitor). -->
+        <div class="tier sel" data-price="48" data-label="1-Month Supply" data-cta="Add to Cart — $48" data-link="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z" data-pay="" data-ship="You're $2 shy of free shipping — add the starter ($17) and it ships free.">
           <span class="radio"></span>
-          <span class="info"><span class="tname">The Steady Circle · 1 pouch (100g) monthly</span><span class="tsub">Delivered monthly · skip, pause, or cancel anytime — no commitment</span></span>
-          <span class="tprice"><span class="was">$48</span><span class="now">$42</span><span class="percup">~$0.84 a cup</span></span>
-        </div>
-        <div class="tier" data-price="48" data-label="One pouch" data-cta="Add to Cart — $48" data-link="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z" data-pay="" data-ship="You're $2 shy of free shipping — add a Sampler ($17) and it ships free.">
-          <span class="radio"></span>
-          <span class="info"><span class="tname">One pouch (100g) · ~50–60 cups</span><span class="tsub">A one-time month's supply</span></span>
+          <span class="info"><span class="tname">1-Month Supply · 100g pouch</span><span class="tsub">A full month of the daily cup · one-time, ~50–60 cups</span></span>
           <span class="tprice"><span class="now">$48</span><span class="percup">~$0.96 a cup</span></span>
         </div>
-        <div class="tier" data-price="17" data-label="Sampler" data-cta="Add to Cart — $17" data-link="https://buy.stripe.com/aFa8wPgQz0rk63hfjPfnO1B" data-pay="" data-ship="Orders over $50 ship free — pair the Sampler with a full pouch and shipping's on us.">
+        <!-- Tier 3: the upsell — 30-day auto-ship subscription ($42/mo, save $6 vs one-time).
+             Flagged best value; cancel-anytime stated. Same 100g pouch, delivered monthly. -->
+        <div class="tier" data-price="42" data-label="30-Day Supply · monthly" data-cta="Subscribe — $42/month" data-link="https://buy.stripe.com/cNicN543Nde60IX2x3fnO1y" data-pay="" data-ship="Ships free every month — never run out, and save $6 on every pouch.">
+          <span class="flag sage">Best value · save $6/mo</span>
           <span class="radio"></span>
-          <span class="info"><span class="tname">The Sampler (50g) · ~25–30 cups</span><span class="tsub">Try it on, low commitment</span></span>
-          <span class="tprice"><span class="now">$17</span><span class="percup">~$0.68 a cup</span></span>
+          <span class="info"><span class="tname">30-Day Supply · delivered monthly</span><span class="tsub">The same 100g pouch, auto-shipped every 30 days · skip, pause, or cancel anytime</span></span>
+          <span class="tprice"><span class="was">$48</span><span class="now">$42<span class="permo">/mo</span></span><span class="percup">~$0.84 a cup</span></span>
         </div>
         <!-- [FILL — uncomment on the actual top-selling tier ONLY after real order data exists; never pre-fill]:
              <span class="flag gold">Customer favorite</span> -->
       </div>
 
-      <a class="addcart" id="addbtn" href="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x">Add to Cart — $120</a>
+      <a class="addcart" id="addbtn" href="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z">Add to Cart — $48</a>
       <div class="paynote" id="paynote"></div>
-      <div class="shipline" id="shipline">Ships free — and it covers the window the studies actually ran.</div>
+      <div class="shipline" id="shipline">You're $2 shy of free shipping — add the starter ($17) and it ships free.</div>
       <div class="smallbatch">Blended in small, dated batches. When one steeps out, the next takes its time.</div>
       <!-- Batch-reservation meter: render ONLY when wired to real inventory AND the batch is >50% sold.
            <div class="smallbatch" id="batchmeter">This batch: [live]% reserved.</div> -->
@@ -545,19 +562,19 @@
     <div>
       <div class="kicker" style="text-align:left;">The garden, measured</div>
       <h2 class="head">Eight botanicals. Two pathways, in the amounts that matter.</h2>
-      <p>Most "blood pressure teas" are just hibiscus. Steady pairs hibiscus with <b>hawthorn</b> — a second, heart-muscle pathway — at levels chosen to actually count, not to look good on an ingredient list.</p>
-      <p>Lemongrass and a curl of ginger make it drinkable; nettle grounds it; chamomile and a careful touch of lavender bring the calm. No dust, no fillers, no flavoring. Cut-and-sifted, food-grade, blended by a nurse who reads the research.</p>
+      <p>Most "blood pressure teas" are just hibiscus. Steady is led by hibiscus and <b>hawthorn</b> — two researched pathways most blends skip — and then <b>every other herb in it earns its place</b>: lemongrass and nettle studied for the vessels, ginger and chamomile for blood sugar, lavender and chamomile for the stress that pushes your numbers up. Not one herb is in here just for looks.</p>
+      <p>No dust, no fillers, no flavoring. Cut-and-sifted, food-grade, blended by a nurse who reads the research — and links it below.</p>
       <div class="ingtags">
-        <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse — the most-studied herb of the Sodium corner, and Anchor 1 of the Method. See The Science below.</span></span>
-        <span class="itag hero">Hawthorn<span class="pop">Berry, leaf and flower — the classic cardiovascular tonic, traditionally used for generations. Note: it can interact with heart medications — see the safety note.</span></span>
-        <span class="itag">Lemongrass<span class="pop">Here for taste, and we say so — the bright citrus note that makes the daily cup a pleasure instead of a chore.</span></span>
-        <span class="itag">Lemon-ginger<span class="pop">A gentle curl of warmth. Traditionally used for digestion and circulation-warming comfort — and it makes the blend sing.</span></span>
-        <span class="itag">Nettle<span class="pop">The mineral leaf — a traditional "green tonic" herb that grounds the cup. Deep-green backbone, nothing flashy.</span></span>
-        <span class="itag">Chamomile<span class="pop">Traditionally used for calm — the soft apple note in the evening cup. Serves the Stress corner.</span></span>
-        <span class="itag">Calendula<span class="pop">The gold fleck. A gentle traditional garden herb — here for beauty and body, and honest about it.</span></span>
-        <span class="itag">Lavender<span class="pop">Just a whisper — traditionally used to settle the nervous system. Enough to soothe, never enough to take over the cup.</span></span>
+        <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse. Studied in a Tufts RCT and meta-analyses for lowering systolic blood pressure. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the study →</a></span></span>
+        <span class="itag hero">Hawthorn<span class="pop">A 2025 meta-analysis of RCTs studied hawthorn for lower systolic pressure in hypertension. Note: it can interact with heart medications — see the safety note. <a href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">See the meta-analysis →</a></span></span>
+        <span class="itag">Lemongrass<span class="pop">Not just taste. A 2022 review ties lemongrass to vessel-relaxing (nitric-oxide) and mild diuretic activity — the vascular corner. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9598547/" target="_blank" rel="noopener">See the review →</a></span></span>
+        <span class="itag">Ginger<span class="pop">A meta-analysis of clinical trials studied ginger for supporting healthy blood pressure; other trials studied it for blood sugar. Sodium + Sugar corners. <a href="https://pubmed.ncbi.nlm.nih.gov/30972845/" target="_blank" rel="noopener">See the study →</a></span></span>
+        <span class="itag">Nettle<span class="pop">In animal research, nettle leaf was studied for lower blood pressure and for helping the body clear sodium and water — the Sodium corner. <a href="https://pubmed.ncbi.nlm.nih.gov/30097121/" target="_blank" rel="noopener">See the study →</a></span></span>
+        <span class="itag">Chamomile<span class="pop">A placebo-controlled trial studied chamomile for easing anxiety — the Stress corner — and diabetic trials studied it for blood sugar. <a href="https://pubmed.ncbi.nlm.nih.gov/19593179/" target="_blank" rel="noopener">See the trial →</a></span></span>
+        <span class="itag">Calendula<span class="pop">The gentlest evidence in the blend, and we say so: animal research studied it for antioxidant support and a healthier lipid profile on a high-sugar diet. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10578091/" target="_blank" rel="noopener">See the study →</a></span></span>
+        <span class="itag">Lavender<span class="pop">In a trial with high-blood-pressure patients, lavender was studied for lower blood pressure, heart rate and cortisol — the Stress corner. Just a whisper in the cup. <a href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the trial →</a></span></span>
       </div>
-      <p class="ingnote">Tap any herb — every one gets a plain-language note, even the ones that are just here for taste. Every batch is third-party tested for identity and heavy metals.</p>
+      <p class="ingnote">Tap any herb — every one carries published research, linked in plain language. Every batch is third-party tested for identity and heavy metals.</p>
     </div>
   </div>
 </section>
@@ -586,11 +603,11 @@
         <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1613211405242-d4afa8f5cedd?q=80&w=900&auto=format&fit=crop" alt="Hawthorn berries on the branch"></div>
         <div class="body">
           <h3>Hawthorn</h3>
-          <div class="studied">Traditionally used · cardiovascular support†</div>
+          <div class="studied">Studied for · blood pressure in hypertension†</div>
           <p>A classic
-            <span class="term">cardiovascular tonic<span class="pop">Hawthorn (berry, leaf and flower) has generations of traditional use for the heart and circulation, and a Cochrane review has examined its cardiovascular research. Note: it can interact with heart medications — see below. <a href="https://pubmed.ncbi.nlm.nih.gov/18254076/" target="_blank" rel="noopener">Read the review →</a></span></span>
-            — used for generations, and studied, for supporting the heart and healthy circulation. The second pathway most BP teas skip.</p>
-          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/18254076/" target="_blank" rel="noopener">See the research →</a>
+            <span class="term">cardiovascular tonic<span class="pop">A 2025 meta-analysis of randomized placebo-controlled trials found hawthorn was studied for lower systolic blood pressure in people with hypertension. Note: it can interact with heart medications — see below. <a href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">Read the meta-analysis →</a></span></span>
+            — the second pathway most BP teas skip. A 2025 meta-analysis studied it for lower systolic pressure in hypertension; a separate RCT studied it in adults already on BP medication.</p>
+          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">See the research →</a>
         </div>
       </div>
 
@@ -598,16 +615,59 @@
         <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1528756514091-dee5ecaa3278?q=80&w=900&auto=format&fit=crop" alt="Lavender flowers"></div>
         <div class="body">
           <h3>Lavender &amp; chamomile</h3>
-          <div class="studied">Traditionally used · calm — the Stress corner</div>
+          <div class="studied">Studied for · stress, the driver behind the numbers</div>
           <p>The Stress corner in a teacup:
-            <span class="term">a whisper of each<span class="pop">Lavender and chamomile are traditionally used to support a calm, settled evening. In Steady they're kept to a careful touch — enough to soothe, never enough to take over the cup. Calm evenings are part of the Method's Stress-corner work.</span></span>
-            — because the Method says a calm evening is part of a steady heart, and your evening cup shouldn't fight it with caffeine.</p>
-          <a class="reflink" href="#triangle">See the Triangle →</a>
+            <span class="term">both studied for calm<span class="pop">A trial in high-blood-pressure patients studied lavender for lower blood pressure, heart rate and cortisol; a placebo-controlled trial studied chamomile for easing anxiety. Chronic stress is a driver of blood pressure. <a href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">Lavender trial →</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/19593179/" target="_blank" rel="noopener">Chamomile trial →</a></span></span>
+            — because chronic stress pushes blood pressure up, and your evening cup shouldn't fight the calm with caffeine.</p>
+          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the research →</a>
         </div>
       </div>
     </div>
 
-    <p class="scinote">†Statements describe published research on the herbs, not promises about your readings. Steady is a food, not a medicine.</p>
+    <div class="reslist">
+      <div class="resrow">
+        <span class="rname">Hibiscus<small>Sodium · arterial</small></span>
+        <span class="rwhat">A Tufts RCT and meta-analyses studied it for lowering systolic blood pressure in adults.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the study →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Hawthorn<small>Arterial pressure</small></span>
+        <span class="rwhat">A 2025 meta-analysis of RCTs studied it for lower systolic pressure in hypertension.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">See the study →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Lemongrass<small>Vascular</small></span>
+        <span class="rwhat">A 2022 review ties it to vessel-relaxing (nitric-oxide) and mild diuretic activity.</span>
+        <a class="rlink" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9598547/" target="_blank" rel="noopener">See the review →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Ginger<small>Sodium · Sugar</small></span>
+        <span class="rwhat">A meta-analysis studied it for healthy blood pressure; other trials studied it for blood sugar.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/30972845/" target="_blank" rel="noopener">See the study →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Nettle<small>Sodium</small></span>
+        <span class="rwhat">Animal research studied it for lower blood pressure and for clearing sodium and water.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/30097121/" target="_blank" rel="noopener">See the study →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Chamomile<small>Stress · Sugar</small></span>
+        <span class="rwhat">A placebo-controlled trial studied it for anxiety; diabetic trials studied it for blood sugar.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/19593179/" target="_blank" rel="noopener">See the trial →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Lavender<small>Stress · arterial</small></span>
+        <span class="rwhat">A trial in high-BP patients studied it for lower blood pressure, heart rate and cortisol.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the trial →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Calendula<small>Gentlest evidence</small></span>
+        <span class="rwhat">Animal research studied it for antioxidant support and healthier lipids on a high-sugar diet.</span>
+        <a class="rlink" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10578091/" target="_blank" rel="noopener">See the study →</a>
+      </div>
+    </div>
+
+    <p class="scinote">†Statements describe published research on the herbs, not promises about your readings. Some studies are in animals or the lab, and we label those honestly. Steady is a food, not a medicine, and it joins your doctor's plan — it never replaces it.</p>
     <div style="text-align:center; margin-top:30px;"><a class="btn-solid" href="#buy">Try Steady — 60-day love-your-first-cup guarantee</a></div>
   </div>
 </section>
@@ -922,8 +982,13 @@
       applyTier(t);
     });
   });
-  // NOTE: the installment note stays hidden until [FILL provider] is confirmed — data-pay is
-  // populated only on the $120 tier and still carries the [FILL] marker on purpose.
+  // Sync the buy button / sticky bar / ship line to the pre-selected tier on load
+  // (applyTier otherwise only runs on click, leaving the hardcoded default stale).
+  const initSel = document.querySelector('#tierbox .tier.sel');
+  if(initSel) applyTier(initSel);
+  // NOTE: no installment note in the current 3-tier ladder (all tiers <= $48); data-pay is
+  // empty on every tier, so paynote stays hidden. Re-add a [FILL provider] note only if a
+  // higher-priced tier returns.
 
   // Gallery thumbs → main image
   const mainphoto = document.getElementById('mainphoto');
