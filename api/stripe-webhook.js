@@ -507,7 +507,12 @@ async function processCheckoutCompleted(event) {
   // sales stamp {funnel:'braveworks-bp'} and its amounts (2700/4700/9700/29700
   // plus 2000/5000/7000 upgrades) collide with bpquiz's ladder and diagnostic
   // tier, so bpquiz must skip them or it double-emails the buyer.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp']);
+  // 2026-07-06: added 'svutu-tea' — the SVUTU Steady tea storefront (bpquiz.com/tea)
+  // sells on this same account via payment links stamped {funnel:'svutu-tea'}.
+  // Its price points can collide with AMOUNT_TO_TIER (esp. if tiers move to
+  // $27/$47 = 2700/4700 → tier-1/tier-2), which would email a tea buyer the
+  // BP Reset Kit. Tea fulfillment is manual/its own flow, never this webhook.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea']);
   const md = session.metadata || {};
   const isRestoreHer =
     md.brand === 'restoreher' ||

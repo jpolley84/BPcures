@@ -119,6 +119,26 @@
   h2.head{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:40px; line-height:1.1; color:var(--ink); text-align:center; margin-bottom:14px;}
   .sectlede{ text-align:center; max-width:620px; margin:0 auto 40px; color:var(--brown); font-size:17px;}
 
+  /* ---- BP Triangle method-mark — ported from bpquiz.com (CheckoutPage BpTriangle),
+         recolored to the tea palette. Draw-on-scroll via the .rv IntersectionObserver. ---- */
+  .tri-wrap{ margin:-6px auto 38px; width:200px; text-align:center;}
+  .bp-tri polygon{ fill:none; stroke:var(--ruby); stroke-width:2; stroke-linejoin:round; stroke-dasharray:460; stroke-dashoffset:460;}
+  .bp-tri.in polygon{ animation:triDraw 1.4s ease-out forwards, triBreathe 3.6s ease-in-out 2s infinite;}
+  .bp-tri .tri-dot{ opacity:0; transform:scale(0); transform-box:fill-box; transform-origin:center;}
+  .bp-tri.in .tri-dot{ animation:triDot .5s ease-out forwards;}
+  .bp-tri.in .tri-dot.d2{ animation-delay:.3s;} .bp-tri.in .tri-dot.d3{ animation-delay:.55s;}
+  .bp-tri .tri-lab{ opacity:0; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; fill:var(--brown);}
+  .bp-tri.in .tri-lab{ animation:triLab .6s ease-out .6s forwards;}
+  @keyframes triDraw{ to{ stroke-dashoffset:0;}}
+  @keyframes triDot{ to{ opacity:1; transform:scale(1);}}
+  @keyframes triLab{ to{ opacity:1;}}
+  @keyframes triBreathe{ 0%,100%{ stroke-opacity:.62;} 50%{ stroke-opacity:1;}}
+  @media (prefers-reduced-motion: reduce){
+    .bp-tri polygon{ stroke-dashoffset:0; animation:none;}
+    .bp-tri .tri-dot{ opacity:1; transform:scale(1); animation:none;}
+    .bp-tri .tri-lab{ opacity:1; animation:none;}
+  }
+
   /* ---- Triangle corners ---- */
   .trio{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
   .bcard{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:30px 26px; text-align:center;}
@@ -375,9 +395,9 @@
     </div>
 
     <div class="buyhead">
-      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · The Pipe-Pressure cup</div>
+      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · The Sodium-corner cup</div>
       <h1>SVUTU <span class="i">Steady</span></h1>
-      <p class="whatis">A daily ruby tea of eight whole botanicals, led by <b>hibiscus &amp; hawthorn</b> — the two herbs at the heart of the Pipe-Pressure corner of <a href="#triangle" style="color:var(--ruby); font-weight:500;">The BP Triangle Method™</a>. Blended by a nurse to support healthy blood pressure, alongside your doctor's care.</p>
+      <p class="whatis">A daily ruby tea of eight whole botanicals, led by <b>hibiscus &amp; hawthorn</b> — the two herbs at the heart of the Sodium corner of <a href="#triangle" style="color:var(--ruby); font-weight:500;">The BP Triangle Method™</a>. Blended by a nurse to support healthy blood pressure, alongside your doctor's care.</p>
       <div class="stars">
         <!-- [FILL — restore star glyphs + "Rated #.# by our first ## customers" ONLY once real reviews exist: <span class="s">★★★★★</span> ] -->
         <span class="fill">[FILL — "Rated #.# by our first ## customers" — stars stay hidden until real reviews exist]</span>
@@ -386,7 +406,7 @@
       <div class="claimblock">
         <div class="chead">In every cup — herbs researchers have studied for:†</div>
         <ul class="benefits">
-          <li>Supporting healthy blood pressure — hibiscus, the most-studied herb of the Pipe-Pressure corner</li>
+          <li>Supporting healthy blood pressure — hibiscus, the most-studied herb of the Sodium corner</li>
           <li>A strong, steady heart — hawthorn, the classic cardiovascular tonic, used for generations</li>
         </ul>
         <hr>
@@ -444,7 +464,7 @@
   <div class="trustbar">
     <div class="wrap">
       <div class="tstat"><div class="n">RN×2</div><div class="l">Nurse-blended · nurse-checked</div></div>
-      <div class="tstat"><div class="n">2</div><div class="l">Pipe-pressure heroes</div></div>
+      <div class="tstat"><div class="n">2</div><div class="l">Sodium-corner heroes</div></div>
       <div class="tstat"><div class="n">0</div><div class="l">Caffeine · sugar · fillers</div></div>
       <div class="tstat"><div class="n">100%</div><div class="l">Heavy-metal tested</div></div>
       <!-- Fifth stat, render only when both numbers are real and non-zero:
@@ -457,26 +477,37 @@
 <section class="rv" id="triangle">
   <div class="wrap">
     <div class="kicker">The BP Triangle™</div>
-    <h2 class="head">Your blood pressure has three drivers.<br>This cup was built around them.</h2>
-    <p class="sectlede">Every reading on the cuff is the sum of <b>Three Pressures</b> — Stress Pressure, Sugar Pressure, and Pipe Pressure. The BP Triangle Method™ works on all three. Steady is the cup that serves them, one steep at a time.</p>
+    <h2 class="head">Your pressure has three corners.<br>Stress. Sugar. Sodium.</h2>
+    <p class="sectlede">Pressure is the outcome; <b>Stress, Sugar, and Sodium</b> are the three corners that drive it. The BP Triangle Method™ works all three. Steady is the cup that serves them, one steep at a time.</p>
+    <div class="tri-wrap">
+      <svg class="bp-tri" viewBox="0 0 200 174" width="200" height="174" role="img" aria-label="The BP Triangle: Stress, Sugar, and Sodium">
+        <polygon points="100,28 36,140 164,140"></polygon>
+        <circle class="tri-dot d1" cx="100" cy="28" r="4.5" fill="var(--gold)"></circle>
+        <circle class="tri-dot d2" cx="36" cy="140" r="4.5" fill="var(--sage-deep)"></circle>
+        <circle class="tri-dot d3" cx="164" cy="140" r="4.5" fill="var(--ruby)"></circle>
+        <text class="tri-lab" x="100" y="16" text-anchor="middle">Sodium</text>
+        <text class="tri-lab" x="22" y="158" text-anchor="middle">Stress</text>
+        <text class="tri-lab" x="178" y="158" text-anchor="middle">Sugar</text>
+      </svg>
+    </div>
     <div class="trio">
       <div class="bcard">
         <div class="ic">♥</div>
-        <div class="corner">Pipe Pressure · the pipes</div>
+        <div class="corner">Sodium · the corner the cuff feels first</div>
         <h3>The hero corner</h3>
-        <p>Hibiscus and hawthorn — the two most-loved herbs of the vascular corner, studied for supporting healthy blood pressure and a strong, steady heart.† This is the corner Steady was blended for.</p>
+        <p>Hibiscus and hawthorn — the two most-loved herbs of the Sodium corner, studied for supporting healthy blood pressure and a strong, steady heart.† This is the corner Steady was blended for.</p>
       </div>
       <div class="bcard">
         <div class="ic">❋</div>
-        <div class="corner">Stress Pressure · the switch</div>
+        <div class="corner">Stress · the switch</div>
         <h3>The evening exhale</h3>
         <p>Chamomile and a whisper of lavender — traditionally used for calm — in a cup with <b>zero caffeine</b>. Swapping the late coffee for Steady is the Temperance move the Method teaches.</p>
       </div>
       <div class="bcard">
         <div class="ic">✦</div>
-        <div class="corner">Sugar Pressure · the metabolism</div>
+        <div class="corner">Sugar · the metabolism</div>
         <h3>The honest swap</h3>
-        <p>Tart, ruby, and naturally <b>sugar-free</b> — nothing sweetened, nothing artificial. Every glass of Steady that replaces a soda or "juice" is one less pour feeding the Sugar-Pressure corner.</p>
+        <p>Tart, ruby, and naturally <b>sugar-free</b> — nothing sweetened, nothing artificial. Every glass of Steady that replaces a soda or "juice" is one less pour feeding the Sugar corner.</p>
       </div>
     </div>
   </div>
@@ -486,7 +517,7 @@
 <section class="symptoms rv">
   <div class="wrap">
     <div class="kicker">Sound familiar?</div>
-    <h2 class="head">The Pressures have tells.<br>Check yours.</h2>
+    <h2 class="head">The corners have tells.<br>Check yours.</h2>
     <p class="sectlede">Tap what's been true for you lately. No email required — this list is for you, not for us.</p>
     <div class="symgrid" id="symlist">
       <div class="sym-item"><span class="box"></span><span class="t">The cuff number creeping up, <em>a little more each checkup</em></span></div>
@@ -502,7 +533,7 @@
     </div>
     <div class="symcta">
       <a class="btn-solid" href="#buy">Meet Steady — the daily cup</a>
-      <a class="btn-ghost" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Which Pressure is loudest? Take the free quiz</a>
+      <a class="btn-ghost" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Which corner is loudest? Take the free quiz</a>
     </div>
   </div>
 </section>
@@ -517,12 +548,12 @@
       <p>Most "blood pressure teas" are just hibiscus. Steady pairs hibiscus with <b>hawthorn</b> — a second, heart-muscle pathway — at levels chosen to actually count, not to look good on an ingredient list.</p>
       <p>Lemongrass and a curl of ginger make it drinkable; nettle grounds it; chamomile and a careful touch of lavender bring the calm. No dust, no fillers, no flavoring. Cut-and-sifted, food-grade, blended by a nurse who reads the research.</p>
       <div class="ingtags">
-        <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse — the most-studied herb of the Pipe-Pressure corner, and Anchor 1 of the Method. See The Science below.</span></span>
+        <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse — the most-studied herb of the Sodium corner, and Anchor 1 of the Method. See The Science below.</span></span>
         <span class="itag hero">Hawthorn<span class="pop">Berry, leaf and flower — the classic cardiovascular tonic, traditionally used for generations. Note: it can interact with heart medications — see the safety note.</span></span>
         <span class="itag">Lemongrass<span class="pop">Here for taste, and we say so — the bright citrus note that makes the daily cup a pleasure instead of a chore.</span></span>
         <span class="itag">Lemon-ginger<span class="pop">A gentle curl of warmth. Traditionally used for digestion and circulation-warming comfort — and it makes the blend sing.</span></span>
         <span class="itag">Nettle<span class="pop">The mineral leaf — a traditional "green tonic" herb that grounds the cup. Deep-green backbone, nothing flashy.</span></span>
-        <span class="itag">Chamomile<span class="pop">Traditionally used for calm — the soft apple note in the evening cup. Serves the Stress-Pressure corner.</span></span>
+        <span class="itag">Chamomile<span class="pop">Traditionally used for calm — the soft apple note in the evening cup. Serves the Stress corner.</span></span>
         <span class="itag">Calendula<span class="pop">The gold fleck. A gentle traditional garden herb — here for beauty and body, and honest about it.</span></span>
         <span class="itag">Lavender<span class="pop">Just a whisper — traditionally used to settle the nervous system. Enough to soothe, never enough to take over the cup.</span></span>
       </div>
@@ -545,7 +576,7 @@
           <h3>Hibiscus</h3>
           <div class="studied">Studied for · healthy blood pressure†</div>
           <p>Researchers have studied
-            <span class="term">hibiscus tea<span class="pop">A six-week randomized trial at Tufts (McKay 2010) served 3 cups of hibiscus tea daily and tracked blood pressure in adults. It's the tart, ruby workhorse of the Pipe-Pressure corner. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">Read the study →</a></span></span>
+            <span class="term">hibiscus tea<span class="pop">A six-week randomized trial at Tufts (McKay 2010) served 3 cups of hibiscus tea daily and tracked blood pressure in adults. It's the tart, ruby workhorse of the Sodium corner. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">Read the study →</a></span></span>
             for its role in supporting healthy blood pressure — daily cups, over weeks, in published trials. The ruby heart of the blend.</p>
           <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the research →</a>
         </div>
@@ -568,8 +599,8 @@
         <div class="body">
           <h3>Lavender &amp; chamomile</h3>
           <div class="studied">Traditionally used · calm — the Stress corner</div>
-          <p>The Stress-Pressure corner in a teacup:
-            <span class="term">a whisper of each<span class="pop">Lavender and chamomile are traditionally used to support a calm, settled evening. In Steady they're kept to a careful touch — enough to soothe, never enough to take over the cup. Calm evenings are part of the Method's Stress-Pressure work.</span></span>
+          <p>The Stress corner in a teacup:
+            <span class="term">a whisper of each<span class="pop">Lavender and chamomile are traditionally used to support a calm, settled evening. In Steady they're kept to a careful touch — enough to soothe, never enough to take over the cup. Calm evenings are part of the Method's Stress-corner work.</span></span>
             — because the Method says a calm evening is part of a steady heart, and your evening cup shouldn't fight it with caffeine.</p>
           <a class="reflink" href="#triangle">See the Triangle →</a>
         </div>
@@ -723,18 +754,18 @@
   <div class="wrap">
     <div class="kicker">Where Steady fits</div>
     <h2 class="head">One cup of a five-anchor method.</h2>
-    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors, the NEWSTART foundation, and the plan for <em>your</em> loudest Pressure live at BPQuiz.com.</p>
+    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors, the NEWSTART foundation, and the plan for <em>your</em> loudest corner live at BPQuiz.com.</p>
     <div class="mgrid">
       <div class="mcard">
         <div class="mk">Start here · free</div>
-        <h3>Which Pressure is loudest?</h3>
-        <p>The 60-second BP Triangle quiz reads your answers and names the corner driving your numbers — Stress, Sugar, or Pipe — with the honest next step for each.</p>
+        <h3>Which corner is loudest?</h3>
+        <p>The 60-second BP Triangle quiz reads your answers and names the corner driving your numbers — Stress, Sugar, or Sodium — with the honest next step for each.</p>
         <a class="btn-solid" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Take the free quiz</a>
       </div>
       <div class="mcard">
         <div class="mk">Then · $17</div>
         <h3>Your Corner Reset</h3>
-        <p>The 10-day plan for your loudest Pressure — the walks, the water, the plate, and where the daily cup of Steady fits in the rhythm.</p>
+        <p>The 10-day plan for your loudest corner — the walks, the water, the plate, and where the daily cup of Steady fits in the rhythm.</p>
         <a class="btn-ghost" href="https://bpquiz.com" target="_blank" rel="noopener">See the Method →</a>
       </div>
     </div>
@@ -748,7 +779,7 @@
     <div>
       <div class="kicker">Not sure where to start?</div>
       <h2 class="head">Sixty seconds. Your Triangle, mapped.</h2>
-      <p>Joel built a short, honest quiz that reads your daily patterns — the sleep, the snacks, the stress, the readings — and names which Pressure is loudest for you. No diagnosis, no scare tactics. Just a clearer picture than you had a minute ago, and the right first step for your corner.</p>
+      <p>Joel built a short, honest quiz that reads your daily patterns — the sleep, the snacks, the stress, the readings — and names which corner is loudest for you. No diagnosis, no scare tactics. Just a clearer picture than you had a minute ago, and the right first step for your corner.</p>
       <a class="btn-solid" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Take the free BP Triangle quiz</a>
       <div class="qmeta">Free · about 60 seconds · built by Joel Polley, RN</div>
     </div>
@@ -936,7 +967,7 @@
   const echoes = {
     0: ['Check what fits. We\'ll say the honest thing underneath.',''],
     1: ['One is enough to notice.','Bodies whisper before they shout. Worth a daily cup of attention.'],
-    2: ['Two checks isn\'t a character flaw.','It\'s a Pressure talking — and the Pressures have been studied.'],
+    2: ['Two checks isn\'t a character flaw.','It\'s a corner talking — and the corners have been studied.'],
     3: ['Three is a pattern, not a coincidence.','This is exactly what the Triangle maps. Sixty seconds, and the quiz names your loudest corner.'],
     4: ['Four or more? You\'re not broken.','You\'re running a Triangle nobody ever showed you. Start with the cup, take the quiz, and bring the results to your provider.']
   };
@@ -979,7 +1010,10 @@
     const rvio = new IntersectionObserver(entries=>{
       entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); rvio.unobserve(en.target); } });
     }, {threshold:0.08});
-    document.querySelectorAll('.rv').forEach(el=>rvio.observe(el));
+    document.querySelectorAll('.rv, .bp-tri').forEach(el=>rvio.observe(el));
+  } else {
+    // No observer or reduced motion: render the triangle mark fully drawn
+    document.querySelectorAll('.bp-tri').forEach(el=>el.classList.add('in'));
   }
 </script>
 
