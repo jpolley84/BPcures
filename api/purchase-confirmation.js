@@ -746,6 +746,21 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
     </td></tr>
   ` : '';
 
+  // SVUTU "Steady" tea — the done-for-you hibiscus the protocol calls for.
+  // Subscription-primary ($42/mo), Sampler ($24) entry. Live tea SKUs
+  // (metadata funnel:svutu-tea). Full storefront at bpquiz.com/tea.
+  const teaBlock = `
+    <tr><td style="padding:6px 28px 18px;">
+      <div style="background:#F3EEE4;border-radius:12px;padding:18px 20px;border:1px solid #B85A36;">
+        <div style="font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#B85A36;margin-bottom:6px;font-weight:700;">One step, done for you</div>
+        <div style="font-family:Georgia,serif;font-size:18px;color:#2C3E50;margin-bottom:6px;font-weight:500;">Drink the protocol. Don't chase it.</div>
+        <div style="font-size:13.5px;line-height:1.6;color:#3A3A3A;margin-bottom:12px;">Your reset calls for hibiscus every day. <strong>Steady</strong> is the exact single-ingredient hibiscus, measured and shipped to your door, so the step most people skip just happens on its own. 60-day keep-the-pouch guarantee.</div>
+        <a href="https://buy.stripe.com/cNicN543Nde60IX2x3fnO1y" style="display:inline-block;background:#B85A36;color:#FFFFFF;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;">Start Steady, $42/mo &rarr;</a>
+        <div style="margin-top:8px;font-size:13px;"><a href="https://buy.stripe.com/dRm7sL9o7fme0IXb3zfnO1A" style="color:#B85A36;font-weight:600;text-decoration:none;">or try a Sampler for $24</a> &nbsp;&middot;&nbsp; <a href="https://bpquiz.com/tea" style="color:#7A7A7A;font-size:12.5px;">see everything about Steady</a></div>
+      </div>
+    </td></tr>
+  `;
+
   return `<!doctype html>
 <html><body style="margin:0;padding:0;background:#FBF8F1;">
 <div style="display:none;max-height:0;overflow:hidden;">Your PDFs are ready to download right now, plus a short note on what comes next from me.</div>
@@ -806,6 +821,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
       </td></tr>
 
       ${upgradeBlock}
+      ${teaBlock}
 
       <tr><td style="padding:4px 28px 24px;">
         <p style="font-size:13px;color:#3A3A3A;line-height:1.55;margin:0 0 10px;">

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Download, ArrowRight } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
+import TeaOffer from '../components/TeaOffer';
 import { track } from '../utils/analytics.js';
 
 export default function SuccessPage() {
@@ -76,6 +77,8 @@ export default function SuccessPage() {
         <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 auto 2rem', maxWidth: '44ch' }}>
           A copy of these links is also being emailed to you from Joel Polley, RN. If you don't see it within 5 minutes, check your spam or promotions folder.
         </p>
+
+        <TeaOffer />
 
         <Link to="/library" style={{
           display: 'inline-flex',

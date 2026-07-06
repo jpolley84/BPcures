@@ -26,6 +26,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, FileText, ArrowLeft, BookOpen, Users, Stethoscope, ArrowRight } from 'lucide-react';
+import TeaOffer from '../components/TeaOffer';
 
 const groups = [
   {
@@ -255,6 +256,10 @@ export default function DownloadsPage() {
             </div>
           </section>
         ))}
+
+        {/* SVUTU Steady tea — the done-for-you hibiscus the protocol calls for.
+            Buyers are the warmest audience for the consumable subscription. */}
+        <TeaOffer />
 
         {/* Coaching CTAs. Buyers are the warmest audience for both the $27/mo
             group (Skool) and Joel's 1:1 tiers (/coaching). Kept off the cold
