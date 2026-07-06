@@ -15,6 +15,10 @@ You took my quiz. Then I went quiet. That was my fault.
 
 ## Body
 
+**Coming soon: the BraveWorks RN app.** Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+
+**→ Join the early-access waitlist: https://bpquiz.com/waitlist** (free; founding access goes out in waitlist order)
+
 Hi, it's Joel Polley. I'm the nurse behind the blood pressure quiz you took a while back.
 
 I owe you an apology.

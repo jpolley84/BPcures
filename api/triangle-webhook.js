@@ -43,7 +43,13 @@ export const AMOUNT_TO_TIER = {
   1700: 'corner',   // $17 launch sale (price_1ToBlW…). The 1700↔RestoreHER $17-kit collision is handled by DISABLING RestoreHER's Stripe webhook (we_1TZDAW…), not by price-dodging.
   1699: 'corner',   // $16.99 launch sale (price_1To1kJ…) — legacy, kept for any in-flight session
   2700: 'corner',
-  4700: 'top2',
+  // 2026-07 ladder change (Joel): the COMPLETE kit now sells at $47 (was $97);
+  // top2 is RETIRED from sale. 4700 therefore maps to 'complete'. A stray buy on
+  // the old top2 $47 link also lands here and is delivered the complete kit
+  // (strictly more than they ordered, never less). 9700 stays as the legacy $97
+  // complete for any in-flight session. NOTE the $97 1:1 call is ALSO 9700 but is
+  // recognized by its OWN price id BEFORE this map (see CALL_97 below).
+  4700: 'complete',
   9700: 'complete',
 };
 
@@ -61,6 +67,17 @@ export const AMOUNT_TO_TIER = {
 // rotated, without a code change.
 const CASE_REVIEW_PRICE_ID = process.env.CASE_REVIEW_PRICE_ID || 'price_1TmZsIHseZnO3rRZmIhg9S7i';
 const CASE_REVIEW_PRODUCT_ID = process.env.CASE_REVIEW_PRODUCT_ID || 'prod_Um8829DP1hSr5A';
+
+// ─── $97 1:1 call with Joel (2026-07 ladder, the upsell from the $47 kit) ───
+// Recognized by its SPECIFIC price/product id or metadata kind:'call-97', NEVER
+// by amount: 9700 collides with the legacy $97 complete kit in AMOUNT_TO_TIER.
+// Fulfillment = a confirmation email with the Calendly booking link (the payment
+// link also redirects to /call-booked which embeds the same calendar). Per Joel,
+// NO Joel-alert email for these (Calendly notifies him when the buyer books).
+const CALL_97_PRICE_ID = process.env.CALL_97_PRICE_ID || 'price_1TpqZIHseZnO3rRZzYrYOfLf';
+const CALL_97_PRODUCT_ID = process.env.CALL_97_PRODUCT_ID || 'prod_UpVar8dVNe2aV5';
+const CALL_BOOKING_URL =
+  process.env.CALL_BOOKING_URL || process.env.VITE_CALENDLY_DIAGNOSTIC_URL || '';
 // 3-pay plan: a recurring monthly price (subscription mode) that the webhook caps
 // at 3 cycles via cancel_at. The price id is an env seam (set after Joel creates
 // the recurring price in Stripe); the metadata marker offer:'case-review' +
@@ -94,6 +111,11 @@ const UPGRADE_PRICE_TO_TIER = {
   [process.env.UPGRADE_CORNER_TO_TOP2_PRICE_ID || 'price_1TmhuvHseZnO3rRZ6jXBe6II']: 'top2',
   [process.env.UPGRADE_CORNER_TO_COMPLETE_PRICE_ID || 'price_1TmhuwHseZnO3rRZbrSRoKfh']: 'complete',
   [process.env.UPGRADE_TOP2_TO_COMPLETE_PRICE_ID || 'price_1TmhuxHseZnO3rRZ3T43Sz77']: 'complete',
+  // 2026-07 ladder: the LIVE upgrade is the corner -> complete OTO for $27
+  // (Joel: better psychological number than $30). The $30 price below it and the
+  // three legacy prices above stay ONLY for in-flight session recognition.
+  [process.env.UPGRADE_CORNER_TO_COMPLETE_30_PRICE_ID || 'price_1TpqZHHseZnO3rRZYIRok6fG']: 'complete',
+  [process.env.UPGRADE_CORNER_TO_COMPLETE_OTO_PRICE_ID || 'price_1TpqyjHseZnO3rRZk05rso0U']: 'complete',
 };
 const UPGRADE_TARGET_TIERS = new Set(['top2', 'complete']);
 
@@ -386,6 +408,133 @@ Talk soon,
 Joel Polley, RN`;
 
   return buildEmail({ preheader, bodyHtml, bodyText, unsubUrl });
+}
+
+// ─── $97 1:1 call: recognition + confirmation ─────────────────────────
+// True when this session is the $97 1:1 call (metadata marker first, then the
+// authoritative price/product ids). Mirrors the case-review pattern exactly.
+async function isCall97Session(session) {
+  const md = session.metadata || {};
+  if (md.kind === 'call-97' && (md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp')) {
+    return true;
+  }
+  try {
+    const stripe = getStripe();
+    const items = await stripe.checkout.sessions.listLineItems(session.id, {
+      limit: 10,
+      expand: ['data.price.product'],
+    });
+    for (const item of items.data || []) {
+      const price = item.price || {};
+      if (price.id && price.id === CALL_97_PRICE_ID) return true;
+      const product = price.product;
+      const productId = product && typeof product === 'object' ? product.id : product;
+      if (productId && productId === CALL_97_PRODUCT_ID) return true;
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: call-97 line-item check failed (non-fatal)', err.message);
+  }
+  return false;
+}
+
+// The buyer confirmation for the $97 1:1 call: gratitude + the Calendly booking
+// link + what to have ready. Education framing, no doses, no clinical promise,
+// ZERO em-dashes.
+function buildCall97Email({ firstName, unsubUrl }) {
+  const preheader = 'Your 1:1 call with Joel is paid. Pick your time here.';
+  const bookHtml = CALL_BOOKING_URL
+    ? ctaButton({ label: 'Pick my call time', url: CALL_BOOKING_URL })
+    : p(`Your booking link is on the page you just landed on. If you closed it, reply to this email and I will send your times directly.`);
+  const bodyHtml = [
+    `<div style="display:inline-block;font-size:12px;font-weight:700;color:${PALETTE.accentSage};border:1px solid ${PALETTE.accentSage};border-radius:999px;padding:5px 12px;margin-bottom:18px;font-family:-apple-system,Segoe UI,sans-serif;">Call confirmed</div>`,
+    p(`Hi ${firstName || 'there'},`),
+    p(`Thank you. You booked time with me, not a course, not a PDF, me. We will sit down together, walk your numbers and your Triangle, and leave you knowing exactly what to work first.`),
+    h2('Book your time now'),
+    bookHtml,
+    h2('Have these ready'),
+    p(`Your last few blood pressure readings, your current medication list, and your quiz result if you took it. The more real numbers we have, the more we can do with your 30 minutes.`),
+    p(`This call is education and lifestyle support to stand alongside your own doctor, never instead of them. Your doctor makes any calls about your medication.`),
+    p(`Talk soon,`),
+    p(`Joel Polley, RN`),
+  ].join('');
+  const bodyText = `Hi ${firstName || 'there'},
+
+Thank you. You booked time with me, not a course, not a PDF, me. We will sit down together, walk your numbers and your Triangle, and leave you knowing exactly what to work first.
+
+BOOK YOUR TIME NOW
+${CALL_BOOKING_URL || 'Your booking link is on the page you just landed on. If you closed it, reply to this email and I will send your times directly.'}
+
+HAVE THESE READY
+Your last few blood pressure readings, your current medication list, and your quiz result if you took it.
+
+This call is education and lifestyle support to stand alongside your own doctor, never instead of them. Your doctor makes any calls about your medication.
+
+Talk soon,
+Joel Polley, RN`;
+  return buildEmail({ preheader, bodyHtml, bodyText, unsubUrl });
+}
+
+async function sendCall97Confirmation({ email, firstName }) {
+  const unsubToken = signUnsubToken({ email });
+  const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
+  const { html, text } = buildCall97Email({ firstName, unsubUrl });
+  await getResend().emails.send({
+    from: FROM,
+    to: String(email).trim(),
+    replyTo: REPLY_TO,
+    subject: 'Your 1:1 call with Joel is confirmed, pick your time',
+    html,
+    text,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  });
+}
+
+// Handle the $97 call purchase end to end: dedupe, mark the drip record, email
+// the booking link. NO Joel alert by design (Calendly notifies him on booking).
+async function processCall97(session) {
+  const customerEmail = session.customer_details?.email;
+  const firstName = firstNameOf(session.customer_details?.name);
+  const emailKey = String(customerEmail).trim().toLowerCase();
+  const dedupeKey = `bwbp:call97:${emailKey}:${session.id}`;
+  try {
+    const already = await kv.get(dedupeKey);
+    if (already) return { action: 'call97', deduplicated: true, customer_email: customerEmail };
+  } catch (err) {
+    console.warn('stripe-webhook: call97 dedupe read failed (non-fatal)', err.message);
+  }
+  let firstNameFinal = firstName;
+  try {
+    const dripKey = `bwbp:drip:${emailKey}`;
+    const existing = await kv.get(dripKey);
+    if (existing?.firstName) firstNameFinal = existing.firstName;
+    if (existing) {
+      await kv.set(dripKey, { ...existing, boughtCall97At: new Date().toISOString() });
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: call97 drip update failed (non-fatal)', err.message);
+  }
+  let delivered = false;
+  try {
+    await sendCall97Confirmation({ email: customerEmail, firstName: firstNameFinal });
+    delivered = true;
+  } catch (err) {
+    console.error('stripe-webhook: call97 confirmation email failed (non-fatal)', err.message);
+  }
+  try {
+    await kv.set(dedupeKey, { deliveredAt: new Date().toISOString() });
+  } catch (err) {
+    console.warn('stripe-webhook: call97 dedupe write failed (non-fatal)', err.message);
+  }
+  await capturePurchase({
+    email: customerEmail,
+    amountCents: session.amount_subtotal ?? session.amount_total ?? 9700,
+    tier: 'call-97',
+    sessionId: session.id,
+  });
+  return { action: 'call97', delivered, customer_email: customerEmail };
 }
 
 // Send the buyer's case-review confirmation. Best-effort: a send failure never
@@ -745,6 +894,7 @@ const TIER_PRICE_IDS = new Set([
   'price_1ToBlWHseZnO3rRZtv4lbw2m', // $17 launch sale
   process.env.STRIPE_TOP2_PRICE_ID || 'price_1TmONNHseZnO3rRZeozMZ3O2',
   process.env.STRIPE_COMPLETE_PRICE_ID || 'price_1TmONOHseZnO3rRZidQTqdAH',
+  process.env.STRIPE_COMPLETE_47_PRICE_ID || 'price_1TpqZHHseZnO3rRZWtW0s1L8', // $47 complete (2026-07 ladder)
 ]);
 
 async function isBraveworksTierSession(session) {
@@ -787,6 +937,14 @@ async function processCheckoutCompleted(event) {
   const caseReviewPlan = await resolveCaseReviewPlan(session);
   if (caseReviewPlan) {
     return await processCaseReview(session, caseReviewPlan);
+  }
+
+  // ── $97 1:1 call check (BEFORE the amount lookup) ──
+  // MUST run before AMOUNT_TO_TIER: the call is 9700 cents, which collides with
+  // the legacy $97 complete kit. Recognized by its own price/product id or
+  // metadata kind:'call-97'; fulfilled with the Calendly booking email.
+  if (await isCall97Session(session)) {
+    return await processCall97(session);
   }
 
   // ── Difference-priced /welcome UPGRADE check (BEFORE the amount lookup) ──

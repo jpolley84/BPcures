@@ -31,7 +31,7 @@
 //
 // Author: BraveWorks RN · state-machine email rebuild · 2026-05-18
 
-import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch, appLaunchHero, appLaunchHeroText } from './_email-shared.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
@@ -153,7 +153,7 @@ const day0 = {
   subject: 'Your diagnostic is booked, 4 things to send me',
   subjectB: 'Before we talk: 4 things',
   preview: 'A quick prep note before our 60 minutes together. Bring what you have.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Your BP Triangle Diagnostic is booked. Thank you for trusting me with the next 60 minutes of your story.`)}
     ${p(`I read every intake the night before. The more I see ahead of time, the less of our call we burn on paperwork, and the more of it we spend on what actually moves your numbers.`)}
@@ -179,7 +179,7 @@ const day0 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Your BP Triangle Diagnostic is booked. Thank you for trusting me with the next 60 minutes of your story.
 
@@ -225,7 +225,7 @@ const day1 = {
   subject: "Patricia's story, read before our call",
   subjectB: "Why I built the diagnostic in the first place",
   preview: "She bought the kit. Plateaued. Then booked the call. What flipped.",
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I want you to know why this product exists before we get on the call. Because the diagnostic didn't come out of a marketing meeting. It came out of an email I couldn't answer.`)}
     ${p(`<strong>Patricia</strong>, age 58, a year ago. She bought the BP Reset Kit. Ran the protocol. Numbers moved from 152/94 down to 138/86 in about three weeks. Then plateaued. Six weeks of holding at 138/86 with no further movement.`)}
@@ -249,7 +249,7 @@ const day1 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I want you to know why this product exists before we get on the call. Because the diagnostic didn't come out of a marketing meeting. It came out of an email I couldn't answer.
 
@@ -294,7 +294,7 @@ const day3 = {
   subject: 'Three things can happen after we talk',
   subjectB: 'The three doors from our call',
   preview: "Most people pick Path 1. A few pick Path 2. Here's when Path 3 fits.",
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Once we finish your call and you have your written protocol in hand, you have three paths. I want to lay them out now so you can think about which one fits before we talk, instead of making the decision on the call when you're already processing a lot.`)}
     ${p(`There's no "right" path. Most clients pick Path 1. A smaller number pick Path 2. Path 3 is rare but real.`)}
@@ -319,7 +319,7 @@ const day3 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Once we finish your call and you have your written protocol in hand, you have three paths. I want to lay them out now so you can think about which one fits before we talk.
 
@@ -359,7 +359,7 @@ const day5 = {
   subject: "Consandra's Wednesday, a peek inside the 90-day work",
   subjectB: "Inside the Sprint, first 30 days",
   preview: "What an actual Cohort 2 week looks like, from a real client.",
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Cohort 2 is the kind of program you don't fully understand until you've seen one. So today I want to walk you through a real client's first 30 days inside the deeper work. She gave me permission to share, I'm using an anonymized first name.`)}
     ${bigQuote('Consandra, age 60. Where she started.')}
@@ -390,7 +390,7 @@ const day5 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Cohort 2 is the kind of program you don't fully understand until you've seen one. So today I want to walk you through a real client's first 30 days inside the deeper work.
 
@@ -436,7 +436,7 @@ const day7 = {
   subject: 'Cohort 2, what it is, what it costs',
   subjectB: '$1,700 net, the math on Cohort 2',
   preview: '$297 already paid → $1,700 net. The full picture.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I told you on Day 3 I'd give you the full Cohort 2 picture this week. Today's the day.`)}
     ${p(`This is the longest email in the sequence. Take ten minutes when you can read it without distraction. I tried to put everything you'd ask on a sales call into the body so you can decide without needing to chase me down for answers.`)}
@@ -476,7 +476,7 @@ const day7 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I told you on Day 3 I'd give you the full Cohort 2 picture this week. Today's the day.
 
@@ -529,7 +529,7 @@ const day9 = {
   subject: "If you're 'not ready,' read this twice",
   subjectB: 'The myth of being ready',
   preview: "Nobody who finishes the Sprint felt ready when they started.",
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Two days after the Cohort 2 reveal, the email I get most often goes something like this:`)}
     ${bigQuote(`"I want to do it. I'm just not ready yet."`)}
@@ -569,7 +569,7 @@ const day9 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Two days after the Cohort 2 reveal, the email I get most often is some version of:
 
@@ -617,7 +617,7 @@ const day10 = {
   subject: 'A Tuesday in October, written by you',
   subjectB: 'What 90 days from now looks like',
   preview: 'Not optimism. The actual arc for clients who follow through.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick exercise. Don't reply, just read it slow.`)}
     ${bigQuote('Picture yourself ninety days from today.')}
@@ -646,7 +646,7 @@ const day10 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Quick exercise. Don't reply, just read it slow.
 
@@ -699,7 +699,7 @@ const day11 = {
   subject: 'What if your case is different?',
   subjectB: 'Your case is more common than you think',
   preview: "Six client patterns. One of them is yours.",
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Second-most-common email I get at this point in the sequence:`)}
     ${bigQuote('"But Joel, my case is complicated. Are you sure this will work for me?"')}
@@ -733,7 +733,7 @@ const day11 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Second-most-common email I get at this point in the sequence:
 
@@ -791,7 +791,7 @@ const day12 = {
   subject: 'Why the 90-day group is small',
   subjectB: 'No countdown. No deadline. Just the honest shape.',
   preview: 'Why Cohort 2 is intentionally small, and how the timing really works.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick, honest note on Cohort 2.`)}
     ${p(`I'm not going to run a countdown on you. "Three seats left, two seats left, one seat", that's marketing theater and most of my readers see right through it. I just want you to know why the room is small, and how the timing really works.`)}
@@ -813,7 +813,7 @@ const day12 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Quick, honest note on Cohort 2.
 
@@ -854,7 +854,7 @@ const day14 = {
   subject: 'Last email about Cohort 2',
   subjectB: "If now isn't your moment, here's what to do",
   preview: 'Then I stop. The protocol is still yours.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Last note on Cohort 2. Then I genuinely stop.`)}
     ${p(`One thing for the record before I go quiet: your $297 diagnostic credit toward Cohort 2 <strong>does not expire</strong>. No midnight deadline, no reset to full price. The group starts when there is a real cohort ready. Apply and I will tell you the next real start date myself.`)}
@@ -896,7 +896,7 @@ const day14 = {
     ${footerSecondaryCTAs()}
     ${unsubStrip(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Last note on Cohort 2. Then I genuinely stop.
 

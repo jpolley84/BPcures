@@ -105,9 +105,39 @@ function entryCta(corner) {
   return ctaButton(text, entryUrl(corner));
 }
 
+// ─── App waitlist (secondary CTA, Days 0/2/4) ─────────────────────────
+// One primary CTA per email stays the rule; the waitlist rides as a short
+// callout with a text link (never a competing button). Copy makes no health
+// claims: the app logs, charts, and reports. Spot numbers are real (KV INCR).
+const WAITLIST_URL = 'https://bpquiz.com/waitlist?utm_source=email&utm_medium=lead-arc&utm_campaign=app-waitlist';
+
+const WAITLIST_CALLOUTS = {
+  day0: {
+    kicker: 'New: the BraveWorksRN app',
+    html: `I am building the BraveWorksRN iPhone app: log your reading in seconds, see your 30 day pattern, and hand your doctor a clean one page report. The waitlist just opened and every spot has a real number. <a href="${WAITLIST_URL}" style="color:${PALETTE.accentClay};font-weight:700;">Save your spot in line here.</a>`,
+    text: `NEW: THE BRAVEWORKSRN APP\nLog your reading in seconds, see your 30 day pattern, hand your doctor a one page report. The waitlist just opened and every spot has a real number: ${WAITLIST_URL}`,
+  },
+  day2: {
+    kicker: 'While you practice the breath',
+    html: `A notebook works. The BraveWorksRN app will work better: seconds to log a reading, your 30 day pattern on one screen, a doctor report in one tap. Spots in line are numbered. <a href="${WAITLIST_URL}" style="color:${PALETTE.accentClay};font-weight:700;">Save yours here.</a>`,
+    text: `WHILE YOU PRACTICE THE BREATH\nThe BraveWorksRN app: seconds to log a reading, your 30 day pattern on one screen, a doctor report in one tap. Save your numbered spot: ${WAITLIST_URL}`,
+  },
+  day4: {
+    kicker: 'Your readings, on one page',
+    html: `The BraveWorksRN app turns your daily readings into the one page your doctor actually wants to see. Coming first to iPhone. <a href="${WAITLIST_URL}" style="color:${PALETTE.accentClay};font-weight:700;">Join the waitlist here.</a>`,
+    text: `YOUR READINGS, ON ONE PAGE\nThe BraveWorksRN app turns daily readings into the one page your doctor actually wants. Coming first to iPhone. Join the waitlist: ${WAITLIST_URL}`,
+  },
+};
+
+function waitlistCallout(key) {
+  const c = WAITLIST_CALLOUTS[key];
+  return callout({ kicker: c.kicker, body: c.html });
+}
+
 // ─── DAY 0 — Welcome + the Triangle (three faucets, one sink) ─────────
 const day0 = {
   subject: 'Three faucets, one sink',
+  preheader: 'Your blood pressure is not one problem. It is three corners feeding one number, and your quiz found the loudest.',
   htmlBody: (ctx) => {
     const { firstName, corner, scores } = ctx;
     const label = cornerLabel(corner);
@@ -133,6 +163,7 @@ const day0 = {
         kicker: 'What to do first',
         body: `If you have not read your full result yet, it is waiting for you. It names your loudest corner and the one first move for it. <a href="${resultUrl(ctx)}" style="color:${PALETTE.accentClay};font-weight:700;">Re-open your result here.</a>`,
       }),
+      waitlistCallout('day0'),
       p(`Tomorrow we open the first corner. Rest well tonight.`),
       p(`Joel Polley, RN`),
     ].join('');
@@ -161,6 +192,8 @@ The system treats the symptom and the pill hides the number. The Triangle calms 
 
 Re-open your full result: ${resultUrl(ctx)}
 
+${WAITLIST_CALLOUTS.day0.text}
+
 Tomorrow we open the first corner. Rest well tonight.
 Joel Polley, RN`;
   },
@@ -169,6 +202,7 @@ Joel Polley, RN`;
 // ─── DAY 2 — The STRESS corner (cortisol) ─────────────────────────────
 const day2 = {
   subject: 'The first faucet: cortisol',
+  preheader: 'A bear in the road and a 2 AM worry look the same to your body. Here is the free move that calms both.',
   htmlBody: ({ firstName, corner }) => [
     p(`Hi ${firstName || 'there'},`),
     p(`Let me take you into the first corner: stress.`),
@@ -182,6 +216,7 @@ const day2 = {
     }),
     p(`That is the corner in miniature. Find the cause, take out what feeds it, add what calms it. Your own 10 day reset walks your loudest corner the same way, day by day, including the foods and the herbs I actually trust, with the safety cautions spelled out.`),
     entryCta(corner),
+    waitlistCallout('day2'),
     p(`Tomorrow, the corner most people never suspect. Rest well.`),
     p(`Joel Polley, RN`),
   ].join(''),
@@ -197,6 +232,8 @@ Paced breathing. Breathe in through your nose for 4, then let the breath out slo
 Your own 10 day reset walks your loudest corner day by day, with the foods and the herbs I trust and the cautions spelled out:
 ${entryUrl(corner)}
 
+${WAITLIST_CALLOUTS.day2.text}
+
 Tomorrow, the corner most people never suspect.
 Joel Polley, RN`,
 };
@@ -204,6 +241,7 @@ Joel Polley, RN`,
 // ─── DAY 4 — The SUGAR corner (insulin) ───────────────────────────────
 const day4 = {
   subject: 'The faucet hiding in your bread',
+  preheader: 'It is not just the candy. Bread, white rice, and cereal quietly feed a sodium problem. And it is reversible.',
   htmlBody: ({ firstName, corner }) => [
     p(`Hi ${firstName || 'there'},`),
     p(`The second corner surprises almost everyone, because it is not just the candy. It is the bread, the white rice, the cereal, the "healthy" snacks. Sugar.`),
@@ -216,6 +254,7 @@ const day4 = {
     }),
     p(`Your own 10 day reset does the same for your loudest corner: one plain move each morning, the foods, and the herbs I trust, all with the doctor conversation built in (because if you take medication, that dial belongs to your doctor, never to you alone).`),
     entryCta(corner),
+    waitlistCallout('day4'),
     p(`Tomorrow we reach the corner where all three rivers meet. Rest well.`),
     p(`Joel Polley, RN`),
   ].join(''),
@@ -232,6 +271,8 @@ A morning walk, about 20 minutes, within an hour of waking, outside. Walking let
 
 Your own 10 day reset does the same for your loudest corner, one plain move each morning, with the doctor conversation built in:
 ${entryUrl(corner)}
+
+${WAITLIST_CALLOUTS.day4.text}
 
 Tomorrow, the corner where all three rivers meet.
 Joel Polley, RN`,
@@ -392,18 +433,21 @@ Joel Polley, RN`;
 // so the engine's ctx (firstName, unsubUrl) plus the record's corner both reach
 // the body, and buildEmail appends the compliance footer + shell.
 function wrap(day) {
+  // Preheader completes the subject's thought (never repeats it) — inbox
+  // preview text is the cheapest open-rate lift available. Falls back to the
+  // subject for any day that has not authored one yet.
   return {
     subject: day.subject,
     htmlBody: (ctx) =>
       buildEmail({
-        preheader: day.subject,
+        preheader: day.preheader || day.subject,
         bodyHtml: day.htmlBody(ctx),
         bodyText: day.textBody(ctx),
         unsubUrl: ctx.unsubUrl,
       }).html,
     textBody: (ctx) =>
       buildEmail({
-        preheader: day.subject,
+        preheader: day.preheader || day.subject,
         bodyHtml: day.htmlBody(ctx),
         bodyText: day.textBody(ctx),
         unsubUrl: ctx.unsubUrl,

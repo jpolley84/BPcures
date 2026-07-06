@@ -33,6 +33,9 @@ const PayPage = lazy(() => import('./pages/PayPage'));
 // Post-purchase landing for the Triangle inline checkout. create-embedded-
 // checkout.js sets return_url to /welcome; ported from braveworks-bp.
 const WelcomePage = lazy(() => import('./pages/WelcomePage'));
+// Post-purchase landing for the $97 1:1 call with Joel (2026-07 ladder). The
+// call payment link redirects here; embeds the Calendly booking calendar.
+const CallBookedPage = lazy(() => import('./pages/CallBookedPage'));
 const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 // WaitlistApplicationPage (the stale $1,297 /1on1 page) is no longer routed:
 // /1on1 now redirects to /coaching (2026-07-03). The file is preserved at
@@ -192,6 +195,10 @@ function App() {
               /welcome?tier=<tier>. Shows the buyer's unlocked kit + locked higher
               tiers with difference-priced upgrade CTAs. Wrapped in SiteLayout. */}
           <Route path="/welcome" element={<SiteLayout><WelcomePage /></SiteLayout>} />
+
+          {/* Post-purchase landing for the $97 1:1 call (Calendly booking). The
+              call payment link's after_completion redirects here. */}
+          <Route path="/call-booked" element={<SiteLayout><CallBookedPage /></SiteLayout>} />
 
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />

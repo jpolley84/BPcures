@@ -10,21 +10,25 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
+import { appLaunchHero, appLaunchHeroText } from './_email-shared.js';
+
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
 // ─── URLs (single source of truth) ────────────────────────────────────
-// Active product Stripe links — verified live 2026-05-14, mirrors
-// purchase-confirmation.js + products.json. Ladder positions:
-//   $17  → entry (Days 1-3, 5-6) — cold leads route to $17 ONLY
-//   ($47 retired from the cold drip 2026-06-14: it converted 0% as a naked
-//    Stripe link to non-buyers. $47 is now a post-purchase one-click upsell.)
-//   $97  → Monday live + Skool VIP (Day 10)
-//   /coaching → 90-Day Freedom Sprint application (Days 8 + 12)
+// Active product Stripe links — mirrors PHASE1_CANON.md. Ladder positions:
+//   $27      → front kit (Days 1-3, 5-6) — cold leads route to $27 ONLY
+//   $12.99   → The Companion book (post-purchase / cheap rung)
+//   $97      → evergreen shadow seat (Wednesday 7 PM ET group call). ONLY
+//              fires as a downsell on a $297 decline — NEVER a cold pitch.
+//   $297     → 30-Day Personalized Sprint / case review (/case-review,
+//              real cap 5/month). The back-end door.
+//   $1,997   → 90-Day Group (Cohort 2), apply-only. Top of the ladder.
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
+export const CASE_REVIEW_URL = 'https://buy.stripe.com/6oUfZh43Nb5Y3V94FbfnO1h'; // $297 case review
 export const COACHING_URL  = 'https://bpquiz.com';
 export const COHORT2_URL   = `${SITE_URL}/cohort2`;
 export const SKOOL_URL     = 'https://www.skool.com/braveworksrn/about';
@@ -80,16 +84,16 @@ function bonusStackBox() {
     <div style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:${PALETTE.text};margin:0 0 14px;font-weight:600;">What's actually in the kit:</div>
     <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The 10-Day BP Reset Daily Plan</strong>, every step, day by day <span style="color:#999;">($27)</span></p>
     <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">Joel's 7 Most-Trusted BP Herbs</strong> with safe dosing ranges <span style="color:#999;">($27)</span></p>
-    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The Cardiologist Conversation Script</strong> <span style="color:#999;">($17)</span></p>
-    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The 4 Lifestyle Levers Cheat Sheet</strong> <span style="color:#999;">($17)</span></p>
-    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 14px;">→ <strong style="color:${PALETTE.text};">Cook For Life Cookbook</strong>, plant-based recipes <span style="color:#999;">($17)</span></p>
-    <p style="font-size:14px;line-height:1.5;color:${PALETTE.text};margin:0;border-top:1px solid ${PALETTE.border};padding-top:12px;"><strong>$105 of nurse-vetted protocol. $17 today.</strong></p>
+    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The Cardiologist Conversation Script</strong> <span style="color:#999;">($27)</span></p>
+    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The 4 Lifestyle Levers Cheat Sheet</strong> <span style="color:#999;">($24)</span></p>
+    <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0 0 14px;">→ <strong style="color:${PALETTE.text};">Cook For Life Cookbook</strong>, plant-based recipes <span style="color:#999;">($24)</span></p>
+    <p style="font-size:14px;line-height:1.5;color:${PALETTE.text};margin:0;border-top:1px solid ${PALETTE.border};padding-top:12px;"><strong>$129 of nurse-vetted protocol. $27 today.</strong></p>
   </div>`;
 }
 
 const guaranteeBlock = clayBlock(
   'The 7-Day Refund Promise',
-  `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">Read every email this week. If you haven't seen your numbers move by Day 7 with honest effort, hit reply with the word <strong style="color:${PALETTE.text};">"refund"</strong>, I'll send your $17 back, no questions, kit yours to keep.</p>`
+  `<p style="font-size:15px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">Read every email this week. If you haven't seen your numbers move by Day 7 with honest effort, hit reply with the word <strong style="color:${PALETTE.text};">"refund"</strong>, I'll send your $27 back, no questions, kit yours to keep.</p>`
 );
 
 function joelSignoff() {
@@ -113,12 +117,12 @@ function footerSecondaryCTAs() {
   </div>`;
 }
 
-// 2026-05-15: Rotated daily upsell footer — pitches a different ladder rung
-// each day so readers see the full path ($17 KIT → $47 RESET KIT → $97
-// CHALLENGE → $1,997 SPRINT) over the first week without feeling sold to
-// twice on the same product. Day 7 gets NO upsellFooter — the opt-in
-// button needs the spotlight there. Every 7 days from there (14, 21, 28,
-// 30) the Sprint application is the pitch.
+// Rotated daily upsell footer — pitches a different ladder rung each day so
+// readers see the canon path ($27 KIT → $12.99 Companion → Wednesday 7 PM ET
+// Weekly Reset → $297 case review → $1,997 Cohort 2) over the first week
+// without feeling sold to twice on the same product. Day 7 gets NO
+// upsellFooter — the opt-in button needs the spotlight there. The $97 shadow
+// seat is NOT pitched cold here (evergreen downsell on a $297 decline only).
 function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
   return `<div style="margin:32px 0 0;padding:22px 24px;background:${PALETTE.outerBg};border-radius:12px;border-left:4px solid ${PALETTE.accentSage};">
     <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.accentSage};font-weight:700;margin-bottom:10px;">${kicker}</div>
@@ -156,8 +160,8 @@ const day1 = {
     ${psBox(`If your number ever feels heavy this week, hit reply. I read every one and answer with a 90-second response.`)}
     ${upsellFooter({
       kicker: 'Want the patient protocol now?',
-      body: 'Marlene\'s exact 3-input reset (you\'ll meet her on Day 3) lives inside the $17 BP Reset Kit, the same document I hand patients on their way out of the hospital. Twenty years of ICU experience condensed into one PDF you can read tonight.',
-      ctaLabel: 'Get the kit for $17',
+      body: 'Marlene\'s exact 3-input reset (you\'ll meet her on Day 3) lives inside the $27 BP Reset Kit, the same document I hand patients on their way out of the hospital. Twenty years of ICU experience condensed into one PDF you can read tonight.',
+      ctaLabel: 'Get the kit for $27',
       ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -193,7 +197,7 @@ P.S. If your number ever feels heavy this week, hit reply. I read every one and 
 
 —
 Want the patient protocol now?
-Marlene's exact 3-input reset (you'll meet her on Day 3) lives inside the $17 BP Reset Kit, the same document I hand patients on their way out of the hospital.
+Marlene's exact 3-input reset (you'll meet her on Day 3) lives inside the $27 BP Reset Kit, the same document I hand patients on their way out of the hospital.
 → ${KIT_URL}
 
 —
@@ -217,7 +221,7 @@ const day2 = {
     ${p(`The other 85% is hidden, printed right on the label. We just don't think to look.`)}
     ${p(`<strong>Three of the worst offenders, ranked:</strong>`)}
     ${p(`<strong>1. Bread.</strong> A single slice of grocery-store sandwich bread holds 200-300mg of sodium. Two slices for a sandwich? 600mg before the meat hits the bread.`)}
-    ${p(`<strong>2. Deli meat.</strong> Three slices of turkey breast, what most call a normal lunch, runs 700-900mg. A roasted turkey breast you cooked yesterday: 80mg.`)}
+    ${p(`<strong>2. Deli meat.</strong> A normal-looking lunch portion runs 700-900mg. A homemade white-bean or chickpea spread you batched on Sunday: about 80mg, for pennies a serving.`)}
     ${p(`<strong>3. Soup, sauce, salad dressing.</strong> A cup of canned soup hits 800-1200mg. One tablespoon of soy sauce: 900mg. Two tablespoons of "lite" Italian dressing: 600mg.`)}
     ${p(`Add those three to a single day and you've already passed the 2,300mg sodium ceiling, without ever picking up the salt shaker.`)}
     ${p(`Picture the person who's been "watching their salt" for a decade. They put down the shaker. BP didn't move. Doctor said genetically prone, let's add another medication.`)}
@@ -295,8 +299,8 @@ const day3 = {
     ${psBox(`If you took one input from Marlene's story and tried it today, which one would you pick? Reply with one word, I'm curious.`)}
     ${upsellFooter({
       kicker: 'Marlene\'s exact 3-day reset',
-      body: 'Page 4 of the BP Reset Kit. $17. Eighteen pages. The exact document that walked Marlene from a third-pill recommendation to "no new pill" in nine days. The same one I hand patients.',
-      ctaLabel: 'Get the kit for $17',
+      body: 'Page 4 of the BP Reset Kit. $27. Eighteen pages. The exact document that walked Marlene from a third-pill recommendation to "no new pill" in nine days. The same one I hand patients.',
+      ctaLabel: 'Get the kit for $27',
       ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -324,7 +328,7 @@ P.S. If you took one input from Marlene's story and tried it today, which one wo
 
 —
 Marlene's exact 3-day reset:
-Page 4 of the BP Reset Kit. $17. Eighteen pages. The same document I hand patients.
+Page 4 of the BP Reset Kit. $27. Eighteen pages. The same document I hand patients.
 → ${KIT_URL}
 
 —
@@ -366,8 +370,8 @@ const day4 = {
     ${psBox(`I made a 12-min YouTube video that walks the 3:1 ratio at the grocery store with my own basket. <a href="${YOUTUBE_URL}" style="color:${PALETTE.accentClay};font-weight:600;">Watch on YouTube →</a> If you're on a potassium-sparing diuretic (like spironolactone or amiloride), check with your prescriber before loading up.`)}
     ${upsellFooter({
       kicker: 'Want it all in one place?',
-      body: 'Everything I teach in these emails, the cardiologist conversation script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life plant-based cookbook, lives in the BP Reset Kit. The same document I hand patients on their way out of the hospital. $105 of nurse-vetted protocol, $17 today.',
-      ctaLabel: 'Get the BP Reset Kit for $17',
+      body: 'Everything I teach in these emails, the cardiologist conversation script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life plant-based cookbook, lives in the BP Reset Kit. The same document I hand patients on their way out of the hospital. $129 of nurse-vetted protocol, $27 today.',
+      ctaLabel: 'Get the BP Reset Kit for $27',
       ctaUrl: KIT_URL,
     })}
     ${footerSecondaryCTAs()}
@@ -405,7 +409,7 @@ P.S. On a potassium-sparing diuretic? Check with your prescriber first.
 
 —
 Want it all in one place?
-The $17 BP Reset Kit has the cardiologist script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life cookbook, the same document I hand patients. $105 of protocol, $17 today.
+The $27 BP Reset Kit has the cardiologist script, the 4 Lifestyle Levers cheat sheet, and the Cook For Life cookbook, the same document I hand patients. $129 of protocol, $27 today.
 → ${KIT_URL}
 
 —
@@ -503,10 +507,10 @@ const day6 = {
     ${p(`Tomorrow I'll show you the three shifts already happening in your body right now. You may not feel them yet. And there's a button at the bottom of tomorrow's email.`)}
     ${p(`Click it if you want to keep going. Days 8 through 30 cover the herbs that work like your meds, the water cure your grandmother knew, the breathing exercise that flips your nervous system in 60 seconds, and the gratitude practice that lowers cortisol faster than any supplement.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I'll read every one.`)}
+    ${psBox(`Which corner of the BP Triangle do you think is running yours? Reply with one word: Sodium, Sugar, or Stress. I'll read every one.`)}
     ${upsellFooter({
-      kicker: 'Not sure which Pressure is loudest?',
-      body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. It is the best first step while the 1:1 channel is being rebuilt.',
+      kicker: 'Not sure which corner is loudest?',
+      body: 'The free BP quiz shows your loudest Triangle corner and where to start. Two minutes, no card. It is the best first step while the 1:1 channel is being rebuilt.',
       ctaLabel: 'Take the free BP quiz',
       ctaUrl: COACHING_URL,
     })}
@@ -535,11 +539,11 @@ Tomorrow I show you the three shifts already happening in your body. There's a b
 Joel
 RN, BraveWorks
 
-P.S. Which of the Three Pressures do you think is running yours? Reply with one word: Pipes, Sugar, or Stress. I read every one.
+P.S. Which corner of the BP Triangle do you think is running yours? Reply with one word: Sodium, Sugar, or Stress. I read every one.
 
 —
-Not sure which Pressure is loudest?
-The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card.
+Not sure which corner is loudest?
+The free BP quiz shows your loudest Triangle corner and where to start. Two minutes, no card.
 → ${COACHING_URL}
 
 —
@@ -635,113 +639,111 @@ P.S. The button stays alive for 48 hours. After that, the door closes for this r
 `,
 };
 
-// ─── DAY 8 — POST-OPT-IN: BP TRIANGLE + $297 DIAGNOSTIC PITCH ────────
+// ─── DAY 8 — POST-OPT-IN: BP TRIANGLE + $297 CASE REVIEW PITCH ───────
 // Fires the morning after Day 7 opt-in. Audience is self-selected — these
 // are the most engaged subs (clicked the Day 7 button to continue).
 //
-// 2026-05-18 rewrite: pitches the $297 BP Triangle Diagnostic Session
-// at /coaching (the new mid-tier direct-checkout product) instead of
-// the legacy $1,297 1:1 application. Per Joel's funnel-expansion call:
-// the diagnostic is the bridge between $17 Kit and $1,997 Sprint. Sprint
-// is NEVER mentioned publicly — only revealed inside the post-purchase
-// diagnostic→Sprint email sequence.
+// Pitches the live $297 case review at /case-review (real cap 5/month, no
+// invented per-week scarcity). It is the back-end door between the $27 Kit
+// and the $1,997 Cohort 2. Cohort 2 is apply-only; no fake per-cohort
+// countdowns.
 //
 // Kit buyers reading this Day 8 will ALSO get the Day 10/14/17 buyer-
-// upsell-cron pitch at $280 (their $17 credit applied). That's the
+// upsell-cron pitch at $270 (their $27 credit applied). That's the
 // intended dual-segment behavior — Day 8 is the warmer-than-cold pitch
 // to all opted-in subs; the buyer-upsell-cron is the buyer-specific
 // follow-up with credit math.
 const APPLY_URL = 'https://bpquiz.com';
 
 const day8 = {
-  subject: 'The 60-minute conversation that ends the guessing',
-  subjectB: 'Day 8, your diagnostic invitation',
-  preview: 'One Zoom. Your loudest Pressure named. A written 30-day protocol that\'s yours.',
+  subject: 'The case review that ends the guessing',
+  subjectB: 'Day 8, my eyes on your case',
+  preview: 'Your loudest corner named. A written 30-day protocol that\'s yours.',
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You opted in. Means you read all 7 days, found something useful, and want the deeper arc. I respect that.`)}
-    ${p(`Before I keep going on the daily emails, I want to put one direct option in front of you, because some of you don't need another 22 days of education. You need a sixty-minute call with a real nurse looking at your real situation.`, { margin: '0 0 32px' })}
-    ${bigQuote('Which of the Three Pressures is yours?')}
-    ${p(`If you've followed along this week, you've seen me reference three Pressures more than once. They're how I think about every BP case I see:`)}
+    ${p(`Before I keep going on the daily emails, I want to put one direct option in front of you, because some of you don't need another 22 days of education. You need a real nurse looking at your real situation.`, { margin: '0 0 32px' })}
+    ${bigQuote('Which corner of the BP Triangle is yours?')}
+    ${p(`If you've followed along this week, you've seen me reference the three corners more than once. They're how I think about every BP case I see:`)}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Pipe Pressure (vascular).</strong> The pipes got stiff. Arterial stiffness, oxidative stress, low NO. You see the numbers. Your doctor sees the numbers. But nobody's fixing the inputs.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Stress Pressure (cortisol).</strong> The switch stuck on. Wired-tired. Can't sleep deep. Midsection weight gain. Cortisol pulls BP up like a pulley. Most cardiologists don't measure this.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Sugar Pressure (insulin).</strong> Sugar stays high. A1C creeping. 3 PM crashes. Can't lose the weight. Insulin is vasoconstrictive, high BP and high A1C are the same disease wearing different shirts.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Sodium.</strong> Held water in the line. Your body clings to sodium, water follows it into the vessels, and the pressure climbs. You see the numbers. Your doctor sees the numbers. But nobody's fixing the inputs.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Stress (cortisol).</strong> The switch stuck on. Wired-tired. Can't sleep deep. Midsection weight gain. Cortisol pulls BP up like a pulley, and it tells your kidneys to hold sodium. Most cardiologists don't measure this.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Sugar (insulin).</strong> Sugar stays high. A1C creeping. 3 PM crashes. Can't lose the weight. Insulin holds sodium too, high BP and high A1C are the same loop wearing different shirts.</p>
     `)}
-    ${p(`Most people have ONE Pressure that's the lead domino. Calm that one and the other two fall in line. The 7-day arc gave you the foundation. The next 22 days teach you to identify and rebuild your loudest Pressure systematically.`)}
+    ${p(`Most people have ONE corner that's the lead domino. Calm that one and the other two fall in line. The 7-day arc gave you the foundation. The next 22 days teach you to identify and rebuild your loudest corner systematically.`)}
     ${p(`That's the work for most people. <strong>And it works.</strong>`, { margin: '0 0 32px' })}
-    ${clayBlock("Don't know your dominant Pressure yet?", `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz routes you to one of the Three Pressures, Stress, Sugar, or Pipes, and returns the first move for your specific type.</p>
+    ${clayBlock("Don't know your loudest corner yet?", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The 90-second BP Triangle Quiz routes you to one of the three corners, Stress, Sugar, or Sodium, and returns the first move for your specific type.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${clayBlock('If this is you, the next 22 emails won\'t be enough', `
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">You're on <strong style="color:${PALETTE.text};">4 or more medications.</strong> Maybe more. BP, statin, beta-blocker, ARB, possibly metformin, possibly a thyroid drug. Maybe a benzo or a sleep aid layered on top.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Your readings are still high. Or they\'re "controlled" but you feel like a ghost of the person you were 10 years ago. Side effects you can\'t pin to one drug because they could be coming from any of them.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">Your doctor\'s answer is "another medication." Or "let\'s adjust the dose." Or "you\'ll just have to live with it."</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">If that\'s you, daily emails aren\'t enough. You need someone in your corner who can read your full picture in one sitting, name your loudest Pressure, and hand you a written protocol that\'s yours, not the general kit.</strong></p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">If that\'s you, daily emails aren\'t enough. You need someone in your corner who can read your full picture in one sitting, name your loudest corner, and hand you a written protocol that\'s yours, not the general kit.</strong></p>
     `)}
-    ${bigQuote('The BP Triangle Diagnostic Session.')}
-    ${p(`A single 60-minute Zoom with me. Bring your home BP log (even three readings from this week is enough), your prescription list, your supplements, your labs if you have any. I look at your full picture and name your loudest Pressure, Pipes, Stress, or Sugar.`)}
+    ${bigQuote('Joel\'s Eyes On Your Case, the $297 case review.')}
+    ${p(`You send me your home BP log (even three readings from this week is enough), your prescription list, your supplements, your labs if you have any. I go through your full picture and name your loudest corner, Sodium, Stress, or Sugar.`)}
     ${p(`You walk out with:`)}
     ${sageBlock(`
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Your loudest Pressure, named (with the second-loudest noted too)</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ Your loudest corner, named (with the second-loudest noted too)</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A written 30-day personalized protocol, yours, not generic</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A clean one-page script to bring your doctor for the deprescribing conversation</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">30 days of follow-up email coaching</strong>, reply to me each Sunday with your numbers and I adjust as needed</p>
     `)}
-    ${p(`It\'s <strong>$297</strong>. One time. No upsell on the call.`)}
-    ${p(`Honest math on availability: I'm only taking <strong>5 of these calls total before Cohort 2 opens on Sunday May 24</strong>. After that, the path into Cohort 2, the 90-Day Group Coaching program, is the public registration page, not a prescreen call with me. If you want the prescreen, this is the window.`, { margin: '0 0 32px' })}
-    ${ctaButton(APPLY_URL, 'Take the free BP quiz →')}
-    ${p(`<span style="color:#999;font-size:14px;">Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. The free quiz shows your loudest Pressure and where to start today, and you'll be first to know when calls reopen.</span>`, { margin: '0 0 28px' })}
-    ${p(`<strong>If the diagnostic isn\'t for you</strong>, no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each Pressure, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a diagnostic. The daily protocols are enough.`)}
-    ${p(`But if you\'re on 4+ meds, or you\'re tired of guessing, start with the free quiz. It shows your biggest Pressure and where to begin, and puts you first in line when 1:1 calls reopen.`, { margin: '0 0 32px' })}
+    ${p(`It\'s <strong>$297</strong>. One time. No upsell.`)}
+    ${p(`Honest note on availability: I take <strong>5 of these each month</strong>, so every case gets real time. If the month is full, the page will say so, and you can come back the next month.`, { margin: '0 0 32px' })}
+    ${ctaButton(CASE_REVIEW_URL, 'Get my eyes on your case →')}
+    ${p(`<span style="color:#999;font-size:14px;">Not there yet? The free quiz shows your loudest corner and where to start today: <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">take the quiz →</a></span>`, { margin: '0 0 28px' })}
+    ${p(`<strong>If the case review isn\'t for you</strong>, no problem. The next 22 days of emails are still coming. You\'ll get the deeper teach-throughs of each corner, the dosing protocols, the doctor-conversation scripts, and the cuff technique that catches what your provider\'s machine misses. Most people don\'t need a case review. The daily protocols are enough.`)}
+    ${p(`But if you\'re on 4+ meds, or you\'re tired of guessing, the case review is the door. It names your loudest corner and hands you a plan with your name on it.`, { margin: '0 0 32px' })}
     ${joelSignoff()}
-    ${psBox(`The diagnostic works regardless of which Pressure is yours. Stress Pressure, Sugar Pressure, or Pipes, same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.`)}
+    ${psBox(`The case review works regardless of which corner is yours. Stress, Sugar, or Sodium, same depth, different protocol output. The work is corner-specific; the door is the same.`)}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
 You opted in, you want the deeper arc. Before I keep going on the daily emails, one direct option for the people who want more than education.
 
-WHICH OF THE THREE PRESSURES IS YOURS?
+WHICH CORNER OF THE BP TRIANGLE IS YOURS?
 
-1. PIPE PRESSURE (vascular), The pipes got stiff. Arterial stiffness, low NO, oxidative stress.
-2. STRESS PRESSURE (cortisol), The switch stuck on. Wired-tired, can't sleep deep, midsection weight gain.
-3. SUGAR PRESSURE (insulin), Sugar stays high. A1C creeping, 3 PM crashes, can't drop the weight.
+1. SODIUM, held water in the line. Your body clings to sodium, water follows, pressure climbs.
+2. STRESS (cortisol), the switch stuck on. Wired-tired, can't sleep deep, midsection weight gain, holds sodium.
+3. SUGAR (insulin), sugar stays high. A1C creeping, 3 PM crashes, can't drop the weight, holds sodium.
 
-Most people have ONE Pressure that's the lead domino. The next 22 days teach you to identify and rebuild your loudest. That's the work for most people. And it works.
+Most people have ONE corner that's the lead domino. The next 22 days teach you to identify and rebuild your loudest. That's the work for most people. And it works.
 
 IF THIS IS YOU, THE NEXT 22 EMAILS WON'T BE ENOUGH:
 
 You're on 4 or more medications. Your readings are still high, or "controlled" but you feel like a ghost. Side effects you can't pin to one drug. Your doctor's answer is "another medication."
 
-If that's you, daily emails aren't enough. You need someone in your corner who can read your full picture in one sitting, name your loudest Pressure, and hand you a written protocol that's yours.
+If that's you, daily emails aren't enough. You need someone in your corner who can read your full picture in one sitting, name your loudest corner, and hand you a written protocol that's yours.
 
-THE BP TRIANGLE DIAGNOSTIC SESSION
+JOEL'S EYES ON YOUR CASE, THE $297 CASE REVIEW
 
-A single 60-minute Zoom with me. Bring your home BP log, your prescription list, supplements, any labs you have. I look at your full picture, name your loudest Pressure, and you walk out with:
+You send me your home BP log, your prescription list, supplements, any labs you have. I go through your full picture, name your loudest corner, and you walk out with:
 
-→ Your loudest Pressure, named (with the second-loudest noted too)
+→ Your loudest corner, named (with the second-loudest noted too)
 → A written 30-day personalized protocol, yours, not generic
 → A doctor-conversation script for the deprescribing talk
 → 30 days of follow-up email coaching, reply to me Sundays with numbers, I adjust
 
-$297. One time. No upsell on the call.
+$297. One time. No upsell.
 
-I'm only taking 5 of these calls total before Cohort 2 (90-Day Group Coaching) opens Sunday May 24. After that, the path in is the public registration, not a prescreen call.
+Honest note: I take 5 of these each month, so every case gets real time. If the month is full, the page will say so, and you can come back the next month.
 
-→ Take the free BP quiz: ${APPLY_URL}
+→ Get my eyes on your case: ${CASE_REVIEW_URL}
 
-Heads up: one-on-one calls are paused while I rebuild the 1:1 channel. The free quiz shows your loudest Pressure and where to start today.
+Not there yet? The free quiz shows your loudest corner and where to start today: ${SITE_URL}/quiz
 
-If you'd rather just keep reading, no problem. The next 22 days of emails are coming. Most people don't need a call; the daily protocols are enough.
+If you'd rather just keep reading, no problem. The next 22 days of emails are coming. Most people don't need a case review; the daily protocols are enough.
 
-But if you're on 4+ meds, or you're tired of guessing, start with the quiz, and you'll be first to know when calls reopen.
+But if you're on 4+ meds, or you're tired of guessing, the case review is the door.
 
 Joel
 RN, BraveWorks
 
-P.S. The diagnostic works regardless of which Pressure is yours. Stress, Sugar, or Pipes, same call, same depth, different protocol output. The work is Pressure-specific; the door is the same.
+P.S. The case review works regardless of which corner is yours. Stress, Sugar, or Sodium, same depth, different protocol output. The work is corner-specific; the door is the same.
 
 —
 → Skool: ${SKOOL_URL}
@@ -766,22 +768,22 @@ const day9 = {
     ${p(`<strong style="color:${PALETTE.text};">Genes load the gun. Inputs pull the trigger.</strong> The same DNA your mother had, sat in a Japanese village in 1960 with the same code in her cells, never developed hypertension. Move that same DNA to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep, boom. Same code, different inputs, different disease.`)}
     ${p(`Your genes set the threshold. Your inputs decide whether you cross it.`, { margin: '0 0 28px' })}
     ${clayBlock("What's actually inherited", `
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Not the blood pressure itself. What's inherited is a <strong style="color:${PALETTE.text};">sensitivity to one of Three Pressures.</strong> Three Pressures of one loop. I call this the <strong style="color:${PALETTE.text};">BP Triangle</strong>:</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">PIPE PRESSURE</strong> (vascular), the pipes. Stiff arteries, low NO, K:Na imbalance.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">STRESS PRESSURE</strong> (cortisol), the switch stuck on. Clamps the vessels, retains sodium.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">SUGAR PRESSURE</strong> (insulin), sugar stays high. Insulin is a vasoconstrictor.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">Not the blood pressure itself. What's inherited is a <strong style="color:${PALETTE.text};">sensitivity to one of three corners.</strong> Three corners of one loop. I call this the <strong style="color:${PALETTE.text};">BP Triangle</strong>:</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">SODIUM</strong>, held water in the line. Your body clings to sodium, water follows, and the K:Na balance tips.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">STRESS</strong> (cortisol), the switch stuck on. Clamps the vessels, holds sodium.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">SUGAR</strong> (insulin), sugar stays high. Insulin holds sodium too.</p>
     `)}
-    ${p(`Most boomer-aged readers I work with assume their dominant Pressure is Pipe, they hear "high blood pressure" and think "stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always <strong style="color:${PALETTE.text};">Stress Pressure</strong>. And cortisol is the driver most cardiologists don't even measure.`)}
+    ${p(`Most boomer-aged readers I work with assume their loudest corner is Sodium, they hear "high blood pressure" and think "cut the salt, more lisinopril." But when I dig into their full history, the lead domino is almost always <strong style="color:${PALETTE.text};">Stress</strong>. And cortisol is the driver most cardiologists don't even measure.`)}
     ${p(`This is why the genetics lie hurts so much: your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, and accepted a lifetime of pills as fate. <strong style="color:${PALETTE.text};">It wasn't fate. It was an input nobody helped her change.</strong>`, { margin: '0 0 28px' })}
-    ${bigQuote('The Stress Pressure corner, two interventions that actually work.')}
+    ${bigQuote('The Stress corner, two interventions that actually work.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Ashwagandha (KSM-66 form, 300 mg AM + PM).</strong> Chandrasekhar et al, 2012, 64 adults, 8 weeks. Salivary cortisol dropped 27.9% versus placebo. Anxiety scores fell in parallel. Cheapest single move you can make for the cortisol corner.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">2. Asleep before 11 PM.</strong> Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset at 10 PM gives you ~3 hours inside that window. Sleep onset at 1 AM gives you zero, even if you sleep until 8.</p>
     `)}
-    ${p(`If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly the one driving your numbers. The good news: Stress Pressure responds faster than Pipe Pressure. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
+    ${p(`If your morning BP runs high and your blood sugar is roughly normal, Stress is almost certainly the corner driving your numbers. The good news: the Stress corner responds faster than the Sodium corner. Most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.`)}
     ${p(`Pills manage output. Protocol fixes input. AND not INSTEAD OF, your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.`, { margin: '0 0 28px' })}
-    ${clayBlock("Don't know which Pressure is yours?", `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your specific type. Built around the same diagnostic I use with my coaching clients.</p>
+    ${clayBlock("Don't know which corner is yours?", `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The free 90-second BP Triangle Quiz returns your loudest corner + the first move for your specific type. Built around the same read I use with my coaching clients.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${SITE_URL}/quiz" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Take the BP Triangle Quiz →</a></p>
     `)}
     ${p(`Tomorrow, the third corner. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.`, { margin: '0 0 24px' })}
@@ -801,31 +803,31 @@ GENES LOAD THE GUN. INPUTS PULL THE TRIGGER.
 
 The same DNA your mother had, sat in a Japanese village in 1960 with the same code, never developed hypertension. Move it to suburban Ohio with 4,000mg of hidden sodium and 4 hours of sleep, boom. Same code, different inputs, different disease.
 
-WHAT'S ACTUALLY INHERITED is a sensitivity to one of Three Pressures. Three Pressures of one loop. I call it the BP Triangle:
+WHAT'S ACTUALLY INHERITED is a sensitivity to one of three corners. Three corners of one loop. I call it the BP Triangle:
 
-→ PIPE PRESSURE (vascular), the pipes. Stiff arteries, low NO, K:Na imbalance.
-→ STRESS PRESSURE (cortisol), the switch stuck on. Clamps the vessels, retains sodium.
-→ SUGAR PRESSURE (insulin), sugar stays high. Insulin is a vasoconstrictor.
+→ SODIUM, held water in the line. Your body clings to sodium, water follows, the K:Na balance tips.
+→ STRESS (cortisol), the switch stuck on. Clamps the vessels, holds sodium.
+→ SUGAR (insulin), sugar stays high. Insulin holds sodium too.
 
-Most boomer-aged readers assume their dominant Pressure is Pipe, "high BP, stiff arteries, more lisinopril." But when I dig into their full history, the lead domino is almost always STRESS PRESSURE. And cortisol is the driver most cardiologists don't even measure.
+Most boomer-aged readers assume their loudest corner is Sodium, "high BP, cut the salt, more lisinopril." But when I dig into their full history, the lead domino is almost always STRESS. And cortisol is the driver most cardiologists don't even measure.
 
 This is why the genetics lie hurts so much. Your mother probably had the same cortisol-driven loop, never knew it, blamed her family tree, accepted a lifetime of pills as fate. It wasn't fate. It was an input nobody helped her change.
 
-THE STRESS PRESSURE CORNER, TWO INTERVENTIONS THAT ACTUALLY WORK:
+THE STRESS CORNER, TWO INTERVENTIONS THAT ACTUALLY WORK:
 
 1. Ashwagandha (KSM-66, 300mg AM+PM). Chandrasekhar 2012, 64 adults, 8 weeks. Salivary cortisol dropped 27.9% vs placebo. Cheapest single move you can make.
 
 2. Asleep before 11 PM. Hours before midnight matter most. Slow-wave cortisol clearance peaks 10 PM to 2 AM. Sleep onset 10 PM = ~3 hours in that window. Sleep onset 1 AM = zero, even if you sleep until 8.
 
-If your morning BP runs high and your blood sugar is roughly normal, Stress Pressure is almost certainly driving your numbers. Stress Pressure responds faster than Pipe Pressure, most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.
+If your morning BP runs high and your blood sugar is roughly normal, Stress is almost certainly the corner driving your numbers. The Stress corner responds faster than the Sodium corner, most people see morning BP drop 5-8 mmHg within two weeks of moving bedtime earlier.
 
 PILLS MANAGE OUTPUT. PROTOCOL FIXES INPUT.
 
 AND not INSTEAD OF. Your meds stay. Your doctor watches the readings. The readings move because the inputs are moving.
 
-DON'T KNOW WHICH PRESSURE IS YOURS?
+DON'T KNOW WHICH CORNER IS YOURS?
 
-Free 90-second BP Triangle Quiz returns your dominant Pressure + the first move for your type.
+Free 90-second BP Triangle Quiz returns your loudest corner + the first move for your type.
 → ${SITE_URL}/quiz
 
 Tomorrow, the third Pressure. The one cardiologists never bring up. The one cutting your salt for a decade did nothing for.
@@ -857,7 +859,7 @@ const day10 = {
     ${bigQuote('Sugar Pressure raises blood pressure. Harder than salt does.')}
     ${p(`Most cardiologists don't measure A1c. They look at your BP, they look at your cholesterol, maybe they look at your kidneys. <strong style="color:${PALETTE.text};">Blood sugar doesn't even show up on their scorecard.</strong>`)}
     ${p(`But every time your blood sugar spikes, your insulin spikes. And insulin is a vasoconstrictor, it narrows your blood vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop on the back end.`)}
-    ${p(`Three Pressures of one loop. Calm one, the other two follow. <strong style="color:${PALETTE.text};">Fix the Triangle, the BP fixes itself.</strong>`, { margin: '0 0 28px' })}
+    ${p(`Three corners of one loop. Calm one, the other two follow. <strong style="color:${PALETTE.text};">Fix the Triangle, the BP fixes itself.</strong>`, { margin: '0 0 28px' })}
     ${clayBlock('The three "savory" foods that spike BP harder than candy', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">White bread / bagels.</strong> Hits like 5 teaspoons of pure sugar. Insulin spikes within 30 minutes.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Boxed cereal.</strong> 30-50% sugar by weight. A "healthy breakfast" cereal can be the same insulin hit as a glazed donut.</p>
@@ -891,7 +893,7 @@ Most cardiologists don't measure A1c. They look at BP, cholesterol, maybe kidney
 
 But every time your blood sugar spikes, insulin spikes. Insulin is a vasoconstrictor, it narrows your vessels for 2-3 hours after every meal. It also tells your kidneys to retain sodium. It also feeds the cortisol loop.
 
-Three Pressures of one loop. Calm one, the other two follow. FIX THE TRIANGLE, THE BP FIXES ITSELF.
+Three corners of one loop. Calm one, the other two follow. FIX THE TRIANGLE, THE BP FIXES ITSELF.
 
 THE THREE "SAVORY" FOODS THAT SPIKE BP HARDER THAN CANDY:
 
@@ -944,7 +946,7 @@ const day11 = {
     ${p(`Here's what it means:`)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">Your medication does one thing well.</strong> It lowers the number on the cuff. That's it. That's what it was designed to do. That's what your doctor measures it by. That's what your insurance company is paying it to deliver.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Your medication does not fix what's making the number high in the first place.</strong> Pipe Pressure (vascular stiffness), Stress Pressure (cortisol load), Sugar Pressure (insulin spike), those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Your medication does not fix what's making the number high in the first place.</strong> The Sodium corner (held water), the Stress corner (cortisol load), the Sugar corner (insulin spike), those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.</p>
     `)}
     ${p(`Pills manage the <em>output</em>, the reading. Protocol fixes the <em>input</em>, the loop that produced the reading.`)}
     ${p(`The pills are fine. They're not the enemy. <strong style="color:${PALETTE.text};">But by themselves they're a fingers-in-the-dam strategy.</strong> The dam keeps leaking because nobody's fixing the water pressure upstream.`, { margin: '0 0 28px' })}
@@ -978,7 +980,7 @@ Here's what it means:
 
 YOUR MEDICATION DOES ONE THING WELL. It lowers the number on the cuff. That's what it was designed to do. That's what your doctor measures it by.
 
-YOUR MEDICATION DOES NOT FIX WHAT'S MAKING THE NUMBER HIGH. Pipe Pressure (vascular stiffness), Stress Pressure (cortisol load), Sugar Pressure (insulin spike), those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.
+YOUR MEDICATION DOES NOT FIX WHAT'S MAKING THE NUMBER HIGH. The Sodium corner (held water), the Stress corner (cortisol load), the Sugar corner (insulin spike), those keep grinding underneath the pill. Which is why most patients end up on a second pill in 3 years. Then a third in 5. Then a fourth by 65.
 
 Pills manage the OUTPUT, the reading. Protocol fixes the INPUT, the loop that produced the reading.
 
@@ -1042,11 +1044,11 @@ const day12 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ Sleep onset 12:30 AM most nights ("can't fall asleep")</p>
     `)}
-    ${p(`When she took my quiz, her Triangle came back lit on two Pressures, <strong style="color:${PALETTE.text};">Sugar Pressure</strong> primary, <strong style="color:${PALETTE.text};">Stress Pressure</strong> secondary. Pipe Pressure tertiary. That's a very common pattern in stage-1 hypertension that "won't budge" on standard pills.`, { margin: '0 0 28px' })}
+    ${p(`When she took my quiz, her Triangle came back lit on two corners, <strong style="color:${PALETTE.text};">Sugar</strong> primary, <strong style="color:${PALETTE.text};">Stress</strong> secondary. Sodium tertiary. That's a very common pattern in stage-1 hypertension that "won't budge" on standard pills.`, { margin: '0 0 28px' })}
     ${bigQuote('The three things she changed.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">1. Store-bought bread → sprouted-grain bread (or none).</strong> Store bread = ~200-300mg sodium per slice AND a glucose-curve hit. Sprouted grain = lower of both. Two slices a day cleared out 600mg of sodium and a major insulin spike.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. Weekday deli turkey → roasted from-the-bird the night before.</strong> Deli meat = 700-900mg sodium per lunch portion. Home-roasted = 80mg. Same protein, same convenience, $50/month less than the deli counter.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;"><strong style="color:${PALETTE.text};">2. Weekday deli meat → a homemade white-bean or chickpea spread batched on Sunday.</strong> Deli meat = 700-900mg sodium per lunch portion. The spread = ~80mg. Same protein, same convenience, $50/month less than the deli counter.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Canned soup for lunch → homemade in 15 minutes Sunday night.</strong> Canned soup = 800-1,200mg sodium per cup. Homemade with low-sodium broth and a pressure cooker = 80-200mg. Eight portions in one Sunday cook.</p>
     `)}
     ${p(`That's it. Three swaps. No new supplement, no new workout, no new pill. Six days in: morning BP <strong style="color:${PALETTE.text};">148/92.</strong> Day 9: <strong style="color:${PALETTE.text};">143/88.</strong>`, { margin: '0 0 28px' })}
@@ -1086,13 +1088,13 @@ DAY 1 BASELINE:
 → A1c 5.9 (pre-diabetic), slow morning weight gain, 3 PM crashes
 → Sleep onset 12:30 AM most nights
 
-When she took my quiz, her Triangle came back: SUGAR PRESSURE primary, STRESS PRESSURE secondary, PIPE PRESSURE tertiary. Common pattern in stage-1 hypertension that won't budge on standard pills.
+When she took my quiz, her Triangle came back: SUGAR primary, STRESS secondary, SODIUM tertiary. Common pattern in stage-1 hypertension that won't budge on standard pills.
 
 THE THREE THINGS SHE CHANGED:
 
 1. Store-bought bread → sprouted-grain bread (or none). Two slices a day cleared 600mg sodium and a major insulin spike.
 
-2. Weekday deli turkey → home-roasted night before. 700-900mg per lunch dropped to 80mg. $50/month savings.
+2. Weekday deli meat → a homemade white-bean or chickpea spread batched on Sunday. 700-900mg per lunch dropped to ~80mg. $50/month savings.
 
 3. Canned soup → homemade Sunday batch. 800-1,200mg per cup dropped to 80-200mg. Eight portions in one Sunday cook.
 
@@ -1143,12 +1145,15 @@ P.S. If you've followed this far, you already know more about the BP Triangle th
 // day with a brief mechanism note + clear next step + rotated CTA.
 //
 // Upsell footer rotation (per-day-strategic, not random):
-//   Kit ($17)        → days 13, 14, 17, 19, 22, 24, 30  (entry-point pitch;
-//                       $47 retired from cold drip 2026-06-14 — 0% converter)
-//   Challenge ($97)  → days 16, 21, 26  (community + 30-day pitch)
-//   Diagnostic ($297)→ days 15, 18, 20, 23, 25, 27, 28, 29  (highest-leverage
-//                       days, the ones where a buyer can self-identify as
-//                       wanting personalized work)
+//   Kit ($27)          → days 13, 14, 17, 19, 22, 24, 30  (front-kit pitch)
+//   Weekly Reset       → days 16, 21, 26  (Wednesday 7 PM ET live, $27/mo,
+//                        7-day free — community + group-call pitch)
+//   $297 case review   → days 15, 18, 20, 23, 25, 27, 28, 29  (highest-
+//                        leverage days, where a buyer can self-identify as
+//                        wanting personalized work; real cap 5/month)
+//   Cohort 2 ($1,997)  → days 21, 26  (apply-only, no per-cohort countdowns)
+//   NOTE: the $97 shadow seat is NOT pitched cold in this drip (evergreen
+//   downsell on a $297 decline only).
 // ═════════════════════════════════════════════════════════════════════
 
 const day13 = {
@@ -1158,7 +1163,7 @@ const day13 = {
   htmlBody: ({ firstName }) => `
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Welcome to Week 2.`)}
-    ${p(`The first seven days were foundation, the three Pressures, the lies about BP, the dosing-vs-pill reframe. By now you know the framework.`, { margin: '0 0 28px' })}
+    ${p(`The first seven days were foundation, the three corners of the Triangle, the lies about BP, the dosing-vs-pill reframe. By now you know the framework.`, { margin: '0 0 28px' })}
     ${bigQuote('The next 17 days teach the inputs, one at a time, one a day.')}
     ${p(`Here's the map:`)}
     ${sageBlock(`
@@ -1169,15 +1174,15 @@ const day13 = {
     ${p(`Each day is one input. Don't try to do all 17 at once. Pick the ones that match your Pressure and stack them slowly. Most people who succeed add ONE new input per week, by Day 60, they have three new habits running on autopilot.`, { margin: '0 0 28px' })}
     ${p(`<strong>Tomorrow: magnesium glycinate.</strong> The single most underrated mineral for blood pressure. I take it. Annie takes it. Most cardiologists never bring it up.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you want me looking at YOUR specific case before adding inputs randomly, the BP Triangle Diagnostic Session is the door. 60 minutes, $297, written 30-day protocol that's yours. Three slots open this week.`)}
-    ${upsellFooter({ kicker: 'WEEK 2 ANCHOR, $17 BP RESET KIT', body: 'Now that the framework makes sense, the BP Reset Kit gives you the dosing details and supplement protocols laid out by Pressure, the same document I hand patients. $17 one-time.', ctaLabel: 'Get the BP Reset Kit →', ctaUrl: KIT_URL })}
+    ${psBox(`If you want me looking at YOUR specific case before adding inputs randomly, the $297 case review is the door. You send your readings, your med list, your story, and I send back a written 30-day protocol that's yours. I take 5 a month, so every case gets real time.`)}
+    ${upsellFooter({ kicker: 'WEEK 2 ANCHOR, $27 BP RESET KIT', body: 'Now that the framework makes sense, the BP Reset Kit gives you the dosing details and supplement protocols laid out by corner, the same document I hand patients. $27 one-time.', ctaLabel: 'Get the BP Reset Kit →', ctaUrl: KIT_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
 
 Welcome to Week 2.
 
-Foundation week is done. By now you know the three Pressures, the lies, and the dosing-vs-pill reframe.
+Foundation week is done. By now you know the three corners of the Triangle, the lies, and the dosing-vs-pill reframe.
 
 THE NEXT 17 DAYS TEACH THE INPUTS, ONE AT A TIME, ONE A DAY.
 
@@ -1195,7 +1200,7 @@ RN, BraveWorks
 P.S. Not sure which input to add first? The free BP quiz shows your loudest Pressure and where to start: ${COACHING_URL}
 
 —
-→ Get the BP Reset Kit ($17): ${KIT_URL}
+→ Get the BP Reset Kit ($27): ${KIT_URL}
 → Skool: ${SKOOL_URL}
 `,
 };
@@ -1218,7 +1223,7 @@ const day14 = {
     `)}
     ${p(`Three-for-one mineral: vascular relaxation, sleep depth, insulin sensitivity. Every Triangle corner benefits.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`Tomorrow, hydration with mineral salt. The 24-hour delay nobody told you about. Wakita dropped 12 systolic points on this alone.`)}
+    ${psBox(`Tomorrow, hydration with mineral salt. The 24-hour delay nobody told you about. Consandra dropped 12 systolic points on this alone.`)}
     ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
@@ -1246,7 +1251,7 @@ Tomorrow: hydration with mineral salt, the 24-hour delay nobody told you about.
 Joel
 RN, BraveWorks
 
-P.S. The $17 BP Reset Kit lays out every supplement protocol by Pressure: ${KIT_URL}
+P.S. The $27 BP Reset Kit lays out every supplement protocol by corner: ${KIT_URL}
 `,
 };
 
@@ -1296,7 +1301,7 @@ Tomorrow: hibiscus tea. A clinical-grade ACE inhibitor.
 Joel
 RN, BraveWorks
 
-P.S. Want this calibrated to YOUR body? BP Triangle Diagnostic, 60 min, $297, six slots: ${COACHING_URL}
+P.S. Want this calibrated to YOUR body? The $297 case review, I take 5 a month: ${CASE_REVIEW_URL}
 `,
 };
 
@@ -1401,7 +1406,7 @@ Tomorrow: sleep architecture. Single most undervalued cardiovascular interventio
 Joel
 RN, BraveWorks
 
-P.S. $17 BP Reset Kit lays out every supplement protocol: ${KIT_URL}
+P.S. $27 BP Reset Kit lays out every supplement protocol: ${KIT_URL}
 `,
 };
 
@@ -1423,7 +1428,7 @@ const day18 = {
     `)}
     ${p(`If you wake at 2-4 AM and can't fall back asleep, that's a cortisol signature. Tomorrow: paced breathing, the fastest fix.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If sleep is your loudest Pressure (cortisol corner), the diagnostic is built to map your specific cascade. 60 minutes. Written protocol. Six slots this week.`)}
+    ${psBox(`If sleep is your loudest corner (Stress/cortisol), the $297 case review is built to map your specific cascade. You send it in, I send back a written protocol. I take 5 a month.`)}
     ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. Two minutes, no card. One-on-one calls are paused while I rebuild the 1:1 channel, so this is the best first step.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
@@ -1495,7 +1500,7 @@ Tomorrow: the 25-gratitudes practice, single best cortisol intervention I've eve
 Joel
 RN, BraveWorks
 
-P.S. The $17 BP Reset Kit lays out the breathing + gratitude + sleep + supplement protocols in order: ${KIT_URL}
+P.S. The $27 BP Reset Kit lays out the breathing + gratitude + sleep + supplement protocols in order: ${KIT_URL}
 `,
 };
 
@@ -1516,7 +1521,7 @@ const day20 = {
     `)}
     ${p(`I taught this to one of my Sprint clients last month. She was waking at 3 AM every night for two years. Day 4 of the gratitude practice she slept eight hours straight. Day 9, BP 128/82 from 142/88. Same diet, same meds, same everything else.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you've been doing all the protocols and your morning BP is still high, cortisol is the likely culprit. The diagnostic catches this in 60 minutes. 297, written protocol, six slots this week.`)}
+    ${psBox(`If you've been doing all the protocols and your morning BP is still high, cortisol is the likely culprit. The $297 case review catches this. You send it in, I send back a written protocol. I take 5 a month.`)}
     ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz shows your biggest Pressure and where to start. If cortisol is the answer, you walk out with the first move for the Stress corner. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
@@ -1562,7 +1567,7 @@ const day21 = {
     ${p(`Three meals a day × 10 minutes = 30 minutes of movement that costs you nothing. Most clients see A1c drop 0.3-0.5 in 90 days from this single habit. Multiple cardiology meta-analyses (Buffey 2022 most recent) replicate the effect.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`This single habit is the easiest way to test if blood sugar is your loudest Pressure. Run it for 14 days. If morning BP drops 3+ points, you've found your corner.`)}
-    ${upsellFooter({ kicker: 'READY FOR THE 90-DAY WORK?', body: 'Cohort 2, my 90-day Sprint, is the deeper room after the Challenge. Weekly Monday Live, WhatsApp office hours, the medication-tapering conversation with your doctor. Application only. 5 women per cohort.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE 90-DAY WORK?', body: 'Cohort 2, my $1,997 90-day group, is the deepest room on the ladder. Live group calls Wednesdays at 7 PM ET, office hours, the medication-tapering conversation with your doctor. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1630,7 +1635,7 @@ Tomorrow: ashwagandha, the cortisol-specific herb.
 Joel
 RN, BraveWorks
 
-P.S. $17 BP Reset Kit has every supplement protocol by Pressure: ${KIT_URL}
+P.S. $27 BP Reset Kit has every supplement protocol by corner: ${KIT_URL}
 `,
 };
 
@@ -1724,7 +1729,7 @@ Tomorrow: meal sequencing, same food, different order, 30-40% less insulin respo
 Joel
 RN, BraveWorks
 
-P.S. The $17 BP Reset Kit has the Cook For Life cookbook built on mineral-salt + meal sequencing: ${KIT_URL}
+P.S. The $27 BP Reset Kit has the Cook For Life cookbook built on mineral-salt + meal sequencing: ${KIT_URL}
 `,
 };
 
@@ -1745,8 +1750,8 @@ const day25 = {
     `)}
     ${p(`This is the single easiest food change in BP nutrition. No new ingredients. No special cooking. No willpower beyond the order in which you put food in your mouth. Run it for 14 days and watch your morning BP.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you've tried meal sequencing + walking after meals for 30 days and your numbers still aren't moving, blood sugar might not be your loudest Pressure. The diagnostic catches this in 60 minutes.`)}
-    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz names whether vascular, cortisol, or blood sugar is loudest for YOU, and gives the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
+    ${psBox(`If you've tried meal sequencing + walking after meals for 30 days and your numbers still aren't moving, blood sugar might not be your loudest corner. The $297 case review catches this, you send it in, I send back a written protocol. I take 5 a month.`)}
+    ${upsellFooter({ kicker: 'FIND YOUR LOUDEST CORNER', body: 'The free BP quiz names whether Sodium, Stress, or Sugar is loudest for YOU, and gives the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1792,7 +1797,7 @@ const day26 = {
     ${p(`Bring the results to your next appointment. The conversation changes when you have data.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow, 16:8 intermittent fasting. The safety screen + protocol. Not for everyone, accelerates everyone it IS for.`)}
-    ${upsellFooter({ kicker: 'READY FOR THE FULL TAPERING ARC?', body: 'Cohort 2, my 90-day Sprint, is where lab interpretation, the doctor conversation, and the medication-tapering plan happen together with me on weekly calls. Application only. 5 women per cohort.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE FULL TAPERING ARC?', body: 'Cohort 2, my $1,997 90-day group, is where lab interpretation, the doctor conversation, and the medication-tapering plan happen together with me on live Wednesday 7 PM ET calls. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1836,7 +1841,7 @@ const day27 = {
     `)}
     ${sageBlock(`
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 6px;"><strong style="color:${PALETTE.text};">Window:</strong> 11 AM to 7 PM is the easiest starting point. Adjust ±2 hours.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 6px;"><strong style="color:${PALETTE.text};">During the fast:</strong> water (Day 15 hydration protocol), unsweetened tea, black coffee. Mineral salt is fine.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 6px;"><strong style="color:${PALETTE.text};">During the fast:</strong> water (Day 15 hydration protocol), unsweetened herbal tea (chamomile, hibiscus), mineral salt.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Ramp:</strong> start at 12:12, then 14:10, then 16:8 over 2-3 weeks. Sudden 16:8 from a standard 12-hour pattern is brutal.</p>
     `)}
     ${p(`Best for: 50+ with stubborn BP, A1c 5.7+, central fat that won't budge, post-menopausal weight gain. Most clients see A1c drop 0.4-0.8 in 90 days and 8-12 mmHg systolic drop alongside.`, { margin: '0 0 28px' })}
@@ -1861,7 +1866,7 @@ Metformin alone: OK. Insulin or sulfonylureas: talk to prescriber FIRST.
 
 PROTOCOL:
 → Window: 11 AM to 7 PM (adjust ±2 hours)
-→ During fast: water, unsweetened tea, black coffee, mineral salt
+→ During fast: water, unsweetened herbal tea (chamomile, hibiscus), mineral salt
 → Ramp: 12:12 → 14:10 → 16:8 over 2-3 weeks
 
 Best for: 50+, stubborn BP, A1c 5.7+, central fat, post-menopausal weight gain. ~0.4-0.8 A1c drop + 8-12 mmHg systolic in 90 days.
@@ -1937,14 +1942,14 @@ const day29 = {
     ${bigQuote('If 28 days of protocols haven\'t moved your numbers enough, there are four reasons, and only four.')}
     ${p(`After teaching this material for years, I can almost always trace a stalled protocol to one of four root causes. Read these honestly. The one you keep circling back to is probably yours.`, { margin: '0 0 28px' })}
     ${sageBlock(`
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Wrong Pressure focus.</strong> You optimized for vascular when cortisol was the real driver. You did hibiscus + garlic + magnesium for six weeks and your numbers barely moved because your loudest corner was Stress Pressure (cortisol) the whole time. The fix is identifying YOUR corner.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Wrong corner focus.</strong> You optimized for Sodium when cortisol was the real driver. You did hibiscus + garlic + magnesium for six weeks and your numbers barely moved because your loudest corner was Stress (cortisol) the whole time. The fix is identifying YOUR corner.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Inconsistent execution.</strong> 4 days a week of magnesium isn't a magnesium protocol. 3 days a week of walking after meals isn't a walking protocol. Most "this isn't working" cases are actually "I'm not doing it" cases. Track for a week, honestly, and see what's actually going in.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">3. Medication interaction.</strong> Your protocol is being undermined by something your prescriber gave you. Beta-blockers blunt the magnesium response. PPIs flush magnesium AND deplete vitamin B12. Statins reduce CoQ10. Diuretics flush everything. The conversation with your doctor (Day 28) catches this.</p>
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. Hidden contributor.</strong> Sleep apnea (undiagnosed in 40% of hypertensives), hidden hyperaldosteronism (5-10%), pheochromocytoma (rare but missed), undiagnosed thyroid dysfunction. These need labs + sometimes specialist evaluation. The diagnostic catches the first three; #4 catches the rest.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. Hidden contributor.</strong> Sleep apnea (undiagnosed in 40% of hypertensives), hidden hyperaldosteronism (5-10%), pheochromocytoma (rare but missed), undiagnosed thyroid dysfunction. These need labs + sometimes specialist evaluation. A case review catches the first three; #4 catches the rest.</p>
     `)}
     ${p(`If you read these and one of them lit up, that's your next focus. Tomorrow's the graduation message. After that the daily emails slow down and we move into the long-term re-engagement cadence.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If reason #1 or #2 hit closest to home, the diagnostic is the fastest fix. 60 min with me, your loudest Pressure named, your protocol customized. Six slots this week.`)}
+    ${psBox(`If reason #1 or #2 hit closest to home, the $297 case review is the fastest fix. You send it in, I name your loudest corner and customize your protocol. I take 5 a month.`)}
     ${upsellFooter({ kicker: 'FIND YOUR LOUDEST PRESSURE', body: 'The free BP quiz does in two minutes what guessing can\'t. It names your specific corner and gives the first move for it. One-on-one calls are paused while I rebuild the 1:1 channel.', ctaLabel: 'Take the free BP quiz →', ctaUrl: COACHING_URL })}
     ${footerSecondaryCTAs()}
   `,
@@ -1956,7 +1961,7 @@ IF 28 DAYS OF PROTOCOLS HASN'T MOVED YOUR NUMBERS, THERE ARE FOUR REASONS, AND O
 
 After teaching this for years, I can almost always trace a stalled protocol to one of these.
 
-1. WRONG PRESSURE FOCUS. You optimized for vascular when cortisol was the real driver. The fix is identifying YOUR corner.
+1. WRONG CORNER FOCUS. You optimized for Sodium when cortisol was the real driver. The fix is identifying YOUR corner.
 
 2. INCONSISTENT EXECUTION. 4 days a week of magnesium isn't a magnesium protocol. Most "this isn't working" cases are actually "I'm not doing it" cases.
 
@@ -1986,14 +1991,14 @@ const day30 = {
     ${p(`Thirty days ago you came into this list with a question. Maybe "why isn't my BP coming down?" Maybe "what are these pills actually doing?" Maybe "is there another way?" Whatever it was, you stuck around. You read. You probably started doing some of this.`)}
     ${p(`Here's what you have now that most patients in cardiology offices don't:`, { margin: '0 0 28px' })}
     ${sageBlock(`
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The framework.</strong> Three Pressures. Your numbers are the output of inputs you can identify.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The framework.</strong> The BP Triangle, three corners. Your numbers are the output of inputs you can identify.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The protocols.</strong> Magnesium, hibiscus, garlic, hydration with minerals, sleep architecture, paced breathing, gratitudes, walking, meal sequencing. Every one is on the right side of the evidence.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 8px;">→ <strong style="color:${PALETTE.text};">The doctor conversation.</strong> Data + structure + the deprescribing language. The visit that changes the relationship.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">The honest question.</strong> When 28 days hasn't moved your numbers, you know it's one of four causes, and you know how to find which.</p>
     `)}
     ${p(`<strong>From here, three paths.</strong>`, { margin: '0 0 18px' })}
     ${p(`<strong>Path 1, keep going on your own.</strong> The framework is yours forever. Run your protocol. Bring your doctor the script. Most clients who stay the course see real numbers move over the next 90 days.`)}
-    ${p(`<strong>Path 2, the BP Triangle Diagnostic Session.</strong> 60 minutes with me, $297, custom written protocol, 30 days of follow-up email coaching. Best for: cases where you've tried the foundation and want personalization. The buyer-only door (your $17 Kit credit applies → $280) is always open via the email I sent earlier this week.`)}
+    ${p(`<strong>Path 2, the $297 case review.</strong> You send me your readings, your med list, your story, I send back a custom written protocol plus 30 days of follow-up email coaching. Best for: cases where you've tried the foundation and want personalization. If you bought the Kit, your $27 credit applies → $270. I take 5 a month.`)}
     ${p(`<strong>Path 3, re-engagement.</strong> You stay on the list. From here, emails come less often, weekly recap on new research, the occasional case study, big announcements. The relationship continues even when the daily emails stop.`, { margin: '0 0 28px' })}
     ${p(`Whatever you pick, I'm glad you read these. The information matters. What you do with it matters more.`)}
     ${joelSignoff()}
@@ -2008,7 +2013,7 @@ Day 30. Last note in the foundational sequence.
 YOU'RE NOT THE SAME PERSON YOU WERE 30 DAYS AGO. YOU KNOW THINGS NOW MOST PATIENTS NEVER LEARN.
 
 What you have now:
-→ THE FRAMEWORK. Three Pressures. Your numbers are the output of inputs you can identify.
+→ THE FRAMEWORK. The BP Triangle, three corners. Your numbers are the output of inputs you can identify.
 → THE PROTOCOLS. Magnesium, hibiscus, garlic, hydration, sleep, breathing, gratitudes, walking, sequencing. All on the right side of the evidence.
 → THE DOCTOR CONVERSATION. Data + structure + deprescribing language.
 → THE HONEST QUESTION. When 28 days hasn't moved numbers, you know the four causes.
@@ -2017,7 +2022,7 @@ FROM HERE, THREE PATHS:
 
 PATH 1, KEEP GOING ON YOUR OWN. Framework is yours forever. Most clients who stay the course see numbers move over the next 90 days.
 
-PATH 2, THE DIAGNOSTIC. 60 min with me, $297, custom protocol, 30-day email coaching. Your $17 Kit credit applies → $280. Buyer-only door is always open.
+PATH 2, THE $297 CASE REVIEW. Send me your readings + med list + story, I send back a custom protocol + 30-day email coaching. If you bought the Kit, your $27 credit applies → $270. I take 5 a month.
 
 PATH 3, RE-ENGAGEMENT. Emails come less often. Weekly recap on research, case studies, announcements. Relationship continues.
 
@@ -2029,7 +2034,7 @@ RN, BraveWorks
 P.S. Moved your numbers? Hit reply. I read every one.
 
 —
-→ $17 BP Reset Kit (the consolidated reference library): ${KIT_URL}
+→ $27 BP Reset Kit (the consolidated reference library): ${KIT_URL}
 → Skool: ${SKOOL_URL}
 `,
 };
@@ -2043,6 +2048,12 @@ export const DAYS = { 1: day1, 2: day2, 3: day3, 4: day4, 5: day5, 6: day6, 7: d
 // renderEmail() / drip-cron.
 export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays = 30, unsubUrl }) {
   const unsubHref = unsubUrl || '#';
+  // CAN-SPAM postal address — env-driven, no hardcoded address. Omit the
+  // line entirely if BUSINESS_POSTAL_ADDRESS is unset (never a fallback).
+  const postalAddress = process.env.BUSINESS_POSTAL_ADDRESS;
+  const postalLine = postalAddress
+    ? `<p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0 0 12px;">BraveWorks Health · ${postalAddress}</p>`
+    : '';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2062,12 +2073,12 @@ export function renderEmailShell({ subject, preview, bodyHtml, dayNum, totalDays
         </td></tr>
       </table>
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${PALETTE.cardBg};border-radius:14px;box-shadow:0 1px 2px rgba(44,62,80,0.04);">
-        <tr><td style="padding:36px 36px 32px;">${bodyHtml}</td></tr>
+        <tr><td style="padding:36px 36px 32px;">${appLaunchHero()}${bodyHtml}</td></tr>
       </table>
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr><td style="padding:24px 16px 0;text-align:center;">
           <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0 0 12px;">This is health education from Joel Polley, RN, BraveWorks Health. Not medical advice. If your BP reads above 180/120, seek emergency care. Always consult your prescriber before changing any medication or supplement.</p>
-          <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0 0 12px;">BraveWorks Health · 4730 South Fort Apache Road, Suite 300, Las Vegas, NV 89147</p>
+          ${postalLine}
           <p style="font-size:12px;line-height:1.6;color:#8A8A8A;margin:0;">You're getting this because you're on Joel's BraveWorks list. <a href="${unsubHref}" style="color:#8A8A8A;text-decoration:underline;">Unsubscribe</a></p>
         </td></tr>
       </table>
@@ -2102,7 +2113,7 @@ export function renderEmail(day, ctx) {
       dayNum: day,
       unsubUrl: ctx.unsubUrl,
     }),
-    text: d.textBody(ctx),
+    text: appLaunchHeroText() + d.textBody(ctx),
     headers,
     tags: [
       { name: 'campaign', value: 'bpquiz-7day-onboarding' },

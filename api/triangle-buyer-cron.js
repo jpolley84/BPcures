@@ -79,9 +79,12 @@ const LIBRARY_URL = `${SITE_URL}/library`;
 // what they already own. These are the same live Stripe payment links /welcome
 // uses (one price per rung, everywhere). Do not swap in the full-price $97
 // link here; the full-price path double-charges upgraders for owned content.
-const UPGRADE_CORNER_TO_TOP2_URL = 'https://buy.stripe.com/6oU3cv9o76PIbnB7RnfnO1j'; // +$20
-const UPGRADE_CORNER_TO_COMPLETE_URL = 'https://buy.stripe.com/00wdR92ZJa1UgHV4FbfnO1k'; // +$70
-const UPGRADE_TOP2_TO_COMPLETE_URL = 'https://buy.stripe.com/28E5kD9o78XQfDR5JffnO1l'; // +$50
+// 2026-07 ladder: ONE kit upgrade, the corner -> complete OTO for $27 additional
+// (Joel: better psychological number than the raw $30 difference). Legacy top2
+// owners use the same link. The upsell from complete is the $97 1:1 call with
+// Joel (Calendly after pay).
+const UPGRADE_TO_COMPLETE_OTO_URL = process.env.UPGRADE_CORNER_TO_COMPLETE_OTO_LINK || 'https://buy.stripe.com/fZu9AT9o71vo0IXc7DfnO1s'; // +$27
+const CALL_97_URL = process.env.CALL_97_LINK || 'https://buy.stripe.com/3cI9AT9o7a1U2R58VrfnO1q'; // $97 1:1 call
 
 // The $297 "Joel's Eyes On Your Case" personal case review. Soft, secondary
 // door for EVERY tier (Day 12 + Day 30), pointing at the on-site page (which
@@ -698,32 +701,20 @@ const day12 = {
         p(`Hi ${firstName},`),
         p(`You finished your first ten days two days ago. Whatever your readings said, the daily work you did is already changing how your body handles pressure. Keep walking, one corner at a time.`),
         p(`You own the whole loop, so there is nothing left to buy to finish your kit. Your next ten days are already sitting in <a href="${LIBRARY_URL}" style="color:${PALETTE.accentClay};font-weight:700;">your library</a>.`),
+        p(`If you want to go one step further, I do offer a <strong>1:1 call</strong>. Thirty minutes, you and me, walking your readings, your medication list, and your Triangle together, so you leave knowing exactly what to work first. It is <strong>$97</strong>, and you book straight onto my calendar the moment you pay.`),
+        ctaButton('Book my 1:1 call with Joel, $97', CALL_97_URL),
         caseReviewBlock,
         p(`Either way, the method is in your hands now. Keep going.`),
         p(`Joel Polley, RN`),
       ].join('');
     }
-    if (isTop2(ctx)) {
-      return [
-        p(`Hi ${firstName},`),
-        p(`You finished your first ten days two days ago, and your second corner is open in front of you. Whatever your readings said, the daily work you did is already changing how your body handles pressure.`),
-        p(`Here is the honest picture. You own your two loudest corners. One corner still feeds the loop, and the Freedom Finale, the graduation piece, is what teaches you to step back and hold the gains. Completing your Triangle is <strong>$50</strong>. You pay only the difference, never twice for what you already own.`),
-        ctaButton('Complete my Triangle for $50', UPGRADE_TOP2_TO_COMPLETE_URL),
-        caseReviewBlock,
-        p(`No pressure on any of it. Keep walking what you have. The method works either way.`),
-        p(`Joel Polley, RN`),
-      ].join('');
-    }
-    const order = cornersFor(ctx);
-    const secondName = CORNER_NAME[order[1]] || 'second';
+    // corner buyers AND legacy top2 buyers: one door, complete the Triangle for
+    // the $30 difference (the $47 complete kit minus what they already paid).
     return [
       p(`Hi ${firstName},`),
       p(`You finished your first ten days two days ago. Whatever your readings said, the daily work you did is already changing how your body handles pressure.`),
-      p(`Here is the honest picture. You own one corner of your Triangle. The other two are still feeding the loop, the way stress and sugar both keep telling your kidneys to hold sodium. If you want to keep walking, there are two doors, and with both you pay only the difference, never twice for what you already own.`),
-      p(`Add your second corner, <strong>${secondName}</strong>, for <strong>$20</strong>:`),
-      ctaButton(`Add my ${secondName} corner for $20`, UPGRADE_CORNER_TO_TOP2_URL),
-      p(`Or close the whole loop at once, all three corners plus the Freedom Finale, for <strong>$70</strong>:`),
-      ctaButton('Close the whole loop for $70', UPGRADE_CORNER_TO_COMPLETE_URL),
+      p(`Here is the honest picture. The rest of your Triangle is still feeding the loop, the way stress and sugar both keep telling your kidneys to hold sodium. If you want to keep walking, there is one door: the complete kit, every corner plus the Freedom Finale, for just <strong>$27 more</strong>, never paying twice for what you already own.`),
+      ctaButton('Complete my Triangle for $27', UPGRADE_TO_COMPLETE_OTO_URL),
       caseReviewBlock,
       p(`No pressure on any of it. Keep walking what you have. The method works either way.`),
       p(`Joel Polley, RN`),
@@ -742,33 +733,20 @@ One more door, only if you want it. Some people want a nurse to read their own c
 You finished your first ten days two days ago. Whatever your readings said, the daily work you did is already changing how your body handles pressure. Keep walking, one corner at a time.
 
 You own the whole loop, so there is nothing left to buy to finish your kit. Your next ten days are already in your library: ${LIBRARY_URL}
+
+If you want to go one step further, I do offer a 1:1 call. Thirty minutes, you and me, walking your readings, your medication list, and your Triangle together, so you leave knowing exactly what to work first. It is $97, and you book straight onto my calendar the moment you pay:
+${CALL_97_URL}
 ${caseReviewBlock}
 The method is in your hands now. Keep going.
 Joel Polley, RN`;
     }
-    if (isTop2(ctx)) {
-      return `Hi ${firstName},
-
-You finished your first ten days two days ago, and your second corner is open in front of you. Whatever your readings said, the daily work you did is already changing how your body handles pressure.
-
-The honest picture: you own your two loudest corners. One corner still feeds the loop, and the Freedom Finale (the graduation piece) teaches you to step back and hold the gains. Completing your Triangle is $50. You pay only the difference, never twice for what you already own.
-
-Complete my Triangle for $50: ${UPGRADE_TOP2_TO_COMPLETE_URL}
-${caseReviewBlock}
-No pressure on any of it. Keep walking what you have. The method works either way.
-Joel Polley, RN`;
-    }
-    const order = cornersFor(ctx);
-    const secondName = CORNER_NAME[order[1]] || 'second';
     return `Hi ${firstName},
 
 You finished your first ten days two days ago. Whatever your readings said, the daily work you did is already changing how your body handles pressure.
 
-The honest picture: you own one corner of your Triangle. The other two are still feeding the loop, the way stress and sugar both keep telling your kidneys to hold sodium. If you want to keep walking, there are two doors, and with both you pay only the difference, never twice for what you already own.
+The honest picture: the rest of your Triangle is still feeding the loop, the way stress and sugar both keep telling your kidneys to hold sodium. If you want to keep walking, there is one door: the complete kit, every corner plus the Freedom Finale, for just $27 more, never paying twice for what you already own.
 
-Add my ${secondName} corner for $20: ${UPGRADE_CORNER_TO_TOP2_URL}
-
-Or close the whole loop (all three corners plus the Freedom Finale) for $70: ${UPGRADE_CORNER_TO_COMPLETE_URL}
+Complete my Triangle for $27: ${UPGRADE_TO_COMPLETE_OTO_URL}
 ${caseReviewBlock}
 No pressure on any of it. Keep walking what you have. The method works either way.
 Joel Polley, RN`;

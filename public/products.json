@@ -394,7 +394,8 @@
       "Two corners closed in sequence, the felt difference being a number that holds steadier instead of bouncing back on you",
       "A free trial of the Skool community, where Joel teaches the Triangle live and you are no longer doing this on your own"
     ],
-    "featured": true
+    "featured": false,
+    "retired": true
   },
   {
     "slug": "bp-complete-triangle",
@@ -403,9 +404,9 @@
     "tier_level": 3,
     "headline": "Thirty days from now you reach for the cuff out of curiosity, not dread, and you walk into your next visit holding your own data, ready to lead the conversation. Then Joel teaches you to let go of the daily policing and trust the body you rebuilt.",
     "description": "The whole loop closed, with a nurse in your pocket for all thirty days. You are never left to figure out the next step, you wake up and the day's move is already in front of you, all three corners worked in the order Joel walks them at the bedside. By the end you are not white-knuckling a checklist, the Freedom Finale teaches you to step back and trust the body you rebuilt, so this becomes how you live and not one more thing to manage. You keep it for life, every future update included, and Joel and the community walk it with you the whole way. Written by Joel Polley, RN. Education and lifestyle support, alongside your doctor.",
-    "price": "$97",
-    "price_cents": 9700,
-    "stripe_price_id": "price_1TmONOHseZnO3rRZidQTqdAH",
+    "price": "$47",
+    "price_cents": 4700,
+    "stripe_price_id": "price_1TpqZHHseZnO3rRZWtW0s1L8",
     "stripe_payment_link": "https://buy.stripe.com/cNiaEX7fZb5YgHVb3zfnO1g",
     "env_var": "VITE_STRIPE_COMPLETE_PRICE_ID",
     "delivers": [
@@ -425,7 +426,8 @@
       "An email walks your first 10 days with you, then check-ins through Day 30, like a nurse looking in on you along the way",
       "Bonus: the Cook for Life cookbook, whole-food meals you can cook for years that quietly feed all three corners"
     ],
-    "featured": false,
-    "best_value": true
+    "featured": true,
+    "best_value": true,
+    "compare_at_price": "$97"
   }
 ]

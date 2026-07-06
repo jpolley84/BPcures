@@ -196,19 +196,23 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           from: 'Resend Webhook <noreply@bpquiz.com>',
           to: [ALERT_EMAIL],
-          subject: '[ALERT] Spam complaint on Practice Launcher outreach',
+          // 2026-07-06: subject was hardcoded "Practice Launcher outreach", which
+          // mislabeled complaints from ANY send (a list-blast complaint read as
+          // cold-outreach spam). Neutral subject + the complained email's subject
+          // in the body so the source is obvious at a glance.
+          subject: `[ALERT] Spam complaint from a recipient (${email || 'unknown'})`,
           text: [
             `Recipient: ${email}`,
+            `Complained-about email subject: ${data?.subject || data?.email?.subject || 'unknown'}`,
             `Event type: ${type}`,
             `Received: ${new Date().toISOString()}`,
             ``,
             `Auto-suppressed in audience: ${suppressed ? 'yes' : 'NO (manual cleanup needed)'}`,
             ``,
-            `Why this matters: complaint rate >0.1% damages sender reputation across the entire`,
-            `outreach.bpquiz.com domain. One complaint is noise; three in a week needs investigation.`,
+            `Why this matters: complaint rate >0.1% damages sender reputation for the sending`,
+            `domain. One complaint is noise; three in a week needs investigation.`,
             ``,
-            `Action: investigate the most recent send to ${email} — what subject line, what body?`,
-            `Pattern across complaints will reveal which lead segment / message is triggering them.`,
+            `Action: check which send this was (subject above) and whether a pattern is forming.`,
           ].join('\n'),
         }),
       });

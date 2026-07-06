@@ -13,7 +13,7 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
-import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch, appLaunchHero, appLaunchHeroText } from './_email-shared.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
@@ -133,7 +133,7 @@ const day0 = {
   subject: 'You\'re in. Wednesday at 7 PM EST: here\'s everything.',
   subjectB: 'Welcome, your 90-day journey starts Wednesday',
   preview: 'Your intake form, the Wednesday Zoom link, and what to bring.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.`)}
     ${p(`This email has the four things you need to start the right way. Read it once today and once Saturday, that's the only homework before we meet.`, { margin: '0 0 28px' })}
@@ -162,7 +162,7 @@ const day0 = {
     ${psBox(`If anything in this email doesn't land, confusion about the Zoom, can't find the intake link, anything, hit reply right now and tell me. I read every one. We start clean.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.
 
@@ -211,7 +211,7 @@ const day1 = {
   subject: 'Your Week 1, bite-sized, with your partner',
   subjectB: 'What to expect in the first 7 days',
   preview: 'The map for Week 1, and why your partner matters more than you think.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`A note before Wednesday: Week 1 is not what most people expect.`)}
     ${p(`Most BP programs throw a wall of protocol at you on Day 1, supplements, food rules, exercise mandates, breathwork timers. You read the binder, you panic, you do half of it for three days, and by Day 5 you're back where you started.`)}
@@ -237,7 +237,7 @@ const day1 = {
     ${psBox(`If you have a partner and they're skeptical, let them read this email. Half of them flip when they realize the ask is "help her, don't change yourself." The other half flip by Day 30 when they see her numbers move.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 A note before Wednesday: Week 1 is not what most people expect.
 
@@ -290,7 +290,7 @@ const day3 = {
   subject: 'Your VIP Skool room is open',
   subjectB: 'Meet your cohort, introduce yourself here',
   preview: 'A small, private room. Just the people on this journey with you.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Your VIP Skool room is live. Walk in.`, { margin: '0 0 28px' })}
     ${ctaButton(SKOOL_VIP_URL, 'Open your VIP Skool room →')}
@@ -314,7 +314,7 @@ const day3 = {
     ${psBox(`If you can't get the Skool link to open, hit reply right now with the email address you used for Skool. Sometimes the invite goes to the wrong inbox. I'll get you in inside an hour during office hours.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Your VIP Skool room is live. Walk in.
 
@@ -364,7 +364,7 @@ const day5 = {
   subject: 'Two habits that make the 90 days work',
   subjectB: 'Your VIP room, and what to bring Wednesday',
   preview: 'How to use the VIP space day to day, and what to bring to your first call.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.`, { margin: '0 0 28px' })}
     ${bigQuote('Habit 1: Use the VIP room like a logbook, not a library.')}
@@ -389,7 +389,7 @@ const day5 = {
     ${psBox(`If you haven't posted your introduction in the VIP room yet (from the Day 3 email), do that first. It takes five minutes, and I comment on every intro within a day. The room works better when it knows you're in it.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.
 
@@ -431,7 +431,7 @@ const day7 = {
   subject: 'Week 1 reflection, how are you feeling?',
   subjectB: 'What\'s working, what\'s tight?',
   preview: 'Two questions I want you to sit with before Wednesday.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Week 1 closes today. You've been on the protocol for seven days. The body has had its first proper drink of water, the brain has spent the first morning of its life listing twenty-five things it's grateful for, and the cuff has watched you a little more carefully than it did last week.`)}
     ${p(`Today I don't ask you for action. I ask you for reflection.`, { margin: '0 0 28px' })}
@@ -452,7 +452,7 @@ const day7 = {
     ${psBox(`If Week 1 has been hard, really hard, that's information too. Reply with "hard" and one sentence about which piece is hardest. I'd rather pull a piece off your plate in Week 2 than have you white-knuckle through.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Week 1 closes today. The body has had its first proper drink of water, the brain has spent the first morning of its life listing twenty-five things it's grateful for, and the cuff has watched you a little more carefully than it did last week.
 
@@ -498,7 +498,7 @@ const day10 = {
   subject: 'Day 14 is the hardest day, read this now',
   subjectB: 'Why your numbers might pause this week',
   preview: 'It happens to almost everyone. Here\'s the why and the move.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I'm writing this on Day 10 because I want to put a flag in the ground before you walk over the cliff.`, { margin: '0 0 28px' })}
     ${bigQuote('The Day 14 dip is coming.')}
@@ -526,7 +526,7 @@ const day10 = {
     ${psBox(`If you've already noticed the dip starting, congratulations, you're early. Text me the word "dip" right now and I'll add you to a thread of three other clients currently inside it. Sometimes the cohort sees you out before I do.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I'm writing this on Day 10 because I want to put a flag in the ground before you walk over the cliff.
 
@@ -581,7 +581,7 @@ const day14 = {
   subject: 'Halfway to Day 30, pulse check',
   subjectB: 'What the data is telling us',
   preview: 'Two weeks in. Here\'s what I need to see before we adjust.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Halfway to the Day 30 mark. Time for the first real pulse check.`)}
     ${p(`Whether or not the Day 14 dip showed up for you, and for a third of this cohort it doesn't, you're built different, I want a clean look at the data before we make the first real adjustment to your protocol.`, { margin: '0 0 28px' })}
@@ -608,7 +608,7 @@ const day14 = {
     ${psBox(`If your numbers haven't moved at all in two weeks, and a small number of clients fit this, that's the most useful data of all. It tells me there's a hidden cause behind the loud one (sleep apnea, medication side effect, a thyroid drift). Reply "stuck" and we'll add that conversation to your next call.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Halfway to the Day 30 mark. Time for the first real pulse check.
 
@@ -658,7 +658,7 @@ const day17 = {
   subject: 'The 7 herbs I\'m prescribing this cohort',
   subjectB: 'Your herb stack, week by week',
   preview: 'Five anchors plus two supports. Why each, how to dose, when to add.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Today is the herb-stack deep dive. Three weeks in, you have the foundation. We start layering the accelerators.`)}
     ${p(`A note on language first. <strong style="color:${PALETTE.text};">I don't prescribe.</strong> I'm a Registered Nurse and a naturopathic practitioner, these are educational recommendations within a coaching relationship, and every adjustment you make to your medication or supplement stack is a conversation with your physician. The Doctor Conversation Script in your kit is the bridge for that. Day 21 we walk through it together.`, { margin: '0 0 28px' })}
@@ -718,7 +718,7 @@ const day17 = {
     ${psBox(`If you're already taking any of these, even one, reply with the name and dose. I want to know what's already in your stack before I sequence the rest. The intake captured what was on the counter; sometimes the bottle in the suitcase from last year isn't on the form.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Today is the herb-stack deep dive. Three weeks in, you have the foundation. We start layering the accelerators.
 
@@ -790,7 +790,7 @@ const day21 = {
   subject: 'Your next doctor visit, the script',
   subjectB: 'How to talk to your cardiologist',
   preview: 'The four sentences. The data you bring. The answer you\'re asking for.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Three weeks in. The body is moving. Now we prepare the conversation that turns this work into a doctor-cleared taper plan.`)}
     ${p(`Most of you have a cardiology or primary-care appointment somewhere between Week 4 and Week 8. I want you walking into that room with the right data and the right four sentences. Read this email today. Reread it the morning of your appointment.`, { margin: '0 0 28px' })}
@@ -828,7 +828,7 @@ const day21 = {
     ${psBox(`Tell me the date of your next appointment when you book it. I block 15 minutes the morning of to send you a focused voice note, your specific numbers, your specific corner, the sentence I'd lead with if I were you. We also rehearse the conversation on the Wednesday group call or in WhatsApp whenever you want one.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Three weeks in. The body is moving. Now we prepare the conversation that turns this work into a doctor-cleared taper plan.
 
@@ -891,7 +891,7 @@ const day30 = {
   subject: '30 days in, what\'s working, what to adjust',
   subjectB: 'Your first taper conversation',
   preview: 'Where we\'ve been. What changes in the next 60 days.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Thirty days. That's a milestone.`)}
     ${p(`Most BP protocols on the internet are 30-day programs. They are designed to deliver a "before and after" result, a small win, a screenshot, a testimonial that makes them buyable. <strong style="color:${PALETTE.text};">You are not on a 30-day program. You are 30 days into a 90-day repatterning.</strong> The work you've done is the foundation. The next 60 days are where it becomes a body.`, { margin: '0 0 28px' })}
@@ -926,7 +926,7 @@ const day30 = {
     ${psBox(`If your Day 30 numbers haven't moved as much as you hoped, read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Thirty days. That's a milestone.
 

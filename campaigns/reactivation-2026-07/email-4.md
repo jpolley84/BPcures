@@ -16,6 +16,10 @@ Five pieces. Ten days. Keep everything either way.
 
 ## Body
 
+**Coming soon: the BraveWorks RN app.** Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+
+**→ Join the early-access waitlist: https://bpquiz.com/waitlist** (free; founding access goes out in waitlist order)
+
 I promised I would lay the kit out plainly. Here it is.
 
 It is called the **Corner Reset**. It costs **$17**. It works on ONE corner of your Triangle, the loudest one, because that is where the fastest progress lives.

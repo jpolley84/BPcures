@@ -15,6 +15,10 @@ Pick the one that fits your season. No pressure from me.
 
 ## Body
 
+**Coming soon: the BraveWorks RN app.** Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+
+**→ Join the early-access waitlist: https://bpquiz.com/waitlist** (free; founding access goes out in waitlist order)
+
 Last letter in this little series. After this, we settle into the weekly rhythm.
 
 You have heard the whole story now. The Triangle. The stress corner. Michael and Maureen. The $17 kit. So here are your three doors. And I mean it when I say all three are fine with me.

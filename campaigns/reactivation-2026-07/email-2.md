@@ -15,6 +15,10 @@ One free thing to try tonight. It takes 10 minutes.
 
 ## Body
 
+**Coming soon: the BraveWorks RN app.** Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+
+**→ Join the early-access waitlist: https://bpquiz.com/waitlist** (free; founding access goes out in waitlist order)
+
 It's Joel again.
 
 Last time I told you about the BP Triangle. Stress, sugar, sodium. Three corners, and one of them is usually loudest.

@@ -16,6 +16,10 @@ He did not quit his meds. He found his corner.
 
 ## Body
 
+**Coming soon: the BraveWorks RN app.** Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+
+**→ Join the early-access waitlist: https://bpquiz.com/waitlist** (free; founding access goes out in waitlist order)
+
 Two quick stories today. Both are real people who stood right where you are standing.
 
 **Michael T., 61, Denver.** His numbers sat in the 150s over 90s. He found his loudest corner and ran the 10-day plan. In his own words:

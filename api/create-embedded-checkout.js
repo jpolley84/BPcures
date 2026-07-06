@@ -22,12 +22,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // 2026-07-01 (Joel): $17 is the PERMANENT price, "leave it at what it is forever."
 // The old launch-sale deadline flip to $27 is removed; we always charge the $17 price.
 
-// tier -> server-owned price ids. corner is the only on-page offer (single-offer
-// result page); top2/complete are post-purchase upsells handled by payment links.
+// tier -> server-owned price ids. 2026-07 ladder: $17 corner on-page, $47
+// COMPLETE kit (all three corners + Finale) as the direct second rung, also
+// buyable inline at /pay?tier=complete. The $30 corner->complete difference
+// upgrade + the $97 1:1 call are post-purchase payment links (see
+// upgradeOffers.js + the webhook). top2 is RETIRED from sale.
 const TIER_PRICES = {
   corner: {
-    sale: process.env.STRIPE_CORNER_SALE_PRICE_ID || 'price_1ToBlWHseZnO3rRZtv4lbw2m', // $17 launch
-    regular: process.env.STRIPE_CORNER_PRICE_ID || 'price_1TlYAFHseZnO3rRZoOCNHviq',   // $27 regular
+    sale: process.env.STRIPE_CORNER_SALE_PRICE_ID || 'price_1ToBlWHseZnO3rRZtv4lbw2m', // $17 permanent
+    regular: process.env.STRIPE_CORNER_PRICE_ID || 'price_1TlYAFHseZnO3rRZoOCNHviq',   // legacy $27 (unused)
+  },
+  complete: {
+    sale: process.env.STRIPE_COMPLETE_47_PRICE_ID || 'price_1TpqZHHseZnO3rRZWtW0s1L8', // $47 complete
+    regular: process.env.STRIPE_COMPLETE_47_PRICE_ID || 'price_1TpqZHHseZnO3rRZWtW0s1L8',
   },
 };
 

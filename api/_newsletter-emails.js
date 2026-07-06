@@ -29,7 +29,7 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
-import { youtubePrimaryCTA, skoolTiersFooter, mondayCallReminder } from './_email-shared.js';
+import { youtubePrimaryCTA, skoolTiersFooter, mondayCallReminder, appLaunchHero, appLaunchHeroText } from './_email-shared.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
@@ -142,7 +142,7 @@ const issue1 = {
   subject: 'Why your number will not stay down',
   subjectB: 'Your blood pressure has three corners',
   preview: 'Stress. Sugar. Sodium. One loop, three corners.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Most people fight blood pressure like it is one dial. Cut the salt. Take the pill. Hope.`)}
     ${p(`After twenty years in the ICU and ER, I can tell you it is not one dial.`)}
@@ -170,7 +170,7 @@ const issue1 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Most people fight blood pressure like it is one dial. Cut the salt. Take the pill. Hope.
 
@@ -205,7 +205,7 @@ const issue2 = {
   subject: 'The salt shaker was never the problem',
   subjectB: 'Where your sodium really comes from',
   preview: 'Less than 15% comes from the shaker. Here is the rest.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`This week: the Sodium corner of the Triangle.`)}
     ${p(`Here is what most diet sheets get wrong. The salt shaker on your table is less than 15% of your daily sodium. The other 85% is hidden in everyday food, printed right on the label. We just do not think to look.`)}
@@ -238,7 +238,7 @@ const issue2 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 This week: the Sodium corner of the Triangle.
 
@@ -279,7 +279,7 @@ const issue3 = {
   subject: 'The corner most heart doctors never check',
   subjectB: 'Sugar pushes your number harder than you think',
   preview: 'Insulin squeezes your vessels for hours after a meal.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`This week: the Sugar corner of the Triangle. This is the one that explains why people who cut their salt for a decade watch the number keep creeping anyway.`)}
     ${bigQuote('Every blood sugar spike raises insulin. And insulin squeezes your vessels.')}
@@ -308,7 +308,7 @@ const issue3 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 This week: the Sugar corner of the Triangle.
 
@@ -347,7 +347,7 @@ const issue4 = {
   subject: 'The corner that ignores your diet',
   subjectB: 'Stress can hold your number up all by itself',
   preview: 'You can eat clean and still run high. Here is why.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`This week: the Stress corner of the Triangle. The one that does not care how clean you eat.`)}
     ${bigQuote('When your body\'s alarm stays on, your vessels stay squeezed.')}
@@ -370,7 +370,7 @@ const issue4 = {
     ${psBox(`Not there yet? Start with the free 90-second quiz and find your loudest corner: <a href="${QUIZ_URL}" style="color:${PALETTE.accentClay};font-weight:600;">take the quiz →</a>`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 This week: the Stress corner of the Triangle. The one that does not care how clean you eat.
 

@@ -87,3 +87,37 @@ export function mondayCallReminder() {
     </p>
   </div>`;
 }
+
+// ─── Block 4: App-launch HERO (top-of-email #1 CTA, launch window only) ─
+// BraveWorks RN app waitlist (bpquiz.com/waitlist). Gated by APP_LAUNCH_ACTIVE
+// so the WHOLE funnel flips on/off with one env var:
+//   APP_LAUNCH_ACTIVE=true  → hero renders atop every email (launch window)
+//   unset / anything else   → renders nothing (evergreen default — dormant)
+// Built dormant on 2026-07-05 so the compliance/price fixes can deploy WITHOUT
+// showing the hero; flip the env var to true in Vercel (+ redeploy) to launch,
+// remove it to revert. Injected at the TOP of each email body/textBody across
+// every sequence so the waitlist is the #1 CTA during launch; the existing
+// Skool/case-review offers stay in place below as secondary.
+export const APP_LAUNCH_ACTIVE = process.env.APP_LAUNCH_ACTIVE === 'true';
+export const APP_WAITLIST_URL = 'https://bpquiz.com/waitlist';
+
+export function appLaunchHero() {
+  if (!APP_LAUNCH_ACTIVE) return '';
+  return `<div style="margin:0 0 30px;padding:26px 26px;background:${PALETTE.accentClay};border-radius:14px;">
+    <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#FFD98A;font-weight:700;margin-bottom:10px;">Coming soon &middot; Early access</div>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:23px;line-height:1.3;color:#FFFFFF;font-weight:600;margin:0 0 12px;">The BraveWorks RN app is almost here.</div>
+    <p style="font-size:15.5px;line-height:1.65;color:#FBECE4;margin:0 0 18px;">Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, walk your daily reset, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.</p>
+    <a href="${APP_WAITLIST_URL}" style="display:inline-block;background:#FFFFFF;color:${PALETTE.accentClay};padding:14px 30px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:0.01em;">Join the early-access waitlist &rarr;</a>
+    <p style="font-size:12.5px;line-height:1.5;color:#FBECE4;margin:14px 0 0;">Free to join. Founding access goes out in waitlist order.</p>
+  </div>`;
+}
+
+export function appLaunchHeroText() {
+  if (!APP_LAUNCH_ACTIVE) return '';
+  return `COMING SOON: THE BRAVEWORKS RN APP
+Everything I teach, now in your pocket. Log your blood pressure in seconds, see which corner of the Triangle (Stress, Sugar, or Sodium) is driving your numbers, walk your daily reset, and tap once to hand your doctor a clean one-page report. I'm opening early access to my email family first, in the order you join.
+Join the early-access waitlist: ${APP_WAITLIST_URL}
+Free to join. Founding access goes out in waitlist order.
+
+`;
+}

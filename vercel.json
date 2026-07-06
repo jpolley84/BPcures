@@ -27,7 +27,7 @@
     },
     {
       "source": "/tea",
-      "destination": "/?utm_source=manychat&utm_medium=comment-dm&utm_campaign=tea",
+      "destination": "/tea/?utm_source=manychat&utm_medium=comment-dm&utm_campaign=tea",
       "permanent": false
     },
     {

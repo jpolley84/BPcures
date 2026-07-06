@@ -30,6 +30,8 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
+import { appLaunchHero, appLaunchHeroText } from './_email-shared.js';
+
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
@@ -179,7 +181,7 @@ const day0 = {
   subject: 'Day 1 starts tomorrow morning',
   subjectB: 'Tonight: 5 minutes. Tomorrow: your first true number.',
   preview: 'Three things to do tonight. Five minutes total.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Earlier today I sent your download links and a note about the Weekly Reset. Keep that one. This one is different. This one is the plan for your first 24 hours.`)}
     ${p(`Most people open a PDF, skim two pages, save it to a folder, and never come back. That's not going to be you.`)}
@@ -205,7 +207,7 @@ const day0 = {
     ${ppsBox(`The Weekly Reset invite from your earlier email is still open. Four live sessions a month with me, Wednesdays at 7 pm ET, first 7 days free. Bring tomorrow's first reading: <a href="${SKOOL_URL}" style="color:${PALETTE.accentClay};">skool.com/braveworksrn/about</a>`)}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Earlier today I sent your download links and a note about the Weekly Reset. Keep that one. This one is different. This one is the plan for your first 24 hours.
 
@@ -242,7 +244,7 @@ const day2 = {
   subject: 'Did you take your first reading?',
   subjectB: 'Your Day 2 number matters more than Day 1',
   preview: 'Two mornings in. The math starts now.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick check. Did you take a reading yesterday morning?`)}
     ${p(`If yes, good. Write today's underneath it. That's the second data point. Two points make a line, and a line is the first thing your doctor will want to see.`)}
@@ -268,7 +270,7 @@ const day2 = {
     })}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Quick check. Did you take a reading yesterday morning?
 
@@ -305,7 +307,7 @@ const day4 = {
   subject: 'Day 4 is the day most quietly quit',
   subjectB: 'Most readers stall here. Don\'t.',
   preview: 'Not because the protocol failed. Because nothing moved yet.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I want to talk about today specifically, because today is the day the math is the cruelest.`)}
     ${p(`Day 1: high excitement. New PDF. New cuff. New numbers.`)}
@@ -337,7 +339,7 @@ const day4 = {
     ${weeklyResetFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I want to talk about today specifically, because today is the day the math is the cruelest.
 
@@ -388,7 +390,7 @@ const day7 = {
   subject: 'The corner your kit didn\'t fully address',
   subjectB: 'What the $27 starter can\'t do alone',
   preview: 'The kit is the map. Your body is the territory.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`One week in. Let me give you the framework behind everything I do on blood pressure, from twenty years in the ICU to the readers I work with now.`)}
     ${p(`I call it the <strong>BP Triangle Method™</strong>, and it's not complicated. It just says one thing:`, { margin: '0 0 28px' })}
@@ -417,7 +419,7 @@ const day7 = {
     ${weeklyResetFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 One week in. Let me give you the framework behind everything I do on blood pressure, from twenty years in the ICU to the readers I work with now.
 
@@ -460,7 +462,7 @@ const day10 = {
   subject: 'I\'d like to put my eyes on your numbers',
   subjectB: 'Your next moves, written for you',
   preview: 'A buyer-only door I want you to know about.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Ten days in. Time to introduce you to something I haven't mentioned yet.`)}
     ${p(`After buyers run the kit for a couple weeks, a small group of them wants more than a PDF can give. They want eyes on their actual log. They want a real answer about which corner of their Triangle is loudest. They want their next moves written for them, not guessed at.`)}
@@ -482,7 +484,7 @@ const day10 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Ten days in. Time to introduce you to something I haven't mentioned yet.
 
@@ -526,7 +528,7 @@ const day13 = {
   subject: 'Patricia worked the wrong corner for four years',
   subjectB: 'The plateau wasn\'t the kit\'s fault',
   preview: 'BEFORE: stuck in the low 140s. AFTER: a different plan entirely.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I want to tell you about Patricia.`)}
     ${p(`(Patricia isn't her real name. I don't use real names in these emails, to protect my buyers. But she's real. The numbers are hers.)`, { margin: '0 0 28px' })}
@@ -558,7 +560,7 @@ const day13 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I want to tell you about Patricia.
 
@@ -613,7 +615,7 @@ const day15 = {
   subject: 'What I look for in 21 mornings of readings',
   subjectB: 'How I write your next moves',
   preview: 'The four patterns your log shows me before I write a word.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`After Day 13, a few of you wrote back with the same question in different words: what do you actually DO when you build someone's plan?`)}
     ${p(`Fair question. Here's the honest answer, piece by piece.`, { margin: '0 0 28px' })}
@@ -641,7 +643,7 @@ const day15 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 After Day 13, a few of you wrote back with the same question in different words: what do you actually DO when you build someone's plan?
 
@@ -685,7 +687,7 @@ const day17 = {
   subject: 'Four honest answers about the $297 case review',
   subjectB: 'Including whether the $27 group is enough',
   preview: 'The four objections I hear, answered honestly.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Let me answer the four things that are probably stopping you. Not with sales talk, with the real answer.`, { margin: '0 0 28px' })}
     ${clayBlock(
@@ -721,7 +723,7 @@ const day17 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Let me answer the four things that are probably stopping you. Not with sales talk, with the real answer.
 
@@ -772,7 +774,7 @@ const day19 = {
   subject: 'Should you do the case review this month, or wait?',
   subjectB: 'A sorting email, not a countdown',
   preview: 'No fake scarcity. Just an honest sort.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I'm not going to run a countdown on you. "Three seats left, two seats left, one seat." That's marketing theater and most of my readers see through it.`)}
     ${p(`So this email is a sorting tool instead. Read both lists. Be honest with yourself about which one you're on.`, { margin: '0 0 28px' })}
@@ -799,7 +801,7 @@ const day19 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I'm not going to run a countdown on you. "Three seats left, two seats left, one seat." That's marketing theater and most of my readers see through it.
 
@@ -854,7 +856,7 @@ const day20 = {
   subject: 'A smaller door, less than a copay',
   subjectB: 'Not a plan with your name on it. A seat in the room.',
   preview: 'If the case review is more than this season needs, here is the lighter step.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I have spent the last couple weeks showing you the case review. If $297 wasn't this season's move, I get it, and this is not another push on it. But I don't want you walking away with just the kit and a closed door. So here is the lighter step, and it is open any day you want it.`, { margin: '0 0 28px' })}
     ${bigQuote('A standing seat in the room.')}
@@ -871,7 +873,7 @@ const day20 = {
     ${sprintFooter()}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I have spent the last couple weeks showing you the case review. If $297 wasn't this season's move, I get it, and this is not another push on it. But I don't want you walking away with just the kit and a closed door. So here is the lighter step, and it is open any day you want it.
 
@@ -905,7 +907,7 @@ const day21 = {
   subject: 'Last email I\'ll send about this',
   subjectB: 'If not now, that\'s a real answer',
   preview: 'I\'ll quiet down after this. Promise.',
-  htmlBody: ({ firstName }) => `
+  htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`This is the last email I send you about the case review.`)}
     ${p(`Three weeks ago you bought a $27 or $47 kit. You've gotten nine emails from me since. Protocol notes, the Triangle (Stress, Sugar, Sodium), Patricia's story, the how-I-write-your-moves walkthrough, the objections.`)}
@@ -937,7 +939,7 @@ const day21 = {
     })}
     ${youtubeLine()}
   `,
-  textBody: ({ firstName }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 This is the last email I send you about the case review.
 

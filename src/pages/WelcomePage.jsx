@@ -49,7 +49,7 @@ import {
   MODULES,
 } from '../../api/_kit-manifest.js';
 import { SITE_URL } from '../lib/loadEnv';
-import { upgradeFor } from '../data/upgradeOffers';
+import { upgradeFor, CALL_97_OFFER } from '../data/upgradeOffers';
 import { track } from '../utils/analytics';
 
 // The three valid tier keys this page understands. Anything else normalizes to a
@@ -58,7 +58,10 @@ const VALID_TIERS = new Set(['corner', 'top2', 'complete']);
 const VALID_CORNERS_SET = new Set(['stress', 'sugar', 'sodium']);
 
 // Tier -> numeric level, so we can compare "owned" vs "higher" cleanly.
-const TIER_LEVEL = { corner: 1, top2: 2, complete: 3 };
+// 2026-07 ladder: TWO kit levels (corner / complete). Legacy top2 owners are
+// treated as level 1 for display; their delivered files came by email, and they
+// can complete the Triangle for the same $30 difference.
+const TIER_LEVEL = { corner: 1, top2: 1, complete: 2 };
 
 // Skool community trial link (env seam, same var the emails use). EVERY tier's
 // kit includes the 7-day trial. When it is unset we omit the card rather than
@@ -211,9 +214,12 @@ const FINALE = MODULES['freedom-finale'];
 // Build the per-LEVEL content each tier ADDS, so the stacked sections read as a
 // good-better-best ladder (each section shows only its increment). Resolution
 // mirrors the manifest exactly (see braveworks-bp original for the full note).
+// 2026-07 ladder: TWO levels. Level 1 = the buyer's loudest corner (the $17
+// Corner Reset). Level 2 = EVERYTHING else in the complete kit: the other two
+// corners, the Freedom Finale, and every remaining bonus, unlocked together for
+// the $30 difference (total $47, the complete price).
 function buildLevels(ordered, knewCorner) {
   const cornerBonuses = bonusesForTier('corner');
-  const top2Bonuses = bonusesForTier('top2');
   const completeBonuses = bonusesForTier('complete');
   const bonusDelta = (higher, lower) => {
     const lowerFiles = new Set(lower.map((b) => b.file));
@@ -235,22 +241,13 @@ function buildLevels(ordered, knewCorner) {
       bonuses: cornerBonuses,
     },
     {
-      tier: 'top2',
+      tier: 'complete',
       level: 2,
       teaser: knewCorner
-        ? `Your ${cornerLabel(c2)} corner, walked the same way, so the corner you just calmed stops getting tugged back.`
-        : 'Your second corner, walked the same way, so the corner you just calmed stops getting tugged back.',
-      modules: cornerSet(c2),
-      bonuses: bonusDelta(top2Bonuses, cornerBonuses),
-    },
-    {
-      tier: 'complete',
-      level: 3,
-      teaser: knewCorner
-        ? `Your ${cornerLabel(c3)} corner plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.`
-        : 'Your third corner plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.',
-      modules: [...cornerSet(c3), FINALE].filter(Boolean),
-      bonuses: bonusDelta(completeBonuses, top2Bonuses),
+        ? `Your ${cornerLabel(c2)} and ${cornerLabel(c3)} corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.`
+        : 'Your other two corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.',
+      modules: [...cornerSet(c2), ...cornerSet(c3), FINALE].filter(Boolean),
+      bonuses: bonusDelta(completeBonuses, cornerBonuses),
     },
   ];
 }
@@ -258,8 +255,7 @@ function buildLevels(ordered, knewCorner) {
 // Short, human heading for each level's section.
 const LEVEL_HEADING = {
   corner: 'Your first corner',
-  top2: 'Your second corner',
-  complete: 'Your third corner, and the finish',
+  complete: 'The rest of your Triangle',
 };
 
 export default function WelcomePage() {
@@ -441,6 +437,36 @@ export default function WelcomePage() {
         </div>
       )}
 
+      {/* ---- $97 1:1 call with Joel (the upsell from the $47 complete kit) ---- */}
+      {isComplete && (
+        <div style={{ ...CARD, borderTop: '4px solid var(--clay, #B85A36)' }}>
+          <span style={KICKER}>Go deeper</span>
+          <h2 style={{ fontSize: '1.3rem', margin: '0.5rem 0 0.5rem', color: 'var(--ink, #121110)' }}>
+            Want Joel on YOUR numbers? Book a 1:1 call.
+          </h2>
+          <p style={{ margin: '0 0 0.9rem', color: 'var(--ink-soft, #2B2824)', fontSize: 'var(--step--1, 0.82rem)', lineHeight: 1.6 }}>
+            You and Joel, one on one, walking your readings, your medication list, and your Triangle
+            together, so you leave knowing exactly what to work first. You book your time the moment
+            you pay, straight onto his calendar. Education alongside your doctor, never instead of.
+          </p>
+          <a
+            href={CALL_97_OFFER.paymentLink}
+            style={BTN_CLAY}
+            onClick={() =>
+              track('offer_cta_click', {
+                tier: 'call-97',
+                from: ownedTier,
+                source: 'welcome_call_offer',
+                price: CALL_97_OFFER.priceLabel,
+              })
+            }
+          >
+            Book my 1:1 call, {CALL_97_OFFER.priceLabel}
+            <ArrowRight size={17} strokeWidth={2} />
+          </a>
+        </div>
+      )}
+
       {/* ---- Doctor-partnership note (compliance spine) ---- */}
       <div
         style={{
@@ -459,6 +485,25 @@ export default function WelcomePage() {
           calls about your medication. This is education to stand alongside your care, never instead of
           it, and you never change a prescription on your own.
         </p>
+      </div>
+
+      {/* ---- BraveWorks RN app waitlist (founder perks) ---- */}
+      <div style={{ ...CARD, borderTop: '4px solid var(--sage, #4A5D4E)', textAlign: 'center' }}>
+        <span style={KICKER}>Coming soon</span>
+        <h2 style={{ fontSize: '1.25rem', margin: '0.5rem 0 0.4rem', color: 'var(--ink, #121110)' }}>
+          The BraveWorks RN app is coming.
+        </h2>
+        <p style={{ margin: '0 auto 0.9rem', maxWidth: '46ch', color: 'var(--ink-soft, #2B2824)', fontSize: 'var(--step--1, 0.82rem)', lineHeight: 1.6 }}>
+          Your Triangle in your pocket. Want founder perks when it launches? Join the waitlist, it takes ten seconds.
+        </p>
+        <Link
+          to="/waitlist"
+          style={{ ...BTN_CLAY, alignSelf: 'center' }}
+          onClick={() => track('waitlist_cta_click', { source: 'welcome_page' })}
+        >
+          Join the waitlist
+          <ArrowRight size={17} strokeWidth={2} />
+        </Link>
       </div>
 
       {/* ---- Single soft, optional mention of the case review (no hard sell) ---- */}

@@ -17,7 +17,7 @@
 // Days 1-15: no upsellFooter pitch. Days 18-30: invite to COHORT2_URL only.
 // ─────────────────────────────────────────────────────────────────────
 
-import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch } from './_email-shared.js';
+import { youtubePrimaryCTA, skoolTiersFooter, premiumVipBodyPitch, appLaunchHero, appLaunchHeroText } from './_email-shared.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
@@ -126,7 +126,7 @@ const day0 = {
   subject: 'Welcome to the BP Triangle Challenge',
   subjectB: 'You\'re in. Here\'s Wednesday\'s link.',
   preview: 'Your Skool room, your Wednesday call, your bonus kits, all inside.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Welcome to the BP Triangle Challenge. You're officially in the cohort. I want to say this directly: <strong style="color:${PALETTE.text};">you didn't buy a PDF. You bought a seat in a room with me for thirty days.</strong>`)}
     ${p(`I want you to know what's about to happen, and what I need from you to make it worth the $97 you spent.`, { margin: '0 0 28px' })}
@@ -151,7 +151,7 @@ const day0 = {
     ${psBox(`The single most important thing you can do this week is take a baseline reading. Morning, sitting, two minutes of quiet first, both arms if you can. Write it down. Day 30 you'll thank yourself for having a clean before-picture.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Welcome to the BP Triangle Challenge. You're officially in the cohort. I want to say this directly: you didn't buy a PDF. You bought a seat in a room with me for thirty days.
 
@@ -195,7 +195,7 @@ const day3 = {
   subject: 'Stress Pressure, Chapter 1 of your Challenge',
   subjectB: 'Wednesday at 7 PM EST: first live call',
   preview: 'The corner most cardiologists never measure. Your first walkthrough.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Three days in. Chapter 1 of the Challenge starts today: <strong style="color:${PALETTE.text};">Stress Pressure</strong>, the cortisol corner of the Triangle.`)}
     ${p(`I'm starting here on purpose. Most boomer-aged women I work with assume their loudest corner is Sodium, they hear "high blood pressure" and think "cut the salt, more lisinopril." But when I dig into a full history, the lead domino is almost always Stress. And cortisol is the driver most cardiologists don't even measure.`, { margin: '0 0 28px' })}
@@ -223,7 +223,7 @@ const day3 = {
     ${psBox(`If you have not started ashwagandha yet, the Skool VIP room has a pinned thread with the exact brand I recommend, the dose schedule, and where to buy it for under $20/month. Look for "Ashwagandha, KSM-66, exact brand" at the top of the channel.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Three days in. Chapter 1 of the Challenge starts today: STRESS PRESSURE, the cortisol corner of the Triangle.
 
@@ -276,7 +276,7 @@ const day6 = {
   subject: 'Sugar Pressure, Chapter 2',
   subjectB: 'The corner cardiologists never measure',
   preview: 'Why cutting your salt didn\'t move your numbers.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Chapter 1 walked the Stress Pressure corner. Chapter 2 of your Challenge starts now: <strong style="color:${PALETTE.text};">Sugar Pressure</strong>, the corner cardiologists never measure.`)}
     ${p(`This is the corner I almost missed in my own practice for years. The one that explains why people who "cut their salt" for a decade watch their BP keep creeping up anyway.`, { margin: '0 0 28px' })}
@@ -307,7 +307,7 @@ const day6 = {
     ${psBox(`Pinned in Skool today: a one-page printable "Anti-BP Plate" template. Print it. Tape it to the inside of the cabinet you open at meal time. The plate becomes automatic in about 9 days, but you have to see it to build the habit.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Chapter 1 walked the Stress Pressure corner. Chapter 2 of your Challenge starts now: SUGAR PRESSURE, the corner cardiologists never measure.
 
@@ -367,7 +367,7 @@ const day9 = {
   subject: 'Sodium, Chapter 3 + your Cortisol Kit',
   subjectB: 'The held water you can\'t see but can feel',
   preview: 'Hibiscus, garlic, magnesium, and your first bonus is unlocked.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Stress on Day 3. Sugar on Day 6. Today, <strong style="color:${PALETTE.text};">Chapter 3: Sodium</strong>. The held-water corner. The water sitting in the line.`)}
     ${p(`Plus your first bonus is unlocked at the bottom of this email. The <strong style="color:${PALETTE.text};">10-Day Cortisol Reset Kit</strong> is ready for download, the same Cortisol Reset Kit I include in the deeper Sprint program.`, { margin: '0 0 28px' })}
@@ -392,7 +392,7 @@ const day9 = {
     ${psBox(`Wednesday's call is in days. Halfway through the cohort, the question that comes up most is "should I be tapering my meds yet?" Short answer: usually no, not until Day 30+ with sustained readings. Long answer: bring it to Wednesday and we'll work through your specific case live.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Stress on Day 3. Sugar on Day 6. Today, CHAPTER 3: SODIUM. The held-water corner. The water sitting in the line.
 
@@ -445,7 +445,7 @@ const day12 = {
   subject: 'Your Blood Sugar Kit is unlocked',
   subjectB: 'Wednesday call: live BP demo with Joel',
   preview: 'Bonus #2, and the question to bring to Wednesday\'s call.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Bonus #2 is unlocked. The <strong style="color:${PALETTE.text};">Blood Sugar 10-Day Reset</strong> is ready for download, your companion guide to Chapter 2 (Sugar Pressure) from earlier this week.`, { margin: '0 0 28px' })}
     ${bigQuote('Pair it with what you already started.')}
@@ -472,7 +472,7 @@ const day12 = {
     ${psBox(`If your readings are NOT moving by Day 12, that's not a failure, that's data. The most common reasons: (1) ashwagandha not started yet, (2) bedtime still after 11 PM, (3) hibiscus is "raspberry hibiscus" tea (mostly other ingredients). Send me a reply with where you actually are on these three and I'll point you at the right Skool thread.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Bonus #2 is unlocked. The Blood Sugar 10-Day Reset is ready for download, your companion guide to Chapter 2 (Sugar Pressure) from earlier this week.
 
@@ -525,7 +525,7 @@ const day15 = {
   subject: 'Halfway through. How\'s the cuff?',
   subjectB: 'What\'s working, and what\'s next',
   preview: 'Day 15 check-in: the data is starting to tell a story.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Day 15. Halfway through your Challenge. I want to slow down today and ask the question that matters more than any new protocol:`)}
     ${bigQuote('How\'s the cuff?')}
@@ -559,7 +559,7 @@ const day15 = {
     ${psBox(`If your numbers HAVE NOT moved at Day 15, that means one of three things. (1) You haven't fully run the protocol yet, be honest with yourself, are you on ashwagandha + hibiscus + the walk-after-meal? (2) There's a hidden cause we haven't found yet, sleep apnea is the big one, screened for in 40-80% of resistant hypertension. (3) Your loudest corner is actually Sodium, and a line that has been overfull for years takes 28+ days to fully drain. Tell me on Wednesday and we'll work through which it is.`)}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Day 15. Halfway through your Challenge. I want to slow down today and ask the question that matters more than any new protocol:
 
@@ -622,7 +622,7 @@ const day18 = {
   subject: 'After the Challenge: there\'s a deeper room',
   subjectB: 'Cohort 2 opens to graduates first',
   preview: 'The 90-day Sprint, what it is, who it\'s for, why it exists.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I told you on Day 15 there was a deeper room. Today I want to tell you what's in it, and who it's for.`)}
     ${p(`This is the longest email I'll send this month. Read it twice if you have to. The next two weeks of this Challenge change a lot depending on whether this resonates with you.`, { margin: '0 0 28px' })}
@@ -662,7 +662,7 @@ const day18 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 I told you on Day 15 there was a deeper room. Today I want to tell you what's in it, and who it's for.
 
@@ -733,7 +733,7 @@ const day22 = {
   subject: 'Consandra\'s Wednesday, a peek inside 90-day work',
   subjectB: 'What Sprint clients do on Day 30',
   preview: 'The Wednesday call. The tracker. The doctor visit prep.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 90-day Cohort 2 isn't an abstraction for you anymore.`)}
     ${p(`This is the BEFORE-AFTER-BRIDGE that most Challenge graduates need to see before the picture clicks.`, { margin: '0 0 28px' })}
@@ -777,7 +777,7 @@ const day22 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 90-day Cohort 2 isn't an abstraction for you anymore.
 
@@ -849,7 +849,7 @@ const day26 = {
   subject: 'Cohort 2: what it is, what it\'s not',
   subjectB: 'The full picture, no deadline games',
   preview: 'The full mechanism. The price. The guarantee.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Day 26 of your Challenge. Four days until you graduate. Today I'm going to walk you through the full mechanism of Cohort 2, what's in it, what's not in it, what it costs, and what the guarantee is.`)}
     ${p(`If you've been waiting for the full picture before deciding whether to apply, this is the email.`, { margin: '0 0 28px' })}
@@ -897,7 +897,7 @@ const day26 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Day 26 of your Challenge. Four days until you graduate. Today I'm going to walk you through the full mechanism of Cohort 2, what's in it, what's not in it, what it costs, and what the guarantee is.
 
@@ -967,7 +967,7 @@ const day30 = {
   subject: 'Day 30, you made it',
   subjectB: 'Your Cohort 2 invitation',
   preview: 'Graduation. The two doors from here. What\'s next either way.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Day 30. You made it. <strong style="color:${PALETTE.text};">Welcome to the graduate side of the BP Triangle Challenge.</strong>`)}
     ${p(`Take a second with that. Thirty days ago you were a name on a Stripe receipt and a baseline reading on a piece of paper. Today you're a woman who has walked her own Triangle for a full month, taken the readings, layered the protocols, sat with the bonus content, and shown up. <strong style="color:${PALETTE.text};">That's the work. The number on the cuff is the receipt.</strong>`, { margin: '0 0 28px' })}
@@ -1010,7 +1010,7 @@ const day30 = {
     })}
     ${footerSecondaryCTAs()}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Day 30. You made it. WELCOME TO THE GRADUATE SIDE OF THE BP TRIANGLE CHALLENGE.
 

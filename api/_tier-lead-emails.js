@@ -19,7 +19,7 @@
 //
 // Author: Joel Polley, RN, BraveWorks Health.
 
-import { youtubePrimaryCTA, skoolTiersFooter } from './_email-shared.js';
+import { youtubePrimaryCTA, skoolTiersFooter, appLaunchHero, appLaunchHeroText } from './_email-shared.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
@@ -158,7 +158,7 @@ const day0 = {
   subject: 'Three faucets, one sink',
   subjectB: 'Meet the person you are 90 days from now',
   preview: 'Why your BP number is really three numbers wearing one coat.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`You just told me your blood pressure is one of the things on your mind. That quiet decision to put your email in mattered. Most people scroll past. You stopped.`)}
     ${p(`I'm Joel. RN for 20 years, most of it in ICU and emergency. Then I crossed over and trained as a naturopath. I run BraveWorks now, and the people I work with are mostly women 50 to 70, with a strong share of men in the same window, all on at least one BP medication, all tired of being told "it's just genetic."`)}
@@ -186,7 +186,7 @@ const day0 = {
     ${psBox(`Hit reply and tell me which faucet feels loudest in you right now: Stress, Sugar, or Sodium. One word is enough. I read every single reply, and it helps me know what to send you next.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 You just told me your blood pressure is on your mind. That quiet decision to put your email in mattered. Most people scroll past. You stopped.
 
@@ -233,7 +233,7 @@ const day1 = {
   subject: 'A garden hose with too much water in it',
   subjectB: 'The first faucet: sodium and the water in the line',
   preview: 'Why I left the ICU, and what the water in your vessels is doing right now.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Yesterday I showed you the three faucets. Today we open the first one: <strong>Sodium</strong>, the water in the line. But first, a quick story, because it's the reason I do this work at all.`)}
     ${p(`I spent 20 years as a registered nurse. Most of it in ICU and emergency. I was the person standing over the bed when someone came in at 220 over 130 with a stroke already starting in the brainstem.`)}
@@ -254,7 +254,7 @@ const day1 = {
     ${psBox(`If you've ever had a discharge story like the one I described, yours, or someone you love, hit reply and tell me one line. I read every email, and they shape what I send next.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Yesterday: the three faucets. Today we open the first one: SODIUM, the water in the line. But first, a quick story, because it's why I do this at all.
 
@@ -301,7 +301,7 @@ const day3 = {
   subject: 'Drain the line, $3 at the store',
   subjectB: 'The study: 7 points lower in 6 weeks',
   preview: 'A falsifiable claim: 7.2 points, six weeks, one red box.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Two days ago: the garden hose with too much water forced through it. Today: how you start draining the line, and the proof it works.`)}
     ${p(`Think of two garden hoses. One has the spigot cranked wide open, swollen and taut with too much water. The other runs at an easy flow. Same hose, but only the swollen one strains and bulges. Your vessels carry the same load. When your kidneys let go of held sodium, the water in the line eases, the strain comes off, and the pressure drops.`)}
@@ -326,7 +326,7 @@ const day3 = {
     ${psBox(`If you pick up a box of hibiscus, snap a photo at the store and reply with it. I will cheer for you. Small wins are how big numbers move. And if you already grabbed the $27 Starter Kit, the Companion is the research shelf behind it. They are built to sit side by side.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Two days ago: the garden hose with too much water forced through it. Today: how you start draining the line, and the proof.
 
@@ -371,7 +371,7 @@ const day5 = {
   subject: 'The faucet you swear you don\'t have',
   subjectB: 'Syrup doesn\'t move like water',
   preview: 'You don\'t need to be diabetic for sugar to push your number up.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`We've spent four days on the pipes. Today we open the second faucet, and it's the one almost everyone tells me they don't have.`)}
     ${bigQuote('Sugar Pressure. Insulin.')}
@@ -394,7 +394,7 @@ const day5 = {
     ${psBox(`Quick gut check: do you crave something starchy or sweet around 3 PM most days? Hit reply with just "yes" or "no." It's the single fastest tell for Sugar Pressure, and I read every reply.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Four days on the pipes. Today, the second faucet, the one almost everyone swears they don't have.
 
@@ -441,7 +441,7 @@ const day7 = {
   subject: 'What Linda did in 11 days',
   subjectB: 'Get off the blood-sugar rollercoaster',
   preview: 'A retired schoolteacher, her cuff log, and the question her cardiologist asked.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Two days ago I told you about the syrup in the line. Today I want you to feel the second half of Sugar Pressure, the <em>swing</em>, and then meet a woman who got off it.`)}
     ${bigQuote('The blood-sugar rollercoaster.')}
@@ -469,7 +469,7 @@ const day7 = {
     ${psBox(`If your number is anywhere near Linda's starting point and you've been told "this is as good as it gets," hit reply and tell me what your number is today. I won't pitch you in the reply. I just want to know who's reading.`)}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Two days ago: the syrup in the line. Today, the second half of Sugar Pressure: the SWING. Then a woman who got off it.
 
@@ -519,7 +519,7 @@ const day10 = {
   subject: 'Your foot is stuck on the gas',
   subjectB: 'The silent faucet nobody measures',
   preview: 'The third Pressure runs even while you sleep. Here is how to ease off.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`We've turned down the pipes. We've thinned the syrup. Today we reach the third faucet, the quiet one, the one almost no cardiologist measures: <strong>Stress Pressure</strong>. Cortisol.`)}
     ${bigQuote('Imagine your foot stuck on the gas pedal.')}
@@ -553,7 +553,7 @@ const day10 = {
     }) : ''}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 We turned down the pipes. We thinned the syrup. Today, the third faucet, the quiet one almost no cardiologist measures: STRESS PRESSURE. Cortisol.
 
@@ -595,7 +595,7 @@ const day13 = {
   subject: 'The dimmer switch nobody told you about',
   subjectB: 'Why your BP shifted right around menopause',
   preview: 'Estrogen held the dimmer on cortisol. It\'s fading. Here\'s what helps.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Three days ago I showed you the foot stuck on the gas pedal. Today I have to tell you the part of the story that's specifically about being a woman in your second half of life, because it changes everything about how you read your own numbers.`)}
     ${p(`Think back. So many women tell me the same thing: <em>"My pressure was fine my whole life. Then somewhere around 50, it just... started creeping up."</em> They assume it's age. It's not really age. It's a switch that quietly turned off.`)}
@@ -627,7 +627,7 @@ const day13 = {
     }) : ''}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Three days ago: the foot stuck on the gas. Today, the part of the story that's specifically about being a woman in your second half of life.
 
@@ -673,7 +673,7 @@ const day16 = {
   subject: 'Driving blind vs. driving with GPS',
   subjectB: 'Your first week in the live room is free',
   preview: 'Four live sessions a month, Wednesdays at 7 pm ET. Day one costs nothing.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Over sixteen days you've learned the whole map. The pipes. The syrup. The gas pedal. The dimmer switch. You could turn down all three faucets starting tomorrow, and many of you will.`)}
     ${p(`But I'd be a poor nurse if I didn't tell you the honest truth about the fourth corner, the one that isn't a faucet at all.`)}
@@ -701,7 +701,7 @@ const day16 = {
     })}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Sixteen days, and you've learned the whole map. The pipes. The syrup. The gas pedal. The dimmer switch. You could turn down all three faucets tomorrow, and many of you will.
 
@@ -748,7 +748,7 @@ const day19 = {
   subject: 'The bill you\'re already paying',
   subjectB: 'I write your 30 days. You walk them with me.',
   preview: 'One flat $297, five readers a month, a plan with your name on it.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Three days ago I told you about the one thing I make that has your name on it. Before I show it to you, I want to do some honest math, because I think you are doing the wrong arithmetic, and it is costing you more than you realize.`)}
     ${p(`When I say a number like $297, the mind hears a cost and flinches. But that number is not being compared to nothing. It is being compared to the bill you are already paying, month after month, quietly, without ever getting a receipt.`)}
@@ -782,7 +782,7 @@ const day19 = {
     })}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Three days ago I told you about the one thing I make that has your name on it. Before I show it to you, some honest math, because I think you are doing the wrong arithmetic, and it is costing you more than you realize.
 
@@ -827,7 +827,7 @@ const day21 = {
   subject: 'A fork in the road',
   subjectB: 'The door stays open',
   preview: 'Twenty-one days of the map. Now there are two roads. Both are okay.',
-  htmlBody: ({ firstName, unsubUrl }) => `
+  htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Twenty-one days. We've walked the whole map together, and I want to say thank you before anything else. You read. You stayed. That's a quiet kind of bravery, and it's exactly what BraveWorks is named for.`)}
     ${bigQuote('Stand with me at a fork in the road.')}
@@ -859,7 +859,7 @@ const day21 = {
     })}
     ${footerSecondaryCTAs(unsubUrl)}
   `,
-  textBody: ({ firstName, unsubUrl }) => `Hi ${firstName || 'there'},
+  textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
 Twenty-one days. We've walked the whole map together, and thank you, before anything else. You read. You stayed. That's a quiet kind of bravery, exactly what BraveWorks is named for.
 
