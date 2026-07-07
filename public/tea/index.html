@@ -7,9 +7,7 @@
 <meta name="description" content="A caffeine-free ruby tea of hibiscus & hawthorn — Anchor 1 of The BP Triangle Method. Blended by a nurse to support healthy blood pressure, alongside your doctor's care. Never instead of it.">
 <link rel="canonical" href="https://bpquiz.com/tea">
 <meta property="og:title" content="SVUTU Steady — The BP Triangle Tea">
-<meta property="og:description" content="Hibiscus & hawthorn, steeped slow. Anchor 1 of The BP Triangle Method. Blended by a nurse.">
-<meta property="og:image" content="https://images.unsplash.com/photo-1563636680-28d36aeb83a4?q=80&w=1200&auto=format&fit=crop">
-<meta property="og:url" content="https://bpquiz.com/tea">
+<meta property="og:description" content="Hibiscus & hawthorn, steeped slow. Anchor 1 of The BP Triangle Method. Blended by a nurse."><meta property="og:url" content="https://bpquiz.com/tea">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
 
@@ -60,6 +58,11 @@
   .thumbs .thumb.on{ border-color:var(--ruby);}
   .thumbs .ph{ flex:1 1 calc(25% - 8px); min-width:70px; aspect-ratio:1; font-size:10px;}
   .gallery .note{ font-size:11px; color:var(--muted); font-style:italic; margin-top:8px; text-align:center;}
+  /* Image-free hero brand panel (the Triangle mark stands in for product photography until real shots exist) */
+  .herobrand{ aspect-ratio:4/5; border-radius:12px; background:linear-gradient(160deg,var(--sand),var(--cream)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px;}
+  .herobrand .bp-tri{ width:210px; height:auto;}
+  .herobrand .hbcap{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:27px; color:var(--ink); margin-top:20px;}
+  .herobrand .hbsub{ font-size:13.5px; color:var(--brown); max-width:280px; margin-top:8px; line-height:1.55;}
 
   .buyhead .eyebrow{ font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:var(--sage-deep); font-weight:600; margin-bottom:8px;}
   .buyhead h1{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:50px; line-height:1.02; color:var(--ink); margin-bottom:6px;}
@@ -368,13 +371,10 @@
 
 <!-- ══════════════════════════════════════════════════════════════════
   SVUTU STEADY — bpquiz.com/tea
-  Photos are STOCK PLACEHOLDERS (Unsplash) — swap for real product
-  photography before paid traffic. [FILL] marks = unproven proof that
-  must stay hidden/placeholder until real (house rule).
   Payment links are LIVE Stripe links (funnel:svutu-tea metadata).
 ═══════════════════════════════════════════════════════════════════ -->
 
-<div class="announce">Free shipping over $50 &nbsp;·&nbsp; <b>Blended by a nurse. Checked by another.</b> &nbsp;·&nbsp; 60-day love-your-first-cup guarantee</div>
+<div class="announce">Free shipping over $50 &nbsp;·&nbsp; <b>Blended by a nurse. Checked by another.</b> &nbsp;·&nbsp; 60-day money-back guarantee</div>
 
 <header>
   <div class="wrap navbar">
@@ -395,29 +395,24 @@
 <!-- ============ HERO STOREFRONT ============ -->
 <section class="hero" id="buy">
   <div class="wrap heromain">
-    <div class="gallery">
-      <div class="mainimg"><img class="photo" id="mainphoto" src="https://images.unsplash.com/photo-1563636680-28d36aeb83a4?q=80&w=900&auto=format&fit=crop" alt="Ruby-red hibiscus tea in a white ceramic cup"></div>
-      <div class="thumbs">
-        <button class="thumb on" data-src="https://images.unsplash.com/photo-1563636680-28d36aeb83a4?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1563636680-28d36aeb83a4?q=80&w=300&auto=format&fit=crop" alt="Ruby brewed cup"></button>
-        <button class="thumb" data-src="https://images.unsplash.com/photo-1602676329820-7a1fa9f5b1ed?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1602676329820-7a1fa9f5b1ed?q=80&w=300&auto=format&fit=crop" alt="Dried ruby hibiscus"></button>
-        <button class="thumb" data-src="https://images.unsplash.com/photo-1653937855510-ec3fd2036d98?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1653937855510-ec3fd2036d98?q=80&w=300&auto=format&fit=crop" alt="The loose blend"></button>
-        <button class="thumb" data-src="https://images.unsplash.com/photo-1654922704274-cd34f165c5e7?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1654922704274-cd34f165c5e7?q=80&w=300&auto=format&fit=crop" alt="Iced ruby tea in glass"></button>
-        <button class="thumb" data-src="https://images.unsplash.com/photo-1521136492500-e18f107709f7?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1521136492500-e18f107709f7?q=80&w=300&auto=format&fit=crop" alt="Steeping tools, brew close-up"></button>
-        <button class="thumb" data-src="https://images.unsplash.com/photo-1594136604897-29f7e564db27?q=80&w=900&auto=format&fit=crop"><img class="photo" src="https://images.unsplash.com/photo-1594136604897-29f7e564db27?q=80&w=300&auto=format&fit=crop" alt="The evening cup"></button>
-        <div class="ph"><span>[FILL image — "what's in every pouch" ingredient-panel graphic: amounts &amp; origins]</span></div>
-      </div>
-      <div class="note">Stock photos shown as placeholders — real pouch &amp; brew photography to come.</div>
+    <div class="herobrand">
+      <svg class="bp-tri" viewBox="0 0 200 174" width="210" height="183" role="img" aria-label="The BP Triangle: Stress, Sugar, and Sodium">
+        <polygon points="100,28 36,140 164,140"></polygon>
+        <circle class="tri-dot d1" cx="100" cy="28" r="4.5" fill="var(--gold)"></circle>
+        <circle class="tri-dot d2" cx="36" cy="140" r="4.5" fill="var(--sage-deep)"></circle>
+        <circle class="tri-dot d3" cx="164" cy="140" r="4.5" fill="var(--ruby)"></circle>
+        <text class="tri-lab" x="100" y="16" text-anchor="middle">Sodium</text>
+        <text class="tri-lab" x="22" y="158" text-anchor="middle">Stress</text>
+        <text class="tri-lab" x="178" y="158" text-anchor="middle">Sugar</text>
+      </svg>
+      <div class="hbcap">The BP Triangle Tea</div>
+      <div class="hbsub">Hibiscus &amp; hawthorn, steeped slow. Anchor 1 of The BP Triangle Method.</div>
     </div>
 
     <div class="buyhead">
       <div class="eyebrow">N° 01 · Caffeine-free herbal tea · The Sodium-corner cup</div>
       <h1>SVUTU <span class="i">Steady</span></h1>
       <p class="whatis">A daily ruby tea of eight whole botanicals, led by <b>hibiscus &amp; hawthorn</b> — the two herbs at the heart of the Sodium corner of <a href="#triangle" style="color:var(--ruby); font-weight:500;">The BP Triangle Method™</a>. Blended by a nurse to support healthy blood pressure, alongside your doctor's care.</p>
-      <div class="stars">
-        <!-- [FILL — restore star glyphs + "Rated #.# by our first ## customers" ONLY once real reviews exist: <span class="s">★★★★★</span> ] -->
-        <span class="fill">[FILL — "Rated #.# by our first ## customers" — stars stay hidden until real reviews exist]</span>
-      </div>
-
       <div class="claimblock">
         <div class="chead">In every cup — herbs researchers have studied for:†</div>
         <ul class="benefits">
@@ -432,40 +427,32 @@
         <div class="foot">†Refers to published research on the herbs — see <a href="#science">The Science, Simply</a> below. Steady is a food, not a medicine, and it joins your doctor's plan — it never replaces it.</div>
       </div>
 
-      <div class="herowhisper"><span class="fill">[FILL — one real sensory/ritual customer quote, e.g. "the 4 p.m. glass replaced my second coffee" — hidden until a verified review exists]</span></div>
-
       <div class="tiers" id="tierbox">
-        <!-- Tier 1: 1-Week entry ($17). FILL NOTE for Joel: fill this starter pouch to
-             ~25-30g so "one honest week" is true at the everyday 1-2 cups/day rhythm
-             (the same rhythm that makes the 100g pouch a month). Stripe product name
-             updated to "Steady — 1-Week Supply". -->
+        <!-- Tier 1 (top, pre-selected): 90-Day Supply, 3 pouches, $120 — the complete-transformation
+             best value. 3 pouches ~= 3 months = the full studied window (hibiscus 6wk, hawthorn to 16wk). -->
+        <div class="tier sel" data-price="120" data-label="90-Day Supply" data-cta="Add to Cart — $120" data-link="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x" data-pay="" data-ship="Ships free — and it covers the full window the studies actually ran.">
+          <span class="flag">Best value · your complete transformation</span>
+          <span class="radio"></span>
+          <span class="info"><span class="tname">90-Day Supply · 3 pouches</span><span class="tsub">The full studied window — the 3 months the research measured · ships free</span></span>
+          <span class="tprice"><span class="was">$144</span><span class="now">$120</span><span class="percup">$40/pouch · ~$0.80 a cup</span></span>
+        </div>
+        <!-- Tier 2: 1-Month one-time ($48). -->
+        <div class="tier" data-price="48" data-label="1-Month Supply" data-cta="Add to Cart — $48" data-link="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z" data-pay="" data-ship="You're $2 shy of free shipping — add the 1-week starter ($17) and it ships free.">
+          <span class="radio"></span>
+          <span class="info"><span class="tname">1-Month Supply · 100g pouch</span><span class="tsub">A full month of the daily cup · one-time, ~50–60 cups</span></span>
+          <span class="tprice"><span class="now">$48</span><span class="percup">~$0.96 a cup</span></span>
+        </div>
+        <!-- Tier 3: 1-Week starter ($17). -->
         <div class="tier" data-price="17" data-label="1-Week Supply" data-cta="Add to Cart — $17" data-link="https://buy.stripe.com/aFa8wPgQz0rk63hfjPfnO1B" data-pay="" data-ship="Orders over $50 ship free — add a full month and shipping's on us.">
           <span class="radio"></span>
           <span class="info"><span class="tname">1-Week Supply · the starter</span><span class="tsub">One honest week of the daily cup — try it on, low commitment</span></span>
           <span class="tprice"><span class="now">$17</span><span class="percup">about a week of daily cups</span></span>
         </div>
-        <!-- Tier 2: 1-Month one-time ($48). Pre-selected default: a clear, honest,
-             non-recurring choice (no subscription dark-pattern on a cold visitor). -->
-        <div class="tier sel" data-price="48" data-label="1-Month Supply" data-cta="Add to Cart — $48" data-link="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z" data-pay="" data-ship="You're $2 shy of free shipping — add the starter ($17) and it ships free.">
-          <span class="radio"></span>
-          <span class="info"><span class="tname">1-Month Supply · 100g pouch</span><span class="tsub">A full month of the daily cup · one-time, ~50–60 cups</span></span>
-          <span class="tprice"><span class="now">$48</span><span class="percup">~$0.96 a cup</span></span>
-        </div>
-        <!-- Tier 3: the upsell — 30-day auto-ship subscription ($42/mo, save $6 vs one-time).
-             Flagged best value; cancel-anytime stated. Same 100g pouch, delivered monthly. -->
-        <div class="tier" data-price="42" data-label="30-Day Supply · monthly" data-cta="Subscribe — $42/month" data-link="https://buy.stripe.com/cNicN543Nde60IX2x3fnO1y" data-pay="" data-ship="Ships free every month — never run out, and save $6 on every pouch.">
-          <span class="flag sage">Best value · save $6/mo</span>
-          <span class="radio"></span>
-          <span class="info"><span class="tname">30-Day Supply · delivered monthly</span><span class="tsub">The same 100g pouch, auto-shipped every 30 days · skip, pause, or cancel anytime</span></span>
-          <span class="tprice"><span class="was">$48</span><span class="now">$42<span class="permo">/mo</span></span><span class="percup">~$0.84 a cup</span></span>
-        </div>
-        <!-- [FILL — uncomment on the actual top-selling tier ONLY after real order data exists; never pre-fill]:
-             <span class="flag gold">Customer favorite</span> -->
       </div>
 
-      <a class="addcart" id="addbtn" href="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z">Add to Cart — $48</a>
+      <a class="addcart" id="addbtn" href="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x">Add to Cart — $120</a>
       <div class="paynote" id="paynote"></div>
-      <div class="shipline" id="shipline">You're $2 shy of free shipping — add the starter ($17) and it ships free.</div>
+      <div class="shipline" id="shipline">Ships free — and it covers the full window the studies actually ran.</div>
       <div class="smallbatch">Blended in small, dated batches. When one steeps out, the next takes its time.</div>
       <!-- Batch-reservation meter: render ONLY when wired to real inventory AND the batch is >50% sold.
            <div class="smallbatch" id="batchmeter">This batch: [live]% reserved.</div> -->
@@ -473,7 +460,7 @@
         <span><span class="i">✓</span> Free shipping over $50</span>
         <span><span class="i">✓</span> Third-party tested</span>
         <span><span class="i">✓</span> <a href="#guarantee">60-day guarantee</a></span>
-        <span><span class="i">✓</span> Order today, ships in <span class="fill">[FILL — days]</span></span>
+        <span><span class="i">✓</span> Order today, ships within 5 days</span>
       </div>
     </div>
   </div>
@@ -484,8 +471,6 @@
       <div class="tstat"><div class="n">2</div><div class="l">Sodium-corner heroes</div></div>
       <div class="tstat"><div class="n">0</div><div class="l">Caffeine · sugar · fillers</div></div>
       <div class="tstat"><div class="n">100%</div><div class="l">Heavy-metal tested</div></div>
-      <!-- Fifth stat, render only when both numbers are real and non-zero:
-           <div class="tstat"><div class="n">Batch [FILL]</div><div class="l">[FILL] pouches shipped</div></div> -->
     </div>
   </div>
 </section>
@@ -557,8 +542,7 @@
 
 <!-- ============ WHAT'S INSIDE / RATIOS ============ -->
 <section class="inside rv" id="inside">
-  <div class="wrap insidegrid">
-    <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1653937855510-ec3fd2036d98?q=80&w=900&auto=format&fit=crop" alt="Loose herbal blend — stock placeholder, real blend photo to come"></div>
+  <div class="wrap insidegrid" style="grid-template-columns:1fr; max-width:760px;">
     <div>
       <div class="kicker" style="text-align:left;">The garden, measured</div>
       <h2 class="head">Eight botanicals. Two pathways, in the amounts that matter.</h2>
@@ -588,7 +572,6 @@
 
     <div class="scicards">
       <div class="scicard">
-        <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1652128288793-6a2077ee246b?q=80&w=900&auto=format&fit=crop" alt="Dried hibiscus calyces"></div>
         <div class="body">
           <h3>Hibiscus</h3>
           <div class="studied">Studied for · healthy blood pressure†</div>
@@ -600,7 +583,6 @@
       </div>
 
       <div class="scicard">
-        <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1613211405242-d4afa8f5cedd?q=80&w=900&auto=format&fit=crop" alt="Hawthorn berries on the branch"></div>
         <div class="body">
           <h3>Hawthorn</h3>
           <div class="studied">Studied for · blood pressure in hypertension†</div>
@@ -612,7 +594,6 @@
       </div>
 
       <div class="scicard">
-        <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1528756514091-dee5ecaa3278?q=80&w=900&auto=format&fit=crop" alt="Lavender flowers"></div>
         <div class="body">
           <h3>Lavender &amp; chamomile</h3>
           <div class="studied">Studied for · stress, the driver behind the numbers</div>
@@ -668,7 +649,7 @@
     </div>
 
     <p class="scinote">†Statements describe published research on the herbs, not promises about your readings. Some studies are in animals or the lab, and we label those honestly. Steady is a food, not a medicine, and it joins your doctor's plan — it never replaces it.</p>
-    <div style="text-align:center; margin-top:30px;"><a class="btn-solid" href="#buy">Try Steady — 60-day love-your-first-cup guarantee</a></div>
+    <div style="text-align:center; margin-top:30px;"><a class="btn-solid" href="#buy">Try Steady — 60-day money-back guarantee</a></div>
   </div>
 </section>
 
@@ -698,19 +679,18 @@
     <div class="safety">
       <span class="sym">♥</span>
       <div>
-        <h4>A note if you take heart or blood-pressure medication</h4>
-        <p>Because hibiscus and hawthorn are active herbs, and hawthorn can interact with cardiac medications, please talk with your provider before making Steady a daily habit — and keep monitoring your numbers with them. The Method's rule is <b>AND, not INSTEAD OF</b>: Steady joins your care and your prescriptions. It never replaces either. That's what "rooted in truth" means to us.</p>
+        <h4>If you take heart or blood-pressure medication</h4>
+        <p>You don't need to skip Steady — just tell your doctor you're starting it, keep taking your prescriptions exactly as directed, and keep monitoring your blood pressure. As your numbers come down, let your doctor know: they may want to adjust your dose. The Method's rule is <b>AND, not INSTEAD OF</b> — Steady joins your care and your prescriptions, it never replaces either. That's what "rooted in truth" means to us.</p>
       </div>
     </div>
 
     <div class="skipbox">
-      <h4>Who should skip Steady</h4>
-      <div class="lede">Steady isn't for everyone — and we'd rather tell you now than after checkout.</div>
+      <h4>Who should check with their doctor first</h4>
+      <div class="lede">Steady is a food, not a medicine — but a few people should talk to their doctor before making it a daily habit.</div>
       <ul>
-        <li>Pregnant or nursing? Skip Steady for this season and come back to it later.</li>
-        <li>Allergic to plants in the daisy family (chamomile and calendula are members)? This isn't your blend.</li>
-        <li>On heart or blood-pressure medication? Read the note above first — provider before pouch.</li>
-        <!-- [FILL — "children" line pending Joel's confirmation; footer disclaimer doesn't currently exclude kids] -->
+        <li>On heart or blood-pressure medication? Let your doctor know you're starting Steady, and keep monitoring your numbers with them (see the note above).</li>
+        <li>Pregnant or nursing? Check with your doctor before starting — hibiscus and hawthorn are active herbs.</li>
+        <li>Allergic to plants in the daisy family (chamomile and calendula are members)? Talk to your doctor before trying it.</li>
       </ul>
     </div>
   </div>
@@ -739,11 +719,11 @@
         <div class="dot">wk 6+</div>
         <div class="when">Weeks 6–16</div>
         <h4>The studied window</h4>
-        <p>This is where the research actually measured — hibiscus at six weeks, hawthorn trials out to sixteen. Three pouches cover it. That's why the Ritual is three.</p>
+        <p>This is where the research actually measured — hibiscus at six weeks, hawthorn trials out to sixteen. Three pouches cover it. That's why the 90-Day Supply is three.</p>
       </div>
     </div>
     <div class="truthline">"Anyone promising day-three miracles is selling you a story. We'd rather sell you a rhythm."</div>
-    <div style="text-align:center; margin-top:26px;"><a class="btn-ghost" href="#buy">Start the rhythm — The Steady Ritual, 3 pouches</a></div>
+    <div style="text-align:center; margin-top:26px;"><a class="btn-ghost" href="#buy">Start the rhythm — the 90-Day Supply, 3 pouches</a></div>
   </div>
 </section>
 
@@ -768,7 +748,7 @@
           <tr><td>Blended and batch-checked by nurses</td><td><span class="y">✓</span></td><td><span class="n">✗</span> <small>white-labeled</small></td></tr>
           <tr><td>Tells you when to talk to your doctor</td><td><span class="y">✓</span></td><td><span class="n">✗</span></td></tr>
           <tr><td>Part of a method — not a mood</td><td><span class="y">✓</span></td><td><span class="n">✗</span></td></tr>
-          <tr><td>60-day keep-the-pouch guarantee</td><td><span class="y">✓</span></td><td><span class="n">✗</span></td></tr>
+          <tr><td>60-day money-back guarantee</td><td><span class="y">✓</span></td><td><span class="n">✗</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -803,9 +783,9 @@
 <section class="guarantee rv" id="guarantee">
   <div class="wrap seal">
     <div class="badge">60<br>DAYS</div>
-    <h2>Love your first cup, or it's on us.</h2>
-    <p>Brew it. Sit with it. Give it the honest window. If your first pouch of Steady isn't a cup you genuinely look forward to, tell us within 60 days and we'll refund it — keep the pouch. No return label, no forms. You risk a cup of tea. Nothing more.</p>
-    <a class="btn-ghost guar-cta" href="#buy">Start your first pouch →</a>
+    <h2>Give it a full 60 days.</h2>
+    <p>Steady works the way the research works: daily, over weeks — not overnight. So we ask you to actually drink it every day for a full 60 days before you decide. Do that, and if you're still not glad you did, email us and we'll refund your most recent order in full. We only ask that you give it the honest 60 days first — because that's the window the studies ran, and the only fair test of a real herb. One refund per household.</p>
+    <a class="btn-ghost guar-cta" href="#buy">Start your 60 days →</a>
   </div>
 </section>
 
@@ -814,7 +794,7 @@
   <div class="wrap">
     <div class="kicker">Where Steady fits</div>
     <h2 class="head">One cup of a five-anchor method.</h2>
-    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors, the NEWSTART foundation, and the plan for <em>your</em> loudest corner live at BPQuiz.com.</p>
+    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors, the eight daily habits, and the plan for <em>your</em> loudest corner live at BPQuiz.com.</p>
     <div class="mgrid">
       <div class="mcard">
         <div class="mk">Start here · free</div>
@@ -835,7 +815,7 @@
 
 <!-- ============ QUIZ CLOSER ============ -->
 <section class="quiz rv" id="quiz">
-  <div class="wrap quizgrid">
+  <div class="wrap quizgrid" style="grid-template-columns:1fr; max-width:720px; text-align:center;">
     <div>
       <div class="kicker">Not sure where to start?</div>
       <h2 class="head">Sixty seconds. Your Triangle, mapped.</h2>
@@ -843,7 +823,6 @@
       <a class="btn-solid" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Take the free BP Triangle quiz</a>
       <div class="qmeta">Free · about 60 seconds · built by Joel Polley, RN</div>
     </div>
-    <div class="imgbox"><img class="photo" src="https://images.unsplash.com/photo-1545386673-7723f55e5490?q=80&w=900&auto=format&fit=crop" alt="A quiet morning cup by the window — stock placeholder"></div>
   </div>
 </section>
 
@@ -855,7 +834,7 @@
     <div style="margin-top:20px;">
       <details class="faqitem">
         <summary>Can I drink Steady if I'm on blood-pressure medication?</summary>
-        <div class="a">Talk with your provider first. Hibiscus and hawthorn are active herbs, and hawthorn can interact with cardiac medications. The Method's rule is AND, not INSTEAD OF — Steady is meant to be enjoyed alongside your care and your prescriptions, never instead of them, and you should keep monitoring your numbers with your provider.</div>
+        <div class="a">Yes — you don't need to stop. Just let your doctor know you're starting Steady, keep taking your prescriptions exactly as directed, and keep monitoring your blood pressure. As your numbers come down, tell your doctor, because they may want to adjust your dose. Hibiscus and hawthorn are active herbs and hawthorn can interact with cardiac medications, so this is a conversation to have with your provider. The Method's rule is AND, not INSTEAD OF.</div>
       </details>
       <details class="faqitem">
         <summary>Does this replace my medication or my doctor?</summary>
@@ -863,15 +842,11 @@
       </details>
       <details class="faqitem">
         <summary>What if I'm pregnant or nursing?</summary>
-        <div class="a">Skip Steady for this season and come back to it later. Hibiscus and hawthorn aren't the right companions for pregnancy or nursing — and a company that says otherwise isn't reading the same research we are.</div>
+        <div class="a">Check with your doctor before starting. Hibiscus and hawthorn are active herbs, so pregnancy and nursing are a conversation to have with your provider first — and a company that tells you otherwise isn't reading the same research we are.</div>
       </details>
       <details class="faqitem">
         <summary>Any side effects I should know about?</summary>
         <div class="a">Steady contains chamomile and calendula — skip it if you're allergic to plants in the daisy family. It's also naturally tart (that's the hibiscus), so like any tart drink, rinse with water after your cup to be kind to tooth enamel. If you take any medication or manage a health condition, run the blend past your provider first.</div>
-      </details>
-      <details class="faqitem">
-        <summary>Does it actually taste good?</summary>
-        <div class="a">Bright, tart, ruby — like a grown-up cranberry-hibiscus. Genuinely lovely hot, and excellent iced with a slice of lemon. If your first pouch isn't a cup you look forward to, we'll refund it and you keep the pouch.</div>
       </details>
       <details class="faqitem">
         <summary>How much should I drink, and when will I notice anything?</summary>
@@ -883,7 +858,7 @@
       </details>
       <details class="faqitem">
         <summary>How long does a pouch last?</summary>
-        <div class="a">A 100g pouch is about 50–60 cups — roughly a month at two cups a day. The three-pouch Steady Ritual works out to about $0.80 a cup, well under the coffee it replaces.</div>
+        <div class="a">A 100g pouch is about 50–60 cups — roughly a month at two cups a day. The three-pouch 90-Day Supply works out to about $0.80 a cup, well under the coffee it replaces.</div>
       </details>
       <details class="faqitem">
         <summary>How should I store it?</summary>
@@ -899,7 +874,7 @@
       </details>
       <details class="faqitem">
         <summary>How does the guarantee work?</summary>
-        <div class="a">Email us within 60 days of your order. We refund your first pouch — and you keep it. No return label, no forms, no "store credit." One guarantee per household, because we're small and honest works both ways.</div>
+        <div class="a">Give Steady an honest 60 days first — drink it every day, the way the research was run. If you've done that and you're still not glad you did, email us within 60 days of your order and we'll refund it in full. We only ask that you actually give it the full 60 days, because that's the only fair test of a real herb. One refund per household.</div>
       </details>
       <details class="faqitem">
         <summary>Why Steady instead of the hibiscus tea at the grocery?</summary>
@@ -917,7 +892,7 @@
     <div class="sub">Steadier mornings, one honest cup at a time.</div>
     <a class="addcart" id="finalbtn" href="#buy">Shop Steady — from $17</a>
     <div class="microtrust" style="color:rgba(251,247,239,.65);">
-      <span><span class="i" style="color:#DDA07E;">✓</span> 60-day love-your-first-cup guarantee</span>
+      <span><span class="i" style="color:#DDA07E;">✓</span> 60-day money-back guarantee</span>
       <span><span class="i" style="color:#DDA07E;">✓</span> Free shipping over $50</span>
     </div>
   </div>
@@ -929,13 +904,13 @@
     <div class="logo">SVUTU</div>
     <div class="tag">Rooted in truth · Part of The BP Triangle Method™ family</div>
     <div class="contact">
-      <a href="mailto:concierge@bpquiz.com">concierge@bpquiz.com</a><!-- [FILL — confirm monitored inbox; hello@svutu.com once the domain exists] -->
-      <a href="#" onclick="return false">Shipping &amp; Returns</a><!-- [FILL — policy page] -->
-      <a href="#" onclick="return false">Refund Policy</a><!-- [FILL — policy page] -->
-      <a href="#" onclick="return false">Terms</a><!-- [FILL — policy page] -->
+      <a href="mailto:concierge@bpquiz.com">concierge@bpquiz.com</a>
+      <a href="#" onclick="return false">Shipping &amp; Returns</a>
+      <a href="#" onclick="return false">Refund Policy</a>
+      <a href="#" onclick="return false">Terms</a>
     </div>
     <div class="paymarks">Secure checkout by Stripe · Visa · Mastercard · Amex · Apple Pay · Google Pay</div>
-    <p class="disc">Steady is a botanical tea — a food to be enjoyed as part of your day, alongside (never instead of) the care of your healthcare provider. If you take heart or blood-pressure medication, are pregnant or nursing, or have a health condition, talk with your provider before making it a daily habit. Contains botanicals in the daisy family. Educational content only — not medical advice, diagnosis, or treatment; consult your physician before changing medications, supplements, or treatment plans. These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure, or prevent any disease.</p>
+    <p class="disc">Steady is a tea, not a medicine. Enjoy it alongside your doctor's care, never instead of it. If you take medication, are pregnant or nursing, or have a health condition, tell your doctor before making Steady a daily habit, and keep monitoring your blood pressure with them. Contains botanicals in the daisy family. These statements have not been evaluated by the FDA, and Steady is not intended to diagnose, treat, cure, or prevent any disease.</p>
     <p style="margin-top:16px; letter-spacing:.18em; font-size:10px; text-transform:uppercase;">© SVUTU · Back to the roots, back to the soil, back to the body's own wisdom</p>
   </div>
 </footer>
@@ -986,20 +961,7 @@
   // (applyTier otherwise only runs on click, leaving the hardcoded default stale).
   const initSel = document.querySelector('#tierbox .tier.sel');
   if(initSel) applyTier(initSel);
-  // NOTE: no installment note in the current 3-tier ladder (all tiers <= $48); data-pay is
-  // empty on every tier, so paynote stays hidden. Re-add a [FILL provider] note only if a
-  // higher-priced tier returns.
-
-  // Gallery thumbs → main image
-  const mainphoto = document.getElementById('mainphoto');
-  document.querySelectorAll('.thumbs .thumb').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      document.querySelectorAll('.thumbs .thumb').forEach(x=>x.classList.remove('on'));
-      b.classList.add('on');
-      mainphoto.src = b.getAttribute('data-src');
-      mainphoto.alt = b.querySelector('img').alt;
-    });
-  });
+  // NOTE: data-pay is empty on every tier, so the installment paynote stays hidden.
 
   // Enter/Space activate for div-based controls
   document.addEventListener('keydown', e=>{
