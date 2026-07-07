@@ -78,6 +78,30 @@ const CALL_97_PRICE_ID = process.env.CALL_97_PRICE_ID || 'price_1TpqZIHseZnO3rRZ
 const CALL_97_PRODUCT_ID = process.env.CALL_97_PRODUCT_ID || 'prod_UpVar8dVNe2aV5';
 const CALL_BOOKING_URL =
   process.env.CALL_BOOKING_URL || process.env.VITE_CALENDLY_DIAGNOSTIC_URL || '';
+
+// ─── SVUTU Steady tea (bpquiz.com/tea) ────────────────────────────────
+// Physical product on the same Stripe account. Every tea payment link stamps
+// metadata funnel:'svutu-tea'; the price ids below are the authoritative match
+// (the $17 sampler is 1700 cents, which COLLIDES with the kit's corner tier, so
+// tea MUST be recognized before any amount routing). A tea purchase is:
+//   1. recorded in KV (tea:sales:<Chicago-date>) for the nightly shipping
+//      digest cron (api/tea-daily-cron.js), and
+//   2. tagged in Resend (the "Tea Buyers (SVUTU Steady)" audience).
+// No per-sale Joel notification (his rule: only $297 alerts); the daily digest
+// to braveworksrn@gmail.com + annie@everydaynurse.com is the fulfillment feed.
+const TEA_AUDIENCE_ID = process.env.TEA_AUDIENCE_ID || 'e70381dc-129d-45a4-9eff-e51e90e8da2b';
+const TEA_PRICE_IDS = new Set([
+  'price_1TqGiWHseZnO3rRZ9XnHorV0', // Ritual 3-pouch $120 (legacy link)
+  'price_1TqGiZHseZnO3rRZSDRdhYPl', // Monthly sub $42/mo
+  'price_1TqGiaHseZnO3rRZhSCeTi1H', // 1-Month pouch $48
+  'price_1TqJJwHseZnO3rRZy09UUxGY', // 1-Week sampler $17
+]);
+
+// Chicago calendar date (YYYY-MM-DD) — the digest cron and the webhook must
+// bucket sales by the SAME day boundary Joel lives in, not UTC.
+export function chicagoDateKey(d = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago' }).format(d);
+}
 // 3-pay plan: a recurring monthly price (subscription mode) that the webhook caps
 // at 3 cycles via cancel_at. The price id is an env seam (set after Joel creates
 // the recurring price in Stripe); the metadata marker offer:'case-review' +
@@ -537,6 +561,270 @@ async function processCall97(session) {
   return { action: 'call97', delivered, customer_email: customerEmail };
 }
 
+// ─── SVUTU Steady tea: recognition + recording ────────────────────────
+// True when this session is a tea purchase (metadata marker first, then the
+// authoritative price ids). Runs BEFORE the foreign-funnel guard and before any
+// amount routing (the $17 sampler amount collides with the kit's corner tier).
+async function isTeaSession(session) {
+  const md = session.metadata || {};
+  if (md.funnel === 'svutu-tea') return true;
+  try {
+    const stripe = getStripe();
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10, expand: ['data.price'] });
+    for (const item of items.data || []) {
+      if (item.price?.id && TEA_PRICE_IDS.has(item.price.id)) return true;
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: tea line-item check failed (non-fatal)', err.message);
+  }
+  return false;
+}
+
+// Record the tea sale for the nightly shipping digest + tag the buyer in the
+// Resend "Tea Buyers" audience. Never throws into the webhook.
+async function processTeaPurchase(session) {
+  const customerEmail = session.customer_details?.email || '';
+  const customerName = session.customer_details?.name || '';
+  const emailKey = String(customerEmail).trim().toLowerCase();
+
+  // Dedupe on the session id (Stripe retries deliver the same event).
+  const dedupeKey = `tea:sale:${session.id}`;
+  try {
+    const already = await kv.get(dedupeKey);
+    if (already) return { action: 'tea_sale', deduplicated: true, customer_email: customerEmail };
+  } catch (err) {
+    console.warn('stripe-webhook: tea dedupe read failed (non-fatal)', err.message);
+  }
+
+  // What they bought (product name + qty per line item).
+  let items = [];
+  try {
+    const stripe = getStripe();
+    const li = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+    items = (li.data || []).map((i) => ({ name: i.description || 'Tea', qty: i.quantity || 1 }));
+  } catch (err) {
+    console.warn('stripe-webhook: tea line-items fetch failed (non-fatal)', err.message);
+  }
+
+  // Shipping address: classic API puts it at session.shipping_details; newer
+  // API versions moved it under collected_information. Take whichever exists,
+  // fall back to the billing address so the digest is never blank.
+  const ship =
+    session.shipping_details ||
+    session.collected_information?.shipping_details ||
+    null;
+  const addr = ship?.address || session.customer_details?.address || {};
+  const record = {
+    at: new Date().toISOString(),
+    sessionId: session.id,
+    email: customerEmail,
+    name: ship?.name || customerName,
+    items,
+    amountCents: session.amount_total ?? session.amount_subtotal ?? 0,
+    subscription: session.mode === 'subscription',
+    address: {
+      line1: addr.line1 || '', line2: addr.line2 || '', city: addr.city || '',
+      state: addr.state || '', postal_code: addr.postal_code || '', country: addr.country || '',
+    },
+  };
+
+  // Append to the Chicago-day bucket the digest cron reads. 21-day TTL.
+  try {
+    const dayKey = `tea:sales:${chicagoDateKey()}`;
+    await kv.rpush(dayKey, JSON.stringify(record));
+    await kv.expire(dayKey, 60 * 60 * 24 * 21);
+  } catch (err) {
+    console.error('stripe-webhook: tea sale KV record failed', err.message);
+  }
+
+  // Send the buyer their confirmation + ingredient flyer. Best-effort: a send
+  // failure never fails the webhook (the KV record + nightly shipping digest is
+  // the fulfillment backstop, and Joel can resend). Fires once per new session
+  // because the dedupe guard above returns early on Stripe retries.
+  if (customerEmail) {
+    try {
+      await sendTeaConfirmation({
+        email: customerEmail,
+        firstName: firstNameOf(record.name || customerName),
+        items,
+        amountCents: record.amountCents,
+        address: record.address,
+        name: record.name,
+      });
+    } catch (err) {
+      console.error('stripe-webhook: tea confirmation email failed', err.message);
+    }
+  }
+
+  // Tag the buyer in Resend (Tea Buyers audience). Existing contact -> Resend
+  // returns an error we can ignore; the tag is the point, not uniqueness.
+  if (emailKey) {
+    try {
+      const [first, ...restName] = String(customerName).trim().split(/\s+/);
+      await fetch(`https://api.resend.com/audiences/${TEA_AUDIENCE_ID}/contacts`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailKey, first_name: first || '', last_name: restName.join(' '), unsubscribed: false }),
+      });
+    } catch (err) {
+      console.warn('stripe-webhook: tea Resend tag failed (non-fatal)', err.message);
+    }
+  }
+
+  try {
+    await kv.set(dedupeKey, { recordedAt: new Date().toISOString() }, { ex: 60 * 60 * 24 * 30 });
+  } catch (err) {
+    console.warn('stripe-webhook: tea dedupe write failed (non-fatal)', err.message);
+  }
+
+  await capturePurchase({
+    email: customerEmail,
+    amountCents: record.amountCents,
+    tier: 'svutu-tea',
+    sessionId: session.id,
+  });
+  return { action: 'tea_sale', recorded: true, customer_email: customerEmail };
+}
+
+// ─── SVUTU Steady: buyer confirmation email + ingredient flyer ────────
+// The at-purchase email for a tea order. Three jobs: (1) verify what they bought,
+// (2) set the hand crafted "ships within 5 to 7 business days" expectation, and
+// (3) carry the same ingredient research flyer as bpquiz.com/tea, every herb
+// linked to a real study. Reuses the shared BraveWorks email shell + compliance
+// footer (Steady is Anchor 1 of the BP Triangle Method, so the family shell
+// fits). Sender is Joel; the family framing is Joel + Annie. ZERO em-dashes in
+// visible copy, per the email system's rule.
+const TEA_EMAIL_FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+
+// Verified BP / BP-driver research, one study per botanical, mirroring the site.
+const TEA_RESEARCH = [
+  { name: 'Hibiscus', corner: 'Sodium', what: 'A Tufts RCT and meta-analyses studied it for lowering systolic blood pressure in adults.', url: 'https://pubmed.ncbi.nlm.nih.gov/20018807/' },
+  { name: 'Hawthorn', corner: 'Arterial pressure', what: 'A 2025 meta-analysis of clinical trials studied it for lower systolic pressure in hypertension.', url: 'https://pubmed.ncbi.nlm.nih.gov/40732315/' },
+  { name: 'Lemongrass', corner: 'Vascular', what: 'A 2022 review ties it to vessel relaxing (nitric oxide) and mild diuretic activity.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9598547/' },
+  { name: 'Ginger', corner: 'Sodium and Sugar', what: 'A meta-analysis studied it for healthy blood pressure, and other trials for blood sugar.', url: 'https://pubmed.ncbi.nlm.nih.gov/30972845/' },
+  { name: 'Nettle', corner: 'Sodium', what: 'Animal research studied it for lower blood pressure and for clearing sodium and water.', url: 'https://pubmed.ncbi.nlm.nih.gov/30097121/' },
+  { name: 'Chamomile', corner: 'Stress and Sugar', what: 'A placebo controlled trial studied it for anxiety, and diabetic trials for blood sugar.', url: 'https://pubmed.ncbi.nlm.nih.gov/19593179/' },
+  { name: 'Lavender', corner: 'Stress', what: 'A trial in high blood pressure patients studied it for lower blood pressure, heart rate and cortisol.', url: 'https://pubmed.ncbi.nlm.nih.gov/35708557/' },
+  { name: 'Calendula', corner: 'Gentlest evidence', what: 'Animal research studied it for antioxidant support and healthier lipids on a high sugar diet.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10578091/' },
+];
+
+function teaFlyerHtml() {
+  const rows = TEA_RESEARCH.map((r) => `
+    <tr><td style="padding:13px 0;border-bottom:1px solid ${PALETTE.lineSoft};font-family:${TEA_EMAIL_FONT};">
+      <div style="font-size:15px;font-weight:700;color:${PALETTE.ink};">${r.name} <span style="font-weight:600;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:${PALETTE.sage};">${r.corner}</span></div>
+      <div style="font-size:13.5px;line-height:1.55;color:${PALETTE.inkSoft};margin:4px 0 6px;">${r.what}</div>
+      <a href="${r.url}" style="font-size:12.5px;font-weight:700;color:${PALETTE.clay};text-decoration:none;">See the research &rarr;</a>
+    </td></tr>`).join('');
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:6px 0 10px;border-collapse:collapse;">${rows}</table>`;
+}
+
+function teaFlyerText() {
+  return TEA_RESEARCH.map((r) => `- ${r.name} (${r.corner}): ${r.what}\n  ${r.url}`).join('\n');
+}
+
+function teaOrderLines(items) {
+  return items && items.length ? items : [{ name: 'SVUTU Steady', qty: 1 }];
+}
+
+function teaOrderSummaryHtml(items, amountCents) {
+  const lines = teaOrderLines(items)
+    .map((i) => `<div style="font-size:15px;color:${PALETTE.inkSoft};font-family:${TEA_EMAIL_FONT};margin:0 0 4px;">${i.qty} &times; ${i.name}</div>`)
+    .join('');
+  const total = typeof amountCents === 'number' && amountCents > 0 ? `$${(amountCents / 100).toFixed(2)}` : '';
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:6px 0 14px;border:1px solid ${PALETTE.line};border-radius:12px;background:${PALETTE.cream};border-collapse:separate;">
+    <tr><td style="padding:16px 20px;">
+      ${lines}
+      ${total ? `<div style="font-size:15px;font-weight:700;color:${PALETTE.ink};font-family:${TEA_EMAIL_FONT};margin-top:8px;border-top:1px solid ${PALETTE.lineSoft};padding-top:8px;">Total paid: ${total}</div>` : ''}
+    </td></tr>
+  </table>`;
+}
+
+function teaShipToHtml(address, name) {
+  if (!address) return '';
+  const parts = [address.line1, address.line2, [address.city, address.state].filter(Boolean).join(', '), address.postal_code].filter(Boolean);
+  if (!parts.length) return '';
+  return `<div style="font-size:13.5px;line-height:1.6;color:${PALETTE.muted};font-family:${TEA_EMAIL_FONT};margin:0 0 8px;">Shipping to: ${name ? name + ', ' : ''}${parts.join(', ')}. If anything looks off, reply to this email and we will fix it before it ships.</div>`;
+}
+
+export function buildTeaConfirmationEmail({ firstName, items, amountCents, address, name, unsubUrl }) {
+  const preheader = 'Your order is confirmed. Hand crafted by our family and shipping within 5 to 7 business days. Here is what is in your cup.';
+  const bodyHtml = [
+    `<div style="display:inline-block;font-size:12px;font-weight:700;color:${PALETTE.accentSage};border:1px solid ${PALETTE.accentSage};border-radius:999px;padding:5px 12px;margin-bottom:18px;font-family:${TEA_EMAIL_FONT};">Order confirmed</div>`,
+    p(`Hi ${firstName || 'there'},`),
+    p(`Thank you for your order of <b>SVUTU Steady</b>, the daily ruby tea from The BP Triangle Method. Your payment went through and your order is confirmed.`),
+    h2('Your order'),
+    teaOrderSummaryHtml(items, amountCents),
+    teaShipToHtml(address, name),
+    callout({
+      kicker: 'When it ships',
+      body: `Every pouch is hand crafted and packaged with love by my family, so give us a few days. Your order will ship within <b>5 to 7 business days</b>, and you will get a note the moment it is on its way.`,
+    }),
+    h2('While your tea travels, here is what is in your cup'),
+    p(`Steady is eight whole botanicals, and every one earns its place. Here is what researchers have studied each for, with the study one tap away, the same research we show on the site.`),
+    teaFlyerHtml(),
+    p(`<a href="${SITE_URL}/tea/#science" style="color:${PALETTE.clay};font-weight:700;text-decoration:none;">See the full science on the site &rarr;</a>`),
+    h2('How to brew it'),
+    p(`One heaping teaspoon per cup, water just off the boil. Cover and steep 7 to 9 minutes, because hibiscus and hawthorn want the time. Two to three cups a day is the rhythm the studies used. Lovely hot, and excellent iced with a slice of lemon.`),
+    callout({
+      kicker: 'Your 60 day guarantee',
+      body: `Give Steady an honest 60 days, drinking it every day the way the research was run. If you have done that and you are still not glad you did, reply to this email and we will refund your order in full.`,
+    }),
+    p(`One honest note: if you take heart or blood pressure medication, you do not need to skip Steady. Just let your doctor know you are starting it, keep taking your prescriptions exactly as directed, and keep monitoring your numbers. As they come down, tell your doctor, because your dose may need adjusting. Steady joins your doctor's care, it never replaces it.`),
+    p(`Thank you for trusting us with your cup.`),
+    p(`Joel Polley, RN, and the family behind SVUTU`),
+  ].join('');
+
+  const bodyText = `Hi ${firstName || 'there'},
+
+Thank you for your order of SVUTU Steady, the daily ruby tea from The BP Triangle Method. Your payment went through and your order is confirmed.
+
+YOUR ORDER
+${teaOrderLines(items).map((i) => `${i.qty} x ${i.name}`).join('\n')}${typeof amountCents === 'number' && amountCents > 0 ? `\nTotal paid: $${(amountCents / 100).toFixed(2)}` : ''}
+
+WHEN IT SHIPS
+Every pouch is hand crafted and packaged with love by my family, so give us a few days. Your order will ship within 5 to 7 business days, and you will get a note the moment it is on its way.
+
+WHILE YOUR TEA TRAVELS, HERE IS WHAT IS IN YOUR CUP
+Steady is eight whole botanicals, and every one earns its place. Here is what researchers have studied each for:
+
+${teaFlyerText()}
+
+See the full science: ${SITE_URL}/tea/#science
+
+HOW TO BREW IT
+One heaping teaspoon per cup, water just off the boil. Cover and steep 7 to 9 minutes. Two to three cups a day is the rhythm the studies used. Lovely hot, and excellent iced with a slice of lemon.
+
+YOUR 60 DAY GUARANTEE
+Give Steady an honest 60 days, drinking it every day the way the research was run. If you have done that and you are still not glad you did, reply to this email and we will refund your order in full.
+
+One honest note: if you take heart or blood pressure medication, you do not need to skip Steady. Just let your doctor know you are starting it, keep taking your prescriptions exactly as directed, and keep monitoring your numbers. As they come down, tell your doctor, because your dose may need adjusting. Steady joins your doctor's care, it never replaces it.
+
+Thank you for trusting us with your cup.
+Joel Polley, RN, and the family behind SVUTU`;
+
+  return buildEmail({ preheader, bodyHtml, bodyText, unsubUrl });
+}
+
+// Send the tea buyer their confirmation + flyer. Best-effort, never throws.
+async function sendTeaConfirmation({ email, firstName, items, amountCents, address, name }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const unsubToken = signUnsubToken({ email });
+  const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
+  const { html, text } = buildTeaConfirmationEmail({ firstName, items, amountCents, address, name, unsubUrl });
+  await getResend().emails.send({
+    from: FROM,
+    to: String(email).trim(),
+    replyTo: REPLY_TO,
+    subject: 'Your SVUTU Steady order is confirmed',
+    html,
+    text,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  });
+}
+
 // Send the buyer's case-review confirmation. Best-effort: a send failure never
 // fails the webhook (the Joel alert is the backstop for fulfillment).
 async function sendCaseReviewConfirmation({ email, firstName }) {
@@ -945,6 +1233,14 @@ async function processCheckoutCompleted(event) {
   // metadata kind:'call-97'; fulfilled with the Calendly booking email.
   if (await isCall97Session(session)) {
     return await processCall97(session);
+  }
+
+  // ── SVUTU tea check (BEFORE the amount lookup AND the foreign guard) ──
+  // The $17 sampler is 1700 cents (collides with the kit's corner tier), and
+  // tea sessions are NOT braveworks-bp funnel sessions, so without this check
+  // a tea sale would be skipped as foreign and never reach the shipping digest.
+  if (await isTeaSession(session)) {
+    return await processTeaPurchase(session);
   }
 
   // ── Difference-priced /welcome UPGRADE check (BEFORE the amount lookup) ──
