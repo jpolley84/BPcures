@@ -482,6 +482,52 @@ export default function CoachingPage() {
 
       <GoldHairline />
 
+      {/* ─── THE CASE FOR A COACH (why get one; athlete/business-owner
+           analogy + step-by-step experience-selling; added 2026-07-08) ── */}
+      <section className="py-16" style={{ background: 'var(--paper-warm)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <motion.div {...reveal(0)}>
+            <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              THE CASE FOR A COACH
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+              Every serious athlete has a coach. So does every serious business owner. Why doesn't your health?
+            </h2>
+          </motion.div>
+          <motion.p {...reveal(0.08)} className="text-base mb-8" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+            Here's what coaching with me actually is, plain and simple. Not a program you download once and never open again. Not a plan built for whoever the average person is supposed to be. It's a working relationship with a nurse who spent years reading real numbers under real pressure, now reading yours, and building your next move with you instead of leaving you to guess at it alone. You already know how to put in the work. Coaching is what happens when that work gets a trained set of eyes on it, every single week.
+          </motion.p>
+
+          <motion.h3 {...reveal(0.12)} className="font-serif text-xl mb-4" style={{ color: 'var(--ink)' }}>
+            You might need a coach if:
+          </motion.h3>
+          <motion.ul {...reveal(0.16)} className="space-y-4 mb-8">
+            {[
+              'You already track your own numbers, and you want someone qualified to read them with you and tell you what they actually mean.',
+              'You hire people for the things that matter. A trainer for your body, someone for your finances. Your blood pressure hasn\'t gotten that same treatment yet.',
+              'You\'ve already hit the ceiling of what generic advice can do for you, and you want a plan built from your actual numbers, not an article written for everyone.',
+              'You\'ve built a solid routine on your own, and now you want a trained perspective on the two or three things you genuinely can\'t see from the inside.',
+              'You\'re not looking for more motivation. You\'re looking for someone qualified to confirm you\'re doing the right work, and tell you plainly if you\'re not.',
+            ].map((item) => (
+              <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
+                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 10, width: 6, height: 6, borderRadius: '50%', background: 'var(--sage-deep)' }} />
+                <span className="text-base" style={{ lineHeight: 1.65 }}>{item}</span>
+              </li>
+            ))}
+          </motion.ul>
+
+          <motion.p {...reveal(0.2)} className="text-base mb-7" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+            Think about it. Every serious athlete has a coach. Not because they don't know how to run, lift, or swing. They have a coach because someone standing outside the effort can see what they can't: the form breaking down, the plateau they've stopped noticing, the one adjustment that turns good into great. Every serious business owner has a coach or a mentor too, someone who's already walked the road they're on and catches the blind spot before it costs real money. Nobody at the top does it alone. Your numbers, and whatever's quietly working against them, deserve that same standard. So here's the question worth sitting with for a second: why is your health the one area of your life you're expected to figure out by yourself?
+          </motion.p>
+
+          <motion.p {...reveal(0.26)} className="text-base italic" style={{ color: 'var(--ink)', lineHeight: 1.75, borderLeft: '3px solid var(--gold)', paddingLeft: '1.1rem' }}>
+            Picture the weeks right after you say yes, thirty of them or ninety, whichever one you start with. Not a PDF sitting in a folder you forgot about, and not a program that never asks how you're actually doing. A real person, looking at what's actually happening with your numbers and helping you decide the next move. Life happens. The trip gets booked, work throws a curveball, the schedule falls apart, and instead of starting over from zero, we adjust the plan and keep going. You're not up at 11pm with a spreadsheet trying to decide if your number is good or bad. Someone who actually reads labs, and understands stress and sugar and sodium, is already thinking about what we'll cover the next time we talk. That's the whole difference. Not more information. A person walking next to you who won't let you drift, in your corner on the weeks the numbers cooperate and the weeks they don't.
+          </motion.p>
+        </div>
+      </section>
+
+      <GoldHairline />
+
       {/* ─── WHO I TAKE 1:1 (the qualifier) ──────────────────────── */}
       <section className="py-16" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
