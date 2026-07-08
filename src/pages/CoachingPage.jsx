@@ -1,64 +1,75 @@
 // /coaching — work with Joel Polley, RN.
 //
-// 2026-06-04 REWRITE; 2026-06-09 LADDER REALIGN (v2 canon reconcile, evening).
-// Canon ladder (ladder-canon-2026-06-09-v2): quiz → $17 → $27/mo Weekly Reset →
-// $297 "30-Day Personalized SPRINT" → $1,997 90-day group (NINETY reply-gate
-// only) → 1:1 tiers below. This page leads with the Sprint, then the four 1:1
-// tiers as the premium "available, not selling" track (Triangle Session $1,500
-// one-time, Inner Circle $1,500/mo, Brave Household $5,000/mo, Pillar Year
-// $50,000/yr).
+// 2026-07-07 REBUILD to align with the current funnel + reuse the patterns
+// proven on bpquiz.com/tea (honest interactive checklist, "what to expect"
+// timeline instead of overnight-miracle claims, a fair comparison table, a
+// satisfaction-based guarantee, a "where this fits" ladder tying back into
+// the $17 -> $47 kit funnel, sticky CTA, zero fabricated testimonials).
 //
-// 2026-06-09 evening: retired the afternoon "$297 Group" fork (link
-// dRm5kD0RBgqi0IXdbHfnO0Z, tier group-30) that conflicted with the settled
-// Sprint canon. Now uses the canon links:
-//   $297 Sprint (cold/lead traffic, flat) → buy.stripe.com/00weVddEnca2ajx0oVfnO0O
-//   ($280 kit-credit variant 7sY9ATeIra1Uajx9ZvfnO0P is for $17/$47 BUYERS, used
-//    in their receipts/drip — not on this cold page.)
-//   $1,997 90-day group → by application (reply NINETY / concierge@bpquiz.com),
-//   not a public impulse-buy button (canon: reply-gate only).
+// THE THREE OFFERS (Joel's call, 2026-07-07):
+//   $297   The 30-Day Personalized Sprint — direct buy, EXISTING Stripe link
+//          (buy.stripe.com/00weVddEnca2ajx0oVfnO0O). Unchanged deliverable:
+//          personalized 30-day protocol + 60-min kickoff call + 4 live group
+//          coaching sessions in Skool. Recognized + fulfilled by the shared
+//          stripe-webhook.js 'diagnostic' tier (do not touch that file).
+//   $1,997 The 90-Day Program — direct buy, EXISTING Stripe link (reused, not
+//          recreated: buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M -> /sprint-welcome).
+//          FLAGGED BEST VALUE per Joel. Deliverables pulled from the REAL,
+//          already-live /sprint-welcome page: 60-min kickoff + full lab review,
+//          WhatsApp 1:1 access to Joel Sun-Thu 9-5 ET, weekly live group call +
+//          protocol library in Skool VIP, Annie looped in if a hormone-baseline
+//          call is warranted, 90 days. Anchored against the $6,997 regular
+//          price already mapped in stripe-webhook.js (AMOUNT_TO_TIER 699700).
+//          NOTE: "weekly 1:1" is represented honestly as the WhatsApp direct
+//          access + the kickoff call, since that is what is ACTUALLY delivered
+//          today. If Joel wants a literal separate recurring 1:1 video call
+//          added, that is a new operational commitment to confirm separately.
+//   Retainer  UNCHANGED per Joel ("3 same") — the same four 1:1 tiers that
+//          were already on this page (Triangle Session $1,500 one-time /
+//          Inner Circle $1,500/mo / Brave Household $5,000/mo / Pillar Year
+//          $50,000/yr), same /apply?tier=<slug> + concierge@bpquiz.com
+//          inquiry mechanism. Presented as "The High-End Retainer" section.
 //
-// Posture: AVAILABLE not selling. Douglas D. Grant model — brand-as-close, no
-// money-back guarantees, no application forms, no Calendly embeds, no urgency
-// stacking, no "limited spots" theater. Joel's verbatim: "it's something I am
-// not even sweating. it's the only way I will 1:1 though and make it worth my
-// time."
+// Guarantee line reused VERBATIM from products.json (bp-premium-coaching /
+// cortisol-premium-coaching / blood-sugar-premium-coaching): "The pre-read
+// promise: if your case needs a different kind of help, Joel tells you before
+// writing a word and refunds every dollar." Satisfaction/fit-based, never a
+// health-outcome guarantee.
 //
-// Close mechanism: email concierge@bpquiz.com with the subject line for the tier.
-// One inbox. Joel reads every one. The price is the proof. (Grant-mimic posture
-// — `concierge@` signals "this is the premium track" without a real EA.)
-// REQUIRES: concierge@bpquiz.com alias forwarding to joel@bpquiz.com or
-// brave.works.marketing@gmail.com. Set up in Google Workspace / Cloudflare
-// Email Routing BEFORE pushing this page live, or emails bounce.
+// Corner naming corrected to the CURRENT canon: Stress, Sugar, Sodium (the
+// stale "Pipe Pressure / Stress Pressure / Sugar Pressure" labels are gone).
+// Reach updated to 500K+ across TikTok, Facebook, and Instagram (matches the
+// current homepage figure).
+//
+// FLAGGED, NOT ACTED ON: stripe-webhook.js currently alerts Joel only on
+// ERROR paths (no email, unmapped amount, send failure) for the diagnostic/
+// coaching tiers, never on a successful $297/$1,997 sale. Joel's stated rule
+// this session is "notify me if it's 297." That is a real gap in the shared
+// webhook, out of scope for a page redesign — flagged for a separate,
+// deliberate change to that file rather than touched here.
 //
 // NOT TOUCHED:
-//   - The retired $297 Stripe products/payment links remain live in Stripe for
-//     existing buyers still in their drip.
-//   - /coaching-welcome (CoachingWelcomePage.jsx) — landing page for existing
-//     $297 buyers, intentionally preserved.
-//   - /1on1 (WaitlistApplicationPage.jsx) — separate Premium waitlist app.
+//   - stripe-webhook.js, the $297/$1,997 Stripe objects, /sprint-welcome,
+//     /coaching-welcome, /apply, /1on1 — all reused as-is.
 //
-// 2026-06-09 night: VISUAL-ONLY pass. Fixed undefined tokens (--paper-light /
-// --border do not exist in index.css; the four 1:1 inquiry buttons rendered
-// ink-on-ink). Replaced with real tokens (--paper-warm / --cream / --line).
-// Added quiet-luxury treatment: framer-motion scroll reveals, hero gradient
-// wash + gold hairline draw, Fraunces display prices, gold card-hover borders,
-// gold gradient section dividers. Zero copy/price/link changes.
-//
-// 2026-06-09 later: APPLICATION FLOW wired in. The $1,997 90-day card and all
-// four 1:1 tiers now route to the /apply questionnaire (ApplyPage.jsx) with
-// ?tier=<slug> preselection (ninety / triangle / inner-circle / household /
-// pillar). /apply POSTs to /api/coaching-apply. The concierge@ mailto remains
-// on each 1:1 card as a quiet secondary path ("Prefer email?") for people who
-// would rather write than fill a form. concierge@ alias must still forward.
+// Posture for the retainer section: AVAILABLE not selling. Douglas D. Grant
+// model — brand-as-close, no application-form theater beyond the existing
+// short form, no urgency stacking. Joel's verbatim: "it's something I am not
+// even sweating. it's the only way I will 1:1 though and make it worth my
+// time."
 
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Mail, Stethoscope, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Mail, Stethoscope, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const EMAIL = 'concierge@bpquiz.com';
 const EASE = [0.22, 1, 0.36, 1];
 
-const TIERS = [
+const SPRINT_297_LINK = 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O';
+const NINETY_1997_LINK = 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M';
+
+const RETAINER_TIERS = [
   {
     name: 'The Triangle Session',
     slug: 'triangle',
@@ -121,6 +132,19 @@ const TIERS = [
   },
 ];
 
+const GUARANTEE_LINE =
+  'The pre-read promise: if your case needs a different kind of help, I tell you before writing a word and refund every dollar.';
+
+// "Is this you" honest checklist (tea-style). No email required, self-scoring
+// only, never leaves the page.
+const CHECKLIST_ITEMS = [
+  'You finished the $17 or $47 kit, did the work, and still want it read against YOUR numbers, not a template',
+  'Your labs, meds, and supplements have never all been looked at together by one person, and neither has the stress corner underneath them',
+  'You want a written plan before your next doctor visit, not after, because fifteen minutes never leaves room for the real question',
+  'You\'ve already worked the obvious levers and the number still hasn\'t moved, so you want someone checking your work weekly instead of guessing again',
+  'You want the whole 90 days walked with you this time, not just the first ten',
+];
+
 function mailtoFor(subject) {
   return `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
 }
@@ -130,10 +154,80 @@ function GoldHairline() {
   return <div aria-hidden="true" className="coach-hairline" />;
 }
 
+function ChecklistSection({ reveal }) {
+  const [checked, setChecked] = useState(() => new Array(CHECKLIST_ITEMS.length).fill(false));
+  const count = checked.filter(Boolean).length;
+  const echoes = [
+    'Check what fits. There is no wrong number here.',
+    'One is enough to be worth a conversation.',
+    'Two is a pattern worth a real look, not a guess.',
+    'Three or more, and the $297 Sprint is the honest starting point below.',
+    'Four or five, and the 90-Day Program is built for exactly this.',
+  ];
+  const echo = echoes[Math.min(count, echoes.length - 1)];
+
+  return (
+    <section className="py-16" style={{ background: 'var(--sage-soft)' }}>
+      <div className="max-w-2xl mx-auto px-5">
+        <motion.div {...reveal(0)}>
+          <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--sage-deep)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+            IS THIS YOU
+          </div>
+          <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+            Check what is true for you. No email required.
+          </h2>
+        </motion.div>
+        <motion.div {...reveal(0.1)} className="space-y-3 mb-6" role="group" aria-label="Self-check, results not sent anywhere">
+          {CHECKLIST_ITEMS.map((item, i) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setChecked((c) => c.map((v, idx) => (idx === i ? !v : v)))}
+              className="w-full text-left flex gap-3 items-start"
+              style={{
+                background: 'var(--cream)',
+                border: `1.5px solid ${checked[i] ? 'var(--clay)' : 'var(--line)'}`,
+                borderRadius: 10,
+                padding: '0.9rem 1rem',
+                cursor: 'pointer',
+              }}
+              aria-pressed={checked[i]}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  flexShrink: 0,
+                  marginTop: 2,
+                  width: 20,
+                  height: 20,
+                  borderRadius: 5,
+                  border: `2px solid ${checked[i] ? 'var(--clay)' : '#cdbda4'}`,
+                  background: checked[i] ? 'var(--clay)' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontSize: 12,
+                  fontWeight: 700,
+                }}
+              >
+                {checked[i] ? '✓' : ''}
+              </span>
+              <span className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>{item}</span>
+            </button>
+          ))}
+        </motion.div>
+        <motion.p {...reveal(0.15)} className="text-base italic text-center" style={{ color: 'var(--muted)', lineHeight: 1.6 }} aria-live="polite">
+          {echo}
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
 export default function CoachingPage() {
   const reduce = useReducedMotion();
 
-  // Scroll-reveal props: fade-up on first entry into viewport.
   const reveal = (delay = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 24 },
     whileInView: { opacity: 1, y: 0 },
@@ -141,7 +235,6 @@ export default function CoachingPage() {
     transition: { duration: 0.7, delay, ease: EASE },
   });
 
-  // Hero mount stagger (kicker → H1 → hairline → paragraphs).
   const rise = (delay = 0) => ({
     initial: { opacity: 0, y: reduce ? 0 : 18 },
     animate: { opacity: 1, y: 0 },
@@ -152,7 +245,6 @@ export default function CoachingPage() {
     <main className="min-h-screen" style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
 
       <style>{`
-        /* Slow ambient gradient wash behind the hero. Gold + clay at whisper opacity. */
         @keyframes coachWash {
           0%   { transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1); }
           50%  { transform: translate3d(3%, 2%, 0) rotate(6deg) scale(1.07); }
@@ -199,18 +291,29 @@ export default function CoachingPage() {
           transform: translateY(-2px);
           box-shadow: 0 14px 30px -12px rgba(164, 75, 40, 0.55);
         }
-        .coach-cta-ink {
-          border: 1px solid transparent;
-        }
+        .coach-cta-ink { border: 1px solid transparent; }
         .coach-cta-ink:hover {
           border-color: var(--gold);
           color: var(--gold) !important;
           transform: translateY(-2px);
           box-shadow: 0 14px 30px -14px rgba(18, 17, 16, 0.5);
         }
+        .coach-compare th, .coach-compare td { padding: 10px 14px; font-size: 14px; border-bottom: 1px solid var(--line); text-align: center; }
+        .coach-compare th { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--ink); background: var(--paper-warm); }
+        .coach-compare th:first-child, .coach-compare td:first-child { text-align: left; font-weight: 500; width: 54%; }
+        .coach-compare tr:last-child td { border-bottom: none; }
+        .coach-sticky {
+          position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+          background: var(--cream); border-top: 1px solid var(--line);
+          box-shadow: 0 -8px 26px rgba(18,17,16,0.12);
+          transform: translateY(110%); transition: transform 0.3s ease;
+          padding: 10px 0;
+        }
+        .coach-sticky.show { transform: translateY(0); }
         @media (prefers-reduced-motion: reduce) {
           .coach-hero-wash { animation: none; }
           .coach-card:hover, .coach-cta-clay:hover, .coach-cta-ink:hover { transform: none; }
+          .coach-sticky { transition: none; }
         }
       `}</style>
 
@@ -230,7 +333,7 @@ export default function CoachingPage() {
             className="font-serif leading-tight mb-5"
             style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)', color: 'var(--ink)', fontStyle: 'italic' }}
           >
-            Two group programs. One method. Your numbers.
+            You cut the salt. You walked. The number still didn't move.
           </motion.h1>
           <motion.div
             aria-hidden="true"
@@ -246,11 +349,134 @@ export default function CoachingPage() {
             }}
           />
           <motion.p {...rise(0.28)} className="text-lg mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: '60ch' }}>
-            Twenty years of ICU and emergency-room nursing, then naturopathic practice for the patients the pharmaceutical model wasn't reaching. I built the BP Triangle Method on the floor, one elevated reading at a time.
+            Twenty years of ICU and ER nursing taught me this: by the time someone gets to me, they've almost always already done the obvious work. Cut the salt. Started walking. Cleaned up meals. Rested when the day actually let them. And the reading holds steady anyway. In my experience, when that happens, the loudest corner usually isn't sodium at all. It's stress, and it doesn't behave like a bad day. It stacks, quietly, on the body, long before anyone calls it stress out loud. For a lot of the people I coach, it's the calls that never stop, the crisis that's always someone else's first, while their own follow-up keeps slipping to next month.
           </motion.p>
           <motion.p {...rise(0.38)} className="text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: '60ch' }}>
-            What I do in 1:1 is read the inside of your body the way a nurse reads a room, then write the protocol the twelve-minute appointment never had time to give you.
+            The kit teaches you the method. Coaching is me sitting with your numbers, your meds, your labs, and the stress load that never makes it onto a chart, and helping you find the corner that's most often driving a reading like yours.
           </motion.p>
+        </div>
+      </section>
+
+      <GoldHairline />
+
+      {/* ─── THE TWO PROGRAMS (direct buy, current funnel; moved above the
+           fold per Joel 2026-07-07 so pricing shows immediately) ───────── */}
+      <section id="programs" className="py-16 sm:py-20" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-4xl mx-auto px-5">
+          <motion.div {...reveal(0)}>
+            <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              THE PROGRAMS
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+              Personalized protocol. Real nursing time.
+            </h2>
+            <p className="text-base mb-12 text-center" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch', margin: '0 auto 3rem' }}>
+              I build YOUR protocol from YOUR numbers, meds, and labs. Then you run it with real access to me, not a template you're left alone with.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 mb-6">
+            {/* $297 — The 30-Day Sprint */}
+            <motion.article
+              {...reveal(0)}
+              className="coach-card"
+              style={{ background: 'var(--cream)', border: '2px solid var(--line)', borderRadius: 14, padding: 'clamp(1.5rem, 3vw, 2.25rem)', display: 'flex', flexDirection: 'column' }}
+            >
+              <header className="mb-4">
+                <h3 className="font-serif" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.55rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: '0.6rem' }}>
+                  The 30-Day Personalized Sprint
+                </h3>
+                <div style={{ fontFamily: "'Fraunces', 'Times New Roman', serif", fontStyle: 'italic', fontSize: 'clamp(1.7rem, 3vw, 2.05rem)', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.05, color: 'var(--ink)' }}>
+                  $297
+                </div>
+                <div aria-hidden="true" style={{ width: '2.5rem', height: 2, marginTop: '0.5rem', background: 'linear-gradient(90deg, var(--gold), rgba(200, 162, 82, 0))' }} />
+                <div className="mt-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+                  30 DAYS · ONE TIME
+                </div>
+              </header>
+              <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
+                The honest starting point. For the person ready to run a real protocol with my eyes on their numbers, without the 90-day commitment.
+              </p>
+              <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
+                {[
+                  'A 60-minute kickoff Zoom. I read your home BP log, meds, supplements, and labs live and name your loudest corner.',
+                  'Your personalized 30-day protocol, written for your body, not a template.',
+                  '4 live group coaching sessions with me over the 30 days. Bring your numbers, get answers.',
+                  'A doctor-conversation script to bring to your next visit.',
+                ].map((item) => (
+                  <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
+                    <CheckCircle2 size={16} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 3 }} />
+                    <span className="text-[0.95rem]" style={{ lineHeight: 1.6 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={SPRINT_297_LINK}
+                className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
+                style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
+              >
+                Start the 30-Day Sprint, $297
+                <ArrowRight size={16} className="coach-cta-arrow" />
+              </a>
+            </motion.article>
+
+            {/* $1,997 — The 90-Day Program (BEST VALUE) */}
+            <motion.article
+              {...reveal(0.08)}
+              className="coach-card"
+              style={{ background: 'var(--cream)', border: '2px solid var(--sage-deep)', borderRadius: 14, padding: 'clamp(1.5rem, 3vw, 2.25rem)', display: 'flex', flexDirection: 'column', position: 'relative' }}
+            >
+              <span style={{ position: 'absolute', top: -12, right: 20, background: 'var(--sage-deep)', color: '#fff', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 12px', borderRadius: 999 }}>
+                Best value
+              </span>
+              <header className="mb-4">
+                <h3 className="font-serif" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.55rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: '0.6rem' }}>
+                  The 90-Day Program
+                </h3>
+                <div className="flex items-baseline gap-2">
+                  <span style={{ fontSize: '1rem', color: 'var(--muted)', textDecoration: 'line-through' }}>$6,997</span>
+                  <span style={{ fontFamily: "'Fraunces', 'Times New Roman', serif", fontStyle: 'italic', fontSize: 'clamp(1.7rem, 3vw, 2.05rem)', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.05, color: 'var(--ink)' }}>
+                    $1,997
+                  </span>
+                </div>
+                <div aria-hidden="true" style={{ width: '2.5rem', height: 2, marginTop: '0.5rem', background: 'linear-gradient(90deg, var(--gold), rgba(200, 162, 82, 0))' }} />
+                <div className="mt-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+                  90 DAYS · 1:1 ACCESS + GROUP
+                </div>
+              </header>
+              <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
+                For the person whose numbers took years to climb and wants me walking the whole 90 days with them, not just the kickoff.
+              </p>
+              <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
+                {[
+                  'A 60-minute kickoff Zoom with a full lab review. Home BP log, meds, supplements, A1c, lipids, kidney, thyroid, all read together.',
+                  'Direct 1:1 access to me by WhatsApp, Sunday through Thursday, 9 to 5 ET, for the full 90 days.',
+                  'A weekly live group call plus the full protocol library in the Skool VIP community.',
+                  'If your case calls for it, Annie is looped in for a hormone-baseline call.',
+                  'A doctor-conversation script, and your Week 1 protocol drafted before you even meet.',
+                ].map((item) => (
+                  <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
+                    <CheckCircle2 size={16} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 3 }} />
+                    <span className="text-[0.95rem]" style={{ lineHeight: 1.6 }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={NINETY_1997_LINK}
+                className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
+                style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
+              >
+                Start the 90-Day Program, $1,997
+                <ArrowRight size={16} className="coach-cta-arrow" />
+              </a>
+            </motion.article>
+          </div>
+
+          <motion.div {...reveal(0.2)} className="text-center" style={{ maxWidth: 560, margin: '0 auto' }}>
+            <p className="text-sm italic" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+              {GUARANTEE_LINE}
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -260,41 +486,28 @@ export default function CoachingPage() {
       <section className="py-16" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <motion.div {...reveal(0)}>
-            <div
-              className="mb-3 text-xs font-bold uppercase"
-              style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-            >
-              WHO I TAKE 1:1
+            <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              WHO THIS IS FOR
             </div>
             <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
-              I only do this work with a few kinds of people.
+              I only take a few kinds of people into coaching.
             </h2>
           </motion.div>
           <motion.ul {...reveal(0.1)} className="space-y-4 mb-6">
             {[
-              'Adults, usually 45 to 70, with cardiovascular numbers that have been climbing for years on two or three medications that aren\'t finishing the job.',
-              'People ready to reverse meds with their doctor, not against their doctor. AND not INSTEAD OF. That line is non-negotiable.',
-              'Faith-honest families who want the eight laws of health applied inside their home, not a clinic.',
-              'Skin-in-the-game posture. You bring the home log, the meds list, the labs, the questions. I bring twenty years of nursing time. We meet in the middle.',
+              'Usually 45 to 70, with cardiovascular numbers that have kept climbing for years even after doing the things every article tells you to do, on two or three medications that still aren\'t finishing the job.',
+              'Ready to work toward less medication alongside your doctor, never around your doctor, and never instead of your doctor. That line is non-negotiable.',
+              'For a lot of the people I coach, the stress corner is the loudest one, and it isn\'t just a mood problem. It\'s a body problem that medicine doesn\'t always recognize as a real driver of blood pressure. We name it honestly instead of routing around it.',
+              'Faith-honest households where you\'ve been the one holding everyone else\'s health together, and it\'s time somebody held yours. This lives inside your home, not a clinic. Skin-in-the-game posture: you bring the home log, the meds list, the labs, the questions. I bring twenty years of nursing time. We meet in the middle.',
             ].map((item) => (
               <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
-                <span
-                  aria-hidden="true"
-                  style={{
-                    flexShrink: 0,
-                    marginTop: 10,
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background: 'var(--sage-deep)',
-                  }}
-                />
+                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 10, width: 6, height: 6, borderRadius: '50%', background: 'var(--sage-deep)' }} />
                 <span className="text-base" style={{ lineHeight: 1.65 }}>{item}</span>
               </li>
             ))}
           </motion.ul>
           <motion.p {...reveal(0.15)} className="text-base italic" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
-            If that's not you yet, the <Link to="/" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 BP Reset Kit</Link> is the right starting place.
+            If you're not there yet, the <Link to="/" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 Corner Reset kit</Link> is the right starting place.
           </motion.p>
         </div>
       </section>
@@ -305,172 +518,152 @@ export default function CoachingPage() {
       <section className="py-16" style={{ background: 'var(--sage-soft)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <motion.div {...reveal(0)}>
-            <div
-              className="mb-3 text-xs font-bold uppercase"
-              style={{ color: 'var(--sage-deep)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-            >
+            <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--sage-deep)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
               THE METHOD
             </div>
             <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
-              The BP Triangle Method, applied through the Eight Laws of Health.
+              The BP Triangle Method: why the obvious fix wasn't enough.
             </h2>
           </motion.div>
           <motion.div {...reveal(0.1)}>
             <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-              Every elevated reading is being driven by at least one of three pressures: pipe, stress, or sugar. Find the loudest one and move the right input, the numbers move with it. That is the method, in one sentence. The Eight Laws (nutrition, exercise, water, sunlight, temperance, air, rest, trust) are the inputs we work with.
+              If you've already cut the sodium and the number held steady anyway, that's not failure. That's information: the plan only had one side of the triangle in it. Every elevated reading is being driven by at least one of three corners: Stress, Sugar, or Sodium. For a lot of the people I coach, once the obvious lever's already been pulled, stress turns out to be the corner still working against the number, though coaching is where we confirm which corner it actually is for you. Find the loudest one, move the right input, and the numbers move with it. That is the method, in one sentence. The Eight Laws (nutrition, exercise, water, sunlight, temperance, air, rest, trust) are the inputs we work with.
             </p>
             <p className="text-base mb-7" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-              This isn't theory. It's the framework underneath every BraveWorks article, every kit, and every conversation in the Skool community. Over 1,100 people are inside that community. Over 250,000 follow the work across TikTok, Facebook, and Instagram. The protocol is public. The 1:1 is where we apply it to your body.
+              This isn't theory. It's the framework underneath every BraveWorks article, every kit, and every conversation in coaching, including the ones where the obvious levers were already pulled and the stress corner never got named until now. Over 500K people follow the work across TikTok, Facebook, and Instagram, and the story in the comments is almost always the same one: they did what every article told them to do, and the number still didn't move. The protocol is public. Coaching is where we apply it to your body.
             </p>
           </motion.div>
           <motion.div {...reveal(0.18)} className="flex flex-wrap gap-2 text-xs" style={{ color: 'var(--muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.08em' }}>
-            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>PIPE PRESSURE</span>
-            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>STRESS PRESSURE</span>
-            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>SUGAR PRESSURE</span>
+            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>STRESS</span>
+            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>SUGAR</span>
+            <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>SODIUM</span>
           </motion.div>
         </div>
       </section>
 
       <GoldHairline />
 
-      {/* ─── THE GROUP PROGRAMS (canon ladder rungs, 2026-06-09) ──── */}
-      <section className="py-16 sm:py-20" style={{ background: 'var(--paper)' }}>
-        <div className="max-w-4xl mx-auto px-5">
-          <motion.div {...reveal(0)}>
-            <div
-              className="mb-3 text-xs font-bold uppercase text-center"
-              style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-            >
-              THE GROUP PROGRAMS
-            </div>
-            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
-              Personalized protocol. Group momentum.
-            </h2>
-            <p className="text-base mb-12 text-center" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch', margin: '0 auto 3rem' }}>
-              Joel builds YOUR protocol from YOUR numbers, meds, and labs. Then you run it with live weekly coaching and people on the same path. Most people start here.
-            </p>
-          </motion.div>
+      {/* ─── IS THIS YOU (honest interactive checklist, tea-style) ── */}
+      <ChecklistSection reveal={reveal} />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-7 mb-6">
+      <GoldHairline />
+
+      {/* ─── WHAT TO EXPECT (honest timeline, tea-style) ───────────── */}
+      <section className="py-16" style={{ background: 'var(--paper-warm)' }}>
+        <div className="max-w-2xl mx-auto px-5">
+          <motion.div {...reveal(0)}>
+            <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              WHAT TO EXPECT
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl mb-8 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+              Honest expectations, not overnight promises.
+            </h2>
+          </motion.div>
+          <motion.div {...reveal(0.1)} className="space-y-4">
             {[
-              {
-                name: 'The 30-Day Personalized Sprint',
-                price: '$297',
-                cadence: '30 days · only 5 spots a month',
-                fit: 'For the person ready to run the full protocol with Joel\'s eyes on their numbers, without 1:1 pricing.',
-                includes: [
-                  'Joel personally reads your intake: home BP log, every med and supplement, your labs if you have them.',
-                  'Your personalized 30-day protocol, built for your body, not a template.',
-                  'Live weekly group coaching with Joel. Bring your numbers, get answers.',
-                  'Daily accountability inside the group for the full 30 days.',
-                ],
-                href: 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O',
-                cta: 'Start the 30-Day Sprint ($297)',
-              },
-              {
-                name: 'The 90-Day Personalized Group',
-                price: '$1,997',
-                cadence: '90 days · by application',
-                fit: 'For the person whose numbers took years to climb and who wants Joel adjusting the protocol the whole way down.',
-                includes: [
-                  'Everything in the 30-Day Sprint, run for a full 90 days.',
-                  'Kickoff onboarding with Joel: your file read, your Week-1 protocol drafted before you start.',
-                  'Protocol adjustments as your numbers move, month over month.',
-                  'A doctor-conversation script for every medication change you earn.',
-                ],
-                to: '/apply?tier=ninety',
-                cta: 'Apply for the 90-Day Group',
-              },
-            ].map((g, i) => (
-              <motion.article
-                key={g.name}
-                {...reveal(i * 0.08)}
-                className="coach-card"
-                style={{
-                  background: 'var(--cream)',
-                  border: '2px solid var(--sage-deep)',
-                  borderRadius: 14,
-                  padding: 'clamp(1.5rem, 3vw, 2.25rem)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <header className="mb-4">
-                  <h3 className="font-serif" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.55rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: '0.6rem' }}>
-                    {g.name}
-                  </h3>
-                  <div
-                    style={{
-                      fontFamily: "'Fraunces', 'Times New Roman', serif",
-                      fontStyle: 'italic',
-                      fontSize: 'clamp(1.7rem, 3vw, 2.05rem)',
-                      fontWeight: 500,
-                      letterSpacing: '-0.02em',
-                      lineHeight: 1.05,
-                      color: 'var(--ink)',
-                    }}
-                  >
-                    {g.price}
-                  </div>
-                  <div
-                    aria-hidden="true"
-                    style={{ width: '2.5rem', height: 2, marginTop: '0.5rem', background: 'linear-gradient(90deg, var(--gold), rgba(200, 162, 82, 0))' }}
-                  />
-                  <div className="mt-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
-                    {g.cadence}
-                  </div>
-                </header>
-                <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
-                  {g.fit}
-                </p>
-                <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
-                  {g.includes.map((item) => (
-                    <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
-                      <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--sage-deep)' }} />
-                      <span className="text-[0.95rem]" style={{ lineHeight: 1.6 }}>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                {g.to ? (
-                  <Link
-                    to={g.to}
-                    className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
-                    style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
-                  >
-                    {g.cta}
-                    <ArrowRight size={16} className="coach-cta-arrow" />
-                  </Link>
-                ) : (
-                  <a
-                    href={g.href}
-                    className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
-                    style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
-                  >
-                    {g.cta}
-                    <ArrowRight size={16} className="coach-cta-arrow" />
-                  </a>
-                )}
-              </motion.article>
+              { when: 'Before the call', title: 'Gather your real numbers', body: 'Home BP log, your prescriptions, your supplements, and any labs from the last year. Bring what you have. The call works either way.' },
+              { when: 'The kickoff (60 min)', title: 'We map your Triangle live', body: 'I listen first, then we look at your numbers together, name your loudest corner, and I write your protocol on screen while you watch and ask questions.' },
+              { when: 'The weeks after', title: 'You run it with me beside you', body: 'Group calls, direct access between them, and a plan that adjusts as your numbers move. Real change is measured in weeks, not days, the same honest window the research runs on.' },
+            ].map((row) => (
+              <div key={row.when} className="flex gap-4 p-4 rounded-xl" style={{ background: 'var(--cream)', border: '1px solid var(--line)' }}>
+                <div className="flex-shrink-0" style={{ width: 120, color: 'var(--sage-deep)', fontWeight: 700, fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  {row.when}
+                </div>
+                <div>
+                  <div className="font-medium text-base mb-1" style={{ color: 'var(--ink)' }}>{row.title}</div>
+                  <div className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>{row.body}</div>
+                </div>
+              </div>
             ))}
-          </div>
-          <motion.p {...reveal(0.2)} className="text-sm text-center" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
-            Not ready for a program? Start with the <Link to="/quiz" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>free 90-second quiz</Link> or the{' '}
-            <a href="https://www.skool.com/braveworksrn/about" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$27/mo Skool community (7 days free)</a>.
+          </motion.div>
+          <motion.p {...reveal(0.2)} className="text-base italic text-center mt-8" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
+            "Anyone promising day-three miracles is selling you a story. I'd rather sell you a plan."
           </motion.p>
         </div>
       </section>
 
       <GoldHairline />
 
-      {/* ─── THE FOUR 1:1 TIERS ─────────────────────────────────── */}
+      {/* ─── COMPARISON: coaching next to a rushed office visit ────── */}
+      <section className="py-16" style={{ background: 'var(--paper)' }}>
+        <div className="max-w-3xl mx-auto px-5">
+          <motion.div {...reveal(0)}>
+            <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              THE PLAIN DIFFERENCE
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl mb-4 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+              What coaching adds, next to a typical visit.
+            </h2>
+            <p className="text-sm text-center mb-8" style={{ color: 'var(--ink-soft)', maxWidth: '56ch', margin: '0 auto 2rem' }}>
+              This isn't a replacement for your doctor. It's the conversation a 12-minute appointment rarely has time for.
+            </p>
+          </motion.div>
+          <motion.div {...reveal(0.1)} style={{ overflowX: 'auto' }}>
+            <table className="coach-compare" style={{ width: '100%', borderCollapse: 'collapse', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 12, overflow: 'hidden' }}>
+              <thead>
+                <tr><th></th><th>Coaching with Joel</th><th>A typical office visit</th></tr>
+              </thead>
+              <tbody>
+                {[
+                  ['A full 60 minutes, no rush', true, false],
+                  ['Your labs and your kit result read together', true, false],
+                  ['A written one-page plan you keep after', true, false],
+                  ['Herbs and supplements cross-checked against your prescriptions', true, false],
+                  ['Booked directly, no referral, no weeks-long wait', true, false],
+                ].map((row) => (
+                  <tr key={row[0]}>
+                    <td>{row[0]}</td>
+                    <td>{row[1] ? <CheckCircle2 size={18} color="var(--sage-deep)" style={{ display: 'inline' }} /> : <XCircle size={18} color="#995449" style={{ display: 'inline' }} />}</td>
+                    <td>{row[2] ? <CheckCircle2 size={18} color="var(--sage-deep)" style={{ display: 'inline' }} /> : <span style={{ color: '#995449', fontSize: 13 }}>rarely</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        </div>
+      </section>
+
+      <GoldHairline />
+
+      {/* ─── WHERE THIS FITS (funnel ladder tie-in) ─────────────────── */}
+      <section className="py-16 sm:py-20" style={{ background: 'var(--sage-soft)' }}>
+        <div className="max-w-4xl mx-auto px-5">
+          <motion.div {...reveal(0)}>
+            <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--sage-deep)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              WHERE THIS FITS
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl mb-10 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
+              Coaching is the top of one path, not a separate one.
+            </h2>
+          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { step: 'Free', title: 'Take the quiz', body: 'Find your loudest corner in 60 seconds.', to: '/quiz', cta: 'Take the quiz' },
+              { step: '$17', title: 'Your Corner Reset', body: 'The 10-day plan for your loudest corner.', to: '/', cta: 'See the kit' },
+              { step: '$47', title: 'Complete the Triangle', body: 'All three corners, plus the Freedom Finale.', to: '/', cta: 'See the kit' },
+              { step: 'You are here', title: 'Coaching with Joel', body: 'Your protocol, read and adjusted by me, live.', to: '#programs', cta: 'See the programs' },
+            ].map((c, i) => (
+              <motion.div key={c.title} {...reveal(i * 0.06)} className="coach-card" style={{ background: 'var(--cream)', border: c.step === 'You are here' ? '2px solid var(--sage-deep)' : '1px solid var(--line)', borderRadius: 12, padding: '1.5rem', textAlign: 'center' }}>
+                <div className="text-xs font-bold uppercase mb-2" style={{ color: 'var(--clay)', letterSpacing: '0.1em' }}>{c.step}</div>
+                <h3 className="font-serif text-lg mb-2" style={{ color: 'var(--ink)' }}>{c.title}</h3>
+                <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.5 }}>{c.body}</p>
+                <Link to={c.to} className="text-sm font-semibold" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                  {c.cta}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <GoldHairline />
+
+      {/* ─── THE HIGH-END RETAINER (unchanged, Joel: "same") ───────── */}
       <section className="py-16 sm:py-20" style={{ background: 'var(--paper-warm)' }}>
         <div className="max-w-4xl mx-auto px-5">
           <motion.div {...reveal(0)}>
-            <div
-              className="mb-3 text-xs font-bold uppercase text-center"
-              style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-            >
-              BEYOND THE GROUPS: 1:1 WITH JOEL
+            <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              BEYOND THE PROGRAMS: THE HIGH-END RETAINER
             </div>
             <h2 className="font-serif text-2xl sm:text-3xl mb-12 text-center" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
               Four ways to have me to yourself. One inbox to start.
@@ -478,47 +671,26 @@ export default function CoachingPage() {
           </motion.div>
 
           <div className="grid grid-cols-1 gap-6 sm:gap-7">
-            {TIERS.map((tier, i) => (
+            {RETAINER_TIERS.map((tier, i) => (
               <motion.article
                 key={tier.name}
                 {...reveal(i * 0.08)}
                 className="coach-card"
-                style={{
-                  background: 'var(--cream)',
-                  border: '1px solid var(--line)',
-                  borderRadius: 14,
-                  padding: 'clamp(1.5rem, 3vw, 2.25rem)',
-                }}
+                style={{ background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 14, padding: 'clamp(1.5rem, 3vw, 2.25rem)' }}
               >
                 <header className="mb-5" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem' }}>
                   <h3 className="font-serif" style={{ fontSize: 'clamp(1.4rem, 3vw, 1.85rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.15 }}>
                     {tier.name}
                   </h3>
                   <div style={{ textAlign: 'right' }}>
-                    <div
-                      style={{
-                        fontFamily: "'Fraunces', 'Times New Roman', serif",
-                        fontStyle: 'italic',
-                        fontSize: 'clamp(1.5rem, 2.5vw, 1.9rem)',
-                        fontWeight: 500,
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.05,
-                        color: 'var(--ink)',
-                      }}
-                    >
+                    <div style={{ fontFamily: "'Fraunces', 'Times New Roman', serif", fontStyle: 'italic', fontSize: 'clamp(1.5rem, 2.5vw, 1.9rem)', fontWeight: 500, letterSpacing: '-0.02em', lineHeight: 1.05, color: 'var(--ink)' }}>
                       {tier.price}
                     </div>
-                    <div
-                      aria-hidden="true"
-                      style={{ width: '2.5rem', height: 2, marginTop: '0.4rem', marginLeft: 'auto', background: 'linear-gradient(270deg, var(--gold), rgba(200, 162, 82, 0))' }}
-                    />
+                    <div aria-hidden="true" style={{ width: '2.5rem', height: 2, marginTop: '0.4rem', marginLeft: 'auto', background: 'linear-gradient(270deg, var(--gold), rgba(200, 162, 82, 0))' }} />
                   </div>
                 </header>
 
-                <div
-                  className="mb-5 text-xs font-bold uppercase"
-                  style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-                >
+                <div className="mb-5 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
                   {tier.cadence}
                 </div>
 
@@ -532,28 +704,13 @@ export default function CoachingPage() {
                 <ul className="space-y-2.5 mb-7">
                   {tier.includes.map((item) => (
                     <li key={item} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
-                      <span
-                        aria-hidden="true"
-                        style={{
-                          flexShrink: 0,
-                          marginTop: 9,
-                          width: 5,
-                          height: 5,
-                          borderRadius: '50%',
-                          background: 'var(--sage-deep)',
-                        }}
-                      />
+                      <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 9, width: 5, height: 5, borderRadius: '50%', background: 'var(--sage-deep)' }} />
                       <span className="text-[0.95rem]" style={{ lineHeight: 1.6 }}>{item}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div
-                  style={{
-                    borderTop: '1px solid rgba(200, 162, 82, 0.4)',
-                    paddingTop: '1.25rem',
-                  }}
-                >
+                <div style={{ borderTop: '1px solid rgba(200, 162, 82, 0.4)', paddingTop: '1.25rem' }}>
                   <div className="text-xs font-bold uppercase mb-2" style={{ color: 'var(--muted)', letterSpacing: '0.14em' }}>
                     How to inquire
                   </div>
@@ -568,19 +725,9 @@ export default function CoachingPage() {
                     Apply for {tier.shortName}
                     <ArrowRight size={14} className="coach-cta-arrow" />
                   </Link>
-                  <div
-                    className="mt-3 text-xs"
-                    style={{
-                      color: 'var(--muted)',
-                      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                      letterSpacing: '0.04em',
-                    }}
-                  >
+                  <div className="mt-3 text-xs" style={{ color: 'var(--muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.04em' }}>
                     Prefer email?{' '}
-                    <a
-                      href={mailtoFor(tier.subject)}
-                      style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
-                    >
+                    <a href={mailtoFor(tier.subject)} style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
                       {EMAIL}
                     </a>{' '}
                     with subject {tier.subject}
@@ -589,45 +736,6 @@ export default function CoachingPage() {
               </motion.article>
             ))}
           </div>
-        </div>
-      </section>
-
-      <GoldHairline />
-
-      {/* ─── HOW TO START ───────────────────────────────────────── */}
-      <section className="py-16" style={{ background: 'var(--paper-warm)' }}>
-        <div className="max-w-2xl mx-auto px-5">
-          <motion.div {...reveal(0)}>
-            <div
-              className="mb-3 text-xs font-bold uppercase"
-              style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-            >
-              HOW TO START
-            </div>
-            <h2 className="font-serif text-2xl sm:text-3xl mb-6" style={{ color: 'var(--ink)', lineHeight: 1.2 }}>
-              One email. One inbox. One reply.
-            </h2>
-          </motion.div>
-          <motion.div {...reveal(0.1)}>
-            <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.75 }}>
-              Email <a href={`mailto:${EMAIL}`} style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px', fontWeight: 600 }}>{EMAIL}</a> with the subject line for the tier you want. Tell me what's been happening with your numbers, what you've already tried, and what tier you're inquiring about. Two or three paragraphs is enough.
-            </p>
-            <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.75 }}>
-              I read every email myself. I reply within 48 hours. If it's a fit, I send a Stripe invoice the same week. The first call is on the calendar within seven days of the invoice being paid.
-            </p>
-            <p
-              className="text-sm mt-8 mb-0"
-              style={{
-                color: 'var(--muted)',
-                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                letterSpacing: '0.04em',
-                borderLeft: '3px solid var(--gold)',
-                paddingLeft: '1rem',
-              }}
-            >
-              EMAIL → REPLY WITHIN 48H → INVOICE → CALL WITHIN 7 DAYS.
-            </p>
-          </motion.div>
         </div>
       </section>
 
@@ -644,22 +752,11 @@ export default function CoachingPage() {
                 alt="Joel Polley, RN"
                 width="84"
                 height="84"
-                style={{
-                  width: 84,
-                  height: 84,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '2px solid var(--cream)',
-                  boxShadow: '0 6px 18px rgba(44,42,38,0.12)',
-                  flexShrink: 0,
-                }}
+                style={{ width: 84, height: 84, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--cream)', boxShadow: '0 6px 18px rgba(44,42,38,0.12)', flexShrink: 0 }}
               />
             </picture>
             <div>
-              <div
-                className="text-xs font-bold uppercase mb-1"
-                style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}
-              >
+              <div className="text-xs font-bold uppercase mb-1" style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
                 ABOUT JOEL
               </div>
               <h2 className="font-serif text-2xl" style={{ color: 'var(--ink)', lineHeight: 1.15, fontStyle: 'italic' }}>
@@ -669,16 +766,12 @@ export default function CoachingPage() {
           </motion.div>
           <motion.div {...reveal(0.1)}>
             <p className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.75 }}>
-              Registered Nurse. Eighteen-plus years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Naturopathic practitioner. Founder of BraveWorks RN. Author of the BP Reset Kit and the BP Reset library on KDP. Creator of the BP Triangle Method.
+              Registered Nurse. Twenty-plus years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology doesn't have time for. Naturopathic practitioner. Founder of BraveWorks RN. Creator of the BP Triangle Method.
             </p>
             <p className="text-base mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.75, fontStyle: 'italic', borderLeft: '3px solid var(--gold)', paddingLeft: '1rem' }}>
               "Pills manage output. Protocol fixes input. That's the whole sentence."
             </p>
-            <Link
-              to="/about/joel"
-              className="inline-flex items-center gap-2 text-sm font-semibold"
-              style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}
-            >
+            <Link to="/about/joel" className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
               Read the long version <ArrowRight size={14} />
             </Link>
           </motion.div>
@@ -689,7 +782,7 @@ export default function CoachingPage() {
                 <Stethoscope size={20} color="var(--sage-deep)" strokeWidth={1.5} style={{ flexShrink: 0, marginTop: 2 }} />
                 <div>
                   <div className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>ICU + ER</div>
-                  <div className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.5 }}>18+ years critical care and emergency medicine.</div>
+                  <div className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.5 }}>20+ years critical care and emergency medicine.</div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -714,13 +807,45 @@ export default function CoachingPage() {
       <GoldHairline />
 
       {/* ─── Disclaimer ─────────────────────────────────────────── */}
-      <section className="py-10 px-5" style={{ background: 'var(--paper-warm)' }}>
+      <section className="py-10 px-5" style={{ background: 'var(--paper-warm)', paddingBottom: '5rem' }}>
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.7, maxWidth: '64ch', margin: '0 auto' }}>
-            All 1:1 work with Joel Polley, RN, is education-based nursing consultation rooted in 20 years of ICU and ER experience. It is not diagnosis, prescription, or replacement for your physician. Any protocol we discuss works alongside your doctor, not instead of them. Never start, stop, or change a prescribed medication without your prescribing physician's supervision.
+            All coaching with Joel Polley, RN, is education-based nursing consultation rooted in 20 years of ICU and ER experience. It is not diagnosis, prescription, or replacement for your physician. Any protocol we discuss works alongside your doctor, not instead of them. Never start, stop, or change a prescribed medication without your prescribing physician's supervision.
           </p>
         </div>
       </section>
+
+      {/* ─── STICKY MOBILE CTA ──────────────────────────────────── */}
+      <StickyBar />
     </main>
+  );
+}
+
+// Simple scroll-triggered sticky bar pointing at the two direct-buy programs.
+// No single price shown (two different offers), so it scrolls to #programs
+// rather than linking one Stripe URL.
+function StickyBar() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 700);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <div className={`coach-sticky md:hidden ${show ? 'show' : ''}`} style={{ minHeight: 64 }}>
+      <div className="max-w-lg mx-auto px-5 flex items-center justify-between gap-3">
+        <span className="font-serif text-sm" style={{ color: 'var(--ink)' }}>Coaching with Joel</span>
+        <a
+          href="#programs"
+          className="px-5 py-2.5 rounded-lg font-bold text-sm"
+          style={{ background: 'var(--clay-hover)', color: '#fff', textDecoration: 'none' }}
+        >
+          See the programs
+        </a>
+      </div>
+    </div>
   );
 }
