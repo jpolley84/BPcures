@@ -35,6 +35,68 @@ const START_OPTIONS = ['This week', 'Within 30 days', 'Just exploring for now'];
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, monospace';
 const SERIF = "'Fraunces', 'Times New Roman', serif";
 
+// 2026-07-09: application-funnel VSL slot (Annie-model "watch this first" take-
+// away sell). Env seam so Joel can drop a Loom/YouTube/Vimeo URL later without
+// a code change; until it is a real embeddable URL, the slot renders nothing
+// (no empty placeholder box on a live page). "Build around it" per Joel.
+const VSL_URL =
+  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_COACHING_VSL_URL) || '';
+
+// Fit-call booking (the "skip the line, book now" step on the thank-you state).
+// Prefer a dedicated fit-call Calendly; fall back to the diagnostic-call var the
+// welcome pages already use. Only treated as real when it is a Calendly URL, so
+// an unset/garbage value degrades to the "we will email you to schedule" copy.
+const RAW_FIT_CALENDLY =
+  (typeof import.meta !== 'undefined' && import.meta.env &&
+    (import.meta.env.VITE_CALENDLY_FIT_CALL_URL || import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL)) || '';
+const HAS_FIT_CALENDLY = /calendly\.com/i.test(RAW_FIT_CALENDLY);
+
+// Turn a Loom/YouTube/Vimeo share URL into an embeddable src. Anything that
+// already looks like an /embed or a direct file is passed through. Returns null
+// for values we cannot safely embed, so the slot just stays hidden.
+function toEmbedSrc(url) {
+  if (!url || typeof url !== 'string') return null;
+  const u = url.trim();
+  const yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/i);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const loom = u.match(/loom\.com\/(?:share|embed)\/([\w-]+)/i);
+  if (loom) return `https://www.loom.com/embed/${loom[1]}`;
+  const vimeo = u.match(/vimeo\.com\/(?:video\/)?(\d+)/i);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  if (/^https:\/\/.+\.(mp4|webm|m4v)(\?|$)/i.test(u) || /\/embed\//i.test(u)) return u;
+  return null;
+}
+
+// The "watch this first" video block. Renders only when VSL_URL is a real,
+// embeddable URL; otherwise nothing (so the page reads clean with no video).
+function VideoSlot({ label }) {
+  const src = toEmbedSrc(VSL_URL);
+  if (!src) return null;
+  const isFile = /\.(mp4|webm|m4v)(\?|$)/i.test(src);
+  return (
+    <div style={{ maxWidth: 640, margin: '0 auto' }}>
+      {label && (
+        <div className="mb-3 text-xs font-bold uppercase text-center" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: MONO }}>
+          {label}
+        </div>
+      )}
+      <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--line)', background: '#000' }}>
+        {isFile ? (
+          <video src={src} controls playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+        ) : (
+          <iframe
+            src={src}
+            title="A word from Joel Polley, RN"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 function GoldHairline() {
   return <div aria-hidden="true" className="apply-hairline" />;
 }
@@ -274,26 +336,76 @@ export default function ApplyPage() {
           <motion.p {...rise(0.38)} style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: '1.1rem', color: 'var(--ink)' }}>
             Joel Polley, RN
           </motion.p>
+
+          {/* "Watch this first" VSL slot (renders only when a video URL is set). */}
+          <motion.div {...rise(0.48)} style={{ marginTop: '2.25rem' }}>
+            <VideoSlot label="Watch this first" />
+          </motion.div>
         </div>
       </section>
 
       <GoldHairline />
 
       {submitted ? (
-        /* THANK-YOU STATE */
-        <section className="py-20" style={{ background: 'var(--paper)' }}>
-          <div className="max-w-xl mx-auto px-5 text-center">
-            <motion.div {...rise(0)}>
+        /* THANK-YOU STATE — Annie-model page 3: confirmation + book-now-to-skip
+           -the-line + the 48-hour expectation. */
+        <section className="py-16 sm:py-20" style={{ background: 'var(--paper)' }}>
+          <div className="max-w-2xl mx-auto px-5">
+            <motion.div {...rise(0)} className="text-center">
               <div
                 aria-hidden="true"
-                style={{ height: 1, width: 'min(220px, 60%)', margin: '0 auto 2rem', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }}
+                style={{ height: 1, width: 'min(220px, 60%)', margin: '0 auto 1.75rem', background: 'linear-gradient(90deg, transparent, var(--gold), transparent)' }}
               />
-              <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 'clamp(1.7rem, 4vw, 2.4rem)', color: 'var(--ink)', marginBottom: '1.25rem' }}>
-                Application received.
+              <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: MONO }}>
+                Application received
+              </div>
+              <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 'clamp(1.7rem, 4vw, 2.4rem)', color: 'var(--ink)', marginBottom: '1.1rem' }}>
+                You are on my desk.
               </h2>
-              <p className="text-base mb-8" style={{ color: 'var(--ink-soft)', lineHeight: 1.7, maxWidth: '46ch', margin: '0 auto 2rem' }}>
-                I read every one personally. You will hear from me within 48 hours, usually sooner. Watch your inbox (and spam folder) for joel@bpquiz.com.
+              <p className="text-base" style={{ color: 'var(--ink-soft)', lineHeight: 1.7, maxWidth: '48ch', margin: '0 auto 2rem' }}>
+                I read every application personally. You will hear from me within 48 hours, usually sooner. Watch your inbox, and your spam folder, for joel@bpquiz.com.
               </p>
+            </motion.div>
+
+            {/* Optional video (same slot as the hero). */}
+            <motion.div {...rise(0.1)} style={{ marginBottom: '2rem' }}>
+              <VideoSlot label="While you wait, watch this" />
+            </motion.div>
+
+            {/* Book now to skip the line. Renders the fit-call calendar when a
+                Calendly URL is configured; otherwise sets the "I will email you
+                to schedule" expectation so there is never a dead control. */}
+            <motion.div {...rise(0.16)} style={{ background: 'var(--paper-warm)', border: '1px solid var(--line)', borderRadius: 14, padding: 'clamp(1.4rem, 3vw, 2rem)', maxWidth: 620, margin: '0 auto' }}>
+              <div className="mb-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: MONO }}>
+                Want to move faster?
+              </div>
+              <h3 style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 'clamp(1.25rem, 2.5vw, 1.6rem)', color: 'var(--ink)', marginBottom: '0.75rem', lineHeight: 1.2 }}>
+                Skip the line. Book your fit call now.
+              </h3>
+              {HAS_FIT_CALENDLY ? (
+                <>
+                  <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, marginBottom: '1.1rem' }}>
+                    Booking a time does not guarantee a spot, but it does move your application to the top of my stack, and it means we talk on the phone instead of by email. Pick a time that works for you.
+                  </p>
+                  <a
+                    href={RAW_FIT_CALENDLY}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="apply-submit"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--clay-hover)', color: '#FFFFFF', fontWeight: 700, textDecoration: 'none', padding: '0.85rem 1.5rem', borderRadius: 10 }}
+                  >
+                    Pick my fit-call time
+                    <ArrowRight size={16} className="apply-submit-arrow" />
+                  </a>
+                </>
+              ) : (
+                <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.65 }}>
+                  When I write back within the next 48 hours, my note includes a link to grab a fit-call time straight on my calendar. No need to do anything now, your application is already in front of me.
+                </p>
+              )}
+            </motion.div>
+
+            <div className="text-center" style={{ marginTop: '2rem' }}>
               <Link
                 to="/coaching"
                 className="text-sm font-semibold"
@@ -301,7 +413,7 @@ export default function ApplyPage() {
               >
                 Back to the coaching page
               </Link>
-            </motion.div>
+            </div>
           </div>
         </section>
       ) : (

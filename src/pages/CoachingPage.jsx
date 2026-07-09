@@ -67,7 +67,11 @@ const EMAIL = 'concierge@bpquiz.com';
 const EASE = [0.22, 1, 0.36, 1];
 
 const SPRINT_297_LINK = 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O';
-const NINETY_1997_LINK = 'https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M';
+// 2026-07-09: the $1,997 90-Day Program no longer sells via a direct Stripe
+// link. It is application-routed (/apply?tier=ninety -> fit call -> close) per
+// Joel's hybrid model. The old direct-buy link is retired from the page; the
+// Stripe price still exists for the invoice Joel sends after the fit call.
+// Retired link: https://buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M
 
 const RETAINER_TIERS = [
   {
@@ -461,14 +465,18 @@ export default function CoachingPage() {
                   </li>
                 ))}
               </ul>
-              <a
-                href={NINETY_1997_LINK}
+              {/* 2026-07-09: the $1,997 is now application-routed (Joel's
+                  hybrid call): $297 stays instant-buy, $1,997 + retainer go
+                  through /apply -> fit call -> close. Price stays visible as
+                  the anchor; the CTA is Apply, not a raw Stripe button. */}
+              <Link
+                to="/apply?tier=ninety"
                 className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
                 style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
               >
-                Start the 90-Day Program, $1,997
+                Apply for the 90-Day Program
                 <ArrowRight size={16} className="coach-cta-arrow" />
-              </a>
+              </Link>
             </motion.article>
           </div>
 
