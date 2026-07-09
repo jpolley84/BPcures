@@ -626,6 +626,18 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
     console.error('recordTeaSale: tea sale KV record failed', err.message);
   }
 
+  // 2026-07-09: permanent per-order ledger (no TTL) so the nightly digest can
+  // show a running "to date" open-orders worklist plus a separate fulfilled
+  // list, not just the rolling 21-day day-bucket above. Same key:id + SCAN
+  // convention as drip:<email> / waitlist:app:<email> elsewhere in this repo.
+  // Marked fulfilled by scripts/tea-mark-fulfilled.mjs when Joel/Annie say an
+  // order shipped; nothing else ever flips this flag.
+  try {
+    await kv.set(`tea:order:${dedupeId}`, { ...record, fulfilled: false, fulfilledAt: null });
+  } catch (err) {
+    console.error('recordTeaSale: tea order ledger write failed', err.message);
+  }
+
   // Send the buyer their confirmation + ingredient flyer. Best-effort: a send
   // failure never fails the caller (the KV record + nightly shipping digest is
   // the fulfillment backstop, and Joel can resend). Fires once per new sale
