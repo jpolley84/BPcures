@@ -134,6 +134,17 @@ function waitlistCallout(key) {
   return callout({ kicker: c.kicker, body: c.html });
 }
 
+// ─── Steady tea (P.S. on Day 6 only) ──────────────────────────────────
+// Day 6 is the sodium synthesis, and hibiscus + hawthorn ARE the Sodium-corner
+// herbs, so the tea rides as a post-signature P.S., never a competing CTA. No
+// health claims here: the page carries the story and the medication cautions.
+const TEA_URL = 'https://bpquiz.com/tea?utm_source=email&utm_medium=lead-arc&utm_campaign=tea';
+
+const TEA_PS = {
+  html: p(`P.S. The two herbs this corner leans on hardest, hibiscus and hawthorn, are the same two I finally blended under my own label: <strong>Steady, the BP Triangle tea</strong>. Caffeine free, steeped slow, under a dollar a cup, with a 60 day keep-the-pouch guarantee. The full story, and the honest cautions if you take medication, lives at <a href="${TEA_URL}" style="color:${PALETTE.accentClay};font-weight:700;">bpquiz.com/tea</a>.`),
+  text: `P.S. The two herbs this corner leans on hardest, hibiscus and hawthorn, are the same two I blended under my own label: Steady, the BP Triangle tea. Caffeine free, steeped slow, under a dollar a cup, 60 day keep-the-pouch guarantee. The full story (and the honest cautions if you take medication): ${TEA_URL}`,
+};
+
 // ─── DAY 0 — Welcome + the Triangle (three faucets, one sink) ─────────
 const day0 = {
   subject: 'Three faucets, one sink',
@@ -338,6 +349,7 @@ const day6 = {
       entryCta(corner),
       p(`Whatever you decide, you already understand your own body better than you did a week ago, and no one can take that back. Thank you for letting me walk these days with you.`),
       p(`Joel Polley, RN`),
+      TEA_PS.html,
     ].join('');
   },
   textBody: ({ firstName, corner, readiness }) => {
@@ -363,7 +375,9 @@ ${readyText}Here is the whole week in one breath: your pressure is not a life se
 Start here: ${entryUrl(corner)}
 
 Thank you for letting me walk these days with you.
-Joel Polley, RN`;
+Joel Polley, RN
+
+${TEA_PS.text}`;
   },
 };
 

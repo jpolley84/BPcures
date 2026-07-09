@@ -67,6 +67,18 @@
     {
       "path": "/api/daily-digest",
       "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/triangle-lead-cron",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/triangle-buyer-cron",
+      "schedule": "30 15 * * *"
+    },
+    {
+      "path": "/api/tea-daily-cron",
+      "schedule": "30 4 * * *"
     }
   ]
 }

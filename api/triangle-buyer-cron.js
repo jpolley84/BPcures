@@ -91,6 +91,10 @@ const CALL_97_URL = process.env.CALL_97_LINK || 'https://buy.stripe.com/3cI9AT9o
 // holds the story, the honest 5-a-month capacity line, and the buy button).
 // Records with caseReview:true (they already bought it) never see this pitch.
 const CASE_REVIEW_PAGE_URL = `${SITE_URL}/case-review`;
+// Steady tea — P.S. on the sodium science email only (hibiscus + hawthorn ARE
+// the Sodium-corner herbs). No health claims in email copy; the /tea page
+// carries the story and the medication cautions.
+const TEA_URL = `${SITE_URL}/tea?utm_source=email&utm_medium=buyer-arc&utm_campaign=tea`;
 
 // Has this buyer already purchased the $297 case review? The drip record
 // carries caseReview:true when they have (set by triangle-webhook). Defensive:
@@ -346,6 +350,7 @@ Joel Polley, RN`,
       sodiumCloser(nextCorner),
       p(`Keep walking it day by day. Your blood pressure is an effect, not a mystery.`),
       p(`Joel Polley, RN`),
+      p(`P.S. If you would rather meet your two Sodium-corner herbs as a nightly ritual than a checklist: hibiscus and hawthorn are exactly what I blended into <strong>Steady, the BP Triangle tea</strong>, under my own label. Caffeine free, under a dollar a cup, 60 day keep-the-pouch guarantee, and the page carries the same medication cautions your module does: <a href="${TEA_URL}" style="color:${PALETTE.accentClay};font-weight:700;">bpquiz.com/tea</a>.`),
     ].join(''),
     text: (firstName, nextCorner) => `Hi ${firstName},
 
@@ -369,7 +374,9 @@ The label-detective work, the hydration number, the potassium plate, the contras
 ${sodiumCloserText(nextCorner)}
 
 Keep walking it day by day. Your blood pressure is an effect, not a mystery.
-Joel Polley, RN`,
+Joel Polley, RN
+
+P.S. If you would rather meet your two Sodium-corner herbs as a nightly ritual than a checklist: hibiscus and hawthorn are exactly what I blended into Steady, the BP Triangle tea, under my own label. Caffeine free, under a dollar a cup, 60 day keep-the-pouch guarantee, and the page carries the same medication cautions your module does: ${TEA_URL}`,
   },
 };
 
