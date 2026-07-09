@@ -117,6 +117,14 @@ export default async function handler(req, res) {
       line_items: [{ price: priceId, quantity: 1 }],
       // The webhook guard keys on metadata.funnel; corner drives kit delivery.
       metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}) },
+      // 2026-07-08: always create a Customer + save the card off_session. This
+      // is invisible to the buyer (no extra fields, no extra step) and costs
+      // nothing at kit-purchase time; it's what lets /welcome offer the tea
+      // upsell as a true one-click charge instead of a re-enter-your-card
+      // redirect (api/tea-one-click.js reads this saved card via
+      // api/get-checkout-session.js).
+      customer_creation: 'always',
+      payment_intent_data: { setup_future_usage: 'off_session' },
       // Pass the corner through so the /welcome thank-you page shows the SAME kit
       // the buyer paid for. A quiz-skipper has no corner in sessionStorage, so
       // without this the page falls back to the wrong corner. The delivery email is

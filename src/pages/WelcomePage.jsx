@@ -39,6 +39,7 @@ import { useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Download, Users, ArrowRight, Stethoscope, CheckCircle2, Lock } from 'lucide-react';
 import TriangleVisual from '../components/TriangleVisual';
+import TeaOneClickOffer from '../components/TeaOneClickOffer';
 import {
   normalizeTier,
   bundleNameForTier,
@@ -292,6 +293,7 @@ export default function WelcomePage() {
   // quiz-skipping buyer lands on the SAME corner they paid for) wins, then the
   // quiz result in sessionStorage, then null (safe manifest default).
   const urlCorner = params.get('corner');
+  const sessionId = params.get('session_id') || '';
   const { corner: quizCorner, scores } = useMemo(readQuiz, []);
   const corner = VALID_CORNERS_SET.has(urlCorner) ? urlCorner : quizCorner;
   const knewCorner = Boolean(corner);
@@ -405,6 +407,9 @@ export default function WelcomePage() {
           </a>
         </div>
       )}
+
+      {/* ---- SVUTU Steady tea: true one-click upsell off the kit's saved card ---- */}
+      <TeaOneClickOffer sessionId={sessionId} />
 
       {/* ---- The three stacked tier levels: owned = unlocked, higher = locked ---- */}
       {levels.map((lvl) => {

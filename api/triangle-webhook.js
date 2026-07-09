@@ -580,21 +580,108 @@ async function isTeaSession(session) {
   return false;
 }
 
-// Record the tea sale for the nightly shipping digest + tag the buyer in the
-// Resend "Tea Buyers" audience. Never throws into the webhook.
-async function processTeaPurchase(session) {
-  const customerEmail = session.customer_details?.email || '';
-  const customerName = session.customer_details?.name || '';
+// Shared tea-sale fulfillment: KV shipping-digest record + Resend "Tea Buyers"
+// tag + buyer confirmation email + PostHog capture. Used by BOTH the Payment
+// Link webhook path (processTeaPurchase, below) and the one-click upsell
+// charge (api/tea-one-click.js), so a tea sale is recorded identically no
+// matter which path it came through, and the nightly shipping digest cron
+// never has to know the difference. dedupeId is whatever Stripe object id is
+// globally unique for the sale (a Checkout Session id from the webhook, or a
+// PaymentIntent id from the one-click charge, which never gets a
+// checkout.session.completed event of its own).
+export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source }) {
+  const customerEmail = email || '';
   const emailKey = String(customerEmail).trim().toLowerCase();
 
-  // Dedupe on the session id (Stripe retries deliver the same event).
-  const dedupeKey = `tea:sale:${session.id}`;
+  const dedupeKey = `tea:sale:${dedupeId}`;
   try {
     const already = await kv.get(dedupeKey);
     if (already) return { action: 'tea_sale', deduplicated: true, customer_email: customerEmail };
   } catch (err) {
-    console.warn('stripe-webhook: tea dedupe read failed (non-fatal)', err.message);
+    console.warn('recordTeaSale: dedupe read failed (non-fatal)', err.message);
   }
+
+  const addr = address || {};
+  const record = {
+    at: new Date().toISOString(),
+    sessionId: dedupeId,
+    email: customerEmail,
+    name: name || '',
+    items: items || [],
+    amountCents: amountCents || 0,
+    subscription: Boolean(isSubscription),
+    source: source || 'checkout_session',
+    address: {
+      line1: addr.line1 || '', line2: addr.line2 || '', city: addr.city || '',
+      state: addr.state || '', postal_code: addr.postal_code || '', country: addr.country || '',
+    },
+  };
+
+  // Append to the Chicago-day bucket the digest cron reads. 21-day TTL.
+  try {
+    const dayKey = `tea:sales:${chicagoDateKey()}`;
+    await kv.rpush(dayKey, JSON.stringify(record));
+    await kv.expire(dayKey, 60 * 60 * 24 * 21);
+  } catch (err) {
+    console.error('recordTeaSale: tea sale KV record failed', err.message);
+  }
+
+  // Send the buyer their confirmation + ingredient flyer. Best-effort: a send
+  // failure never fails the caller (the KV record + nightly shipping digest is
+  // the fulfillment backstop, and Joel can resend). Fires once per new sale
+  // because the dedupe guard above returns early on a repeat.
+  if (customerEmail) {
+    try {
+      await sendTeaConfirmation({
+        email: customerEmail,
+        firstName: firstNameOf(record.name),
+        items: record.items,
+        amountCents: record.amountCents,
+        address: record.address,
+        name: record.name,
+      });
+    } catch (err) {
+      console.error('recordTeaSale: tea confirmation email failed', err.message);
+    }
+  }
+
+  // Tag the buyer in Resend (Tea Buyers audience). Existing contact -> Resend
+  // returns an error we can ignore; the tag is the point, not uniqueness.
+  if (emailKey) {
+    try {
+      const [first, ...restName] = String(record.name).trim().split(/\s+/);
+      await fetch(`https://api.resend.com/audiences/${TEA_AUDIENCE_ID}/contacts`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailKey, first_name: first || '', last_name: restName.join(' '), unsubscribed: false }),
+      });
+    } catch (err) {
+      console.warn('recordTeaSale: tea Resend tag failed (non-fatal)', err.message);
+    }
+  }
+
+  try {
+    await kv.set(dedupeKey, { recordedAt: new Date().toISOString() }, { ex: 60 * 60 * 24 * 30 });
+  } catch (err) {
+    console.warn('recordTeaSale: tea dedupe write failed (non-fatal)', err.message);
+  }
+
+  await capturePurchase({
+    email: customerEmail,
+    amountCents: record.amountCents,
+    tier: 'svutu-tea',
+    sessionId: dedupeId,
+  });
+  return { action: 'tea_sale', recorded: true, customer_email: customerEmail };
+}
+
+// Record the tea sale for the nightly shipping digest + tag the buyer in the
+// Resend "Tea Buyers" audience. Never throws into the webhook. Thin wrapper
+// around recordTeaSale() that pulls the shared fields out of a Stripe
+// Checkout Session (the shape a tea Payment Link purchase arrives in).
+async function processTeaPurchase(session) {
+  const customerEmail = session.customer_details?.email || '';
+  const customerName = session.customer_details?.name || '';
 
   // What they bought (product name + qty per line item).
   let items = [];
@@ -614,76 +701,17 @@ async function processTeaPurchase(session) {
     session.collected_information?.shipping_details ||
     null;
   const addr = ship?.address || session.customer_details?.address || {};
-  const record = {
-    at: new Date().toISOString(),
-    sessionId: session.id,
+
+  return recordTeaSale({
+    dedupeId: session.id,
     email: customerEmail,
     name: ship?.name || customerName,
     items,
     amountCents: session.amount_total ?? session.amount_subtotal ?? 0,
-    subscription: session.mode === 'subscription',
-    address: {
-      line1: addr.line1 || '', line2: addr.line2 || '', city: addr.city || '',
-      state: addr.state || '', postal_code: addr.postal_code || '', country: addr.country || '',
-    },
-  };
-
-  // Append to the Chicago-day bucket the digest cron reads. 21-day TTL.
-  try {
-    const dayKey = `tea:sales:${chicagoDateKey()}`;
-    await kv.rpush(dayKey, JSON.stringify(record));
-    await kv.expire(dayKey, 60 * 60 * 24 * 21);
-  } catch (err) {
-    console.error('stripe-webhook: tea sale KV record failed', err.message);
-  }
-
-  // Send the buyer their confirmation + ingredient flyer. Best-effort: a send
-  // failure never fails the webhook (the KV record + nightly shipping digest is
-  // the fulfillment backstop, and Joel can resend). Fires once per new session
-  // because the dedupe guard above returns early on Stripe retries.
-  if (customerEmail) {
-    try {
-      await sendTeaConfirmation({
-        email: customerEmail,
-        firstName: firstNameOf(record.name || customerName),
-        items,
-        amountCents: record.amountCents,
-        address: record.address,
-        name: record.name,
-      });
-    } catch (err) {
-      console.error('stripe-webhook: tea confirmation email failed', err.message);
-    }
-  }
-
-  // Tag the buyer in Resend (Tea Buyers audience). Existing contact -> Resend
-  // returns an error we can ignore; the tag is the point, not uniqueness.
-  if (emailKey) {
-    try {
-      const [first, ...restName] = String(customerName).trim().split(/\s+/);
-      await fetch(`https://api.resend.com/audiences/${TEA_AUDIENCE_ID}/contacts`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailKey, first_name: first || '', last_name: restName.join(' '), unsubscribed: false }),
-      });
-    } catch (err) {
-      console.warn('stripe-webhook: tea Resend tag failed (non-fatal)', err.message);
-    }
-  }
-
-  try {
-    await kv.set(dedupeKey, { recordedAt: new Date().toISOString() }, { ex: 60 * 60 * 24 * 30 });
-  } catch (err) {
-    console.warn('stripe-webhook: tea dedupe write failed (non-fatal)', err.message);
-  }
-
-  await capturePurchase({
-    email: customerEmail,
-    amountCents: record.amountCents,
-    tier: 'svutu-tea',
-    sessionId: session.id,
+    isSubscription: session.mode === 'subscription',
+    address: addr,
+    source: 'checkout_session',
   });
-  return { action: 'tea_sale', recorded: true, customer_email: customerEmail };
 }
 
 // ─── SVUTU Steady: buyer confirmation email + ingredient flyer ────────

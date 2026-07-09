@@ -1,13 +1,16 @@
 // Post-purchase upsell for SVUTU "Steady" — the done-for-you hibiscus tea.
 // The BraveWorks protocol calls for hibiscus daily; Steady ships the exact
-// single-ingredient tea. Subscription-primary ($42/mo), Sampler ($24) as the
-// low-friction entry. Rendered on SuccessPage + DownloadsPage. Stripe links are
-// the live tea SKUs (metadata funnel:svutu-tea → triangle-webhook skips the kit
-// misdelivery guard). Full storefront at bpquiz.com/tea.
+// single-ingredient tea. Rendered on SuccessPage + DownloadsPage (pages
+// without a reliable saved-card session context, so this stays a plain
+// Payment Link, unlike the true one-click offer on /welcome, see
+// TeaOneClickOffer.jsx). 2026-07-08: swapped the retired $42/mo subscription
+// + $24 Sampler links (no longer sold) for the two tiers actually live on
+// bpquiz.com/tea today. Stripe links are the live tea SKUs (metadata
+// funnel:svutu-tea → triangle-webhook skips the kit misdelivery guard).
 import { Leaf, ArrowRight } from 'lucide-react';
 
-const SUB = 'https://buy.stripe.com/cNicN543Nde60IX2x3fnO1y';       // $42/mo subscription
-const SAMPLER = 'https://buy.stripe.com/dRm7sL9o7fme0IXb3zfnO1A';   // $24 sampler
+const MONTH = 'https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z';    // $48 1-Month Supply
+const NINETY_DAY = 'https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x'; // $120 90-Day Supply
 const PAGE = 'https://bpquiz.com/tea';
 
 export default function TeaOffer() {
@@ -39,16 +42,16 @@ export default function TeaOffer() {
         Your reset calls for hibiscus every day. <strong>Steady</strong> is the exact single-ingredient hibiscus, measured and shipped to your door, so the step most people skip just happens on its own. 60-day keep-the-pouch guarantee, so there is no risk in trying it.
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.7rem', alignItems: 'center' }}>
-        <a href={SUB} target="_blank" rel="noopener noreferrer" style={{
+        <a href={MONTH} target="_blank" rel="noopener noreferrer" style={{
           display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
           background: 'var(--clay, #B85A36)', color: 'var(--cream, #FBF8F1)',
           padding: '0.8rem 1.4rem', borderRadius: 10, textDecoration: 'none',
           fontWeight: 700, fontSize: '0.98rem',
         }}>
-          Start Steady, $42/mo <ArrowRight size={15} />
+          Shop Steady, $48 <ArrowRight size={15} />
         </a>
-        <a href={SAMPLER} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', color: 'var(--clay, #B85A36)', fontWeight: 600, textDecoration: 'none' }}>
-          or try a Sampler for $24
+        <a href={NINETY_DAY} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', color: 'var(--clay, #B85A36)', fontWeight: 600, textDecoration: 'none' }}>
+          or the 90-Day Supply for $120
         </a>
       </div>
       <div style={{ marginTop: '0.9rem' }}>
