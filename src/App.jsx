@@ -50,6 +50,9 @@ const SeminarPage = lazy(() => import('./pages/SeminarPage'));
 const SeminarWelcomePage = lazy(() => import('./pages/SeminarWelcomePage'));
 const WakitaIntakePage = lazy(() => import('./pages/WakitaIntakePage'));
 const LuveniaIntakePage = lazy(() => import('./pages/LuveniaIntakePage'));
+// John Treadwell (Stage 4 CKD) 30-day program assessment (2026-07-09).
+// Click-based intake; submit emails Joel a PDF via api/johnt-assessment.js.
+const JohnTAssessmentPage = lazy(() => import('./pages/JohnTAssessmentPage'));
 // Blog / Articles — re-enabled 2026-05-17 for the "Blood Pressure Guy"
 // rebrand SEO content hub.
 const BlogListPage = lazy(() => import('./pages/BlogListPage'));
@@ -233,6 +236,8 @@ function App() {
               short alias for bio links + the app's own marketing. */}
           <Route path="/waitlist" element={<AppWaitlistPage />} />
           <Route path="/app" element={<Navigate to="/waitlist" replace />} />
+
+          <Route path="/JohnT" element={<JohnTAssessmentPage />} />
 
           {/* /1on1 — 2026-07-03: redirects to /coaching. The old
               WaitlistApplicationPage quoted a stale $1,297 single-pay price
