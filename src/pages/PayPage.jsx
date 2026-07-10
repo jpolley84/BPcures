@@ -19,8 +19,13 @@ import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
-const VALID_TIERS = new Set(['corner', 'top2', 'complete']);
+// 2026-07-10: tea-48 / tea-120 added — the bpquiz.com/tea buy buttons now come
+// here instead of redirecting to buy.stripe.com, so the card is saved for the
+// post-purchase one-click "+1 pouch" (api/tea-one-click.js) and the buyer
+// stays on-site. The API branch collects the shipping address in-checkout.
+const VALID_TIERS = new Set(['corner', 'top2', 'complete', 'tea-48', 'tea-120']);
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium']);
+const TEA_TIERS = new Set(['tea-48', 'tea-120']);
 
 function readContext() {
   try {
@@ -52,6 +57,7 @@ export default function PayPage() {
   const { tier, corner, email } = useMemo(readContext, []);
   const containerRef = useRef(null);
   const [error, setError] = useState('');
+  const isTea = TEA_TIERS.has(tier);
 
   useEffect(() => {
     let checkout;
@@ -105,11 +111,11 @@ export default function PayPage() {
           Secure checkout
         </p>
         <h1 style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', margin: '0 0 0.6rem', color: 'var(--navy, #1a2b4a)' }}>
-          You are seconds from your reset.
+          {isTea ? 'Your Steady is almost on its way.' : 'You are seconds from your reset.'}
         </h1>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--dark-gray, #555)' }}>
           <span>Encrypted, secured by Stripe</span>
-          <span>30-day money-back guarantee</span>
+          <span>{isTea ? '60-day guarantee · Ships in 5 to 7 business days' : '30-day money-back guarantee'}</span>
         </div>
       </div>
 

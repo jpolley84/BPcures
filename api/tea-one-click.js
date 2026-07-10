@@ -73,16 +73,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Unknown tier: ${tier}` });
   }
 
+  // Shipping comes one of two ways:
+  //   - explicit `shipping` object (the /welcome kit-buyer flow, where the kit
+  //     checkout never collected an address), or
+  //   - `reuse_session_shipping: true` (the /tea-thanks flow, where the buyer
+  //     JUST typed their address into the tea checkout; we read it back off
+  //     the original session so they never re-type it). Resolved after the
+  //     session is retrieved below.
+  const reuseSessionShipping = req.body.reuse_session_shipping === true;
   const shipping = req.body.shipping || {};
-  const name = cleanStr(shipping.name, 120);
-  const line1 = cleanStr(shipping.line1, 200);
-  const line2 = cleanStr(shipping.line2, 200);
-  const city = cleanStr(shipping.city, 100);
-  const state = cleanStr(shipping.state, 60);
-  const postal_code = cleanStr(shipping.postal_code, 20);
-  const country = cleanStr(shipping.country, 2) || 'US';
+  let name = cleanStr(shipping.name, 120);
+  let line1 = cleanStr(shipping.line1, 200);
+  let line2 = cleanStr(shipping.line2, 200);
+  let city = cleanStr(shipping.city, 100);
+  let state = cleanStr(shipping.state, 60);
+  let postal_code = cleanStr(shipping.postal_code, 20);
+  let country = cleanStr(shipping.country, 2) || 'US';
 
-  if (!name || !line1 || !city || !state || !postal_code) {
+  if (!reuseSessionShipping && (!name || !line1 || !city || !state || !postal_code)) {
     return res.status(400).json({ error: 'Missing shipping fields' });
   }
 
@@ -105,6 +113,29 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     return res.status(404).json({ error: 'session_not_found', detail: err.message });
+  }
+
+  // Resolve reused shipping off the original session (tea checkout collects
+  // it; classic API = session.shipping_details, newer = collected_information).
+  if (reuseSessionShipping) {
+    const ship =
+      originalSession.shipping_details ||
+      originalSession.collected_information?.shipping_details ||
+      null;
+    const a = ship?.address || {};
+    name = cleanStr(ship?.name || originalSession.customer_details?.name, 120);
+    line1 = cleanStr(a.line1, 200);
+    line2 = cleanStr(a.line2, 200);
+    city = cleanStr(a.city, 100);
+    state = cleanStr(a.state, 60);
+    postal_code = cleanStr(a.postal_code, 20);
+    country = cleanStr(a.country, 2) || 'US';
+    if (!name || !line1 || !city || !state || !postal_code) {
+      return res.status(409).json({
+        error: 'no_session_shipping',
+        message: 'Original session has no shipping address. Collect it client-side.',
+      });
+    }
   }
 
   const customerId = typeof originalSession.customer === 'string'

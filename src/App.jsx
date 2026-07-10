@@ -43,6 +43,7 @@ const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const ApplyPage = lazy(() => import('./pages/ApplyPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
+const TeaThanksPage = lazy(() => import('./pages/TeaThanksPage'));
 const CoachingOptinPage = lazy(() => import('./pages/CoachingOptinPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
@@ -194,6 +195,7 @@ function App() {
               at /pay?tier=corner&corner=<corner>; charges inline (no redirect).
               Wrapped in SiteLayout for the nav/footer. */}
           <Route path="/pay" element={<SiteLayout><PayPage /></SiteLayout>} />
+          <Route path="/tea-thanks" element={<SiteLayout><TeaThanksPage /></SiteLayout>} />
 
           {/* Post-purchase Triangle landing. The inline checkout's return_url is
               /welcome?tier=<tier>. Shows the buyer's unlocked kit + locked higher

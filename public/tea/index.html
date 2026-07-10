@@ -45,8 +45,7 @@
   nav.links a{ text-decoration:none; color:var(--brown);}
   nav.links a:hover{ color:var(--ruby);}
   .navcta{ background:var(--ruby); color:#fff; text-decoration:none; font-size:13px; font-weight:600; letter-spacing:.04em; padding:10px 20px; border-radius:4px;}
-  .navquiz{ display:none; text-decoration:none; color:var(--brown); font-size:13px; font-weight:600; letter-spacing:.05em; border-bottom:1.5px dotted var(--ruby); padding-bottom:1px;}
-  @media(max-width:820px){ nav.links{display:none;} .navquiz{display:inline-block;} }
+  @media(max-width:820px){ nav.links{display:none;} }
   .tier:focus-visible, .sym-item:focus-visible, .term:focus-visible, .thumb:focus-visible{ outline:2px solid var(--ruby); outline-offset:2px;}
 
   .hero{ padding:44px 0 20px;}
@@ -59,8 +58,12 @@
   .thumbs .ph{ flex:1 1 calc(25% - 8px); min-width:70px; aspect-ratio:1; font-size:10px;}
   .gallery .note{ font-size:11px; color:var(--muted); font-style:italic; margin-top:8px; text-align:center;}
   /* Image-free hero brand panel (the Triangle mark stands in for product photography until real shots exist) */
-  .herobrand{ aspect-ratio:4/5; border-radius:12px; background:linear-gradient(160deg,var(--sand),var(--cream)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px;}
+  .herobrand{ border-radius:12px; background:linear-gradient(160deg,var(--sand),var(--cream)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;}
   .herobrand .bp-tri{ width:210px; height:auto;}
+  .herobrand .heroimg{ width:100%; height:auto; border-radius:10px; display:block; box-shadow:0 14px 34px -18px rgba(60,40,30,.35);}
+  .sectimg{ width:100%; max-width:640px; height:auto; border-radius:12px; display:block; margin:26px auto 0; border:1px solid var(--line); box-shadow:0 14px 34px -18px rgba(60,40,30,.3);}
+  .tasteline{ text-align:center; font-size:13.5px; color:var(--sage-deep); margin-top:10px; font-weight:500;}
+  .trustbar .nursecred{ display:block; text-align:center; font-size:14px; color:var(--brown); padding:14px 24px 0; line-height:1.5;}
   .herobrand .hbcap{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:27px; color:var(--ink); margin-top:20px;}
   .herobrand .hbsub{ font-size:13.5px; color:var(--brown); max-width:280px; margin-top:8px; line-height:1.55;}
 
@@ -143,14 +146,6 @@
     .bp-tri .tri-lab{ opacity:1; animation:none;}
   }
 
-  /* ---- Triangle corners ---- */
-  .trio{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
-  .bcard{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:30px 26px; text-align:center;}
-  .bcard .ic{ width:52px; height:52px; border-radius:50%; background:var(--ruby-soft); color:var(--ruby); display:flex; align-items:center; justify-content:center; font-size:24px; margin:0 auto 14px; font-family:'Cormorant Garamond'; font-style:italic;}
-  .bcard .corner{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--sage-deep); font-weight:600; margin-bottom:6px;}
-  .bcard h3{ font-family:'Cormorant Garamond'; font-weight:600; font-size:23px; margin-bottom:8px; color:var(--ink);}
-  .bcard p{ font-size:14.5px; color:var(--brown);}
-
   /* ---- Symptom checklist ---- */
   .symptoms{ background:var(--sand);}
   .symgrid{ max-width:680px; margin:0 auto;}
@@ -185,16 +180,6 @@
   .ingnote a{ color:var(--ruby); font-weight:600;}
 
   .science{ background:var(--cream);}
-  .scicards{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
-  .scicard{ background:#fff; border:1px solid var(--line); border-radius:12px; display:flex; flex-direction:column; overflow:hidden;}
-  .scicard .imgbox{ aspect-ratio:16/10;}
-  .scicard .imgbox img{ border-radius:0;}
-  .scicard .body{ padding:22px 22px 24px;}
-  .scicard h3{ font-family:'Cormorant Garamond'; font-weight:600; font-size:25px; color:var(--ink); margin-bottom:4px;}
-  .scicard .studied{ font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--sage-deep); font-weight:600; margin-bottom:10px;}
-  .scicard p{ font-size:14.5px; color:var(--brown); margin-bottom:14px;}
-  .reflink{ font-size:13px; font-weight:600; color:var(--ruby); text-decoration:none; letter-spacing:.02em; cursor:pointer;}
-  .reflink:hover{ text-decoration:underline;}
 
   /* ---- Every-herb research list — all 8 botanicals, each with a real study link ---- */
   .reslist{ margin:44px auto 0; max-width:860px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px 26px;}
@@ -231,12 +216,6 @@
   .safety h4{ font-family:'Montserrat'; font-weight:600; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--ruby-deep); margin-bottom:5px;}
   .safety p{ font-size:14px; color:var(--brown); margin:0;}
   .safety .revline{ font-size:12px; color:var(--muted); font-style:italic; margin-top:8px;}
-  .skipbox{ background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 26px; margin-top:14px;}
-  .skipbox h4{ font-family:'Montserrat'; font-weight:600; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink); margin-bottom:8px;}
-  .skipbox .lede{ font-family:'Cormorant Garamond'; font-style:italic; font-size:17px; color:var(--brown); margin-bottom:10px;}
-  .skipbox ul{ list-style:none;}
-  .skipbox li{ padding:3px 0 3px 24px; position:relative; font-size:14px; color:var(--brown);}
-  .skipbox li:before{ content:"—"; position:absolute; left:0; color:var(--ruby);}
 
   /* ---- Expectations timeline ---- */
   .expect .exgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; position:relative; margin-top:40px;}
@@ -307,15 +286,6 @@
   .mcard p{ font-size:14px; color:var(--brown); margin-bottom:16px;}
   .mnote{ text-align:center; margin-top:30px; font-family:'Cormorant Garamond'; font-style:italic; font-size:19px; color:var(--ruby-deep); max-width:640px; margin-left:auto; margin-right:auto;}
 
-  /* ---- Quiz closer ---- */
-  .quiz{ background:var(--sand);}
-  .quizgrid{ display:grid; grid-template-columns:1.2fr 0.8fr; gap:44px; align-items:center;}
-  .quiz h2{ text-align:left; margin-bottom:14px;}
-  .quiz .kicker{ text-align:left;}
-  .quiz p{ color:var(--brown); margin-bottom:20px; max-width:52ch;}
-  .quiz .imgbox{ aspect-ratio:4/3; border-radius:10px; overflow:hidden;}
-  .quiz .qmeta{ font-size:12.5px; color:var(--brown); margin-top:12px; font-style:italic;}
-
   .faq{ background:var(--cream);}
   .faqitem{ border-bottom:1px solid var(--line);}
   .faqitem summary{ font-family:'Cormorant Garamond'; font-weight:600; font-size:21px; color:var(--ink); padding:20px 34px 20px 0; cursor:pointer; list-style:none; position:relative;}
@@ -356,12 +326,11 @@
   }
 
   @media(max-width:820px){
-    .heromain,.insidegrid,.foundergrid,.quizgrid{ grid-template-columns:1fr; gap:28px;}
-    .trio,.scicards,.steps,.reviews .rgrid,.expect .exgrid{ grid-template-columns:1fr;}
+    .heromain,.insidegrid,.foundergrid{ grid-template-columns:1fr; gap:28px;}
+    .steps,.reviews .rgrid,.expect .exgrid{ grid-template-columns:1fr;}
     .board,.mgrid{ grid-template-columns:1fr;}
     .exgrid:before{ display:none;}
-    .buyhead h1{ font-size:40px;} h2.head{ font-size:32px;} .inside h2,.founder h2,.quiz h2{ text-align:center;}
-    .quiz .kicker{ text-align:center;}
+    .buyhead h1{ font-size:40px;} h2.head{ font-size:32px;} .inside h2,.founder h2{ text-align:center;}
     section{ padding:52px 0;}
     .stickybar .sname small{ display:none;}
   }
@@ -391,7 +360,6 @@
       <a href="#method">The Method</a>
     </nav>
     <div style="display:flex; align-items:center; gap:16px;">
-      <a href="https://bpquiz.com/quiz" class="navquiz">Quiz</a>
       <a href="#buy" class="navcta">Shop Steady</a>
     </div>
   </div>
@@ -401,15 +369,9 @@
 <section class="hero" id="buy">
   <div class="wrap heromain">
     <div class="herobrand">
-      <svg class="bp-tri" viewBox="0 0 200 174" width="210" height="183" role="img" aria-label="The BP Triangle: Stress, Sugar, and Sodium">
-        <polygon points="100,28 36,140 164,140"></polygon>
-        <circle class="tri-dot d1" cx="100" cy="28" r="4.5" fill="var(--gold)"></circle>
-        <circle class="tri-dot d2" cx="36" cy="140" r="4.5" fill="var(--sage-deep)"></circle>
-        <circle class="tri-dot d3" cx="164" cy="140" r="4.5" fill="var(--ruby)"></circle>
-        <text class="tri-lab" x="100" y="16" text-anchor="middle">Sodium</text>
-        <text class="tri-lab" x="22" y="158" text-anchor="middle">Stress</text>
-        <text class="tri-lab" x="178" y="158" text-anchor="middle">Sugar</text>
-      </svg>
+      <!-- 2026-07-10: real product imagery replaces the brand SVG (the
+           triangle still lives in the #triangle section below). -->
+      <img class="heroimg" src="/tea/img/steady-hero-hand.webp" alt="A hand holding a pouch of SVUTU Steady loose-leaf tea beside a brewed ruby cup" width="1000" height="1249" fetchpriority="high">
       <div class="hbcap">The BP Triangle Tea</div>
       <div class="hbsub">Hibiscus &amp; hawthorn, steeped slow. Anchor 1 of The BP Triangle Method.</div>
     </div>
@@ -433,31 +395,38 @@
       </div>
 
       <div class="tiers" id="tierbox">
-        <!-- Tier 1 (top, pre-selected): 90-Day Supply, 3 pouches, $120 — the complete-transformation
-             best value. 3 pouches ~= 3 months = the full studied window (hibiscus 6wk, hawthorn to 16wk). -->
-        <div class="tier sel" data-price="120" data-label="90-Day Supply" data-cta="Add to Cart — $120" data-link="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x" data-pay="" data-ship="Ships free — and it covers the full window the studies actually ran.">
-          <span class="flag">Best value · your complete transformation</span>
-          <span class="radio"></span>
-          <span class="info"><span class="tname">90-Day Supply · 3 pouches</span><span class="tsub">The full studied window — the 3 months the research measured · ships free</span></span>
-          <span class="tprice"><span class="was">$180</span><span class="now">$120</span><span class="percup">$40/pouch · ~$0.80 a cup</span></span>
-        </div>
-        <!-- Tier 2: 1-Month one-time ($48). -->
-        <div class="tier" data-price="48" data-label="1-Month Supply" data-cta="Add to Cart — $48" data-link="https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z" data-pay="" data-ship="You're just $2 from free shipping — step up to the 90-Day Supply and it ships free.">
+        <!-- 2026-07-10 trial-first (conversion plan): the $48 1-month "Try
+             Steady" is FIRST and PRESELECTED (lowers the first-purchase
+             flinch); the $120 90-day keeps its best-value badge below. The
+             AOV given up at selection is recovered by the post-purchase
+             one-click +1 pouch on /tea-thanks. Buy path is now the INLINE
+             embedded checkout at /pay (card saved for the one-click); the
+             old buy.stripe.com payment links stay live as a fallback but the
+             page no longer uses them. -->
+        <div class="tier sel" data-price="48" data-label="1-Month Supply" data-cta="Try Steady — $48" data-link="/pay?tier=tea-48" data-pay="" data-ship="A full month of the daily cup — ships in 5 to 7 business days.">
+          <span class="flag">Try Steady · start with one pouch</span>
           <span class="radio"></span>
           <span class="info"><span class="tname">1-Month Supply · 100g pouch</span><span class="tsub">A full month of the daily cup · one-time, ~50–60 cups</span></span>
           <span class="tprice"><span class="was">$60</span><span class="now">$48</span><span class="percup">~$0.96 a cup</span></span>
         </div>
+        <div class="tier" data-price="120" data-label="90-Day Supply" data-cta="Add to Cart — $120" data-link="/pay?tier=tea-120" data-pay="" data-ship="Ships free — three months of the daily ritual.">
+          <span class="flag sage">Best value + free shipping</span>
+          <span class="radio"></span>
+          <span class="info"><span class="tname">90-Day Supply · 3 pouches</span><span class="tsub">Three months of the daily ritual · the consistency window · ships free</span></span>
+          <span class="tprice"><span class="was">$180</span><span class="now">$120</span><span class="percup">$40/pouch · ~$0.80 a cup</span></span>
+        </div>
       </div>
 
-      <a class="addcart" id="addbtn" href="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x">Add to Cart — $120</a>
+      <a class="addcart" id="addbtn" href="/pay?tier=tea-48">Try Steady — $48</a>
       <div class="paynote" id="paynote"></div>
-      <div class="shipline" id="shipline">Ships free — and it covers the full window the studies actually ran.</div>
+      <div class="shipline" id="shipline">A full month of the daily cup — ships in 5 to 7 business days.</div>
+      <div class="tasteline">If the taste is not right for you, tell us after one cup and we will make it right.</div>
       <div class="smallbatch">Blended in small, dated batches. When one steeps out, the next takes its time.</div>
       <!-- Batch-reservation meter: render ONLY when wired to real inventory AND the batch is >50% sold.
            <div class="smallbatch" id="batchmeter">This batch: [live]% reserved.</div> -->
       <div class="microtrust">
+        <span><span class="i">✓</span> Secure Stripe checkout</span>
         <span><span class="i">✓</span> Free shipping over $50</span>
-        <span><span class="i">✓</span> Third-party tested</span>
         <span><span class="i">✓</span> <a href="#guarantee">60-day guarantee</a></span>
         <span><span class="i">✓</span> Hand-crafted by our family, ships in 5–7 business days</span>
       </div>
@@ -465,9 +434,12 @@
   </div>
 
   <div class="trustbar">
+    <div class="wrap nursecred">
+      Formulated by <b>Joel Polley, RN</b>, 20 years ICU and ER. Blended and taste-checked by <b>Annie, RN</b>. Small, dated batches.
+    </div>
     <div class="wrap">
       <div class="tstat"><div class="n">RN×2</div><div class="l">Nurse-blended · nurse-checked</div></div>
-      <div class="tstat"><div class="n">2</div><div class="l">Sodium-corner heroes</div></div>
+      <div class="tstat"><div class="n">8</div><div class="l">Whole botanicals</div></div>
       <div class="tstat"><div class="n">0</div><div class="l">Caffeine · sugar · fillers</div></div>
       <div class="tstat"><div class="n">100%</div><div class="l">Heavy-metal tested</div></div>
     </div>
@@ -490,26 +462,6 @@
         <text class="tri-lab" x="22" y="158" text-anchor="middle">Stress</text>
         <text class="tri-lab" x="178" y="158" text-anchor="middle">Sugar</text>
       </svg>
-    </div>
-    <div class="trio">
-      <div class="bcard">
-        <div class="ic">♥</div>
-        <div class="corner">Sodium · the corner the cuff feels first</div>
-        <h3>The hero corner</h3>
-        <p>Hibiscus and hawthorn — the two most-loved herbs of the Sodium corner, studied for supporting healthy blood pressure and a strong, steady heart.† This is the corner Steady was blended for.</p>
-      </div>
-      <div class="bcard">
-        <div class="ic">❋</div>
-        <div class="corner">Stress · the switch</div>
-        <h3>The evening exhale</h3>
-        <p>Chamomile and a whisper of lavender — traditionally used for calm — in a cup with <b>zero caffeine</b>. Swapping the late coffee for Steady is the Temperance move the Method teaches.</p>
-      </div>
-      <div class="bcard">
-        <div class="ic">✦</div>
-        <div class="corner">Sugar · the metabolism</div>
-        <h3>The honest swap</h3>
-        <p>Tart, ruby, and naturally <b>sugar-free</b> — nothing sweetened, nothing artificial. Every glass of Steady that replaces a soda or "juice" is one less pour feeding the Sugar corner.</p>
-      </div>
     </div>
   </div>
 </section>
@@ -534,7 +486,7 @@
     </div>
     <div class="symcta">
       <a class="btn-solid" href="#buy">Meet Steady — the daily cup</a>
-      <a class="btn-ghost" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Which corner is loudest? Take the free quiz</a>
+      <a class="btn-ghost" href="#science">See what the research says</a>
     </div>
   </div>
 </section>
@@ -547,6 +499,7 @@
       <h2 class="head">Eight botanicals. Two pathways, in the amounts that matter.</h2>
       <p>Most "blood pressure teas" are just hibiscus. Steady is led by hibiscus and <b>hawthorn</b> — two researched pathways most blends skip — and then <b>every other herb in it earns its place</b>: lemongrass and nettle studied for the vessels, ginger and chamomile for blood sugar, lavender and chamomile for the stress that pushes your numbers up. Not one herb is in here just for looks.</p>
       <p>No dust, no fillers, no flavoring. Cut-and-sifted, food-grade, blended by a nurse who reads the research — and links it below.</p>
+      <img class="sectimg" src="/tea/img/steady-flatlay.webp" alt="SVUTU Steady pouch surrounded by its whole botanicals: hibiscus, chamomile, lavender, lemongrass, and a brewed ruby cup" width="1000" height="1249" loading="lazy">
       <div class="ingtags">
         <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse. Studied in a Tufts RCT and meta-analyses for lowering systolic blood pressure. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the study →</a></span></span>
         <span class="itag hero">Hawthorn<span class="pop">A 2025 meta-analysis of RCTs studied hawthorn for lower systolic pressure in hypertension. Note: it can interact with heart medications — see the safety note. <a href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">See the meta-analysis →</a></span></span>
@@ -566,45 +519,10 @@
 <section class="science rv" id="science">
   <div class="wrap">
     <div class="kicker">The science, simply</div>
-    <h2 class="head">Tap a herb. See what researchers studied.</h2>
+    <h2 class="head">Every herb, and the study behind it.</h2>
     <p class="sectlede">We don't make promises about your numbers. We tell you what the research actually says about each botanical — in plain language, with the sources one click away.</p>
 
-    <div class="scicards">
-      <div class="scicard">
-        <div class="body">
-          <h3>Hibiscus</h3>
-          <div class="studied">Studied for · healthy blood pressure†</div>
-          <p>Researchers have studied
-            <span class="term">hibiscus tea<span class="pop">A six-week randomized trial at Tufts (McKay 2010) served 3 cups of hibiscus tea daily and tracked blood pressure in adults. It's the tart, ruby workhorse of the Sodium corner. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">Read the study →</a></span></span>
-            for its role in supporting healthy blood pressure — daily cups, over weeks, in published trials. The ruby heart of the blend.</p>
-          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the research →</a>
-        </div>
-      </div>
-
-      <div class="scicard">
-        <div class="body">
-          <h3>Hawthorn</h3>
-          <div class="studied">Studied for · blood pressure in hypertension†</div>
-          <p>A classic
-            <span class="term">cardiovascular tonic<span class="pop">A 2025 meta-analysis of randomized placebo-controlled trials found hawthorn was studied for lower systolic blood pressure in people with hypertension. Note: it can interact with heart medications — see below. <a href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">Read the meta-analysis →</a></span></span>
-            — the second pathway most BP teas skip. A 2025 meta-analysis studied it for lower systolic pressure in hypertension; a separate RCT studied it in adults already on BP medication.</p>
-          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/40732315/" target="_blank" rel="noopener">See the research →</a>
-        </div>
-      </div>
-
-      <div class="scicard">
-        <div class="body">
-          <h3>Lavender &amp; chamomile</h3>
-          <div class="studied">Studied for · stress, the driver behind the numbers</div>
-          <p>The Stress corner in a teacup:
-            <span class="term">both studied for calm<span class="pop">A trial in high-blood-pressure patients studied lavender for lower blood pressure, heart rate and cortisol; a placebo-controlled trial studied chamomile for easing anxiety. Chronic stress is a driver of blood pressure. <a href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">Lavender trial →</a> · <a href="https://pubmed.ncbi.nlm.nih.gov/19593179/" target="_blank" rel="noopener">Chamomile trial →</a></span></span>
-            — because chronic stress pushes blood pressure up, and your evening cup shouldn't fight the calm with caffeine.</p>
-          <a class="reflink" href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the research →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="reslist">
+    <div class="reslist" style="margin-top:10px;">
       <div class="resrow">
         <span class="rname">Hibiscus<small>Sodium · arterial</small></span>
         <span class="rwhat">A Tufts RCT and meta-analyses studied it for lowering systolic blood pressure in adults.</span>
@@ -657,6 +575,7 @@
   <div class="wrap">
     <div class="kicker">The daily ritual</div>
     <h2 class="head">Three steps. Hot or iced.</h2>
+    <img class="sectimg" src="/tea/img/steady-ritual.webp" alt="A woman savoring a warm cup of Steady at her kitchen table, pouch and journal beside her" width="1000" height="1249" loading="lazy">
     <div class="steps" style="margin-top:36px;">
       <div class="step">
         <div class="num">1</div>
@@ -683,15 +602,6 @@
       </div>
     </div>
 
-    <div class="skipbox">
-      <h4>Who should check with their doctor first</h4>
-      <div class="lede">Steady is a food, not a medicine — but a few people should talk to their doctor before making it a daily habit.</div>
-      <ul>
-        <li>On heart or blood-pressure medication? Let your doctor know you're starting Steady, and keep monitoring your numbers with them (see the note above).</li>
-        <li>Pregnant or nursing? Check with your doctor before starting — hibiscus and hawthorn are active herbs.</li>
-        <li>Allergic to plants in the daisy family (chamomile and calendula are members)? Talk to your doctor before trying it.</li>
-      </ul>
-    </div>
   </div>
 </section>
 
@@ -783,7 +693,7 @@
   <div class="wrap seal">
     <div class="badge">60<br>DAYS</div>
     <h2>Give it a full 60 days.</h2>
-    <p>Steady works the way the research works: daily, over weeks — not overnight. So we ask you to actually drink it every day for a full 60 days before you decide. Do that, and if you're still not glad you did, email us and we'll refund your most recent order in full. We only ask that you give it the honest 60 days first — because that's the window the studies ran, and the only fair test of a real herb. One refund per household.</p>
+    <p>Try Steady for up to 60 days. If it is not the right ritual for you, contact us within 60 days of delivery and we will refund your most recent order in full. No need to return anything, and no hoops. One refund per household. And the taste promise stands from cup one: if the flavor is not right for you, tell us and we will make it right.</p>
     <a class="btn-ghost guar-cta" href="#buy">Start your 60 days →</a>
   </div>
 </section>
@@ -793,35 +703,16 @@
   <div class="wrap">
     <div class="kicker">Where Steady fits</div>
     <h2 class="head">One cup of a five-anchor method.</h2>
-    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors, the eight daily habits, and the plan for <em>your</em> loudest corner live at BPQuiz.com.</p>
-    <div class="mgrid">
+    <p class="sectlede">Steady is <b>Anchor 1</b> of The BP Triangle Method™ — the daily hibiscus cup the protocol is built around. The other four anchors and the eight daily habits live at BPQuiz.com.</p>
+    <div class="mgrid" style="grid-template-columns:1fr; max-width:430px;">
       <div class="mcard">
-        <div class="mk">Start here · free</div>
-        <h3>Which corner is loudest?</h3>
-        <p>The 60-second BP Triangle quiz reads your answers and names the corner driving your numbers — Stress, Sugar, or Sodium — with the honest next step for each.</p>
-        <a class="btn-solid" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Take the free quiz</a>
-      </div>
-      <div class="mcard">
-        <div class="mk">Then · $17</div>
+        <div class="mk">Go deeper · $17</div>
         <h3>Your Corner Reset</h3>
         <p>The 10-day plan for your loudest corner — the walks, the water, the plate, and where the daily cup of Steady fits in the rhythm.</p>
         <a class="btn-ghost" href="https://bpquiz.com" target="_blank" rel="noopener">See the Method →</a>
       </div>
     </div>
     <p class="mnote">"The Method's endgame is doctor-cleared independence — a lifestyle strong enough that, eventually, even the herbs get weaned off. Steady is a tool for the season, not a crutch for life. We're the only tea company that will ever tell you that."</p>
-  </div>
-</section>
-
-<!-- ============ QUIZ CLOSER ============ -->
-<section class="quiz rv" id="quiz">
-  <div class="wrap quizgrid" style="grid-template-columns:1fr; max-width:720px; text-align:center;">
-    <div>
-      <div class="kicker">Not sure where to start?</div>
-      <h2 class="head">Sixty seconds. Your Triangle, mapped.</h2>
-      <p>Joel built a short, honest quiz that reads your daily patterns — the sleep, the snacks, the stress, the readings — and names which corner is loudest for you. No diagnosis, no scare tactics. Just a clearer picture than you had a minute ago, and the right first step for your corner.</p>
-      <a class="btn-solid" href="https://bpquiz.com/quiz" target="_blank" rel="noopener">Take the free BP Triangle quiz</a>
-      <div class="qmeta">Free · about 60 seconds · built by Joel Polley, RN</div>
-    </div>
   </div>
 </section>
 
@@ -872,10 +763,6 @@
         <div class="a">Only if you want to. The BP Triangle Method is honest about its endgame: doctor-cleared independence — a lifestyle that carries the load, with your doctor steering, where even the herbs eventually get weaned off. Plenty of people keep the cup because they love it — but Steady is a tool for a season, not a subscription to a crutch. We might be the only tea company that will ever say that out loud.</div>
       </details>
       <details class="faqitem">
-        <summary>How does the guarantee work?</summary>
-        <div class="a">Give Steady an honest 60 days first — drink it every day, the way the research was run. If you've done that and you're still not glad you did, email us within 60 days of your order and we'll refund it in full. We only ask that you actually give it the full 60 days, because that's the only fair test of a real herb. One refund per household.</div>
-      </details>
-      <details class="faqitem">
         <summary>Why Steady instead of the hibiscus tea at the grocery?</summary>
         <div class="a">Two reasons: hawthorn, and honesty. Grocery "heart teas" are almost always hibiscus alone, bagged as dust, at amounts chosen for cost. Steady pairs whole-cut hibiscus with hawthorn — the second pathway — at amounts chosen to count, and links you to the actual research. The plain-difference table above shows it side by side.</div>
       </details>
@@ -917,8 +804,8 @@
 <!-- ============ STICKY BUY BAR ============ -->
 <div class="stickybar" id="stickybar">
   <div class="wrap">
-    <div class="sname">SVUTU <em class="serif" style="color:var(--ruby);">Steady</em> — <span id="stickyprice">$120</span><small id="stickylabel">The Steady Ritual · 3 pouches</small></div>
-    <a class="sbtn" id="stickybtn" href="https://buy.stripe.com/14A00j0RBa1U63hb3zfnO1x">Add to Cart</a>
+    <div class="sname">SVUTU <em class="serif" style="color:var(--ruby);">Steady</em> — <span id="stickyprice">$48</span><small id="stickylabel">1-Month Supply · 100g pouch</small></div>
+    <a class="sbtn" id="stickybtn" href="/pay?tier=tea-48">Add to Cart</a>
   </div>
 </div>
 
@@ -1007,8 +894,8 @@
     0: ['Check what fits. We\'ll say the honest thing underneath.',''],
     1: ['One is enough to notice.','Bodies whisper before they shout. Worth a daily cup of attention.'],
     2: ['Two checks isn\'t a character flaw.','It\'s a corner talking — and the corners have been studied.'],
-    3: ['Three is a pattern, not a coincidence.','This is exactly what the Triangle maps. Sixty seconds, and the quiz names your loudest corner.'],
-    4: ['Four or more? You\'re not broken.','You\'re running a Triangle nobody ever showed you. Start with the cup, take the quiz, and bring the results to your provider.']
+    3: ['Three is a pattern, not a coincidence.','This is exactly what the Triangle maps — and exactly the season Steady was blended for.'],
+    4: ['Four or more? You\'re not broken.','You\'re running a Triangle nobody ever showed you. Start with the cup, and bring what you\'re noticing to your provider.']
   };
   function updateEcho(){
     const n = document.querySelectorAll('#symlist .sym-item.on').length;
@@ -1054,6 +941,42 @@
     // No observer or reduced motion: render the triangle mark fully drawn
     document.querySelectorAll('.bp-tri').forEach(el=>el.classList.add('in'));
   }
+</script>
+
+<!-- PostHog funnel tracking (2026-07-10 conversion plan). Same event schema
+     as hormoneteas.com so both tea pages compare in one dashboard. Public
+     project token (client-safe by design). -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_tyPhu6kt2jmfzhBPBjttdp3crfxNY4JdsZBoKa7SRgzS', {api_host:'https://us.i.posthog.com', capture_pageview:false});
+  (function(){
+    var SITE = 'bpquiz-tea';
+    function cap(name, props){ try{ window.posthog && posthog.capture(name, Object.assign({site:SITE}, props||{})); }catch(e){} }
+    cap('tea_page_view');
+    // Scroll depth, fire-once at 25% and 50%
+    var fired25=false, fired50=false;
+    window.addEventListener('scroll', function(){
+      var d=(window.scrollY+window.innerHeight)/document.documentElement.scrollHeight;
+      if(!fired25 && d>=0.25){ fired25=true; cap('tea_scroll_25'); }
+      if(!fired50 && d>=0.5){ fired50=true; cap('tea_scroll_50'); }
+    }, {passive:true});
+    // Tier selection
+    document.querySelectorAll('#tierbox .tier').forEach(function(t){
+      t.addEventListener('click', function(){ cap('tea_tier_selected', {tier: t.getAttribute('data-price')}); });
+    });
+    // Checkout clicks (main button + sticky + final)
+    ['addbtn','stickybtn','finalbtn'].forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.addEventListener('click', function(){
+        var sel=document.querySelector('#tierbox .tier.sel');
+        cap('tea_checkout_clicked', {tier: sel ? sel.getAttribute('data-price') : null, control:id});
+      });
+    });
+    // Quiz clicks
+    document.querySelectorAll('a[href*="/quiz"]').forEach(function(a){
+      a.addEventListener('click', function(){ cap('tea_quiz_clicked'); });
+    });
+  })();
 </script>
 
 </body>

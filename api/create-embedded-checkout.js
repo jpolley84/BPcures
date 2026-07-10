@@ -103,6 +103,41 @@ export default async function handler(req, res) {
     }
   }
 
+  // ── SVUTU Steady tea (bpquiz.com/tea, embedded inline checkout) ──
+  // 2026-07-10 conversion plan: the tea page's buy buttons move from Stripe
+  // Payment Link redirects to this inline checkout so (a) the card is saved
+  // for the post-purchase one-click "+1 pouch" (api/tea-one-click.js) and
+  // (b) the buyer never bounces to a third-party screen. Physical product:
+  // shipping address is collected IN the checkout (US). metadata
+  // funnel:'svutu-tea' routes fulfillment to processTeaPurchase in
+  // triangle-webhook.js (KV shipping digest + Resend tag + confirmation
+  // email), exactly like the payment-link path. Prices are the SAME live
+  // price ids the payment links use (verified 2026-07-08).
+  if (tier === 'tea-48' || tier === 'tea-120') {
+    const TEA_PRICES = {
+      'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
+      'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
+    };
+    const metadata = { funnel: 'svutu-tea', offer: tier };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        mode: 'payment',
+        line_items: [{ price: TEA_PRICES[tier], quantity: 1 }],
+        metadata,
+        shipping_address_collection: { allowed_countries: ['US'] },
+        customer_creation: 'always',
+        payment_intent_data: { setup_future_usage: 'off_session' },
+        return_url: `${siteUrl}/tea-thanks?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout tea error:', err.message);
+      return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
   const prices = TIER_PRICES[tier];
   if (!prices) return res.status(400).json({ error: 'Unknown tier' });
 
