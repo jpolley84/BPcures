@@ -64,6 +64,12 @@
   .sectimg{ width:100%; max-width:640px; height:auto; border-radius:12px; display:block; margin:26px auto 0; border:1px solid var(--line); box-shadow:0 14px 34px -18px rgba(60,40,30,.3);}
   .tasteline{ text-align:center; font-size:13.5px; color:var(--sage-deep); margin-top:10px; font-weight:500;}
   .trustbar .nursecred{ display:block; text-align:center; font-size:14px; color:var(--brown); padding:14px 24px 0; line-height:1.5;}
+  /* Storyboard rail: horizontal scroll-snap card sequence (2026-07-10) */
+  .storyrail-wrap{ padding:34px 0 8px; }
+  .storyrail{ display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; padding:6px 24px 14px; scrollbar-width:thin;}
+  .storyrail img{ width:min(78vw, 340px); height:auto; flex:0 0 auto; scroll-snap-align:center; border-radius:12px; border:1px solid var(--line); box-shadow:0 10px 26px -16px rgba(60,40,30,.3);}
+  .storyhint{ text-align:center; font-size:12px; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-top:2px;}
+  @media(min-width:900px){ .storyrail{ justify-content:flex-start; padding-left:calc(50% - 540px); } }
   .herobrand .hbcap{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:27px; color:var(--ink); margin-top:20px;}
   .herobrand .hbsub{ font-size:13.5px; color:var(--brown); max-width:280px; margin-top:8px; line-height:1.55;}
 
@@ -372,24 +378,26 @@
       <!-- 2026-07-10: real product imagery replaces the brand SVG (the
            triangle still lives in the #triangle section below). -->
       <img class="heroimg" src="/tea/img/steady-hero-hand.webp" alt="A hand holding a pouch of SVUTU Steady loose-leaf tea beside a brewed ruby cup" width="1000" height="1249" fetchpriority="high">
-      <div class="hbcap">The BP Triangle Tea</div>
-      <div class="hbsub">Hibiscus &amp; hawthorn, steeped slow. Anchor 1 of The BP Triangle Method.</div>
+      <div class="hbcap">The daily cup for the season your numbers changed</div>
+      <div class="hbsub">Hibiscus &amp; hawthorn, steeped slow. Blended by a nurse, checked by another.</div>
     </div>
 
     <div class="buyhead">
-      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · The Sodium-corner cup</div>
+      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · 50-60 cups per pouch</div>
       <h1>SVUTU <span class="i">Steady</span></h1>
-      <p class="whatis">A daily ruby tea of eight whole botanicals, led by <b>hibiscus &amp; hawthorn</b> — the two herbs at the heart of the Sodium corner of <a href="#triangle" style="color:var(--ruby); font-weight:500;">The BP Triangle Method™</a>. Blended by a nurse to support healthy blood pressure, alongside your doctor's care.</p>
+      <p class="whatis">The number keeps creeping up. The doctor keeps saying "let's watch it." You already cut the salt, you take everything on time, and your afternoon coffee is not doing your readings any favors. <b>Steady was blended by a nurse for exactly that woman</b>: a tart, ruby, caffeine-free cup of eight whole botanicals, led by hibiscus and hawthorn, the two herbs researchers have studied most for healthy blood pressure. A daily ritual that joins your doctor's care, never replaces it.</p>
       <div class="claimblock">
-        <div class="chead">In every cup — herbs researchers have studied for:†</div>
+        <div class="chead">Made for the woman who...</div>
         <ul class="benefits">
-          <li>Supporting healthy blood pressure — hibiscus, the most-studied herb of the Sodium corner</li>
-          <li>A strong, steady heart — hawthorn, the classic cardiovascular tonic, used for generations</li>
+          <li>Watches the cuff number creep a little higher at every checkup</li>
+          <li>Has heard "let's keep an eye on it" one too many times</li>
+          <li>Already cut the salt and started walking, and wants a daily habit that actually feels good</li>
+          <li>Wants a warm cup in her hands that is not caffeine pushing her numbers the wrong way</li>
         </ul>
         <hr>
         <ul class="benefits">
-          <li>Tart, ruby, bright — genuinely lovely hot or iced</li>
-          <li>Caffeine-free · zero sugar · non-GMO · nothing artificial</li>
+          <li>Tart, ruby, bright — genuinely lovely hot or iced · caffeine-free · zero sugar · nothing artificial</li>
+          <li>Hibiscus &amp; hawthorn, studied by researchers for healthy blood pressure†</li>
         </ul>
         <div class="foot">†Refers to published research on the herbs — see <a href="#science">The Science, Simply</a> below. Steady is a food, not a medicine, and it joins your doctor's plan — it never replaces it.</div>
       </div>
@@ -446,6 +454,44 @@
   </div>
 </section>
 
+<!-- ============ STORYBOARD RAIL (swipe/scroll sequence) ============ -->
+<section class="rv storyrail-wrap" aria-label="Meet Steady, card by card">
+  <div class="storyrail">
+    <img src="/tea/img/story-1-meet.webp" alt="Meet Steady: the front and back of the nurse-formulated herbal tea bag" width="720" height="899" loading="lazy">
+    <img src="/tea/img/story-2-why.webp" alt="Why women choose Steady: nurse formulated, caffeine free, root solutions for root causes" width="720" height="899" loading="lazy">
+    <img src="/tea/img/story-3-inside.webp" alt="What's inside Steady: the 8-herb loose-leaf blend with supplement facts" width="720" height="899" loading="lazy">
+    <img src="/tea/img/story-4-support.webp" alt="Studied herbal support: hibiscus, hawthorn, chamomile, lavender, nettle, and ginger" width="720" height="899" loading="lazy">
+    <img src="/tea/img/story-5-ritual.webp" alt="A simple daily ritual: steep one heaping teaspoon, cover 7 to 9 minutes, enjoy 2 cups a day" width="720" height="899" loading="lazy">
+  </div>
+  <div class="storyhint">Swipe or scroll →</div>
+</section>
+
+<!-- ============ SOUND FAMILIAR — SYMPTOM CHECKLIST (person first) ============ -->
+<section class="symptoms rv">
+  <div class="wrap">
+    <div class="kicker">Sound familiar?</div>
+    <h2 class="head">If this is your season,<br>you're in the right place.</h2>
+    <p class="sectlede">Tap what's been true for you lately. No email required — this list is for you, not for us.</p>
+    <div class="symgrid" id="symlist">
+      <div class="sym-item"><span class="box"></span><span class="t">The cuff number creeping up, <em>a little more each checkup</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">"Let's keep an eye on it," <em>said your doctor — again</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">3 a.m., wide awake, <em>mind running laps</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">The afternoon reach — <em>coffee, soda, something salty</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">Shoulders that live <em>somewhere up near your ears</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">A pill organizer you <em>never agreed to grow old with</em></span></div>
+      <div class="sym-item"><span class="box"></span><span class="t">The quiet one: <em>"I know I should be doing something."</em></span></div>
+    </div>
+    <div class="symecho" id="symecho" aria-live="polite">
+      <div class="serif">Check what fits. We'll say the honest thing underneath.</div>
+    </div>
+    <img class="sectimg" src="/tea/img/steady-woman-locs.webp" alt="A woman at her kitchen table holding her pouch of Steady" width="640" height="800" loading="lazy" style="max-width:420px;">
+    <div class="symcta">
+      <a class="btn-solid" href="#buy">Meet Steady — the daily cup</a>
+      <a class="btn-ghost" href="#science">See what the research says</a>
+    </div>
+  </div>
+</section>
+
 <!-- ============ THE BP TRIANGLE ============ -->
 <section class="rv" id="triangle">
   <div class="wrap">
@@ -466,30 +512,7 @@
   </div>
 </section>
 
-<!-- ============ SOUND FAMILIAR — TRIANGLE CHECKLIST ============ -->
-<section class="symptoms rv">
-  <div class="wrap">
-    <div class="kicker">Sound familiar?</div>
-    <h2 class="head">The corners have tells.<br>Check yours.</h2>
-    <p class="sectlede">Tap what's been true for you lately. No email required — this list is for you, not for us.</p>
-    <div class="symgrid" id="symlist">
-      <div class="sym-item"><span class="box"></span><span class="t">The cuff number creeping up, <em>a little more each checkup</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">"Let's keep an eye on it," <em>said your doctor — again</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">3 a.m., wide awake, <em>mind running laps</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">The afternoon reach — <em>coffee, soda, something salty</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">Shoulders that live <em>somewhere up near your ears</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">A pill organizer you <em>never agreed to grow old with</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">The quiet one: <em>"I know I should be doing something."</em></span></div>
-    </div>
-    <div class="symecho" id="symecho" aria-live="polite">
-      <div class="serif">Check what fits. We'll say the honest thing underneath.</div>
-    </div>
-    <div class="symcta">
-      <a class="btn-solid" href="#buy">Meet Steady — the daily cup</a>
-      <a class="btn-ghost" href="#science">See what the research says</a>
-    </div>
-  </div>
-</section>
+<!-- (symptoms section moved above #triangle, 2026-07-10) -->
 
 <!-- ============ WHAT'S INSIDE / RATIOS ============ -->
 <section class="inside rv" id="inside">
@@ -611,6 +634,7 @@
     <div class="kicker">What to expect</div>
     <h2 class="head">Honest expectations, week by week.</h2>
     <p class="sectlede">Tea companies love overnight stories. Nurses read the actual studies — and the hibiscus and hawthorn research ran for weeks, not days. Here's the truthful arc.</p>
+    <img class="sectimg" src="/tea/img/steady-woman-silver.webp" alt="A woman holding her pouch of Steady in the morning light" width="640" height="800" loading="lazy" style="max-width:420px; margin-bottom:8px;">
     <div class="exgrid">
       <div class="ex">
         <div class="dot">wk 1</div>
@@ -692,6 +716,7 @@
 <section class="guarantee rv" id="guarantee">
   <div class="wrap seal">
     <div class="badge">60<br>DAYS</div>
+    <img class="sectimg" src="/tea/img/steady-smile-sm.webp" alt="A smiling woman holding her pouch of Steady at home" width="640" height="800" loading="lazy" style="max-width:380px; margin:0 auto 18px;">
     <h2>Give it a full 60 days.</h2>
     <p>Try Steady for up to 60 days. If it is not the right ritual for you, contact us within 60 days of delivery and we will refund your most recent order in full. No need to return anything, and no hoops. One refund per household. And the taste promise stands from cup one: if the flavor is not right for you, tell us and we will make it right.</p>
     <a class="btn-ghost guar-cta" href="#buy">Start your 60 days →</a>
