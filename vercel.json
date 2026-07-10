@@ -5,7 +5,7 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$).*)",
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
   ],
