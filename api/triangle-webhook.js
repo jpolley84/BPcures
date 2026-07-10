@@ -97,6 +97,16 @@ const TEA_PRICE_IDS = new Set([
   'price_1TqJJwHseZnO3rRZy09UUxGY', // 1-Week sampler $17
 ]);
 
+// ─── Samson Formula ($67, physical, resold on this account) ───────────
+// A physical supplement Joel resells at $67 (creator ships it). No storefront,
+// no drip, no buyer email from us: the only automation is a notification to
+// Joel with the buyer + delivery address so he can forward the order to the
+// creator for fulfillment. Recognized by metadata funnel:'samson' (stamped on
+// the payment link) or the price id below. 2026-07-09.
+const SAMSON_PRICE_IDS = new Set([
+  'price_1TrS5wHseZnO3rRZAyU6MVtL', // Samson Formula 30-Day Supply $67
+]);
+
 // Chicago calendar date (YYYY-MM-DD) — the digest cron and the webhook must
 // bucket sales by the SAME day boundary Joel lives in, not UTC.
 export function chicagoDateKey(d = new Date()) {
@@ -726,6 +736,102 @@ async function processTeaPurchase(session) {
   });
 }
 
+// ─── Samson Formula: recognition + notify-Joel-with-address ───────────
+// True when this session is a Samson purchase (metadata marker first, then the
+// price id). Runs BEFORE the foreign-funnel guard (Samson is not a braveworks-bp
+// funnel, so it would otherwise be skipped with no notification).
+async function isSamsonSession(session) {
+  const md = session.metadata || {};
+  if (md.funnel === 'samson') return true;
+  try {
+    const stripe = getStripe();
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10, expand: ['data.price'] });
+    for (const item of items.data || []) {
+      if (item.price?.id && SAMSON_PRICE_IDS.has(item.price.id)) return true;
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: samson line-item check failed (non-fatal)', err.message);
+  }
+  return false;
+}
+
+// Notify Joel of a Samson sale with the buyer + delivery address so he can hand
+// the order to the creator for fulfillment. No buyer email, no drip: Stripe
+// sends the buyer their own receipt. Dedupes on session id; never throws.
+async function processSamsonPurchase(session) {
+  const customerEmail = session.customer_details?.email || '';
+  const customerName = session.customer_details?.name || '';
+  const phone = session.customer_details?.phone || '';
+
+  const dedupeKey = `samson:sale:${session.id}`;
+  try {
+    const already = await kv.get(dedupeKey);
+    if (already) return { action: 'samson_sale', deduplicated: true, customer_email: customerEmail };
+  } catch (err) {
+    console.warn('stripe-webhook: samson dedupe read failed (non-fatal)', err.message);
+  }
+
+  let items = [];
+  try {
+    const stripe = getStripe();
+    const li = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+    items = (li.data || []).map((i) => ({ name: i.description || 'Samson Formula', qty: i.quantity || 1 }));
+  } catch (err) {
+    console.warn('stripe-webhook: samson line-items fetch failed (non-fatal)', err.message);
+  }
+
+  const ship =
+    session.shipping_details ||
+    session.collected_information?.shipping_details ||
+    null;
+  const a = ship?.address || session.customer_details?.address || {};
+  const addressLines = [
+    ship?.name || customerName,
+    a.line1,
+    a.line2,
+    [a.city, a.state, a.postal_code].filter(Boolean).join(', '),
+    a.country,
+  ].filter(Boolean);
+  const amountCents = session.amount_total ?? session.amount_subtotal ?? 0;
+  const dollars = `$${(amountCents / 100).toFixed(2)}`;
+  const itemLines = items.map((i) => `${i.qty} x ${i.name}`).join('\n') || 'Samson Formula';
+  const hasAddress = Boolean(a.line1);
+
+  try {
+    const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
+    await getResend().emails.send({
+      from: 'BraveWorks Ops <joel@bpquiz.com>',
+      to,
+      replyTo: customerEmail || REPLY_TO,
+      subject: `[SAMSON ORDER] ${customerName || customerEmail || 'New buyer'} - ${dollars}`,
+      text: `New Samson Formula order (${dollars}).
+
+Buyer: ${customerName || '(no name)'}
+Email: ${customerEmail || '(none)'}
+Phone: ${phone || '(none)'}
+
+Ordered:
+${itemLines}
+
+Ship to:
+${hasAddress ? addressLines.join('\n') : '(!) NO SHIPPING ADDRESS ON THIS ORDER - reply to the buyer to collect it before fulfilling.'}
+
+Forward this delivery address to the creator to fulfill. Stripe session: ${session.id}`,
+    });
+  } catch (err) {
+    console.error('stripe-webhook: samson notify email failed', err.message);
+  }
+
+  try {
+    await kv.set(dedupeKey, { recordedAt: new Date().toISOString() }, { ex: 60 * 60 * 24 * 30 });
+  } catch (err) {
+    console.warn('stripe-webhook: samson dedupe write failed (non-fatal)', err.message);
+  }
+
+  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id });
+  return { action: 'samson_sale', recorded: true, customer_email: customerEmail };
+}
+
 // ─── SVUTU Steady: buyer confirmation email + ingredient flyer ────────
 // The at-purchase email for a tea order. Three jobs: (1) verify what they bought,
 // (2) set the hand crafted "ships within 5 to 7 business days" expectation, and
@@ -1281,6 +1387,13 @@ async function processCheckoutCompleted(event) {
   // a tea sale would be skipped as foreign and never reach the shipping digest.
   if (await isTeaSession(session)) {
     return await processTeaPurchase(session);
+  }
+
+  // ── Samson Formula check (BEFORE the foreign-funnel guard) ──
+  // Samson is not a braveworks-bp funnel, so the guard below would skip it with
+  // no notification. Recognize it here and notify Joel with the delivery address.
+  if (await isSamsonSession(session)) {
+    return await processSamsonPurchase(session);
   }
 
   // ── Difference-priced /welcome UPGRADE check (BEFORE the amount lookup) ──
