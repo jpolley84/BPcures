@@ -48,7 +48,7 @@ function EmailCapture({ reduce, big }) {
         body: JSON.stringify({ email: email.trim(), firstName: firstName.trim(), source: 'coaching-optin', tags: ['coaching-interested'] }),
       });
     } catch { /* never block the visitor on a capture failure */ }
-    navigate('/coaching');
+    navigate('/coaching-offers');
   }
 
   return (
@@ -300,7 +300,7 @@ export default function CoachingOptinPage() {
             All coaching with Joel Polley, RN, is education-based nursing consultation rooted in 20 years of ICU and ER experience. It is not diagnosis, prescription, or replacement for your physician. Any protocol we discuss works alongside your doctor, not instead of them. Never start, stop, or change a prescribed medication without your prescribing physician's supervision.
           </p>
           <p className="text-xs text-center" style={{ color: 'var(--muted)', marginTop: '1rem' }}>
-            Already know you are in? <Link to="/coaching" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>See the coaching options</Link>.
+            Already know you are in? <Link to="/coaching-offers" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>See the coaching options</Link>.
           </p>
         </div>
       </section>

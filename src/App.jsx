@@ -260,8 +260,12 @@ function App() {
               + a 1:1 CTA), intentionally kept OFF the cold homepage. Close
               mechanism is mailto concierge@bpquiz.com; that alias MUST forward
               to Joel or the high-ticket inquiries bounce. */}
-          <Route path="/coaching" element={<CoachingPage />} />
+          {/* 2026-07-09: /coaching is now the opt-in (funnel page 1); the
+              offers/sales page moved to /coaching-offers (post-optin step 2).
+              /coaching-vip kept as an alias for the opt-in. */}
+          <Route path="/coaching" element={<CoachingOptinPage />} />
           <Route path="/coaching-vip" element={<CoachingOptinPage />} />
+          <Route path="/coaching-offers" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
               https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}
