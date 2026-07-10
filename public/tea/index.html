@@ -61,6 +61,14 @@
   .herobrand{ border-radius:12px; background:linear-gradient(160deg,var(--sand),var(--cream)); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;}
   .herobrand .bp-tri{ width:210px; height:auto;}
   .herobrand .heroimg{ width:100%; height:auto; border-radius:10px; display:block; box-shadow:0 14px 34px -18px rgba(60,40,30,.35);}
+  /* Product gallery (2026-07-10): main image + clickable thumbnails below */
+  .gmain-wrap{ width:100%; position:relative;}
+  .gmain{ width:100%; height:auto; aspect-ratio:4/5; object-fit:cover; border-radius:10px; display:block; box-shadow:0 14px 34px -18px rgba(60,40,30,.35); background:#fff;}
+  .thumbrow{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; width:100%; margin-top:10px;}
+  .thumb{ width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; border:2px solid var(--line); cursor:pointer; transition:border-color .15s, transform .15s; background:#fff; padding:0; display:block;}
+  .thumb:hover{ border-color:var(--kraft); transform:translateY(-1px);}
+  .thumb.on{ border-color:var(--ruby);}
+  @media(max-width:560px){ .thumbrow{ grid-template-columns:repeat(4,1fr); gap:6px;} }
   .sectimg{ width:100%; max-width:640px; height:auto; border-radius:12px; display:block; margin:26px auto 0; border:1px solid var(--line); box-shadow:0 14px 34px -18px rgba(60,40,30,.3);}
   .tasteline{ text-align:center; font-size:13.5px; color:var(--sage-deep); margin-top:10px; font-weight:500;}
   .trustbar .nursecred{ display:block; text-align:center; font-size:14px; color:var(--brown); padding:14px 24px 0; line-height:1.5;}
@@ -375,9 +383,22 @@
 <section class="hero" id="buy">
   <div class="wrap heromain">
     <div class="herobrand">
-      <!-- 2026-07-10: real product imagery replaces the brand SVG (the
-           triangle still lives in the #triangle section below). -->
-      <img class="heroimg" src="/tea/img/steady-hero-hand.webp" alt="A hand holding a pouch of SVUTU Steady loose-leaf tea beside a brewed ruby cup" width="1000" height="1249" fetchpriority="high">
+      <!-- 2026-07-10: product GALLERY (Joel: main product shot as the landing
+           hero, thumbnails underneath that swap the enlarged image above).
+           The storyboard cards live here as thumbs now, not a separate rail. -->
+      <div class="gmain-wrap">
+        <img class="gmain" id="gmain" src="/tea/img/steady-pouch.webp" alt="SVUTU Steady pouch with a brewed ruby cup and whole botanicals" width="1000" height="1249" fetchpriority="high">
+      </div>
+      <div class="thumbrow" id="thumbrow" role="tablist" aria-label="Product photos">
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb on" src="/tea/img/steady-pouch.webp" data-full="/tea/img/steady-pouch.webp" alt="Steady pouch with brewed cup"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/steady-hero-hand.webp" data-full="/tea/img/steady-hero-hand.webp" alt="Hand holding the Steady pouch"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/steady-flatlay.webp" data-full="/tea/img/steady-flatlay.webp" alt="Steady flat-lay with its botanicals"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/steady-ritual.webp" data-full="/tea/img/steady-ritual.webp" alt="A woman savoring her cup of Steady"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/story-2-why.webp" data-full="/tea/img/story-2-why.webp" alt="Why women choose Steady"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/story-3-inside.webp" data-full="/tea/img/story-3-inside.webp" alt="What's inside Steady: the 8-herb blend"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/story-4-support.webp" data-full="/tea/img/story-4-support.webp" alt="Studied herbal support, herb by herb"></button>
+        <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/story-5-ritual.webp" data-full="/tea/img/story-5-ritual.webp" alt="A simple daily ritual: steep, cover, enjoy"></button>
+      </div>
       <div class="hbcap">The daily cup for the season your numbers changed</div>
       <div class="hbsub">Hibiscus &amp; hawthorn, steeped slow. Blended by a nurse, checked by another.</div>
     </div>
@@ -454,17 +475,7 @@
   </div>
 </section>
 
-<!-- ============ STORYBOARD RAIL (swipe/scroll sequence) ============ -->
-<section class="rv storyrail-wrap" aria-label="Meet Steady, card by card">
-  <div class="storyrail">
-    <img src="/tea/img/story-1-meet.webp" alt="Meet Steady: the front and back of the nurse-formulated herbal tea bag" width="720" height="899" loading="lazy">
-    <img src="/tea/img/story-2-why.webp" alt="Why women choose Steady: nurse formulated, caffeine free, root solutions for root causes" width="720" height="899" loading="lazy">
-    <img src="/tea/img/story-3-inside.webp" alt="What's inside Steady: the 8-herb loose-leaf blend with supplement facts" width="720" height="899" loading="lazy">
-    <img src="/tea/img/story-4-support.webp" alt="Studied herbal support: hibiscus, hawthorn, chamomile, lavender, nettle, and ginger" width="720" height="899" loading="lazy">
-    <img src="/tea/img/story-5-ritual.webp" alt="A simple daily ritual: steep one heaping teaspoon, cover 7 to 9 minutes, enjoy 2 cups a day" width="720" height="899" loading="lazy">
-  </div>
-  <div class="storyhint">Swipe or scroll →</div>
-</section>
+<!-- (storyboard rail folded into the hero gallery thumbnails, 2026-07-10) -->
 
 <!-- ============ SOUND FAMILIAR — SYMPTOM CHECKLIST (person first) ============ -->
 <section class="symptoms rv">
@@ -938,6 +949,22 @@
       updateEcho();
     });
   });
+
+  // Product gallery: clicking a thumbnail swaps the enlarged image above.
+  (function(){
+    const gmain = document.getElementById('gmain');
+    const row = document.getElementById('thumbrow');
+    if (gmain && row){
+      row.addEventListener('click', function(e){
+        const t = e.target.closest('img.thumb');
+        if (!t) return;
+        gmain.src = t.getAttribute('data-full');
+        gmain.alt = t.alt;
+        row.querySelectorAll('img.thumb').forEach(x=>x.classList.toggle('on', x===t));
+        try{ window.posthog && posthog.capture('tea_gallery_click', {site:'bpquiz-tea', image: t.getAttribute('data-full')}); }catch(err){}
+      });
+    }
+  })();
 
   // Sticky buy bar — show once the Add-to-Cart button scrolls away; hide over the footer
   const stickybar = document.getElementById('stickybar');
