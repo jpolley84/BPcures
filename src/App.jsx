@@ -43,6 +43,7 @@ const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 const ApplyPage = lazy(() => import('./pages/ApplyPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
+const CoachingOptinPage = lazy(() => import('./pages/CoachingOptinPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
 const Cohort2Page = lazy(() => import('./pages/Cohort2Page'));
@@ -260,6 +261,7 @@ function App() {
               mechanism is mailto concierge@bpquiz.com; that alias MUST forward
               to Joel or the high-ticket inquiries bounce. */}
           <Route path="/coaching" element={<CoachingPage />} />
+          <Route path="/coaching-vip" element={<CoachingOptinPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
               https://bpquiz.com/coaching-welcome?session_id={CHECKOUT_SESSION_ID} */}
