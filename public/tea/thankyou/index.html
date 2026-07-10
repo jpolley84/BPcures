@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Order confirmed — SVUTU Steady</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap');
+  :root{
+    --cream:#FBF7EF; --sand:#F1E7D6; --kraft:#E7D6BB;
+    --ruby:#B0463A; --ruby-deep:#8C3127; --ruby-soft:#F4E2DD;
+    --gold:#C0A06A; --gold-soft:#F0E7D2;
+    --sage:#8C9A6E; --sage-deep:#5F6E45; --sage-soft:#E6EADB;
+    --brown:#6B5744; --ink:#3B3228; --muted:#7D6F5E; --line:#E7DDCB;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ font-family:'Montserrat',sans-serif; color:var(--ink); background:var(--cream); font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; padding:0 20px;}
+  .serif{ font-family:'Cormorant Garamond',serif;}
+  .wrap{ max-width:600px; margin:0 auto; padding:40px 0 60px;}
+  .badge{ display:inline-block; font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--sage-deep); border:1px solid var(--sage); border-radius:999px; padding:6px 14px; margin-bottom:20px;}
+  h1{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:38px; line-height:1.08; color:var(--ink); margin-bottom:12px;}
+  h1 .i{ font-style:italic; color:var(--ruby);}
+  .lede{ font-size:17px; color:var(--brown); margin-bottom:22px;}
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:24px 26px; margin:18px 0;}
+  .brewrow{ display:flex; gap:14px; align-items:flex-start; font-size:14.5px; color:var(--brown); padding:10px 0; border-bottom:1px solid var(--line);}
+  .brewrow:last-child{ border-bottom:none;}
+  .brewrow .ic{ color:var(--sage-deep); font-size:18px; flex:0 0 auto; line-height:1.3;}
+  .brewrow b{ color:var(--ink); font-weight:600;}
+
+  /* Upsell */
+  .offer{ background:linear-gradient(160deg,var(--ruby-soft),#fff); border:1.5px solid var(--ruby); border-radius:16px; padding:28px 26px; margin:28px 0; box-shadow:0 8px 30px rgba(176,70,58,.12);}
+  .offer .kick{ font-size:11.5px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ruby-deep); margin-bottom:10px;}
+  .offer h2{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:27px; line-height:1.12; color:var(--ink); margin-bottom:10px;}
+  .offer p{ font-size:15px; color:var(--brown); margin-bottom:8px;}
+  .offer .price{ font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--ruby); margin:6px 0 4px;}
+  .addbtn{ display:block; width:100%; background:var(--ruby); color:#fff; border:none; font-family:'Montserrat'; font-weight:600; font-size:16.5px; letter-spacing:.01em; padding:17px; border-radius:8px; cursor:pointer; transition:background .18s, transform .12s; box-shadow:0 6px 18px rgba(176,70,58,.28); margin-top:16px;}
+  .addbtn:hover{ background:var(--ruby-deep); transform:translateY(-1px);}
+  .addbtn:disabled{ opacity:.6; cursor:default; transform:none;}
+  .oneclick{ text-align:center; font-size:12.5px; color:var(--muted); margin-top:12px;}
+  .nothanks{ display:block; text-align:center; margin-top:16px; font-size:13.5px; color:var(--muted); text-decoration:underline; cursor:pointer;}
+  .nothanks:hover{ color:var(--brown);}
+  .msg{ font-size:15px; padding:16px 18px; border-radius:10px; margin-top:16px; display:none;}
+  .msg.ok{ display:block; background:var(--sage-soft); color:var(--sage-deep); border:1px solid var(--sage);}
+  .msg.warn{ display:block; background:var(--gold-soft); color:var(--brown); border:1px solid var(--gold);}
+  .fallbtn{ display:inline-block; margin-top:10px; background:var(--ruby); color:#fff; text-decoration:none; font-weight:600; font-size:15px; padding:12px 22px; border-radius:7px;}
+  .foot{ text-align:center; font-size:12px; color:var(--muted); margin-top:34px; font-style:italic;}
+  .spin{ display:inline-block; width:15px; height:15px; border:2px solid rgba(255,255,255,.5); border-top-color:#fff; border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:8px;}
+  @keyframes sp{ to{ transform:rotate(360deg);}}
+  @media(max-width:520px){ h1{ font-size:31px;} .wrap{ padding:28px 0 44px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">Order confirmed</div>
+  <h1>Thank you. Your <span class="i">Steady</span> is on its way.</h1>
+  <p class="lede">Payment went through and your order is confirmed. Watch your inbox for your confirmation and the ingredient research.</p>
+
+  <div class="card">
+    <div class="brewrow"><span class="ic">✦</span><div><b>Hand-crafted, shipping within 5 to 7 business days.</b> Every pouch is blended and packaged with love by our family, so give us a few days. You will get a note the moment it ships.</div></div>
+    <div class="brewrow"><span class="ic">❦</span><div><b>Brew note while you wait:</b> one heaping teaspoon, water just off the boil, covered, 7 to 9 minutes. Two to three cups a day, lovely hot or iced.</div></div>
+  </div>
+
+  <!-- ONE-CLICK UPSELL: the $17 BP Reset Kit, charged to the card just used -->
+  <div class="offer" id="offer">
+    <div class="kick">One-time add, just for new tea drinkers</div>
+    <h2>Add the $17 BP Reset Kit while you wait for your tea.</h2>
+    <p>Your tea is Anchor 1. The <b>BP Reset Kit</b> is the rest of the plan: a 10-day, day-by-day protocol for your loudest corner, the herb formulary with safe amounts and cautions, and a one-page sheet to bring to your doctor. Download it the second you add it.</p>
+    <div class="price">$17, one time — normally part of the full Method</div>
+    <button class="addbtn" id="addbtn">Yes — add the $17 BP Reset Kit</button>
+    <div class="oneclick" id="oneclick">One tap adds it to the card you just used. No forms, no re-entering anything.</div>
+    <div class="msg" id="msg"></div>
+    <span class="nothanks" id="nothanks">No thanks, I'm all set with my tea</span>
+  </div>
+
+  <div class="foot">SVUTU Steady, part of The BP Triangle Method. Questions? Reply to your confirmation email and a real person answers.</div>
+</div>
+
+<script>
+  var qs = new URLSearchParams(location.search);
+  var sessionId = qs.get('session_id') || '';
+  var addbtn = document.getElementById('addbtn');
+  var msg = document.getElementById('msg');
+  var oneclick = document.getElementById('oneclick');
+  var offer = document.getElementById('offer');
+  var nothanks = document.getElementById('nothanks');
+  var FALLBACK = 'https://buy.stripe.com/cNieVdcAj3Dw3V9fjPfnO1o';
+
+  // No session id (opened the page directly): can't one-click, so the button
+  // just goes to the normal $17 kit checkout.
+  var canOneClick = /^cs_/.test(sessionId);
+
+  function showOk(html){ msg.className = 'msg ok'; msg.innerHTML = html; }
+  function showFallback(html){
+    msg.className = 'msg warn';
+    msg.innerHTML = html + '<br><a class="fallbtn" href="' + FALLBACK + '">Get the $17 BP Reset Kit →</a>';
+  }
+
+  addbtn.addEventListener('click', function(){
+    if (!canOneClick) { location.href = FALLBACK; return; }
+    addbtn.disabled = true;
+    addbtn.innerHTML = '<span class="spin"></span>Adding it to your card...';
+    fetch('/api/tea-upsell', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sessionId })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      oneclick.style.display = 'none';
+      if (d.status === 'succeeded' || d.status === 'already') {
+        addbtn.style.display = 'none';
+        nothanks.style.display = 'none';
+        showOk('<b>Added — thank you!</b> Your BP Reset Kit is in your inbox now (check spam if you do not see it in a minute). Your $17 was charged to the card you just used.');
+      } else {
+        // auth_required / declined / no_saved_card / error -> offer the normal checkout.
+        addbtn.style.display = 'none';
+        showFallback('<b>One quick step.</b> We could not add it in one click, so finish it here in a few seconds:');
+      }
+    }).catch(function(){
+      oneclick.style.display = 'none';
+      addbtn.style.display = 'none';
+      showFallback('<b>One quick step.</b> Finish adding your kit here:');
+    });
+  });
+
+  nothanks.addEventListener('click', function(){
+    offer.innerHTML = '<div class="kick" style="margin:0;">You\'re all set. Enjoy your Steady, and thank you for trusting us with your cup.</div>';
+  });
+
+  if (!canOneClick) { oneclick.textContent = 'Adds the BP Reset Kit to your order for $17.'; }
+</script>
+</body>
+</html>

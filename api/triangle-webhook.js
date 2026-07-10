@@ -97,6 +97,21 @@ const TEA_PRICE_IDS = new Set([
   'price_1TqJJwHseZnO3rRZy09UUxGY', // 1-Week sampler $17
 ]);
 
+// ─── SVUTU Satin hormone tea (Annie's venture — storefront at hormoneteas.com) ──
+// 2026-07-10: Satin sells on this SAME Stripe account (product prod_UpwJYlcBgy19Ct).
+// Its payment links stamp metadata {venture:'svutu', blend:'satin'}; the price ids
+// below are the authoritative backstop. Satin orders are recorded into the SAME
+// nightly shipping digest as Steady (the tea:order:<id> ledger) but stamped
+// blend:'satin' so the two are clearly separated in the email. Satin gets NO Steady
+// confirmation email and is NOT added to the Steady "Tea Buyers" audience (wrong
+// blend/branding) — its buyers get Stripe's own receipt for now.
+const SATIN_PRICE_IDS = new Set([
+  'price_1TqGR9HseZnO3rRZJ9ynNFKx', // 90-Day Ritual 3-pouch $120
+  'price_1TqGRCHseZnO3rRZBsF7Mvyu', // 1-Month pouch $48
+  'price_1TqGREHseZnO3rRZUQf1WJ8W', // Sampler $24 (link exists, unused on page)
+  'price_1TqGRBHseZnO3rRZwmS9ar6n', // Monthly sub $42/mo (link exists, unused on page)
+]);
+
 // ─── Samson Formula ($67, physical, resold on this account) ───────────
 // A physical supplement Joel resells at $67 (creator ships it). No storefront,
 // no drip, no buyer email from us: the only automation is a notification to
@@ -314,7 +329,7 @@ Joel Polley, RN`;
 // Best-effort: a send failure never fails the webhook (the buyer cron is the
 // backstop). Renders via buildBuyerDeliveryEmail so the preview and the live
 // send stay identical.
-async function sendBuyerDelivery({ email, firstName, tier, corner, scores }) {
+export async function sendBuyerDelivery({ email, firstName, tier, corner, scores }) {
   // One-click unsubscribe for this transactional-but-ongoing relationship.
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
@@ -599,9 +614,10 @@ async function isTeaSession(session) {
 // globally unique for the sale (a Checkout Session id from the webhook, or a
 // PaymentIntent id from the one-click charge, which never gets a
 // checkout.session.completed event of its own).
-export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source }) {
+export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source, blend = 'steady' }) {
   const customerEmail = email || '';
   const emailKey = String(customerEmail).trim().toLowerCase();
+  const isSatin = blend === 'satin';
 
   const dedupeKey = `tea:sale:${dedupeId}`;
   try {
@@ -615,6 +631,7 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   const record = {
     at: new Date().toISOString(),
     sessionId: dedupeId,
+    blend, // 'steady' | 'satin' — the nightly digest marks each order by blend
     email: customerEmail,
     name: name || '',
     items: items || [],
@@ -652,7 +669,10 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   // failure never fails the caller (the KV record + nightly shipping digest is
   // the fulfillment backstop, and Joel can resend). Fires once per new sale
   // because the dedupe guard above returns early on a repeat.
-  if (customerEmail) {
+  // STEADY ONLY: sendTeaConfirmation is the Steady flyer (hibiscus/hawthorn
+  // research, "SVUTU Steady" branding). Satin has no confirmation template yet,
+  // so Satin buyers get Stripe's receipt only — never the wrong-blend flyer.
+  if (blend === 'steady' && customerEmail) {
     try {
       await sendTeaConfirmation({
         email: customerEmail,
@@ -669,7 +689,9 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
 
   // Tag the buyer in Resend (Tea Buyers audience). Existing contact -> Resend
   // returns an error we can ignore; the tag is the point, not uniqueness.
-  if (emailKey) {
+  // STEADY ONLY: TEA_AUDIENCE_ID is the "Tea Buyers (SVUTU Steady)" audience.
+  // Satin buyers are not tagged into a Steady audience (no Satin audience yet).
+  if (blend === 'steady' && emailKey) {
     try {
       const [first, ...restName] = String(record.name).trim().split(/\s+/);
       await fetch(`https://api.resend.com/audiences/${TEA_AUDIENCE_ID}/contacts`, {
@@ -691,17 +713,17 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   await capturePurchase({
     email: customerEmail,
     amountCents: record.amountCents,
-    tier: 'svutu-tea',
+    tier: isSatin ? 'svutu-satin' : 'svutu-tea',
     sessionId: dedupeId,
   });
-  return { action: 'tea_sale', recorded: true, customer_email: customerEmail };
+  return { action: 'tea_sale', blend, recorded: true, customer_email: customerEmail };
 }
 
 // Record the tea sale for the nightly shipping digest + tag the buyer in the
 // Resend "Tea Buyers" audience. Never throws into the webhook. Thin wrapper
 // around recordTeaSale() that pulls the shared fields out of a Stripe
 // Checkout Session (the shape a tea Payment Link purchase arrives in).
-async function processTeaPurchase(session) {
+async function processTeaPurchase(session, blend = 'steady') {
   const customerEmail = session.customer_details?.email || '';
   const customerName = session.customer_details?.name || '';
 
@@ -733,7 +755,28 @@ async function processTeaPurchase(session) {
     isSubscription: session.mode === 'subscription',
     address: addr,
     source: 'checkout_session',
+    blend,
   });
+}
+
+// True when this session is a SVUTU Satin purchase (hormoneteas.com). Metadata
+// marker first (venture:'svutu' / blend:'satin'), then the authoritative price
+// ids. Runs AFTER isTeaSession (so a Steady sale is caught there) and BEFORE the
+// foreign-funnel guard (Satin is not a braveworks-bp funnel, so it would
+// otherwise be skipped and never reach the shipping digest).
+async function isSatinSession(session) {
+  const md = session.metadata || {};
+  if (md.blend === 'satin' || md.venture === 'svutu') return true;
+  try {
+    const stripe = getStripe();
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10, expand: ['data.price'] });
+    for (const item of items.data || []) {
+      if (item.price?.id && SATIN_PRICE_IDS.has(item.price.id)) return true;
+    }
+  } catch (err) {
+    console.warn('triangle-webhook: satin line-item check failed (non-fatal)', err.message);
+  }
+  return false;
 }
 
 // ─── Samson Formula: recognition + notify-Joel-with-address ───────────
@@ -1386,7 +1429,15 @@ async function processCheckoutCompleted(event) {
   // tea sessions are NOT braveworks-bp funnel sessions, so without this check
   // a tea sale would be skipped as foreign and never reach the shipping digest.
   if (await isTeaSession(session)) {
-    return await processTeaPurchase(session);
+    return await processTeaPurchase(session, 'steady');
+  }
+
+  // ── SVUTU Satin check (Annie's hormoneteas.com storefront) ──
+  // Recorded into the SAME nightly shipping digest as Steady, marked blend:'satin'.
+  // Runs BEFORE the foreign-funnel guard (Satin is not a braveworks-bp funnel, so
+  // it would otherwise be skipped as foreign and never reach the digest).
+  if (await isSatinSession(session)) {
+    return await processTeaPurchase(session, 'satin');
   }
 
   // ── Samson Formula check (BEFORE the foreign-funnel guard) ──
