@@ -516,7 +516,9 @@ async function processCheckoutCompleted(event) {
   // ($100 = 10000, not in AMOUNT_TO_TIER). Without this it would fire a confusing
   // "unmapped amount" alert on every deposit. It has no automated fulfillment;
   // Joel handles onboarding + balance manually off the Stripe dashboard.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit']);
+  // 2026-07-09: added 'samson' — the $67 Samson Formula link (6700, not in
+  // AMOUNT_TO_TIER); skip cleanly, no automated fulfillment on this account.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson']);
   const md = session.metadata || {};
   const isRestoreHer =
     md.brand === 'restoreher' ||
