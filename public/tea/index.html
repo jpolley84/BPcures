@@ -478,31 +478,8 @@
 
 <!-- (storyboard rail folded into the hero gallery thumbnails, 2026-07-10) -->
 
-<!-- ============ SOUND FAMILIAR — SYMPTOM CHECKLIST (person first) ============ -->
-<section class="symptoms rv">
-  <div class="wrap">
-    <div class="kicker">Sound familiar?</div>
-    <h2 class="head">If this is your season,<br>you're in the right place.</h2>
-    <p class="sectlede">Tap what's been true for you lately. No email required — this list is for you, not for us.</p>
-    <div class="symgrid" id="symlist">
-      <div class="sym-item"><span class="box"></span><span class="t">The cuff number creeping up, <em>a little more each checkup</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">"Let's keep an eye on it," <em>said your doctor — again</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">3 a.m., wide awake, <em>mind running laps</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">The afternoon reach — <em>coffee, soda, something salty</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">Shoulders that live <em>somewhere up near your ears</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">A pill organizer you <em>never agreed to grow old with</em></span></div>
-      <div class="sym-item"><span class="box"></span><span class="t">The quiet one: <em>"I know I should be doing something."</em></span></div>
-    </div>
-    <div class="symecho" id="symecho" aria-live="polite">
-      <div class="serif">Check what fits. We'll say the honest thing underneath.</div>
-    </div>
-    <img class="sectimg" src="/tea/img/steady-woman-locs.webp" alt="A woman at her kitchen table holding her pouch of Steady" width="640" height="800" loading="lazy" style="max-width:420px;">
-    <div class="symcta">
-      <a class="btn-solid" href="#buy">Meet Steady — the daily cup</a>
-      <a class="btn-ghost" href="#science">See what the research says</a>
-    </div>
-  </div>
-</section>
+<!-- (symptom checklist removed entirely per Joel 2026-07-10; the hero's
+     "Made for the woman who..." list carries the recognition job now) -->
 
 <!-- ============ THE BP TRIANGLE ============ -->
 <section class="rv" id="triangle">
@@ -924,32 +901,7 @@
     document.querySelectorAll('.term, .itag').forEach(t=>{ t.classList.remove('open'); t.setAttribute('aria-expanded','false'); });
   });
 
-  // Triangle checklist — count + honest echo (no data leaves the page)
-  const symItems = document.querySelectorAll('#symlist .sym-item');
-  const symecho = document.getElementById('symecho');
-  const echoes = {
-    0: ['Check what fits. We\'ll say the honest thing underneath.',''],
-    1: ['One is enough to notice.','Bodies whisper before they shout. Worth a daily cup of attention.'],
-    2: ['Two checks isn\'t a character flaw.','It\'s a corner talking — and the corners have been studied.'],
-    3: ['Three is a pattern, not a coincidence.','This is exactly what the Triangle maps — and exactly the season Steady was blended for.'],
-    4: ['Four or more? You\'re not broken.','You\'re running a Triangle nobody ever showed you. Start with the cup, and bring what you\'re noticing to your provider.']
-  };
-  function updateEcho(){
-    const n = document.querySelectorAll('#symlist .sym-item.on').length;
-    const key = Math.min(n,4);
-    const [line, sub] = echoes[key];
-    symecho.innerHTML = '<div class="serif">'+line+'</div>' + (sub ? '<div class="plain">'+sub+'</div>' : '');
-  }
-  symItems.forEach(it=>{
-    it.setAttribute('role','checkbox');
-    it.setAttribute('tabindex','0');
-    it.setAttribute('aria-checked','false');
-    it.addEventListener('click', ()=>{
-      it.classList.toggle('on');
-      it.setAttribute('aria-checked', it.classList.contains('on') ? 'true' : 'false');
-      updateEcho();
-    });
-  });
+  // (symptom-checklist JS removed with its section, 2026-07-10)
 
   // Product gallery: clicking a thumbnail swaps the enlarged image above.
   (function(){
