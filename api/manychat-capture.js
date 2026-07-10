@@ -47,11 +47,19 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
-  const { email, name, first_name } = req.body || {};
+  const { email, name, first_name, segment, source } = req.body || {};
   const fname = name || first_name || '';
   if (!looksLikeValidEmail(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
+  // Optional DM segmentation (Q2 answer in the ManyChat flows): three corners
+  // map onto the triangle drip's corner field; the two urgency answers become
+  // tags only (no corner — the quiz still decides that).
+  const SEGMENT_CORNERS = { stress: 'stress', sodium: 'sodium', sugar: 'sugar' };
+  const seg = typeof segment === 'string' ? segment.trim().toLowerCase() : '';
+  const segValid = ['stress', 'sodium', 'sugar', 'onmeds', 'scared'].includes(seg) ? seg : '';
+  const segCorner = SEGMENT_CORNERS[segValid] || null;
+  const srcTag = typeof source === 'string' && /^[a-z0-9-]{1,40}$/.test(source) ? source : '';
   if (!process.env.KV_REST_API_URL) {
     await alert('[ALERT] manychat-capture: KV unavailable', `Captured ${email} from ManyChat but KV_REST_API_URL is missing — lead lost.`);
     return res.status(500).json({ error: 'Storage unavailable' });
@@ -73,7 +81,11 @@ export default async function handler(req, res) {
       await kv.set(dripKey, {
         ...existing,
         firstName: existing.firstName || fname,
-        tags: Array.from(new Set([...(existing.tags || []), 'manychat-dm', 'instagram'])),
+        tags: Array.from(new Set([
+          ...(existing.tags || []), 'manychat-dm', 'instagram',
+          ...(segValid ? [`dm-${segValid}`] : []),
+          ...(srcTag ? [srcTag] : []),
+        ])),
         ...(reEnterLead ? { state: 'lead', stateEnteredAt: nowIso } : {}),
       });
     } else {
@@ -86,7 +98,9 @@ export default async function handler(req, res) {
         lastSentDay: 0,
         optedIn: true, // DMing their email IS the opt-in
         source: 'manychat-dm',
-        tags: ['manychat-dm', 'instagram'],
+        tags: ['manychat-dm', 'instagram',
+          ...(segValid ? [`dm-${segValid}`] : []),
+          ...(srcTag ? [srcTag] : [])],
         state: 'lead',
         stateEnteredAt: nowIso,
       });
@@ -113,18 +127,21 @@ export default async function handler(req, res) {
           ...triExisting,
           firstName: triExisting.firstName || fname,
           lastCaptureAt: nowIso,
+          // Enrich-only: a DM self-report fills an empty corner, never
+          // overwrites one the quiz already scored.
+          ...(segCorner && !triExisting.corner ? { corner: segCorner } : {}),
         });
       } else {
         await kv.set(triKey, {
           email: emailLower,
           firstName: fname,
-          corner: null,
+          corner: segCorner,
           readiness: null,
           scores: null,
           state: 'lead',
           stateEnteredAt: nowIso,
           enrolledAt: nowIso,
-          source: 'manychat-dm',
+          source: srcTag || 'manychat-dm',
         });
       }
     }
