@@ -163,11 +163,39 @@ const CONFIRMATION_HTML = (email) => `<!doctype html>
   </div>
 </body></html>`;
 
+// 2026-07-10 — LEGACY braveworks-bp TOKENS. Every drip email sent by the
+// retired braveworks-bp deployment (pre-2026-07-05) carries an unsubscribe
+// link of the form braveworks-bp.vercel.app/api/unsubscribe?token=<T>, and
+// that domain now redirects wholesale to bpquiz.com — meaning those tokens
+// land HERE. Their format is base64url(`${email}:${sig24}`) where sig24 is
+// the first 24 hex chars of HMAC-SHA256(UNSUB_SECRET||CRON_SECRET, email)
+// (see braveworks-bp/api/unsubscribe.js). Without this fallback every one
+// of those recipients gets a 400 instead of an unsubscribe — a CAN-SPAM
+// problem. Full-scope only (legacy tokens carry no tag).
+function verifyLegacyBwbpToken(token) {
+  try {
+    const decoded = Buffer.from(String(token), 'base64url').toString('utf8');
+    const idx = decoded.lastIndexOf(':');
+    if (idx === -1) return null;
+    const email = decoded.slice(0, idx);
+    const sig = decoded.slice(idx + 1);
+    if (!email.includes('@') || !/^[0-9a-f]{24}$/.test(sig)) return null;
+    for (const secret of [process.env.UNSUB_SECRET, process.env.CRON_SECRET]) {
+      if (!secret) continue;
+      const expected = crypto.createHmac('sha256', secret).update(email).digest('hex').slice(0, 24);
+      if (sig === expected) return { email, ts: null, tag: null };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function handler(req, res) {
   const token = (req.query?.token) || (req.body?.token);
   if (!token) return res.status(400).json({ error: 'Missing token' });
 
-  const verified = verifyUnsubToken(token);
+  const verified = verifyUnsubToken(token) || verifyLegacyBwbpToken(token);
   if (!verified) return res.status(400).json({ error: 'Invalid token' });
 
   const { email, tag } = verified;

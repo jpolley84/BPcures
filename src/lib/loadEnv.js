@@ -32,7 +32,7 @@ export function loadEnv(name, fallback = '') {
 
 // Convenience accessors for the values the funnel uses most. Phase 2 agents
 // can import these directly instead of re-typing var names.
-export const SITE_URL = () => loadEnv('VITE_SITE_URL', 'https://braveworks-bp.vercel.app');
+export const SITE_URL = () => loadEnv('VITE_SITE_URL', 'https://bpquiz.com');
 export const STRIPE_PUBLISHABLE_KEY = () => loadEnv('VITE_STRIPE_PUBLISHABLE_KEY');
 // $27 entry corner — reuses the live bpquiz $27 price id as the fallback.
 export const STRIPE_ENTRY_PRICE_ID = () =>
