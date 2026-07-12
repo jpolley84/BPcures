@@ -518,6 +518,13 @@ async function processCheckoutCompleted(event) {
   // Joel handles onboarding + balance manually off the Stripe dashboard.
   // 2026-07-09: added 'samson' — the $67 Samson Formula link (6700, not in
   // AMOUNT_TO_TIER); skip cleanly, no automated fulfillment on this account.
+  // 2026-07-10: added the SVUTU Satin hormone tea (restoreherhormones.com, Annie's
+  // venture). Its payment links ($48 / $120) stamp {venture:'svutu', blend:'satin'}
+  // with NO `funnel` key, so the funnel-set guard misses them; 4800/12000 are not in
+  // AMOUNT_TO_TIER, so without this every Satin sale fires a noise "unmapped amount"
+  // alert (and a future 4800/12000 mapping would mis-deliver a BP kit). Satin ships
+  // manually off the Stripe dashboard — never this webhook. Guard on venture:'svutu'
+  // so all current + future SVUTU blends skip cleanly.
   const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson']);
   const md = session.metadata || {};
   const isRestoreHer =
@@ -525,8 +532,8 @@ async function processCheckoutCompleted(event) {
     md.tier === 'recordings' ||
     /^restoreher/i.test(md.event || '') ||
     /restoreher|everydaynurse/i.test(md.source || '');
-  if (FOREIGN_FUNNELS.has(md.funnel) || isRestoreHer) {
-    return { action: 'skipped', reason: `foreign:${md.funnel || md.brand || md.tier || 'restoreher'}` };
+  if (FOREIGN_FUNNELS.has(md.funnel) || md.venture === 'svutu' || isRestoreHer) {
+    return { action: 'skipped', reason: `foreign:${md.funnel || md.venture || md.brand || md.tier || 'restoreher'}` };
   }
 
   const customerEmail = session.customer_details?.email;
