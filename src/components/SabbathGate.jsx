@@ -34,6 +34,10 @@ const EXEMPT_PREFIXES = [
   '/privacy', '/terms', '/disclaimer',
   '/success', '/upsell', '/library', '/downloads',
   '/coaching-welcome', '/sprint-welcome', '/seminar-welcome',
+  // Tea fulfillment: post-purchase confirmation only. /pay stays GATED (Joel
+  // 2026-07-12: tea rests with the store; the static /tea page carries its
+  // own matching gate since it lives outside this React tree).
+  '/tea-thanks',
   '/ops', '/wakita', '/luvenia', '/intake', '/apply',
   // App waitlist — email capture, not commerce. Nothing is sold there.
   '/waitlist', '/app',

@@ -984,5 +984,128 @@
   })();
 </script>
 
+<!-- ============ SABBATH GATE (static twin of SabbathGate.jsx) ============
+     Joel 2026-07-12: the tea shop RESTS with the store, sundown Friday to
+     sundown Saturday. This static page lives outside the React tree, so it
+     carries its own gate with the SAME sunset algorithm (Fordsville, KY),
+     the same fail-open rule (any error = store stays open), the same
+     ?sabbath=force / ?sabbath=off test overrides, and the same
+     bpquiz.com-only host check (previews and localhost never gate). -->
+<script>
+(function(){
+  try {
+    var LAT = 37.6362, LNG = -86.710, ZENITH = 90.833, TZ = 'America/Chicago';
+    var D2R = Math.PI/180, R2D = 180/Math.PI;
+
+    function sunsetUTHours(y, m, d){
+      var N1 = Math.floor((275*m)/9), N2 = Math.floor((m+9)/12);
+      var N3 = 1 + Math.floor((y - 4*Math.floor(y/4) + 2)/3);
+      var N = N1 - N2*N3 + d - 30;
+      var lngHour = LNG/15;
+      var t = N + (18 - lngHour)/24;
+      var M = 0.9856*t - 3.289;
+      var L = M + 1.916*Math.sin(M*D2R) + 0.02*Math.sin(2*M*D2R) + 282.634;
+      L = ((L % 360) + 360) % 360;
+      var RA = R2D*Math.atan(0.91764*Math.tan(L*D2R));
+      RA = ((RA % 360) + 360) % 360;
+      var Lq = Math.floor(L/90)*90, RAq = Math.floor(RA/90)*90;
+      RA = (RA + (Lq - RAq))/15;
+      var sinDec = 0.39782*Math.sin(L*D2R);
+      var cosDec = Math.cos(Math.asin(sinDec));
+      var cosH = (Math.cos(ZENITH*D2R) - sinDec*Math.sin(LAT*D2R)) / (cosDec*Math.cos(LAT*D2R));
+      if (cosH > 1 || cosH < -1) return null;
+      var H = R2D*Math.acos(cosH)/15;
+      var T = H + RA - 0.06571*t - 6.622;
+      var UT = T - lngHour;
+      return ((UT % 24) + 24) % 24;
+    }
+
+    function centralParts(date){
+      var fmt = new Intl.DateTimeFormat('en-US', { timeZone: TZ, year:'numeric', month:'numeric', day:'numeric', weekday:'short', hour:'numeric', minute:'numeric', hour12:false });
+      var p = {};
+      fmt.formatToParts(date).forEach(function(part){ p[part.type] = part.value; });
+      var wk = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
+      return { y:+p.year, m:+p.month, d:+p.day, weekday:wk[p.weekday], hour:(+p.hour)%24, minute:+p.minute };
+    }
+
+    function sunsetInstant(y, m, d){
+      var ut = sunsetUTHours(y, m, d);
+      if (ut == null) return null;
+      var offs = [0, 1, -1];
+      for (var i = 0; i < offs.length; i++){
+        var inst = new Date(Date.UTC(y, m-1, d+offs[i]) + ut*3600*1000);
+        var lp = centralParts(inst);
+        if (lp.y === y && lp.m === m && lp.d === d) return inst;
+      }
+      return new Date(Date.UTC(y, m-1, d) + ut*3600*1000);
+    }
+
+    function fridayOfWeek(cNow){
+      var delta = cNow.weekday >= 5 ? cNow.weekday - 5 : cNow.weekday + 2;
+      var a = new Date(Date.UTC(cNow.y, cNow.m-1, cNow.d, 12));
+      a.setUTCDate(a.getUTCDate() - delta);
+      return { y:a.getUTCFullYear(), m:a.getUTCMonth()+1, d:a.getUTCDate() };
+    }
+
+    function sabbathStatus(now){
+      try {
+        var cNow = centralParts(now);
+        var fri = fridayOfWeek(cNow);
+        var satA = new Date(Date.UTC(fri.y, fri.m-1, fri.d, 12)); satA.setUTCDate(satA.getUTCDate()+1);
+        var sat = { y:satA.getUTCFullYear(), m:satA.getUTCMonth()+1, d:satA.getUTCDate() };
+        var friSunset = sunsetInstant(fri.y, fri.m, fri.d);
+        var satSunset = sunsetInstant(sat.y, sat.m, sat.d);
+        if (!friSunset || !satSunset) return { active:false };
+        return { active: now >= friSunset && now < satSunset, satSunset: satSunset };
+      } catch (e) { return { active:false }; }
+    }
+
+    function reopenLabel(satSunset){
+      try {
+        return new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday:'long', hour:'numeric', minute:'2-digit' }).format(satSunset) + ' CT';
+      } catch (e) { return 'sundown Saturday'; }
+    }
+
+    var params = new URLSearchParams(location.search);
+    var override = params.get('sabbath'); // 'force' | 'off' | null
+    var hostOk = override === 'force' || location.hostname === 'bpquiz.com' || location.hostname === 'www.bpquiz.com';
+
+    var gateEl = null;
+    function sync(){
+      var st = sabbathStatus(new Date());
+      var active = override === 'force' ? true : override === 'off' ? false : st.active;
+      var show = active && hostOk;
+      if (show && !gateEl){
+        gateEl = document.createElement('div');
+        gateEl.setAttribute('role', 'dialog');
+        gateEl.setAttribute('aria-label', 'Closed for the Sabbath');
+        gateEl.id = 'sabbathgate';
+        gateEl.style.cssText = 'position:fixed;inset:0;z-index:99999;background:var(--cream,#FBF8F1);display:flex;align-items:center;justify-content:center;padding:24px;';
+        gateEl.innerHTML =
+          '<div style="max-width:460px;text-align:center;font-family:Montserrat,sans-serif;color:var(--ink,#2C2A26);">' +
+          '<div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--brown,#7A6A55);font-weight:600;">SVUTU Tea Co. &middot; BPQuiz.com</div>' +
+          '<svg width="68" height="48" viewBox="0 0 68 48" aria-hidden="true" style="margin:18px auto 14px;display:block;"><line x1="6" y1="40" x2="62" y2="40" stroke="#B0463A" stroke-width="2" stroke-linecap="round"/><circle cx="34" cy="40" r="13" fill="#C8A252"/><g stroke="#C8A252" stroke-width="2" stroke-linecap="round"><line x1="34" y1="14" x2="34" y2="6"/><line x1="16" y1="22" x2="11" y2="17"/><line x1="52" y1="22" x2="57" y2="17"/><line x1="9" y1="34" x2="3" y2="32"/><line x1="59" y1="34" x2="65" y2="32"/></g></svg>' +
+          '<h1 style="font-family:\'Cormorant Garamond\',serif;font-size:32px;font-weight:600;margin:0 0 12px;">Closed for the Sabbath</h1>' +
+          '<p style="font-size:15px;line-height:1.65;color:var(--brown,#5A4A3A);margin:0 0 16px;">We rest from sundown Friday to sundown Saturday. The kettle is off and the shop is paused until the Sabbath ends.</p>' +
+          '<div style="display:inline-block;background:#fff;border:1px solid var(--line,#E2D6C2);border-radius:999px;padding:9px 18px;font-size:14px;color:var(--brown,#5A4A3A);">Reopening <strong style="color:var(--ink,#2C2A26);">' + reopenLabel(st.satSunset) + '</strong></div>' +
+          '<p style="font-size:13px;color:var(--muted,#9A8C77);margin:16px 0 0;">Come back at sundown Saturday. Steady will be right here, and the 60-day guarantee will be too.</p>' +
+          '<div style="height:1px;background:var(--line,#E2D6C2);margin:22px auto;width:120px;"></div>' +
+          '<p style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:16px;color:var(--brown,#5A4A3A);margin:0;">&ldquo;Remember the Sabbath day, to keep it holy.&rdquo;<span style="font-style:normal;font-size:12px;color:var(--muted,#9A8C77);"> Exodus 20:8</span></p>' +
+          '</div>';
+        document.body.appendChild(gateEl);
+        document.body.style.overflow = 'hidden';
+      } else if (!show && gateEl){
+        gateEl.remove();
+        gateEl = null;
+        document.body.style.overflow = '';
+      }
+    }
+    sync();
+    setInterval(sync, 60*1000);
+    document.addEventListener('visibilitychange', sync);
+  } catch (e) { /* fail open: any error keeps the shop visible */ }
+})();
+</script>
+
 </body>
 </html>
