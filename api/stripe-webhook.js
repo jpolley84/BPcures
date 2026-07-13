@@ -10,9 +10,12 @@
 //      use email-as-queue rather than file persistence).
 //
 // Non-launcher purchases (BP Reset Kit etc.) are handled by purchase-confirmation.js.
-// This handler ALWAYS returns 200 after signature verification — even on
-// downstream failures — to prevent Stripe from retrying and double-sending
-// welcome emails. Errors are logged via console.error (Vercel captures).
+// Failure semantics (2026-07 rework): deliberate skips (foreign funnels,
+// unmapped amounts, triangle-owned sessions, ignored event types) return 200;
+// handled kit-email send failures alert Joel and return 200 (manual-resend
+// runbook); genuine unexpected failures return 500 so Stripe RETRIES — the
+// event-id idempotency key is written only after success, so a retry re-enters
+// processing safely. Errors are logged via console.error (Vercel captures).
 //
 // Required env vars (set in Vercel):
 //   STRIPE_SECRET_KEY        — for the Stripe SDK constructor
@@ -39,6 +42,16 @@ import {
   TIER_CONFIG,
 } from './purchase-confirmation.js';
 import { capturePurchase } from './_posthog.js';
+// Cross-webhook coordination with the braveworks-bp handler on this shared
+// Stripe account: triangle owns any session whose price id is in its
+// TIER_PRICE_IDS (this webhook defers entirely), claimSession is the shared
+// atomic claim:sale:<id> guard for whatever still overlaps by amount, and
+// TIER_AMOUNTS gates both checks so non-colliding amounts skip them.
+import {
+  isBraveworksTierSession as isTriangleTierSession,
+  claimSession,
+  TIER_AMOUNTS as TRIANGLE_TIER_AMOUNTS,
+} from './triangle-webhook.js';
 
 // State-machine mapping (Phase 1 spec, 2026-05-17). Purchase events
 // transition the drip:* record's `state` field, which the new per-state
@@ -610,6 +623,30 @@ To prevent recurrence: add ${amountCents} to AMOUNT_TO_TIER in api/purchase-conf
       return { action: 'skipped', reason: 'amount_not_mapped', amount: amountCents };
     }
 
+    // 2026-07 DOUBLE-DELIVERY GUARD. An untagged $17 payment-link session whose
+    // price id is in triangle's TIER_PRICE_IDS passes BOTH webhooks (this
+    // amount-map's 1700 AND triangle's price-id match) — two kit emails + two
+    // purchase events for one sale. Triangle wins: if the session's line items
+    // carry a triangle tier price id, defer entirely and let triangle deliver.
+    // GATED by the exported triangle tier-amount set so amounts that can never
+    // be a triangle tier sale (29700, 199700, ...) skip the Stripe line-items
+    // lookup (and the claim) entirely — no wasted network call per sale.
+    if (TRIANGLE_TIER_AMOUNTS.has(amountCents)) {
+      if (await isTriangleTierSession(session)) {
+        console.log('stripe-webhook: session matches triangle TIER_PRICE_IDS, deferring to /api/triangle-webhook', session.id);
+        return { action: 'skipped', reason: 'triangle_tier_deferred' };
+      }
+
+      // Shared cross-webhook claim (claim:sale:<id>, first one wins) for any
+      // remaining amount-collision the price-id check above cannot see (e.g. a
+      // transient line-items fetch failure inside the check). A retry of OUR OWN
+      // event still passes (the claim records its owner).
+      if (!(await claimSession(session.id, 'stripe-webhook'))) {
+        console.warn('stripe-webhook: session already claimed by the triangle webhook, skipping kit flow', session.id);
+        return { action: 'skipped', reason: 'claimed_by_other_webhook' };
+      }
+    }
+
     // Refine tier=1 (the catch-all starter tier) to a category-specific
     // variant based on the actual product name. This routes Cortisol
     // Healing Blueprint buyers to the cortisol email, Blood Sugar Cures
@@ -635,23 +672,37 @@ To prevent recurrence: add ${amountCents} to AMOUNT_TO_TIER in api/purchase-conf
       }
     }
 
-    let emailSent = false;
-    let emailError = null;
+    // Per-session business key (mirrors triangle's bwbp:kitdone:). Several
+    // seconds of post-email work (beehiiv tag, drip writes, audit emails,
+    // posthog flush) run before the event-id key is written; a crash in that
+    // window triggers a Stripe retry, and without this marker the retry would
+    // re-send the customer's kit email. Skip the send when present; the
+    // trailing work below still runs (it is idempotent: tags de-dupe via Set,
+    // drip writes converge, posthog dedupes on the ph:purchase marker).
+    const kitDoneKey = `legacy:kitdone:${session.id}`;
+    let kitAlreadySent = false;
     try {
-      await sendPurchaseConfirmation({
-        email: customerEmail,
-        name: customerName,
-        tier: kitTier,
-      });
-      emailSent = true;
-      console.log(`stripe-webhook: kit confirmation sent → ${customerEmail} [tier=${kitTier}, amount=${amountCents}]`);
+      kitAlreadySent = Boolean(await kv.get(kitDoneKey));
     } catch (err) {
-      emailError = err.message;
-      console.error('stripe-webhook: kit confirmation failed', err.message);
-      // Loud alert — customer paid but didn't get their kit. Joel must act.
-      await alertJoel({
-        subject: `Kit-email send FAILED for ${customerEmail} (${formatAmount(amountCents)})`,
-        text: `The customer paid ${formatAmount(amountCents)} but the welcome email send to Resend failed.
+      console.warn('stripe-webhook: kitdone read failed (continuing)', err.message);
+    }
+
+    if (kitAlreadySent) {
+      console.log(`stripe-webhook: kit confirmation already sent for ${session.id}, skipping send (running trailing work only)`);
+    } else {
+      try {
+        await sendPurchaseConfirmation({
+          email: customerEmail,
+          name: customerName,
+          tier: kitTier,
+        });
+        console.log(`stripe-webhook: kit confirmation sent → ${customerEmail} [tier=${kitTier}, amount=${amountCents}]`);
+      } catch (err) {
+        console.error('stripe-webhook: kit confirmation failed', err.message);
+        // Loud alert — customer paid but didn't get their kit. Joel must act.
+        await alertJoel({
+          subject: `Kit-email send FAILED for ${customerEmail} (${formatAmount(amountCents)})`,
+          text: `The customer paid ${formatAmount(amountCents)} but the welcome email send to Resend failed.
 
 Customer:   ${customerName || '(no name)'} <${customerEmail}>
 Tier:       ${kitTier}
@@ -664,18 +715,27 @@ Resend the welcome via:
 curl -X POST https://bpquiz.com/api/test-purchase-email \\
   -H "Content-Type: application/json" \\
   -d '{"tier":"${kitTier}","email":"${customerEmail}","name":"${(customerName || '').replace(/"/g, '\\"')}"}'`,
-      });
-      await emitStripeEvent({
-        kind: 'failed',
-        sessionId: session.id,
-        amountCents,
-        email: customerEmail,
-        name: customerName,
-        tier: kitTier,
-        status: 'send_error',
-        errorMsg: err.message,
-      });
-      return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
+        });
+        await emitStripeEvent({
+          kind: 'failed',
+          sessionId: session.id,
+          amountCents,
+          email: customerEmail,
+          name: customerName,
+          tier: kitTier,
+          status: 'send_error',
+          errorMsg: err.message,
+        });
+        return { action: 'kit_confirmation_failed', tier: kitTier, error: err.message };
+      }
+
+      // Write the marker immediately AFTER the send succeeds and BEFORE the
+      // trailing work, so a crash anywhere below never re-sends this email.
+      try {
+        await kv.set(kitDoneKey, { sentAt: new Date().toISOString(), tier: String(kitTier) }, { ex: 60 * 60 * 24 * 30 });
+      } catch (err) {
+        console.warn('stripe-webhook: kitdone write failed (retry may re-send once)', err.message);
+      }
     }
 
     // Tag the buyer in beehiiv so post-purchase automations can fire
@@ -808,6 +868,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       product: TIER_CONFIG[kitTier]?.product,
       source: 'checkout',
       sessionId: session.id,
+      markSession: true,
     });
 
     return {
@@ -902,6 +963,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
     product: tier.name,
     source: 'launcher',
     sessionId: session.id,
+    markSession: true,
   });
 
   return {
@@ -948,32 +1010,91 @@ export default async function handler(req, res) {
   // arriving twice → we return 200 immediately without resending the kit email.
   // This is what was burning sender reputation: jessalady@gmail.com and
   // dqualls1117@yahoo.com each got Day 1 emails twice within 3 minutes.
+  //
+  // 2026-07 rework: two-phase event key. At entry we take an atomic NX
+  // "processing" claim (10 min TTL), which closes the window where two
+  // CONCURRENT deliveries of the same event both pass a plain read and both
+  // send the kit email. On success the claim is overwritten with the durable
+  // done marker (24h TTL); on failure it is DELETED so Stripe's next retry
+  // passes immediately. The internal flow markers (legacy:kitdone:,
+  // cart-recovery-sent:, claim:sale:) keep those retries from double-sending.
+  const kvKey = `stripe-evt:${event.id}`;
   try {
-    const kvKey = `stripe-evt:${event.id}`;
-    const seen = await kv.get(kvKey);
-    if (seen) {
-      console.log(`stripe-webhook: duplicate event ${event.id} — already processed at ${seen.processedAt}, skipping`);
-      return res.status(200).json({ ok: true, deduplicated: true, eventId: event.id, originalProcessedAt: seen.processedAt });
+    const claimed = await kv.set(kvKey, { status: 'processing', at: Date.now() }, { nx: true, ex: 600 });
+    if (!claimed) {
+      const seen = await kv.get(kvKey);
+      if (seen && seen.processedAt) {
+        console.log(`stripe-webhook: duplicate event ${event.id} — already processed at ${seen.processedAt}, skipping`);
+        return res.status(200).json({ ok: true, deduplicated: true, eventId: event.id, originalProcessedAt: seen.processedAt });
+      }
+      // A concurrent twin of this delivery is mid-flight (or just released
+      // its claim). Ack this copy; if the in-flight one dies, its claim
+      // expires and Stripe's retry passes.
+      console.log(`stripe-webhook: event ${event.id} already in flight on a concurrent delivery, skipping`);
+      return res.status(200).json({ ok: true, inFlight: true, eventId: event.id });
     }
-    // Set FIRST (before processing) so concurrent retries don't race past us.
-    await kv.set(kvKey, { processedAt: new Date().toISOString() }, { ex: 86400 });
   } catch (err) {
     // KV failure shouldn't block — log and continue. We'd rather risk a rare
     // duplicate send than fail the webhook entirely (which Stripe would retry).
-    console.warn('stripe-webhook: KV idempotency check failed (continuing):', err.message);
+    console.warn('stripe-webhook: KV idempotency claim failed (continuing):', err.message);
   }
 
   try {
     const result = event.type === 'checkout.session.expired'
       ? await processCheckoutExpired(event)
       : await processCheckoutCompleted(event);
+    // Overwrite the processing claim with the done marker only now that
+    // processing finished (deliberate skips included — they are handled
+    // outcomes, not failures).
+    try {
+      await kv.set(kvKey, { processedAt: new Date().toISOString() }, { ex: 86400 });
+    } catch (err) {
+      console.warn('stripe-webhook: KV idempotency write failed (flow markers still dedupe retries):', err.message);
+    }
     return res.status(200).json({ ok: true, ...result });
   } catch (err) {
-    // Already-handled errors return 200 internally; this catches truly
-    // unexpected failures. Still return 200 — duplicate welcome emails are
-    // worse than a missed dashboard entry.
-    console.error('stripe-webhook: processing failed', err.stack || err.message);
-    return res.status(200).json({ ok: false, error: err.message });
+    // Bounded-retry guard: a DETERMINISTIC failure (revoked API key, bad
+    // config) would otherwise 500 every retry for ~3 days and can get this
+    // endpoint auto-disabled by Stripe. After 5 failures the event is
+    // quarantined (CRITICAL log + KV record, 7d TTL) and acked with 200 so
+    // Stripe stops retrying it.
+    let fails = 0;
+    try {
+      const failKey = `evt-fails:${event.id}`;
+      fails = await kv.incr(failKey);
+      if (fails === 1) await kv.expire(failKey, 60 * 60 * 24 * 3);
+    } catch (kvErr) {
+      console.warn('stripe-webhook: fail-counter KV error (treating as first failure):', kvErr.message);
+    }
+
+    // Release the processing claim either way, so the next attempt (Stripe
+    // retry, or a manual dashboard Resend after a quarantine fix) passes
+    // immediately instead of waiting out the claim TTL.
+    try {
+      await kv.del(kvKey);
+    } catch (kvErr) {
+      console.warn('stripe-webhook: claim release failed (claim expires in 10 min):', kvErr.message);
+    }
+
+    if (fails >= 5) {
+      console.error(`stripe-webhook: CRITICAL poison event ${event.id} failed ${fails} times, quarantining and returning 200 to stop Stripe retries.`, err.stack || err.message);
+      try {
+        await kv.set(
+          `quarantine:evt:${event.id}`,
+          { eventId: event.id, type: event.type, error: err.message, failures: fails, quarantinedAt: new Date().toISOString() },
+          { ex: 60 * 60 * 24 * 7 }
+        );
+      } catch (kvErr) {
+        console.warn('stripe-webhook: quarantine write failed:', kvErr.message);
+      }
+      return res.status(200).json({ ok: false, quarantined: true, eventId: event.id, error: err.message });
+    }
+
+    // Deliberate skips and handled send-failures return 200 above; this
+    // catches genuine unexpected failures. Return 500 so Stripe retries —
+    // the done marker was NOT written, so the retry re-enters processing.
+    console.error('stripe-webhook: processing FAILED, returning 500 so Stripe retries', err.stack || err.message);
+    return res.status(500).json({ ok: false, error: err.message });
   }
 }
 

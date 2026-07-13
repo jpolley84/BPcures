@@ -346,13 +346,13 @@ const RESULT_TIPS = {
     },
     {
       title: 'Eat 2 meals. Walk 3 times. Move all 3 numbers.',
-      body: 'Two plant-rich meals, three short walks, no snacks between. Simple. Most women feel the first change by day 4 and see their numbers move by week 2.',
+      body: 'Two plant-rich meals, three short walks, no snacks between. Simple enough to start tomorrow morning.',
       hook: 'Day one of your plan tells you exactly when to eat and walk.',
     },
     {
       title: 'Win your evening. Win your whole next day.',
       body: 'Sleep before midnight heals twice as fast. Joel\'s bedtime routine sets your stress, your blood sugar, and your blood pressure, all three, for the morning.',
-      hook: 'Day 3 is when most women say: "wait, something is changing."',
+      hook: 'Joel\'s exact bedtime routine is Day 3 of the plan.',
     },
   ],
 };
@@ -726,6 +726,24 @@ function QuizModule({ products }) {
     }
     setLoading(true);
     setError('');
+    // 2026-07-13: persist for /pay. PayPage prefills Stripe's email field from
+    // localStorage('bwbp_lead_email') and falls back to the quiz corner via
+    // sessionStorage('bp_quiz'). Both keys were READ but never written until
+    // now, so every buyer retyped on her phone the email she gave us 60
+    // seconds earlier (mistyped emails were breaking kit delivery).
+    try {
+      localStorage.setItem('bwbp_lead_email', email.trim());
+    } catch {
+      /* private mode */
+    }
+    try {
+      sessionStorage.setItem(
+        'bp_quiz',
+        JSON.stringify({ corner: PRESSURE_TO_CORNER[pressure] || 'stress', score: riskScore })
+      );
+    } catch {
+      /* private mode */
+    }
     // Tie this device's anonymous events to the lead for funnel analysis.
     identify(email, name.trim() ? { name: name.trim() } : undefined);
     track('quiz_email_submitted', { pressure, risk_score: riskScore });
@@ -916,7 +934,7 @@ function QuizModule({ products }) {
               </div>
 
               <h2 className="quiz-question" style={{ fontSize: '1.15rem' }}>
-                Your full plan is ready. Where should we send it?
+                Your result is ready. Where should we send it?
               </h2>
               <p className="quiz-subtitle">
                 Your personalized protocol + 3 specific steps for {pressureCopy.label}, plus a free plant-based cookbook.
@@ -940,7 +958,7 @@ function QuizModule({ products }) {
                 />
                 {error && <p style={{ color: 'var(--clay)', fontSize: '0.82rem' }}>{error}</p>}
                 <button type="submit" className="btn btn-ink btn-lg" disabled={loading} style={{ marginTop: '0.35rem' }}>
-                  {loading ? 'Sending…' : 'Show my full plan'}
+                  {loading ? 'Sending…' : 'Show my result'}
                   <ArrowRight size={16} className="arrow" />
                 </button>
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.5rem', textAlign: 'center' }}>
@@ -1011,7 +1029,7 @@ function QuizModule({ products }) {
                   padding: '1rem',
                 }}
               >
-                Send me my plan: {kitPrice} <ArrowRight size={16} className="arrow" />
+                Get my full 10-Day Reset Kit: {kitPrice} <ArrowRight size={16} className="arrow" />
               </a>
 
               {/* ─── KIT STACK — Vacation-style offer at the top ──────────── */}
@@ -1034,8 +1052,8 @@ function QuizModule({ products }) {
 
                 <div style={{ display: 'grid', gap: '0.6rem', marginBottom: '1.25rem' }}>
                   {[
-                    { icon: '📋', label: 'Your 10-day plan: what to do each morning, step by step', sub: 'Day 4 is when most people say: "wait, my numbers moved."' },
-                    { icon: '🌿', label: '7 herbs that help blood pressure: names, amounts, what to skip if you take pills', sub: 'Herb #3 surprised Linda\'s heart doctor.' },
+                    { icon: '📋', label: 'Your 10-day plan: what to do each morning, step by step', sub: 'Every morning laid out for you. No guesswork.' },
+                    { icon: '🌿', label: '7 herbs that help blood pressure: names, amounts, what to skip if you take pills', sub: 'Each herb with its dose and cautions, nurse-vetted.' },
                     { icon: '🗣️', label: 'What to say to your doctor, word for word', sub: 'So they support your plan instead of adding more pills.' },
                     { icon: '🍽️', label: 'Cook For Life: 45 plant-based meals (free bonus)', sub: 'The 7 foods that help all three root causes. Easy to make. Easy to love.' },
                     { icon: '👥', label: 'The community: over 1,200 people on the same path', sub: 'You are not doing this alone.' },
@@ -1083,45 +1101,12 @@ function QuizModule({ products }) {
                     width: '100%',
                   }}
                 >
-                  Yes, send my plan ({kitPrice}) <ArrowRight size={16} className="arrow" />
+                  Yes, I want the full 10-day kit ({kitPrice}) <ArrowRight size={16} className="arrow" />
                 </a>
                 <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: '0.6rem', textAlign: 'center' }}>
                   In your inbox in 60 seconds · Community included · One-time. No subscription.
                 </p>
               </div>
-
-              {/* ─── SUB-$20 BOOK RUNG — The Companion ($12.99) ───────────────
-                  Phase 1 canon cheap rung. Sits under the kit card as the
-                  lower-commitment option. Stripe link bJe4gzeIrfme9ft3B7fnO02. */}
-              <a
-                href="https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02"
-                target="_top"
-                rel="noopener"
-                onClick={() => track('checkout_clicked', { product: 'companion-book', value: 12.99 })}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.85rem',
-                  padding: '0.9rem 1.1rem',
-                  marginBottom: '1rem',
-                  background: 'var(--paper-warm)',
-                  border: '1px solid var(--line)',
-                  borderRadius: 12,
-                  textDecoration: 'none',
-                  color: 'var(--ink)',
-                }}
-              >
-                <span style={{ fontSize: '1.25rem', lineHeight: 1, flexShrink: 0 }}>📖</span>
-                <span style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ display: 'block', fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.3 }}>
-                    Not ready for the full kit? Start with the book, $12.99.
-                  </span>
-                  <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45, marginTop: '0.15rem' }}>
-                    The Companion: Joel walks the whole Triangle, Stress, Sugar, Sodium, in plain words. The lowest-cost way in.
-                  </span>
-                </span>
-                <ArrowRight size={16} style={{ flexShrink: 0, color: 'var(--clay)' }} />
-              </a>
 
               {/* ─── SCROLL PROMPT — bridge from offer to personalized read ── */}
               <div style={{
@@ -1166,7 +1151,7 @@ function QuizModule({ products }) {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: urgency.tone === 'urgent' ? 'var(--clay)' : 'var(--muted)', marginTop: '0.4rem', fontWeight: 500 }}>
                     <AlertCircle size={12} />
-                    Over 1,200 people have walked this path. People who score {riskScore}/10 and start <strong>{urgency.label}</strong> usually feel a change by day 4.
+                    Over 1,200 people have walked this path. A {riskScore}/10 is exactly what the 10-day plan was built for. Start <strong>{urgency.label}</strong>.
                   </div>
                 </div>
               </div>
@@ -1288,6 +1273,41 @@ function QuizModule({ products }) {
                 }}
               >
                 Yes, solve my {pressureCopy.label} ({kitPrice}) <ArrowRight size={16} className="arrow" />
+              </a>
+
+              {/* ─── SUB-$20 BOOK RUNG — The Companion ($12.99) ───────────────
+                  Phase 1 canon cheap rung. 2026-07-13 panel: moved BELOW the
+                  personalized assessment + final kit CTA so it only catches
+                  confirmed non-buyers instead of splitting the single buy
+                  decision at peak intent. Stripe link bJe4gzeIrfme9ft3B7fnO02. */}
+              <a
+                href="https://buy.stripe.com/bJe4gzeIrfme9ft3B7fnO02"
+                target="_top"
+                rel="noopener"
+                onClick={() => track('checkout_clicked', { product: 'companion-book', value: 12.99 })}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.85rem',
+                  padding: '0.9rem 1.1rem',
+                  marginBottom: '1rem',
+                  background: 'var(--paper-warm)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 12,
+                  textDecoration: 'none',
+                  color: 'var(--ink)',
+                }}
+              >
+                <span style={{ fontSize: '1.25rem', lineHeight: 1, flexShrink: 0 }}>📖</span>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ display: 'block', fontSize: '0.88rem', fontWeight: 600, lineHeight: 1.3 }}>
+                    Not ready for the full kit? Start with the book, $12.99.
+                  </span>
+                  <span style={{ display: 'block', fontSize: '0.78rem', color: 'var(--ink-soft)', lineHeight: 1.45, marginTop: '0.15rem' }}>
+                    The Companion: Joel walks the whole Triangle, Stress, Sugar, Sodium, in plain words. The lowest-cost way in.
+                  </span>
+                </span>
+                <ArrowRight size={16} style={{ flexShrink: 0, color: 'var(--clay)' }} />
               </a>
 
               {/* 2026-06-21 CRO: Skool trial removed from quiz results.

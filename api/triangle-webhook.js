@@ -15,8 +15,11 @@
 // Event to subscribe: checkout.session.completed
 //
 // Required env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, KV_REST_API_URL.
-// Returns 200 after signature verification even on downstream failure, so
-// Stripe doesn't retry and double-send.
+// Failure semantics (2026-07 rework): deliberate skips (foreign funnel,
+// unmapped amount, ignored event types) return 200; a genuine processing
+// failure returns 500 so Stripe RETRIES (~3 days, backoff). The event-id
+// idempotency key is written only after success, and every side-effect flow
+// carries a per-session business dedupe key so retries never double-send.
 
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
@@ -65,8 +68,8 @@ export const AMOUNT_TO_TIER = {
 // memory). The funnel/kind metadata marker is also stamped on the payment link's
 // sessions as a secondary signal. Env can override the price id if it is ever
 // rotated, without a code change.
-const CASE_REVIEW_PRICE_ID = process.env.CASE_REVIEW_PRICE_ID || 'price_1TmZsIHseZnO3rRZmIhg9S7i';
-const CASE_REVIEW_PRODUCT_ID = process.env.CASE_REVIEW_PRODUCT_ID || 'prod_Um8829DP1hSr5A';
+export const CASE_REVIEW_PRICE_ID = process.env.CASE_REVIEW_PRICE_ID || 'price_1TmZsIHseZnO3rRZmIhg9S7i';
+export const CASE_REVIEW_PRODUCT_ID = process.env.CASE_REVIEW_PRODUCT_ID || 'prod_Um8829DP1hSr5A';
 
 // ─── $97 1:1 call with Joel (2026-07 ladder, the upsell from the $47 kit) ───
 // Recognized by its SPECIFIC price/product id or metadata kind:'call-97', NEVER
@@ -74,8 +77,8 @@ const CASE_REVIEW_PRODUCT_ID = process.env.CASE_REVIEW_PRODUCT_ID || 'prod_Um882
 // Fulfillment = a confirmation email with the Calendly booking link (the payment
 // link also redirects to /call-booked which embeds the same calendar). Per Joel,
 // NO Joel-alert email for these (Calendly notifies him when the buyer books).
-const CALL_97_PRICE_ID = process.env.CALL_97_PRICE_ID || 'price_1TpqZIHseZnO3rRZzYrYOfLf';
-const CALL_97_PRODUCT_ID = process.env.CALL_97_PRODUCT_ID || 'prod_UpVar8dVNe2aV5';
+export const CALL_97_PRICE_ID = process.env.CALL_97_PRICE_ID || 'price_1TpqZIHseZnO3rRZzYrYOfLf';
+export const CALL_97_PRODUCT_ID = process.env.CALL_97_PRODUCT_ID || 'prod_UpVar8dVNe2aV5';
 const CALL_BOOKING_URL =
   process.env.CALL_BOOKING_URL || process.env.VITE_CALENDLY_DIAGNOSTIC_URL || '';
 
@@ -90,7 +93,7 @@ const CALL_BOOKING_URL =
 // No per-sale Joel notification (his rule: only $297 alerts); the daily digest
 // to braveworksrn@gmail.com + annie@everydaynurse.com is the fulfillment feed.
 const TEA_AUDIENCE_ID = process.env.TEA_AUDIENCE_ID || 'e70381dc-129d-45a4-9eff-e51e90e8da2b';
-const TEA_PRICE_IDS = new Set([
+export const TEA_PRICE_IDS = new Set([
   'price_1TqGiWHseZnO3rRZ9XnHorV0', // Ritual 3-pouch $120 (legacy link)
   'price_1TqGiZHseZnO3rRZSDRdhYPl', // Monthly sub $42/mo
   'price_1TqGiaHseZnO3rRZhSCeTi1H', // 1-Month pouch $48
@@ -105,7 +108,7 @@ const TEA_PRICE_IDS = new Set([
 // blend:'satin' so the two are clearly separated in the email. Satin gets NO Steady
 // confirmation email and is NOT added to the Steady "Tea Buyers" audience (wrong
 // blend/branding) — its buyers get Stripe's own receipt for now.
-const SATIN_PRICE_IDS = new Set([
+export const SATIN_PRICE_IDS = new Set([
   'price_1TqGR9HseZnO3rRZJ9ynNFKx', // 90-Day Ritual 3-pouch $120
   'price_1TqGRCHseZnO3rRZBsF7Mvyu', // 1-Month pouch $48
   'price_1TqGREHseZnO3rRZUQf1WJ8W', // Sampler $24 (link exists, unused on page)
@@ -118,7 +121,7 @@ const SATIN_PRICE_IDS = new Set([
 // Joel with the buyer + delivery address so he can forward the order to the
 // creator for fulfillment. Recognized by metadata funnel:'samson' (stamped on
 // the payment link) or the price id below. 2026-07-09.
-const SAMSON_PRICE_IDS = new Set([
+export const SAMSON_PRICE_IDS = new Set([
   'price_1TrS5wHseZnO3rRZAyU6MVtL', // Samson Formula 30-Day Supply $67
 ]);
 
@@ -156,7 +159,7 @@ function caseReviewCountKey() {
 // (cheap signal stamped on the payment link), and early-return BEFORE the
 // AMOUNT_TO_TIER lookup (same pattern the $297 case-review uses). Env can
 // override each price id if Stripe ever rotates them, without a code change.
-const UPGRADE_PRICE_TO_TIER = {
+export const UPGRADE_PRICE_TO_TIER = {
   [process.env.UPGRADE_CORNER_TO_TOP2_PRICE_ID || 'price_1TmhuvHseZnO3rRZ6jXBe6II']: 'top2',
   [process.env.UPGRADE_CORNER_TO_COMPLETE_PRICE_ID || 'price_1TmhuwHseZnO3rRZbrSRoKfh']: 'complete',
   [process.env.UPGRADE_TOP2_TO_COMPLETE_PRICE_ID || 'price_1TmhuxHseZnO3rRZ3T43Sz77']: 'complete',
@@ -565,12 +568,15 @@ async function processCall97(session) {
   } catch (err) {
     console.warn('stripe-webhook: call97 drip update failed (non-fatal)', err.message);
   }
-  let delivered = false;
+  // Booking-link email is THE fulfillment for this product — a failure throws
+  // so the handler 500s and Stripe retries. The dedupe key is written only
+  // AFTER a successful send, so the retry re-attempts the email but a
+  // succeeded send is never repeated.
   try {
     await sendCall97Confirmation({ email: customerEmail, firstName: firstNameFinal });
-    delivered = true;
   } catch (err) {
-    console.error('stripe-webhook: call97 confirmation email failed (non-fatal)', err.message);
+    console.error('stripe-webhook: call97 confirmation email failed, 500 for Stripe retry', err.message);
+    throw new Error(`call97 confirmation email failed: ${err.message}`);
   }
   try {
     await kv.set(dedupeKey, { deliveredAt: new Date().toISOString() });
@@ -582,8 +588,9 @@ async function processCall97(session) {
     amountCents: session.amount_subtotal ?? session.amount_total ?? 9700,
     tier: 'call-97',
     sessionId: session.id,
+    markSession: true,
   });
-  return { action: 'call97', delivered, customer_email: customerEmail };
+  return { action: 'call97', delivered: true, customer_email: customerEmail };
 }
 
 // ─── SVUTU Steady tea: recognition + recording ────────────────────────
@@ -715,6 +722,7 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
     amountCents: record.amountCents,
     tier: isSatin ? 'svutu-satin' : 'svutu-tea',
     sessionId: dedupeId,
+    markSession: true,
   });
   return { action: 'tea_sale', blend, recorded: true, customer_email: customerEmail };
 }
@@ -840,6 +848,9 @@ async function processSamsonPurchase(session) {
   const itemLines = items.map((i) => `${i.qty} x ${i.name}`).join('\n') || 'Samson Formula';
   const hasAddress = Boolean(a.line1);
 
+  // The Joel notify email IS the fulfillment feed for Samson (no buyer email,
+  // no digest) — a failure throws so Stripe retries. Dedupe key is written
+  // only after a successful send, so the retry re-attempts the notify.
   try {
     const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
     await getResend().emails.send({
@@ -862,7 +873,8 @@ ${hasAddress ? addressLines.join('\n') : '(!) NO SHIPPING ADDRESS ON THIS ORDER 
 Forward this delivery address to the creator to fulfill. Stripe session: ${session.id}`,
     });
   } catch (err) {
-    console.error('stripe-webhook: samson notify email failed', err.message);
+    console.error('stripe-webhook: samson notify email failed, 500 for Stripe retry', err.message);
+    throw new Error(`samson notify email failed: ${err.message}`);
   }
 
   try {
@@ -871,7 +883,7 @@ Forward this delivery address to the creator to fulfill. Stripe session: ${sessi
     console.warn('stripe-webhook: samson dedupe write failed (non-fatal)', err.message);
   }
 
-  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id });
+  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id, markSession: true });
   return { action: 'samson_sale', recorded: true, customer_email: customerEmail };
 }
 
@@ -1081,34 +1093,52 @@ async function processCaseReview(session, plan = 'full') {
 
   const emailKey = String(customerEmail).trim().toLowerCase();
 
+  // ── Per-session business dedupe + partial-progress record ──
+  // completedAt set → this SESSION already fully processed, skip everything.
+  // A partially-complete record (e.g. buyer confirmation sent, then a later
+  // step threw and Stripe is retrying) re-attempts only what didn't finish.
+  const crDoneKey = `bwbp:crdone:${session.id}`;
+  let crProgress = null;
+  try {
+    crProgress = await kv.get(crDoneKey);
+    if (crProgress && crProgress.completedAt) {
+      return { action: 'case_review', deduplicated: true, customer_email: customerEmail, plan };
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: crdone read failed (continuing)', err.message);
+  }
+  crProgress = crProgress || {};
+  const CR_DONE_TTL = { ex: 60 * 60 * 24 * 30 };
+
   // bwbp:-namespaced cohort record for the case-review buyer. Separate key space
   // from the drip state machine (bwbp:drip:) so it never collides with tier
-  // delivery, and dedupes a Stripe retry at the business level.
+  // delivery. Per-session dedupe now lives on bwbp:crdone: above, so a retry of
+  // THIS session keeps the original record, while a genuine SECOND purchase by
+  // the same buyer (new session id) refreshes it and counts a new slot.
   const reviewKey = `bwbp:casereview:${emailKey}`;
   try {
     const existing = await kv.get(reviewKey);
-    if (existing && existing.confirmedAt) {
-      return { action: 'case_review', deduplicated: true, customer_email: customerEmail, plan };
+    if (!existing || existing.sessionId !== session.id) {
+      await kv.set(reviewKey, {
+        email: emailKey,
+        firstName,
+        sessionId: session.id,
+        confirmedAt: new Date().toISOString(),
+        status: 'awaiting_review',
+        plan,
+      });
+      // ── Monthly capacity counter (read by api/case-review-slots.js) ──
+      // Incremented only on the FIRST record write for this session so a
+      // Stripe retry never double-counts a slot. Best-effort: a counter
+      // failure never blocks fulfillment.
+      try {
+        await kv.incr(caseReviewCountKey());
+      } catch (err) {
+        console.warn('stripe-webhook: case-review slot counter incr failed (non-fatal)', err.message);
+      }
     }
-    await kv.set(reviewKey, {
-      email: emailKey,
-      firstName,
-      sessionId: session.id,
-      confirmedAt: new Date().toISOString(),
-      status: 'awaiting_review',
-      plan,
-    });
   } catch (err) {
     console.warn('stripe-webhook: case-review KV record failed (non-fatal)', err.message);
-  }
-
-  // ── Monthly capacity counter (read by api/case-review-slots.js) ──
-  // Increments AFTER the dedupe check so a Stripe retry never double-counts a
-  // slot. Best-effort: a counter failure never blocks fulfillment.
-  try {
-    await kv.incr(caseReviewCountKey());
-  } catch (err) {
-    console.warn('stripe-webhook: case-review slot counter incr failed (non-fatal)', err.message);
   }
 
   // ── Flag the buyer's drip record (do NOT flip their state) ──
@@ -1162,21 +1192,45 @@ async function processCaseReview(session, plan = 'full') {
     }
   }
 
-  let delivered = false;
-  try {
-    await sendCaseReviewConfirmation({ email: customerEmail, firstName });
-    delivered = true;
-  } catch (err) {
-    console.error('stripe-webhook: case-review confirmation email failed (non-fatal)', err.message);
+  // ── Buyer confirmation ── skipped if a prior attempt of this session
+  // already sent it (progress marker); a fresh failure is recorded and thrown
+  // AFTER the Joel alert below so fulfillment is never lost while Stripe
+  // retries the confirmation.
+  let delivered = Boolean(crProgress.confirmationSentAt);
+  let confirmationError = null;
+  if (!delivered) {
+    try {
+      await sendCaseReviewConfirmation({ email: customerEmail, firstName });
+      delivered = true;
+      crProgress.confirmationSentAt = new Date().toISOString();
+      try {
+        await kv.set(crDoneKey, crProgress, CR_DONE_TTL);
+      } catch (err) {
+        console.warn('stripe-webhook: crdone progress write failed (retry may re-send once)', err.message);
+      }
+    } catch (err) {
+      confirmationError = err;
+      console.error('stripe-webhook: case-review confirmation email failed, will 500 for Stripe retry', err.message);
+    }
   }
 
-  // Always alert Joel so he fulfills, even if the buyer email failed.
-  await alertJoelCaseReview({ sessionId: session.id, email: customerEmail, name: customerName, plan });
+  // Always alert Joel so he fulfills, even if the buyer email failed — but
+  // only ONCE per session (Stripe retries would otherwise re-alert for days).
+  if (!crProgress.joelAlertedAt) {
+    await alertJoelCaseReview({ sessionId: session.id, email: customerEmail, name: customerName, plan });
+    crProgress.joelAlertedAt = new Date().toISOString();
+    try {
+      await kv.set(crDoneKey, crProgress, CR_DONE_TTL);
+    } catch (err) {
+      console.warn('stripe-webhook: crdone progress write failed (retry may re-alert once)', err.message);
+    }
+  }
 
   // ── Revenue attribution (PostHog) ── the $297 personal case review. Amount
   // from the session subtotal (falls back to the known 29700 price). For a
   // 3-pay purchase the subtotal is the FIRST installment only; the later two
   // charges bill on the subscription (no checkout.session.completed).
+  // Analytics-only: never fails the webhook; reconciliation cron backfills.
   await capturePurchase({
     email: customerEmail,
     amountCents: session.amount_subtotal ?? session.amount_total ?? 29700,
@@ -1184,7 +1238,22 @@ async function processCaseReview(session, plan = 'full') {
     product: "Joel's Eyes On Your Case",
     source: 'case_review',
     sessionId: session.id,
+    markSession: true,
   });
+
+  if (confirmationError) {
+    // Surface the buyer-email failure so Stripe retries this event; the
+    // progress marker keeps the retry from re-alerting Joel or re-counting.
+    throw new Error(`case-review confirmation email failed: ${confirmationError.message}`);
+  }
+
+  // Fully processed — seal the per-session marker.
+  crProgress.completedAt = new Date().toISOString();
+  try {
+    await kv.set(crDoneKey, crProgress, CR_DONE_TTL);
+  } catch (err) {
+    console.warn('stripe-webhook: crdone final write failed (retry-safe via progress fields)', err.message);
+  }
 
   return { action: 'case_review', delivered, customer_email: customerEmail, plan };
 }
@@ -1298,9 +1367,8 @@ async function processUpgrade(session, targetTier) {
 
   // Deliver the TARGET tier's full content (upgraded bundle + bonuses), resolved
   // to the buyer's corner(s). Reuses the same delivery email the purchase path
-  // sends. Best-effort: a send failure never fails the webhook (the buyer cron is
-  // the onboarding backstop).
-  let delivered = false;
+  // sends. A send failure THROWS so the handler 500s and Stripe retries — the
+  // dedupe marker below is only written after a successful send.
   try {
     await sendBuyerDelivery({
       email: customerEmail,
@@ -1309,24 +1377,27 @@ async function processUpgrade(session, targetTier) {
       corner: buyerCorner,
       scores: buyerScores,
     });
-    delivered = true;
   } catch (err) {
-    console.error('stripe-webhook: upgrade delivery email failed (non-fatal)', err.message);
+    console.error('stripe-webhook: upgrade delivery email failed, 500 for Stripe retry', err.message);
+    throw new Error(`upgrade delivery email failed: ${err.message}`);
   }
 
   // ── Revenue attribution (PostHog) ── the difference-priced /welcome upgrade
   // (corner→top2 $20, corner→complete $70, top2→complete $50). Amount is the
   // session subtotal; tier = the TARGET tier the buyer upgraded into.
+  // Analytics-only: never fails the webhook; reconciliation cron backfills.
   await capturePurchase({
     email: customerEmail,
     amountCents: session.amount_subtotal ?? session.amount_total,
     tier: targetTier,
     source: 'upgrade',
     sessionId: session.id,
+    markSession: true,
   });
 
-  // Record the dedupe marker AFTER attempting delivery so a failed send can be
-  // retried by Stripe rather than being permanently marked done.
+  // Record the dedupe marker now that delivery has succeeded, so a Stripe
+  // retry of this event never re-sends, while a failed send above stays
+  // unmarked and IS retried.
   try {
     await kv.set(upgradeKey, {
       email: emailKey,
@@ -1338,7 +1409,7 @@ async function processUpgrade(session, targetTier) {
     console.warn('stripe-webhook: upgrade dedupe write failed (non-fatal)', err.message);
   }
 
-  return { action: 'upgrade', delivered, target_tier: targetTier, customer_email: customerEmail };
+  return { action: 'upgrade', delivered: true, target_tier: targetTier, customer_email: customerEmail };
 }
 
 // Disable Vercel's body parser so we can read the raw body for signature
@@ -1365,7 +1436,7 @@ async function readRawBody(req) {
 // AMOUNT_TO_TIER we REQUIRE a positive braveworks tier match: the specific tier
 // price id (authoritative) or the funnel marker (cheap). The $297 case-review and
 // the upgrades are recognized separately above by their own price ids.
-const TIER_PRICE_IDS = new Set([
+export const TIER_PRICE_IDS = new Set([
   process.env.STRIPE_CORNER_PRICE_ID || 'price_1TlYAFHseZnO3rRZoOCNHviq',
   process.env.STRIPE_CORNER_SALE_PRICE_ID || 'price_1To1kJHseZnO3rRZX7sFvz1M', // $16.99 launch sale (legacy)
   'price_1ToBlWHseZnO3rRZtv4lbw2m', // $17 launch sale
@@ -1374,20 +1445,66 @@ const TIER_PRICE_IDS = new Set([
   process.env.STRIPE_COMPLETE_47_PRICE_ID || 'price_1TpqZHHseZnO3rRZWtW0s1L8', // $47 complete (2026-07 ladder)
 ]);
 
-async function isBraveworksTierSession(session) {
+// The cent amounts the TIER_PRICE_IDS prices can produce (1700, 1699, 2700,
+// 4700, 9700) — derived from AMOUNT_TO_TIER so the two can never drift. The
+// legacy /api/stripe-webhook uses this to skip the Stripe line-items lookup
+// in isBraveworksTierSession for amounts that can never be a triangle tier
+// sale (29700, 199700, ...). Any new tier price MUST land in AMOUNT_TO_TIER
+// anyway (that map is the delivery router), so this set follows automatically.
+export const TIER_AMOUNTS = new Set(Object.keys(AMOUNT_TO_TIER).map(Number));
+
+export async function isBraveworksTierSession(session) {
   const md = session.metadata || {};
   if (md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp') return true;
+  // A TRANSIENT line-items API failure THROWS instead of returning false.
+  // Returning false misroutes on BOTH sides: this webhook would skip a real
+  // braveworks sale as "foreign" (delivery permanently lost), and the legacy
+  // webhook's defer check would claim a triangle-owned $17 session and send
+  // the wrong product's email while claim:sale locked triangle out. The throw
+  // rides each handler's processing-failure path (500, Stripe retries when
+  // the API recovers; the poison guard bounds a persistent outage). A genuine
+  // "no line items / no tier price match" still returns false below.
+  let items;
   try {
     const stripe = getStripe();
-    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10, expand: ['data.price'] });
-    for (const item of items.data || []) {
-      const price = item.price || {};
-      if (price.id && TIER_PRICE_IDS.has(price.id)) return true;
-    }
+    items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10, expand: ['data.price'] });
   } catch (err) {
-    console.warn('stripe-webhook: tier line-item check failed (non-fatal)', err.message);
+    console.error('stripe-webhook: tier line-item check failed, throwing so the event is retried instead of misrouted', err.message);
+    throw err;
+  }
+  for (const item of items.data || []) {
+    const price = item.price || {};
+    if (price.id && TIER_PRICE_IDS.has(price.id)) return true;
   }
   return false;
+}
+
+// ─── Cross-webhook sale claim ─────────────────────────────────────────
+// An untagged $17 payment-link session whose price id is in TIER_PRICE_IDS
+// passes BOTH webhooks on this shared Stripe account: the legacy
+// /api/stripe-webhook amount-map (1700 -> tier 1) AND this handler's price-id
+// match — two kit emails + two PostHog purchase events for one sale. The fix
+// is an atomic SHARED claim on the session id (NX set, 30d TTL): first webhook
+// wins the whole kit flow, the other logs and skips. The claim records WHO won
+// so a Stripe RETRY of the winner's own event still passes (the per-session
+// business keys then dedupe the actual side effects). KV failure fails OPEN —
+// a rare duplicate beats a permanently lost delivery. Exported so the legacy
+// webhook claims the same `claim:sale:<id>` namespace.
+export async function claimSession(sessionId, owner) {
+  const key = `claim:sale:${sessionId}`;
+  try {
+    const set = await kv.set(
+      key,
+      { by: owner, at: new Date().toISOString() },
+      { nx: true, ex: 60 * 60 * 24 * 30 }
+    );
+    if (set) return true; // NX write won — this webhook owns the sale
+    const existing = await kv.get(key);
+    return Boolean(existing && existing.by === owner); // our own earlier claim (retry) still counts
+  } catch (err) {
+    console.warn('claimSession: KV claim failed (fail-open, proceeding)', err.message);
+    return true;
+  }
 }
 
 // ─── Per-event workflow ───────────────────────────────────────────────
@@ -1477,6 +1594,30 @@ async function processCheckoutCompleted(event) {
     return { action: 'skipped', reason: 'amount_not_mapped', amount: amountCents };
   }
 
+  // ── Per-session business dedupe (kit tier) ──
+  // A Stripe RETRY of this event (now that failures return 500) re-enters this
+  // flow; this marker says the kit delivery already went out, so skip it all.
+  const kitDoneKey = `bwbp:kitdone:${session.id}`;
+  try {
+    const kitDone = await kv.get(kitDoneKey);
+    if (kitDone) {
+      return { action: 'buyer_recorded', tier, deduplicated: true, customer_email: customerEmail };
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: kitdone read failed (continuing)', err.message);
+  }
+
+  // ── Cross-webhook claim ──
+  // The legacy /api/stripe-webhook also maps this session's amount (e.g. an
+  // untagged $17 payment link = 1700 in both maps). First webhook to claim the
+  // session delivers; the other skips entirely (no second email, no second
+  // purchase event). Legacy defers to us for TIER_PRICE_IDS sessions, so we
+  // win every race it recognizes; this claim covers the rest.
+  if (!(await claimSession(session.id, 'triangle-webhook'))) {
+    console.warn('stripe-webhook: kit-tier session already claimed by the legacy webhook, skipping', session.id);
+    return { action: 'skipped', reason: 'claimed_by_other_webhook', tier };
+  }
+
   // ── State-machine transition (purchase event) ──
   // Move the lead → buyer so the BUYER sequence takes over and the lead
   // sequence stops. Reset stateEnteredAt only when the state actually changes.
@@ -1537,10 +1678,11 @@ async function processCheckoutCompleted(event) {
   // ── At-purchase delivery email (Day 0 of the buyer journey) ──
   // $27 corner → the reader's #1 corner set; $47 top2 → their two loudest
   // corner sets + Skool trial; $97 complete → all three sets + Freedom Finale +
-  // Skool trial. The buyer's scores resolve the #2 corner for top2. Best-effort:
-  // a send failure is logged but never fails the webhook, and the buyer cron
-  // (_buyer-emails.js) is the backstop for onboarding.
-  let delivered = false;
+  // Skool trial. The buyer's scores resolve the #2 corner for top2. A send
+  // failure THROWS so the handler returns 500 and Stripe retries — a paid
+  // buyer's delivery email must never be silently lost to a Resend hiccup.
+  // The bwbp:kitdone: marker (set just below) keeps the retry from re-sending
+  // once a send has succeeded.
   try {
     await sendBuyerDelivery({
       email: customerEmail,
@@ -1549,24 +1691,34 @@ async function processCheckoutCompleted(event) {
       corner: buyerCorner,
       scores: buyerScores,
     });
-    delivered = true;
   } catch (err) {
-    console.error('stripe-webhook: buyer delivery email failed (non-fatal)', err.message);
+    console.error('stripe-webhook: buyer delivery email failed, 500 for Stripe retry', err.message);
+    throw new Error(`buyer delivery email failed: ${err.message}`);
+  }
+
+  // Delivery succeeded — set the business marker so a retry (or a duplicate
+  // event) never re-sends this buyer's kit email.
+  try {
+    await kv.set(kitDoneKey, { deliveredAt: new Date().toISOString(), tier }, { ex: 60 * 60 * 24 * 30 });
+  } catch (err) {
+    console.warn('stripe-webhook: kitdone write failed (retry may re-send once)', err.message);
   }
 
   // ── Revenue attribution (PostHog) ──
   // Authoritative `purchase` event, keyed by buyer email so it attaches to the
   // PostHog person the client identify(email) created at the result-page gate.
-  // Best-effort: capturePurchase swallows its own errors and never throws.
+  // Analytics-only: a failure logs loudly but never fails the webhook — the
+  // nightly reconciliation cron backfills from the ph:purchase:<id> marker.
   await capturePurchase({
     email: customerEmail,
     amountCents,
     tier,
     source: 'checkout',
     sessionId: session.id,
+    markSession: true,
   });
 
-  return { action: 'buyer_recorded', tier, delivered, customer_email: customerEmail };
+  return { action: 'buyer_recorded', tier, delivered: true, customer_email: customerEmail };
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────
@@ -1598,27 +1750,87 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, ignored: event.type });
   }
 
-  // Idempotency — record each handled event id (24h TTL). Stripe retries on
-  // network blips / our 5xx / dashboard "Resend"; same id twice → skip.
+  // Idempotency — the event-id key is a two-phase marker. At entry we take an
+  // atomic NX "processing" claim (10 min TTL), which closes the window where
+  // two CONCURRENT deliveries of the same event both pass a plain read and
+  // both send the buyer email. On success the claim is overwritten with the
+  // durable done marker (24h TTL); on failure it is DELETED so Stripe's next
+  // retry passes immediately. Per-flow business keys (bwbp:kitdone:/
+  // bwbp:crdone:/bwbp:call97:/tea:sale:/samson:sale:/bwbp:upgrade:) make
+  // those retries safe to re-run. bwbp-namespaced so the legacy
+  // /api/stripe-webhook endpoint (own dedupe key `stripe-evt:*`) never claims
+  // an event this handler still needs.
+  const kvKey = `bwbp:stripe-evt:${event.id}`;
   try {
-    // bwbp-namespaced so the legacy /api/stripe-webhook endpoint (own dedupe
-    // key `stripe-evt:*`) never claims an event this handler still needs.
-    const kvKey = `bwbp:stripe-evt:${event.id}`;
-    const seen = await kv.get(kvKey);
-    if (seen) {
-      return res.status(200).json({ ok: true, deduplicated: true, eventId: event.id });
+    const claimed = await kv.set(kvKey, { status: 'processing', at: Date.now() }, { nx: true, ex: 600 });
+    if (!claimed) {
+      const seen = await kv.get(kvKey);
+      if (seen && seen.processedAt) {
+        return res.status(200).json({ ok: true, deduplicated: true, eventId: event.id });
+      }
+      // A concurrent twin of this delivery is mid-flight (or just released its
+      // claim). Ack this copy; if the in-flight one dies, its claim expires
+      // and Stripe's retry passes.
+      return res.status(200).json({ ok: true, inFlight: true, eventId: event.id });
     }
-    await kv.set(kvKey, { processedAt: new Date().toISOString() }, { ex: 86400 });
   } catch (err) {
-    console.warn('stripe-webhook: KV idempotency check failed (continuing):', err.message);
+    console.warn('stripe-webhook: KV idempotency claim failed (continuing):', err.message);
   }
 
   try {
     const result = await processCheckoutCompleted(event);
+    // Overwrite the processing claim with the done marker only now that
+    // processing finished (deliberate skips included — they are handled
+    // outcomes, not failures).
+    try {
+      await kv.set(kvKey, { processedAt: new Date().toISOString() }, { ex: 86400 });
+    } catch (err) {
+      console.warn('stripe-webhook: KV idempotency write failed (business keys still dedupe retries):', err.message);
+    }
     return res.status(200).json({ ok: true, ...result });
   } catch (err) {
-    // Return 200 anyway — a duplicate delivery is worse than a missed log line.
-    console.error('stripe-webhook: processing failed', err.stack || err.message);
-    return res.status(200).json({ ok: false, error: err.message });
+    // Bounded-retry guard: a DETERMINISTIC failure (revoked API key, bad
+    // config) would otherwise 500 every retry for ~3 days and can get this
+    // endpoint auto-disabled by Stripe. After 5 failures the event is
+    // quarantined (CRITICAL log + KV record, 7d TTL) and acked with 200 so
+    // Stripe stops retrying it.
+    let fails = 0;
+    try {
+      const failKey = `evt-fails:${event.id}`;
+      fails = await kv.incr(failKey);
+      if (fails === 1) await kv.expire(failKey, 60 * 60 * 24 * 3);
+    } catch (kvErr) {
+      console.warn('stripe-webhook: fail-counter KV error (treating as first failure):', kvErr.message);
+    }
+
+    // Release the processing claim either way, so the next attempt (Stripe
+    // retry, or a manual dashboard Resend after a quarantine fix) passes
+    // immediately instead of waiting out the claim TTL.
+    try {
+      await kv.del(kvKey);
+    } catch (kvErr) {
+      console.warn('stripe-webhook: claim release failed (claim expires in 10 min):', kvErr.message);
+    }
+
+    if (fails >= 5) {
+      console.error(`stripe-webhook: CRITICAL poison event ${event.id} failed ${fails} times, quarantining and returning 200 to stop Stripe retries.`, err.stack || err.message);
+      try {
+        await kv.set(
+          `quarantine:evt:${event.id}`,
+          { eventId: event.id, type: event.type, error: err.message, failures: fails, quarantinedAt: new Date().toISOString() },
+          { ex: 60 * 60 * 24 * 7 }
+        );
+      } catch (kvErr) {
+        console.warn('stripe-webhook: quarantine write failed:', kvErr.message);
+      }
+      return res.status(200).json({ ok: false, quarantined: true, eventId: event.id, error: err.message });
+    }
+
+    // Genuine processing failure of an event we handle: 500 so Stripe retries.
+    // The done marker was NOT written, so the retry re-enters processing; the
+    // per-flow business keys keep the retry from double-sending anything that
+    // already completed.
+    console.error('stripe-webhook: processing FAILED, returning 500 so Stripe retries', err.stack || err.message);
+    return res.status(500).json({ ok: false, error: err.message });
   }
 }

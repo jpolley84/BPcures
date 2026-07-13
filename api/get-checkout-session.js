@@ -41,12 +41,19 @@ export default async function handler(req, res) {
       || null;
     const firstName = (customerName || '').split(' ')[0] || '';
 
-    // The saved PaymentMethod ID — only present if the original session
-    // was created with payment_intent_data.setup_future_usage='off_session'
-    // (i.e. via /api/checkout with saveCard:true). If undefined, no
-    // one-click path available — caller falls back.
+    // The saved PaymentMethod ID — only valid for off-session reuse if the
+    // original session was created with payment_intent_data.setup_future_usage
+    // ='off_session'. A completed PaymentIntent ALWAYS carries a
+    // payment_method id, but without setup_future_usage that PM was never
+    // attached to the Customer, and a later off_session charge fails with
+    // invalid_request_error. So gate on the PI's setup_future_usage field
+    // (2026-07-13: the $17 kit branch no longer saves cards; tea still does).
     let savedPaymentMethodId = null;
-    if (session.payment_intent && typeof session.payment_intent === 'object') {
+    if (
+      session.payment_intent &&
+      typeof session.payment_intent === 'object' &&
+      session.payment_intent.setup_future_usage === 'off_session'
+    ) {
       savedPaymentMethodId = session.payment_intent.payment_method
         || session.payment_intent.last_payment_error?.payment_intent?.payment_method
         || null;

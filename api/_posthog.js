@@ -16,6 +16,7 @@
 // bundling). No key set → every function here is a silent no-op.
 
 import { PostHog } from 'posthog-node';
+import { kv } from '@vercel/kv';
 
 let _client = null;
 function getClient() {
@@ -31,13 +32,48 @@ function getClient() {
   return _client;
 }
 
+// ph:purchase:<id> marker TTL — long enough for the nightly 48h reconciliation
+// window plus a generous audit tail. Shared namespace with _triangle-posthog.js
+// on purpose: one marker per Stripe session, whichever webhook captured it.
+const PURCHASE_MARKER_TTL_SECONDS = 60 * 60 * 24 * 45;
+
 // Fire the canonical revenue event. Non-fatal by contract — a failed
-// analytics call must never break a paid customer's fulfillment.
-export async function capturePurchase({ email, amountCents, tier, product, source, sessionId }) {
+// analytics call must never break a paid customer's fulfillment (gaps are
+// backfilled by the nightly api/reconcile-purchases.js cron via the
+// ph:purchase:<id> marker).
+//
+// markSession: opt-in for callers where sessionId is the PRIMARY sale id for
+// this purchase (the Stripe webhooks + the reconciliation cron). When set:
+//   - an existing ph:purchase:<sessionId> marker skips the capture (so a
+//     Stripe retry of a partially-failed webhook never double-counts revenue)
+//   - the marker is written ONLY after a successful capture + flush.
+// Callers that attribute a DIFFERENT charge to a session they have in scope
+// (e.g. the one-click OTO in charge-saved-card.js) must NOT set it, or they
+// would mask / be masked by the session's own purchase event.
+//
+// Returns true when the event was captured, false when skipped or failed.
+export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false }) {
+  let client;
   try {
-    const client = getClient();
-    if (!client || !email) return;
-    const distinctId = String(email).trim().toLowerCase();
+    client = getClient();
+  } catch (err) {
+    console.error('posthog capturePurchase: client init failed (non-fatal):', err.message);
+    return false;
+  }
+  if (!client || !email) return false;
+  const distinctId = String(email).trim().toLowerCase();
+  const markerKey = markSession && sessionId ? `ph:purchase:${sessionId}` : null;
+
+  if (markerKey) {
+    try {
+      const already = await kv.get(markerKey);
+      if (already) return false; // this session's purchase already reached PostHog
+    } catch (err) {
+      console.warn('posthog capturePurchase: marker read failed (capturing anyway)', err.message);
+    }
+  }
+
+  try {
     client.capture({
       distinctId,
       event: 'purchase',
@@ -47,13 +83,25 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
         currency: 'usd',
         tier: tier != null ? String(tier) : null,
         product: product || null,
-        source: source || 'checkout',   // 'checkout' | 'launcher' | 'one_click_upsell'
+        source: source || 'checkout',   // 'checkout' | 'launcher' | 'one_click_upsell' | 'reconciliation'
         stripe_session_id: sessionId || null,
         $set: { is_paid_customer: true, last_purchase_at: new Date().toISOString() },
       },
     });
     await client.flush();   // ensure delivery before the function freezes
   } catch (err) {
-    console.error('posthog capturePurchase failed (non-fatal):', err.message);
+    // LOUD on purpose: this sale is now invisible to analytics until the
+    // nightly reconciliation cron backfills it from Stripe.
+    console.error('posthog capturePurchase FAILED (purchase event lost until reconciliation backfill):', err.message, 'session', sessionId || 'n/a');
+    return false;
   }
+
+  if (markerKey) {
+    try {
+      await kv.set(markerKey, { capturedAt: new Date().toISOString(), source: source || 'checkout' }, { ex: PURCHASE_MARKER_TTL_SECONDS });
+    } catch (err) {
+      console.warn('posthog capturePurchase: marker write failed (reconciliation may re-capture this session once)', err.message);
+    }
+  }
+  return true;
 }

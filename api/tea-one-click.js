@@ -142,11 +142,19 @@ export default async function handler(req, res) {
     ? originalSession.customer
     : originalSession.customer?.id;
   const paymentMethodId = originalSession.payment_intent?.payment_method;
+  // A completed PI always carries payment_method, but the PM is only reusable
+  // off-session when the original session set setup_future_usage='off_session'
+  // (2026-07-13: the $17 kit branch no longer does; tea sessions still do).
+  // Without this gate the charge below fails invalid_request_error AFTER the
+  // buyer filled the shipping form.
+  const cardSavedForReuse =
+    originalSession.payment_intent?.setup_future_usage === 'off_session';
 
-  if (!customerId || !paymentMethodId) {
-    // No saved card on this session — expected for sessions from before the
-    // saveCard change, or any session that isn't a kit purchase. Caller falls
-    // back to the plain Payment Link.
+  if (!customerId || !paymentMethodId || !cardSavedForReuse) {
+    // No reusable saved card on this session — expected for kit sessions
+    // after the saved-card rollback, sessions from before the saveCard
+    // change, or any non-kit purchase. Caller falls back to the plain
+    // Payment Link.
     return res.status(409).json({
       error: 'no_saved_card',
       message: 'This session has no saved payment method. Use fallback.',

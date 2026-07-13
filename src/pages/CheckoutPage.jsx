@@ -820,7 +820,7 @@ const CheckoutPage = () => {
             Instant download to your phone. Start today.
           </p>
           <p style={{ color: 'var(--muted-gray)', fontSize: '13px' }}>
-            Secure checkout. Credit card, debit, Apple Pay, Google Pay, or PayPal.
+            Secure checkout. Credit card, debit, Apple Pay, or Google Pay.
           </p>
         </div>
       </AnimatedSection>

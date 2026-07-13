@@ -141,6 +141,11 @@ export default function CaseReviewPage() {
           return;
         }
         checkout.mount(checkoutContainerRef.current);
+        // The reveal button above is a UI toggle, not checkout intent; THIS is
+        // where the 3-pay buyer actually reaches a payment form. Keeps the
+        // 3-pay leg visible in funnels after checkout_clicked was removed
+        // from the reveal (same event PayPage fires on mount).
+        track('checkout_form_mounted', { tier: 'casereview3', product: 'case-review-3pay', value: 99 });
       } catch {
         setThreePayError('Something went wrong starting the split-pay checkout. Please try again, or use the one-time button above.');
       }
@@ -238,7 +243,10 @@ export default function CaseReviewPage() {
                 type="button"
                 style={BTN_QUIET}
                 onClick={() => {
-                  track('checkout_clicked', { product: 'case-review-3pay', value: 99, source: 'case-review-page' });
+                  // 2026-07-13: renamed from checkout_clicked. This button only
+                  // REVEALS the inline 3-pay form; no checkout is reached, so
+                  // it was polluting the funnel denominator.
+                  track('case_review_3pay_revealed', { product: 'case-review-3pay', value: 99, source: 'case-review-page' });
                   setShowThreePay(true);
                 }}
               >

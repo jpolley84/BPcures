@@ -193,8 +193,11 @@ function App() {
 
           {/* Inline checkout for the new Triangle kits. Every BP buy CTA points
               at /pay?tier=corner&corner=<corner>; charges inline (no redirect).
-              Wrapped in SiteLayout for the nav/footer. */}
-          <Route path="/pay" element={<SiteLayout><PayPage /></SiteLayout>} />
+              STANDALONE (2026-07-13 checkout overhaul): SiteLayout's Navbar put
+              a competing free Skool CTA + exits above the card form. PayPage
+              renders its own minimal locked header. SabbathGate still covers
+              this route (it mounts above the router, not inside SiteLayout). */}
+          <Route path="/pay" element={<PayPage />} />
           <Route path="/tea-thanks" element={<SiteLayout><TeaThanksPage /></SiteLayout>} />
 
           {/* Post-purchase Triangle landing. The inline checkout's return_url is
