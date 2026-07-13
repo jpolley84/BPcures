@@ -88,26 +88,25 @@ function isStoreHost() {
 }
 
 // What the buyer is paying for, restated at the point of payment. Contents
-// mirror api/_kit-manifest.js modulesForTier() EXACTLY (corner tier = the one
-// corner's protocol + formulary + doctor sheet, plus the BP Tracker and
-// Triangle Meal Plan bonuses; complete adds all three corners, the Freedom
-// Finale, doctor visit templates, and the Cook For Life cookbook) so the
-// promise at the card form never drifts from the delivery email.
+// mirror api/_kit-manifest.js modulesForTier() EXACTLY (2026-07-13: the
+// corner tier ships 11 files — the corner's protocol + formulary + doctor
+// sheet plus the full 8-item library; complete ships 19). If the manifest
+// changes, this copy and the CheckoutPage stack change with it, or buyers
+// hit the not-received gap at the exact point of payment.
 function orderSummary(tier, corner) {
   if (tier === 'complete') {
     return {
       title: 'The Complete BP Reset Kit',
       price: '$47',
-      body: 'All three corners of the Triangle (Stress, Sugar, and Sodium), each with its 10-day protocol, herb formulary, and doctor sheet, plus the Freedom Finale, doctor visit templates, the BP Tracker, the Triangle Meal Plan, and the Cook For Life cookbook.',
+      body: 'All three corners of the Triangle (Stress, Sugar, and Sodium), each with its 10-day protocol, herb formulary, and doctor sheet, plus the Freedom Finale and the full library: the Master Blood Pressure Document, Top 10 Herbs Deep Dive, Cook For Life Cookbook, White Coat Syndrome Guide, BP FAQ, the Overmedicated Boomers book, your BP Tracker, the Triangle Meal Plan, and doctor visit templates. 19 downloads in all.',
     };
   }
   const label = CORNER_LABELS[corner];
+  const forCorner = label ? `matched to your ${label} corner` : 'matched to your loudest corner';
   return {
     title: label ? `Your ${label} Corner Reset Kit` : 'The 10-Day Corner Reset Kit',
     price: '$17',
-    body: label
-      ? `Your step-by-step 10-day reset protocol, herb formulary, and bring-this-to-your-doctor sheet, all matched to your ${label} corner, plus the BP Tracker and the Triangle Meal Plan bonuses.`
-      : 'Your step-by-step 10-day reset protocol, herb formulary, and bring-this-to-your-doctor sheet, matched to your loudest corner, plus the BP Tracker and the Triangle Meal Plan bonuses.',
+    body: `Your step-by-step 10-day reset protocol, herb formulary, and bring-this-to-your-doctor sheet, ${forCorner}, plus the full library: the Master Blood Pressure Document, Top 10 Herbs Deep Dive, Cook For Life Cookbook, White Coat Syndrome Guide, BP FAQ, the Overmedicated Boomers book, your BP Tracker, and the Triangle Meal Plan. 11 downloads in all.`,
   };
 }
 

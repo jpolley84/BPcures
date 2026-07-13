@@ -124,8 +124,10 @@ export const MODULES = {
 // These are already-built BraveWorks RN assets reused as tier bonuses. They do
 // NOT overlap the core corner protocols/formularies/doctor sheets. Each is
 // flagged `bonus: true` so the delivery page and email render them under their
-// own "Your bonuses" heading, separate from the core kit. The files live in
-// public/downloads/bonuses/ (not the rendered-kit downloads root). Compliance:
+// own "Your bonuses" heading, separate from the core kit. The first four live
+// in public/downloads/bonuses/; the legacy-library bonuses (added 2026-07-13,
+// per Joel: the $17 kit ships ALL 8 items the homepage stack promises) live at
+// the downloads root, where the 2026-07-06 restoration put them. Compliance:
 // the bonus files are paid deliverables and may carry supplement doses; the
 // OFFER COPY in products.json that describes them states no doses.
 export const BONUS_MODULES = {
@@ -157,29 +159,71 @@ export const BONUS_MODULES = {
     title: 'Bonus: The Triangle Meal Plan',
     blurb: 'A plant-based, high-fiber day of eating that front-loads breakfast and tapers to a light supper, built to support all three corners at once.',
   },
+
+  // ── Legacy library (2026-07-13, per Joel): the full 8-item stack the
+  // homepage and quiz results promise now ships on EVERY tier, starting at
+  // $17. These PDFs were restored to public/downloads/ on 2026-07-06. Titles
+  // match the CheckoutPage value stack so the promise and the delivery email
+  // read as the same kit. ──
+  'bonus-master-bp-doc': {
+    file: 'master-blood-pressure-document.pdf',
+    bonus: true,
+    kind: 'bonus',
+    title: 'Master Blood Pressure Document',
+    blurb: 'The full protocol in one place: what to take, when to take it, and how much, so you always know the next step.',
+  },
+  'bonus-top-10-herbs': {
+    file: 'top-10-herbs-deep-dive.pdf',
+    bonus: true,
+    kind: 'bonus',
+    title: 'Top 10 Herbs Deep Dive',
+    blurb: 'The ten herbs Joel reaches for most, each explained plainly with how it is used and the cautions that matter.',
+  },
+  'bonus-white-coat': {
+    file: 'white-coat-syndrome-guide.pdf',
+    bonus: true,
+    kind: 'bonus',
+    title: 'White Coat Syndrome Guide',
+    blurb: 'Why readings at the office often run high, and the simple steps nurses use to get numbers you can trust.',
+  },
+  'bonus-bp-faq': {
+    file: 'blood-pressure-faq.pdf',
+    bonus: true,
+    kind: 'bonus',
+    title: 'Blood Pressure FAQ',
+    blurb: '25 questions people are afraid to ask their doctor, answered plainly by a nurse who has heard them all.',
+  },
+  'bonus-overmedicated': {
+    file: 'overmedicated-boomers.pdf',
+    bonus: true,
+    kind: 'bonus',
+    title: 'Overmedicated Boomers (Book)',
+    blurb: 'The book on what your generation was never told about the prescriptions you carry, and the questions to bring to your doctor.',
+  },
 };
 
 // Bonus stack per tier, cumulative (good-better-best). Each higher tier inherits
-// every lower tier's bonuses:
-//   corner   -> tracker, meal plan
-//   top2     -> + doctor templates
-//   complete -> + Cook for Life cookbook
+// every lower tier's bonuses.
+// 2026-07-13 (Joel): the corner tier now carries the FULL legacy library plus
+// Cook For Life, so the $17 buyer receives every item the homepage 8-item
+// stack promises (Master BP Doc, Top 10 Herbs, Cook For Life, White Coat,
+// FAQ, Tracker, Overmedicated; the 8th item, the 10-Day Reset Protocol, is
+// the corner's core protocol). Higher tiers add the doctor templates.
+const CORNER_BONUS_KEYS = [
+  'bonus-master-bp-doc',
+  'bonus-top-10-herbs',
+  'bonus-cook-for-life',
+  'bonus-white-coat',
+  'bonus-bp-faq',
+  'bonus-bp-tracker',
+  'bonus-overmedicated',
+  'bonus-meal-plan',
+];
+
 const BONUS_KEYS_BY_TIER = {
-  corner: [
-    'bonus-bp-tracker',
-    'bonus-meal-plan',
-  ],
-  top2: [
-    'bonus-bp-tracker',
-    'bonus-meal-plan',
-    'bonus-doctor-templates',
-  ],
-  complete: [
-    'bonus-bp-tracker',
-    'bonus-meal-plan',
-    'bonus-doctor-templates',
-    'bonus-cook-for-life',
-  ],
+  corner: [...CORNER_BONUS_KEYS],
+  top2: [...CORNER_BONUS_KEYS, 'bonus-doctor-templates'],
+  complete: [...CORNER_BONUS_KEYS, 'bonus-doctor-templates'],
 };
 
 // The ordered bonus modules a tier delivers. Pure lookup, no clinical copy.

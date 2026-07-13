@@ -133,16 +133,13 @@ const CheckoutPage = () => {
   // charges for it separately (was a double-charge). A believable ~5x anchor
   // ($89 → $17) converts better than a fake 26x.
   const whatIsIncluded = [
-    // These are the EXACT 5 pieces the $17 Corner Reset delivers (api/_kit-manifest.js
-    // modulesForTier('corner'): your corner's protocol + formulary + doctor sheet,
-    // plus the Tracker and Meal Plan bonuses). Everything listed here is actually
-    // shipped in the kit. The Cook For Life cookbook, the other two corners, and the
-    // Freedom Finale are $47/$97 upgrade content, so they are NOT promised here.
-    // Value stack below totals $258 against the $17 price (Joel restore 2026-07-06).
-    // Full 8-item value stack restored by Joel 2026-07-06 (clearer, more appealing
-    // names, updated PDFs + the old library). $258 total against the $17 price.
-    // DELIVERY MUST MATCH: every item here needs its PDF shipped in the kit (see
-    // DownloadsPage / api/_kit-manifest.js) or buyers hit the not-received gap.
+    // 2026-07-13 (Joel): delivery now MATCHES this full 8-item stack. The
+    // corner tier in api/_kit-manifest.js ships the corner protocol set PLUS
+    // the whole legacy library as bonuses (Master BP Doc, Top 10 Herbs, Cook
+    // For Life, White Coat, FAQ, Tracker, Overmedicated) — 11 PDFs per buyer;
+    // bundle ZIPs rebuilt via scripts/build-bundles.mjs. If you edit this
+    // list, edit the manifest and re-run the bundle script, or buyers hit the
+    // not-received gap.
     { name: 'Master Blood Pressure Document', description: "The full protocol. What to take, when to take it, how much.", value: '$47' },
     { name: 'Top 10 Herbs Deep Dive', description: "Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.", value: '$27' },
     { name: '10-Day BP Reset Protocol', description: "Wake up. Open that day's PDF. Follow the checklist. That's the whole system.", value: '$97' },
