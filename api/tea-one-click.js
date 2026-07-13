@@ -228,6 +228,7 @@ export default async function handler(req, res) {
       isSubscription: false,
       address: { line1, line2, city, state, postal_code, country },
       source: 'one_click_upsell',
+      deviceDistinctId: originalSession.metadata?.ph_distinct_id || null,
     });
   } catch (err) {
     console.error('tea-one-click: recordTeaSale failed (charge OK)', err.message);

@@ -24,7 +24,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { ArrowRight, CheckCircle2, Stethoscope } from 'lucide-react';
 import { CASE_REVIEW } from '../data/caseReviewOffer';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track } from '../utils/analytics';
+import { track, getDistinctId } from '../utils/analytics';
 
 // One Stripe instance at module load (same pattern as PayPage.jsx). Null when
 // the publishable key is unset, so the 3-pay path degrades to a clear message.
@@ -128,7 +128,7 @@ export default function CaseReviewPage() {
             const res = await fetch('/api/create-embedded-checkout', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ tier: 'casereview3', email }),
+              body: JSON.stringify({ tier: 'casereview3', email, ph_did: getDistinctId() }),
             });
             if (!res.ok) throw new Error('start_failed');
             const data = await res.json();

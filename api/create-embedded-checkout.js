@@ -67,6 +67,16 @@ export default async function handler(req, res) {
       : '';
   const siteUrl = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
+  // Browser PostHog distinct id, threaded through session metadata so the
+  // server-side purchase capture merges the buyer into the clicking device's
+  // PostHog person (see api/_posthog.js / api/_triangle-posthog.js).
+  // Sanitized: string only, control chars stripped, max 200 chars.
+  const phDid =
+    typeof req.body.ph_did === 'string'
+      ? req.body.ph_did.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, 200)
+      : '';
+  const phMeta = phDid ? { ph_distinct_id: phDid } : {};
+
   // ── $297 case review (paid in full OR 3-pay) ──
   // Both land on /case-review-confirmed. The metadata markers (offer + plan,
   // plus the legacy kind the webhook already recognizes) drive fulfillment in
@@ -83,6 +93,7 @@ export default async function handler(req, res) {
       kind: 'case-review',
       offer: 'case-review',
       plan: isThreePay ? '3pay' : 'full',
+      ...phMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -118,7 +129,7 @@ export default async function handler(req, res) {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
     };
-    const metadata = { funnel: 'svutu-tea', offer: tier };
+    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta };
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
@@ -151,7 +162,7 @@ export default async function handler(req, res) {
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       // The webhook guard keys on metadata.funnel; corner drives kit delivery.
-      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}) },
+      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}), ...phMeta },
       // 2026-07-08: always create a Customer (the webhook + upgrade ladder use
       // it). 2026-07-13 panel fix: setup_future_usage REMOVED from the kit
       // branch. It made Stripe render save-card/future-charge consent language

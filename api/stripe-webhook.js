@@ -869,6 +869,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       source: 'checkout',
       sessionId: session.id,
       markSession: true,
+      deviceDistinctId: session.metadata?.ph_distinct_id || null,
     });
 
     return {
@@ -964,6 +965,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
     source: 'launcher',
     sessionId: session.id,
     markSession: true,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
 
   return {

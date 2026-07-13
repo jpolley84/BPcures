@@ -934,10 +934,10 @@ function QuizModule({ products }) {
               </div>
 
               <h2 className="quiz-question" style={{ fontSize: '1.15rem' }}>
-                Your result is ready. Where should we send it?
+                Your result is ready.
               </h2>
               <p className="quiz-subtitle">
-                Your personalized protocol + 3 specific steps for {pressureCopy.label}, plus a free plant-based cookbook.
+                Where should we send your corner and your 3 first steps for {pressureCopy.label}? A free plant-based cookbook comes with it.
               </p>
 
               <form onSubmit={submitEmail} style={{ display: 'grid', gap: '0.65rem' }}>
@@ -1272,7 +1272,7 @@ function QuizModule({ products }) {
                   padding: '1rem',
                 }}
               >
-                Yes, solve my {pressureCopy.label} ({kitPrice}) <ArrowRight size={16} className="arrow" />
+                Yes, solve my {pressureCopy.label}: 10-Day Reset Kit, {kitPrice} <ArrowRight size={16} className="arrow" />
               </a>
 
               {/* ─── SUB-$20 BOOK RUNG — The Companion ($12.99) ───────────────

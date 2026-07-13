@@ -203,6 +203,7 @@ export default async function handler(req, res) {
         source: 'reconciliation',
         sessionId: session.id,
         markSession: true,
+        deviceDistinctId: session.metadata?.ph_distinct_id || null,
       });
       if (captured) {
         backfilledRows.push({

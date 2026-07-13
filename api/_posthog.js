@@ -52,7 +52,7 @@ const PURCHASE_MARKER_TTL_SECONDS = 60 * 60 * 24 * 45;
 // would mask / be masked by the session's own purchase event.
 //
 // Returns true when the event was captured, false when skipped or failed.
-export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false }) {
+export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null }) {
   let client;
   try {
     client = getClient();
@@ -61,7 +61,13 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
     return false;
   }
   if (!client || !email) return false;
-  const distinctId = String(email).trim().toLowerCase();
+  const emailId = String(email).trim().toLowerCase();
+  // When the checkout session carried the browser's PostHog distinct id
+  // (metadata.ph_distinct_id, threaded via api/create-embedded-checkout.js),
+  // capture under THAT id so the buyer and the clicking device resolve to one
+  // PostHog person; the email is preserved on the person via $set + property.
+  const deviceId = deviceDistinctId ? String(deviceDistinctId).trim() : '';
+  const distinctId = deviceId || emailId;
   const markerKey = markSession && sessionId ? `ph:purchase:${sessionId}` : null;
 
   if (markerKey) {
@@ -74,6 +80,15 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
   }
 
   try {
+    if (deviceId) {
+      // Merge the historical email-keyed person into the device person before
+      // the capture. Non-fatal: a failed alias must never lose the purchase.
+      try {
+        client.alias({ distinctId: deviceId, alias: emailId });
+      } catch (err) {
+        console.warn('posthog capturePurchase: alias failed (non-fatal)', err.message);
+      }
+    }
     client.capture({
       distinctId,
       event: 'purchase',
@@ -85,7 +100,12 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
         product: product || null,
         source: source || 'checkout',   // 'checkout' | 'launcher' | 'one_click_upsell' | 'reconciliation'
         stripe_session_id: sessionId || null,
-        $set: { is_paid_customer: true, last_purchase_at: new Date().toISOString() },
+        ...(deviceId ? { buyer_email: emailId } : {}),
+        $set: {
+          is_paid_customer: true,
+          last_purchase_at: new Date().toISOString(),
+          ...(deviceId ? { email: emailId } : {}),
+        },
       },
     });
     await client.flush();   // ensure delivery before the function freezes

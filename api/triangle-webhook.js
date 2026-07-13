@@ -589,6 +589,7 @@ async function processCall97(session) {
     tier: 'call-97',
     sessionId: session.id,
     markSession: true,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
   return { action: 'call97', delivered: true, customer_email: customerEmail };
 }
@@ -621,7 +622,7 @@ async function isTeaSession(session) {
 // globally unique for the sale (a Checkout Session id from the webhook, or a
 // PaymentIntent id from the one-click charge, which never gets a
 // checkout.session.completed event of its own).
-export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source, blend = 'steady' }) {
+export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source, blend = 'steady', deviceDistinctId = null }) {
   const customerEmail = email || '';
   const emailKey = String(customerEmail).trim().toLowerCase();
   const isSatin = blend === 'satin';
@@ -723,6 +724,7 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
     tier: isSatin ? 'svutu-satin' : 'svutu-tea',
     sessionId: dedupeId,
     markSession: true,
+    deviceDistinctId,
   });
   return { action: 'tea_sale', blend, recorded: true, customer_email: customerEmail };
 }
@@ -764,6 +766,7 @@ async function processTeaPurchase(session, blend = 'steady') {
     address: addr,
     source: 'checkout_session',
     blend,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
 }
 
@@ -883,7 +886,7 @@ Forward this delivery address to the creator to fulfill. Stripe session: ${sessi
     console.warn('stripe-webhook: samson dedupe write failed (non-fatal)', err.message);
   }
 
-  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id, markSession: true });
+  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id, markSession: true, deviceDistinctId: session.metadata?.ph_distinct_id || null });
   return { action: 'samson_sale', recorded: true, customer_email: customerEmail };
 }
 
@@ -1239,6 +1242,7 @@ async function processCaseReview(session, plan = 'full') {
     source: 'case_review',
     sessionId: session.id,
     markSession: true,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
 
   if (confirmationError) {
@@ -1393,6 +1397,7 @@ async function processUpgrade(session, targetTier) {
     source: 'upgrade',
     sessionId: session.id,
     markSession: true,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
 
   // Record the dedupe marker now that delivery has succeeded, so a Stripe
@@ -1716,6 +1721,7 @@ async function processCheckoutCompleted(event) {
     source: 'checkout',
     sessionId: session.id,
     markSession: true,
+    deviceDistinctId: session.metadata?.ph_distinct_id || null,
   });
 
   return { action: 'buyer_recorded', tier, delivered: true, customer_email: customerEmail };

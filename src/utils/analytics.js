@@ -28,6 +28,16 @@ export function track(event, props) {
   try { if (enabled) posthog.capture(event, props); } catch { /* noop */ }
 }
 
+// Current browser distinct id, threaded through Stripe checkout metadata so
+// server-side purchase events land on the same PostHog person as the clicks.
+// Returns '' when analytics is disabled or anything throws.
+export function getDistinctId() {
+  try {
+    if (enabled) return posthog.get_distinct_id() || '';
+  } catch { /* noop */ }
+  return '';
+}
+
 // Ties the anonymous device to the lead's email at the quiz email gate, so
 // the funnel (and revenue) can be analyzed per-person across sessions.
 export function identify(email, props) {
