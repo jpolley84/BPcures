@@ -677,12 +677,13 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   // failure never fails the caller (the KV record + nightly shipping digest is
   // the fulfillment backstop, and Joel can resend). Fires once per new sale
   // because the dedupe guard above returns early on a repeat.
-  // STEADY ONLY: sendTeaConfirmation is the Steady flyer (hibiscus/hawthorn
-  // research, "SVUTU Steady" branding). Satin has no confirmation template yet,
-  // so Satin buyers get Stripe's receipt only — never the wrong-blend flyer.
-  if (blend === 'steady' && customerEmail) {
+  // Blend-matched confirmation: Steady gets the flyer email (hibiscus/hawthorn
+  // research), Satin gets its own sage/fennel/spearmint confirmation (added
+  // 2026-07-14 — before this, Satin buyers got Stripe's receipt only).
+  if (customerEmail) {
     try {
-      await sendTeaConfirmation({
+      const sendConfirmation = blend === 'satin' ? sendSatinConfirmation : sendTeaConfirmation;
+      await sendConfirmation({
         email: customerEmail,
         firstName: firstNameOf(record.name),
         items: record.items,
@@ -1020,6 +1021,80 @@ async function sendTeaConfirmation({ email, firstName, items, amountCents, addre
     to: String(email).trim(),
     replyTo: REPLY_TO,
     subject: 'Your SVUTU Steady order is confirmed',
+    html,
+    text,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  });
+}
+
+// ─── SVUTU Satin: buyer confirmation email (Annie's hormoneteas.com blend) ───
+// Same three jobs as the Steady confirmation (verify order, set the 5-7 day
+// hand-crafted shipping expectation, teach the cup) but Satin-branded: sage,
+// fennel and spearmint, hormone-support framing, NO Steady flyer and NO BP
+// research table (Satin has no per-herb study list on a site yet, and we never
+// invent research links). ZERO em-dashes in visible copy.
+export function buildSatinConfirmationEmail({ firstName, items, amountCents, address, name, unsubUrl }) {
+  const preheader = 'Your order is confirmed. Hand crafted by our family and shipping within 5 to 7 business days. Here is what is in your cup.';
+  const satinItems = items && items.length ? items : [{ name: 'SVUTU Satin', qty: 1 }];
+  const bodyHtml = [
+    `<div style="display:inline-block;font-size:12px;font-weight:700;color:${PALETTE.accentSage};border:1px solid ${PALETTE.accentSage};border-radius:999px;padding:5px 12px;margin-bottom:18px;font-family:${TEA_EMAIL_FONT};">Order confirmed</div>`,
+    p(`Hi ${firstName || 'there'},`),
+    p(`Thank you for your order of <b>SVUTU Satin</b>, our caffeine free herbal blend for women. Your payment went through and your order is confirmed.`),
+    h2('Your order'),
+    teaOrderSummaryHtml(satinItems, amountCents),
+    teaShipToHtml(address, name),
+    callout({
+      kicker: 'When it ships',
+      body: `Every pouch is hand crafted and packaged with love by our family, so give us a few days. Your order will ship within <b>5 to 7 business days</b>, and you will get a note the moment it is on its way.`,
+    }),
+    h2('What is in your cup'),
+    p(`Satin is three whole botanicals, chosen for the season of life so many of the women in our community are walking through: <b>sage</b>, the herb traditionally leaned on through the change; <b>fennel</b>, the gentle seed women have brewed for balance for centuries; and <b>spearmint</b>, the soft mint that makes the whole cup a pleasure to drink. No caffeine, no flavorings, nothing else.`),
+    h2('How to brew it'),
+    p(`One heaping teaspoon per cup, water just off the boil. Cover and steep 5 to 7 minutes so the seeds and leaves give you everything they have. One to two cups a day as a daily ritual. Lovely hot, and just as nice iced.`),
+    p(`One honest note: Satin is a food, not a medicine. If you take prescriptions or are working with your doctor on your hormones, let them know you are adding it, and keep following their care exactly. Satin joins your provider's care, it never replaces it.`),
+    p(`Thank you for trusting us with your cup.`),
+    p(`Joel Polley, RN, and the family behind SVUTU`),
+  ].join('');
+
+  const bodyText = `Hi ${firstName || 'there'},
+
+Thank you for your order of SVUTU Satin, our caffeine free herbal blend for women. Your payment went through and your order is confirmed.
+
+YOUR ORDER
+${satinItems.map((i) => `${i.qty} x ${i.name}`).join('\n')}${typeof amountCents === 'number' && amountCents > 0 ? `\nTotal paid: $${(amountCents / 100).toFixed(2)}` : ''}
+
+WHEN IT SHIPS
+Every pouch is hand crafted and packaged with love by our family, so give us a few days. Your order will ship within 5 to 7 business days, and you will get a note the moment it is on its way.
+
+WHAT IS IN YOUR CUP
+Satin is three whole botanicals, chosen for the season of life so many of the women in our community are walking through: sage, the herb traditionally leaned on through the change; fennel, the gentle seed women have brewed for balance for centuries; and spearmint, the soft mint that makes the whole cup a pleasure to drink. No caffeine, no flavorings, nothing else.
+
+HOW TO BREW IT
+One heaping teaspoon per cup, water just off the boil. Cover and steep 5 to 7 minutes. One to two cups a day as a daily ritual. Lovely hot, and just as nice iced.
+
+One honest note: Satin is a food, not a medicine. If you take prescriptions or are working with your doctor on your hormones, let them know you are adding it, and keep following their care exactly. Satin joins your provider's care, it never replaces it.
+
+Thank you for trusting us with your cup.
+Joel Polley, RN, and the family behind SVUTU`;
+
+  return buildEmail({ preheader, bodyHtml, bodyText, unsubUrl });
+}
+
+// Send the Satin buyer their confirmation. Best-effort, never throws (caller
+// guards). Mirrors sendTeaConfirmation.
+async function sendSatinConfirmation({ email, firstName, items, amountCents, address, name }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const unsubToken = signUnsubToken({ email });
+  const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
+  const { html, text } = buildSatinConfirmationEmail({ firstName, items, amountCents, address, name, unsubUrl });
+  await getResend().emails.send({
+    from: FROM,
+    to: String(email).trim(),
+    replyTo: REPLY_TO,
+    subject: 'Your SVUTU Satin order is confirmed',
     html,
     text,
     headers: {
