@@ -265,12 +265,13 @@ function App() {
               + a 1:1 CTA), intentionally kept OFF the cold homepage. Close
               mechanism is mailto concierge@bpquiz.com; that alias MUST forward
               to Joel or the high-ticket inquiries bounce. */}
-          {/* 2026-07-15: /coaching temporarily repointed to The Front Row
-              application (webinar-only $1,997 90-day cohort — see
+          {/* 2026-07-15: /coaching temporarily repointed to the "Be There"
+              application (webinar-only $1,997 90-day cohort — webinar script
+              was titled The Front Row, offer is branded Be There — see
               The_Front_Row_Webinar_Script.pdf) for this cohort's traffic.
               Previous behavior (opt-in funnel page 1) preserved at
               /coaching-vip so it can be swapped back with a one-line revert. */}
-          <Route path="/coaching" element={<Navigate to="/apply?tier=frontrow" replace />} />
+          <Route path="/coaching" element={<Navigate to="/apply?tier=bethere" replace />} />
           <Route path="/coaching-vip" element={<CoachingOptinPage />} />
           <Route path="/coaching-offers" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
