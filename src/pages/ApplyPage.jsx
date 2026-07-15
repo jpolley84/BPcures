@@ -19,6 +19,10 @@ import { ArrowRight, Check } from 'lucide-react';
 const EASE = [0.22, 1, 0.36, 1];
 
 const TIERS = [
+  // 2026-07-15: The Front Row — webinar-only offer (The_Front_Row_Webinar_Script.pdf).
+  // $1,997 or 3x $697, 90-day live cohort capped at 40, Front-Row Promise guarantee.
+  // /coaching redirects straight here with ?tier=frontrow for this cohort's traffic.
+  { slug: 'frontrow', name: 'The Front Row', shortName: 'The Front Row', price: '$1,997', cadence: '90-day live cohort · or 3x $697' },
   { slug: 'ninety', name: 'The 90-Day Personalized Group', shortName: 'the 90-Day Group', price: '$1,997', cadence: '90 days, group' },
   { slug: 'triangle', name: 'The Triangle Session', shortName: 'the Triangle Session', price: '$1,500 one-time', cadence: 'One 90-minute 1:1' },
   { slug: 'inner-circle', name: 'The Inner Circle', shortName: 'the Inner Circle', price: '$1,500/month', cadence: 'Weekly 1:1' },
@@ -158,6 +162,7 @@ export default function ApplyPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const selectedTier = TIERS.find((t) => t.slug === tier) || TIERS[0];
+  const isFrontRow = initialTier === 'frontrow';
 
   const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -308,15 +313,20 @@ export default function ApplyPage() {
             className="mb-6 text-xs font-bold uppercase"
             style={{ color: 'var(--clay)', letterSpacing: '0.18em', fontFamily: MONO }}
           >
-            PRIVATE COACHING APPLICATION
+            {isFrontRow ? 'THE FRONT ROW · 90-DAY COHORT APPLICATION' : 'PRIVATE COACHING APPLICATION'}
           </motion.div>
           <motion.h1
             {...rise(0.12)}
             className="leading-tight mb-5"
             style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 'clamp(1.9rem, 5vw, 3.1rem)', color: 'var(--ink)', letterSpacing: '-0.02em' }}
           >
-            Tell me where your numbers stand.
+            {isFrontRow ? 'Grab your seat in the front row.' : 'Tell me where your numbers stand.'}
           </motion.h1>
+          {isFrontRow && (
+            <motion.p {...rise(0.2)} className="text-base mb-2" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch' }}>
+              You just watched the training. This is that one next step: a short application, then I read it personally and tell you if there's a seat for you. Cap is 40 women per cohort.
+            </motion.p>
+          )}
           <motion.div
             aria-hidden="true"
             initial={{ scaleX: 0 }}
