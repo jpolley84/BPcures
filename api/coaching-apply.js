@@ -106,6 +106,12 @@ export default async function handler(req, res) {
   // subject to the Cohort 2 window (the 1:1 tiers are evergreen).
   const isApplyPage = req.body.source === 'apply-page';
 
+  // 2026-07-16: third payload shape — the Be There 8-step prequalification
+  // wizard (BeThereApplyPage.jsx), source: 'bethere-apply'. Fully additive;
+  // legacy 'apply-page' and /cohort2 payloads are untouched.
+  const isBeThere = req.body.source === 'bethere-apply';
+  if (isBeThere) return handleBeThere(req, res);
+
   // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
   // closed; this endpoint is now serving Cohort 2 applications (the
   // 90-day group program opening May 24, 2026). Window stays open
@@ -455,4 +461,240 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({ ok: true, submittedAt });
+}
+
+// ---------------------------------------------------------------------------
+// 2026-07-16: Be There prequalification handler (source: 'bethere-apply').
+// Rate limit + body checks already ran in the main handler before dispatch.
+//
+// Fit scoring (exact rules):
+//   FLAG answers: medsAlignment = off-meds-without-doctor, OR
+//                 investComfort = 'It would strain the essentials'.
+//   COLD if ANY FLAG, or (startWindow 'Just exploring for now' AND
+//        dailyTime 'Honestly none right now').
+//   HOT  if startWindow in {This week, Within two weeks} AND
+//        investComfort in {Yes, comfortably / Yes with a payment plan} AND
+//        no FLAG AND dailyTime in {30 minutes or more / 15 to 30} AND
+//        trackingWillingness in {Yes / Mostly}.
+//   Else WARM.
+// ---------------------------------------------------------------------------
+const BETHERE_OFF_MEDS = 'I was hoping to get off my medications without my doctor';
+const BETHERE_STRAIN = 'It would strain the essentials';
+
+function scoreBeThere(b) {
+  const flag = b.medsAlignment === BETHERE_OFF_MEDS || b.investComfort === BETHERE_STRAIN;
+  const exploring = b.startWindow === 'Just exploring for now';
+  const noTime = b.dailyTime === 'Honestly none right now';
+  if (flag || (exploring && noTime)) return 'COLD';
+  const hot =
+    (b.startWindow === 'This week' || b.startWindow === 'Within two weeks') &&
+    (b.investComfort === 'Yes, comfortably' || b.investComfort === 'Yes with a payment plan') &&
+    (b.dailyTime === '30 minutes or more' || b.dailyTime === '15 to 30') &&
+    (b.trackingWillingness === 'Yes' || b.trackingWillingness === 'Mostly');
+  return hot ? 'HOT' : 'WARM';
+}
+
+async function handleBeThere(req, res) {
+  const b = req.body;
+  const safe = (v) => (typeof v === 'string' ? v.trim() : '');
+
+  if (!safe(b.name)) return res.status(400).json({ error: 'First name is required' });
+  if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
+  if (safe(b.story).length < 20) {
+    return res.status(400).json({ error: 'The "in your own words" answer is required. Joel reads it first.' });
+  }
+  if (safe(b.whyThisWeek).length < 10) {
+    return res.status(400).json({ error: 'The "what made this the week" answer is required.' });
+  }
+  if (safe(b.winning).length < 10) {
+    return res.status(400).json({ error: 'The "what would winning look like" answer is required.' });
+  }
+  if (!safe(b.startWindow)) return res.status(400).json({ error: 'When you want to start is required' });
+  if (!safe(b.investComfort)) return res.status(400).json({ error: 'The investment question is required' });
+
+  const trimmedEmail = b.email.trim().toLowerCase();
+  const submittedAt = new Date().toISOString();
+  const fitTier = scoreBeThere(b);
+  const flags = [];
+  if (b.medsAlignment === BETHERE_OFF_MEDS) flags.push('off-meds seeker');
+  if (b.investComfort === BETHERE_STRAIN) flags.push('would strain essentials');
+  if (b.groupsFeel === 'Groups are not for me') flags.push('minor: groups not for her');
+
+  const application = {
+    source: 'bethere-apply',
+    tier: 'be-there',
+    program: 'Be There (90-day cohort)',
+    name: safe(b.name),
+    email: trimmedEmail,
+    phone: safe(b.phone),
+    ageRange: safe(b.ageRange),
+    readingRange: safe(b.readingRange),
+    homeCheck: safe(b.homeCheck),
+    medsCount: safe(b.medsCount),
+    doctorRelationship: safe(b.doctorRelationship),
+    concernDuration: safe(b.concernDuration),
+    tried: Array.isArray(b.tried) ? b.tried.map((m) => safe(String(m))).filter(Boolean) : [],
+    whatHappened: safe(b.whatHappened),
+    story: safe(b.story),
+    loudestCorner: safe(b.loudestCorner),
+    sleep: safe(b.sleep),
+    stressLevel: safe(b.stressLevel),
+    whyThisWeek: safe(b.whyThisWeek),
+    startWindow: safe(b.startWindow),
+    dailyTime: safe(b.dailyTime),
+    trackingWillingness: safe(b.trackingWillingness),
+    plantBased: safe(b.plantBased),
+    medsAlignment: safe(b.medsAlignment),
+    groupsFeel: safe(b.groupsFeel),
+    investComfort: safe(b.investComfort),
+    decisionMakers: safe(b.decisionMakers),
+    foundJoel: safe(b.foundJoel),
+    watchedVideo: safe(b.watchedVideo),
+    winning: safe(b.winning),
+    anythingElse: safe(b.anythingElse),
+    flags,
+    fitTier,
+    submittedAt,
+    status: 'pending-review',
+  };
+
+  // 1. Notify Joel FIRST — mandatory (same P0-3 ordering as the other paths).
+  try {
+    const tierColor = fitTier === 'HOT' ? '#3F5A3C' : fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
+    const row = (label, value) =>
+      `<tr><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#9C9485;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;width:200px;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#2C2A26;font-size:13px;line-height:1.55;white-space:pre-wrap;">${escapeHtml(value) || '<em style="color:#9C9485;">(blank)</em>'}</td></tr>`;
+    const wordsBlock = (label, text) =>
+      `<div style="margin:0 0 14px;"><div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;margin:0 0 4px;">${escapeHtml(label)}</div><div style="background:#FFFFFF;border:1px solid #E6DECE;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2C2A26;white-space:pre-wrap;">${escapeHtml(text)}</div></div>`;
+
+    const subject = `[BE THERE] ${application.name} [${fitTier}]${flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : ''}`;
+    const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
+      <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Be There application · fit ${fitTier}${flags.length ? ' · ' + escapeHtml(flags.join('; ')) : ''}</div>
+        <div style="font-size:22px;font-weight:700;margin-top:6px;">${escapeHtml(application.name)}</div>
+        <div style="font-size:13px;opacity:0.85;">${escapeHtml(application.email)} · ${escapeHtml(application.phone) || 'no phone'}</div>
+      </div>
+      <div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>
+        ${wordsBlock('Her story (last two years)', application.story)}
+        ${wordsBlock('What winning looks like (90 days)', application.winning)}
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Pressure today</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Age range', application.ageRange)}
+          ${row('Reading range', application.readingRange)}
+          ${row('Checks at home', application.homeCheck)}
+          ${row('BP medications', application.medsCount)}
+          ${row('Doctor relationship', application.doctorRelationship)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Story</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Concern for', application.concernDuration)}
+          ${row('Has tried', application.tried.join(', '))}
+          ${row('What usually happened', application.whatHappened)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Corners</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Loudest corner', application.loudestCorner)}
+          ${row('Sleep', application.sleep)}
+          ${row('Typical stress', application.stressLevel)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Readiness</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Why this week', application.whyThisWeek)}
+          ${row('Start window', application.startWindow)}
+          ${row('Daily time', application.dailyTime)}
+          ${row('Will log readings', application.trackingWillingness)}
+          ${row('Plant-based foods', application.plantBased)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Screening + investment</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Alongside-doctor framing', application.medsAlignment)}
+          ${row('Groups', application.groupsFeel)}
+          ${row('Could invest without strain', application.investComfort)}
+          ${row('Decision makers', application.decisionMakers)}
+        </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Last things</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Found Joel via', application.foundJoel)}
+          ${row('Watched the video', application.watchedVideo)}
+          ${row('Anything else', application.anythingElse)}
+        </table>
+        <p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ${escapeHtml(application.email)}. ${fitTier === 'COLD' ? 'Applicant was routed to the free community and starter kit (no call link shown).' : 'Applicant was shown the fit-call booking link with the 48-hour promise.'} Auto-ack sent.</p>
+      </div>
+    </body></html>`;
+
+    await getResend().emails.send({
+      from: FROM,
+      to: NOTIFY_EMAIL,
+      replyTo: trimmedEmail,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error('coaching-apply(bethere): notify email failed — returning 500 so applicant retries', err.message);
+    return res.status(500).json({
+      ok: false,
+      error: 'We could not deliver your application right now. Please try again in a moment, or email braveworksrn@gmail.com directly.',
+    });
+  }
+
+  // 2. KV store (existing coaching-app:* pattern, 90-day TTL) + drip tag.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      await kv.set(`coaching-app:${Date.now()}:${trimmedEmail}`, application, { ex: 90 * 86400 });
+    } catch (err) {
+      console.error('coaching-apply(bethere): KV store failed (non-fatal)', err.message);
+    }
+    try {
+      const dripKey = `drip:${trimmedEmail}`;
+      const existing = await kv.get(dripKey);
+      const applicantTags = ['coaching-applicant', `fit-${fitTier.toLowerCase()}`, 'tier-be-there'];
+      if (existing) {
+        await kv.set(dripKey, {
+          ...existing,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          tags: Array.from(new Set([...(existing.tags || []), ...applicantTags])),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email: trimmedEmail,
+          firstName: application.name.split(' ')[0] || '',
+          cohort: 'coaching-applied',
+          enrolledAt: submittedAt,
+          lastSentDay: 0,
+          optedIn: true,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          source: 'coaching-apply',
+          tags: applicantTags,
+        });
+      }
+    } catch (err) {
+      console.warn('coaching-apply(bethere): drip enrollment failed (non-fatal)', err.message);
+    }
+  }
+
+  // 3. Auto-ack to applicant. No prices, no dashes, alongside-doctor footer.
+  try {
+    const firstName = application.name.split(' ')[0] || 'there';
+    await getResend().emails.send({
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
+      to: trimmedEmail,
+      replyTo: 'braveworksrn@gmail.com',
+      subject: `Your Be There application is in, ${firstName}`,
+      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
+      <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
+      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
+      <p style="margin:0 0 16px;">I read every word personally. You will hear from me within 48 hours, usually sooner. If this is your fit, I will tell you exactly what comes next. If it is not, I will tell you that too, and point you somewhere honest.</p>
+      <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever we build together works alongside your doctor, never instead of them.</p>
+      <p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel Polley</p>
+      <p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RN, BraveWorks</p>
+      <p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>
+    </body></html>`,
+    });
+  } catch (err) {
+    console.error('coaching-apply(bethere): applicant ack failed', err.message);
+  }
+
+  return res.status(200).json({ ok: true, submittedAt, fitTier });
 }

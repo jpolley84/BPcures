@@ -40,11 +40,15 @@ const OpsDashboardPage = lazy(() => import('./pages/OpsDashboardPage'));
 // WaitlistApplicationPage (the stale $1,297 /1on1 page) is no longer routed:
 // /1on1 now redirects to /coaching (2026-07-03). The file is preserved at
 // src/pages/WaitlistApplicationPage.jsx if we ever want it back.
-const ApplyPage = lazy(() => import('./pages/ApplyPage'));
+// 2026-07-16 Be There funnel: /coaching + /coaching-vip land on the minimal
+// Be There landing (webinar video + one CTA), /apply runs the 8-step
+// prequalification wizard. Old ApplyPage.jsx / CoachingOptinPage.jsx are
+// preserved on disk, unrouted.
+const BeThereLandingPage = lazy(() => import('./pages/BeThereLandingPage'));
+const BeThereApplyPage = lazy(() => import('./pages/BeThereApplyPage'));
 const IntakeFormPage = lazy(() => import('./pages/IntakeFormPage'));
 const CoachingPage = lazy(() => import('./pages/CoachingPage'));
 const TeaThanksPage = lazy(() => import('./pages/TeaThanksPage'));
-const CoachingOptinPage = lazy(() => import('./pages/CoachingOptinPage'));
 const CoachingWelcomePage = lazy(() => import('./pages/CoachingWelcomePage'));
 const SprintWelcomePage = lazy(() => import('./pages/SprintWelcomePage'));
 const Cohort2Page = lazy(() => import('./pages/Cohort2Page'));
@@ -250,13 +254,11 @@ function App() {
               while /coaching lists the live $1,500+ tiers; two conflicting
               prices were reachable at once. File kept for history. */}
           <Route path="/1on1" element={<Navigate to="/coaching" replace />} />
-          {/* /apply — private coaching application questionnaire (2026-06-09,
-              replaces the old redirect to /1on1). Serves the $1,997 90-Day
-              Group + the four 1:1 tiers; ?tier=<slug> preselects (ninety /
-              triangle / inner-circle / household / pillar). POSTs to
-              /api/coaching-apply with source: 'apply-page'. Standalone, no
-              SiteLayout — matches /coaching's quiet-luxury posture. */}
-          <Route path="/apply" element={<ApplyPage />} />
+          {/* /apply — 2026-07-16: the Be There 8-step prequalification wizard
+              (BeThereApplyPage). Legacy ?tier= links still land here; tier
+              defaults to 'be-there'. POSTs to /api/coaching-apply with
+              source: 'bethere-apply'. Old ApplyPage.jsx preserved unrouted. */}
+          <Route path="/apply" element={<BeThereApplyPage />} />
 
           {/* 2026-06-08 RELAUNCHED: /coaching is live again, listing Joel's
               four 1:1 tiers (Triangle Session $1,500 one-time, Inner Circle
@@ -271,8 +273,11 @@ function App() {
               The_Front_Row_Webinar_Script.pdf) for this cohort's traffic.
               Previous behavior (opt-in funnel page 1) preserved at
               /coaching-vip so it can be swapped back with a one-line revert. */}
-          <Route path="/coaching" element={<Navigate to="/apply?tier=bethere" replace />} />
-          <Route path="/coaching-vip" element={<CoachingOptinPage />} />
+          {/* 2026-07-16: /coaching (and the /coaching-vip alias) now render the
+              minimal Be There landing (webinar embed + one apply CTA). The old
+              CoachingOptinPage.jsx stays on disk, unrouted. */}
+          <Route path="/coaching" element={<BeThereLandingPage />} />
+          <Route path="/coaching-vip" element={<BeThereLandingPage />} />
           <Route path="/coaching-offers" element={<CoachingPage />} />
           {/* Post-$297-purchase landing — Stripe Payment Link redirect target.
               Configure the after_completion.redirect.url on the $297 link to:
