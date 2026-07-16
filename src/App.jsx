@@ -14,6 +14,10 @@ import Footer from './components/Footer';
 // to /quiz for SEO + warm-traffic landing. The split test showed cold TikTok
 // traffic converts ~3× higher on the sales-letter format vs the quiz.
 import CheckoutPage from './pages/CheckoutPage'; // eager — landing page
+// 2026-07-16 A/B test: '/' renders HomeSplit, a sticky 50/50 split between
+// CheckoutPage (variant 'a', unchanged) and QuizFirstLanding (variant 'b',
+// quiz-first). Eager import — it wraps the landing. See pages/HomeSplit.jsx.
+import HomeSplit from './pages/HomeSplit';
 
 // All other routes are lazy-loaded. Users who land on `/` (99% of traffic)
 // only download the landing chunk; the rest stream on-demand when their
@@ -146,7 +150,10 @@ function App() {
               <SiteLayout><QuizPage /></SiteLayout> back on `/` and remove the
               /offer redirect. (CheckoutPage renders standalone — its own
               header/footer/social bar, no SiteLayout.) */}
-          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <CheckoutPage />} />
+          {/* 2026-07-16: '/' now renders HomeSplit (50/50 A/B). Variant 'a'
+              is CheckoutPage exactly as before; variant 'b' is the new
+              QuizFirstLanding. Vanity subdomains still bypass the split. */}
+          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <HomeSplit />} />
           <Route path="/offer" element={<Navigate to="/" replace />} />
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm

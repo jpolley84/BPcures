@@ -3,9 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import {
-  ArrowRight, ArrowUpRight, Star, Quote, AlertCircle,
+  ArrowRight, ArrowUpRight, Star, Quote, AlertCircle, Download,
 } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
+
+// 2026-07-16 homepage A/B test (see pages/HomeSplit.jsx): variant 'b'
+// visitors were promised a free downloadable guide on the QuizFirstLanding.
+// Read the same sticky assignment key, guarded for private mode. Anything
+// other than a stored 'b' means variant 'a' behavior (byte-identical to
+// today: the guide card simply never renders).
+function readHomeVariant() {
+  try {
+    return localStorage.getItem('bpq_ab_home') === 'b' ? 'b' : 'a';
+  } catch {
+    return 'a';
+  }
+}
 
 // 2026-06-04 — prefers-reduced-motion guard, computed once. Confetti + the
 // typewriter both honor this so the celebration never fights accessibility.
@@ -989,6 +1002,52 @@ function QuizModule({ products }) {
                 <span className="rsb-value">{pressureCopy.label}</span>
                 <span className="rsb-score">{riskScore}/10</span>
               </div>
+
+              {/* ─── VARIANT B ONLY — free-guide download card (2026-07-16
+                  A/B test). Renders right under the score reveal, ABOVE the
+                  offer, only when the sticky homepage assignment is 'b'.
+                  Variant 'a' renders nothing here (unchanged behavior). */}
+              {readHomeVariant() === 'b' && (
+                <div style={{
+                  padding: '1.25rem',
+                  margin: '0 0 1.25rem',
+                  background: 'rgba(74, 103, 65, 0.08)',
+                  border: '1px solid var(--sage, #4A5D4E)',
+                  borderRadius: 14,
+                }}>
+                  <h3 style={{
+                    fontFamily: 'Fraunces, serif',
+                    fontSize: '1.15rem',
+                    fontWeight: 550,
+                    lineHeight: 1.2,
+                    margin: '0 0 0.5rem',
+                    color: 'var(--ink)',
+                  }}>
+                    Your free guide is ready
+                  </h3>
+                  <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: '0 0 0.9rem' }}>
+                    The 5 Hidden Reasons Why Your Blood Pressure Keeps Rising. Stress, sugar,
+                    sodium, hormones, and sleep, with one small step for tonight in each chapter.
+                  </p>
+                  <a
+                    href="/downloads/5-hidden-reasons-bp.pdf"
+                    download
+                    onClick={() => track('leadmagnet_downloaded', { magnet: '5-hidden-reasons' })}
+                    className="btn btn-lg"
+                    style={{
+                      background: 'var(--clay)',
+                      color: 'var(--cream)',
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    Download My Free Guide <Download size={16} />
+                  </a>
+                </div>
+              )}
 
               {/* Villain line (Phase 1 canon) — the loop-vs-symptom reframe,
                   high on the results page before the offer. */}

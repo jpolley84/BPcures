@@ -38,6 +38,14 @@ export function getDistinctId() {
   return '';
 }
 
+// Registers PostHog super properties (attached to every subsequent event on
+// this device). Used by the homepage A/B split so 'ab_home_variant' rides on
+// every event without threading it through each track() call. No-ops when
+// analytics is disabled (no VITE_POSTHOG_KEY) or anything throws.
+export function registerSuperProps(props) {
+  try { if (enabled && props) posthog.register(props); } catch { /* noop */ }
+}
+
 // Ties the anonymous device to the lead's email at the quiz email gate, so
 // the funnel (and revenue) can be analyzed per-person across sessions.
 export function identify(email, props) {
