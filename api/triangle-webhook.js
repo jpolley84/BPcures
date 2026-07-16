@@ -495,7 +495,7 @@ async function isCall97Session(session) {
 function buildCall97Email({ firstName, unsubUrl }) {
   const preheader = 'Your 1:1 call with Joel is paid. Pick your time here.';
   const bookHtml = CALL_BOOKING_URL
-    ? ctaButton({ label: 'Pick my call time', url: CALL_BOOKING_URL })
+    ? ctaButton('Pick my call time', CALL_BOOKING_URL)
     : p(`Your booking link is on the page you just landed on. If you closed it, reply to this email and I will send your times directly.`);
   const bodyHtml = [
     `<div style="display:inline-block;font-size:12px;font-weight:700;color:${PALETTE.accentSage};border:1px solid ${PALETTE.accentSage};border-radius:999px;padding:5px 12px;margin-bottom:18px;font-family:-apple-system,Segoe UI,sans-serif;">Call confirmed</div>`,
@@ -1714,9 +1714,15 @@ async function processCheckoutCompleted(event) {
     // session (create-embedded-checkout sets metadata.corner). Without this, a
     // Stress-by-default buyer who skipped the quiz gets the Sodium fallback kit in
     // their delivery email + ZIP even though the /welcome page shows Stress.
-    const okCorner = (c) => c === 'stress' || c === 'sugar' || c === 'sodium';
+    // 2026-07-16: sleep + stillness are sellable triggers at the corner tier.
+    const okCorner = (c) =>
+      c === 'stress' || c === 'sugar' || c === 'sodium' || c === 'sleep' || c === 'stillness';
     const sessionCorner = okCorner(session.metadata?.corner) ? session.metadata.corner : null;
-    buyerCorner = existing?.corner || sessionCorner;
+    // 2026-07-16: the corner stamped on the PAID Stripe session wins over the
+    // drip record. The dual-write's enrich path can hold a stale corner from
+    // an earlier quiz take, and the buyer must receive the kit they actually
+    // clicked and paid for, not their first-ever result.
+    buyerCorner = sessionCorner || existing?.corner || null;
     buyerScores = existing?.scores || null; // resolves the #2 corner for top2 delivery
     if (existing?.firstName) buyerFirstName = existing.firstName;
     const newState = purchaseToState(tier);

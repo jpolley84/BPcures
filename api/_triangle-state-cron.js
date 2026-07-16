@@ -150,6 +150,11 @@ export async function runStateCron({
         const ctx = {
           firstName: sub.firstName || '',
           corner: sub.corner || null,
+          // 2026-07-16 Annie-v2: the 5 Hidden Triggers quiz stores the lead's
+          // trigger slug + display name (lead-magnet.js). Older records carry
+          // neither; sequence bodies must fall back gracefully.
+          trigger: sub.trigger || null,
+          triggerName: sub.triggerName || null,
           readiness: sub.readiness || null,
           scores: sub.scores || null,
           paidTier: sub.paidTier || null,

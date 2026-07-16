@@ -110,6 +110,55 @@ export const MODULES = {
     blurb: 'A one page sheet to take to your next visit so you and your doctor read your numbers together.',
   },
 
+  // ── SLEEP trigger (The Midnight Drift) ── 2026-07-16 Annie-v2 funnel:
+  // the 5 Hidden Triggers quiz sells two triggers beyond the Triangle's three
+  // corners. Each ships the same 3-piece set. These are TRIGGERS, not Triangle
+  // corners; the `corner` field is just the internal fulfillment key.
+  sleep: {
+    file: 'sleep.pdf',
+    corner: 'sleep',
+    kind: 'protocol',
+    title: 'The Midnight Drift, 10-Day Reset',
+    blurb: 'Restore the overnight dip your blood pressure has been missing, one night at a time.',
+  },
+  'sleep-formulary': {
+    file: 'sleep-formulary.pdf',
+    corner: 'sleep',
+    kind: 'formulary',
+    title: 'The Midnight Drift Herb Formulary',
+    blurb: 'Your evening wind-down herbs, each with dose, why it helps, and the cautions that matter.',
+  },
+  'sleep-doctor-sheet': {
+    file: 'sleep-doctor-sheet.pdf',
+    corner: 'sleep',
+    kind: 'doctor-sheet',
+    title: 'Bring This To Your Doctor, The Midnight Drift',
+    blurb: 'A one page sheet to take to your next visit so you and your doctor read your numbers together.',
+  },
+
+  // ── STILLNESS trigger ──
+  stillness: {
+    file: 'stillness.pdf',
+    corner: 'stillness',
+    kind: 'protocol',
+    title: 'The Stillness Trigger, 10-Day Reset',
+    blurb: 'Give your vessels back the movement signal that keeps them flexible and responsive.',
+  },
+  'stillness-formulary': {
+    file: 'stillness-formulary.pdf',
+    corner: 'stillness',
+    kind: 'formulary',
+    title: 'The Stillness Trigger Herb Formulary',
+    blurb: 'Your circulation herbs, each with use, why it helps, and the cautions that matter.',
+  },
+  'stillness-doctor-sheet': {
+    file: 'stillness-doctor-sheet.pdf',
+    corner: 'stillness',
+    kind: 'doctor-sheet',
+    title: 'Bring This To Your Doctor, The Stillness Trigger',
+    blurb: 'A one page sheet to take to your next visit so you and your doctor read your numbers together.',
+  },
+
   // ── The capstone (triangle tier only) ──
   'freedom-finale': {
     file: 'freedom-finale.pdf',
@@ -232,16 +281,25 @@ export function bonusesForTier(tier) {
   return (BONUS_KEYS_BY_TIER[t] || []).map((k) => BONUS_MODULES[k]).filter(Boolean);
 }
 
-// The three corners, in the order Joel walks them.
+// The three corners, in the order Joel walks them. ALL_CORNERS stays
+// Triangle-only on purpose: it drives the complete tier's contents and the
+// score-ordering logic below, and the $47 Complete kit is (and stays) the
+// three Triangle corners + Finale.
 export const ALL_CORNERS = ['stress', 'sugar', 'sodium'];
+
+// 2026-07-16: the two extra quiz triggers, sellable at the corner tier only.
+// KIT_CORNERS is the set of keys the $17 corner tier accepts.
+export const EXTRA_TRIGGERS = ['sleep', 'stillness'];
+export const KIT_CORNERS = [...ALL_CORNERS, ...EXTRA_TRIGGERS];
 
 // The kinds a corner ships, in delivery order (protocol first, then the two
 // premium companions). Used to assemble a corner's full set from its key.
 const CORNER_PIECE_ORDER = ['protocol', 'formulary', 'doctor-sheet'];
 
-// All pieces (protocol + formulary + doctor sheet) for one corner, in order.
+// All pieces (protocol + formulary + doctor sheet) for one corner/trigger, in
+// order.
 export function cornerSet(corner) {
-  const key = ALL_CORNERS.includes(corner) ? corner : 'sodium';
+  const key = KIT_CORNERS.includes(corner) ? corner : 'sodium';
   const suffix = { protocol: '', formulary: '-formulary', 'doctor-sheet': '-doctor-sheet' };
   return CORNER_PIECE_ORDER.map((kind) => MODULES[`${key}${suffix[kind]}`]).filter(Boolean);
 }
@@ -250,7 +308,7 @@ export function cornerSet(corner) {
 // the Sodium corner (where the whole Triangle converges) when the corner is
 // unknown, so a buyer is never handed a blank delivery.
 export function entryModuleFor(corner) {
-  const key = ALL_CORNERS.includes(corner) ? corner : 'sodium';
+  const key = KIT_CORNERS.includes(corner) ? corner : 'sodium';
   return MODULES[key];
 }
 
@@ -377,8 +435,8 @@ export function bundleNameForTier(tier, corner, scores) {
     const pair = stableCorners(topTwoCorners(scores, corner));
     return `bundle-top2-${pair[0]}-${pair[1]}.zip`;
   }
-  // corner: the one loudest corner's full set
-  const key = ALL_CORNERS.includes(corner) ? corner : 'sodium';
+  // corner: the one loudest corner's/trigger's full set
+  const key = KIT_CORNERS.includes(corner) ? corner : 'sodium';
   return `bundle-corner-${key}.zip`;
 }
 
@@ -399,8 +457,8 @@ export function bundleLabelForTier(tier) {
 // each spec; corner alone drives corner/top2 resolution here.
 export function allBundleSpecs() {
   const specs = [];
-  // corner: one per corner
-  for (const c of BUNDLE_CORNER_ORDER) {
+  // corner: one per corner/trigger (Triangle corners + the two extra triggers)
+  for (const c of [...BUNDLE_CORNER_ORDER, ...EXTRA_TRIGGERS]) {
     specs.push({ tier: 'corner', corner: c, scores: null, file: `bundle-corner-${c}.zip` });
   }
   // top2: one per unordered pair, in stable order

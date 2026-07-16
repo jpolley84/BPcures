@@ -52,7 +52,10 @@ const CASE_REVIEW_3PAY_PRICE_ID = 'price_1Tp9OXHseZnO3rRZ5nLQww5E'; // $99/mo x3
 const CASE_REVIEW_3PAY_PRICE =
   process.env.STRIPE_CASE_REVIEW_3PAY_PRICE_ID || CASE_REVIEW_3PAY_PRICE_ID;
 
-const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium']);
+// 2026-07-16: all 5 quiz triggers are valid corner keys (sleep = The Midnight
+// Drift, stillness = The Stillness Trigger). Keep in sync with PayPage
+// VALID_CORNERS and _kit-manifest KIT_CORNERS.
+const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

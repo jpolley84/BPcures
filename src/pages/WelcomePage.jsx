@@ -56,7 +56,11 @@ import { track } from '../utils/analytics';
 // The three valid tier keys this page understands. Anything else normalizes to a
 // safe default inside modulesForTier, so a junk ?tier= never breaks the page.
 const VALID_TIERS = new Set(['corner', 'top2', 'complete']);
-const VALID_CORNERS_SET = new Set(['stress', 'sugar', 'sodium']);
+// 2026-07-16: sleep + stillness are sellable triggers at the corner tier
+// (Annie-v2 quiz). They are NOT Triangle corners; EXTRA_TRIGGER_SET marks them
+// so the level ladder reads correctly for those buyers.
+const VALID_CORNERS_SET = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
+const EXTRA_TRIGGER_SET = new Set(['sleep', 'stillness']);
 
 // Tier -> numeric level, so we can compare "owned" vs "higher" cleanly.
 // 2026-07 ladder: TWO kit levels (corner / complete). Legacy top2 owners are
@@ -73,7 +77,13 @@ const SKOOL_TRIAL_URL =
 
 // Pretty corner names for teasers ("your Sugar corner"). Falls back to the raw
 // key if an unexpected value ever appears.
-const CORNER_LABEL = { stress: 'Stress', sugar: 'Sugar', sodium: 'Sodium' };
+const CORNER_LABEL = {
+  stress: 'Stress',
+  sugar: 'Sugar',
+  sodium: 'Sodium',
+  sleep: 'Midnight Drift',
+  stillness: 'Stillness',
+};
 function cornerLabel(c) {
   return CORNER_LABEL[c] || (c ? c.charAt(0).toUpperCase() + c.slice(1) : '');
 }
@@ -219,7 +229,7 @@ const FINALE = MODULES['freedom-finale'];
 // Corner Reset). Level 2 = EVERYTHING else in the complete kit: the other two
 // corners, the Freedom Finale, and every remaining bonus, unlocked together for
 // the $30 difference (total $47, the complete price).
-function buildLevels(ordered, knewCorner) {
+function buildLevels(ordered, knewCorner, corner, ownedTier) {
   const cornerBonuses = bonusesForTier('corner');
   const completeBonuses = bonusesForTier('complete');
   const bonusDelta = (higher, lower) => {
@@ -227,16 +237,22 @@ function buildLevels(ordered, knewCorner) {
     return higher.filter((b) => !lowerFiles.has(b.file));
   };
 
-  const c1 = ordered[0];
-  const c2 = ordered[1];
-  const c3 = ordered[2];
+  // 2026-07-16: a sleep/stillness CORNER buyer's level 1 is THEIR trigger
+  // set, and the complete upgrade adds the whole Triangle (all three corner
+  // sets + Finale) rather than "the other two corners". Gated on the corner
+  // tier: a complete-tier buyer owns the Triangle, not the extra trigger, so
+  // showing the trigger set as unlocked would promise files that tier does
+  // not deliver.
+  const isExtra = EXTRA_TRIGGER_SET.has(corner) && ownedTier === 'corner';
+  const c1 = isExtra ? corner : ordered[0];
+  const rest = isExtra ? [...ALL_TRIANGLE] : [ordered[1], ordered[2]];
 
   return [
     {
       tier: 'corner',
       level: 1,
       teaser: knewCorner
-        ? `Your ${cornerLabel(c1)} corner, worked first.`
+        ? `Your ${cornerLabel(c1)} ${isExtra ? 'trigger' : 'corner'}, worked first.`
         : 'Your loudest corner, worked first.',
       modules: cornerSet(c1),
       bonuses: cornerBonuses,
@@ -244,14 +260,25 @@ function buildLevels(ordered, knewCorner) {
     {
       tier: 'complete',
       level: 2,
-      teaser: knewCorner
-        ? `Your ${cornerLabel(c2)} and ${cornerLabel(c3)} corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.`
-        : 'Your other two corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.',
-      modules: [...cornerSet(c2), ...cornerSet(c3), FINALE].filter(Boolean),
+      teaser: isExtra
+        ? 'The full BP Triangle: your Stress, Sugar, and Sodium corners plus the Freedom Finale, so the three everyday drivers cannot quietly pull your number back.'
+        : knewCorner
+          ? `Your ${cornerLabel(rest[0])} and ${cornerLabel(rest[1])} corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.`
+          : 'Your other two corners plus the Freedom Finale, the whole loop closed so none of the three quietly pulls your number back.',
+      modules: [...rest.flatMap((c) => cornerSet(c)), FINALE].filter(Boolean),
       bonuses: bonusDelta(completeBonuses, cornerBonuses),
+      // Extra-trigger buyers add all THREE Triangle corners, not "the other
+      // two" (the UPGRADE_LINE default would contradict the list above it).
+      ...(isExtra
+        ? { upgradeLine: (price) => `Add the full BP Triangle, all three corners and the Freedom Finale, for ${price}.` }
+        : {}),
     },
   ];
 }
+
+// The Triangle's three corners in walk order, local copy for the extra-trigger
+// upgrade path (kept in sync with _kit-manifest ALL_CORNERS).
+const ALL_TRIANGLE = ['stress', 'sugar', 'sodium'];
 
 // Short, human heading for each level's section.
 const LEVEL_HEADING = {
@@ -307,7 +334,10 @@ export default function WelcomePage() {
   const showSkool = Boolean(SKOOL_TRIAL_URL);
 
   const ordered = useMemo(() => orderedCorners(scores, corner), [scores, corner]);
-  const levels = useMemo(() => buildLevels(ordered, knewCorner), [ordered, knewCorner]);
+  const levels = useMemo(
+    () => buildLevels(ordered, knewCorner, corner, ownedTier),
+    [ordered, knewCorner, corner, ownedTier],
+  );
 
   const base = SITE_URL();
   const fileUrl = (file) => `${base}/downloads/${file}`;
@@ -534,12 +564,13 @@ function TierSection({ level, owned, upgrade, fileUrl }) {
   const heading = LEVEL_HEADING[level.tier] || 'Your kit';
   const rows = [...level.modules, ...level.bonuses].filter(Boolean);
   const borderTop = owned ? '4px solid var(--clay, #B85A36)' : '4px solid var(--line, #D8CFBD)';
-  const upgradeLine =
-    upgrade && UPGRADE_LINE[`${upgrade.fromTier}_${upgrade.targetTier}`]
-      ? UPGRADE_LINE[`${upgrade.fromTier}_${upgrade.targetTier}`](upgrade.priceLabel)
-      : upgrade
-        ? `Unlock this level for ${upgrade.priceLabel}.`
-        : '';
+  const upgradeLine = upgrade
+    ? typeof level.upgradeLine === 'function'
+      ? level.upgradeLine(upgrade.priceLabel)
+      : UPGRADE_LINE[`${upgrade.fromTier}_${upgrade.targetTier}`]
+        ? UPGRADE_LINE[`${upgrade.fromTier}_${upgrade.targetTier}`](upgrade.priceLabel)
+        : `Unlock this level for ${upgrade.priceLabel}.`
+    : '';
 
   return (
     <div style={{ ...CARD, borderTop }}>

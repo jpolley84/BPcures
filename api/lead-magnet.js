@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
 import { looksLikeValidEmail } from './_email-validation.js';
+import { p, ctaButton, buildEmail, PALETTE } from './_triangle-email.js';
 
 // Local alias for the imported helper (keeps the call-site readable + matches
 // the convention used in this file).
@@ -23,6 +24,112 @@ function getResend() {
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const COOKBOOK_URL = `${SITE_URL}/downloads/cook-for-life-cookbook.pdf`;
+
+// ─── 2026-07-16 Annie-v2: the 5 Hidden Triggers ───────────────────────
+// Email 1 of the trigger sequence sends from HERE (immediately at capture,
+// Blueprint attached); days 2-15 live in triangle-lead-cron.js. Both quiz
+// funnels land in this endpoint: the triggers quiz posts { trigger,
+// triggerName, quiz: 'triggers' }, the Triangle quiz posts { pressure } and
+// the trigger is derived from it below.
+const TRIGGER_NAMES = {
+  stress: 'The Stress Spike',
+  sugar: 'The Sugar Surge',
+  sodium: 'The Sodium Trap',
+  sleep: 'The Midnight Drift',
+  stillness: 'The Stillness Trigger',
+};
+
+const PRESSURE_TO_TRIGGER = { stress: 'stress', sugar: 'sugar', pipes: 'sodium', all: 'stress' };
+
+const BLUEPRINT_FILE = path.join(process.cwd(), 'public', 'downloads', 'bp-blueprint.pdf');
+const BLUEPRINT_URL = `${SITE_URL}/downloads/bp-blueprint.pdf`;
+
+// Cache the attachment across warm invocations. Read from the deployment's
+// filesystem first (public/ ships with the function, same pattern as
+// products.json below); fall back to fetching our own CDN; fall back to
+// sending WITHOUT the attachment (the body always carries a download link).
+let _blueprintB64 = null;
+async function getBlueprintAttachment() {
+  if (_blueprintB64) return _blueprintB64;
+  try {
+    _blueprintB64 = fs.readFileSync(BLUEPRINT_FILE).toString('base64');
+    return _blueprintB64;
+  } catch {
+    /* fall through to fetch */
+  }
+  try {
+    const r = await fetch(BLUEPRINT_URL);
+    if (r.ok) {
+      _blueprintB64 = Buffer.from(await r.arrayBuffer()).toString('base64');
+      return _blueprintB64;
+    }
+  } catch {
+    /* send without attachment */
+  }
+  return null;
+}
+
+// Email 1 — deliver the Blueprint + confirm hope. Pure delivery, zero offer.
+// The open loop at the close pulls into Day 2 (triangle-lead-cron.js).
+function renderEmailOne({ firstName, triggerName, unsubUrl, attached }) {
+  const bodyHtml = [
+    p(`Hey ${firstName || 'there'},`),
+    p('Your results are in.'),
+    triggerName
+      ? p(`Based on what you told me, your loudest driver right now is <strong>${triggerName}</strong>.`)
+      : p('Based on what you told me, your loudest driver is the one your quiz named on your result screen.'),
+    p('Not a guess. Not a generic list. That is the pattern your own answers pointed to.'),
+    attached
+      ? p(`I have attached the full <strong>Blood Pressure Blueprint</strong>: all 5 hidden triggers, not just yours. Because most people are carrying two or three of these at once, and I would rather you see the whole picture than just the loudest piece of it. <a href="${BLUEPRINT_URL}" style="color:${PALETTE.accentClay};font-weight:700;">(If the attachment will not open, download your copy here.)</a>`)
+      : p(`Here is your full <strong>Blood Pressure Blueprint</strong>: all 5 hidden triggers, not just yours. Because most people are carrying two or three of these at once, and I would rather you see the whole picture than just the loudest piece of it.`),
+    ...(attached ? [] : [ctaButton('Download your Blueprint (PDF)', BLUEPRINT_URL)]),
+    p('Here is what I want you to do with it: open it, find your trigger, and start with the 3 things on that page. An herb, a food swap, a lifestyle shift. Nothing complicated. Nothing you need to buy today. Just start.'),
+    p('One more thing, before you go.'),
+    p('You did not do this to yourself. I have spent 20 years in ICU and ER medicine watching good, careful people do everything right and still watch their numbers climb. It is never because they did not try hard enough. It is because nobody showed them where to actually look.'),
+    p('That is what this is for.'),
+    p('In my next note I want to show you why almost nobody I meet is dealing with just one trigger, and why that is actually good news.'),
+    p('One trigger at a time.', { margin: '0 0 6px' }),
+    p('Joel Polley, RN'),
+    p('P.S. Save this email. You will want the Blueprint again later, I promise.'),
+    // The Triangle quiz gate promises a free plant-based cookbook with the
+    // result; this email is now the only capture email, so it delivers on
+    // that promise for every lead.
+    p(`P.P.S. Your free plant-based cookbook, Cook For Life, comes with your result too. <a href="${COOKBOOK_URL}" style="color:${PALETTE.accentClay};font-weight:700;">Download it here.</a>`),
+  ].join('');
+
+  const bodyText = `Hey ${firstName || 'there'},
+
+Your results are in.
+
+${triggerName ? `Based on what you told me, your loudest driver right now is ${triggerName}.` : 'Based on what you told me, your loudest driver is the one your quiz named on your result screen.'}
+
+Not a guess. Not a generic list. That is the pattern your own answers pointed to.
+
+${attached ? 'I have attached the full Blood Pressure Blueprint: all 5 hidden triggers, not just yours.' : 'Here is your full Blood Pressure Blueprint: all 5 hidden triggers, not just yours.'} Most people are carrying two or three of these at once, and I would rather you see the whole picture than just the loudest piece of it.
+Download link: ${BLUEPRINT_URL}
+
+Open it, find your trigger, and start with the 3 things on that page. An herb, a food swap, a lifestyle shift. Nothing complicated. Nothing you need to buy today. Just start.
+
+One more thing, before you go. You did not do this to yourself. I have spent 20 years in ICU and ER medicine watching good, careful people do everything right and still watch their numbers climb. It is never because they did not try hard enough. It is because nobody showed them where to actually look.
+
+That is what this is for.
+
+In my next note I want to show you why almost nobody I meet is dealing with just one trigger, and why that is actually good news.
+
+One trigger at a time.
+Joel Polley, RN
+
+P.S. Save this email. You will want the Blueprint again later, I promise.
+
+P.P.S. Your free plant-based cookbook, Cook For Life, comes with your result too: ${COOKBOOK_URL}`;
+
+  return buildEmail({
+    preheader: 'Plus the full Blueprint, like I promised.',
+    bodyHtml,
+    bodyText,
+    unsubUrl,
+  });
+}
 
 // 2026-07-04: the BP ladder's legacy Stripe links are retired (Cures purge
 // 06-09; premium link dead 05-09). BP cards route to the live funnel;
@@ -445,7 +552,20 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
-  const { email, name, category: rawCategory, pressure, riskScore, answers, tags: extraTags } = req.body || {};
+  const {
+    email, name, category: rawCategory, pressure, riskScore, answers, tags: extraTags,
+    trigger: rawTrigger,
+  } = req.body || {};
+
+  // Resolve the lead's hidden trigger: an explicit valid trigger from the
+  // triggers quiz wins, else derive from the Triangle quiz's pressure key.
+  // The display name is ALWAYS derived server-side from the slug. Never trust
+  // a client-supplied triggerName: this endpoint is unauthenticated and the
+  // name is interpolated into Joel-branded email HTML (injection surface).
+  const trigger = TRIGGER_NAMES[rawTrigger]
+    ? rawTrigger
+    : PRESSURE_TO_TRIGGER[pressure] || null;
+  const triggerName = trigger ? TRIGGER_NAMES[trigger] : null;
 
   // 2026-05-13 hardening: tightened from `.includes('@')` to the shared
   // looksLikeValidEmail() which also blocks CRLF header-injection.
@@ -455,19 +575,16 @@ export default async function handler(req, res) {
 
   const category = normalizeCategory(rawCategory);
   const tier = recommendedTier(riskScore);
-  const tiers = tiersForCategory(category);
-
-  if (!tiers.length) {
-    console.error('lead-magnet: no tiers for category', category);
-    return res.status(500).json({ error: 'Product lookup failed' });
-  }
+  // 2026-07-16: the products.json tier lookup (tiersForCategory) is no longer
+  // used by the capture email (Email 1 replaced the tier-card email), and its
+  // old empty-check 500'd the ENTIRE capture BEFORE the KV enroll ran, i.e. a
+  // missing/unbundled products.json would silently lose every lead with no
+  // alert. Removed; nothing below depends on it.
 
   // Dedupe: skip the Resend send if this email got a lead magnet in the
   // last 5 minutes. The KV enrollment below still runs so updated quiz
   // answers / tier / category get recorded on the drip:* record.
   const isDuplicate = await recentLeadMagnetSend({ email: email.trim() });
-
-  const cat = CATEGORIES[category];
 
   // ── ENROLL FIRST, SEND SECOND (2026-06-09 reorder) ────────────────────
   // The Resend send used to run first and `return 500` on failure, so a
@@ -492,6 +609,7 @@ export default async function handler(req, res) {
     const dripKey = `drip:${email.trim().toLowerCase()}`;
     const a = answers || {};
     const newTags = ['quiz-taker', `category-${category}`, `tier-${tier}`];
+    if (trigger) newTags.push(`trigger-${trigger}`);
     if (a.medication) newTags.push(`meds-${a.medication}`);
     if (a.age) newTags.push(`age-${a.age}`);
     if (a.duration) newTags.push(`duration-${a.duration}`);
@@ -600,15 +718,15 @@ export default async function handler(req, res) {
   // Idempotent like capture-lead: never demote a buyer, never reset an
   // existing record's state/stateEnteredAt — enrich missing fields only.
   // Best-effort: a failure here never fails the request.
+  // Whether the triangle rail is open for this address (used below to mark
+  // leadDay0Sent after a successful Email 1 send).
+  let triangleWritable = false;
   if (process.env.KV_REST_API_URL) {
     try {
-      const PRESSURE_TO_TRIANGLE_CORNER = {
-        stress: 'stress',
-        sugar: 'sugar',
-        pipes: 'sodium',
-        all: 'stress',
-      };
-      const corner = PRESSURE_TO_TRIANGLE_CORNER[pressure] || null;
+      // The trigger slugs double as fulfillment corner keys (all 5 are valid
+      // corners since 2026-07-16); a Triangle-quiz lead's corner comes from
+      // the same pressure mapping.
+      const corner = trigger || null;
       const emailLower = email.trim().toLowerCase();
 
       // Respect a legacy unsubscribe: if drip:<email> is opted out, do not
@@ -616,18 +734,24 @@ export default async function handler(req, res) {
       if (legacyRecord && legacyRecord.unsubscribed) {
         console.log(`lead-magnet: skipped triangle dual-write for ${emailLower} (legacy unsubscribed)`);
       } else {
+        triangleWritable = true;
         const triKey = `bwbp:drip:${emailLower}`;
         const triExisting = await kv.get(triKey);
         const nowIso = new Date().toISOString();
         if (triExisting) {
-          // Enrich only. Never clobber an in-flight sequence's state/timer,
-          // and never demote a buyer back to a lead.
+          // Enrich without touching an in-flight sequence's state/timer, and
+          // never demote a buyer back to a lead. The corner/trigger fields
+          // take the LATEST quiz result when one was captured (a retake with a
+          // new loudest trigger must not deliver the old kit or personalize
+          // the drip to a stale trigger), else keep what we had.
           await kv.set(triKey, {
             ...triExisting,
             firstName: triExisting.firstName || (name || ''),
-            corner: triExisting.corner || corner,
-            riskScore: triExisting.riskScore || riskScore || '',
-            answers: triExisting.answers || answers || null,
+            corner: corner || triExisting.corner,
+            trigger: trigger || triExisting.trigger,
+            triggerName: triggerName || triExisting.triggerName,
+            riskScore: riskScore || triExisting.riskScore || '',
+            answers: answers || triExisting.answers || null,
             lastCaptureAt: nowIso,
           });
         } else {
@@ -635,6 +759,8 @@ export default async function handler(req, res) {
             email: emailLower,
             firstName: name || '',
             corner,
+            trigger,
+            triggerName,
             readiness: null,
             scores: null,
             riskScore: riskScore || '',
@@ -653,29 +779,75 @@ export default async function handler(req, res) {
   }
 
   // ── SEND (a failure here no longer loses the lead) ────────────────────
+  // 2026-07-16 Annie-v2: the immediate email is now Email 1 of the Hidden
+  // Triggers sequence (deliver the Blueprint + confirm hope, zero offer),
+  // with the Blueprint PDF attached per the sequence spec. Days 2-15 send
+  // from triangle-lead-cron.js. The old category/tier lead-magnet email
+  // (renderEmail above) is retired for quiz captures.
   let sent = false;
   let sendError = null;
-  if (!isDuplicate) {
+  // Never send to a tombstoned address. Both unsubscribe endpoints tombstone
+  // drip:<email>, so legacyRecord (already read above) is the authority. This
+  // endpoint is unauthenticated: without this gate a third party could POST
+  // an opted-out address and trigger a CAN-SPAM send.
+  const isUnsubscribed = Boolean(legacyRecord && legacyRecord.unsubscribed);
+  if (isUnsubscribed) {
+    console.log(`lead-magnet: skipped Email 1 for ${email.trim()} (unsubscribed)`);
+  }
+  if (!isDuplicate && !isUnsubscribed) {
     // RFC 8058 one-click unsubscribe via /api/unsubscribe (CAN-SPAM compliance).
-    // The token is HMAC-signed so addresses can't be forged. Token format
-    // matches signUnsubToken in api/unsubscribe.js. Computed BEFORE render so
-    // the in-body unsubscribe link (16 CFR 316.5) renders too.
+    // The token is HMAC-signed so addresses can't be forged. This endpoint
+    // tombstones BOTH rails (drip:* and bwbp:drip:*), so one click stops the
+    // whole sequence. Computed BEFORE render so the in-body unsubscribe link
+    // (16 CFR 316.5) renders too.
     const unsubToken = signUnsubTokenInline(email.trim().toLowerCase());
     const unsubUrl = `${SITE_URL}/api/unsubscribe?token=${unsubToken}`;
-    const html = renderEmail({ name, category, tier, tiers, unsubUrl });
+    const firstName = (name || '').trim().split(/\s+/)[0] || '';
+    const blueprintB64 = await getBlueprintAttachment();
+    const { html, text } = renderEmailOne({
+      firstName,
+      triggerName,
+      unsubUrl,
+      attached: Boolean(blueprintB64),
+    });
+    const subject = firstName
+      ? `Here's your result, ${firstName}`
+      : 'The trigger driving your numbers up';
     try {
       await getResend().emails.send({
         from: 'Joel Polley, RN <joel@bpquiz.com>',
         to: email.trim(),
         replyTo: 'braveworksrn@gmail.com',
-        subject: cat.subject_a,
+        subject,
         html,
+        text,
+        ...(blueprintB64
+          ? { attachments: [{ filename: 'The-Blood-Pressure-Blueprint.pdf', content: blueprintB64 }] }
+          : {}),
         headers: {
           'List-Unsubscribe': `<${unsubUrl}>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
         },
       });
       sent = true;
+      // Mark Email 1 as delivered on the triangle record so the lead cron's
+      // Day 0 safety net never double-sends it. Non-fatal on failure (the
+      // worst case is one duplicate delivery email tomorrow).
+      if (triangleWritable) {
+        try {
+          const triKey = `bwbp:drip:${email.trim().toLowerCase()}`;
+          const rec = await kv.get(triKey);
+          if (rec && !rec.leadDay0Sent) {
+            await kv.set(triKey, {
+              ...rec,
+              leadDay0Sent: true,
+              leadDay0SentAt: new Date().toISOString(),
+            });
+          }
+        } catch (flagErr) {
+          console.warn('lead-magnet: leadDay0Sent flag write failed (non-fatal)', flagErr.message);
+        }
+      }
     } catch (err) {
       sendError = err.message;
       console.error('lead-magnet: resend failed', err.message);

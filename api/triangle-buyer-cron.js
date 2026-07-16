@@ -132,8 +132,20 @@ function cornersIncluded(ctx) {
   return 1;
 }
 
-// Display name for a corner key.
-const CORNER_NAME = { stress: 'Stress', sugar: 'Sugar', sodium: 'Sodium' };
+// Display name for a corner key. sleep/stillness are the 2026-07-16 extra
+// quiz triggers, sellable at the corner tier (not Triangle corners).
+const CORNER_NAME = {
+  stress: 'Stress',
+  sugar: 'Sugar',
+  sodium: 'Sodium',
+  sleep: 'Midnight Drift',
+  stillness: 'Stillness',
+};
+
+// The extra triggers get their science from their own 10-day protocol PDFs;
+// the corner science deep-dives below are Triangle-specific, so those days
+// skip for these buyers (see scienceDay's shouldSend).
+const EXTRA_TRIGGERS = ['sleep', 'stillness'];
 
 // The buyer's corners in walk order (loudest first), from their quiz scores.
 // Falls back through ctx.corner to the convergence order when scores are absent.
@@ -147,6 +159,8 @@ const FIRST_MOVE = {
   stress: 'paced breathing, five minutes, breathe in slowly through your nose for a count of 4 and let the exhale out long and unhurried for a count of 6, once in the afternoon when cortisol tends to spike and once before bed; the long exhale is what pulls the brake on your stress nerve',
   sugar: 'a 20 minute walk outside within an hour of waking',
   sodium: 'drinking your body weight in pounds as ounces of water across the day, water only, starting with 16 ounces on waking',
+  sleep: 'anchoring one consistent wake time starting tomorrow morning, even on weekends, and getting morning light on your face within an hour of it; the fixed wake time is what resets the overnight dip your pressure has been missing',
+  stillness: 'a movement break every 60 to 90 minutes today, even 2 minutes of standing, calf raises, or a short hallway walk; the break is the signal your vessels have been waiting for',
 };
 
 // ─── DAY 1 — What to do first ─────────────────────────────────────────
@@ -439,8 +453,12 @@ function scienceDay(slotIndex) {
     return nxt ? CORNER_NAME[nxt] : null;
   };
   return {
-    // Only send when the buyer's tier includes this corner slot.
-    shouldSend: (ctx) => slotIndex < cornersIncluded(ctx),
+    // Only send when the buyer's tier includes this corner slot. Extra-trigger
+    // buyers (sleep/stillness) own no Triangle corner, and cornersFor() would
+    // resolve slot 0 to a corner they never bought, so science days skip them
+    // entirely; their protocol PDF carries its own science.
+    shouldSend: (ctx) =>
+      slotIndex < cornersIncluded(ctx) && !EXTRA_TRIGGERS.includes(ctx.corner),
     subject: (ctx) => {
       const c = cornerFor(ctx);
       return (c && SCIENCE[c]?.subject) || 'The science behind this corner';
@@ -511,7 +529,10 @@ Joel Polley, RN`;
 // after purchase, so the move has to be small enough to say yes to.
 
 function protocolDay(dayNum, spec) {
-  const cornerOf = (ctx) => cornersFor(ctx)[0] || 'sodium';
+  // Extra-trigger buyers (sleep/stillness) get their own actions; cornersFor
+  // only understands Triangle corners and would misroute them to sodium.
+  const cornerOf = (ctx) =>
+    EXTRA_TRIGGERS.includes(ctx.corner) ? ctx.corner : cornersFor(ctx)[0] || 'sodium';
   return {
     subject: spec.subject,
     corner: (ctx) => cornerOf(ctx),
@@ -555,6 +576,8 @@ const day3 = protocolDay(3, {
     stress: `Five minutes of paced breathing this afternoon. Breathe in through your nose for a count of 4, then let the breath out long and slow for a count of 6. The long exhale pulls the brake on your stress nerve, right when cortisol likes to spike.`,
     sugar: `Swap your breakfast for a whole plant one from your meal plan, like oats with fruit. No refined flour, no added sugar. A steady breakfast means a steady morning, and steady is what your pressure loves.`,
     sodium: `Drink 16 ounces of water the moment you get up, before anything else. Then keep your water bottle where your eyes land all day. Water is how your kidneys let go of the extra sodium.`,
+    sleep: `Pick your fixed wake time and set the alarm now, for every day including weekends. Then tonight, screens off by 9. Your body clock resets from the morning side, and a quiet evening is the running start.`,
+    stillness: `Set a timer for every 60 to 90 minutes today. Every time it goes off, stand up and move for 2 minutes: calf raises, a hallway walk, anything. The signal matters more than the sweat.`,
   },
   closer: `Small moves done daily beat big moves done once.`,
 });
@@ -566,6 +589,8 @@ const day4 = protocolDay(4, {
     stress: `Take a ten minute walk outside today, and leave your phone behind. Let your eyes rest on things far away. Movement plus quiet tells your body the emergency is over.`,
     sugar: `Take a 20 minute walk within an hour of waking. Your moving muscles pull sugar out of your blood on their own, no insulin needed.`,
     sodium: `Be a label detective today. Pick three packaged foods in your kitchen and read the sodium number on each. Change nothing yet. Just see where the salt hides.`,
+    sleep: `Get outside within an hour of waking for a 20 minute unhurried walk in daylight. Morning light is the strongest lever your body clock has. Tonight's sleep is built this morning.`,
+    stillness: `Take a 20 minute unhurried walk today, and pair a tall glass of water with every movement break. Flexible vessels need both the signal and the flow.`,
   },
   closer: `You are not white knuckling this. You are stacking small wins.`,
 });
@@ -577,6 +602,8 @@ const day6 = protocolDay(6, {
     stress: `Tonight, five minutes of paced breathing before bed. In through your nose for 4, out slow for 6. The long exhale deepens sleep, and deep sleep is when your pressure gets to rest too.`,
     sugar: `Do the breakfast swap again this morning, then notice how you feel two hours later. Steadier, less snacky? That is your blood sugar holding level instead of spiking.`,
     sodium: `Hit your full water number today: your body weight in pounds, in ounces of water, spread across the day. Start with 16 ounces on waking.`,
+    sleep: `Tonight, run your full wind-down: screens off by 9, a cool dark room, and five long-exhale breaths at lights-out. In for 4, hold 4, out for 6. That long exhale is the off switch.`,
+    stillness: `Keep your movement breaks going, and tonight end your shower with 30 seconds of cool water. Simple hydrotherapy. Your circulation does the rest.`,
   },
   closer: `Halfway done is not half a result. Each day is teaching your body a new normal.`,
 });
@@ -588,6 +615,8 @@ const day8 = protocolDay(8, {
     stress: `Take your ten minute walk today and pair it with slow breathing as you go: in through the nose, long easy exhale out. Two calming levers in one walk.`,
     sugar: `Morning walk again, 20 minutes inside the first hour. Yes, the same move. Boring on purpose. Boring is what working looks like.`,
     sodium: `One label check before one meal today. Look at two options and pick the one with less sodium. One choice, one meal. That is the whole job.`,
+    sleep: `Same wake time again this morning, even if last night ran short. Yes, the same move. Boring on purpose. The clock learns from repetition, not intensity.`,
+    stillness: `Movement break every 60 to 90 minutes, same as yesterday. Add calf raises during one TV show or phone call tonight. Boring is what working looks like.`,
   },
   closer: `Repetition is not a rut. It is how your body learns to trust the change.`,
 });
@@ -599,6 +628,8 @@ const day9 = protocolDay(9, {
     stress: `Paced breathing twice today. Five minutes in the afternoon, five minutes before bed. In for 4, out for 6, slow and easy.`,
     sugar: `One more breakfast swap, and your morning walk if you can fit it. Keep the streak alive one more day.`,
     sodium: `Water first thing, then count your glasses as you go and try to land on your number by supper.`,
+    sleep: `Run the whole evening ritual one more time: a light supper finished 2 to 3 hours before bed, screens off by 9, long-exhale breaths at lights-out.`,
+    stillness: `Your walk and your movement breaks, one more day. Keep the streak alive, and drink your water with each break.`,
   },
   extra: `One more thing: get your blood pressure cuff out tonight and set it where you will see it at breakfast. Tomorrow morning I am going to ask you for two numbers.`,
   closer: `Nine days of showing up. Look how far you have walked.`,

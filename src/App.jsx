@@ -23,6 +23,10 @@ import HomeSplit from './pages/HomeSplit';
 // only download the landing chunk; the rest stream on-demand when their
 // route is visited.
 const QuizPage = lazy(() => import('./pages/QuizPage'));
+// 2026-07-16 Annie-v2 funnel: the 5 Hidden Triggers quiz (variant B of the
+// homepage split routes here). Landing lives in pages/TriggerLanding.jsx and
+// renders via HomeSplit; the quiz + email gate + results live at /triggers.
+const TriggerQuizPage = lazy(() => import('./pages/TriggerQuizPage'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
 const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
@@ -151,14 +155,20 @@ function App() {
               /offer redirect. (CheckoutPage renders standalone — its own
               header/footer/social bar, no SiteLayout.) */}
           {/* 2026-07-16: '/' now renders HomeSplit (50/50 A/B). Variant 'a'
-              is CheckoutPage exactly as before; variant 'b' is the new
-              QuizFirstLanding. Vanity subdomains still bypass the split. */}
+              is CheckoutPage exactly as before; variant 'b' is the Annie-v2
+              TriggerLanding. Vanity subdomains still bypass the split. */}
           <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <HomeSplit />} />
           <Route path="/offer" element={<Navigate to="/" replace />} />
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
               traffic that wants the diagnostic before buying. */}
           <Route path="/quiz" element={<SiteLayout><QuizPage /></SiteLayout>} />
+
+          {/* /triggers — the 5 Hidden Triggers quiz (Annie-v2 funnel,
+              2026-07-16). Standalone (own mini header + compliance footer):
+              quiz -> email gate -> result -> /pay upsell. Variant B's landing
+              CTAs navigate here. */}
+          <Route path="/triggers" element={<TriggerQuizPage />} />
 
           {/* /start — quiz-first entry for social bio links (TikTok/FB/IG).
               2026-05-29: the homepage sales letter was leaking 98% of cold

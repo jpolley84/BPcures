@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T13:43:01.129Z",
+  "generatedAt": "2026-07-16T20:11:55.767Z",
   "modules": [
     {
       "file": "stress.pdf",
@@ -74,6 +74,54 @@
       "url": "/downloads/sodium-doctor-sheet.pdf"
     },
     {
+      "file": "sleep.pdf",
+      "corner": "sleep",
+      "kind": "protocol",
+      "title": "The Midnight Drift, 10-Day Reset",
+      "blurb": "Restore the overnight dip your blood pressure has been missing, one night at a time.",
+      "url": "/downloads/sleep.pdf"
+    },
+    {
+      "file": "sleep-formulary.pdf",
+      "corner": "sleep",
+      "kind": "formulary",
+      "title": "The Midnight Drift Herb Formulary",
+      "blurb": "Your evening wind-down herbs, each with dose, why it helps, and the cautions that matter.",
+      "url": "/downloads/sleep-formulary.pdf"
+    },
+    {
+      "file": "sleep-doctor-sheet.pdf",
+      "corner": "sleep",
+      "kind": "doctor-sheet",
+      "title": "Bring This To Your Doctor, The Midnight Drift",
+      "blurb": "A one page sheet to take to your next visit so you and your doctor read your numbers together.",
+      "url": "/downloads/sleep-doctor-sheet.pdf"
+    },
+    {
+      "file": "stillness.pdf",
+      "corner": "stillness",
+      "kind": "protocol",
+      "title": "The Stillness Trigger, 10-Day Reset",
+      "blurb": "Give your vessels back the movement signal that keeps them flexible and responsive.",
+      "url": "/downloads/stillness.pdf"
+    },
+    {
+      "file": "stillness-formulary.pdf",
+      "corner": "stillness",
+      "kind": "formulary",
+      "title": "The Stillness Trigger Herb Formulary",
+      "blurb": "Your circulation herbs, each with use, why it helps, and the cautions that matter.",
+      "url": "/downloads/stillness-formulary.pdf"
+    },
+    {
+      "file": "stillness-doctor-sheet.pdf",
+      "corner": "stillness",
+      "kind": "doctor-sheet",
+      "title": "Bring This To Your Doctor, The Stillness Trigger",
+      "blurb": "A one page sheet to take to your next visit so you and your doctor read your numbers together.",
+      "url": "/downloads/stillness-doctor-sheet.pdf"
+    },
+    {
       "file": "freedom-finale.pdf",
       "corner": null,
       "kind": "protocol",
@@ -81,30 +129,5 @@
       "blurb": "Graduate from daily policing to a body you trust, with your doctor right beside you.",
       "url": "/downloads/freedom-finale.pdf"
     }
-  ],
-  "tiers": {
-    "entry": {
-      "note": "the buyer's ONE quiz corner: protocol + Herb Formulary + Bring-This-To-Your-Doctor sheet",
-      "corners": [
-        "stress",
-        "sugar",
-        "sodium"
-      ]
-    },
-    "triangle": {
-      "note": "all three corner sets (protocol + formulary + doctor sheet) plus the Freedom Finale",
-      "files": [
-        "stress.pdf",
-        "stress-formulary.pdf",
-        "stress-doctor-sheet.pdf",
-        "sugar.pdf",
-        "sugar-formulary.pdf",
-        "sugar-doctor-sheet.pdf",
-        "sodium.pdf",
-        "sodium-formulary.pdf",
-        "sodium-doctor-sheet.pdf",
-        "freedom-finale.pdf"
-      ]
-    }
-  }
+  ]
 }

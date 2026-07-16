@@ -75,6 +75,13 @@ const TRIANGLE_CORNERS = [
   { key: 'sodium', label: 'Sodium' },
 ];
 
+// 2026-07-16 Annie-v2: the two extra quiz triggers, each its own 3-piece set
+// (not part of the Triangle; sold at the $17 corner tier).
+const EXTRA_TRIGGERS_LIST = [
+  { key: 'sleep', label: 'The Midnight Drift' },
+  { key: 'stillness', label: 'The Stillness Trigger' },
+];
+
 // Build the "Your Triangle Kit" groups from the manifest. Same {title, desc,
 // files:[{name, desc, href}]} shape the legacy groups use, except each file
 // carries an explicit href (bundle ZIPs live under /downloads/bundles/).
@@ -99,6 +106,26 @@ function buildTriangleGroups(manifest) {
       },
     ],
   }));
+  // Extra-trigger sets render only when the manifest actually carries their
+  // modules (so a stale manifest.json never shows an empty section).
+  for (const { key, label } of EXTRA_TRIGGERS_LIST) {
+    const mods = manifest.modules.filter((m) => m.corner === key);
+    if (mods.length === 0) continue;
+    built.push({
+      title: label,
+      desc: `Your ${label.replace('The ', '')} trigger set: the 10-day protocol, the herb formulary, and the bring-to-your-doctor sheet.`,
+      files: [
+        ...mods.map(rowFor),
+        {
+          name: `${label}, one file`,
+          desc: 'The whole trigger set plus the kit bonuses, zipped into one download.',
+          href: `/downloads/bundles/bundle-corner-${key}.zip`,
+          file: `bundle-corner-${key}.zip`,
+        },
+      ],
+    });
+  }
+
   const finale = manifest.modules.find((m) => m.file === 'freedom-finale.pdf');
   built.push({
     title: 'The Complete Triangle',

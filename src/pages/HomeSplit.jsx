@@ -1,6 +1,7 @@
 // HomeSplit — 50/50 sticky A/B split for the homepage ('/').
 //   Variant 'a' = CheckoutPage (the current sales letter, unchanged).
-//   Variant 'b' = QuizFirstLanding (quiz-first lead-magnet landing).
+//   Variant 'b' = TriggerLanding (Annie-v2 quiz opt-in landing, 2026-07-16;
+//                 previously QuizFirstLanding).
 // Assignment is sticky per device via localStorage('bpq_ab_home'). Every
 // render re-registers the PostHog super property 'ab_home_variant' so ALL
 // events on the device (both fresh assignments and returning visitors)
@@ -10,7 +11,7 @@
 // no tracking crash.
 import { useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
-import QuizFirstLanding from './QuizFirstLanding';
+import TriggerLanding from './TriggerLanding';
 import { track, registerSuperProps } from '../utils/analytics.js';
 
 const STORAGE_KEY = 'bpq_ab_home';
@@ -73,5 +74,5 @@ export default function HomeSplit() {
   // still stamp the super property before any other event fires.
   registerSuperProps({ ab_home_variant: variant });
 
-  return variant === 'b' ? <QuizFirstLanding /> : <CheckoutPage />;
+  return variant === 'b' ? <TriggerLanding /> : <CheckoutPage />;
 }
