@@ -29,15 +29,19 @@ import { track } from '../utils/analytics';
 // ---- scroll-reveal ---------------------------------------------------------
 function useReveal() {
   useEffect(() => {
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return undefined;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof window === 'undefined') return undefined;
     const els = Array.from(document.querySelectorAll('.lbn [data-rv]'));
-    if (reduced) {
-      els.forEach((el) => el.classList.add('rv-in'));
+    const revealAll = () => els.forEach((el) => el.classList.add('rv-in'));
+    // FAIL-OPEN: content visibility must never depend on the observer
+    // delivering callbacks (some webviews throttle or drop them).
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      revealAll();
       return undefined;
     }
+    let fired = false;
     const io = new IntersectionObserver(
       (entries) => {
+        fired = true;
         entries.forEach((e) => {
           if (e.isIntersecting) {
             e.target.classList.add('rv-in');
@@ -48,7 +52,13 @@ function useReveal() {
       { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const fallback = setTimeout(() => {
+      if (!fired) revealAll();
+    }, 1800);
+    return () => {
+      clearTimeout(fallback);
+      io.disconnect();
+    };
   }, []);
 }
 
