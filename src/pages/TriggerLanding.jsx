@@ -190,11 +190,19 @@ export default function TriggerLanding() {
         .bpq-cta { transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
         .bpq-cta:hover { background: var(--clay-hover, #A44B28); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(184, 90, 54, 0.38); }
         .bpq-cta:focus-visible { outline: 3px solid var(--sage-deep, #2E3A30); outline-offset: 3px; }
+        .bpq-hero-row { display: flex; gap: 0.9rem; align-items: stretch; }
+        .bpq-hero-row .bpq-hero-steps { flex: 1 1 52%; min-width: 0; }
         .bpq-hero-poster {
-          display: block; width: 100%; border: none; padding: 0; background: none;
-          cursor: pointer; border-radius: 14px; overflow: hidden;
-          box-shadow: 0 26px 55px rgba(18, 17, 16, 0.24);
+          display: block; flex: 0 1 44%; align-self: flex-start;
+          border: none; padding: 0; background: none;
+          cursor: pointer; border-radius: 12px; overflow: hidden;
+          box-shadow: 0 18px 40px rgba(18, 17, 16, 0.22);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        @media (max-width: 520px) {
+          .bpq-hero-row { flex-direction: column; align-items: center; }
+          .bpq-hero-poster { flex: none; width: min(72%, 280px); }
+          .bpq-hero-row .bpq-hero-steps { width: 100%; }
         }
         .bpq-hero-poster:hover { transform: translateY(-3px); box-shadow: 0 32px 65px rgba(18, 17, 16, 0.3); }
         .bpq-hero-poster:focus-visible { outline: 3px solid var(--clay, #B85A36); outline-offset: 3px; }
@@ -235,26 +243,74 @@ export default function TriggerLanding() {
             </em>
           </h1>
 
-          {/* Hero poster (owner's supplied graphic): full width, clickable. */}
-          <button
-            type="button"
-            className="bpq-hero-poster"
-            onClick={() => startQuiz('hero_poster')}
-            aria-label="5 Hidden Triggers Behind the Rising Numbers. Take the quiz. By Joel Polley, RN."
-            style={{ margin: '0.2rem 0 1.2rem' }}
-          >
-            <picture>
-              <source srcSet="/images/hero-5-triggers.webp" type="image/webp" />
-              <img
-                src="/images/hero-5-triggers.jpg"
-                alt="5 Hidden Triggers Behind the Rising Numbers. What may be quietly pushing your blood pressure up. Take the quiz. By Joel Polley, RN, 20 years in ICU and Emergency Medicine."
-                width="1108"
-                height="1419"
-                fetchPriority="high"
-                style={{ display: 'block', width: '100%', height: 'auto' }}
-              />
-            </picture>
-          </button>
+          {/* Hero row: poster (smaller, clickable) beside the 1-2-3 how-it-
+              works steps (owner's edit); stacks on narrow screens. */}
+          <div className="bpq-hero-row" style={{ margin: '0.2rem 0 1.2rem' }}>
+            <button
+              type="button"
+              className="bpq-hero-poster"
+              onClick={() => startQuiz('hero_poster')}
+              aria-label="5 Hidden Triggers Behind the Rising Numbers. Take the quiz. By Joel Polley, RN."
+            >
+              <picture>
+                <source srcSet="/images/hero-5-triggers.webp" type="image/webp" />
+                <img
+                  src="/images/hero-5-triggers.jpg"
+                  alt="5 Hidden Triggers Behind the Rising Numbers. What may be quietly pushing your blood pressure up. Take the quiz. By Joel Polley, RN, 20 years in ICU and Emergency Medicine."
+                  width="1108"
+                  height="1419"
+                  fetchPriority="high"
+                  style={{ display: 'block', width: '100%', height: 'auto' }}
+                />
+              </picture>
+            </button>
+            <div className="bpq-hero-steps">
+              <div style={{ ...labelStyle, marginBottom: '0.55rem' }}>How it works</div>
+              {HOW_IT_WORKS.map((step) => (
+                <div
+                  key={step.n}
+                  style={{
+                    display: 'flex',
+                    gap: '0.7rem',
+                    alignItems: 'flex-start',
+                    background: '#fff',
+                    border: '1px solid var(--line, #D8CFBD)',
+                    borderRadius: 10,
+                    padding: '0.7rem 0.8rem',
+                    marginBottom: '0.55rem',
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      flexShrink: 0,
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      background: 'var(--clay, #B85A36)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 1,
+                    }}
+                  >
+                    {step.n}
+                  </span>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.85rem', lineHeight: 1.3, marginBottom: 2 }}>
+                      {step.title}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', lineHeight: 1.5, color: 'var(--ink-soft, #2B2824)' }}>
+                      {step.body}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Quiz CTA above the trust band (co-designer mandate). */}
           <CtaBlock position="top" onStart={startQuiz} />
@@ -311,52 +367,6 @@ export default function TriggerLanding() {
               </span>
             </div>
           ))}
-        </div>
-
-        {/* ─── How it works: 1-2-3 ──────────────────────────────── */}
-        <div data-bpqrv style={{ marginBottom: '1.75rem' }}>
-          <div style={{ ...labelStyle, textAlign: 'center' }}>How it works</div>
-          <div style={{ display: 'grid', gap: '0.7rem' }}>
-            {HOW_IT_WORKS.map((step) => (
-              <div
-                key={step.n}
-                style={{
-                  display: 'flex',
-                  gap: '0.9rem',
-                  alignItems: 'flex-start',
-                  background: '#fff',
-                  border: '1px solid var(--line, #D8CFBD)',
-                  borderRadius: 12,
-                  padding: '0.95rem 1.05rem',
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    flexShrink: 0,
-                    width: 30,
-                    height: 30,
-                    borderRadius: '50%',
-                    background: 'var(--clay, #B85A36)',
-                    color: '#fff',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {step.n}
-                </span>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 2 }}>{step.title}</div>
-                  <div style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)' }}>
-                    {step.body}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* ─── Result preview + benefit bullets ─────────────────── */}
