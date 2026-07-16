@@ -23,6 +23,13 @@ const FIT_CALL_URL =
     (import.meta.env.VITE_CALENDLY_FIT_CALL_URL || import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL)) ||
   'https://calendly.com/braveworksrn/60min';
 
+// Welcome video shown on the accepted-track thank-you screen (the landing
+// page promises: application -> welcome video -> full cost -> decide -> book).
+// Env seam first, else the live Be There webinar.
+const WELCOME_VIDEO_URL =
+  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_COACHING_VSL_URL) ||
+  'https://www.youtube-nocookie.com/embed/UdJvWCvUKww';
+
 // ---- Option sets (visible copy: no dashes, no prices) ----
 const AGE_OPTIONS = ['Under 45', '45 to 54', '55 to 64', '65 to 74', '75 plus'];
 const READING_OPTIONS = ['Under 130/80', '130s to 140s', '150s to 160s', '170 plus', 'I do not know'];
@@ -391,9 +398,57 @@ export default function BeThereApplyPage() {
               <h1 style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 'clamp(1.7rem, 5vw, 2.4rem)', lineHeight: 1.2, margin: '0 0 1rem' }}>
                 Your application is in.
               </h1>
-              <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 2rem' }}>
-                Joel reads every word. Next step: book your fit call.
+              <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.75rem' }}>
+                Joel reads every word. Three steps left: watch his short welcome video, see the
+                investment, and book your call.
               </p>
+
+              {/* Step 1: the welcome video (the landing page promises it here). */}
+              <div
+                style={{
+                  position: 'relative',
+                  paddingTop: '56.25%',
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                  border: '1px solid var(--line, #D8CFBD)',
+                  background: '#000',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <iframe
+                  src={WELCOME_VIDEO_URL}
+                  title="A welcome from Joel Polley, RN"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                />
+              </div>
+
+              {/* Step 2: the investment, stated plainly before any call. */}
+              <div
+                style={{
+                  maxWidth: 420,
+                  margin: '0 auto 1.75rem',
+                  background: '#FFFFFF',
+                  border: '1px solid var(--line, #D8CFBD)',
+                  borderRadius: 12,
+                  padding: '1.25rem 1.4rem',
+                }}
+              >
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
+                  The Investment
+                </div>
+                <div style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
+                  $1,997
+                </div>
+                <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
+                  For the full 90 day program. Payment plans are available, and you can settle the
+                  details on your call. Nothing is charged today, and the call itself is free.
+                </p>
+              </div>
+
+              {/* Step 3: book. */}
               <a
                 href={FIT_CALL_URL}
                 target="_blank"
