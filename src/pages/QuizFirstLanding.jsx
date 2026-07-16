@@ -150,7 +150,7 @@ export default function QuizFirstLanding() {
           </picture>
           <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
             <strong style={{ color: 'var(--ink, #121110)' }}>Joel Polley, RN.</strong>{' '}
-            20 years in the ICU and ER. Over 400,000 people follow his health teaching on
+            20 years in the ICU and ER. Over 550,000 people follow his health teaching on
             Facebook and TikTok.
           </p>
         </div>

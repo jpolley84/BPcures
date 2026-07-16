@@ -10,7 +10,7 @@
 //   footer, sticky mobile CTA bar.
 // Owner mandates honored: the poster stays large at the top; a quiz CTA
 // stays above the trust band; ~3rd-grade copy; ZERO em/en dashes; no
-// invented proof (20 yrs RN and 400,000+ followers are verified). One-job
+// invented proof (20 yrs RN; 550,000+ followers per Joel, 2026-07-16). One-job
 // page: every action routes to /triggers.
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -330,7 +330,7 @@ export default function TriggerLanding() {
         >
           {[
             { num: '20 Yrs', label: 'ICU & ER Nurse' },
-            { num: '400,000+', label: 'Follow His Teaching' },
+            { num: '550,000+', label: 'Follow His Teaching' },
             { num: 'Free', label: '90-Second Check' },
           ].map((chip, i) => (
             <div

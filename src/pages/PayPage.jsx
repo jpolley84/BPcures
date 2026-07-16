@@ -138,6 +138,25 @@ const TEA_SUMMARY = {
   'tea-120': { title: 'Steady, The Daily Ritual (90 days)', price: '$120', body: 'Three 100g pouches, roughly 150 to 180 cups. Caffeine-free. Ships free.' },
 };
 
+// The $17 kit's value stack, itemized at the point of payment (Hormozi stack:
+// every deliverable named with its own value, totaled against the price).
+// Items mirror api/_kit-manifest.js corner tier EXACTLY (11 downloads).
+// Values are honest solo-price anchors, not invented retail claims.
+const KIT_STACK = [
+  { name: 'Your 10-Day Reset Plan, built for your trigger', value: 47 },
+  { name: 'Your Herb Guide for that trigger', value: 19 },
+  { name: 'Your Bring-To-Your-Doctor Sheet', value: 9 },
+  { name: 'The Master Blood Pressure Document', value: 29 },
+  { name: 'Top 10 Herbs Deep Dive', value: 17 },
+  { name: 'Cook For Life Cookbook', value: 27 },
+  { name: 'White Coat Syndrome Guide', value: 9 },
+  { name: 'BP FAQ', value: 7 },
+  { name: 'Overmedicated Boomers (the book)', value: 17 },
+  { name: 'Your BP Tracker', value: 9 },
+  { name: 'The Triangle Meal Plan', value: 19 },
+];
+const KIT_STACK_TOTAL = KIT_STACK.reduce((sum, item) => sum + item.value, 0);
+
 const WHATS_INSIDE = [
   {
     title: 'Your Trigger, Actually Addressed',
@@ -420,7 +439,63 @@ export default function PayPage() {
             <span>{isTea ? tea.title : kit.title}</span>
             <span>{isTea ? tea.price : kit.price}</span>
           </div>
-          <p style={{ margin: '0 0 0.45rem' }}>{isTea ? tea.body : kit.body}</p>
+          {isKit ? (
+            <>
+              <ul style={{ listStyle: 'none', margin: '0 0 0.6rem', padding: 0 }}>
+                {KIT_STACK.map((item) => (
+                  <li
+                    key={item.name}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: '0.8rem',
+                      alignItems: 'baseline',
+                      padding: '0.32rem 0',
+                      borderBottom: '1px dashed var(--line, #E5DFD2)',
+                      fontSize: '0.86rem',
+                    }}
+                  >
+                    <span>{item.name}</span>
+                    <span style={{ whiteSpace: 'nowrap', color: 'var(--sage-deep, #2E3A30)', fontWeight: 600 }}>
+                      ${item.value} value
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: '0.8rem',
+                  fontWeight: 700,
+                  color: 'var(--ink, #121110)',
+                  fontSize: '0.92rem',
+                  marginBottom: '0.2rem',
+                }}
+              >
+                <span>Total value</span>
+                <span style={{ textDecoration: 'line-through', textDecorationColor: 'var(--clay, #B85A36)' }}>
+                  ${KIT_STACK_TOTAL}
+                </span>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: '0.8rem',
+                  fontWeight: 800,
+                  color: 'var(--clay, #B85A36)',
+                  fontSize: '1.02rem',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span>You pay today</span>
+                <span>$17</span>
+              </div>
+            </>
+          ) : (
+            <p style={{ margin: '0 0 0.45rem' }}>{isTea ? tea.body : kit.body}</p>
+          )}
           {!isTea && (
             <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--dark-gray, #555)' }}>
               One payment. Not a subscription. Nothing renews. Your kit opens on the next

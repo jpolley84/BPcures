@@ -190,7 +190,7 @@ export default function AppWaitlistPage() {
           />
           <p className="wl-proof-text">
             Built by <strong>Joel Polley, RN</strong>, 20 years in the ICU.
-            More than 400,000 people follow his plain-language blood pressure
+            More than 550,000 people follow his plain-language blood pressure
             teaching on TikTok and Facebook.
           </p>
         </section>
