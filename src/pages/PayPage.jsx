@@ -125,11 +125,11 @@ function orderSummary(tier, corner) {
     };
   }
   const meta = TRIGGER_META[corner];
-  const forTrigger = meta ? `matched to your ${meta.label} trigger` : 'matched to your loudest trigger';
+  const forTrigger = meta ? `all made for your ${meta.label} trigger` : 'all made for your loudest trigger';
   return {
     title: meta ? `Your ${meta.label} Reset Kit` : 'The 10-Day Reset Kit',
     price: '$17',
-    body: `Your step-by-step 10-day reset protocol, herb formulary, and bring-this-to-your-doctor sheet, ${forTrigger}, plus the full library: the Master Blood Pressure Document, Top 10 Herbs Deep Dive, Cook For Life Cookbook, White Coat Syndrome Guide, BP FAQ, the Overmedicated Boomers book, your BP Tracker, and the Triangle Meal Plan. 11 downloads in all.`,
+    body: `Your simple 10-day plan, your herb guide, and your bring-to-your-doctor sheet, ${forTrigger}. Plus the full library: the Master Blood Pressure Document, Top 10 Herbs Deep Dive, Cook For Life Cookbook, White Coat Syndrome Guide, BP FAQ, the Overmedicated Boomers book, your BP Tracker, and the Triangle Meal Plan. 11 downloads in all.`,
   };
 }
 
@@ -141,30 +141,30 @@ const TEA_SUMMARY = {
 const WHATS_INSIDE = [
   {
     title: 'Your Trigger, Actually Addressed',
-    text: 'The exact plan built for your #1 driver, not a generic wellness checklist everyone gets.',
+    text: 'A plan built for your #1 cause. Not a one-size list everyone gets.',
   },
   {
     title: 'Become The Person Who Started',
-    text: 'Most people mean to. This is built to get you actually doing it. Today, not "someday."',
+    text: 'Most people mean to start. This helps you really do it. Today, not someday.',
   },
   {
     title: '10 Minutes To Your First Step',
-    text: 'No research, no shopping list of 20 things. Open it, and you will know exactly where to start.',
+    text: 'No homework. No list of 20 things to buy. Open it and you will know your first step.',
   },
   {
     title: 'Built By A Nurse, Not An Influencer',
-    text: '20 years of ICU and ER medicine went into deciding what actually belongs in here.',
+    text: '20 years of ICU and ER nursing decided what belongs in here.',
   },
 ];
 
 const FAQ = [
   {
     q: 'Is this a subscription?',
-    a: 'No. One-time $17 payment. It is yours to keep, no recurring charge.',
+    a: 'No. You pay $17 one time. It is yours to keep. Nothing renews.',
   },
   {
     q: 'What do I get right away?',
-    a: 'Instant digital access the moment you check out. Your downloads open on the next screen and a copy lands in your email within about a minute. Nothing shipped, nothing to wait for.',
+    a: 'Everything, right away. Your files open on the next screen, and a copy goes to your email in about a minute. Nothing ships. No waiting.',
   },
   {
     q: 'What if it is not the right fit?',
@@ -357,8 +357,8 @@ export default function PayPage() {
                 margin: '0 auto 0.6rem',
               }}
             >
-              Get the exact next step for your trigger so you can start today. No 40-page
-              course, no subscription to forget about, no more guessing.
+              Get the exact next step for your trigger. Start today. No big course. No
+              subscription. No more guessing.
             </p>
             <p
               style={{
@@ -369,8 +369,7 @@ export default function PayPage() {
                 margin: '0 auto',
               }}
             >
-              Because $17 was never about the price to me. It is about making sure the price is
-              never the reason someone does not start.
+              Why $17? Because I never want price to be the reason someone does not start.
             </p>
           </div>
         ) : (
@@ -424,8 +423,8 @@ export default function PayPage() {
           <p style={{ margin: '0 0 0.45rem' }}>{isTea ? tea.body : kit.body}</p>
           {!isTea && (
             <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--dark-gray, #555)' }}>
-              One payment. Not a subscription. Nothing renews. Your kit opens on the next screen
-              and a copy lands in your email within about a minute.
+              One payment. Not a subscription. Nothing renews. Your kit opens on the next
+              screen, and a copy goes to your email in about a minute.
             </p>
           )}
           {isTea && (
@@ -610,9 +609,9 @@ export default function PayPage() {
                   Joel Polley, RN
                 </div>
                 <p style={{ fontSize: '0.87rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
-                  ICU &amp; Emergency Medicine, 20 years. I built this because &ldquo;eat better,
-                  move more, stress less&rdquo; was never specific enough to actually help
-                  anyone. This kit picks up exactly where the free quiz leaves off.
+                  ICU &amp; ER nurse, 20 years. I built this because &ldquo;eat better, move
+                  more, stress less&rdquo; never told anyone how. This kit starts where the
+                  free quiz ends.
                 </p>
               </div>
             </div>

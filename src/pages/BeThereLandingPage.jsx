@@ -712,9 +712,9 @@ export default function BeThereLandingPage() {
             <h2>Meet Joel Polley, RN</h2>
             <div className="role">20 Years a Nurse · ICU &amp; Emergency Medicine · Works Alongside Your Doctor</div>
             <p>
-              Joel spent twenty years as a nurse, most of them in the ICU and the emergency room.
-              He has seen what happens when blood pressure goes unchecked for too long, and he has
-              seen women told what to change without ever being shown how.
+              Joel spent 20 years as a nurse, most of them in the ICU and the ER. He has seen
+              what happens when high blood pressure goes on too long. And he has seen women
+              told what to change, but never shown how.
             </p>
             <p>So he built a way to help. One that fits your real life, not a perfect one.</p>
             <p>

@@ -87,9 +87,9 @@ const labelStyle = {
 };
 
 const WALK_AWAY = [
-  'Your #1 hidden blood pressure trigger, named and explained. Not a generic list.',
-  '3 things to start today: an herb, a food swap, and one lifestyle shift, specific to your result.',
-  'The full Blood Pressure Blueprint PDF: all 5 triggers explained in plain English, sent to your inbox.',
+  'The #1 hidden thing pushing your pressure up. Named in plain words.',
+  '3 things to start today: an herb, a food swap, and one habit. All picked for you.',
+  'The free Blood Pressure Blueprint: all 5 triggers in plain words, sent to your email.',
 ];
 
 function Check() {
@@ -143,16 +143,60 @@ export default function TriggerLanding() {
           </em>
         </h1>
         <p style={subStyle}>
-          Take the free quiz and finally see which hidden trigger is driving your blood
-          pressure up. No fad diet, no supplement gamble, and no appointment that ends
-          with more questions than answers.
+          Take the free quiz and see what is really pushing your blood pressure up. No fad
+          diets. No guessing at pills. No rushed visit that leaves you more confused.
         </p>
+
+        {/* Big hero Blueprint cover (Joel, 2026-07-16: "large and in their
+            face on landing"). Gentle float, still under the reduced-motion
+            kill switch via the keyframe media query below. */}
+        <style>{`
+          @keyframes bpqFloat {
+            0%, 100% { transform: rotate(-2.5deg) translateY(0); }
+            50% { transform: rotate(-2.5deg) translateY(-9px); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .bpq-hero-cover { animation: none !important; }
+          }
+        `}</style>
+        <div style={{ textAlign: 'center', margin: '0.4rem 0 1.4rem' }}>
+          <picture>
+            <source srcSet="/images/blueprint-cover.webp" type="image/webp" />
+            <img
+              className="bpq-hero-cover"
+              src="/images/blueprint-cover.png"
+              alt="The Blood Pressure Blueprint, your free guide by Joel Polley, RN"
+              width="300"
+              height="388"
+              fetchpriority="high"
+              style={{
+                width: 'min(74%, 300px)',
+                height: 'auto',
+                borderRadius: 10,
+                border: '1px solid var(--line, #D8CFBD)',
+                boxShadow: '0 26px 55px rgba(18, 17, 16, 0.28)',
+                transform: 'rotate(-2.5deg)',
+                animation: 'bpqFloat 7s ease-in-out infinite',
+              }}
+            />
+          </picture>
+          <p
+            style={{
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              color: 'var(--sage-deep, #2E3A30)',
+              margin: '0.9rem 0 0',
+            }}
+          >
+            Your free guide. You get it when you finish the quiz.
+          </p>
+        </div>
 
         {/* Quiz CTA above the trust band (Annie's edit, 2026-07-16) */}
         <button type="button" style={ctaStyle} onClick={() => startQuiz('top')}>
           Take the Free 90-Second Quiz <ArrowRight size={18} />
         </button>
-        <p style={fineStyle}>Real, personal answer. Not a generic list.</p>
+        <p style={fineStyle}>A real answer about you. Not a list made for everyone.</p>
 
         {/* ─── Trust band ───────────────────────────────────────── */}
         <div
@@ -207,58 +251,35 @@ export default function TriggerLanding() {
           ))}
         </div>
 
-        {/* ─── What you'll walk away with + Blueprint cover ─────── */}
+        {/* ─── What you'll walk away with (cover now lives in the hero) ── */}
         <div
           style={{
-            display: 'flex',
-            gap: '1.1rem',
-            alignItems: 'flex-start',
             background: 'var(--paper-warm, #EFE8DB)',
             borderRadius: 12,
             padding: '1.15rem 1.15rem',
             marginBottom: '1.5rem',
           }}
         >
-          <picture style={{ flexShrink: 0 }}>
-            <source srcSet="/images/blueprint-cover.webp" type="image/webp" />
-            <img
-              src="/images/blueprint-cover.png"
-              alt="The Blood Pressure Blueprint, free guide by Joel Polley, RN"
-              width="104"
-              height="135"
-              loading="lazy"
-              style={{
-                width: 104,
-                height: 'auto',
-                borderRadius: 6,
-                border: '1px solid var(--line, #D8CFBD)',
-                boxShadow: '6px 8px 18px rgba(18, 17, 16, 0.18)',
-                transform: 'rotate(-2deg)',
-              }}
-            />
-          </picture>
-          <div>
-            <div style={labelStyle}>What you&rsquo;ll walk away with</div>
-            <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {WALK_AWAY.map((item) => (
-                <li
-                  key={item}
-                  style={{
-                    display: 'flex',
-                    gap: '0.6rem',
-                    alignItems: 'flex-start',
-                    fontSize: '0.9rem',
-                    lineHeight: 1.55,
-                    color: 'var(--ink-soft, #2B2824)',
-                    marginBottom: '0.6rem',
-                  }}
-                >
-                  <Check />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div style={labelStyle}>What you&rsquo;ll walk away with</div>
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {WALK_AWAY.map((item) => (
+              <li
+                key={item}
+                style={{
+                  display: 'flex',
+                  gap: '0.6rem',
+                  alignItems: 'flex-start',
+                  fontSize: '0.92rem',
+                  lineHeight: 1.55,
+                  color: 'var(--ink-soft, #2B2824)',
+                  marginBottom: '0.6rem',
+                }}
+              >
+                <Check />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* ─── Agitation ────────────────────────────────────────── */}
@@ -274,9 +295,9 @@ export default function TriggerLanding() {
             marginBottom: '1.6rem',
           }}
         >
-          You&rsquo;re taking your medication. You&rsquo;re trying to eat better. And the
-          numbers still climb. That&rsquo;s not a willpower problem. It&rsquo;s a signal
-          nobody&rsquo;s taught you how to read yet.
+          You take your medicine. You try to eat better. And the numbers still climb.
+          That is not about willpower. It is a signal no one has taught you how to read
+          yet.
         </div>
 
         <button type="button" style={ctaStyle} onClick={() => startQuiz('bottom')}>
@@ -321,11 +342,10 @@ export default function TriggerLanding() {
             </div>
           </div>
           <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
-            Joel spent two decades on the front lines of ICU and emergency medicine, watching
-            the same story repeat itself: patients doing everything right and still watching
-            their numbers climb, with no one showing them where to actually look. BraveWorks RN
-            exists to close that gap. Plain-language, nurse-built education for the everyday
-            patterns quietly driving blood pressure up.
+            Joel spent 20 years as a nurse in the ICU and the ER. He saw the same story over
+            and over: people doing everything right, and their numbers still climbing. No one
+            showed them where to look. He built BraveWorks RN to fix that. Plain words. Real
+            help. Made by a nurse.
           </p>
         </div>
 

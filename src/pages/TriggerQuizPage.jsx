@@ -16,42 +16,42 @@ export const TRIGGERS = {
   stress: {
     name: 'The Stress Spike',
     slug: 'stress',
-    copy: 'When your body perceives pressure (deadlines, arguments, just never getting a quiet moment) it releases cortisol and adrenaline on repeat. Those hormones are supposed to spike and settle. But when the stress never fully lets up, your vessels stay primed and tightened longer than they are built to, and your reading climbs with it. This is not in your head. It is in your nervous system.',
-    herb: 'Ashwagandha, a traditional adaptogen many people use to support the body’s stress response.',
-    food: 'Cut the caffeine (swap to chamomile or hibiscus tea), and add magnesium-rich foods like pumpkin seeds and leafy greens.',
-    lifestyle: 'Build one deliberate down-shift into your day. Even 3 slow breaths before opening your inbox.',
+    copy: 'When your body feels stress, it makes stress chemicals like cortisol. A fight, a deadline, no quiet time: it all counts. Those chemicals should rise and then settle. But when the stress never stops, your blood vessels stay squeezed too long. So your number climbs. This is not in your head. It is your body’s alarm stuck in the on position.',
+    herb: 'Ashwagandha. An herb many people use to help their body handle stress.',
+    food: 'Cut the caffeine. Swap it for chamomile or hibiscus tea. Add foods rich in magnesium, like pumpkin seeds and leafy greens.',
+    lifestyle: 'Build one calm moment into your day. Even 3 slow breaths before you check your phone.',
   },
   sugar: {
     name: 'The Sugar Surge',
     slug: 'sugar',
-    copy: 'Every time blood sugar spikes and crashes, your body releases stress hormones to bring it back into balance. The same hormones involved in raising blood pressure. Do that several times a day, most days, and your system never gets a real break. It is not about willpower or “being good.” It is about how often your blood sugar is swinging without you realizing it.',
-    herb: 'Cinnamon, commonly used to support a healthy blood sugar response when added to meals.',
-    food: 'Pair carbs with protein or fiber instead of eating them alone. It softens the swing.',
-    lifestyle: 'A short walk after eating, even 10 minutes, measurably softens a blood sugar spike.',
+    copy: 'Every time your blood sugar spikes and crashes, your body sends out stress chemicals to fix it. Those are the same chemicals that push blood pressure up. Do that many times a day, every day, and your body never gets a break. This is not about willpower or “being good.” It is about how often your blood sugar swings without you knowing it.',
+    herb: 'Cinnamon. Many people add it to meals to help keep blood sugar steady.',
+    food: 'Do not eat carbs alone. Pair them with protein or fiber. It softens the swing.',
+    lifestyle: 'Take a short walk after you eat. Even 10 minutes softens a blood sugar spike.',
   },
   sodium: {
     name: 'The Sodium Trap',
     slug: 'sodium',
-    copy: 'It is rarely the salt shaker. It is the sodium hiding in bread, sauces, canned goods, and “healthy” frozen meals, paired with too little potassium from fresh produce to balance it out. That imbalance makes your body hold onto extra fluid, which means your heart is pushing more volume through the same space. More volume, same pipes. The pressure has to go somewhere.',
-    herb: 'Hibiscus, traditionally used to support healthy fluid balance and circulation.',
-    food: 'Add one potassium-rich food most days: banana, sweet potato, spinach, or beans.',
-    lifestyle: 'For one week, just read sodium on labels the way you would read sugar. Notice before you change.',
+    copy: 'It is rarely the salt shaker. Most salt hides in bread, sauces, canned food, and “healthy” frozen meals. And most of us do not eat enough fresh food with potassium to balance it out. So your body holds on to extra water. More water means your heart pushes more through the same pipes. The pressure has to go somewhere.',
+    herb: 'Hibiscus. An herb tea long used to support healthy water balance and blood flow.',
+    food: 'Eat one food rich in potassium most days: a banana, a sweet potato, spinach, or beans.',
+    lifestyle: 'For one week, read the salt number on food labels the way you would read sugar. Just notice.',
   },
   sleep: {
     name: 'The Midnight Drift',
     slug: 'sleep',
-    copy: 'Blood pressure is supposed to dip at night. It is called nocturnal dipping, and it is when your cardiovascular system gets its one real chance to rest. Fragmented sleep, waking at 2-3am, or sleep that never gets deep enough means that dip never happens. Your system runs the whole night like it is still daytime, and the numbers never get their recovery window.',
-    herb: 'Chamomile or passionflower, traditional herbs many people use to wind down before bed.',
-    food: 'Avoid heavy or sugary meals within 2-3 hours of bedtime. They work against the nightly dip.',
-    lifestyle: 'Anchor one consistent wake time, even on weekends. It does more than a strict bedtime.',
+    copy: 'Your blood pressure is supposed to drop at night. That nightly dip is when your heart and blood vessels get their one real rest. Broken sleep, waking at 2 or 3 a.m., or sleep that never gets deep steals that dip. Your body runs all night like it is still daytime. Your numbers never get their break.',
+    herb: 'Chamomile or passionflower. Gentle herbs many people use to wind down before bed.',
+    food: 'Skip heavy or sugary meals in the 2 to 3 hours before bed. They work against the nightly dip.',
+    lifestyle: 'Wake up at the same time every day, even on weekends. It does more than a strict bedtime.',
   },
   stillness: {
     name: 'The Stillness Trigger',
     slug: 'stillness',
-    copy: 'Movement is what keeps blood vessels flexible and responsive. It is not just about burning calories. Long stretches of sitting, whether it is a desk, a car, or a couch, mean your vessels are not getting the regular signal to stay pliable. Over time, they respond more sluggishly to normal daily demands, and your baseline reading creeps up even on days that felt calm.',
-    herb: 'Hawthorn, a traditional herb associated with healthy circulation and vascular support.',
-    food: 'Add plant omega-3s a few times a week: walnuts, flaxseed, or chia seeds.',
-    lifestyle: 'Set a movement break every 60-90 minutes. Even 2 minutes of standing and stretching counts.',
+    copy: 'Movement is the signal that keeps your blood vessels soft and springy. It is not about burning calories. Long sitting, at a desk, in the car, or on the couch, means your vessels stop getting that signal. Over time they get stiff and slow. So your number creeps up, even on calm days.',
+    herb: 'Hawthorn. An herb long used to support the heart and healthy blood flow.',
+    food: 'Add plant omega-3s a few times a week: walnuts, ground flaxseed, or chia seeds.',
+    lifestyle: 'Get up and move every 60 to 90 minutes. Even 2 minutes of standing and stretching counts.',
   },
 };
 
@@ -68,43 +68,43 @@ const QUESTIONS = [
     ],
   },
   {
-    title: 'How do you feel 1-2 hours after a carb-heavy meal, like pasta, bread, or dessert?',
+    title: 'How do you feel an hour or two after a big meal of pasta, bread, or dessert?',
     options: [
-      { key: 'stress', text: 'Fine physically, but my mind races more than usual.' },
-      { key: 'sugar', text: 'Sluggish, foggy, sometimes shaky or lightheaded.' },
+      { key: 'stress', text: 'My body feels fine, but my mind races more than usual.' },
+      { key: 'sugar', text: 'Slow and foggy. Sometimes shaky or dizzy.' },
       { key: 'sodium', text: 'Puffy. My rings or shoes feel tighter than that morning.' },
-      { key: 'sleep', text: 'I crash hard and want to nap immediately.' },
+      { key: 'sleep', text: 'I crash hard and want a nap right away.' },
       { key: 'stillness', text: 'I do not really notice. I am usually sitting anyway.' },
     ],
   },
   {
-    title: 'How often is your food coming from a box, can, restaurant, or drive-thru?',
+    title: 'How often does your food come from a box, can, restaurant, or drive-thru?',
     options: [
-      { key: 'stress', text: 'More when I am overwhelmed. It is just the fastest option.' },
+      { key: 'stress', text: 'More when I am stressed. It is just the fastest option.' },
       { key: 'sugar', text: 'Often, and it usually comes with something sweet too.' },
-      { key: 'sodium', text: 'Most days. Convenience wins over cooking from scratch.' },
+      { key: 'sodium', text: 'Most days. Easy wins over cooking.' },
       { key: 'sleep', text: 'Late at night, when I should be winding down instead.' },
       { key: 'stillness', text: 'Often, and I eat it sitting at a desk or on the couch.' },
     ],
   },
   {
-    title: 'What does a typical night’s sleep actually look like for you?',
+    title: 'What does a normal night of sleep really look like for you?',
     options: [
       { key: 'stress', text: 'My mind will not shut off. I replay the whole day.' },
-      { key: 'sugar', text: 'I wake up around 2-3am, sometimes hungry.' },
-      { key: 'sodium', text: 'I am up to use the bathroom more than once a night.' },
-      { key: 'sleep', text: 'I am tired all day no matter how many hours I got.' },
+      { key: 'sugar', text: 'I wake up around 2 or 3 a.m., sometimes hungry.' },
+      { key: 'sodium', text: 'I get up to use the bathroom more than once a night.' },
+      { key: 'sleep', text: 'I am tired all day, no matter how many hours I got.' },
       { key: 'stillness', text: 'I sleep fine, but I wake up stiff and heavy anyway.' },
     ],
   },
   {
-    title: 'Combining desk, car, and couch, how much of your day is spent sitting?',
+    title: 'Add up desk, car, and couch. How much of your day do you spend sitting?',
     options: [
-      { key: 'stress', text: 'A lot, and I can feel tension build the longer I sit.' },
-      { key: 'sugar', text: 'A lot, and I snack more the longer I am at my desk.' },
+      { key: 'stress', text: 'A lot, and I feel tension build the longer I sit.' },
+      { key: 'sugar', text: 'A lot, and I snack more the longer I sit at my desk.' },
       { key: 'sodium', text: 'A lot. My legs or ankles feel swollen by evening.' },
       { key: 'sleep', text: 'A lot, but I still do not feel rested at the end of it.' },
-      { key: 'stillness', text: 'Most of it. 8+ hours some days, easily.' },
+      { key: 'stillness', text: 'Most of it. Some days 8 hours or more, easily.' },
     ],
   },
 ];
@@ -359,8 +359,7 @@ export default function TriggerQuizPage() {
                 margin: '0 0 1.3rem',
               }}
             >
-              Answer honestly, not &ldquo;healthiest.&rdquo; There is no wrong answer, just a
-              pattern check.
+              Be honest, not perfect. There are no wrong answers here.
             </p>
             <h2 style={{ ...serif, fontSize: 'clamp(1.25rem, 4.5vw, 1.5rem)', lineHeight: 1.35, margin: '0 0 1.3rem' }}>
               {QUESTIONS[current].title}
@@ -435,8 +434,8 @@ export default function TriggerQuizPage() {
               Your results are ready.
             </h2>
             <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1rem' }}>
-              Based on your answers, we&rsquo;ve identified your loudest blood pressure driver.
-              Enter your email and we&rsquo;ll unlock it right now, plus:
+              Your answers point to one loudest cause. Put in your email and we will show it
+              to you right now, plus:
             </p>
             <ul
               style={{
@@ -448,9 +447,9 @@ export default function TriggerQuizPage() {
               }}
             >
               {[
-                'Your #1 hidden driver, named and explained in plain English',
-                'Your herb, food swap, and lifestyle shift: 3 things to start today',
-                'The full Blood Pressure Blueprint PDF, all 5 triggers, sent to your inbox',
+                'Your #1 hidden cause, named in plain words',
+                '3 things to start today: an herb, a food swap, and one habit',
+                'The free Blueprint guide: all 5 triggers, sent to your email',
               ].map((item) => (
                 <li
                   key={item}
@@ -512,7 +511,7 @@ export default function TriggerQuizPage() {
                 <p style={{ color: 'var(--clay, #B85A36)', fontSize: '0.85rem', margin: '0.4rem 0 0' }}>{error}</p>
               )}
               <p style={{ fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
-                No spam. Helpful notes from Joel, and you can unsubscribe anytime with one click.
+                No spam. Helpful notes from Joel. You can stop them anytime with one click.
               </p>
             </form>
           </div>
@@ -548,13 +547,13 @@ export default function TriggerQuizPage() {
                 marginBottom: '1.4rem',
               }}
             >
-              <strong style={{ color: 'var(--sage-deep, #2E3A30)' }}>{t.name} is your loudest driver</strong>, but it
-              is rarely the only one. It is usually layered with one or two of:{' '}
+              <strong style={{ color: 'var(--sage-deep, #2E3A30)' }}>{t.name} is your loudest cause</strong>. But it
+              rarely works alone. Most people have one or two more riding along, like{' '}
               {Object.values(TRIGGERS)
                 .filter((x) => x.slug !== t.slug)
                 .map((x) => x.name)
                 .join(', ')}
-              . The full Blueprint breaks down all 5, so you can see the whole picture, not just the loudest piece.
+              . Your free Blueprint covers all 5, so you can see the whole picture.
             </div>
 
             <div style={labelStyle}>3 Things To Start Today</div>
@@ -624,8 +623,8 @@ export default function TriggerQuizPage() {
                 Your full Blueprint is on its way
               </h3>
               <p style={{ color: 'var(--sage-soft, #C5CDBF)', fontSize: '0.88rem', lineHeight: 1.6, margin: '0 0 0.8rem' }}>
-                All 5 hidden triggers, explained simply, sent straight to the email you just
-                entered. Check your inbox in the next few minutes.
+                All 5 hidden triggers in plain words. It is on the way to your email right
+                now. Check your inbox in a few minutes.
               </p>
               <a
                 href="/downloads/bp-blueprint.pdf"
@@ -651,8 +650,8 @@ export default function TriggerQuizPage() {
               Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
             </button>
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.7rem 0 0' }}>
-              The step-by-step 10-day plan for your exact trigger, built by Joel. One-time $17,
-              instant access, no subscription.
+              A simple 10-day plan for your exact trigger, built by Joel. One time $17. Yours
+              right away. No subscription.
             </p>
           </div>
         )}

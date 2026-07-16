@@ -399,8 +399,8 @@ export default function BeThereApplyPage() {
                 Your application is in.
               </h1>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.75rem' }}>
-                Joel reads every word. Three steps left: watch his short welcome video, see the
-                investment, and book your call.
+                Joel reads every word. Three steps left: watch his short welcome video, see
+                the cost, and book your call.
               </p>
 
               {/* Step 1: the welcome video (the landing page promises it here). */}
@@ -437,14 +437,14 @@ export default function BeThereApplyPage() {
                 }}
               >
                 <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
-                  The Investment
+                  The Cost
                 </div>
                 <div style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
                   $1,997
                 </div>
                 <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
-                  For the full 90 day program. Payment plans are available, and you can settle the
-                  details on your call. Nothing is charged today, and the call itself is free.
+                  This covers the full 90 days. Payment plans are there if you need one. You pay
+                  nothing today. The call is free.
                 </p>
               </div>
 
