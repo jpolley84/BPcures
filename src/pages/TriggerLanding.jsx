@@ -147,50 +147,53 @@ export default function TriggerLanding() {
           diets. No guessing at pills. No rushed visit that leaves you more confused.
         </p>
 
-        {/* Big hero Blueprint cover (Joel, 2026-07-16: "large and in their
-            face on landing"). Gentle float, still under the reduced-motion
-            kill switch via the keyframe media query below. */}
+        {/* Hero poster (Joel's supplied graphic, 2026-07-16 evening): the
+            5 Hidden Triggers cover, full width and clickable. Its baked-in
+            TAKE THE QUIZ button routes to the quiz like every other CTA. */}
         <style>{`
-          @keyframes bpqFloat {
-            0%, 100% { transform: rotate(-2.5deg) translateY(0); }
-            50% { transform: rotate(-2.5deg) translateY(-9px); }
+          .bpq-hero-poster {
+            display: block;
+            width: 100%;
+            border: none;
+            padding: 0;
+            background: none;
+            cursor: pointer;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 26px 55px rgba(18, 17, 16, 0.24);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          .bpq-hero-poster:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 32px 65px rgba(18, 17, 16, 0.3);
+          }
+          .bpq-hero-poster:focus-visible {
+            outline: 3px solid var(--clay, #B85A36);
+            outline-offset: 3px;
           }
           @media (prefers-reduced-motion: reduce) {
-            .bpq-hero-cover { animation: none !important; }
+            .bpq-hero-poster, .bpq-hero-poster:hover { transform: none; transition: none; }
           }
         `}</style>
-        <div style={{ textAlign: 'center', margin: '0.4rem 0 1.4rem' }}>
+        <button
+          type="button"
+          className="bpq-hero-poster"
+          onClick={() => startQuiz('hero_poster')}
+          aria-label="5 Hidden Triggers Behind the Rising Numbers. Take the quiz. By Joel Polley, RN."
+          style={{ margin: '0.4rem 0 1.4rem' }}
+        >
           <picture>
-            <source srcSet="/images/blueprint-cover.webp" type="image/webp" />
+            <source srcSet="/images/hero-5-triggers.webp" type="image/webp" />
             <img
-              className="bpq-hero-cover"
-              src="/images/blueprint-cover.png"
-              alt="The Blood Pressure Blueprint, your free guide by Joel Polley, RN"
-              width="300"
-              height="388"
+              src="/images/hero-5-triggers.jpg"
+              alt="5 Hidden Triggers Behind the Rising Numbers. What may be quietly pushing your blood pressure up. Take the quiz. By Joel Polley, RN, 20 years in ICU and Emergency Medicine."
+              width="1108"
+              height="1419"
               fetchpriority="high"
-              style={{
-                width: 'min(74%, 300px)',
-                height: 'auto',
-                borderRadius: 10,
-                border: '1px solid var(--line, #D8CFBD)',
-                boxShadow: '0 26px 55px rgba(18, 17, 16, 0.28)',
-                transform: 'rotate(-2.5deg)',
-                animation: 'bpqFloat 7s ease-in-out infinite',
-              }}
+              style={{ display: 'block', width: '100%', height: 'auto' }}
             />
           </picture>
-          <p
-            style={{
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              color: 'var(--sage-deep, #2E3A30)',
-              margin: '0.9rem 0 0',
-            }}
-          >
-            Your free guide. You get it when you finish the quiz.
-          </p>
-        </div>
+        </button>
 
         {/* Quiz CTA above the trust band (Annie's edit, 2026-07-16) */}
         <button type="button" style={ctaStyle} onClick={() => startQuiz('top')}>
