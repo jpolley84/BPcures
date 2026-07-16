@@ -160,40 +160,11 @@ export default function TriggerLanding() {
     track('quizfirst_landing_viewed', { funnel_version: 'annie-v2', layout: 'optin-v3' });
   }, []);
 
-  // Scroll reveals (research: motion draws the eye; always reduced-motion
-  // safe). FAIL-OPEN: content visibility must never depend on the observer
-  // actually delivering callbacks (some webviews throttle or drop them), so
-  // if nothing has fired shortly after mount, everything reveals at once.
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
-    const els = Array.from(document.querySelectorAll('[data-bpqrv]'));
-    const revealAll = () => els.forEach((el) => el.classList.add('bpqrv-in'));
-    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      revealAll();
-      return undefined;
-    }
-    let fired = false;
-    const io = new IntersectionObserver(
-      (entries) => {
-        fired = true;
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('bpqrv-in');
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.15 },
-    );
-    els.forEach((el) => io.observe(el));
-    const fallback = setTimeout(() => {
-      if (!fired) revealAll();
-    }, 1800);
-    return () => {
-      clearTimeout(fallback);
-      io.disconnect();
-    };
-  }, []);
+  // Entrance animation strategy: sections are VISIBLE BY DEFAULT and only
+  // gain a keyframes entrance (animation-fill-mode: backwards) with a small
+  // stagger. Fail-safe by construction: if animations never run (throttled
+  // webview, no JS, reduced motion, ancient browser), the natural state is
+  // fully visible. No IntersectionObserver dependency for content.
 
   // Sticky mobile CTA bar once the hero scrolls away (research: bottom
   // sticky CTAs win on mobile, not desktop; the bar is mobile-only in CSS).
@@ -214,8 +185,8 @@ export default function TriggerLanding() {
   return (
     <div style={wrap}>
       <style>{`
-        [data-bpqrv] { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s cubic-bezier(0.22,1,0.36,1); }
-        [data-bpqrv].bpqrv-in { opacity: 1; transform: none; }
+        @keyframes bpqUp { from { opacity: 0; transform: translateY(22px); } }
+        [data-bpqrv] { animation: bpqUp .7s cubic-bezier(0.22,1,0.36,1) backwards; }
         .bpq-cta { transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
         .bpq-cta:hover { background: var(--clay-hover, #A44B28); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(184, 90, 54, 0.38); }
         .bpq-cta:focus-visible { outline: 3px solid var(--sage-deep, #2E3A30); outline-offset: 3px; }
@@ -246,8 +217,7 @@ export default function TriggerLanding() {
         .bpq-faq-item.open .bpq-plus { transform: rotate(45deg); }
         @media (max-width: 720px) { .bpq-stickybar { display: block; } }
         @media (prefers-reduced-motion: reduce) {
-          [data-bpqrv], .bpq-cta, .bpq-hero-poster, .bpq-stickybar { transition: none !important; transform: none !important; }
-          [data-bpqrv] { opacity: 1 !important; }
+          [data-bpqrv], .bpq-cta, .bpq-hero-poster, .bpq-stickybar { animation: none !important; transition: none !important; transform: none !important; }
         }
       `}</style>
 
