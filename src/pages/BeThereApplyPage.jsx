@@ -431,10 +431,14 @@ export default function BeThereApplyPage() {
                 />
               </div>
 
-              {/* Step 2: the investment, stated plainly before any call. */}
+              {/* Step 2: everything included, then the price. Joel-confirmed
+                  contents (2026-07-17): weekly live group call, personalized
+                  day-by-day protocol, private community, 1:1 access to Joel,
+                  full kit stack (tracker, herb formulary, doctor sheet). No
+                  invented per-item dollar values, just what she actually gets. */}
               <div
                 style={{
-                  maxWidth: 420,
+                  maxWidth: 460,
                   margin: '0 auto 1.75rem',
                   background: '#FFFFFF',
                   border: '1px solid var(--line, #D8CFBD)',
@@ -442,14 +446,36 @@ export default function BeThereApplyPage() {
                   padding: '1.25rem 1.4rem',
                 }}
               >
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
-                  The Cost
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 10 }}>
+                  Everything Included
                 </div>
-                <div style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
-                  $1,997
+                <ul style={{ listStyle: 'none', margin: '0 0 1.1rem', padding: 0, textAlign: 'left' }}>
+                  {[
+                    ['Weekly live group call with Joel', 'Every week for 90 days, real time, real questions.'],
+                    ['Your personalized day-by-day protocol', 'Built around your loudest corner, not a generic plan.'],
+                    ['Private community access', 'Other women doing this alongside you, every day.'],
+                    ['1:1 access to Joel between calls', 'Message him directly when something comes up.'],
+                    ['The full kit stack', 'Herb Formulary, BP tracker, and your Bring This To Your Doctor sheet.'],
+                  ].map(([h, p]) => (
+                    <li key={h} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', marginBottom: '0.7rem' }}>
+                      <span style={{ color: 'var(--sage, #4A5D4E)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      <span>
+                        <span style={{ display: 'block', fontWeight: 700, fontSize: '0.94rem', color: 'var(--ink, #121110)' }}>{h}</span>
+                        <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--muted, #7A7061)', lineHeight: 1.5 }}>{p}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div style={{ borderTop: '1px solid var(--line, #D8CFBD)', paddingTop: '1.1rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
+                    The Cost
+                  </div>
+                  <div style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
+                    $1,997
+                  </div>
                 </div>
                 <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
-                  This covers the full 90 days. Payment plans are there if you need one. You pay
+                  This covers everything above for the full 90 days. Payment plans are there if you need one. You pay
                   nothing today. The call is free.
                 </p>
               </div>
