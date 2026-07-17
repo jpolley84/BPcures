@@ -40,9 +40,9 @@ const SECRET = process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
 // set, those in-flight links MUST keep working (CAN-SPAM) — so verification
 // accepts the legacy secret for tokens whose embedded timestamp predates the
 // grace deadline. New tokens are signed ONLY with the real secret. Remove
-// GRACE_* after 2026-10-01.
+// GRACE_* after 2027-07-01.
 const GRACE_SECRET = 'CHANGE-ME-IN-VERCEL-ENV';
-const GRACE_DEADLINE_MS = Date.parse('2026-10-01T00:00:00Z');
+const GRACE_DEADLINE_MS = Date.parse('2027-07-01T00:00:00Z');
 
 function signWith(secret, payload) {
   return crypto.createHmac('sha256', secret).update(payload).digest('hex').slice(0, 16);
@@ -64,9 +64,16 @@ export function verifyUnsubToken(token) {
     const decoded = Buffer.from(token, 'base64url').toString('utf8');
     const parts = decoded.split('.');
     if (parts.length < 4) return null;
+    // 2026-07-16 FIX: emails contain dots, so parse from the RIGHT (sig, tag,
+    // ts are the last three dot-fields; everything before is the email).
+    // The old left-destructure `[email, ts, tag] = parts` truncated every
+    // dotted address ("x@example") and read the timestamp as a tag, turning
+    // every full unsubscribe into a tag-scoped no-op.
     const sig = parts.pop();
-    const payload = parts.join('.');
-    const [email, ts, tag] = parts;
+    const tag = parts.pop();
+    const ts = parts.pop();
+    const email = parts.join('.');
+    const payload = `${email}.${ts}.${tag}`;
     const tsNum = Number(ts);
     const current = signWith(SECRET, payload);
     // Legacy-signed tokens: honored only while the grace window is open and
@@ -220,7 +227,14 @@ export default async function handler(req, res) {
   const verified = verifyUnsubToken(token) || verifyLegacyBwbpToken(token);
   if (!verified) return res.status(400).json({ error: 'Invalid token' });
 
-  const { email, tag } = verified;
+  // 2026-07-16: tag-scoped unsubscribes (remove one tag, keep the
+  // subscription) are honored ONLY for tags in this allowlist. Any other tag
+  // (e.g. 'freegift-broadcast', used purely as a campaign label in tokens)
+  // must behave as a FULL unsubscribe — the email's link says "Unsubscribe",
+  // and anything less is a CAN-SPAM problem.
+  const TAG_SCOPED = new Set([]);
+  const { email } = verified;
+  const tag = verified.tag && TAG_SCOPED.has(verified.tag) ? verified.tag : null;
 
   const result = await unsubscribeInKV({ email, tag });
   if (!result.ok && result.reason !== 'kv_not_configured') {
