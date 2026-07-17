@@ -8,7 +8,7 @@
 // A/B insights keep reading, each stamped funnel_version: 'annie-v2'.
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Download } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
 
 // ---- The 5 triggers -------------------------------------------------------
@@ -401,13 +401,14 @@ export default function TriggerQuizPage() {
     }
   }
 
-  function buyKit() {
+  function buyKit(placement = 'bottom') {
     const t = TRIGGERS[winner] || TRIGGERS.stress;
     track('checkout_clicked', {
       product: 'bp-corner-reset',
       quiz: 'triggers',
       corner: t.slug,
       funnel_version: 'annie-v2',
+      placement, // 'top' | 'bottom' | 'sticky' — 2026-07-17 friction fix, measure which CTA converts
     });
     navigate(`/pay?tier=corner&corner=${t.slug}`);
   }
@@ -731,6 +732,19 @@ export default function TriggerQuizPage() {
               </div>
             ))}
 
+            {/* 2026-07-17 friction fix: the ONLY buy button used to sit after
+                4 more content blocks (Blueprint box, Lies, money-math) and
+                only 8% of result-viewers ever scrolled far enough to see it.
+                This early CTA puts the offer in front of them at peak
+                interest, right after the reveal, before the free-download
+                escape hatch below gives their curiosity a free release. */}
+            <button type="button" style={{ ...primaryBtn, marginBottom: '0.6rem' }} onClick={() => buyKit('top')}>
+              Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
+            </button>
+            <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0 0 1.6rem' }}>
+              One time $17. Yours right away. No subscription.
+            </p>
+
             {/* Blueprint delivery note */}
             <div
               style={{
@@ -748,22 +762,26 @@ export default function TriggerQuizPage() {
                   ? 'All 5 hidden triggers in plain words. Our email system hit a snag just now, so grab your copy right here instead.'
                   : 'All 5 hidden triggers in plain words. It is on the way to your email right now. Check your inbox in a few minutes.'}
               </p>
+              {/* 2026-07-17 friction fix: this was styled as prominently as a
+                  real button (icon + bold underline) right after the reveal,
+                  competing with the $17 offer for the same moment of intent
+                  and letting people's curiosity resolve for free. Kept (it's
+                  a real deliverable they're owed) but de-emphasized: no icon,
+                  no bold, plain small link, so it reads as a footnote, not a
+                  second CTA. */}
               <a
                 href="/downloads/bp-blueprint.pdf"
                 download
                 onClick={() => track('leadmagnet_downloaded', { magnet: 'bp-blueprint', funnel_version: 'annie-v2' })}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  color: 'var(--cream, #FBF8F1)',
-                  fontSize: '0.88rem',
-                  fontWeight: 600,
+                  color: 'var(--sage-soft, #C5CDBF)',
+                  fontSize: '0.78rem',
+                  fontWeight: 400,
                   textDecoration: 'underline',
                   textUnderlineOffset: 3,
                 }}
               >
-                Can&rsquo;t wait? Download it now <Download size={15} />
+                Having trouble finding the email? Download it here instead
               </a>
             </div>
 
@@ -838,7 +856,7 @@ export default function TriggerQuizPage() {
             </div>
 
             {/* $17 kit upsell */}
-            <button type="button" style={primaryBtn} onClick={buyKit}>
+            <button type="button" style={primaryBtn} onClick={() => buyKit('bottom')}>
               Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
             </button>
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.7rem 0 0' }}>
@@ -866,6 +884,33 @@ export default function TriggerQuizPage() {
           See our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
         </p>
       </div>
+
+      {/* 2026-07-17 friction fix: sticky buy bar for the result phase, so the
+          $17 offer survives no matter how far down the long scroll (Lies,
+          money-math, etc.) someone is. Only renders once a winner exists. */}
+      {phase === 'result' && t && (
+        <div
+          style={{
+            position: 'sticky',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            background: '#fff',
+            borderTop: '1px solid var(--line, #D8CFBD)',
+            boxShadow: '0 -8px 24px rgba(18, 17, 16, 0.08)',
+            padding: '0.7rem 1.25rem calc(0.7rem + env(safe-area-inset-bottom))',
+            zIndex: 20,
+          }}
+        >
+          <button
+            type="button"
+            style={{ ...primaryBtn, maxWidth: 620, margin: '0 auto' }}
+            onClick={() => buyKit('sticky')}
+          >
+            Get the BP Reset Kit, $17 <ArrowRight size={18} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
