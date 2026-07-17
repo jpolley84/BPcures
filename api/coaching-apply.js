@@ -483,28 +483,29 @@ export default async function handler(req, res) {
 // 2026-07-16: Be There prequalification handler (source: 'bethere-apply').
 // Rate limit + body checks already ran in the main handler before dispatch.
 //
-// Fit scoring (exact rules):
-//   FLAG answers: medsAlignment = off-meds-without-doctor, OR
-//                 investComfort = 'It would strain the essentials'.
-//   COLD if ANY FLAG, or (startWindow 'Just exploring for now' AND
-//        dailyTime 'Honestly none right now').
+// Fit scoring (exact rules, 2026-07-17):
+//   COLD if investTier = 'I am not willing to invest at this time'. This is
+//        the ONLY cold-lead path — everyone else gets the fit-call link.
 //   HOT  if startWindow in {This week, Within two weeks} AND
-//        investComfort in {Yes, comfortably / Yes with a payment plan} AND
-//        no FLAG AND dailyTime in {30 minutes or more / 15 to 30} AND
+//        dailyTime in {30 minutes or more / 15 to 30} AND
 //        trackingWillingness in {Yes / Mostly}.
 //   Else WARM.
+// medsAlignment (off-meds-without-doctor) and groupsFeel ('not for me') are
+// still recorded as advisory flags in Joel's notify email, but no longer
+// affect the fit tier or gate the call link.
 // ---------------------------------------------------------------------------
 const BETHERE_OFF_MEDS = 'I was hoping to get off my medications without my doctor';
-const BETHERE_STRAIN = 'It would strain the essentials';
+// 2026-07-17 (Joel): investComfort (3-option comfort question) replaced by
+// investTier (dollar-tier question, floor $5,000/yr). NOT_WILLING is now the
+// SOLE cold-lead signal — exact string must match BeThereApplyPage.jsx's
+// NOT_WILLING constant. Every other applicant gets the fit-call link; the
+// old medsAlignment-flag / exploring+no-time COLD paths are removed.
+const BETHERE_NOT_WILLING = 'I am not willing to invest at this time';
 
 function scoreBeThere(b) {
-  const flag = b.medsAlignment === BETHERE_OFF_MEDS || b.investComfort === BETHERE_STRAIN;
-  const exploring = b.startWindow === 'Just exploring for now';
-  const noTime = b.dailyTime === 'Honestly none right now';
-  if (flag || (exploring && noTime)) return 'COLD';
+  if (b.investTier === BETHERE_NOT_WILLING) return 'COLD';
   const hot =
     (b.startWindow === 'This week' || b.startWindow === 'Within two weeks') &&
-    (b.investComfort === 'Yes, comfortably' || b.investComfort === 'Yes with a payment plan') &&
     (b.dailyTime === '30 minutes or more' || b.dailyTime === '15 to 30') &&
     (b.trackingWillingness === 'Yes' || b.trackingWillingness === 'Mostly');
   return hot ? 'HOT' : 'WARM';
@@ -525,15 +526,15 @@ async function handleBeThere(req, res) {
   if (safe(b.winning).length < 10) {
     return res.status(400).json({ error: 'The "what would winning look like" answer is required.' });
   }
+  if (!safe(b.pictureValue)) return res.status(400).json({ error: 'The dollar value of the health picture is required' });
   if (!safe(b.startWindow)) return res.status(400).json({ error: 'When you want to start is required' });
-  if (!safe(b.investComfort)) return res.status(400).json({ error: 'The investment question is required' });
+  if (!safe(b.investTier)) return res.status(400).json({ error: 'The investment question is required' });
 
   const trimmedEmail = b.email.trim().toLowerCase();
   const submittedAt = new Date().toISOString();
   const fitTier = scoreBeThere(b);
   const flags = [];
   if (b.medsAlignment === BETHERE_OFF_MEDS) flags.push('off-meds seeker');
-  if (b.investComfort === BETHERE_STRAIN) flags.push('would strain essentials');
   if (b.groupsFeel === 'Groups are not for me') flags.push('minor: groups not for her');
 
   const application = {
@@ -562,7 +563,8 @@ async function handleBeThere(req, res) {
     plantBased: safe(b.plantBased),
     medsAlignment: safe(b.medsAlignment),
     groupsFeel: safe(b.groupsFeel),
-    investComfort: safe(b.investComfort),
+    pictureValue: safe(b.pictureValue),
+    investTier: safe(b.investTier),
     decisionMakers: safe(b.decisionMakers),
     foundJoel: safe(b.foundJoel),
     watchedVideo: safe(b.watchedVideo),
@@ -593,6 +595,7 @@ async function handleBeThere(req, res) {
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>
         ${wordsBlock('Her story (last two years)', application.story)}
         ${wordsBlock('What winning looks like (90 days)', application.winning)}
+        ${wordsBlock('What that picture is worth to her, in dollars', application.pictureValue)}
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Pressure today</h3>
         <table style="width:100%;border-collapse:collapse;">
           ${row('Age range', application.ageRange)}
@@ -625,7 +628,7 @@ async function handleBeThere(req, res) {
         <table style="width:100%;border-collapse:collapse;">
           ${row('Alongside-doctor framing', application.medsAlignment)}
           ${row('Groups', application.groupsFeel)}
-          ${row('Could invest without strain', application.investComfort)}
+          ${row('Investment tier (floor $5,000/yr)', application.investTier)}
           ${row('Decision makers', application.decisionMakers)}
         </table>
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Last things</h3>

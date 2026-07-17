@@ -48,7 +48,13 @@ const TRACKING_OPTIONS = ['Yes', 'Mostly', 'That sounds hard'];
 const PLANT_OPTIONS = ['Excited', 'Willing to try', 'Hesitant', 'That is not for me'];
 const ALIGN_OPTIONS = ['Yes, that is what I want', 'I was hoping to get off my medications without my doctor', 'Not sure'];
 const GROUPS_OPTIONS = ['I love learning with others', 'Prefer one on one but open to a group', 'Groups are not for me'];
-const INVEST_OPTIONS = ['Yes, comfortably', 'Yes with a payment plan', 'It would strain the essentials'];
+// 2026-07-17 (Joel): replaced the old 3-option investComfort question with a
+// direct dollar-tier question. "Not willing" is the SOLE cold-lead signal now
+// (see scoreBeThere in api/coaching-apply.js, kept in exact-string sync with
+// NOT_WILLING here) - every other applicant gets the fit-call link, no more
+// gating on the old multi-factor flag/exploring heuristic.
+const NOT_WILLING = 'I am not willing to invest at this time';
+const INVEST_TIER_OPTIONS = ['$5,000 to $9,999 a year', '$10,000 to $24,999 a year', '$25,000 or more a year', NOT_WILLING];
 const DECISION_OPTIONS = ['Just me', 'My spouse or partner and me', 'An adult child or family member'];
 const FOUND_OPTIONS = ['TikTok', 'Facebook', 'YouTube', 'A friend', 'Other'];
 const WATCHED_OPTIONS = ['Yes, all of it', 'Some of it', 'Not yet'];
@@ -197,9 +203,9 @@ export default function BeThereApplyPage() {
     // Step 6
     medsAlignment: '', groupsFeel: '',
     // Step 7
-    investComfort: '', decisionMakers: '',
+    winning: '', pictureValue: '', investTier: '', decisionMakers: '',
     // Step 8
-    foundJoel: '', watchedVideo: '', winning: '', anythingElse: '',
+    foundJoel: '', watchedVideo: '', anythingElse: '',
   });
 
   useEffect(() => {
@@ -252,13 +258,14 @@ export default function BeThereApplyPage() {
       if (!form.groupsFeel) e.groupsFeel = 'Pick one.';
     }
     if (s === 7) {
-      if (!form.investComfort) e.investComfort = 'Pick one. Honesty helps us both.';
+      if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
+      if (!form.pictureValue.trim()) e.pictureValue = 'A dollar figure, even a rough one, is what Joel needs here.';
+      if (!form.investTier) e.investTier = 'Pick one. Honesty helps us both.';
       if (!form.decisionMakers) e.decisionMakers = 'Pick one.';
     }
     if (s === 8) {
       if (!form.foundJoel) e.foundJoel = 'Pick one.';
       if (!form.watchedVideo) e.watchedVideo = 'Pick one.';
-      if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
     }
     return e;
   }
@@ -283,15 +290,13 @@ export default function BeThereApplyPage() {
   // Local mirror of the server scoring, used only as a fallback if the
   // response does not carry fitTier.
   function localFit() {
-    const flag =
-      form.medsAlignment === 'I was hoping to get off my medications without my doctor' ||
-      form.investComfort === 'It would strain the essentials';
-    const noTime = form.dailyTime === 'Honestly none right now';
-    const exploring = form.startWindow === 'Just exploring for now';
-    if (flag || (exploring && noTime)) return 'COLD';
+    // 2026-07-17: cold is now decided SOLELY by the investment-tier answer
+    // (see NOT_WILLING). Every other applicant is warm/hot and gets the
+    // fit-call link - no more gating on the meds-alignment flag or the
+    // exploring+no-time combo.
+    if (form.investTier === NOT_WILLING) return 'COLD';
     const hot =
       (form.startWindow === 'This week' || form.startWindow === 'Within two weeks') &&
-      (form.investComfort === 'Yes, comfortably' || form.investComfort === 'Yes with a payment plan') &&
       (form.dailyTime === '30 minutes or more' || form.dailyTime === '15 to 30') &&
       (form.trackingWillingness === 'Yes' || form.trackingWillingness === 'Mostly');
     return hot ? 'HOT' : 'WARM';
@@ -332,11 +337,12 @@ export default function BeThereApplyPage() {
           plantBased: form.plantBased,
           medsAlignment: form.medsAlignment,
           groupsFeel: form.groupsFeel,
-          investComfort: form.investComfort,
+          winning: form.winning.trim(),
+          pictureValue: form.pictureValue.trim(),
+          investTier: form.investTier,
           decisionMakers: form.decisionMakers,
           foundJoel: form.foundJoel,
           watchedVideo: form.watchedVideo,
-          winning: form.winning.trim(),
           anythingElse: form.anythingElse.trim(),
         }),
       });
@@ -634,13 +640,18 @@ export default function BeThereApplyPage() {
         {/* STEP 7 — The honest question */}
         {step === 7 && (
           <>
+            <Field label="If the next 90 days went perfectly, what would winning look like for you?" helper="This is the most important question on the whole application. Paint the real picture." error={errors.winning}>
+              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
+            </Field>
+            <Field label="What would you say that picture is worth to you, in dollars?" helper="Whatever number is honest. Joel is not going to hold you to it, he just wants to understand how you see it." error={errors.pictureValue}>
+              <input className="bt-input" type="text" inputMode="numeric" value={form.pictureValue} onChange={(e) => set('pictureValue', e.target.value)} placeholder="e.g. $50,000" />
+            </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              Be There is a serious 90 day commitment of time and resources. If Joel accepts your
-              application, could you invest in a program like this without touching money needed for
-              bills, groceries, or medicine?
+              Be There is a serious 90 day commitment of time and resources, built to hold that picture
+              for the next 20 years, not just the next 90 days.
             </p>
-            <Field label="Your honest answer" error={errors.investComfort}>
-              <OptionList name="Investment comfort" options={INVEST_OPTIONS} value={form.investComfort} onChange={(v) => set('investComfort', v)} />
+            <Field label="What are you willing to invest right now to have that picture for the next 20 years?" error={errors.investTier}>
+              <OptionList name="Investment tier" options={INVEST_TIER_OPTIONS} value={form.investTier} onChange={(v) => set('investTier', v)} />
             </Field>
             <Field label="Who is part of this decision?" error={errors.decisionMakers}>
               <OptionList name="Decision makers" options={DECISION_OPTIONS} value={form.decisionMakers} onChange={(v) => set('decisionMakers', v)} />
@@ -656,9 +667,6 @@ export default function BeThereApplyPage() {
             </Field>
             <Field label="Did you watch the video on the last page?" error={errors.watchedVideo}>
               <OptionList name="Watched video" options={WATCHED_OPTIONS} value={form.watchedVideo} onChange={(v) => set('watchedVideo', v)} />
-            </Field>
-            <Field label="If the next 90 days went perfectly, what would winning look like for you?" helper="This is the most important question on the whole application." error={errors.winning}>
-              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
             </Field>
             <Field label="Anything else Joel should know?" optional>
               <textarea className="bt-input" rows={3} style={{ resize: 'vertical', minHeight: 80 }} value={form.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Anything that matters that we did not ask about." />
