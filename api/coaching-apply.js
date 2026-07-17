@@ -41,7 +41,17 @@ function getResend() {
 // a parallel inbox. Override with LAUNCHER_NOTIFY_EMAIL in Vercel env
 // if a different routing is needed for any specific environment.
 const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
-const FROM = 'BP Triangle Freedom Sprint <coaching@bpquiz.com>';
+// 2026-07-17: was 'coaching@bpquiz.com' — that address had ZERO successful
+// sends ever in Resend's log (bpquiz.com domain shows status
+// 'partially_failed' in Resend's /domains API, SPF/DKIM/DMARC not fully
+// verified). The Resend SDK returned an { error } object instead of
+// throwing, and the code below didn't check it, so Joel's application
+// notifications silently vanished for at least 2 real "Be There"
+// applicants (Sushma 7/16, Theresa O'Brien 7/17 HOT) before anyone
+// noticed. joel@bpquiz.com has thousands of successful sends — use that
+// instead, and the send-result checks added below make a future failure
+// loud instead of silent.
+const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 
 // 2026-06-09: canonical tier catalog for the /apply questionnaire. The page
 // sends tierName/tierPrice too, but we resolve from the slug server-side so
@@ -352,13 +362,18 @@ export default async function handler(req, res) {
       </div>
     </body></html>`;
     }
-    await getResend().emails.send({
+    // 2026-07-17: Resend's SDK returns { error } on a rejected send instead
+    // of throwing — must check it explicitly or a failure looks identical
+    // to success and Joel never finds out (this is exactly how 2 real
+    // applications went silently missing before this fix).
+    const sendResult = await getResend().emails.send({
       from: FROM,
       to: NOTIFY_EMAIL,
       replyTo: trimmedEmail,
       subject,
       html,
     });
+    if (sendResult.error) throw new Error(`Resend rejected notify send: ${JSON.stringify(sendResult.error)}`);
   } catch (err) {
     console.error('coaching-apply: notify email failed — returning 500 so applicant retries', err.message);
     return res.status(500).json({
@@ -449,13 +464,14 @@ export default async function handler(req, res) {
       <p style="margin:0;font-size:14px;color:#4A4A4A;font-style:italic;">RN, BraveWorks</p>
     </body></html>`;
     }
-    await getResend().emails.send({
+    const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
       subject: ackSubject,
       html: ackHtml,
     });
+    if (ackResult.error) console.error('coaching-apply: applicant ack rejected by Resend', JSON.stringify(ackResult.error));
   } catch (err) {
     console.error('coaching-apply: applicant ack failed', err.message);
   }
@@ -622,13 +638,14 @@ async function handleBeThere(req, res) {
       </div>
     </body></html>`;
 
-    await getResend().emails.send({
+    const sendResult = await getResend().emails.send({
       from: FROM,
       to: NOTIFY_EMAIL,
       replyTo: trimmedEmail,
       subject,
       html,
     });
+    if (sendResult.error) throw new Error(`Resend rejected notify send: ${JSON.stringify(sendResult.error)}`);
   } catch (err) {
     console.error('coaching-apply(bethere): notify email failed — returning 500 so applicant retries', err.message);
     return res.status(500).json({
@@ -677,7 +694,7 @@ async function handleBeThere(req, res) {
   // 3. Auto-ack to applicant. No prices, no dashes, alongside-doctor footer.
   try {
     const firstName = application.name.split(' ')[0] || 'there';
-    await getResend().emails.send({
+    const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
@@ -692,6 +709,7 @@ async function handleBeThere(req, res) {
       <p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>
     </body></html>`,
     });
+    if (ackResult.error) console.error('coaching-apply(bethere): applicant ack rejected by Resend', JSON.stringify(ackResult.error));
   } catch (err) {
     console.error('coaching-apply(bethere): applicant ack failed', err.message);
   }
