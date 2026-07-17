@@ -260,6 +260,7 @@ export default function BeThereLandingPage() {
           --lteal:#2E4A47; --teal-deep:#213735; --lsage:#8FA189; --sage-lt:#DCE3D3;
           --lclay:#BE7A57; --clay-lt:#EAD1BE; --lnk:#2B2A26; --lnk-soft:#665F54;
           --lcream:#FBF7F0; --lwhite:#FFFDF8;
+          --gold:#C9A44C; --gold-soft:#EFE1BC; --gold-deep:#9C7B2E;
           --serif:'Fraunces', Georgia, serif;
           --sans:'Inter', 'Public Sans', -apple-system, sans-serif;
           font-family:var(--sans); color:var(--lnk); background:var(--bg);
@@ -376,14 +377,39 @@ export default function BeThereLandingPage() {
         .lbn .tri-card h3{font-size:22px;margin-bottom:10px;}
         .lbn .tri-card p{font-size:16px;color:var(--lnk-soft);}
 
+        /* gold divider — used between major sections for visual rhythm */
+        .lbn .gold-divider{display:flex;align-items:center;justify-content:center;gap:14px;max-width:200px;margin:0 auto;}
+        .lbn .gold-divider .line{height:1px;flex:1;background:linear-gradient(90deg, transparent, var(--gold), transparent);}
+        .lbn .gold-divider .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+
+        /* BE THERE tease — the acronym payoff, before the breakdown */
+        .lbn .tease{background:var(--night);padding:84px 0 56px;text-align:center;overflow:hidden;}
+        .lbn .tease .eyebrow{color:var(--gold);}
+        .lbn .tease h2{color:#EFE9DC;font-size:clamp(22px,3vw,30px);font-weight:400;max-width:640px;margin:0 auto 6px;line-height:1.4;}
+        .lbn .tease .gap-line{height:22px;}
+        .lbn .tease .bethere-big{
+          font-family:var(--serif);font-weight:600;font-style:italic;
+          font-size:clamp(58px,13vw,148px);line-height:0.92;letter-spacing:-0.01em;
+          color:var(--gold);
+          background:linear-gradient(180deg, var(--gold-soft) 0%, var(--gold) 45%, var(--gold-deep) 100%);
+          -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+          margin:8px 0 18px;
+          text-shadow:0 2px 40px rgba(201,164,76,0.25);
+        }
+        .lbn .tease .sub{color:#C9D3CE;font-size:18px;max-width:520px;margin:0 auto;}
+
         /* method */
-        .lbn .method{background:var(--teal-deep);padding:96px 0;color:#EFE9DC;}
+        .lbn .method{background:var(--teal-deep);padding:64px 0 96px;color:#EFE9DC;}
         .lbn .method .eyebrow{color:var(--clay-lt);}
         .lbn .method h2{color:#FBF7F0;font-size:clamp(30px,4vw,42px);margin-bottom:16px;}
         .lbn .method p.intro{color:#C9D3CE;max-width:480px;margin-bottom:56px;}
         .lbn .t-step{display:grid;grid-template-columns:64px 1fr;gap:22px;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.12);}
         .lbn .t-step:last-child{border-bottom:none;}
-        .lbn .t-letter{font-family:var(--serif);font-size:30px;color:var(--clay-lt);font-style:italic;}
+        .lbn .t-letter{
+          font-family:var(--serif);font-size:34px;font-weight:600;font-style:italic;
+          color:var(--gold);
+          text-shadow:0 0 18px rgba(201,164,76,0.35);
+        }
         .lbn .t-step h3{color:#FBF7F0;font-size:19px;margin-bottom:6px;font-family:var(--sans);font-weight:600;}
         .lbn .t-step p{color:#C9D3CE;font-size:16px;}
 
@@ -591,6 +617,10 @@ export default function BeThereLandingPage() {
         </div>
       </section>
 
+      <div className="gold-divider" aria-hidden="true" style={{ padding: '36px 0' }}>
+        <span className="line" /><span className="dot" /><span className="line" />
+      </div>
+
       {/* ===== GAP ===== */}
       <section className="gap">
         <div className="wrap-narrow">
@@ -687,13 +717,24 @@ export default function BeThereLandingPage() {
         </div>
       </section>
 
-      {/* ===== BE THERE METHOD ===== */}
+      {/* ===== BE THERE TEASE ===== */}
+      <section className="tease">
+        <div className="wrap" data-rv>
+          <span className="eyebrow">Your Path Forward</span>
+          <h2>Follow it, corner by corner, day by day.</h2>
+          <div className="gap-line" aria-hidden="true" />
+          <p className="bethere-big">BE THERE.</p>
+          <p className="sub">Seven simple steps. Here is exactly how you get there.</p>
+        </div>
+      </section>
+
+      {/* ===== BE THERE METHOD (breakdown) ===== */}
       <section className="method">
         <div className="wrap">
-          <span className="eyebrow" data-rv>Your Path Forward</span>
-          <h2 data-rv>Here&rsquo;s How You Get There</h2>
+          <span className="eyebrow" data-rv>The Breakdown</span>
+          <h2 data-rv>What Each Letter Actually Means</h2>
           <p className="intro" data-rv>
-            Seven simple steps. Not so you are perfect for 90 days, but so you build a life that
+            Not so you are perfect for 90 days, but so you build a life that
             still works on the hard days.
           </p>
           <div className="timeline" data-rv data-rv-child>
@@ -827,6 +868,10 @@ export default function BeThereLandingPage() {
           </p>
         </div>
       </section>
+
+      <div className="gold-divider" aria-hidden="true" style={{ padding: '36px 0' }}>
+        <span className="line" /><span className="dot" /><span className="line" />
+      </div>
 
       {/* ===== OBJECTIONS ===== */}
       <section className="objections">
