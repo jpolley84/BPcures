@@ -52,7 +52,7 @@ const PURCHASE_MARKER_TTL_SECONDS = 60 * 60 * 24 * 45;
 // would mask / be masked by the session's own purchase event.
 //
 // Returns true when the event was captured, false when skipped or failed.
-export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null }) {
+export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null, abHomeVariant = null }) {
   let client;
   try {
     client = getClient();
@@ -100,6 +100,13 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
         product: product || null,
         source: source || 'checkout',   // 'checkout' | 'launcher' | 'one_click_upsell' | 'reconciliation'
         stripe_session_id: sessionId || null,
+        // 2026-07-17: stamps the homepage A/B variant ('a' | 'b') on the
+        // purchase event itself. Threaded from Stripe session metadata
+        // (api/create-embedded-checkout.js reads it from the client's
+        // localStorage assignment) since posthog-node here has no access to
+        // the browser's super property — without this, purchase revenue
+        // could never be split by variant, only pre-checkout funnel steps.
+        ...(abHomeVariant ? { ab_home_variant: abHomeVariant } : {}),
         ...(deviceId ? { buyer_email: emailId } : {}),
         $set: {
           is_paid_customer: true,

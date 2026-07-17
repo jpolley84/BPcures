@@ -870,6 +870,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       sessionId: session.id,
       markSession: true,
       deviceDistinctId: session.metadata?.ph_distinct_id || null,
+      abHomeVariant: session.metadata?.ab_home_variant || null,
     });
 
     return {

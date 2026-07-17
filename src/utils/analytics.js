@@ -46,6 +46,20 @@ export function registerSuperProps(props) {
   try { if (enabled && props) posthog.register(props); } catch { /* noop */ }
 }
 
+// Reads the sticky homepage A/B assignment directly from localStorage
+// (same key HomeSplit.jsx writes: 'bpq_ab_home'). Threaded through Stripe
+// checkout metadata so the server-side purchase event can be broken down by
+// variant — the client super-property alone never reaches server-side
+// captures, since posthog-node fires purchase from the webhook, not the
+// browser. Returns '' when unset/blocked (private mode, non-homepage entry).
+export function getAbHomeVariant() {
+  try {
+    const v = localStorage.getItem('bpq_ab_home');
+    return v === 'a' || v === 'b' ? v : '';
+  } catch { /* noop */ }
+  return '';
+}
+
 // Ties the anonymous device to the lead's email at the quiz email gate, so
 // the funnel (and revenue) can be analyzed per-person across sessions.
 export function identify(email, props) {

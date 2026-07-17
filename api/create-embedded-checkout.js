@@ -80,6 +80,18 @@ export default async function handler(req, res) {
       : '';
   const phMeta = phDid ? { ph_distinct_id: phDid } : {};
 
+  // Homepage A/B split variant ('a' | 'b'), threaded from localStorage
+  // (src/utils/analytics.js getAbHomeVariant) so the purchase event capturePurchase
+  // fires server-side can be broken down by variant. Without this the purchase
+  // event has no ab_home_variant at all (2026-07-17 gap found: quiz_started and
+  // checkout_clicked carried it via the client super-property, but purchase
+  // fires from THIS server-side webhook, which never sees a browser super prop).
+  const abVariant =
+    typeof req.body.ab_variant === 'string' && (req.body.ab_variant === 'a' || req.body.ab_variant === 'b')
+      ? req.body.ab_variant
+      : '';
+  const abMeta = abVariant ? { ab_home_variant: abVariant } : {};
+
   // ── $297 case review (paid in full OR 3-pay) ──
   // Both land on /case-review-confirmed. The metadata markers (offer + plan,
   // plus the legacy kind the webhook already recognizes) drive fulfillment in
@@ -165,7 +177,7 @@ export default async function handler(req, res) {
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       // The webhook guard keys on metadata.funnel; corner drives kit delivery.
-      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}), ...phMeta },
+      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}), ...phMeta, ...abMeta },
       // 2026-07-08: always create a Customer (the webhook + upgrade ladder use
       // it). 2026-07-13 panel fix: setup_future_usage REMOVED from the kit
       // branch. It made Stripe render save-card/future-charge consent language

@@ -31,7 +31,7 @@ import { Link } from 'react-router-dom';
 import { Lock, ShieldCheck } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track, getDistinctId } from '../utils/analytics.js';
+import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics.js';
 import { sabbathStatus } from '../utils/sabbath';
 
 // One Stripe instance at module load (Stripe's recommended pattern). Null when
@@ -265,7 +265,7 @@ export default function PayPage() {
             const res = await fetch('/api/create-embedded-checkout', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ tier, corner, email, ph_did: getDistinctId() }),
+              body: JSON.stringify({ tier, corner, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
             });
             if (!res.ok) throw new Error('start_failed');
             const data = await res.json();
