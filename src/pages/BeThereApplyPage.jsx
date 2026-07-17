@@ -478,9 +478,12 @@ export default function BeThereApplyPage() {
                       $1,997
                     </span>
                   </div>
+                  <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.86rem', lineHeight: 1.5, margin: '0.35rem 0 0' }}>
+                    or 3 payments of $697
+                  </p>
                 </div>
                 <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
-                  This covers everything above for the full 90 days. Payment plans are there if you need one. You pay
+                  This covers everything above for the full 90 days. You pay
                   nothing today. The call is free.
                 </p>
               </div>
