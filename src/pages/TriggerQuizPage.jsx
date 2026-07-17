@@ -55,9 +55,14 @@ export const TRIGGERS = {
   },
 };
 
-// ---- 5 questions, options mapped to the 5 triggers ------------------------
+// ---- Questions ------------------------------------------------------------
+// 2026-07-16 (Joel): ALL questions are multiple-selection now. kind:
+//   'trigger' — options map to the 5 triggers and drive scoring
+//   'belief'  — where they think BP comes from; drives the results debunk
+//   'spend'   — last year's medical spending; drives the savings frame
 const QUESTIONS = [
   {
+    kind: 'trigger',
     title: 'When your day gets stressful, what does your body actually do?',
     options: [
       { key: 'stress', text: 'My chest tightens and my heart pounds for a while after.' },
@@ -68,6 +73,7 @@ const QUESTIONS = [
     ],
   },
   {
+    kind: 'trigger',
     title: 'How do you feel an hour or two after a big meal of pasta, bread, or dessert?',
     options: [
       { key: 'stress', text: 'My body feels fine, but my mind races more than usual.' },
@@ -78,6 +84,7 @@ const QUESTIONS = [
     ],
   },
   {
+    kind: 'trigger',
     title: 'How often does your food come from a box, can, restaurant, or drive-thru?',
     options: [
       { key: 'stress', text: 'More when I am stressed. It is just the fastest option.' },
@@ -88,6 +95,7 @@ const QUESTIONS = [
     ],
   },
   {
+    kind: 'trigger',
     title: 'What does a normal night of sleep really look like for you?',
     options: [
       { key: 'stress', text: 'My mind will not shut off. I replay the whole day.' },
@@ -98,6 +106,7 @@ const QUESTIONS = [
     ],
   },
   {
+    kind: 'trigger',
     title: 'Add up desk, car, and couch. How much of your day do you spend sitting?',
     options: [
       { key: 'stress', text: 'A lot, and I feel tension build the longer I sit.' },
@@ -107,7 +116,57 @@ const QUESTIONS = [
       { key: 'stillness', text: 'Most of it. Some days 8 hours or more, easily.' },
     ],
   },
+  {
+    kind: 'belief',
+    title: 'Where do you think high blood pressure really comes from? Pick all you have heard.',
+    options: [
+      { key: 'genetic', text: 'It is genetic. It runs in my family, so nothing helps.' },
+      { key: 'heart', text: 'It means something is wrong with my heart.' },
+      { key: 'permanent', text: 'Once you have it, you have it for life.' },
+      { key: 'tablesalt', text: 'It comes from table salt. Put down the shaker and you are fine.' },
+      { key: 'none', text: 'None of the above.' },
+    ],
+  },
+  {
+    kind: 'spend',
+    title: 'What did health care cost you this past year? Count visits, meds, copays, and tests.',
+    options: [
+      { key: 'spend-under-500', text: 'Under $500' },
+      { key: 'spend-500-2000', text: '$500 to $2,000' },
+      { key: 'spend-2000-5000', text: '$2,000 to $5,000' },
+      { key: 'spend-over-5000', text: 'More than $5,000' },
+      { key: 'spend-unsure', text: 'Honestly, I have lost track.' },
+    ],
+  },
 ];
+
+// Debunk copy for the results page, keyed by belief answer.
+const LIES = {
+  genetic: {
+    lie: 'It is genetic, so nothing helps.',
+    truth: 'Genes write the recipe, but your daily habits do the baking. People with the same family history land in very different places based on how they eat, sleep, move, and handle stress.',
+  },
+  heart: {
+    lie: 'It means something is wrong with my heart.',
+    truth: 'The number is a measurement of pressure in your blood vessels, not a verdict on your heart. Most of the time the driver is a daily habit squeezing those vessels. Find the habit, and the number can change.',
+  },
+  permanent: {
+    lie: 'Once you have it, you have it for life.',
+    truth: 'Blood pressure is a moving number. It changes with sleep, food, stress, and movement, in both directions. Many people watch it move when they fix their loudest trigger. Your doctor tracks it with you.',
+  },
+  tablesalt: {
+    lie: 'It comes from table salt. Skip the shaker and you are fine.',
+    truth: 'Most salt hides in bread, sauces, and packaged food, not the shaker. And salt is only ONE of the 5 triggers. If cutting salt never moved your number, the real driver is probably somewhere else.',
+  },
+};
+
+const SPEND_LABELS = {
+  'spend-under-500': 'under $500',
+  'spend-500-2000': '$500 to $2,000',
+  'spend-2000-5000': '$2,000 to $5,000',
+  'spend-over-5000': 'more than $5,000',
+  'spend-unsure': 'more than you can track',
+};
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -199,8 +258,12 @@ export default function TriggerQuizPage() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState('quiz'); // quiz | gate | result
   const [current, setCurrent] = useState(0);
+  // Multi-select: answers[i] = array of selected option keys for question i.
   const [answers, setAnswers] = useState([]);
+  const [selected, setSelected] = useState([]); // current question's picks
   const [winner, setWinner] = useState(null);
+  const [beliefs, setBeliefs] = useState([]); // belief-question picks
+  const [spend, setSpend] = useState([]); // spend-question picks
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -218,34 +281,58 @@ export default function TriggerQuizPage() {
     window.scrollTo({ top: 0 });
   }, [phase, current]);
 
-  function choose(key) {
+  function toggle(key) {
     if (!startedRef.current) {
       startedRef.current = true;
       track('quiz_started', { quiz: 'triggers', funnel_version: 'annie-v2' });
     }
-    const nextAnswers = [...answers, key];
+    setSelected((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    );
+  }
+
+  function next() {
+    if (!selected.length) return;
+    const q = QUESTIONS[current];
+    const nextAnswers = [...answers, selected];
     setAnswers(nextAnswers);
-    track('quiz_question_answered', { quiz: 'triggers', step: current + 1, answer: key });
+    track('quiz_question_answered', {
+      quiz: 'triggers',
+      step: current + 1,
+      answer: selected.join(','),
+      funnel_version: 'annie-v2',
+    });
+    if (q.kind === 'belief') setBeliefs(selected);
+    if (q.kind === 'spend') setSpend(selected);
+    setSelected([]);
     if (current + 1 < QUESTIONS.length) {
       setCurrent(current + 1);
-    } else {
-      const scores = { stress: 0, sugar: 0, sodium: 0, sleep: 0, stillness: 0 };
-      nextAnswers.forEach((k) => {
-        if (k in scores) scores[k] += 1;
-      });
-      let top = 'stress';
-      let best = -1;
-      // First-answer priority breaks ties in favor of the gut answer.
-      nextAnswers.forEach((k) => {
-        if (scores[k] > best) {
-          best = scores[k];
-          top = k;
+      return;
+    }
+    // Score ONLY the trigger questions. Selection order breaks ties in favor
+    // of the earliest gut pick.
+    const scores = { stress: 0, sugar: 0, sodium: 0, sleep: 0, stillness: 0 };
+    const flat = [];
+    QUESTIONS.forEach((qq, i) => {
+      if (qq.kind !== 'trigger') return;
+      (nextAnswers[i] || []).forEach((k) => {
+        if (k in scores) {
+          scores[k] += 1;
+          flat.push(k);
         }
       });
-      setWinner(top);
-      track('quiz_completed', { quiz: 'triggers', trigger: top, funnel_version: 'annie-v2' });
-      setPhase('gate');
-    }
+    });
+    let top = 'stress';
+    let best = -1;
+    flat.forEach((k) => {
+      if (scores[k] > best) {
+        best = scores[k];
+        top = k;
+      }
+    });
+    setWinner(top);
+    track('quiz_completed', { quiz: 'triggers', trigger: top, funnel_version: 'annie-v2' });
+    setPhase('gate');
   }
 
   async function submitGate(e) {
@@ -271,6 +358,8 @@ export default function TriggerQuizPage() {
       funnel_version: 'annie-v2',
     });
     let tags = ['triggers-quiz'];
+    tags = tags.concat(beliefs.filter((b) => b !== 'none').map((b) => `belief-${b}`));
+    tags = tags.concat(spend);
     try {
       const utm = new URLSearchParams(window.location.search);
       tags = tags.concat(
@@ -285,7 +374,8 @@ export default function TriggerQuizPage() {
       quiz: 'triggers',
       trigger: t.slug,
       triggerName: t.name,
-      answers,
+      // Flat list of every selected key (server stores it opaquely).
+      answers: answers.flat(),
       tags,
     });
     const post = () =>
@@ -366,55 +456,79 @@ export default function TriggerQuizPage() {
                 margin: '0 0 1.3rem',
               }}
             >
-              Be honest, not perfect. There are no wrong answers here.
+              Be honest, not perfect. Pick ALL that fit you, then tap Next.
             </p>
             <h2 style={{ ...serif, fontSize: 'clamp(1.25rem, 4.5vw, 1.5rem)', lineHeight: 1.35, margin: '0 0 1.3rem' }}>
               {QUESTIONS[current].title}
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {QUESTIONS[current].options.map((opt, i) => (
-                <button
-                  key={opt.key}
-                  type="button"
-                  onClick={() => choose(opt.key)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.85rem',
-                    textAlign: 'left',
-                    background: '#fff',
-                    border: '1.5px solid var(--line, #D8CFBD)',
-                    borderRadius: 12,
-                    padding: '0.85rem 1rem',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.45,
-                    color: 'var(--ink, #121110)',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    width: '100%',
-                  }}
-                >
-                  <span
+              {QUESTIONS[current].options.map((opt, i) => {
+                const on = selected.includes(opt.key);
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    role="checkbox"
+                    aria-checked={on}
+                    onClick={() => toggle(opt.key)}
                     style={{
-                      flexShrink: 0,
-                      width: 28,
-                      height: 28,
-                      borderRadius: '50%',
-                      border: '1.5px solid var(--line, #D8CFBD)',
-                      display: 'inline-flex',
+                      display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      color: 'var(--sage-deep, #2E3A30)',
+                      gap: '0.85rem',
+                      textAlign: 'left',
+                      background: on ? 'var(--paper-warm, #EFE8DB)' : '#fff',
+                      border: on
+                        ? '1.5px solid var(--clay, #B85A36)'
+                        : '1.5px solid var(--line, #D8CFBD)',
+                      borderRadius: 12,
+                      padding: '0.85rem 1rem',
+                      fontSize: '0.95rem',
+                      lineHeight: 1.45,
+                      color: 'var(--ink, #121110)',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      width: '100%',
                     }}
                   >
-                    {LETTERS[i]}
-                  </span>
-                  <span>{opt.text}</span>
-                </button>
-              ))}
+                    <span
+                      aria-hidden="true"
+                      style={{
+                        flexShrink: 0,
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        border: on
+                          ? '1.5px solid var(--clay, #B85A36)'
+                          : '1.5px solid var(--line, #D8CFBD)',
+                        background: on ? 'var(--clay, #B85A36)' : 'transparent',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: on ? '#fff' : 'var(--sage-deep, #2E3A30)',
+                      }}
+                    >
+                      {on ? '✓' : LETTERS[i]}
+                    </span>
+                    <span>{opt.text}</span>
+                  </button>
+                );
+              })}
             </div>
+            <button
+              type="button"
+              onClick={next}
+              disabled={!selected.length}
+              style={{
+                ...primaryBtn,
+                marginTop: '1.1rem',
+                opacity: selected.length ? 1 : 0.5,
+                cursor: selected.length ? 'pointer' : 'not-allowed',
+              }}
+            >
+              {current + 1 < QUESTIONS.length ? 'Next' : 'See My Results'} <ArrowRight size={18} />
+            </button>
           </div>
         )}
 
@@ -653,6 +767,76 @@ export default function TriggerQuizPage() {
               </a>
             </div>
 
+            {/* The lies, debunked. Their own picks are marked. */}
+            <div style={{ ...labelStyle, marginTop: '1.6rem' }}>
+              The Lies You Have Been Told About Blood Pressure
+            </div>
+            {Object.entries(LIES).map(([key, item]) => {
+              const picked = beliefs.includes(key);
+              return (
+                <div
+                  key={key}
+                  style={{
+                    background: picked ? 'var(--paper-warm, #EFE8DB)' : '#fff',
+                    border: picked
+                      ? '1.5px solid var(--clay, #B85A36)'
+                      : '1.5px solid var(--line, #D8CFBD)',
+                    borderRadius: 12,
+                    padding: '0.9rem 1rem',
+                    marginBottom: 10,
+                  }}
+                >
+                  {picked && (
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontSize: '0.62rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        color: '#fff',
+                        background: 'var(--clay, #B85A36)',
+                        padding: '0.2rem 0.55rem',
+                        borderRadius: 999,
+                        marginBottom: '0.45rem',
+                      }}
+                    >
+                      You said you heard this one
+                    </span>
+                  )}
+                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--clay, #B85A36)', marginBottom: 3 }}>
+                    Lie: &ldquo;{item.lie}&rdquo;
+                  </div>
+                  <div style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)' }}>
+                    <strong style={{ color: 'var(--sage-deep, #2E3A30)' }}>Truth:</strong> {item.truth}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* The money frame: what fixing the trigger can do to their bills. */}
+            <div
+              style={{
+                background: 'var(--sage-deep, #2E3A30)',
+                borderRadius: 14,
+                padding: '1.3rem 1.3rem',
+                margin: '1.4rem 0 1.1rem',
+              }}
+            >
+              <h3 style={{ ...serif, color: 'var(--cream, #FBF8F1)', fontSize: '1.2rem', margin: '0 0 0.5rem' }}>
+                Now do the math on your medical bills.
+              </h3>
+              <p style={{ color: 'var(--sage-soft, #C5CDBF)', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
+                {spend.length && SPEND_LABELS[spend[0]]
+                  ? `You told us health care cost you ${SPEND_LABELS[spend[0]]} this past year. `
+                  : ''}
+                Extra visits, refills, copays, and tests add up, year after year. When people
+                get ahead of their loudest trigger, some cut what they spend on all of that
+                by up to half*. The kit below costs $17, one time. That is the price of one
+                copay, for a plan you keep forever.
+              </p>
+            </div>
+
             {/* $17 kit upsell */}
             <button type="button" style={primaryBtn} onClick={buyKit}>
               Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
@@ -660,6 +844,10 @@ export default function TriggerQuizPage() {
             <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.7rem 0 0' }}>
               A simple 10-day plan for your exact trigger, built by Joel. One time $17. Yours
               right away. No subscription.
+            </p>
+            <p style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
+              *Results vary from person to person. This is education, not medical or
+              financial advice. Your doctor makes every medication call.
             </p>
           </div>
         )}

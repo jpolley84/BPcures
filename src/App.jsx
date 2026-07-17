@@ -163,7 +163,10 @@ function App() {
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
               traffic that wants the diagnostic before buying. */}
-          <Route path="/quiz" element={<SiteLayout><QuizPage /></SiteLayout>} />
+          {/* 2026-07-16 (Joel): /quiz IS the 5 Hidden Triggers quiz now, for
+              BOTH homepage variants. The old Triangle QuizPage stays routed
+              at /start only. */}
+          <Route path="/quiz" element={<TriggerQuizPage />} />
 
           {/* /triggers — the 5 Hidden Triggers quiz (Annie-v2 funnel,
               2026-07-16). Standalone (own mini header + compliance footer):

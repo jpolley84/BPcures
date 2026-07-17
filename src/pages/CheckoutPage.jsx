@@ -158,6 +158,26 @@ const CheckoutPage = () => {
 
   return (
     <div className="min-h-screen bg-white pb-20" data-hpvariant={hpVariant}>
+      {/* 2026-07-16 (Joel): prominent above-the-fold quiz banner. Reverses
+          the 06-08 removal of the top /quiz link by explicit request: give
+          every visitor a clear way into the free 90-second trigger quiz
+          before the sales letter starts. /quiz now serves the 5 Hidden
+          Triggers quiz for both variants. */}
+      <Link
+        to="/quiz"
+        onClick={() => track('quizfirst_start_clicked', { position: 'top_banner', page: 'checkout' })}
+        className="block bg-[#2E3A30] hover:bg-[#3a4a3e] transition-colors"
+      >
+        <div className="max-w-3xl mx-auto flex items-center justify-center gap-3 px-4 py-3 text-center">
+          <span className="text-[#F2D49B] text-xs font-bold uppercase tracking-widest shrink-0">Free</span>
+          <span className="text-white text-sm sm:text-base font-semibold">
+            Not sure where to start? Find your #1 hidden blood pressure trigger in 90 seconds
+          </span>
+          <span className="shrink-0 inline-flex items-center gap-1 bg-[#B85A36] text-white text-sm font-bold px-3 py-1.5 rounded-full">
+            Take the quiz <ArrowRight size={14} />
+          </span>
+        </div>
+      </Link>
       {/* Top credibility strip. 2026-06-08 conversion pass.
           Was a /quiz link, which gave buy-ready traffic a free exit at the
           very top of the page. Replaced with a non-clickable credibility
