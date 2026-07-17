@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       if (sendDay === null) continue;
 
       const emailFn = SPRINT_FLASH_EMAILS[sendDay];
-      const ctx = { firstName: sub.firstName || '', corner: sub.corner || null };
+      const ctx = { firstName: sub.firstName || '', corner: sub.corner || null, flashVariant: sub.flashVariant || null };
       const { subject, render } = emailFn(ctx);
       const unsubToken = signUnsubToken({ email: sub.email });
       const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;

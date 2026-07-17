@@ -101,6 +101,14 @@ export async function runStateCron({
           summary.skippedExcluded++;
           continue;
         }
+        // 2026-07-17: flashOnly records are legacy past-buyers migrated ONLY
+        // for the $97 Sprint flash arc (sprint-flash-cron). They must never
+        // enter the lead OR buyer sequence here (they already own their kit
+        // and bought long ago), so the shared engine skips them entirely.
+        if (sub.flashOnly) {
+          summary.skippedExcluded++;
+          continue;
+        }
         if (sub.state !== state) {
           summary.skippedWrongState++;
           continue;

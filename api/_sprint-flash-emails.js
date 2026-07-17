@@ -28,8 +28,61 @@ export const flashSentFlag = (day) => `sprintFlash${day}Sent`;
 
 const first = (ctx) => ctx.firstName || 'friend';
 
+// ── Email 1 (PAST-BUYER variant) · for legacy buyers migrated in 2026-07-17.
+// The normal Email 1 opens "It has been about ten days since you opened your
+// kit" — a lie for someone who bought 30-90 days ago. This variant is
+// purchase-age-neutral: it re-opens the relationship and offers the door that
+// never existed when they bought. ctx.flashVariant === 'pastbuyer' selects it.
+function email1PastBuyer(ctx) {
+  const subject = 'you bought the kit. I never told you about this.';
+  const preheader = 'The door I open for buyers only. Yours is open now.';
+  const bodyHtml = [
+    p(`Hey ${first(ctx)},`),
+    p(`A while back you bought a BP Reset Kit from me. First, thank you. Whether you ran all ten days or it is still sitting in your inbox, you did the one thing most people never do. You started.`),
+    p(`And I owe you something I never offered you back then.`),
+    p(`Here is what 20 years in the ICU and ER taught me. The people who struggled most were almost never the ones who did nothing. They were the ones doing the right things in the <strong>wrong order</strong>. Walking every day while their sleep stole the progress back every night. Cutting salt while stress kept the pressure pinned.`),
+    p(`It was never a willpower problem. It was a which-order problem. And the kit could give you the plan, but it could never give you my eyes on YOUR case. So I built the one thing that does:`),
+    h2(`The 30-Day Sprint: Joel's Eyes On Your Case`),
+    p(`You send me your numbers, your history, and what you have tried. I sit down with your case the way I used to sit down with a chart, and I build your next 30 days, day by day, for your life. And it now includes something it never did before: <strong>a 1:1 call with me</strong>, so we walk through your plan together and you leave with zero guesses.`),
+    p(`The page price is $297. But you already bought from me and did the work, so this is the buyer price, and it is not on the website:`),
+    callout({
+      kicker: 'Buyer only, inside this email',
+      body: `$97, one time. The full case review, the 30-day plan built for you, and the 1:1 call. This price only lives in these emails, because you already own a kit.`,
+    }),
+    ctaButton('Get My 30-Day Plan and Call, $97', FLASH_97_LINK),
+    p(`Talk soon,`),
+    p(`Joel Polley, RN`),
+  ].join('');
+  const bodyText = `Hey ${first(ctx)},
+
+A while back you bought a BP Reset Kit from me. First, thank you. Whether you ran all ten days or it is still sitting in your inbox, you did the one thing most people never do. You started.
+
+And I owe you something I never offered you back then.
+
+Here is what 20 years in the ICU and ER taught me. The people who struggled most were almost never the ones who did nothing. They were the ones doing the right things in the WRONG ORDER. Walking every day while their sleep stole the progress back every night. Cutting salt while stress kept the pressure pinned.
+
+It was never a willpower problem. It was a which-order problem. And the kit could give you the plan, but it could never give you my eyes on YOUR case. So I built the one thing that does.
+
+THE 30-DAY SPRINT: JOEL'S EYES ON YOUR CASE
+You send me your numbers, your history, and what you have tried. I sit down with your case the way I used to sit down with a chart, and I build your next 30 days, day by day, for your life. And it now includes something it never did before: a 1:1 call with me, so we walk through your plan together and you leave with zero guesses.
+
+The page price is $297. But you already bought from me and did the work, so this is the buyer price, and it is not on the website:
+
+BUYER ONLY, INSIDE THIS EMAIL
+$97, one time. The full case review, the 30-day plan built for you, and the 1:1 call. This price only lives in these emails, because you already own a kit.
+
+Get my 30-day plan and call, $97: ${FLASH_97_LINK}
+
+Talk soon,
+Joel Polley, RN
+
+P.S. This is not a new pitch of the same thing. It is the level of help the kit alone was never built to give. If your numbers still are not where you want them, this is the door.`;
+  return { subject, render: (unsubUrl) => buildEmail({ preheader, bodyHtml: bodyHtml + psHtml(`This is not a new pitch of the same thing. It is the level of help the kit alone was never built to give. If your numbers still are not where you want them, this is the door.`), bodyText, unsubUrl, corner: ctx.corner }) };
+}
+
 // ── Email 1 · Day 10 · did the kit move your numbers? ─────────────────
 function email1(ctx) {
+  if (ctx.flashVariant === 'pastbuyer') return email1PastBuyer(ctx);
   const subject = 'did the kit move your numbers?';
   const preheader = 'If yes, read this. If no, definitely read this.';
   const bodyHtml = [
