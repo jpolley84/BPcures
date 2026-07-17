@@ -452,6 +452,22 @@ const CheckoutPage = () => {
               </p>
             ))}
           </div>
+          {/* Kit vault hero image (2026-07-17, Joel): the full kit library
+              in one shot, right before the price line + CTA. Brand imagery,
+              not a customer photo. */}
+          <div className="mb-4 mt-2 rounded-xl overflow-hidden" style={{ boxShadow: '0 18px 40px rgba(18, 17, 16, 0.18)' }}>
+            <picture>
+              <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
+              <img
+                src="/images/kit-vault-hero.jpg"
+                alt="The 10-Day BP Reset Kit: a complete library of protocols, herb guides, recipes, and tools to help you calm the three pressures behind your numbers. By Joel Polley, RN."
+                width="1672"
+                height="941"
+                fetchPriority="high"
+                style={{ display: 'block', width: '100%', height: 'auto' }}
+              />
+            </picture>
+          </div>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
             Your Corner Reset &middot; 10 days &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>

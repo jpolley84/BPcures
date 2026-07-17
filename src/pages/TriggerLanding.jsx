@@ -190,19 +190,14 @@ export default function TriggerLanding() {
         .bpq-cta { transition: transform .25s ease, box-shadow .25s ease, background .25s ease; }
         .bpq-cta:hover { background: var(--clay-hover, #A44B28); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(184, 90, 54, 0.38); }
         .bpq-cta:focus-visible { outline: 3px solid var(--sage-deep, #2E3A30); outline-offset: 3px; }
-        .bpq-hero-row { display: flex; gap: 0.9rem; align-items: stretch; }
-        .bpq-hero-row .bpq-hero-steps { flex: 1 1 52%; min-width: 0; }
+        .bpq-hero-row { display: flex; flex-direction: column; gap: 0.9rem; }
+        .bpq-hero-row .bpq-hero-steps { width: 100%; min-width: 0; }
         .bpq-hero-poster {
-          display: block; flex: 0 1 44%; align-self: flex-start;
+          display: block; width: 100%;
           border: none; padding: 0; background: none;
           cursor: pointer; border-radius: 12px; overflow: hidden;
           box-shadow: 0 18px 40px rgba(18, 17, 16, 0.22);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        @media (max-width: 520px) {
-          .bpq-hero-row { flex-direction: column; align-items: center; }
-          .bpq-hero-poster { flex: none; width: min(72%, 280px); }
-          .bpq-hero-row .bpq-hero-steps { width: 100%; }
         }
         .bpq-hero-poster:hover { transform: translateY(-3px); box-shadow: 0 32px 65px rgba(18, 17, 16, 0.3); }
         .bpq-hero-poster:focus-visible { outline: 3px solid var(--clay, #B85A36); outline-offset: 3px; }
@@ -243,22 +238,23 @@ export default function TriggerLanding() {
             </em>
           </h1>
 
-          {/* Hero row: poster (smaller, clickable) beside the 1-2-3 how-it-
-              works steps (owner's edit); stacks on narrow screens. */}
+          {/* Hero row: the 10-Day BP Reset Kit vault image (2026-07-17,
+              Joel) full-width and clickable, with the 1-2-3 how-it-works
+              steps stacked below. */}
           <div className="bpq-hero-row" style={{ margin: '0.2rem 0 1.2rem' }}>
             <button
               type="button"
               className="bpq-hero-poster"
               onClick={() => startQuiz('hero_poster')}
-              aria-label="5 Hidden Triggers Behind the Rising Numbers. Take the quiz. By Joel Polley, RN."
+              aria-label="The 10-Day BP Reset Kit library. Take the free 90-second quiz to find your trigger."
             >
               <picture>
-                <source srcSet="/images/hero-5-triggers.webp" type="image/webp" />
+                <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
                 <img
-                  src="/images/hero-5-triggers.jpg"
-                  alt="5 Hidden Triggers Behind the Rising Numbers. What may be quietly pushing your blood pressure up. Take the quiz. By Joel Polley, RN, 20 years in ICU and Emergency Medicine."
-                  width="1108"
-                  height="1419"
+                  src="/images/kit-vault-hero.jpg"
+                  alt="The 10-Day BP Reset Kit: a complete library of protocols, herb guides, recipes, and tools to help you calm the three pressures behind your numbers. By Joel Polley, RN."
+                  width="1672"
+                  height="941"
                   fetchPriority="high"
                   style={{ display: 'block', width: '100%', height: 'auto' }}
                 />
