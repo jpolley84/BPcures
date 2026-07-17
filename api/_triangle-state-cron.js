@@ -29,7 +29,12 @@ import { Resend } from 'resend';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 
-const RATE_LIMIT_MS = 100; // ~10/sec — Resend free-tier ceiling
+// 2026-07-16: Resend's default API rate limit is 2 req/s (the old 100ms /
+// "10/sec" claim was wrong and produced 429 storms at volume). 550ms ≈ 1.8/s.
+// Throughput: ~500 sends per 300s invocation; the lead cron now runs HOURLY
+// (vercel.json) so the 6,313-lead freegift cohort clears each arc day
+// (~13 invocations) instead of silently missing its 2-3 run day-window.
+const RATE_LIMIT_MS = 550;
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
 function daysBetween(isoA, now = Date.now()) {
@@ -189,8 +194,13 @@ export async function runStateCron({
               'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
             },
           });
+          // 2026-07-16: re-GET before write. `sub` came from a batched mget
+          // that can be minutes stale by now; writing {...sub} back would
+          // clobber a webhook state flip (buyer!) or an unsubscribe that
+          // landed mid-batch. Merge the sent flags onto the FRESH record.
+          const fresh = (await kv.get(key)) || sub;
           await kv.set(key, {
-            ...sub,
+            ...fresh,
             [flagName]: true,
             [`${flagName}At`]: new Date().toISOString(),
             lastSentAt: new Date().toISOString(),

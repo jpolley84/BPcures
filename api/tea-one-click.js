@@ -138,6 +138,18 @@ export default async function handler(req, res) {
     }
   }
 
+  // 2026-07-16 eligibility gate (journey audit): only a PAID session from OUR
+  // funnels may be charged. The Stripe account is shared across funnels, and
+  // session ids can leak (return URLs, referrers, screenshots) — without this
+  // gate any leaked off-session-card session id could be billed $48/$120 by
+  // an unauthenticated caller.
+  const md = originalSession.metadata || {};
+  const isOurs =
+    md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp' || md.funnel === 'svutu-tea';
+  if (!isOurs || originalSession.payment_status !== 'paid') {
+    return res.status(409).json({ error: 'not_eligible', message: 'Session is not a paid BraveWorks purchase.' });
+  }
+
   const customerId = typeof originalSession.customer === 'string'
     ? originalSession.customer
     : originalSession.customer?.id;

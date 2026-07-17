@@ -81,6 +81,25 @@ export default async function handler(req, res) {
     return res.status(409).json({ error: 'not_eligible', message: 'Session is not a paid corner-kit purchase.' });
   }
 
+  // Never bill an upgrade the buyer already owns: the KV idem marker used to
+  // expire after 24h, so a bookmarked /oto revisit could re-charge $27 while
+  // processUpgrade's own dedupe swallowed re-delivery (paid twice, got
+  // nothing). Check BOTH the permanent upgrade marker and the drip record.
+  const buyerEmail = (originalSession.customer_details?.email || '').trim().toLowerCase();
+  if (buyerEmail) {
+    try {
+      const [upgradeMark, drip] = await Promise.all([
+        kv.get(`bwbp:upgrade:${buyerEmail}:complete`),
+        kv.get(`bwbp:drip:${buyerEmail}`),
+      ]);
+      if (upgradeMark || drip?.paidTier === 'complete') {
+        return res.status(409).json({ error: 'already_upgraded', message: 'This buyer already owns the complete kit.' });
+      }
+    } catch (err) {
+      console.warn('kit-oto-charge: ownership check failed (continuing)', err.message);
+    }
+  }
+
   const customerId = typeof originalSession.customer === 'string'
     ? originalSession.customer
     : originalSession.customer?.id;
@@ -130,11 +149,13 @@ export default async function handler(req, res) {
   }
 
   try {
+    // PERMANENT (no TTL): one OTO per session, forever. A 24h expiry plus a
+    // bookmarked /oto revisit is a double-charge.
     await kv.set(idemKey, {
       payment_intent_id: paymentIntent.id,
       charged_at: new Date().toISOString(),
       amount: OTO.amount,
-    }, { ex: 86400 });
+    });
   } catch (err) {
     console.warn('kit-oto-charge: idem write failed', err.message);
   }
@@ -164,6 +185,31 @@ export default async function handler(req, res) {
     delivered = Boolean(result && (result.delivered || result.deduplicated));
   } catch (err) {
     console.error('kit-oto-charge: processUpgrade failed (charge OK, needs recovery)', err.message);
+    // Charged-but-undelivered must never depend on someone grepping logs:
+    // write a durable KV recovery record AND email Joel. Best-effort both.
+    try {
+      await kv.set(`needs-recovery:kit-oto:${paymentIntent.id}`, {
+        payment_intent_id: paymentIntent.id,
+        session_id,
+        email: originalSession.customer_details?.email || null,
+        error: err.message,
+        at: new Date().toISOString(),
+      });
+    } catch (e2) {
+      console.error('kit-oto-charge: recovery record write failed', e2.message);
+    }
+    try {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      await resend.emails.send({
+        from: 'BraveWorks Ops <noreply@bpquiz.com>',
+        to: process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com',
+        subject: 'ACTION: OTO charged but delivery failed',
+        text: `A $27 complete-kit OTO charge succeeded but fulfillment failed.\n\nPaymentIntent: ${paymentIntent.id}\nBuyer: ${originalSession.customer_details?.email || 'unknown'}\nError: ${err.message}\n\nRecovery record: needs-recovery:kit-oto:${paymentIntent.id}\nManually deliver the complete kit or refund.`,
+      });
+    } catch (e3) {
+      console.error('kit-oto-charge: recovery alert email failed', e3.message);
+    }
   }
 
   return res.status(200).json({ ok: true, payment_intent_id: paymentIntent.id, delivered });

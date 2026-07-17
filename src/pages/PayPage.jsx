@@ -224,7 +224,7 @@ export default function PayPage() {
   const meta = corner ? TRIGGER_META[corner] : null;
 
   useEffect(() => {
-    track('pay_page_viewed', { tier, ...(corner ? { corner } : {}) });
+    track('pay_page_viewed', { funnel_version: 'annie-v2', tier, ...(corner ? { corner } : {}) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -255,7 +255,7 @@ export default function PayPage() {
     async function init() {
       if (!stripePromise) {
         setError('Checkout is briefly unavailable. Please refresh in a moment, or use the button on the previous page again.');
-        track('checkout_start_failed', { tier, stage: 'no_key' });
+        track('checkout_start_failed', { funnel_version: 'annie-v2', tier, stage: 'no_key' });
         return;
       }
       try {
@@ -280,11 +280,12 @@ export default function PayPage() {
         checkout.mount(containerRef.current);
         setMounted(true);
         setError('');
-        track('checkout_form_mounted', { tier });
+        track('checkout_form_mounted', { funnel_version: 'annie-v2', tier });
       } catch (err) {
         setMounted(false);
         setError('The order form did not load. Your card was NOT charged. Tap below to try again.');
         track('checkout_start_failed', {
+          funnel_version: 'annie-v2',
           tier,
           // 'no_secret' is a session-creation failure too (API 200 without a
           // clientSecret); only true mount/stripe-js failures land in 'mount'.

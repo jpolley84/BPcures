@@ -205,6 +205,9 @@ export default function TriggerQuizPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  // true when the email capture POST failed after retry: the results page
+  // must NOT promise "it is on the way to your email" that will never come.
+  const [captureFailed, setCaptureFailed] = useState(false);
   const startedRef = useRef(false);
 
   useEffect(() => {
@@ -295,7 +298,11 @@ export default function TriggerQuizPage() {
       let res = await post().catch(() => null);
       if (!res || !res.ok) {
         res = await post().catch(() => null);
-        if (!res || !res.ok) console.error('lead-magnet capture failed after retry');
+        if (!res || !res.ok) {
+          console.error('lead-magnet capture failed after retry');
+          setCaptureFailed(true);
+          track('quiz_email_capture_failed', { funnel_version: 'annie-v2' });
+        }
       }
     } finally {
       setLoading(false);
@@ -620,11 +627,12 @@ export default function TriggerQuizPage() {
               }}
             >
               <h3 style={{ ...serif, color: 'var(--cream, #FBF8F1)', fontSize: '1.15rem', margin: '0 0 0.4rem' }}>
-                Your full Blueprint is on its way
+                {captureFailed ? 'Your full Blueprint is ready' : 'Your full Blueprint is on its way'}
               </h3>
               <p style={{ color: 'var(--sage-soft, #C5CDBF)', fontSize: '0.88rem', lineHeight: 1.6, margin: '0 0 0.8rem' }}>
-                All 5 hidden triggers in plain words. It is on the way to your email right
-                now. Check your inbox in a few minutes.
+                {captureFailed
+                  ? 'All 5 hidden triggers in plain words. Our email system hit a snag just now, so grab your copy right here instead.'
+                  : 'All 5 hidden triggers in plain words. It is on the way to your email right now. Check your inbox in a few minutes.'}
               </p>
               <a
                 href="/downloads/bp-blueprint.pdf"

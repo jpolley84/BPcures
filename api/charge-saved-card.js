@@ -92,6 +92,17 @@ export default async function handler(req, res) {
     return res.status(404).json({ error: 'session_not_found', detail: err.message });
   }
 
+  // 2026-07-16 eligibility gate (journey audit): legacy endpoint, still
+  // routable. Require a PAID session from our funnel before any charge —
+  // shared Stripe account, leaked session ids must not be billable.
+  const omd = originalSession.metadata || {};
+  if (
+    !(omd.funnel === 'braveworks-bp' || omd.brand === 'braveworks-bp') ||
+    originalSession.payment_status !== 'paid'
+  ) {
+    return res.status(409).json({ error: 'not_eligible', message: 'Session is not a paid BraveWorks purchase.' });
+  }
+
   const customerId = typeof originalSession.customer === 'string'
     ? originalSession.customer
     : originalSession.customer?.id;

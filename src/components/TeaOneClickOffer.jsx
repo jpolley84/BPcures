@@ -22,7 +22,10 @@ import { useState, useEffect } from 'react';
 import { Leaf, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 
 const TEA_48_LINK = 'https://buy.stripe.com/eVq5kD8k30rk63h6NjfnO1z'; // fallback checkout
-const TEA_PAGE = 'https://bpquiz.com/tea';
+// Trailing slash + own UTMs: the bare /tea 307-redirect stamps
+// manychat/comment-dm UTMs on ALL traffic, which would mis-attribute every
+// post-purchase click. The slash form bypasses that redirect.
+const TEA_PAGE = 'https://bpquiz.com/tea/?utm_source=post-purchase&utm_medium=upsell&utm_campaign=tea';
 
 const WRAP = {
   background: 'var(--paper-warm, #F3EEE4)',

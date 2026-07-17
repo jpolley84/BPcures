@@ -27,14 +27,21 @@ const TRIGGER_NAMES = {
   stillness: 'The Stillness Trigger',
 };
 
-// What the $27 ADDS on top of the corner kit the buyer just bought.
-const ADDS = [
-  'The Stress Spike full plan, herb guide, and doctor sheet',
-  'The Sugar Surge full plan, herb guide, and doctor sheet',
-  'The Sodium Trap full plan, herb guide, and doctor sheet',
-  'The Freedom Finale, the final phase that ties all of it together',
-  'Doctor visit templates, so you walk in prepared',
-];
+// What the $27 ADDS on top of the corner kit the buyer just bought. Built
+// per-buyer: a Triangle-corner buyer already owns their own corner's set, so
+// listing it as "added" would claim content they were already delivered.
+function buildAdds(corner) {
+  const triangle = [
+    ['stress', 'The Stress Spike full plan, herb guide, and doctor sheet'],
+    ['sugar', 'The Sugar Surge full plan, herb guide, and doctor sheet'],
+    ['sodium', 'The Sodium Trap full plan, herb guide, and doctor sheet'],
+  ];
+  return [
+    ...triangle.filter(([slug]) => slug !== corner).map(([, label]) => label),
+    'The Freedom Finale, the final phase that ties all of it together',
+    'Doctor visit templates, so you walk in prepared',
+  ];
+}
 
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
 
@@ -74,7 +81,7 @@ export default function OtoCompletePage() {
     if (busy) return;
     setBusy(true);
     setError('');
-    track('oto_accept_clicked', { ...(corner ? { corner } : {}) });
+    track('oto_accept_clicked', { funnel_version: 'annie-v2', ...(corner ? { corner } : {}) });
     try {
       const res = await fetch('/api/kit-oto-charge', {
         method: 'POST',
@@ -83,7 +90,7 @@ export default function OtoCompletePage() {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
-        track('oto_accepted', { one_click: true, ...(corner ? { corner } : {}) });
+        track('oto_accepted', { funnel_version: 'annie-v2', one_click: true, ...(corner ? { corner } : {}) });
         navigate(welcomeUrl('complete'), { replace: true });
         return;
       }
@@ -91,24 +98,25 @@ export default function OtoCompletePage() {
       // sale is not lost. Its after_completion returns to /welcome and the
       // webhook delivers the upgrade.
       if (res.status === 409 || res.status === 402) {
-        track('oto_fallback_payment_link', { reason: data.error || String(res.status) });
+        track('oto_fallback_payment_link', { funnel_version: 'annie-v2', reason: data.error || String(res.status) });
         window.location.href = UPGRADE_CORNER_TO_COMPLETE.paymentLink;
         return;
       }
       throw new Error(data.error || 'charge_failed');
     } catch (err) {
-      track('oto_charge_failed', { reason: err.message });
+      track('oto_charge_failed', { funnel_version: 'annie-v2', reason: err.message });
       setError('That did not go through. Your card was NOT charged again for your kit. You can tap the button to retry, or skip below. The same upgrade will also be waiting on your next page.');
       setBusy(false);
     }
   }
 
   function decline() {
-    track('oto_declined', { ...(corner ? { corner } : {}) });
+    track('oto_declined', { funnel_version: 'annie-v2', ...(corner ? { corner } : {}) });
     navigate(welcomeUrl('corner'));
   }
 
   const triggerName = TRIGGER_NAMES[corner] || 'your trigger';
+  const adds = buildAdds(corner);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--cream, #FBF8F1)', color: 'var(--ink, #121110)', fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -132,8 +140,8 @@ export default function OtoCompletePage() {
         <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', textAlign: 'center', maxWidth: '52ch', margin: '0 auto 1.4rem' }}>
           Blood pressure almost never has just one cause. You fixed your loudest trigger.
           The Complete Kit covers all three corners of the BP Triangle, so the next
-          trigger never takes you by surprise. It is $47 on its own. On this page only,
-          you add it for $27, in one tap, with the card you just used.
+          trigger never takes you by surprise. It is $47 on its own. Because you just
+          bought your kit, you add it for $27, in one tap, with the card you just used.
         </p>
 
         <div style={{ background: '#fff', border: '1px solid var(--line, #E5DFD2)', borderRadius: 14, padding: '1.15rem 1.2rem', marginBottom: '1.2rem' }}>
@@ -141,7 +149,7 @@ export default function OtoCompletePage() {
             One tap adds all of this
           </div>
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-            {ADDS.map((item) => (
+            {adds.map((item) => (
               <li key={item} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', padding: '0.4rem 0', fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)' }}>
                 <Check size={17} aria-hidden style={{ flexShrink: 0, marginTop: 3, color: 'var(--sage-deep, #2E3A30)' }} />
                 <span>{item}</span>
