@@ -518,19 +518,13 @@ export default function BeThereLandingPage() {
         .lbn .t-step p strong{color:#FFF;}
 
         /* joel */
-        .lbn .joel{padding:96px 0 60px;}
+        .lbn .joel{padding:96px 0;}
         .lbn .joel-grid{display:grid;grid-template-columns:260px 1fr;gap:52px;align-items:center;}
         .lbn .joel-photo{width:260px;height:260px;border-radius:26px;object-fit:cover;border:1px solid rgba(201,164,76,.45);box-shadow:0 18px 44px rgba(31,54,52,0.16);}
         .lbn .joel h2{font-size:clamp(26px,3.4vw,34px);margin-bottom:6px;}
         .lbn .joel .role{color:var(--gold-deep);font-weight:600;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:20px;}
         .lbn .joel p{color:var(--lnk-soft);font-size:17px;margin-bottom:14px;}
         .lbn .joel .bold-line{font-family:var(--serif);font-style:italic;color:var(--lteal);font-size:19px;}
-
-        /* video */
-        .lbn .video-sec{padding:0 0 96px;text-align:center;}
-        .lbn .video-sec h2{font-size:clamp(24px,3vw,30px);margin-bottom:26px;}
-        .lbn .video-frame{position:relative;max-width:740px;margin:0 auto;padding-top:min(56.25%, 416px);border-radius:20px;overflow:hidden;background:#0d1716;box-shadow:0 24px 60px rgba(31,54,52,0.25);border:1px solid rgba(201,164,76,.3);}
-        .lbn .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
         /* possibility */
         .lbn .possible{background:var(--sage-lt);padding:96px 0;}
@@ -658,7 +652,6 @@ export default function BeThereLandingPage() {
           .lbn .vpanel{min-height:280px;}
           .lbn .hero{padding:60px 0 50px;}
           .lbn .night,.lbn .desire,.lbn .root,.lbn .contrast,.lbn .triangle,.lbn .method,.lbn .joel,.lbn .possible,.lbn .included,.lbn .group,.lbn .forwho,.lbn .apply-section,.lbn .faq,.lbn .final{padding-top:64px;padding-bottom:64px;}
-          .lbn .video-sec{padding-bottom:64px;}
           .lbn .stickybar{display:block;}
         }
         @media(prefers-reduced-motion: reduce){
@@ -941,21 +934,11 @@ export default function BeThereLandingPage() {
         </div>
       </section>
 
-      {/* ===== VIDEO ===== */}
-      <section className="video-sec">
-        <div className="wrap" data-rv>
-          <h2>Hear It From Joel</h2>
-          <div className="video-frame">
-            <iframe
-              src="https://www.youtube-nocookie.com/embed/UdJvWCvUKww"
-              title="Joel Polley, RN explains the Be There program"
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      </section>
+      {/* Video section removed 2026-07-17 per Joel ("remove the video
+          currently embedded for now"). The /apply wizard still shows the
+          welcome video on its thank-you screen, so the apply-steps copy
+          ("Watch Joel's short welcome video") stays true. Reinstate here
+          when a page-ready video exists. */}
 
       {/* ===== WHAT STARTS TO FEEL POSSIBLE ===== */}
       <section className="possible">
