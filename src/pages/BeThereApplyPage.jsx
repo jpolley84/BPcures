@@ -470,8 +470,13 @@ export default function BeThereApplyPage() {
                   <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
                     The Cost
                   </div>
-                  <div style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
-                    $1,997
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontFamily: SERIF, fontSize: '1.15rem', fontWeight: 600, color: 'var(--muted, #7A7061)', textDecoration: 'line-through', textDecorationColor: 'var(--clay, #B85A36)', textDecorationThickness: '2px' }}>
+                      $4,997 value
+                    </span>
+                    <span style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
+                      $1,997
+                    </span>
                   </div>
                 </div>
                 <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
