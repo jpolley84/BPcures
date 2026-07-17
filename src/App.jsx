@@ -34,6 +34,7 @@ const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
 const OtoCompletePage = lazy(() => import('./pages/OtoCompletePage'));
+const SprintAssessmentPage = lazy(() => import('./pages/SprintAssessmentPage'));
 const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 // Inline Stripe embedded checkout for the new Triangle kits (no buy.stripe.com
@@ -231,6 +232,8 @@ function App() {
           {/* True one-click OTO between the $17 corner checkout and /welcome.
               Standalone (no SiteLayout): zero exits at the offer moment. */}
           <Route path="/oto" element={<OtoCompletePage />} />
+          {/* Deep assessment for $297/$97 Sprint buyers (fulfillment, no nav). */}
+          <Route path="/sprint-assessment" element={<SprintAssessmentPage />} />
           <Route path="/welcome" element={<SiteLayout><WelcomePage /></SiteLayout>} />
 
           {/* Post-purchase landing for the $97 1:1 call (Calendly booking). The

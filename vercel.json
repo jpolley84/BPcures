@@ -88,6 +88,10 @@
       "schedule": "15 * * * *"
     },
     {
+      "path": "/api/sprint-flash-cron",
+      "schedule": "45 15 * * *"
+    },
+    {
       "path": "/api/triangle-buyer-cron",
       "schedule": "30 15 * * *"
     },

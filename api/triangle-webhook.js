@@ -427,17 +427,27 @@ async function resolveCaseReviewPlan(session) {
 // shared buildEmail renderer so it looks like every other BraveWorks BP email.
 // Outcome-framed, gratitude-first, NO doses, NO diagnosis, NO clinical promise,
 // ZERO em-dashes.
-function buildCaseReviewEmail({ firstName, unsubUrl }) {
-  const preheader = 'Joel has your case. He will review it himself and email you within 2 business days.';
+// 2026-07-17 (Joel): the Sprint now INCLUDES the 1:1 call (the $97
+// standalone call is retired from sale), and fulfillment starts with the
+// deep assessment at /sprint-assessment. Step 1 in this email IS the
+// assessment link; Joel is alerted when the filled assessment lands
+// (api/sprint-assessment.js), not just at purchase.
+function buildCaseReviewEmail({ firstName, unsubUrl, email }) {
+  const assessmentUrl = `${SITE_URL}/sprint-assessment${email ? `?email=${encodeURIComponent(email)}` : ''}`;
+  const preheader = 'One 10-minute step starts everything. Your plan and your call come from it.';
   const bodyHtml = [
     `<div style="display:inline-block;font-size:12px;font-weight:700;color:${PALETTE.accentSage};border:1px solid ${PALETTE.accentSage};border-radius:999px;padding:5px 12px;margin-bottom:18px;font-family:-apple-system,Segoe UI,sans-serif;">Case received</div>`,
     p(`Hi ${firstName || 'there'},`),
     p(`Thank you, truly. This one comes straight to me. You did not just buy a kit, you asked a nurse to read your case, and I do not take that lightly.`),
-    h2('What happens next'),
-    p(`I will sit down with your quiz, your corners, and what you have tried so far, and I will write back your exact next moves in plain language, for your situation, not a generic plan.`),
+    h2('Step 1: tell me about your case (10 minutes)'),
+    p(`Before I can build your 30 days, I need your story in your own words. Your numbers, your medications, what you have tried, and what winning looks like for you. That is your deep assessment, and it is the most important 10 minutes of your Sprint:`),
+    ctaButton('Fill Out My Assessment Now', assessmentUrl),
+    h2('Then here is what I do'),
+    p(`I sit down with your assessment the way I used to sit down with a chart, and I build your exact next 30 days in plain language, in the right order, for your situation. Not a generic plan.`),
+    p(`<strong>And your 1:1 call with me is included.</strong> When your plan lands, so does the link to pick your call time, and we walk through it together so you leave with zero guesses.`),
     callout({
       kicker: 'Your timing',
-      body: `It lands in your inbox within 2 business days. Keep an eye out, and peek in your spam folder just in case. If you do not hear from me, reply to this email and I will make it right.`,
+      body: `Your plan lands within 2 business days of your assessment. The sooner you fill it out, the sooner I start. If you do not hear from me, reply to this email and I will make it right.`,
     }),
     p(`Everything I send is education and lifestyle support to stand alongside your own doctor, never instead of them. Your doctor makes any calls about your medication, and you never start, stop, or change a prescription on your own.`),
     p(`Talk soon,`),
@@ -448,11 +458,18 @@ function buildCaseReviewEmail({ firstName, unsubUrl }) {
 
 Thank you, truly. This one comes straight to me. You asked a nurse to read your case, and I do not take that lightly.
 
-WHAT HAPPENS NEXT
-I will sit down with your quiz, your corners, and what you have tried so far, and write back your exact next moves in plain language, for your situation, not a generic plan.
+STEP 1: TELL ME ABOUT YOUR CASE (10 MINUTES)
+Before I can build your 30 days, I need your story in your own words. Your numbers, your medications, what you have tried, and what winning looks like for you. That is your deep assessment, and it is the most important 10 minutes of your Sprint:
+
+Fill out my assessment now: ${assessmentUrl}
+
+THEN HERE IS WHAT I DO
+I sit down with your assessment the way I used to sit down with a chart, and I build your exact next 30 days in plain language, in the right order, for your situation. Not a generic plan.
+
+And your 1:1 call with me is included. When your plan lands, so does the link to pick your call time, and we walk through it together so you leave with zero guesses.
 
 YOUR TIMING
-It lands in your inbox within 2 business days. Keep an eye out, and peek in your spam folder just in case. If you do not hear from me, reply to this email and I will make it right.
+Your plan lands within 2 business days of your assessment. The sooner you fill it out, the sooner I start. If you do not hear from me, reply to this email and I will make it right.
 
 Everything I send is education and lifestyle support to stand alongside your own doctor, never instead of them. Your doctor makes any calls about your medication, and you never start, stop, or change a prescription on your own.
 
@@ -1109,12 +1126,12 @@ async function sendSatinConfirmation({ email, firstName, items, amountCents, add
 async function sendCaseReviewConfirmation({ email, firstName }) {
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
-  const { html, text } = buildCaseReviewEmail({ firstName, unsubUrl });
+  const { html, text } = buildCaseReviewEmail({ firstName, unsubUrl, email });
   await getResend().emails.send({
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
-    subject: 'Joel has your case (what happens next)',
+    subject: 'Joel has your case (your first step is inside)',
     html,
     text,
     headers: {
@@ -1744,6 +1761,9 @@ async function processCheckoutCompleted(event) {
         isPaidCustomer: true,
         paidTier: tier,
         purchasedAt: existing.purchasedAt || new Date().toISOString(),
+        // 2026-07-17: anchor for the $97 Sprint flash arc (Days 10/14/17,
+        // api/sprint-flash-cron.js). Set once at first purchase.
+        sprintAnchorAt: existing.sprintAnchorAt || new Date().toISOString(),
         ...stateFields,
       });
     } else {
@@ -1757,6 +1777,7 @@ async function processCheckoutCompleted(event) {
         isPaidCustomer: true,
         paidTier: tier,
         purchasedAt: new Date().toISOString(),
+        sprintAnchorAt: new Date().toISOString(),
         source: 'stripe-direct',
         ...stateFields,
       });

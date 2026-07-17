@@ -50,7 +50,7 @@ import {
   MODULES,
 } from '../../api/_kit-manifest.js';
 import { SITE_URL } from '../lib/loadEnv';
-import { upgradeFor, CALL_97_OFFER } from '../data/upgradeOffers';
+import { upgradeFor } from '../data/upgradeOffers';
 import { track } from '../utils/analytics';
 
 // The three valid tier keys this page understands. Anything else normalizes to a
@@ -472,31 +472,32 @@ export default function WelcomePage() {
         </div>
       )}
 
-      {/* ---- $97 1:1 call with Joel (the upsell from the $47 complete kit) ---- */}
+      {/* ---- 30-Day Sprint (replaced the retired $97 standalone call,
+              2026-07-17: the 1:1 call is now INSIDE the $297 Sprint) ---- */}
       {isComplete && (
         <div style={{ ...CARD, borderTop: '4px solid var(--clay, #B85A36)' }}>
           <span style={KICKER}>Go deeper</span>
           <h2 style={{ fontSize: '1.3rem', margin: '0.5rem 0 0.5rem', color: 'var(--ink, #121110)' }}>
-            Want Joel on YOUR numbers? Book a 1:1 call.
+            Want Joel&rsquo;s eyes on YOUR case? The 30-Day Sprint.
           </h2>
           <p style={{ margin: '0 0 0.9rem', color: 'var(--ink-soft, #2B2824)', fontSize: 'var(--step--1, 0.82rem)', lineHeight: 1.6 }}>
-            You and Joel, one on one, walking your readings, your medication list, and your Triangle
-            together, so you leave knowing exactly what to work first. You book your time the moment
-            you pay, straight onto his calendar. Education alongside your doctor, never instead of.
+            Joel reads your full case, builds your next 30 days in order for your body and your
+            life, and walks it through with you on a 1:1 call, included. He takes 5 cases a month
+            so each one gets done right. Education alongside your doctor, never instead of.
           </p>
           <a
-            href={CALL_97_OFFER.paymentLink}
+            href="/case-review"
             style={BTN_CLAY}
             onClick={() =>
               track('offer_cta_click', {
-                tier: 'call-97',
+                tier: 'case-review',
                 from: ownedTier,
-                source: 'welcome_call_offer',
-                price: CALL_97_OFFER.priceLabel,
+                source: 'welcome_sprint_offer',
+                price: '$297',
               })
             }
           >
-            Book my 1:1 call, {CALL_97_OFFER.priceLabel}
+            Get Joel&rsquo;s Eyes On My Case, $297
             <ArrowRight size={17} strokeWidth={2} />
           </a>
         </div>

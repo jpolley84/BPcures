@@ -739,9 +739,8 @@ const day12 = {
         p(`Hi ${firstName},`),
         p(`You finished your first ten days two days ago. Whatever your readings said, the daily work you did is already changing how your body handles pressure. Keep walking, one corner at a time.`),
         p(`You own the whole loop, so there is nothing left to buy to finish your kit. Your next ten days are already sitting in <a href="${LIBRARY_URL}" style="color:${PALETTE.accentClay};font-weight:700;">your library</a>.`),
-        p(`If you want to go one step further, I do offer a <strong>1:1 call</strong>. Thirty minutes, you and me, walking your readings, your medication list, and your Triangle together, so you leave knowing exactly what to work first. It is <strong>$97</strong>, and you book straight onto my calendar the moment you pay.`),
-        ctaButton('Book my 1:1 call with Joel, $97', CALL_97_URL),
-        caseReviewBlock,
+        p(`If you want to go one step further, there is one door: the <strong>30-Day Sprint</strong>. I read your full case, build your next 30 days in order for your body and your life, and we get on a <strong>1:1 call together</strong> to walk through it, so you leave with zero guesses. I take 5 cases a month, so each one gets done right.`),
+        ctaButton(`Get Joel's Eyes On My Case, $297`, CASE_REVIEW_PAGE_URL),
         p(`Either way, the method is in your hands now. Keep going.`),
         p(`Joel Polley, RN`),
       ].join('');
@@ -772,9 +771,9 @@ You finished your first ten days two days ago. Whatever your readings said, the 
 
 You own the whole loop, so there is nothing left to buy to finish your kit. Your next ten days are already in your library: ${LIBRARY_URL}
 
-If you want to go one step further, I do offer a 1:1 call. Thirty minutes, you and me, walking your readings, your medication list, and your Triangle together, so you leave knowing exactly what to work first. It is $97, and you book straight onto my calendar the moment you pay:
-${CALL_97_URL}
-${caseReviewBlock}
+If you want to go one step further, there is one door: the 30-Day Sprint. I read your full case, build your next 30 days in order for your body and your life, and we get on a 1:1 call together to walk through it, so you leave with zero guesses. I take 5 cases a month, so each one gets done right:
+${CASE_REVIEW_PAGE_URL}
+
 The method is in your hands now. Keep going.
 Joel Polley, RN`;
     }

@@ -332,12 +332,25 @@ ${pre}
 </body></html>`;
 }
 
+// 2026-07-17 (Joel): every sequence email drives YouTube at the bottom.
+// Sits ABOVE the compliance footer, below the sign-off. One quiet line,
+// Martell "4 More To Explore" energy without the noise.
+export const YOUTUBE_URL = process.env.YOUTUBE_CHANNEL_URL || 'https://www.youtube.com/@braveworksrn';
+function youtubeBlockHtml() {
+  return `<p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:26px 0 0;border-top:1px solid ${PALETTE.line};padding-top:14px;">
+    Want more? <a href="${YOUTUBE_URL}" style="color:${PALETTE.clay};font-weight:600;text-decoration:none;">Check out my latest video on YouTube &raquo;</a>
+  </p>`;
+}
+function youtubeBlockText() {
+  return `Want more? Check out my latest video on YouTube: ${YOUTUBE_URL}`;
+}
+
 // Convenience: assemble a full email from body + footer, both formats.
 // Accepts the same fields as before plus an OPTIONAL `corner` passed through
 // to emailShell for the corner-color accent (sequences may forward ctx.corner).
 export function buildEmail({ preheader, bodyHtml, bodyText, unsubUrl, corner }) {
   return {
-    html: emailShell(bodyHtml + complianceFooterHtml(unsubUrl), { preheader, corner }),
-    text: `${bodyText}\n\n${complianceFooterText(unsubUrl)}`,
+    html: emailShell(bodyHtml + youtubeBlockHtml() + complianceFooterHtml(unsubUrl), { preheader, corner }),
+    text: `${bodyText}\n\n${youtubeBlockText()}\n\n${complianceFooterText(unsubUrl)}`,
   };
 }
