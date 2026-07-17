@@ -140,33 +140,10 @@ const QUESTIONS = [
   },
 ];
 
-// Debunk copy for the results page, keyed by belief answer.
-const LIES = {
-  genetic: {
-    lie: 'It is genetic, so nothing helps.',
-    truth: 'Genes write the recipe, but your daily habits do the baking. People with the same family history land in very different places based on how they eat, sleep, move, and handle stress.',
-  },
-  heart: {
-    lie: 'It means something is wrong with my heart.',
-    truth: 'The number is a measurement of pressure in your blood vessels, not a verdict on your heart. Most of the time the driver is a daily habit squeezing those vessels. Find the habit, and the number can change.',
-  },
-  permanent: {
-    lie: 'Once you have it, you have it for life.',
-    truth: 'Blood pressure is a moving number. It changes with sleep, food, stress, and movement, in both directions. Many people watch it move when they fix their loudest trigger. Your doctor tracks it with you.',
-  },
-  tablesalt: {
-    lie: 'It comes from table salt. Skip the shaker and you are fine.',
-    truth: 'Most salt hides in bread, sauces, and packaged food, not the shaker. And salt is only ONE of the 5 triggers. If cutting salt never moved your number, the real driver is probably somewhere else.',
-  },
-};
-
-const SPEND_LABELS = {
-  'spend-under-500': 'under $500',
-  'spend-500-2000': '$500 to $2,000',
-  'spend-2000-5000': '$2,000 to $5,000',
-  'spend-over-5000': 'more than $5,000',
-  'spend-unsure': 'more than you can track',
-};
+// 2026-07-17: LIES and SPEND_LABELS (results-page debunk copy + spend-range
+// display strings) were removed with the on-page result content they served
+// (see the OFFER phase below). beliefs/spend answers are still collected in
+// the quiz and still sent to lead-magnet.js as tags for segmentation.
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -256,7 +233,7 @@ function MiniHeader() {
 
 export default function TriggerQuizPage() {
   const navigate = useNavigate();
-  const [phase, setPhase] = useState('quiz'); // quiz | gate | result
+  const [phase, setPhase] = useState('quiz'); // quiz | gate | offer | declined
   const [current, setCurrent] = useState(0);
   // Multi-select: answers[i] = array of selected option keys for question i.
   const [answers, setAnswers] = useState([]);
@@ -396,9 +373,20 @@ export default function TriggerQuizPage() {
       }
     } finally {
       setLoading(false);
-      setPhase('result');
-      track('quiz_results_viewed', { quiz: 'triggers', trigger: t.slug, funnel_version: 'annie-v2' });
+      // 2026-07-17: the full result breakdown (trigger narrative, Lies,
+      // money-math) no longer renders on-page. lead-magnet.js already emails
+      // the named trigger + full Blueprint the moment this POST lands, so
+      // she gets her actual results by email while the page goes straight to
+      // the $17 offer, before any of that content, per Joel's direction.
+      setPhase('offer');
+      track('quiz_offer_viewed', { quiz: 'triggers', trigger: t.slug, funnel_version: 'annie-v2' });
     }
+  }
+
+  function declineOffer() {
+    const t = TRIGGERS[winner] || TRIGGERS.stress;
+    track('kit_offer_declined', { quiz: 'triggers', trigger: t.slug, funnel_version: 'annie-v2' });
+    setPhase('declined');
   }
 
   function buyKit(placement = 'bottom') {
@@ -639,234 +627,165 @@ export default function TriggerQuizPage() {
           </div>
         )}
 
-        {/* ─── RESULT ───────────────────────────────────────────── */}
-        {phase === 'result' && t && (
+        {/* ─── OFFER ────────────────────────────────────────────── */}
+        {/* 2026-07-17 (Joel): the quiz used to spend the whole page walking
+            her through her result before ever asking for the sale, and only
+            8% of people ever scrolled far enough to see the $17 button. Now
+            the offer comes FIRST, right when the quiz ends, before any of
+            that result content. Her actual results (named trigger + full
+            5-trigger Blueprint) go out by email via lead-magnet.js the
+            moment the gate form posts, so she still gets them, just not
+            on-page and not before the offer. */}
+        {phase === 'offer' && t && (
           <div style={cardStyle}>
             <div
               style={{
-                fontSize: '0.75rem',
+                display: 'inline-block',
+                fontSize: '0.72rem',
                 fontWeight: 700,
-                letterSpacing: '0.09em',
+                letterSpacing: '0.08em',
                 textTransform: 'uppercase',
-                color: 'var(--clay, #B85A36)',
-                marginBottom: '0.5rem',
+                color: '#fff',
+                background: 'var(--sage-deep, #2E3A30)',
+                padding: '0.3rem 0.7rem',
+                borderRadius: 999,
+                marginBottom: '0.9rem',
               }}
             >
-              Your Loudest Driver
+              Quiz Complete
             </div>
-            <h2 style={{ ...serif, fontSize: 'clamp(1.8rem, 6vw, 2.4rem)', margin: '0 0 0.9rem' }}>{t.name}</h2>
-            <p style={{ fontSize: '0.97rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.1rem' }}>
-              {t.copy}
+            <h2 style={{ ...serif, fontSize: 'clamp(1.6rem, 5.5vw, 2.1rem)', margin: '0 0 0.7rem' }}>
+              Congratulations, you completed the quiz! 🎉
+            </h2>
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.5rem' }}>
+              Your results, built around <strong>{t.name}</strong>, plus the full 5-trigger Blueprint, are on
+              their way to your email right now. Check your inbox in a few minutes.
             </p>
+
             <div
               style={{
                 background: 'var(--paper-warm, #EFE8DB)',
-                borderRadius: 10,
-                padding: '1rem 1.1rem',
-                fontSize: '0.9rem',
-                lineHeight: 1.6,
-                color: 'var(--ink-soft, #2B2824)',
-                marginBottom: '1.4rem',
+                border: '1.5px solid var(--clay, #B85A36)',
+                borderRadius: 14,
+                padding: '1.3rem 1.2rem',
+                marginBottom: '1rem',
               }}
             >
-              <strong style={{ color: 'var(--sage-deep, #2E3A30)' }}>{t.name} is your loudest cause</strong>. But it
-              rarely works alone. Most people have one or two more riding along, like{' '}
-              {Object.values(TRIGGERS)
-                .filter((x) => x.slug !== t.slug)
-                .map((x) => x.name)
-                .join(', ')}
-              . Your free Blueprint covers all 5, so you can see the whole picture.
-            </div>
-
-            <div style={labelStyle}>3 Things To Start Today</div>
-            {[
-              { icon: '🌿', label: 'Herb', text: t.herb },
-              { icon: '🍽️', label: 'Food Swap', text: t.food },
-              { icon: '🚶', label: 'Lifestyle Shift', text: t.lifestyle },
-            ].map((row) => (
-              <div
-                key={row.label}
-                style={{
-                  display: 'flex',
-                  gap: '0.85rem',
-                  alignItems: 'flex-start',
-                  background: '#fff',
-                  border: '1.5px solid var(--line, #D8CFBD)',
-                  borderRadius: 12,
-                  padding: '0.85rem 1rem',
-                  marginBottom: 10,
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    flexShrink: 0,
-                    width: 34,
-                    height: 34,
-                    borderRadius: '50%',
-                    background: 'var(--sage-soft, #C5CDBF)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.95rem',
-                  }}
-                >
-                  {row.icon}
-                </span>
-                <div>
-                  <span
+              <div style={{ ...labelStyle, marginBottom: '0.7rem' }}>While that lands in your inbox</div>
+              <h3 style={{ ...serif, fontSize: '1.3rem', margin: '0 0 0.6rem', color: 'var(--ink, #121110)' }}>
+                The BP Reset Kit for {t.name.replace('The ', 'the ')}
+              </h3>
+              <ul style={{ listStyle: 'none', margin: '0 0 1.1rem', padding: 0 }}>
+                {[
+                  'Your exact 10-day, day-by-day plan',
+                  'The Herb Formulary: dose, why it helps, the cautions',
+                  'A one-page Bring This To Your Doctor sheet',
+                ].map((item) => (
+                  <li
+                    key={item}
                     style={{
-                      display: 'block',
-                      fontSize: '0.66rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.05em',
-                      textTransform: 'uppercase',
-                      color: 'var(--clay, #B85A36)',
-                      marginBottom: 2,
+                      display: 'flex',
+                      gap: '0.6rem',
+                      fontSize: '0.9rem',
+                      lineHeight: 1.55,
+                      color: 'var(--ink-soft, #2B2824)',
+                      marginBottom: '0.45rem',
                     }}
                   >
-                    {row.label}
-                  </span>
-                  <span style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink, #121110)' }}>{row.text}</span>
-                </div>
-              </div>
-            ))}
+                    <span style={{ color: 'var(--sage, #4A5D4E)', fontWeight: 700 }}>✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" style={primaryBtn} onClick={() => buyKit('top')}>
+                Get the Kit, $17 <ArrowRight size={18} />
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0.65rem 0 0' }}>
+                One time $17. Yours right away. No subscription.
+              </p>
+            </div>
 
-            {/* 2026-07-17 friction fix: the ONLY buy button used to sit after
-                4 more content blocks (Blueprint box, Lies, money-math) and
-                only 8% of result-viewers ever scrolled far enough to see it.
-                This early CTA puts the offer in front of them at peak
-                interest, right after the reveal, before the free-download
-                escape hatch below gives their curiosity a free release. */}
-            <button type="button" style={{ ...primaryBtn, marginBottom: '0.6rem' }} onClick={() => buyKit('top')}>
-              Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
-            </button>
-            <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0 0 1.6rem' }}>
-              One time $17. Yours right away. No subscription.
-            </p>
-
-            {/* Blueprint delivery note */}
-            <div
+            {/* Clever, small decline. Not a real exit door: it should make
+                her pause and reconsider, not just click through. */}
+            <button
+              type="button"
+              onClick={declineOffer}
               style={{
-                background: 'var(--sage-deep, #2E3A30)',
-                borderRadius: 14,
-                padding: '1.3rem 1.3rem',
-                margin: '1.4rem 0 1.1rem',
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+                background: 'none',
+                border: 'none',
+                color: 'var(--muted, #7A7061)',
+                fontSize: '0.78rem',
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                margin: '0.9rem 0 0',
+                padding: '0.4rem',
               }}
             >
-              <h3 style={{ ...serif, color: 'var(--cream, #FBF8F1)', fontSize: '1.15rem', margin: '0 0 0.4rem' }}>
-                {captureFailed ? 'Your full Blueprint is ready' : 'Your full Blueprint is on its way'}
-              </h3>
-              <p style={{ color: 'var(--sage-soft, #C5CDBF)', fontSize: '0.88rem', lineHeight: 1.6, margin: '0 0 0.8rem' }}>
-                {captureFailed
-                  ? 'All 5 hidden triggers in plain words. Our email system hit a snag just now, so grab your copy right here instead.'
-                  : 'All 5 hidden triggers in plain words. It is on the way to your email right now. Check your inbox in a few minutes.'}
-              </p>
-              {/* 2026-07-17 friction fix: this was styled as prominently as a
-                  real button (icon + bold underline) right after the reveal,
-                  competing with the $17 offer for the same moment of intent
-                  and letting people's curiosity resolve for free. Kept (it's
-                  a real deliverable they're owed) but de-emphasized: no icon,
-                  no bold, plain small link, so it reads as a footnote, not a
-                  second CTA. */}
+              No thanks, I don&rsquo;t want the plan that could turn this around
+            </button>
+
+            <p style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--muted, #7A7061)', margin: '1.2rem 0 0' }}>
+              *Results vary from person to person. This is education, not medical or
+              financial advice. Your doctor makes every medication call.
+            </p>
+          </div>
+        )}
+
+        {/* ─── DECLINED ─────────────────────────────────────────── */}
+        {phase === 'declined' && t && (
+          <div style={cardStyle}>
+            <h2 style={{ ...serif, fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', margin: '0 0 0.8rem' }}>
+              No problem at all.
+            </h2>
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.3rem' }}>
+              {captureFailed
+                ? 'Your results and the full Blueprint are ready right here since our email system hit a snag just now.'
+                : 'Your results and the full Blueprint are on their way to your email. Check your inbox in a few minutes.'}
+            </p>
+            {captureFailed && (
               <a
                 href="/downloads/bp-blueprint.pdf"
                 download
                 onClick={() => track('leadmagnet_downloaded', { magnet: 'bp-blueprint', funnel_version: 'annie-v2' })}
                 style={{
-                  color: 'var(--sage-soft, #C5CDBF)',
-                  fontSize: '0.78rem',
-                  fontWeight: 400,
+                  display: 'inline-block',
+                  color: 'var(--clay, #B85A36)',
+                  fontSize: '0.88rem',
+                  fontWeight: 700,
                   textDecoration: 'underline',
                   textUnderlineOffset: 3,
+                  marginBottom: '1.3rem',
                 }}
               >
-                Having trouble finding the email? Download it here instead
+                Download your Blueprint now
               </a>
-            </div>
-
-            {/* The lies, debunked. Their own picks are marked. */}
-            <div style={{ ...labelStyle, marginTop: '1.6rem' }}>
-              The Lies You Have Been Told About Blood Pressure
-            </div>
-            {Object.entries(LIES).map(([key, item]) => {
-              const picked = beliefs.includes(key);
-              return (
-                <div
-                  key={key}
-                  style={{
-                    background: picked ? 'var(--paper-warm, #EFE8DB)' : '#fff',
-                    border: picked
-                      ? '1.5px solid var(--clay, #B85A36)'
-                      : '1.5px solid var(--line, #D8CFBD)',
-                    borderRadius: 12,
-                    padding: '0.9rem 1rem',
-                    marginBottom: 10,
-                  }}
-                >
-                  {picked && (
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        fontSize: '0.62rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.06em',
-                        textTransform: 'uppercase',
-                        color: '#fff',
-                        background: 'var(--clay, #B85A36)',
-                        padding: '0.2rem 0.55rem',
-                        borderRadius: 999,
-                        marginBottom: '0.45rem',
-                      }}
-                    >
-                      You said you heard this one
-                    </span>
-                  )}
-                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--clay, #B85A36)', marginBottom: 3 }}>
-                    Lie: &ldquo;{item.lie}&rdquo;
-                  </div>
-                  <div style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)' }}>
-                    <strong style={{ color: 'var(--sage-deep, #2E3A30)' }}>Truth:</strong> {item.truth}
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* The money frame: what fixing the trigger can do to their bills. */}
-            <div
+            )}
+            <button
+              type="button"
+              onClick={() => setPhase('offer')}
               style={{
-                background: 'var(--sage-deep, #2E3A30)',
-                borderRadius: 14,
-                padding: '1.3rem 1.3rem',
-                margin: '1.4rem 0 1.1rem',
+                display: 'block',
+                width: '100%',
+                textAlign: 'center',
+                background: 'none',
+                border: 'none',
+                color: 'var(--clay, #B85A36)',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                padding: '0.4rem',
               }}
             >
-              <h3 style={{ ...serif, color: 'var(--cream, #FBF8F1)', fontSize: '1.2rem', margin: '0 0 0.5rem' }}>
-                Now do the math on your medical bills.
-              </h3>
-              <p style={{ color: 'var(--sage-soft, #C5CDBF)', fontSize: '0.92rem', lineHeight: 1.65, margin: 0 }}>
-                {spend.length && SPEND_LABELS[spend[0]]
-                  ? `You told us health care cost you ${SPEND_LABELS[spend[0]]} this past year. `
-                  : ''}
-                Extra visits, refills, copays, and tests add up, year after year. When people
-                get ahead of their loudest trigger, some cut what they spend on all of that
-                by up to half*. The kit below costs $17, one time. That is the price of one
-                copay, for a plan you keep forever.
-              </p>
-            </div>
-
-            {/* $17 kit upsell */}
-            <button type="button" style={primaryBtn} onClick={() => buyKit('bottom')}>
-              Get the BP Reset Kit for {t.name.replace('The ', 'the ')}, $17 <ArrowRight size={18} />
+              Actually, let me see the kit again
             </button>
-            <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.7rem 0 0' }}>
-              A simple 10-day plan for your exact trigger, built by Joel. One time $17. Yours
-              right away. No subscription.
-            </p>
-            <p style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
-              *Results vary from person to person. This is education, not medical or
-              financial advice. Your doctor makes every medication call.
-            </p>
           </div>
         )}
 
@@ -885,10 +804,8 @@ export default function TriggerQuizPage() {
         </p>
       </div>
 
-      {/* 2026-07-17 friction fix: sticky buy bar for the result phase, so the
-          $17 offer survives no matter how far down the long scroll (Lies,
-          money-math, etc.) someone is. Only renders once a winner exists. */}
-      {phase === 'result' && t && (
+      {/* Sticky buy bar for the offer phase, backing up the in-card CTA. */}
+      {phase === 'offer' && t && (
         <div
           style={{
             position: 'sticky',
