@@ -156,7 +156,7 @@ export default function TeaOneClickOffer({ sessionId, firstName }) {
 
       {hasSavedCard && !showForm && (
         <button type="button" style={BTN} onClick={() => setShowForm(true)}>
-          Add Steady, $48 &mdash; 1 click <ArrowRight size={15} />
+          Add Steady, $48 in 1 click <ArrowRight size={15} />
         </button>
       )}
 

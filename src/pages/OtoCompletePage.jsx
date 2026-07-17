@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, Lock } from 'lucide-react';
 import { track } from '../utils/analytics.js';
 import { UPGRADE_CORNER_TO_COMPLETE } from '../data/upgradeOffers.js';
+import TeaOneClickOffer from '../components/TeaOneClickOffer.jsx';
 
 const TRIGGER_NAMES = {
   stress: 'The Stress Spike',
@@ -200,6 +201,13 @@ export default function OtoCompletePage() {
             No thanks, take me to my {TRIGGER_NAMES[corner] ? triggerName.replace('The ', '') : ''} kit downloads
           </button>
         </p>
+
+        {/* Second offer: Steady tea, 1-month supply. Same saved card, one
+            click plus a shipping address (physical product). Component
+            handles the no-saved-card and decline fallbacks itself. */}
+        <div style={{ borderTop: '1px solid var(--line, #E5DFD2)', marginTop: '2rem', paddingTop: '0.4rem' }}>
+          <TeaOneClickOffer sessionId={sessionId} />
+        </div>
       </section>
     </div>
   );
