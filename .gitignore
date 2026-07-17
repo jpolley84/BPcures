@@ -40,3 +40,4 @@ tmp/
 # Audit artifacts (do not commit into the repo)
 bpquiz_full_sweep_*.pdf
 build_report.py
+.env.vercel-prod

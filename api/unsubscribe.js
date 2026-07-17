@@ -34,8 +34,22 @@ import crypto from 'node:crypto';
 
 const SECRET = process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
 
+// 2026-07-16 GRACE SECRET. UNSUB_SECRET was never set in prod, so every
+// token sent before today (including the 6,313-recipient freegift broadcast)
+// is signed with the old fallback string. Now that a real UNSUB_SECRET is
+// set, those in-flight links MUST keep working (CAN-SPAM) — so verification
+// accepts the legacy secret for tokens whose embedded timestamp predates the
+// grace deadline. New tokens are signed ONLY with the real secret. Remove
+// GRACE_* after 2026-10-01.
+const GRACE_SECRET = 'CHANGE-ME-IN-VERCEL-ENV';
+const GRACE_DEADLINE_MS = Date.parse('2026-10-01T00:00:00Z');
+
+function signWith(secret, payload) {
+  return crypto.createHmac('sha256', secret).update(payload).digest('hex').slice(0, 16);
+}
+
 function sign(payload) {
-  return crypto.createHmac('sha256', SECRET).update(payload).digest('hex').slice(0, 16);
+  return signWith(SECRET, payload);
 }
 
 export function signUnsubToken({ email, tag = '' }) {
@@ -52,10 +66,18 @@ export function verifyUnsubToken(token) {
     if (parts.length < 4) return null;
     const sig = parts.pop();
     const payload = parts.join('.');
-    const expected = sign(payload);
-    if (sig !== expected) return null;
     const [email, ts, tag] = parts;
-    return { email, ts: Number(ts), tag: tag || null };
+    const tsNum = Number(ts);
+    const current = signWith(SECRET, payload);
+    // Legacy-signed tokens: honored only while the grace window is open and
+    // only for tokens minted before the deadline (timestamp is inside the
+    // signed payload, so it can't be forged forward).
+    const grace =
+      SECRET !== GRACE_SECRET && Date.now() < GRACE_DEADLINE_MS && tsNum < GRACE_DEADLINE_MS
+        ? signWith(GRACE_SECRET, payload)
+        : null;
+    if (sig !== current && sig !== grace) return null;
+    return { email, ts: tsNum, tag: tag || null };
   } catch {
     return null;
   }
