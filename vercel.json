@@ -46,6 +46,11 @@
       "permanent": false
     },
     {
+      "source": "/magnesium",
+      "destination": "https://www.tiktok.com/t/ZP9Mo41fRtHnU-pux7n/",
+      "permanent": false
+    },
+    {
       "source": "/downloads",
       "destination": "/library",
       "permanent": false
