@@ -33,6 +33,7 @@ const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
 const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
+const OtoCompletePage = lazy(() => import('./pages/OtoCompletePage'));
 const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
 // Inline Stripe embedded checkout for the new Triangle kits (no buy.stripe.com
@@ -224,6 +225,9 @@ function App() {
           {/* Post-purchase Triangle landing. The inline checkout's return_url is
               /welcome?tier=<tier>. Shows the buyer's unlocked kit + locked higher
               tiers with difference-priced upgrade CTAs. Wrapped in SiteLayout. */}
+          {/* True one-click OTO between the $17 corner checkout and /welcome.
+              Standalone (no SiteLayout): zero exits at the offer moment. */}
+          <Route path="/oto" element={<OtoCompletePage />} />
           <Route path="/welcome" element={<SiteLayout><WelcomePage /></SiteLayout>} />
 
           {/* Post-purchase landing for the $97 1:1 call (Calendly booking). The

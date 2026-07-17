@@ -1378,7 +1378,11 @@ async function resolveUpgradeTargetTier(session) {
 // sequence reflects the new tier), and dedupe via a namespaced KV marker so a
 // Stripe retry never double-delivers. The buyer's corner + scores come off their
 // existing drip record so the upgraded bundle is resolved to THEIR corners.
-async function processUpgrade(session, targetTier) {
+// Exported 2026-07-16: api/kit-oto-charge.js (the /oto one-click upgrade)
+// reuses this exact fulfillment path with a synthetic session-shaped object,
+// so an OTO upgrade delivers, bumps paidTier, and dedupes identically to a
+// payment-link upgrade.
+export async function processUpgrade(session, targetTier) {
   const customerEmail = session.customer_details?.email;
   const customerName = session.customer_details?.name;
 

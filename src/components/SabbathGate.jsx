@@ -32,7 +32,7 @@ import { sabbathStatus, reopenLabel } from '../utils/sabbath';
 const EXEMPT_PREFIXES = [
   '/blog', '/learn', '/articles', '/about',
   '/privacy', '/terms', '/disclaimer',
-  '/success', '/upsell', '/library', '/downloads',
+  '/success', '/upsell', '/oto', '/library', '/downloads',
   '/coaching-welcome', '/sprint-welcome', '/seminar-welcome',
   // Tea fulfillment: post-purchase confirmation only. /pay stays GATED (Joel
   // 2026-07-12: tea rests with the store; the static /tea page carries its

@@ -175,11 +175,24 @@ export default async function handler(req, res) {
       // to its normal checkout link (TeaOneClickOffer already handles the
       // no-saved-card case).
       customer_creation: 'always',
+      // 2026-07-16 (Joel): setup_future_usage restored on the CORNER tier only,
+      // for the /oto true one-click upgrade (api/kit-oto-charge.js). This
+      // reverses the 07-13 panel removal (Stripe renders save-card consent
+      // language at the pay button); Joel accepted the trade-off for the OTO.
+      // Complete tier has nothing left to upsell, so it stays consent-free.
+      ...(tier === 'corner'
+        ? { payment_intent_data: { setup_future_usage: 'off_session' } }
+        : {}),
       // Pass the corner through so the /welcome thank-you page shows the SAME kit
       // the buyer paid for. A quiz-skipper has no corner in sessionStorage, so
       // without this the page falls back to the wrong corner. The delivery email is
       // driven by metadata.corner regardless; this just keeps the on-site page matched.
-      return_url: `${siteUrl}/welcome?tier=${encodeURIComponent(tier)}${corner ? `&corner=${encodeURIComponent(corner)}` : ''}&session_id={CHECKOUT_SESSION_ID}`,
+      // Corner buyers route through /oto (one-click complete upgrade) BEFORE
+      // /welcome; complete buyers go straight to delivery.
+      return_url:
+        tier === 'corner'
+          ? `${siteUrl}/oto?tier=corner${corner ? `&corner=${encodeURIComponent(corner)}` : ''}&session_id={CHECKOUT_SESSION_ID}`
+          : `${siteUrl}/welcome?tier=${encodeURIComponent(tier)}${corner ? `&corner=${encodeURIComponent(corner)}` : ''}&session_id={CHECKOUT_SESSION_ID}`,
       ...(email ? { customer_email: email } : {}),
     });
     return res.status(200).json({ clientSecret: session.client_secret });
