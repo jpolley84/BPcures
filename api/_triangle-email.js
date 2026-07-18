@@ -332,17 +332,26 @@ ${pre}
 </body></html>`;
 }
 
-// 2026-07-17 (Joel): every sequence email drives YouTube at the bottom.
-// Sits ABOVE the compliance footer, below the sign-off. One quiet line,
-// Martell "4 More To Explore" energy without the noise.
+// 2026-07-17 (Joel): every sequence email drives YouTube AND invites sharing.
+// Sits ABOVE the compliance footer, below the sign-off. Martell "4 More To
+// Explore" energy without the noise. The share line is dual: forward the link
+// (self-serve, the friend opts in on their own) OR reply with an email address
+// (assisted; processed by api/referral-scan.js -> api/refer.js, which sends
+// that person the Blueprint with a one-click unsubscribe, so consent stays
+// clean and the domain stays healthy).
 export const YOUTUBE_URL = process.env.YOUTUBE_CHANNEL_URL || 'https://www.youtube.com/@braveworksrn';
 function youtubeBlockHtml() {
-  return `<p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:26px 0 0;border-top:1px solid ${PALETTE.line};padding-top:14px;">
-    Want more? <a href="${YOUTUBE_URL}" style="color:${PALETTE.clay};font-weight:600;text-decoration:none;">Check out my latest video on YouTube &raquo;</a>
-  </p>`;
+  return `<div style="margin:26px 0 0;border-top:1px solid ${PALETTE.line};padding-top:14px;">
+    <p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:0 0 8px;">
+      <strong style="color:${PALETTE.text};">Want more?</strong> <a href="${YOUTUBE_URL}" style="color:${PALETTE.clay};font-weight:600;text-decoration:none;">Check out my latest videos on YouTube &raquo;</a>
+    </p>
+    <p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:0;">
+      <strong style="color:${PALETTE.text};">Know someone whose numbers are creeping up?</strong> Forward them this email, or just reply with their email address and I will send them the free Blueprint to get them started.
+    </p>
+  </div>`;
 }
 function youtubeBlockText() {
-  return `Want more? Check out my latest video on YouTube: ${YOUTUBE_URL}`;
+  return `Want more? Check out my latest videos on YouTube: ${YOUTUBE_URL}\n\nKnow someone whose numbers are creeping up? Forward them this email, or just reply with their email address and I will send them the free Blueprint to get them started.`;
 }
 
 // Convenience: assemble a full email from body + footer, both formats.

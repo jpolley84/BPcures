@@ -386,6 +386,9 @@ export default function BeThereLandingPage() {
         .lbn .vpanel .clock{font-size:clamp(52px,7vw,84px);font-weight:600;color:var(--gold);font-style:normal;letter-spacing:0.02em;line-height:1;}
         .lbn .vpanel .clock-sub{margin-top:14px;font-size:17px;color:#C9D3CE;max-width:280px;}
         .lbn .vpanel svg{margin-bottom:22px;}
+        .lbn .vpanel.photo{padding:0;position:relative;overflow:hidden;}
+        .lbn .vpanel.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+        .lbn .final-banner{display:block;width:100%;border-radius:22px;margin:0 0 50px;box-shadow:0 18px 44px rgba(31,54,52,.18);border:1px solid rgba(201,164,76,.35);}
 
         /* hero */
         .lbn .hero{position:relative;padding:84px 0 76px;overflow:hidden;}
@@ -603,7 +606,6 @@ export default function BeThereLandingPage() {
 
         /* final */
         .lbn .final{background:linear-gradient(180deg, var(--bg) 0%, var(--sage-lt) 100%);padding:104px 0 100px;text-align:center;}
-        .lbn .final-vpanel{min-height:320px;margin:0 0 50px;}
         .lbn .final .eyebrow{color:var(--gold-deep);}
         .lbn .final h2{font-size:clamp(28px,4vw,40px);margin-bottom:20px;}
         .lbn .final .brand-lines{font-family:var(--serif);font-style:italic;font-size:clamp(22px,3vw,30px);color:var(--lteal);margin:30px auto 36px;line-height:1.45;}
@@ -700,15 +702,8 @@ export default function BeThereLandingPage() {
               doctor tells you to stop.
             </p>
           </div>
-          {/* Visual panel: swap for real photography when supplied (art
-              direction: woman 50-65 walking toward a family event or sunlit
-              future, no cuff). */}
-          <div className="vpanel" aria-hidden="true">
-            <svg width="88" height="60" viewBox="0 0 88 60" fill="none">
-              <path d="M4 56 C24 20, 64 20, 84 56" stroke="#C9A44C" strokeWidth="2" strokeLinecap="round" fill="none" />
-              <circle cx="44" cy="18" r="9" stroke="#C9A44C" strokeWidth="2" fill="none" />
-            </svg>
-            <p className="big">There is still so much life ahead.</p>
+          <div className="vpanel photo">
+            <img src="/coaching/hero-joel.jpg" alt="Joel Polley, RN, walking a sunlit stone path" loading="eager" />
           </div>
         </div>
       </section>
@@ -806,12 +801,8 @@ export default function BeThereLandingPage() {
               can hold.
             </p>
           </div>
-          <div className="vpanel dark" data-rv aria-hidden="true">
-            <svg width="96" height="96" viewBox="0 0 96 96" fill="none">
-              <circle cx="48" cy="48" r="40" stroke="#C9A44C" strokeWidth="1.5" fill="none" />
-              <path d="M30 58 L42 44 L52 54 L66 34" stroke="#C9A44C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </svg>
-            <p className="big" style={{ color: '#EFE9DC' }}>The whole life. Not a medical chart.</p>
+          <div className="vpanel photo" data-rv>
+            <img src="/coaching/home-joel.jpg" alt="Joel Polley, RN, at home" loading="lazy" />
           </div>
         </div>
       </section>
@@ -905,10 +896,7 @@ export default function BeThereLandingPage() {
       {/* ===== MEET JOEL ===== */}
       <section className="joel">
         <div className="wrap joel-grid" data-rv>
-          <picture>
-            <source srcSet="/headshot.webp" type="image/webp" />
-            <img className="joel-photo" src="/headshot.jpg" alt="Joel Polley, RN" width="260" height="260" loading="lazy" />
-          </picture>
+          <img className="joel-photo" src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN, in navy scrubs with a stethoscope" width="260" height="260" loading="lazy" />
           <div>
             <span className="eyebrow">Your Guide</span>
             <h2>Joel Has Seen What Happens When People Wait Too Long.</h2>
@@ -1095,19 +1083,13 @@ export default function BeThereLandingPage() {
       {/* ===== FINAL ===== */}
       <section className="final">
         <div className="wrap-narrow">
-          {/* Closing visual panel: swap for real photography (woman walking
-              into a family celebration, in the picture, not watching from
-              the side) when supplied. */}
-          <div className="vpanel dark final-vpanel" data-rv aria-hidden="true">
-            <svg width="110" height="64" viewBox="0 0 110 64" fill="none">
-              <circle cx="55" cy="18" r="10" stroke="#C9A44C" strokeWidth="2" fill="none" />
-              <path d="M35 60 C40 40, 70 40, 75 60" stroke="#C9A44C" strokeWidth="2" strokeLinecap="round" fill="none" />
-              <circle cx="22" cy="26" r="7" stroke="#C9A44C" strokeWidth="1.5" fill="none" opacity="0.6" />
-              <circle cx="88" cy="26" r="7" stroke="#C9A44C" strokeWidth="1.5" fill="none" opacity="0.6" />
-              <path d="M8 60 C12 46, 30 46, 34 58 M76 58 C80 46, 98 46, 102 60" stroke="#C9A44C" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
-            </svg>
-            <p className="big" style={{ color: '#EFE9DC' }}>She is in the picture. Not watching from the side.</p>
-          </div>
+          <img
+            className="final-banner"
+            data-rv
+            src="/coaching/banner-lbn.jpg"
+            alt="Life Beyond the Numbers. Joel Polley, BraveWorks RN. Get your life back."
+            loading="lazy"
+          />
           <span className="eyebrow center" style={{ display: 'block' }} data-rv>
             The Number Matters. But the Life Behind It Matters More.
           </span>
