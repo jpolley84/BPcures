@@ -107,6 +107,13 @@ export default async function handler(req, res) {
           ...fresh,
           [flashSentFlag(sendDay)]: true,
           [`${flashSentFlag(sendDay)}At`]: new Date().toISOString(),
+          // 2026-07-17: after the FINAL flash email (day 17), release the
+          // flashOnly hold so the evergreen weekly loop picks these
+          // migrated past-buyers up. Without this they would go silent again
+          // after the flash arc, re-creating the exact gap we just closed.
+          ...(sendDay === SPRINT_FLASH_DAYS[SPRINT_FLASH_DAYS.length - 1]
+            ? { flashOnly: false }
+            : {}),
         });
       }
       summary.sentByDay[sendDay] = (summary.sentByDay[sendDay] || 0) + 1;

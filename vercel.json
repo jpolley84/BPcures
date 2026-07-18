@@ -92,6 +92,10 @@
       "schedule": "45 15 * * *"
     },
     {
+      "path": "/api/evergreen-cron",
+      "schedule": "0 16 * * *"
+    },
+    {
       "path": "/api/triangle-buyer-cron",
       "schedule": "30 15 * * *"
     },
