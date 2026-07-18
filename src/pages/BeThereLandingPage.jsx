@@ -389,6 +389,7 @@ export default function BeThereLandingPage() {
         .lbn .vpanel.photo{padding:0;position:relative;overflow:hidden;}
         .lbn .vpanel.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
         .lbn .final-banner{display:block;width:100%;border-radius:22px;margin:0 0 50px;box-shadow:0 18px 44px rgba(31,54,52,.18);border:1px solid rgba(201,164,76,.35);}
+        .lbn .apply-banner{display:block;width:100%;border-radius:18px;margin:0 0 44px;border:1px solid rgba(201,164,76,.4);}
 
         /* hero */
         .lbn .hero{position:relative;padding:84px 0 76px;overflow:hidden;}
@@ -1039,6 +1040,15 @@ export default function BeThereLandingPage() {
       {/* ===== APPLY ===== */}
       <section className="apply-section" id="apply">
         <div className="wrap-narrow">
+          {/* Brand banner: dark green + gold artwork sits naturally on this
+              dark section, right above the application ask. */}
+          <img
+            className="apply-banner"
+            data-rv
+            src="/coaching/banner-lbn.jpg"
+            alt="Life Beyond the Numbers. Joel Polley, BraveWorks RN. Get your life back."
+            loading="lazy"
+          />
           <span className="eyebrow" data-rv>The Next Step</span>
           <h2 data-rv>Apply to Work With Joel.</h2>
           <p className="lede" data-rv>
@@ -1083,11 +1093,13 @@ export default function BeThereLandingPage() {
       {/* ===== FINAL ===== */}
       <section className="final">
         <div className="wrap-narrow">
+          {/* The closing visual is the point of the whole page: in the
+              picture with the family, not watching from the side. */}
           <img
             className="final-banner"
             data-rv
-            src="/coaching/banner-lbn.jpg"
-            alt="Life Beyond the Numbers. Joel Polley, BraveWorks RN. Get your life back."
+            src="/coaching/family-joel.jpg"
+            alt="Joel Polley with his family"
             loading="lazy"
           />
           <span className="eyebrow center" style={{ display: 'block' }} data-rv>
