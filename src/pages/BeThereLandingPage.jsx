@@ -172,16 +172,8 @@ const POSSIBILITIES = [
   { h: 'With Your Family', p: 'Your children see you making strong, steady choices instead of living from scare to scare.' },
 ];
 
-const INCLUDED = [
-  { h: 'Your Personal Starting Map', p: 'See where stress, food, sleep, movement, and routines are pulling you off course.', so: 'So you know where to begin without changing your whole life on Monday.' },
-  { h: 'Weekly Coaching With Joel', p: 'Bring the hard week, family dinner, travel question, slip, and win.', so: 'So you have help when real life hits, not after you have given up.' },
-  { h: 'The Real-Life Food Plan', p: 'Learn how to shop, cook, order, season, and enjoy food without fear or punishment.', so: 'So eating better feels like care, not a sentence.' },
-  { h: 'Stress and Sleep Shifts', p: 'Build small routines that help your body come down from always being on.', so: 'So night can feel like rest again instead of another place to worry.' },
-  { h: 'Movement That Fits Your Body', p: 'Create a way to move that respects your knees, energy, schedule, and starting point.', so: 'So movement becomes something you can keep, not something you dread.' },
-  { h: 'Your Bounce-Back Plan', p: 'Know what to do after the cookout, stressful week, missed call, or moment you fell off.', so: 'So one hard day stays one hard day.' },
-  { h: 'Community and Accountability', p: 'Be surrounded by women who understand the fear, pressure, and desire to do better.', so: 'So you stop carrying this like it is yours to solve alone.' },
-  { h: 'Your Life-After-90-Days Plan', p: 'Build the travel, holiday, busy-season, and hard-week plan.', so: 'So the end of coaching is not the end of your progress.' },
-];
+// INCLUDED (offer stack) removed 2026-07-17 per Joel; the program is revealed
+// on the fit call, not itemized on the page.
 
 const FOR_YES = [
   'To wake up and feel like your body is working with you again.',
@@ -203,9 +195,8 @@ const FOR_NO = [
 
 const APPLY_STEPS = [
   'Complete the qualification questions',
-  'Watch Joel’s short welcome video',
-  'Review the full investment and payment options',
   'Receive calendar access if the program looks like a fit',
+  'Talk with Joel about your case and everything the program involves',
   'Use the call to make a clear decision',
 ];
 
@@ -240,7 +231,7 @@ const FAQS = [
   },
   {
     q: 'When will I see the investment?',
-    a: 'After the qualification questions, you will watch a short video from Joel and review the full investment and payment options before you receive calendar access.',
+    a: 'On your call with Joel. If your application looks like a fit, you receive calendar access, and Joel goes over everything the program involves, including the investment and payment options, so you can make a clear decision together.',
   },
   {
     q: 'Can I use HSA or FSA money?',
@@ -923,11 +914,8 @@ export default function BeThereLandingPage() {
         </div>
       </section>
 
-      {/* Video section removed 2026-07-17 per Joel ("remove the video
-          currently embedded for now"). The /apply wizard still shows the
-          welcome video on its thank-you screen, so the apply-steps copy
-          ("Watch Joel's short welcome video") stays true. Reinstate here
-          when a page-ready video exists. */}
+      {/* Video removed 2026-07-17 per Joel (landing page AND the /apply
+          thank-you screen). No welcome video anywhere in the coaching funnel. */}
 
       {/* ===== WHAT STARTS TO FEEL POSSIBLE ===== */}
       <section className="possible">
@@ -948,28 +936,8 @@ export default function BeThereLandingPage() {
         </div>
       </section>
 
-      {/* ===== OFFER STACK ===== */}
-      <section className="included">
-        <div className="wrap">
-          <div className="center-head" data-rv>
-            <span className="eyebrow center" style={{ display: 'block' }}>Introducing Life Beyond the Numbers&trade;</span>
-            <h2>90 Days to Build the Habits That Give Your Life Room to Open Again.</h2>
-            <p>This is not a folder of information. It is guided help turning what you know into what you actually do.</p>
-          </div>
-          <div className="inc-grid" data-rv data-rv-child>
-            {INCLUDED.map((c) => (
-              <div className="inc-card" key={c.h}>
-                <div className="inc-dot" />
-                <div>
-                  <h3>{c.h}</h3>
-                  <p>{c.p}</p>
-                  <p className="offer-payoff">{c.so}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Offer stack section removed 2026-07-17 per Joel. The program is
+          revealed on the fit call, not itemized on the page. */}
 
       {/* ===== WHY GROUP ===== */}
       <section className="group">

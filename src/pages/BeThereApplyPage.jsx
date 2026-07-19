@@ -23,12 +23,10 @@ const FIT_CALL_URL =
     (import.meta.env.VITE_CALENDLY_FIT_CALL_URL || import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL)) ||
   'https://calendly.com/braveworksrn/60min';
 
-// Welcome video shown on the accepted-track thank-you screen (the landing
-// page promises: application -> welcome video -> full cost -> decide -> book).
-// Env seam first, else the live Be There webinar.
-const WELCOME_VIDEO_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_COACHING_VSL_URL) ||
-  'https://www.youtube-nocookie.com/embed/UdJvWCvUKww';
+// 2026-07-17 (Joel): welcome video, offer stack, and the "did you watch the
+// video" question were all removed. The accepted-track thank-you now goes
+// straight to booking the fit call; cost is discussed on the call, not on the
+// page.
 
 // ---- Option sets (visible copy: no dashes, no prices) ----
 const AGE_OPTIONS = ['Under 45', '45 to 54', '55 to 64', '65 to 74', '75 plus'];
@@ -57,7 +55,6 @@ const NOT_WILLING = 'I am not willing to invest at this time';
 const INVEST_TIER_OPTIONS = ['$5,000 to $9,999 a year', '$10,000 to $24,999 a year', '$25,000 or more a year', NOT_WILLING];
 const DECISION_OPTIONS = ['Just me', 'My spouse or partner and me', 'An adult child or family member'];
 const FOUND_OPTIONS = ['TikTok', 'Facebook', 'YouTube', 'A friend', 'Other'];
-const WATCHED_OPTIONS = ['Yes, all of it', 'Some of it', 'Not yet'];
 
 const STEP_TITLES = [
   'About you',
@@ -205,7 +202,7 @@ export default function BeThereApplyPage() {
     // Step 7
     winning: '', pictureValue: '', investTier: '', decisionMakers: '',
     // Step 8
-    foundJoel: '', watchedVideo: '', anythingElse: '',
+    foundJoel: '', anythingElse: '',
   });
 
   useEffect(() => {
@@ -265,7 +262,6 @@ export default function BeThereApplyPage() {
     }
     if (s === 8) {
       if (!form.foundJoel) e.foundJoel = 'Pick one.';
-      if (!form.watchedVideo) e.watchedVideo = 'Pick one.';
     }
     return e;
   }
@@ -342,7 +338,6 @@ export default function BeThereApplyPage() {
           investTier: form.investTier,
           decisionMakers: form.decisionMakers,
           foundJoel: form.foundJoel,
-          watchedVideo: form.watchedVideo,
           anythingElse: form.anythingElse.trim(),
         }),
       });
@@ -405,90 +400,13 @@ export default function BeThereApplyPage() {
                 Your application is in.
               </h1>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.75rem' }}>
-                Joel reads every word. Three steps left: watch his short welcome video, see
-                the cost, and book your call.
+                Joel reads every word. If it looks like a fit, the next step is a short call
+                with him, where you will talk through your case and everything the program
+                involves. Book your time below.
               </p>
 
-              {/* Step 1: the welcome video (the landing page promises it here). */}
-              <div
-                style={{
-                  position: 'relative',
-                  paddingTop: '56.25%',
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  border: '1px solid var(--line, #D8CFBD)',
-                  background: '#000',
-                  marginBottom: '1.5rem',
-                }}
-              >
-                <iframe
-                  src={WELCOME_VIDEO_URL}
-                  title="A welcome from Joel Polley, RN"
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-                />
-              </div>
-
-              {/* Step 2: everything included, then the price. Joel-confirmed
-                  contents (2026-07-17): weekly live group call, personalized
-                  day-by-day protocol, private community, 1:1 access to Joel,
-                  full kit stack (tracker, herb formulary, doctor sheet). No
-                  invented per-item dollar values, just what she actually gets. */}
-              <div
-                style={{
-                  maxWidth: 460,
-                  margin: '0 auto 1.75rem',
-                  background: '#FFFFFF',
-                  border: '1px solid var(--line, #D8CFBD)',
-                  borderRadius: 12,
-                  padding: '1.25rem 1.4rem',
-                }}
-              >
-                <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 10 }}>
-                  Everything Included
-                </div>
-                <ul style={{ listStyle: 'none', margin: '0 0 1.1rem', padding: 0, textAlign: 'left' }}>
-                  {[
-                    ['Weekly live group call with Joel', 'Every week for 90 days, real time, real questions.'],
-                    ['Your personalized day-by-day protocol', 'Built around your loudest corner, not a generic plan.'],
-                    ['Private community access', 'Other women doing this alongside you, every day.'],
-                    ['1:1 access to Joel between calls', 'Message him directly when something comes up.'],
-                    ['The full kit stack', 'Herb Formulary, BP tracker, and your Bring This To Your Doctor sheet.'],
-                  ].map(([h, p]) => (
-                    <li key={h} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', marginBottom: '0.7rem' }}>
-                      <span style={{ color: 'var(--sage, #4A5D4E)', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                      <span>
-                        <span style={{ display: 'block', fontWeight: 700, fontSize: '0.94rem', color: 'var(--ink, #121110)' }}>{h}</span>
-                        <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--muted, #7A7061)', lineHeight: 1.5 }}>{p}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <div style={{ borderTop: '1px solid var(--line, #D8CFBD)', paddingTop: '1.1rem' }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', marginBottom: 6 }}>
-                    The Cost
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontFamily: SERIF, fontSize: '1.15rem', fontWeight: 600, color: 'var(--muted, #7A7061)', textDecoration: 'line-through', textDecorationColor: 'var(--clay, #B85A36)', textDecorationThickness: '2px' }}>
-                      $4,997 value
-                    </span>
-                    <span style={{ fontFamily: SERIF, fontSize: '2rem', fontWeight: 600, color: 'var(--ink, #121110)', lineHeight: 1.2 }}>
-                      $1,997
-                    </span>
-                  </div>
-                  <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.86rem', lineHeight: 1.5, margin: '0.35rem 0 0' }}>
-                    or 3 payments of $697
-                  </p>
-                </div>
-                <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '0.92rem', lineHeight: 1.6, margin: '0.4rem 0 0' }}>
-                  This covers everything above for the full 90 days. You pay
-                  nothing today. The call is free.
-                </p>
-              </div>
-
-              {/* Step 3: book. */}
+              {/* Book the fit call. Video, offer stack, and price were removed
+                  2026-07-17 per Joel; the call is where all of that is covered. */}
               <a
                 href={FIT_CALL_URL}
                 target="_blank"
@@ -698,9 +616,6 @@ export default function BeThereApplyPage() {
           <>
             <Field label="How did you find Joel?" error={errors.foundJoel}>
               <OptionList name="How found Joel" options={FOUND_OPTIONS} value={form.foundJoel} onChange={(v) => set('foundJoel', v)} />
-            </Field>
-            <Field label="Did you watch the video on the last page?" error={errors.watchedVideo}>
-              <OptionList name="Watched video" options={WATCHED_OPTIONS} value={form.watchedVideo} onChange={(v) => set('watchedVideo', v)} />
             </Field>
             <Field label="Anything else Joel should know?" optional>
               <textarea className="bt-input" rows={3} style={{ resize: 'vertical', minHeight: 80 }} value={form.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Anything that matters that we did not ask about." />
