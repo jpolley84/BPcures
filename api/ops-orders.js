@@ -102,13 +102,21 @@ async function loadTea() {
   return rows;
 }
 
-async function loadKits(limit = 100) {
+// excludeIds: payment ids already present in the TEA ledger. The $17 1-Week
+// Sampler (prod_Upwbtp9VC0HglB) collides exactly with the $17 Reset Kit price,
+// so amount alone cannot tell them apart. Samplers were backfilled into the tea
+// ledger keyed by payment id (scripts/backfill-sampler-orders-2026-07-19.mjs);
+// excluding those ids here is what keeps a sampler from showing up as BOTH a
+// tea order and a "$17 Reset Kit" in the digital list.
+async function loadKits(limit = 100, excludeIds = new Set()) {
   const out = [];
   try {
     const charges = await stripe.charges.list({ limit });
     for (const c of charges.data) {
       if (c.status !== 'succeeded' || c.refunded) continue;
       if (TEA_AMOUNTS.has(c.amount)) continue; // tea lives in the KV ledger
+      const pi = typeof c.payment_intent === 'string' ? c.payment_intent : c.payment_intent?.id;
+      if (excludeIds.has(c.id) || (pi && excludeIds.has(pi))) continue; // already a tea order
       const md = c.metadata || {};
       const label =
         AMOUNT_LABEL[c.amount] ||
@@ -183,12 +191,12 @@ export default async function handler(req, res) {
 
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const [tea, kits] = await Promise.all([
-    loadTea().catch((e) => ({ error: e.message })),
-    loadKits().catch((e) => ({ error: e.message, rows: [] })),
-  ]);
-
+  // Tea first: its payment ids are what de-duplicate the Stripe-sourced list.
+  const tea = await loadTea().catch((e) => ({ error: e.message }));
   const teaRows = Array.isArray(tea) ? tea : [];
+  const teaPaymentIds = new Set(teaRows.map((r) => String(r.id).replace(/^tea:order:/, '')));
+  const kits = await loadKits(100, teaPaymentIds).catch((e) => ({ error: e.message, rows: [] }));
+
   const kitRows = kits.rows || [];
   const sum = (rows) => rows.reduce((n, r) => n + (r.amountCents || 0), 0);
   const byStatus = (s) => teaRows.filter((r) => r.status === s);
