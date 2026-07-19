@@ -18,6 +18,7 @@
 // are read-only here (a ledger to see, not a worklist). Sourced from Stripe
 // charges so nothing is missed when a KV write failed.
 import { kv } from '@vercel/kv';
+import { sendTeaShipped, firstNameOf } from './_tea-shipped-email.js';
 import Stripe from 'stripe';
 import crypto from 'node:crypto';
 
@@ -146,6 +147,9 @@ export default async function handler(req, res) {
       const existing = await kv.get(id);
       if (!existing) return res.status(404).json({ error: 'Order not found' });
       const now = new Date().toISOString();
+      // Only a NEW transition into fulfilled earns a shipped email, so
+      // re-saving an already-shipped order never re-notifies the buyer.
+      const newlyFulfilled = status === 'fulfilled' && !existing.fulfilled;
       await kv.set(id, {
         ...existing,
         status,
@@ -153,9 +157,24 @@ export default async function handler(req, res) {
         fulfilled: status === 'fulfilled',
         fulfilledAt: status === 'fulfilled' ? (existing.fulfilledAt || now) : null,
         ...(typeof note === 'string' && note ? { opsNote: note.slice(0, 300) } : {}),
+        ...(newlyFulfilled ? { shippedEmailAt: now } : {}),
         statusUpdatedAt: now,
       });
-      return res.status(200).json({ ok: true, id, status });
+
+      // Tell the buyer their tea is on the way. Analytics of the human kind:
+      // before this existed, orders shipped silently and buyers wrote in asking
+      // where their tea was. Never blocks the status write.
+      let notified = false;
+      if (newlyFulfilled) {
+        notified = await sendTeaShipped({
+          email: existing.email,
+          firstName: firstNameOf(existing.name),
+          blend: existing.blend || 'steady',
+          items: existing.items,
+          orderRef: String(existing.sessionId || '').slice(-8).toUpperCase(),
+        });
+      }
+      return res.status(200).json({ ok: true, id, status, notified });
     } catch (err) {
       console.error('ops-orders POST failed', err.message);
       return res.status(500).json({ error: 'Update failed' });
