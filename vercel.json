@@ -51,6 +51,11 @@
       "permanent": false
     },
     {
+      "source": "/saffron",
+      "destination": "https://www.tiktok.com/t/ZP9rebBAGVd8G-duWOM/",
+      "permanent": false
+    },
+    {
       "source": "/downloads",
       "destination": "/library",
       "permanent": false
