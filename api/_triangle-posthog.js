@@ -56,7 +56,7 @@ const PURCHASE_MARKER_TTL_SECONDS = 60 * 60 * 24 * 45;
 // would mask / be masked by the session's own purchase event.
 //
 // Returns true when the event was captured, false when skipped or failed.
-export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null }) {
+export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null, abHomeVariant = null }) {
   let client;
   try {
     client = getClient();
@@ -105,6 +105,11 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
         source: source || 'checkout',   // 'checkout' | 'upgrade' | 'case_review' | 'one_click_upsell' | 'reconciliation'
         stripe_session_id: sessionId || null,
         site_version: 'braveworks-bp',
+        // Homepage A/B arm ('a' sales letter | 'b' Hidden Triggers funnel),
+        // threaded browser -> PayPage -> checkout session metadata -> here.
+        // Absent for buyers who entered below the homepage (DM/exit-intent
+        // traffic never gets bucketed), so null is expected, not a bug.
+        ...(abHomeVariant ? { ab_home_variant: String(abHomeVariant) } : {}),
         ...(deviceId ? { buyer_email: emailId } : {}),
         $set: {
           is_paid_customer: true,

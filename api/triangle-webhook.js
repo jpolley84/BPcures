@@ -607,6 +607,7 @@ async function processCall97(session) {
     sessionId: session.id,
     markSession: true,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    abHomeVariant: session.metadata?.ab_home_variant || null,
   });
   return { action: 'call97', delivered: true, customer_email: customerEmail };
 }
@@ -904,7 +905,7 @@ Forward this delivery address to the creator to fulfill. Stripe session: ${sessi
     console.warn('stripe-webhook: samson dedupe write failed (non-fatal)', err.message);
   }
 
-  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id, markSession: true, deviceDistinctId: session.metadata?.ph_distinct_id || null });
+  await capturePurchase({ email: customerEmail, amountCents, tier: 'samson', sessionId: session.id, markSession: true, deviceDistinctId: session.metadata?.ph_distinct_id || null, abHomeVariant: session.metadata?.ab_home_variant || null });
   return { action: 'samson_sale', recorded: true, customer_email: customerEmail };
 }
 
@@ -1335,6 +1336,7 @@ async function processCaseReview(session, plan = 'full') {
     sessionId: session.id,
     markSession: true,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    abHomeVariant: session.metadata?.ab_home_variant || null,
   });
 
   if (confirmationError) {
@@ -1494,6 +1496,7 @@ export async function processUpgrade(session, targetTier) {
     sessionId: session.id,
     markSession: true,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    abHomeVariant: session.metadata?.ab_home_variant || null,
   });
 
   // Record the dedupe marker now that delivery has succeeded, so a Stripe
@@ -1828,6 +1831,7 @@ async function processCheckoutCompleted(event) {
     sessionId: session.id,
     markSession: true,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    abHomeVariant: session.metadata?.ab_home_variant || null,
   });
 
   return { action: 'buyer_recorded', tier, delivered: true, customer_email: customerEmail };
