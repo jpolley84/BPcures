@@ -1,20 +1,27 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Activity,
   AlertCircle,
+  AlertTriangle,
   ArrowDown,
   ArrowUp,
+  BarChart3,
   Calendar,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
   ClipboardList,
+  Copy,
   DollarSign,
   FileText,
   GitBranch,
   Inbox,
+  LayoutDashboard,
   Mail,
+  Package,
   RefreshCw,
+  Search,
+  Settings,
   TrendingUp,
   Users,
   Zap,
@@ -461,6 +468,782 @@ function HeadlineStrip({ stripe, funnel }) {
   );
 }
 
+// ─── Shared small pieces (Orders + Traffic) ───────────────────────────
+function StatCard({ title, value, sub, accent = 'text-stone-100' }) {
+  return (
+    <Tile title={title}>
+      <div
+        className={`text-3xl leading-none ${accent}`}
+        style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+      >
+        {value}
+      </div>
+      {sub && <div className="text-xs text-stone-400 mt-2 leading-snug">{sub}</div>}
+    </Tile>
+  );
+}
+
+function InlineWarning({ children }) {
+  if (!children) return null;
+  return (
+    <div className="mb-3 text-xs text-amber-400 bg-amber-900/20 border border-amber-800/50 rounded-lg px-3 py-2 flex items-start gap-2">
+      <AlertCircle size={12} className="mt-0.5 shrink-0" />
+      <span className="min-w-0 break-words">{children}</span>
+    </div>
+  );
+}
+
+function TabButton({ active, onClick, Icon, label }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs uppercase tracking-wider font-semibold transition-colors border ${
+        active
+          ? 'bg-stone-800 border-stone-600 text-stone-100'
+          : 'bg-transparent border-transparent text-stone-500 hover:text-stone-300 hover:bg-stone-800/40'
+      }`}
+    >
+      <Icon size={13} />
+      {label}
+    </button>
+  );
+}
+
+function FilterPill({ active, onClick, children, disabled }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wider border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+        active
+          ? 'bg-emerald-900/40 border-emerald-700/60 text-emerald-300'
+          : 'bg-stone-900/40 border-stone-700 text-stone-400 hover:text-stone-200 hover:border-stone-600'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+  return new Promise((resolve, reject) => {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      resolve();
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+// ─── Orders tab ───────────────────────────────────────────────────────
+const BLEND_STYLES = {
+  steady: 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50',
+  satin: 'bg-purple-900/40 text-purple-300 border-purple-700/50',
+};
+
+const STATUS_ORDER = { new: 0, pending: 1, fulfilled: 2 };
+
+function formatAddress(address) {
+  if (!address) return '';
+  const { line1, line2, city, state, postal_code: postal, country } = address;
+  const cityLine = [city, state].filter(Boolean).join(', ');
+  const lastLine = [cityLine, postal].filter(Boolean).join(' ');
+  return [line1, line2, lastLine, country].filter(Boolean).join('\n');
+}
+
+function shortDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function TeaOrderRow({ order, passcode, onStatusChange }) {
+  const [busy, setBusy] = useState(false);
+  const [rowError, setRowError] = useState('');
+  const [copied, setCopied] = useState(false);
+  const addressText = formatAddress(order.address);
+
+  const setStatus = async (next) => {
+    if (next === order.status || busy) return;
+    const previous = order.status;
+    setRowError('');
+    setBusy(true);
+    onStatusChange(order.id, next); // optimistic
+    try {
+      const res = await fetch('/api/ops-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Ops-Pass': passcode },
+        body: JSON.stringify({ id: order.id, status: next }),
+      });
+      if (!res.ok) {
+        onStatusChange(order.id, previous); // revert
+        setRowError(`Update failed (HTTP ${res.status})`);
+      }
+    } catch (e) {
+      onStatusChange(order.id, previous); // revert
+      setRowError(e.message || 'Network error');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copyOne = () => {
+    const block = [
+      order.name || '(no name)',
+      addressText,
+      `${order.item || order.blend || 'tea'} x ${order.qty ?? 1}`,
+    ]
+      .filter(Boolean)
+      .join('\n');
+    copyToClipboard(block).then(
+      () => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      },
+      () => setRowError('Clipboard blocked')
+    );
+  };
+
+  const blendKey = String(order.blend || '').toLowerCase();
+  const blendClass = BLEND_STYLES[blendKey] || 'bg-stone-700/40 text-stone-300 border-stone-600/50';
+
+  return (
+    <div className="py-4 border-b border-stone-700/60 last:border-0">
+      <div className="flex flex-wrap items-start gap-x-3 gap-y-2">
+        <span className="text-[11px] font-mono text-stone-500 shrink-0 pt-0.5">
+          {shortDate(order.date)}
+        </span>
+        <span
+          className={`text-[10px] uppercase tracking-wider border rounded px-1.5 py-0.5 shrink-0 ${blendClass}`}
+        >
+          {order.blend || 'tea'}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm text-stone-200 font-medium truncate">
+            {order.name || '(no name)'}
+          </div>
+          <div className="text-xs text-stone-500 truncate">{order.email || '—'}</div>
+        </div>
+        <div className="text-right shrink-0">
+          <div className="text-sm text-stone-200 font-mono">{formatMoney(order.amountCents)}</div>
+          <div className="text-[10px] text-stone-500">
+            {order.item || '—'} × {order.qty ?? 1}
+          </div>
+        </div>
+      </div>
+
+      {order.subscription && (
+        <div className="mt-2 text-[10px] uppercase tracking-wider text-amber-400/80">
+          subscription
+        </div>
+      )}
+
+      {order.addressLooksLikeName && (
+        <div className="mt-2 inline-flex items-start gap-1.5 text-[10px] uppercase tracking-wider bg-amber-900/30 text-amber-300 border border-amber-700/50 rounded px-2 py-1">
+          <AlertTriangle size={11} className="mt-px shrink-0" />
+          Name looks like address — confirm before shipping
+        </div>
+      )}
+
+      <div className="mt-3 flex flex-wrap items-start gap-3">
+        <pre className="flex-1 min-w-[200px] text-xs text-stone-300 font-mono whitespace-pre-wrap bg-stone-900/50 border border-stone-700/60 rounded-lg px-3 py-2 leading-relaxed">
+          {addressText || 'No shipping address on file'}
+        </pre>
+        <button
+          onClick={copyOne}
+          className="shrink-0 text-[10px] uppercase tracking-wider text-stone-500 hover:text-stone-200 transition-colors flex items-center gap-1 px-2 py-2"
+          title="Copy this address block"
+        >
+          <Copy size={11} /> {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        {['new', 'pending', 'fulfilled'].map((s) => {
+          const active = order.status === s;
+          return (
+            <button
+              key={s}
+              onClick={() => setStatus(s)}
+              disabled={busy}
+              className={`px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wider border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                active
+                  ? s === 'fulfilled'
+                    ? 'bg-emerald-900/50 border-emerald-600/60 text-emerald-300'
+                    : s === 'pending'
+                    ? 'bg-amber-900/50 border-amber-600/60 text-amber-300'
+                    : 'bg-stone-700/60 border-stone-500/60 text-stone-100'
+                  : 'bg-stone-900/40 border-stone-700 text-stone-500 hover:text-stone-200 hover:border-stone-600'
+              }`}
+            >
+              {active && s === 'fulfilled' && <CheckCircle2 size={10} className="inline -mt-0.5 mr-1" />}
+              {s}
+            </button>
+          );
+        })}
+        {busy && <RefreshCw size={11} className="text-stone-500 animate-spin ml-1" />}
+        {order.status === 'fulfilled' && order.fulfilledAt && (
+          <span className="text-[10px] text-stone-500 ml-1">{timeAgo(order.fulfilledAt)}</span>
+        )}
+      </div>
+
+      {rowError && (
+        <div className="mt-2 text-xs text-rose-400 flex items-center gap-1.5">
+          <AlertCircle size={11} /> {rowError}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OrdersTab({ passcode, refreshNonce }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('open');
+  const [blendFilter, setBlendFilter] = useState('all');
+  const [query, setQuery] = useState('');
+  const [copiedList, setCopiedList] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/ops-orders', {
+          headers: { 'X-Ops-Pass': passcode },
+          cache: 'no-store',
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if (!cancelled) {
+          setData(json);
+          setError(null);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e.message || String(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [passcode, refreshNonce]);
+
+  const handleStatusChange = useCallback((id, status) => {
+    setData((prev) => {
+      if (!prev || !Array.isArray(prev.tea)) return prev;
+      return { ...prev, tea: prev.tea.map((o) => (o.id === id ? { ...o, status } : o)) };
+    });
+  }, []);
+
+  const tea = Array.isArray(data?.tea) ? data.tea : [];
+  const kits = Array.isArray(data?.kits) ? data.kits : [];
+  const summary = data?.summary || {};
+
+  const filteredTea = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const rows = tea.filter((o) => {
+      const status = o.status || 'new';
+      if (statusFilter === 'open' && status === 'fulfilled') return false;
+      if (statusFilter !== 'all' && statusFilter !== 'open' && status !== statusFilter) return false;
+      if (blendFilter !== 'all' && String(o.blend || '').toLowerCase() !== blendFilter) return false;
+      if (q) {
+        const hay = `${o.email || ''} ${o.name || ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    // Open work first, then newest first
+    return rows.sort((a, b) => {
+      const sa = STATUS_ORDER[a.status] ?? 0;
+      const sb = STATUS_ORDER[b.status] ?? 0;
+      if (sa !== sb) return sa - sb;
+      return new Date(b.date || 0) - new Date(a.date || 0);
+    });
+  }, [tea, statusFilter, blendFilter, query]);
+
+  const copyShippingList = () => {
+    const open = filteredTea.filter((o) => (o.status || 'new') !== 'fulfilled');
+    if (open.length === 0) {
+      setCopiedList('Nothing open to copy');
+      setTimeout(() => setCopiedList(''), 2000);
+      return;
+    }
+    const text = open
+      .map((o) =>
+        [
+          o.name || '(no name)',
+          formatAddress(o.address),
+          `${o.item || o.blend || 'tea'} x ${o.qty ?? 1}`,
+        ]
+          .filter(Boolean)
+          .join('\n')
+      )
+      .join('\n\n---\n\n');
+    copyToClipboard(text).then(
+      () => {
+        setCopiedList(`Copied ${open.length} order${open.length === 1 ? '' : 's'}`);
+        setTimeout(() => setCopiedList(''), 2000);
+      },
+      () => {
+        setCopiedList('Clipboard blocked');
+        setTimeout(() => setCopiedList(''), 2000);
+      }
+    );
+  };
+
+  if (loading && !data) {
+    return (
+      <div className="flex items-center gap-3 text-stone-400 text-sm py-16 justify-center">
+        <RefreshCw size={16} className="animate-spin" />
+        Loading orders...
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <Tile title="Orders">
+        <div className="text-rose-400 text-sm flex items-center gap-2">
+          <AlertCircle size={14} /> {error}
+        </div>
+      </Tile>
+    );
+  }
+
+  const openCount = (summary.teaNew ?? 0) + (summary.teaPending ?? 0);
+
+  return (
+    <>
+      {error && <InlineWarning>Refresh failed: {error} (showing last good data)</InlineWarning>}
+
+      {/* Summary strip */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4">
+        <StatCard
+          title="Open tea orders"
+          value={openCount}
+          accent={openCount > 0 ? 'text-amber-300' : 'text-stone-100'}
+          sub={`${formatMoney(summary.teaOpenRevenueCents)} unshipped · ${summary.teaNew ?? 0} new · ${
+            summary.teaPending ?? 0
+          } pending`}
+        />
+        <StatCard
+          title="Fulfilled"
+          value={summary.teaFulfilled ?? 0}
+          sub={`of ${summary.teaTotal ?? 0} tea orders · ${formatMoney(summary.teaRevenueCents)} lifetime`}
+        />
+        <StatCard
+          title="Blend split"
+          value={`${summary.teaSteady ?? 0} / ${summary.teaSatin ?? 0}`}
+          sub="Steady / Satin"
+        />
+        <StatCard
+          title="Kit orders"
+          value={summary.kitCount ?? 0}
+          sub={`${formatMoney(summary.kitRevenueCents)} · digital, auto-delivered`}
+        />
+      </section>
+
+      {/* Tea worklist */}
+      <section className="mb-4">
+        <Tile title={`Tea orders — shipping worklist (${filteredTea.length})`}>
+          {data?.teaError && <InlineWarning>{data.teaError}</InlineWarning>}
+
+          {/* Filters */}
+          <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-stone-700/60">
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                ['open', 'Open'],
+                ['all', 'All'],
+                ['new', 'New'],
+                ['pending', 'Pending'],
+                ['fulfilled', 'Fulfilled'],
+              ].map(([key, label]) => (
+                <FilterPill
+                  key={key}
+                  active={statusFilter === key}
+                  onClick={() => setStatusFilter(key)}
+                >
+                  {label}
+                </FilterPill>
+              ))}
+            </div>
+            <span className="text-stone-700 hidden sm:inline">|</span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                ['all', 'All blends'],
+                ['steady', 'Steady'],
+                ['satin', 'Satin'],
+              ].map(([key, label]) => (
+                <FilterPill key={key} active={blendFilter === key} onClick={() => setBlendFilter(key)}>
+                  {label}
+                </FilterPill>
+              ))}
+            </div>
+            <div className="relative flex-1 min-w-[160px]">
+              <Search
+                size={12}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-500 pointer-events-none"
+              />
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search email or name"
+                className="w-full bg-stone-900/50 border border-stone-700 rounded-md pl-7 pr-2 py-1.5 text-xs text-stone-200 placeholder:text-stone-600 focus:outline-none focus:border-emerald-600"
+              />
+            </div>
+            <button
+              onClick={copyShippingList}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] uppercase tracking-wider border border-stone-700 bg-stone-900/40 text-stone-400 hover:text-stone-100 hover:border-stone-600 transition-colors"
+            >
+              <Copy size={11} /> {copiedList || 'Copy shipping list'}
+            </button>
+          </div>
+
+          {filteredTea.length === 0 ? (
+            <div className="text-stone-500 text-sm italic py-6 text-center">
+              No orders match this filter.
+            </div>
+          ) : (
+            <div className="-my-1">
+              {filteredTea.map((o) => (
+                <TeaOrderRow
+                  key={o.id}
+                  order={o}
+                  passcode={passcode}
+                  onStatusChange={handleStatusChange}
+                />
+              ))}
+            </div>
+          )}
+        </Tile>
+      </section>
+
+      {/* Kits — read only */}
+      <section className="mb-4">
+        <Tile title={`Kits & upsells (${kits.length}) — digital, auto-delivered`}>
+          {data?.kitsError && <InlineWarning>{data.kitsError}</InlineWarning>}
+          {kits.length === 0 ? (
+            <div className="text-stone-500 text-sm italic py-4">No kit orders yet.</div>
+          ) : (
+            <div className="overflow-x-auto -mx-1 px-1">
+              <table className="w-full text-xs min-w-[560px]">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-stone-500 text-left">
+                    <th className="font-semibold pb-2 pr-3">Date</th>
+                    <th className="font-semibold pb-2 pr-3">Email</th>
+                    <th className="font-semibold pb-2 pr-3">Label</th>
+                    <th className="font-semibold pb-2 pr-3">Corner</th>
+                    <th className="font-semibold pb-2 text-right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-700/60">
+                  {kits.map((k) => (
+                    <tr key={k.id} className="text-stone-300">
+                      <td className="py-2 pr-3 font-mono text-stone-500 whitespace-nowrap">
+                        {shortDate(k.date)}
+                      </td>
+                      <td className="py-2 pr-3 max-w-[200px] truncate">{k.email || '—'}</td>
+                      <td className="py-2 pr-3 text-stone-200">{k.label || '—'}</td>
+                      <td className="py-2 pr-3 text-stone-500">{k.corner || '—'}</td>
+                      <td className="py-2 text-right font-mono text-stone-200 whitespace-nowrap">
+                        {formatMoney(k.amountCents)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Tile>
+      </section>
+    </>
+  );
+}
+
+// ─── Traffic tab ──────────────────────────────────────────────────────
+function pctLabel(v) {
+  return v == null ? '—' : `${v}%`;
+}
+
+function TrendBars({ trend }) {
+  if (!Array.isArray(trend) || trend.length === 0) {
+    return <div className="text-stone-500 text-sm italic">No trend data.</div>;
+  }
+  const maxViews = Math.max(...trend.map((d) => d.pageviews || 0), 1);
+  const visitorSeries = trend.map((d) => d.visitors || 0);
+  const totalViews = trend.reduce((a, d) => a + (d.pageviews || 0), 0);
+  const totalVisitors = trend.reduce((a, d) => a + (d.visitors || 0), 0);
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-3">
+        <div className="text-xs text-stone-400">
+          <span className="text-stone-200 font-medium">{totalViews.toLocaleString('en-US')}</span>{' '}
+          pageviews
+          <span className="text-stone-600 mx-2">·</span>
+          <span className="text-stone-200 font-medium">{totalVisitors.toLocaleString('en-US')}</span>{' '}
+          visitors
+        </div>
+        <Sparkline values={visitorSeries} width={90} height={28} stroke="#10b981" />
+      </div>
+      <div className="overflow-x-auto -mx-1 px-1">
+        <div className="flex items-end gap-[2px] h-24 min-w-[280px]">
+          {trend.map((d) => {
+            const h = Math.max(2, Math.round(((d.pageviews || 0) / maxViews) * 96));
+            return (
+              <div
+                key={d.day}
+                className="flex-1 min-w-[3px] bg-emerald-600/60 hover:bg-emerald-500 rounded-sm transition-colors"
+                style={{ height: `${h}px` }}
+                title={`${d.day}: ${d.pageviews || 0} views · ${d.visitors || 0} visitors`}
+              />
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex justify-between text-[10px] text-stone-600 mt-2 font-mono">
+        <span>{trend[0]?.day || ''}</span>
+        <span>{trend[trend.length - 1]?.day || ''}</span>
+      </div>
+    </div>
+  );
+}
+
+function SetupCard({ setup }) {
+  return (
+    <Tile title="Analytics not configured">
+      <div className="flex items-start gap-3 mb-4">
+        <Settings size={16} className="text-amber-400 mt-0.5 shrink-0" />
+        <div className="text-sm text-stone-300 leading-snug">
+          {setup?.why || 'Analytics source is not connected yet.'}
+        </div>
+      </div>
+      {Array.isArray(setup?.steps) && setup.steps.length > 0 && (
+        <ol className="space-y-2 text-sm text-stone-400 border-t border-stone-700 pt-4">
+          {setup.steps.map((step, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span className="text-[10px] uppercase tracking-wider text-stone-600 font-mono mt-1 shrink-0">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span className="leading-snug break-words min-w-0">{step}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Tile>
+  );
+}
+
+function TrafficTab({ passcode, refreshNonce }) {
+  const [days, setDays] = useState(30);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/ops-analytics?days=${days}`, {
+          headers: { 'X-Ops-Pass': passcode },
+          cache: 'no-store',
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        if (!cancelled) {
+          setData(json);
+          setError(null);
+        }
+      } catch (e) {
+        if (!cancelled) setError(e.message || String(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [passcode, days, refreshNonce]);
+
+  if (loading && !data) {
+    return (
+      <div className="flex items-center gap-3 text-stone-400 text-sm py-16 justify-center">
+        <RefreshCw size={16} className="animate-spin" />
+        Loading analytics...
+      </div>
+    );
+  }
+
+  if (error && !data) {
+    return (
+      <Tile title="Traffic">
+        <div className="text-rose-400 text-sm flex items-center gap-2">
+          <AlertCircle size={14} /> {error}
+        </div>
+      </Tile>
+    );
+  }
+
+  if (data && data.configured === false) {
+    return <SetupCard setup={data.setup} />;
+  }
+
+  const conv = data?.conversion || {};
+  const pages = Array.isArray(data?.pages) ? data.pages : [];
+  const sources = Array.isArray(data?.sources) ? data.sources : [];
+
+  return (
+    <>
+      {error && <InlineWarning>Refresh failed: {error} (showing last good data)</InlineWarning>}
+
+      {/* Range selector */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-semibold">
+          Range
+        </span>
+        {[7, 30, 90].map((d) => (
+          <FilterPill key={d} active={days === d} onClick={() => setDays(d)} disabled={loading}>
+            {d}d
+          </FilterPill>
+        ))}
+        {loading && <RefreshCw size={12} className="text-stone-500 animate-spin" />}
+      </div>
+
+      {/* Conversion stats */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4">
+        <StatCard
+          title="Visitors"
+          value={(conv.visitors ?? 0).toLocaleString('en-US')}
+          sub={`${(conv.quizStarters ?? 0).toLocaleString('en-US')} started the quiz`}
+        />
+        <StatCard
+          title="Leads"
+          value={(conv.leads ?? 0).toLocaleString('en-US')}
+          sub={`${(conv.checkoutClicks ?? 0).toLocaleString('en-US')} checkout clicks`}
+        />
+        <StatCard
+          title="Purchases"
+          value={(conv.purchases ?? 0).toLocaleString('en-US')}
+          accent="text-emerald-300"
+          sub={`${pctLabel(conv.visitorToPurchasePct)} of visitors`}
+        />
+      </section>
+
+      <section className="mb-4">
+        <Tile title="Conversion rates">
+          {data?.conversionError && <InlineWarning>{data.conversionError}</InlineWarning>}
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              ['Visitor → quiz', conv.visitorToQuizPct],
+              ['Quiz → lead', conv.quizToLeadPct],
+              ['Lead → purchase', conv.leadToPurchasePct],
+              ['Visitor → purchase', conv.visitorToPurchasePct],
+              ['OTO take rate', conv.otoTakeRatePct],
+            ].map(([label, val]) => (
+              <div key={label}>
+                <div
+                  className="text-2xl text-stone-100 leading-none"
+                  style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
+                >
+                  {pctLabel(val)}
+                </div>
+                <div className="text-[10px] uppercase tracking-wider text-stone-500 mt-1.5 leading-snug">
+                  {label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Tile>
+      </section>
+
+      <section className="mb-4">
+        <Tile title={`Traffic trend (${data?.days ?? days}d)`}>
+          {data?.trendError && <InlineWarning>{data.trendError}</InlineWarning>}
+          <TrendBars trend={data?.trend} />
+        </Tile>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
+        <Tile title="Top pages">
+          {data?.pagesError && <InlineWarning>{data.pagesError}</InlineWarning>}
+          {pages.length === 0 ? (
+            <div className="text-stone-500 text-sm italic">No page data.</div>
+          ) : (
+            <div className="overflow-x-auto -mx-1 px-1">
+              <table className="w-full text-xs min-w-[320px]">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-stone-500 text-left">
+                    <th className="font-semibold pb-2 pr-3">Path</th>
+                    <th className="font-semibold pb-2 pr-3 text-right">Views</th>
+                    <th className="font-semibold pb-2 text-right">Visitors</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-700/60">
+                  {pages.map((p, i) => (
+                    <tr key={`${p.path}-${i}`} className="text-stone-300">
+                      <td className="py-2 pr-3 font-mono max-w-[220px] truncate">{p.path || '—'}</td>
+                      <td className="py-2 pr-3 text-right font-mono text-stone-200">
+                        {(p.views ?? 0).toLocaleString('en-US')}
+                      </td>
+                      <td className="py-2 text-right font-mono text-stone-400">
+                        {(p.visitors ?? 0).toLocaleString('en-US')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Tile>
+
+        <Tile title="Traffic sources">
+          {data?.sourcesError && <InlineWarning>{data.sourcesError}</InlineWarning>}
+          {sources.length === 0 ? (
+            <div className="text-stone-500 text-sm italic">No source data.</div>
+          ) : (
+            <div className="overflow-x-auto -mx-1 px-1">
+              <table className="w-full text-xs min-w-[280px]">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-stone-500 text-left">
+                    <th className="font-semibold pb-2 pr-3">Source</th>
+                    <th className="font-semibold pb-2 text-right">Visitors</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-700/60">
+                  {sources.map((s, i) => (
+                    <tr key={`${s.source}-${i}`} className="text-stone-300">
+                      <td className="py-2 pr-3 max-w-[220px] truncate">{s.source || 'direct'}</td>
+                      <td className="py-2 text-right font-mono text-stone-200">
+                        {(s.visitors ?? 0).toLocaleString('en-US')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Tile>
+      </section>
+    </>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────
 const STORAGE_KEY = 'OPS_AUTH';
 const POLL_INTERVAL_MS = 10_000;
@@ -478,6 +1261,8 @@ export default function OpsDashboardPage() {
   const [state, setState] = useState(null);
   const [lastFetched, setLastFetched] = useState(null);
   const [fetchError, setFetchError] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [refreshNonce, setRefreshNonce] = useState(0);
   const pollTimer = useRef(null);
 
   const fetchState = useCallback(
@@ -618,7 +1403,10 @@ export default function OpsDashboardPage() {
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="hidden sm:inline">{lastFetched ? timeAgo(lastFetched.toISOString()) : '—'}</span>
             <button
-              onClick={() => fetchState()}
+              onClick={() => {
+                fetchState();
+                setRefreshNonce((n) => n + 1);
+              }}
               className="ml-1 text-stone-500 hover:text-stone-200 transition-colors"
               aria-label="Refresh"
               title="Refresh"
@@ -645,29 +1433,59 @@ export default function OpsDashboardPage() {
           </div>
         )}
 
-        {/* Zone 1 — hero */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
-          <RevenueTile stripe={state.stripe} />
-          <LeadPoolTile pool={state.pool} />
-          <FunnelTile funnel={state.funnel} />
-        </section>
+        {/* Tab bar */}
+        <nav className="flex items-center gap-1 mb-4 overflow-x-auto -mx-1 px-1 border-b border-stone-700/60 pb-3">
+          <TabButton
+            active={activeTab === 'overview'}
+            onClick={() => setActiveTab('overview')}
+            Icon={LayoutDashboard}
+            label="Overview"
+          />
+          <TabButton
+            active={activeTab === 'orders'}
+            onClick={() => setActiveTab('orders')}
+            Icon={Package}
+            label="Orders"
+          />
+          <TabButton
+            active={activeTab === 'traffic'}
+            onClick={() => setActiveTab('traffic')}
+            Icon={BarChart3}
+            label="Traffic"
+          />
+        </nav>
 
-        {/* Zone 2 — system pulse */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
-          <CronsTile crons={state.crons} />
-          <DeployTile deploy={state.deploy} />
-        </section>
+        {activeTab === 'overview' && (
+          <>
+            {/* Zone 1 — hero */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
+              <RevenueTile stripe={state.stripe} />
+              <LeadPoolTile pool={state.pool} />
+              <FunnelTile funnel={state.funnel} />
+            </section>
 
-        {/* Zone 3 — action queue */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
-          <RepliesTile replies={state.replies} />
-          <JoelQueueTile items={state.joelQueue} />
-        </section>
+            {/* Zone 2 — system pulse */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
+              <CronsTile crons={state.crons} />
+              <DeployTile deploy={state.deploy} />
+            </section>
 
-        {/* Zone 4 — activity */}
-        <section className="mb-4">
-          <ActivityStream events={state.activity} />
-        </section>
+            {/* Zone 3 — action queue */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
+              <RepliesTile replies={state.replies} />
+              <JoelQueueTile items={state.joelQueue} />
+            </section>
+
+            {/* Zone 4 — activity */}
+            <section className="mb-4">
+              <ActivityStream events={state.activity} />
+            </section>
+          </>
+        )}
+
+        {activeTab === 'orders' && <OrdersTab passcode={passcode} refreshNonce={refreshNonce} />}
+
+        {activeTab === 'traffic' && <TrafficTab passcode={passcode} refreshNonce={refreshNonce} />}
 
         {/* Footer / Mailchimp */}
         <footer className="text-[10px] uppercase tracking-widest text-stone-600 text-center pt-4 pb-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
