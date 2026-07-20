@@ -413,10 +413,8 @@
       });
       const data = await res.json().catch(()=>({}));
       if(res.ok && data.ok){
-        form.style.display='none';
-        card.querySelector('[data-success]').style.display='block';
-        card.querySelector('.top').scrollIntoView({behavior:'smooth',block:'center'});
         if(window.posthog){ posthog.capture('masterclass_register',{already:!!data.already, ...getUtm()}); }
+        window.location.href = '/masterclass/registered/';
       }else{
         err.textContent = (data && data.error) || 'Something went wrong. Please try again.';
         err.style.display='block';

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex" />
+<title>You're In! — Beyond the Cuff Masterclass | BraveWorks RN</title>
+<meta name="description" content="Your seat is saved for the Beyond the Cuff masterclass. Here's exactly what to do next." />
+<link rel="icon" href="/favicon.svg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#1E2B2A;--ink-soft:#4A5A58;--evergreen:#0F3D3E;--cream:#FAF6EF;--card:#FFFFFF;
+    --coral:#DB4E2E;--coral-dk:#B93C20;--gold:#E3A83B;--rose:#F4E6DE;--line:#E4DACE;
+    --shadow:0 18px 50px -18px rgba(15,61,62,.35);--radius:18px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:"Figtree",system-ui,sans-serif;
+    font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;line-height:1.08;margin:0 0 .4em;}
+  p{margin:0 0 1em;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px;}
+
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:50;}
+
+  .hero{background:radial-gradient(120% 90% at 50% -10%, #14514F 0%, var(--evergreen) 55%, #0B2F30 100%);
+    color:#F6F0E4;text-align:center;padding:56px 0 46px;}
+  .eyebrow{display:inline-block;font-size:14px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--gold);border:1px solid rgba(227,168,59,.5);border-radius:999px;padding:7px 16px;margin-bottom:18px;}
+  .hero h1{font-size:clamp(34px,6vw,54px);font-weight:900;}
+  .hero .sub{font-size:clamp(17px,2.2vw,21px);color:#DCE7E1;max-width:560px;margin:0 auto;}
+
+  section{padding:46px 0;}
+  .stepcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 10px 28px -20px rgba(15,61,62,.45);padding:26px 26px 22px;margin-bottom:18px;position:relative;}
+  .stepcard .num{position:absolute;top:-16px;left:22px;width:34px;height:34px;border-radius:50%;
+    background:var(--evergreen);color:var(--gold);font-family:"Fraunces";font-weight:900;font-size:18px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -6px rgba(15,61,62,.5);}
+  .stepcard h3{color:var(--evergreen);font-size:clamp(20px,3vw,25px);margin-top:4px;}
+  .stepcard p{color:var(--ink-soft);margin-bottom:.4em;}
+  .stepcard .fine{font-size:15px;color:#8B8577;}
+
+  .alarm{background:var(--evergreen);color:#F1EADD;text-align:center;border:none;}
+  .alarm .num{background:var(--gold);color:var(--evergreen);}
+  .alarm h3{color:var(--gold);}
+  .alarm .bigtime{font-family:"Fraunces";font-weight:900;font-size:clamp(38px,8vw,60px);line-height:1;
+    color:#fff;margin:10px 0 4px;}
+  .alarm .tz{color:#CBDCD4;font-weight:600;margin-bottom:14px;}
+  .alarm p{color:#DCE7E1;}
+  .alarm .why{font-family:"Fraunces";font-style:italic;color:#CBDCD4;font-size:17px;}
+
+  .btn{display:inline-block;background:var(--coral);color:#fff;text-decoration:none;font-weight:800;
+    font-size:18px;padding:15px 32px;border-radius:999px;box-shadow:0 12px 26px -10px rgba(219,78,46,.6);
+    transition:transform .12s ease, background .12s ease;}
+  .btn:hover{background:var(--coral-dk);transform:translateY(-2px);}
+  .btn.ghost{background:transparent;border:2px solid var(--evergreen);color:var(--evergreen);box-shadow:none;}
+  .btn.ghost:hover{background:rgba(15,61,62,.06);}
+
+  .countdown{display:flex;justify-content:center;gap:10px;margin:6px 0 2px;}
+  .countdown div{background:var(--rose);border-radius:10px;padding:10px 4px;min-width:64px;text-align:center;}
+  .countdown b{display:block;font-family:"Fraunces";font-weight:900;font-size:26px;color:var(--evergreen);line-height:1;}
+  .countdown span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);}
+
+  .quiz{background:var(--rose);text-align:center;}
+  .quiz h2{color:var(--evergreen);font-size:clamp(24px,4vw,32px);}
+  .quiz p{max-width:520px;margin:0 auto 20px;color:var(--ink-soft);}
+
+  footer{background:#0B2726;color:#A9BBB6;text-align:center;padding:34px 0;font-size:14px;}
+  footer a{color:#A9BBB6;}
+
+  @media(max-width:640px){body{font-size:18px;}section{padding:36px 0;}}
+  @media(prefers-reduced-motion:reduce){.btn{transition:none;}#confetti{display:none;}}
+</style>
+</head>
+<body>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Registration confirmed</span>
+    <h1>🎉 You're in!</h1>
+    <p class="sub">Your seat for <strong>Beyond the Cuff</strong> is saved. Monday night, we expose the 3 hidden triggers. Do these three things right now — they take 60 seconds.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+
+    <div class="stepcard alarm">
+      <div class="num">1</div>
+      <h3>Set your alarm — right now, while you're here</h3>
+      <div class="bigtime">6:55 PM</div>
+      <p class="tz">Monday · Central Time &nbsp;(7:55 pm ET · 4:55 pm PT)</p>
+      <p><strong>Five minutes before class starts.</strong> Grab your phone, open the clock app, and set it for Monday at 6:55 pm — name it <em>"Beyond the Cuff."</em></p>
+      <p class="why">Life gets loud on Monday nights. The people who set the alarm are the people who make it into the room.</p>
+      <div class="countdown" aria-label="Time until class">
+        <div><b class="cd-d">00</b><span>Days</span></div>
+        <div><b class="cd-h">00</b><span>Hours</span></div>
+        <div><b class="cd-m">00</b><span>Min</span></div>
+        <div><b class="cd-s">00</b><span>Sec</span></div>
+      </div>
+    </div>
+
+    <div class="stepcard">
+      <div class="num">2</div>
+      <h3>Go find my email — your join link is inside</h3>
+      <p>I just sent your confirmation with the <strong>Zoom link you'll click Monday night</strong>. Open it now so you know it's there.</p>
+      <p class="fine">Don't see it? Check spam or promotions — then drag it to your inbox so Monday's reminder lands where you'll see it. It's from <strong>Joel Polley, RN &lt;joel@bpquiz.com&gt;</strong>.</p>
+    </div>
+
+    <div class="stepcard">
+      <div class="num">3</div>
+      <h3>Put it on your calendar</h3>
+      <p>One tap adds every Monday-night class straight to your calendar — with the join link baked in.</p>
+      <p style="margin-top:14px"><a class="btn ghost" href="https://us06web.zoom.us/meeting/tZUlfuqsqj8rHNNki9GHqJ55fXCn5uxImAIf/ics?icsToken=DC3sn8fxTo0gb2QaOQAALAAAAK9PT-326cN619RyXU7_QMehYIfs6OmodrdJ1-eTKA8AlIkfZA_ac0hMlQBj7ia-cJxpYtWH335ZjhQhczAwMDAwMQ&meetingMasterEventId=QO1dTtP2SB6QlfVpLs29HQ">Add to My Calendar →</a></p>
+      <p class="fine">Downloads a calendar file — open it and it drops right into Apple, Google, or Outlook.</p>
+    </div>
+
+    <div class="stepcard">
+      <div class="num">4</div>
+      <h3>Come with your last 3 blood pressure readings</h3>
+      <p>From your home cuff, the pharmacy machine, or your last appointment — even from memory. You'll understand why the moment class starts.</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="quiz">
+  <div class="wrap">
+    <h2>While you wait — find YOUR loudest trigger</h2>
+    <p>The free BP quiz takes 2 minutes and tells you which of the three hidden triggers is speaking loudest in <em>your</em> numbers. Bring your result Monday night.</p>
+    <a class="btn" href="/quiz">Take the Free 2-Minute Quiz →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Educational only — not medical advice. Never change a medication except with your own physician.</p>
+    <p><a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="mailto:braveworksrn@gmail.com">Contact</a></p>
+  </div>
+</footer>
+
+<script>
+  /* ====== CONFETTI — brand colors, one celebratory burst ====== */
+  (function(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var c = document.getElementById('confetti'), x = c.getContext('2d');
+    var W, H; function size(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+    size(); addEventListener('resize', size);
+    var colors = ['#E3A83B','#DB4E2E','#0F3D3E','#F4E6DE','#6FA088'];
+    var P = [];
+    for (var i=0;i<160;i++){
+      P.push({
+        x: Math.random()*W,
+        y: -20 - Math.random()*H*0.5,
+        w: 6+Math.random()*7, h: 8+Math.random()*10,
+        vy: 2+Math.random()*3, vx: -1+Math.random()*2,
+        rot: Math.random()*Math.PI, vr: -0.1+Math.random()*0.2,
+        color: colors[i%colors.length], shape: Math.random()<0.3?'circle':'rect'
+      });
+    }
+    var start = Date.now(), DURATION = 6000;
+    function tick(){
+      var t = Date.now()-start;
+      x.clearRect(0,0,W,H);
+      var alive = false;
+      P.forEach(function(p){
+        p.y += p.vy; p.x += p.vx + Math.sin((p.y+p.w)/40); p.rot += p.vr;
+        if (p.y < H+30) alive = true;
+        var fade = t > DURATION-1200 ? Math.max(0,(DURATION-t)/1200) : 1;
+        x.save(); x.globalAlpha = fade; x.translate(p.x,p.y); x.rotate(p.rot);
+        x.fillStyle = p.color;
+        if (p.shape==='circle'){ x.beginPath(); x.arc(0,0,p.w/2,0,7); x.fill(); }
+        else { x.fillRect(-p.w/2,-p.h/2,p.w,p.h); }
+        x.restore();
+      });
+      if (alive && t < DURATION) requestAnimationFrame(tick);
+      else x.clearRect(0,0,W,H);
+    }
+    requestAnimationFrame(tick);
+  })();
+
+  /* ====== COUNTDOWN — next Monday 7:00 pm America/Chicago ====== */
+  var WEEKLY_HOUR = 19;
+  function chicagoOffsetMs(atUtcMs){
+    var d = new Date(atUtcMs);
+    var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+      year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(d);
+    function g(t){ return Number(parts.find(function(p){return p.type===t;}).value); }
+    return Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second')) - atUtcMs;
+  }
+  function nextTarget(){
+    var now = Date.now();
+    for (var addDays=0; addDays<8; addDays++){
+      var probe = new Date(now + addDays*86400000);
+      var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+        year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
+      var wd = parts.find(function(p){return p.type==='weekday';}).value;
+      if (wd!=='Mon') continue;
+      function g(t){ return Number(parts.find(function(p){return p.type===t;}).value); }
+      var naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR,0,0);
+      var target = naive - chicagoOffsetMs(naive);
+      if (target > now) return target;
+    }
+    return now + 7*86400000;
+  }
+  (function(){
+    var d=document.querySelectorAll('.cd-d'),h=document.querySelectorAll('.cd-h'),
+        m=document.querySelectorAll('.cd-m'),s=document.querySelectorAll('.cd-s');
+    function p(n){ return String(n).padStart(2,'0'); }
+    function set(nodes,v){ nodes.forEach(function(n){ n.textContent=v; }); }
+    var target = nextTarget();
+    function tick(){
+      var diff = target - Date.now();
+      if (diff<0){ target = nextTarget(); diff = target - Date.now(); }
+      set(d,p(Math.floor(diff/86400000)));
+      set(h,p(Math.floor(diff%86400000/3600000)));
+      set(m,p(Math.floor(diff%3600000/60000)));
+      set(s,p(Math.floor(diff%60000/1000)));
+    }
+    tick(); setInterval(tick,1000);
+  })();
+</script>
+<script>
+  /* PostHog (same project as the main site) */
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_tyPhu6kt2jmfzhBPBjttdp3crfxNY4JdsZBoKa7SRgzS',{api_host:'https://us.i.posthog.com'});
+  window.posthog && posthog.capture('masterclass_registered_pageview');
+</script>
+</body>
+</html>
