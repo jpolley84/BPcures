@@ -785,7 +785,7 @@ export default function BeThereLandingPage() {
       {/* ===== DESIRE / PAYOFFS ===== */}
       <section className="desire">
         <div className="wrap">
-          <span className="eyebrow" data-rv>The Payoff Behind the Payoff</span>
+          <span className="eyebrow" data-rv>Is This What You Want?</span>
           <h2 data-rv>You Want the Numbers to Change Because You Want Your Life Back.</h2>
           <p className="sub" data-rv>
             Not a smaller life built around fear. A fuller life built around what still matters
@@ -1006,7 +1006,7 @@ export default function BeThereLandingPage() {
       <section className="group">
         <div className="wrap group-grid">
           <div data-rv>
-            <span className="eyebrow">Why Group Coaching Works</span>
+            <span className="eyebrow">Why Group Coaching Is Better</span>
             <h2>Another Woman Will Ask the Question You Did Not Know You Needed Answered.</h2>
             <p>Someone will talk about cooking for a family that does not want to change.</p>
             <p>Someone else will ask what to do when she travels.</p>
