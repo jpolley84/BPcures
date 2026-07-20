@@ -29,17 +29,22 @@ import { track, getDistinctId } from '../utils/analytics';
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
-// ─── OFFER STACK (placeholders — Joel confirms real items + values) ───────
+// ─── OFFER STACK — "Life Beyond the Numbers" 90-Day Women's Pressure &
+// Hormone Reset (Joel's final stack, 2026-07-20). Grouped as the doc's Final
+// Value Stack table; sums to $10,614. ───────────────────────────────────────
 const STACK = [
-  { label: '12 Weeks of 1:1 Coaching with Joel (6 bi-weekly sessions)', value: 6000 },
-  { label: 'Your Personalized 90-Day Protocol, built around your labs and medications', value: 2000 },
-  { label: 'Weekly Live Group Reset Calls', value: 1500 },
-  { label: 'Private Member Community for 90 Days', value: 1000 },
-  { label: 'The Complete Triangle Kit Library', value: 1000 },
-  { label: 'Direct Message Support Between Sessions', value: 1000 },
-  { label: 'Lifetime Access to the Beyond the Cuff Masterclass', value: 497 },
+  { label: 'Her Pressure & Hormone Map — your personalized onboarding assessment', value: 997 },
+  { label: 'Her Safety-First Emergency Plan — know your numbers and when to act', value: 497 },
+  { label: 'The Numbers Decoded Lab-Literacy System', value: 697 },
+  { label: 'The Herbal Blood-Pressure Support Vault, plus your Steady Start Box', value: 797 },
+  { label: 'The Food Freedom & Blood-Sugar Pathway', value: 997 },
+  { label: 'The Smarter Movement Method', value: 797 },
+  { label: 'Weekly Nurse-Led Transformation Coaching', value: 1800 },
+  { label: "The Love the Girl You're In Wellness Hub", value: 997 },
+  { label: '4 Program Bonuses (Symptom Sorting, Glow & Confidence, Doctor-Visit Advocacy Kit, Purpose & Energy Plan)', value: 1288 },
+  { label: 'Fast-Action Bonuses (Private Root-Driver Clarity Session + RestoreHER Replay Vault)', value: 1747 },
 ];
-const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 12,997
+const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 10,614
 
 const OPTIONS = [
   { key: 'full', tier: 'allin-full', pill: 'Pay in full', headline: '$1,997 today', sub: 'One payment, all in. Best value.', value: 1997 },
@@ -119,7 +124,7 @@ export default function AllInPage() {
         {/* Top strip */}
         <div style={{ textAlign: 'center', marginBottom: 'clamp(1rem, 2.5vw, 1.6rem)' }}>
           <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
-            Life Beyond the Numbers &middot; 90-Day Program
+            Life Beyond the Numbers &middot; The 90-Day Women's Pressure &amp; Hormone Reset
           </span>
           <h1 style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.2rem)', lineHeight: 1.12, margin: '0.5rem auto 0', maxWidth: '20ch', fontWeight: 700 }}>
             You are all in. Let's build your 12 weeks.
