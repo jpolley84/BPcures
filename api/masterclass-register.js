@@ -31,6 +31,12 @@ import { looksLikeValidEmail } from './_email-validation.js';
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
+// Weekly Zoom (Mondays 7pm CT) — provided by Joel 2026-07-20.
+const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
+const ZOOM_MEETING_ID = '818 9344 4167';
+const ZOOM_PASSCODE = '846248';
+const ZOOM_ICS_URL = 'https://us06web.zoom.us/meeting/tZUlfuqsqj8rHNNki9GHqJ55fXCn5uxImAIf/ics?icsToken=DC3sn8fxTo0gb2QaOQAALAAAAK9PT-326cN619RyXU7_QMehYIfs6OmodrdJ1-eTKA8AlIkfZA_ac0hMlQBj7ia-cJxpYtWH335ZjhQhczAwMDAwMQ&meetingMasterEventId=QO1dTtP2SB6QlfVpLs29HQ';
+
 function clean(s, max = 80) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';
 }
@@ -78,7 +84,12 @@ function confirmationEmail({ firstName }) {
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Beyond the Cuff &middot; Free Live Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
 <p><strong>Beyond the Cuff &mdash; Take Charge of Your Numbers</strong> runs live every Monday night at <strong>7:00 pm Central</strong> (8:00 pm Eastern &middot; 5:00 pm Pacific).</p>
-<p>I'll send your join link to this email address before class. Watch for it Monday.</p>
+<div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
+  <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
+  <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>
+  <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
+  <a href="${ZOOM_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> so Monday night finds you ready.</p>
+</div>
 <p><strong>What we'll cover:</strong> the 3 hidden daily triggers quietly driving your numbers up &mdash; the habit almost nobody connects to their readings, the "healthy" trap working against you, and the one everyone blames for the wrong reason.</p>
 <p><strong>Do one thing before Monday:</strong> if you haven't taken the free BP quiz yet, it takes 2 minutes and tells you which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B93C20;">Take it here</a>.</p>
 <p>Questions? Just reply. I read these myself.</p>
@@ -145,6 +156,39 @@ async function handleRegister(req, res) {
     // Set/counter are conveniences for segmentation + the ops dashboard;
     // the per-email record above is the durable truth. Non-fatal.
     console.warn('masterclass-register: sadd/incr failed (non-fatal)', err.message);
+  }
+
+  // Enroll into the lead-nurture drip (bwbp:drip:*) — the same machine the
+  // quiz EmailGate feeds via capture-lead.js. Rules mirrored from there:
+  // enrich-only if a record exists (never reset state/timer, never demote a
+  // buyer back to 'lead'); new emails start at Day 0 of the lead sequence.
+  try {
+    const dripKey = `bwbp:drip:${email}`;
+    const drip = await kv.get(dripKey);
+    if (drip) {
+      await kv.set(dripKey, {
+        ...drip,
+        firstName: drip.firstName || firstName,
+        tags: Array.from(new Set([...(drip.tags || []), 'masterclass'])),
+        lastCaptureAt: new Date().toISOString(),
+      });
+    } else {
+      const now = new Date().toISOString();
+      await kv.set(dripKey, {
+        email,
+        firstName,
+        corner: null,
+        readiness: null,
+        scores: null,
+        state: 'lead',
+        stateEnteredAt: now,
+        enrolledAt: now,
+        source: 'masterclass-page',
+        tags: ['masterclass'],
+      });
+    }
+  } catch (err) {
+    console.warn('masterclass-register: drip enroll failed (non-fatal)', err.message);
   }
 
   // Mirror into the Resend audience so Joel can segment/broadcast from the
