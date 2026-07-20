@@ -395,15 +395,13 @@ export default function BeThereLandingPage() {
         .lbn .final-banner{display:block;width:100%;border-radius:22px;margin:0 0 50px;box-shadow:0 18px 44px rgba(31,54,52,.18);border:1px solid rgba(201,164,76,.35);}
         .lbn .apply-banner{display:block;width:100%;border-radius:18px;margin:0 0 44px;border:1px solid rgba(201,164,76,.4);}
 
-        /* hero: white band that blends seamlessly into the white studio photo.
-           Eyebrow + H1 sit in the photo's built-in white space on desktop;
-           below 840px the overlay stacks above the image. */
-        .lbn .hero{position:relative;padding:34px 0 64px;background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 84%,var(--bg) 100%);}
-        .lbn .hero-banner{position:relative;}
-        .lbn .hero-banner img{display:block;width:100%;height:auto;border-radius:0;}
-        .lbn .hero-overlay{position:absolute;left:28px;top:50%;transform:translateY(-50%);max-width:56%;}
-        .lbn .hero-body{padding-top:26px;}
-        .lbn .hero h1{font-size:clamp(30px,4.6vw,54px);letter-spacing:-0.01em;margin-bottom:0;}
+        /* hero: two-column on the page cream. The studio portrait lives in a
+           framed card (matching the site's vpanel language), so its white
+           background reads as an intentional studio card, not a color break. */
+        .lbn .hero{position:relative;padding:64px 0 70px;background:var(--bg);}
+        .lbn .hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:52px;align-items:start;}
+        .lbn .hero-card{min-height:0;aspect-ratio:396/315;width:100%;margin-top:64px;}
+        .lbn .hero h1{font-size:clamp(34px,5vw,58px);letter-spacing:-0.01em;margin-bottom:18px;}
         .lbn .hero .tagline{font-family:var(--serif);font-style:italic;font-size:clamp(21px,2.6vw,28px);color:var(--lteal);margin:0 0 22px;}
         .lbn .hero p.sub{font-size:18.5px;color:var(--lnk-soft);max-width:640px;margin:0 0 18px;}
         .lbn .hero .headline2{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.6vw,27px);color:var(--lteal);max-width:650px;margin:26px 0 30px;line-height:1.35;}
@@ -447,7 +445,6 @@ export default function BeThereLandingPage() {
           transition:transform .3s ease, box-shadow .3s ease;
         }
         .lbn .payoff-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(31,54,52,.11);}
-        .lbn .payoff-card:nth-child(2),.lbn .payoff-card:nth-child(3){background:var(--sage-lt);}
         .lbn .payoff-card .label{display:block;margin-bottom:10px;color:var(--gold-deep);font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;}
         .lbn .payoff-card h3{font-size:23px;margin-bottom:12px;}
         .lbn .payoff-card p{font-size:16px;color:var(--lnk-soft);}
@@ -542,7 +539,7 @@ export default function BeThereLandingPage() {
         .lbn .possible h2{font-size:clamp(30px,4vw,42px);}
         .lbn .possible .center-head p{color:var(--lnk-soft);max-width:480px;margin:14px auto 0;}
         .lbn .possibility-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:940px;margin:0 auto;}
-        .lbn .possibility-card{background:rgba(255,253,248,.9);border:1px solid rgba(46,74,71,.1);border-left:3px solid var(--gold);border-radius:18px;padding:26px;text-align:left;}
+        .lbn .possibility-card{background:rgba(255,253,248,.9);border:1px solid rgba(46,74,71,.1);border-top:3px solid var(--gold);border-radius:18px;padding:26px;text-align:left;}
         .lbn .possibility-card h3{font-size:21px;margin-bottom:8px;}
         .lbn .possibility-card p{font-size:15.5px;color:var(--lnk-soft);}
 
@@ -670,15 +667,16 @@ export default function BeThereLandingPage() {
 
         @media(max-width:840px){
           .lbn{font-size:17px;}
-          .lbn .hero-overlay{position:static;transform:none;max-width:100%;padding:0 0 18px;}
-          .lbn .hero-banner img{height:230px;object-fit:cover;object-position:right center;}
+          .lbn .hero-grid{grid-template-columns:1fr;gap:30px;}
+          .lbn .hero-card{order:-1;max-width:420px;margin:0 auto;}
+          .lbn .hero-card{margin-top:0;}
           .lbn .night-grid,.lbn .root-grid,.lbn .group-grid{grid-template-columns:1fr;}
           .lbn .payoff-grid,.lbn .contrast-grid,.lbn .fw-grid,.lbn .inc-grid{grid-template-columns:1fr;}
           .lbn .tri-grid,.lbn .possibility-grid{grid-template-columns:1fr;}
           .lbn .joel-grid{grid-template-columns:1fr;text-align:center;}
           .lbn .joel-photo{margin:0 auto;}
           .lbn .vpanel{min-height:280px;}
-          .lbn .hero{padding:22px 0 50px;}
+          .lbn .hero{padding:36px 0 50px;}
           .lbn .night,.lbn .desire,.lbn .root,.lbn .contrast,.lbn .triangle,.lbn .method,.lbn .joel,.lbn .possible,.lbn .included,.lbn .group,.lbn .forwho,.lbn .apply-section,.lbn .faq,.lbn .final{padding-top:64px;padding-bottom:64px;}
           .lbn .stickybar{display:block;}
         }
@@ -697,21 +695,10 @@ export default function BeThereLandingPage() {
 
       {/* ===== HERO ===== */}
       <section className="hero" ref={heroRef}>
-        <div className="wrap hero-banner">
-          <img
-            src="/coaching/hero-seated.jpg"
-            alt="Joel Polley, RN, seated in an armchair"
-            width="851"
-            height="315"
-            loading="eager"
-            fetchPriority="high"
-          />
-          <div className="hero-overlay hero-stage">
+        <div className="wrap hero-grid">
+          <div className="hero-stage">
             <span className="eyebrow">For Women Over 40 Who Are Done Letting the Cuff Run Their Life</span>
             <h1>Your Blood-Pressure Reading Is Not Your Future.</h1>
-          </div>
-        </div>
-        <div className="wrap hero-body hero-stage">
           <p className="tagline">Reclaim your health. Reclaim your confidence. Reclaim your life. Fully.</p>
           <p className="sub">
             You are not looking for one more warning. Not one more pill. Not one more food to
@@ -733,10 +720,21 @@ export default function BeThereLandingPage() {
             <div className="trust-dot" aria-hidden="true" />
             <div className="trust-stat"><span className="tnum">1,300+</span><span className="tlbl">women inside the community</span></div>
           </div>
-          <p className="disclaimer">
-            This is coaching, not medical treatment. Keep taking your medicine unless your
-            doctor tells you to stop.
-          </p>
+            <p className="disclaimer">
+              This is coaching, not medical treatment. Keep taking your medicine unless your
+              doctor tells you to stop.
+            </p>
+          </div>
+          <div className="vpanel photo hero-card">
+            <img
+              src="/coaching/hero-seated-card.jpg"
+              alt="Joel Polley, RN, seated in an armchair"
+              width="396"
+              height="315"
+              loading="eager"
+              fetchPriority="high"
+            />
+          </div>
         </div>
       </section>
 
@@ -831,7 +829,7 @@ export default function BeThereLandingPage() {
             </p>
           </div>
           <div className="vpanel photo" data-rv>
-            <img src="/coaching/home-joel.jpg" alt="Joel Polley, RN, at home" loading="lazy" />
+            <img src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN, in navy scrubs with a stethoscope" loading="lazy" />
           </div>
         </div>
       </section>
@@ -892,7 +890,7 @@ export default function BeThereLandingPage() {
           method, so the BE THERE plan lands with a face and a reason) ===== */}
       <section className="joel">
         <div className="wrap joel-grid" data-rv>
-          <img className="joel-photo" src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN, in navy scrubs with a stethoscope" width="260" height="260" loading="lazy" />
+          <img className="joel-photo" src="/coaching/home-joel.jpg" alt="Joel Polley, RN" width="260" height="260" loading="lazy" style={{ objectPosition: 'center top' }} />
           <div>
             <span className="eyebrow">Your Guide</span>
             <h2>Joel Has Seen What Happens When People Wait Too Long.</h2>
