@@ -26,8 +26,15 @@ const PREVIEW = "Barbara O'Neill + Annie. Both days. $97 for my readers only.";
 const PAGE_URL = 'https://restoreherhormones.com';
 const CHECKOUT_URL = 'https://buy.stripe.com/dRmbJ16bV1vo63h2x3fnO1H';
 const RATE_LIMIT_MS = 70; // ~14/sec
-const MAX_RUN_MS = 270 * 1000;
+const MAX_RUN_MS = 250 * 1000;
 const SENT_FLAG = 'rhhReplayBlastSent';
+// 2026-07-20 POST-INCIDENT: per-key flags don't dedupe the SAME EMAIL living
+// under two keys (drip:* + bwbp:drip:*) across separate fires — the in-memory
+// `seen` set resets every invocation, so pool-duplicated people got a second
+// copy once fires crossed into the bwbp pool. This KV SET of already-emailed
+// addresses makes dedupe persistent: backfilled from flagged keys each pass,
+// checked before every send, duplicate keys get flag-suppressed (no send).
+const SENT_SET = 'rhhblast:sent-emails';
 
 let _resend = null;
 function getResend() {
@@ -195,13 +202,24 @@ export default async function handler(req, res) {
   }
 
   const startedAt = Date.now();
-  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, noEmail: 0, duplicate: 0, invalidEmail: 0 };
+  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, noEmail: 0, duplicate: 0, invalidEmail: 0, dupSuppressed: 0 };
   const seen = new Set();
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
   const samples = [];
   const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
   const resend = sendMode ? getResend() : null;
+
+  // Backfill accumulator: emails of already-flagged keys, pushed to SENT_SET
+  // in chunks so the set covers sends from before this dedupe existed.
+  const backfill = [];
+  async function flushBackfill(force = false) {
+    if (backfill.length === 0 || (!force && backfill.length < 300)) return;
+    const chunk = backfill.splice(0, backfill.length);
+    try { await kv.sadd(SENT_SET, ...chunk); } catch (err) {
+      console.warn('rhh-blast: backfill sadd failed', err.message);
+    }
+  }
 
   for (const k of allKeys) {
     stats.total++;
@@ -220,12 +238,32 @@ export default async function handler(req, res) {
     if (!rec || !rec.email) { stats.noEmail++; continue; }
     if (rec.unsubscribed) { stats.unsub++; continue; }
     if (rec.paused) { stats.paused++; continue; }
-    if (rec[SENT_FLAG]) { stats.alreadySent++; continue; }
 
     const emailKey = String(rec.email).toLowerCase().trim();
+
+    if (rec[SENT_FLAG]) {
+      stats.alreadySent++;
+      if (sendMode && EMAIL_RE.test(emailKey)) { backfill.push(emailKey); await flushBackfill(); }
+      continue;
+    }
+
     if (!EMAIL_RE.test(emailKey)) { stats.invalidEmail++; continue; }
     if (seen.has(emailKey)) { stats.duplicate++; continue; }
     seen.add(emailKey);
+
+    // Persistent cross-fire dedupe: if this email already got the blast from
+    // another key, flag-suppress this key without sending.
+    if (sendMode) {
+      let inSet = 0;
+      try { inSet = await kv.sismember(SENT_SET, emailKey); } catch { /* treat as not-sent */ }
+      if (inSet) {
+        stats.dupSuppressed++;
+        try {
+          await kv.set(k, { ...rec, [SENT_FLAG]: true, rhhReplayBlastSuppressed: 'duplicate-email', rhhReplayBlastSentAt: new Date().toISOString() });
+        } catch { /* next fire re-checks */ }
+        continue;
+      }
+    }
     stats.eligible++;
 
     if (!sendMode) {
@@ -265,6 +303,11 @@ export default async function handler(req, res) {
       });
       results.sent++;
       try {
+        await kv.sadd(SENT_SET, emailKey);
+      } catch (err) {
+        console.warn('rhh-blast: sadd failed for', rec.email, err.message);
+      }
+      try {
         await kv.set(k, { ...rec, [SENT_FLAG]: true, rhhReplayBlastSentAt: new Date().toISOString() });
       } catch (writeErr) {
         console.warn('rhh-blast: flag write failed for', rec.email, writeErr.message);
@@ -276,8 +319,14 @@ export default async function handler(req, res) {
     await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
   }
 
+  if (sendMode) await flushBackfill(true);
+
+  let uniqueEmailed = null;
+  try { uniqueEmailed = await kv.scard(SENT_SET); } catch { /* informational */ }
+
   return res.status(200).json({
     ok: true,
+    uniqueEmailed,
     mode: sendMode ? 'SEND' : 'DRY-RUN',
     from: FROM,
     subject: SUBJECT,
