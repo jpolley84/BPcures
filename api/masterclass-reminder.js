@@ -4,12 +4,12 @@
 // registrants before the live class. This fires the 60-minute and 10-minute
 // reminders (with the Zoom link) to everyone in masterclass:members.
 //
-// Trigger: Vercel cron, Mondays (class is every Monday 7pm CT):
-//   stage=60 -> 0 23 * * 1   (6:00 pm CT / 23:00 UTC, CDT)
-//   stage=10 -> 50 23 * * 1  (6:50 pm CT / 23:50 UTC, CDT)
-// DST caveat: schedules are UTC. During CST (winter) 6pm CT = 00:00 UTC the
-// NEXT day, so these fire an hour early Nov-Mar. Revisit at the fall change,
-// or move to a self-checking "is it ~1h before 7pm CT" guard later.
+// Trigger: MANUAL (2026-07-20, Joel: "make the cron manual in case i miss one").
+// No Vercel cron drives this — it fires only when Joel says so, so a skipped or
+// rescheduled class never blasts reminders at the wrong time. Fire it with:
+//   curl "https://bpquiz.com/api/masterclass-reminder?stage=60" -H "Authorization: Bearer $CRON_SECRET"
+//   curl "https://bpquiz.com/api/masterclass-reminder?stage=10" -H "Authorization: Bearer $CRON_SECRET"
+// (or just tell the head agent "fire the 60-min masterclass reminder").
 //
 // Idempotent: one KV marker per (CT class date, stage), so a double cron fire
 // or a manual re-trigger never double-sends. Query flags:
