@@ -1,15 +1,35 @@
 // /apply — the Be There cohort prequalification application.
 //
-// 2026-07-16: replaces ApplyPage.jsx on the /apply route (the old file stays
-// in the repo, unrouted). An 8-step wizard, one section per screen, progress
-// dots, back button, state preserved across steps. POSTs to
-// /api/coaching-apply with source: 'bethere-apply'; the API scores fit
-// (HOT / WARM / COLD) and the thank-you screen branches on it.
+// 2026-07-20 REBUILD: modeled on the LifestyleU "getfit" application Joel sent.
+// Her form pre-qualifies with six sharp moves, and we now use all of them:
+//   1. a negative opt-in GATE ("yes I'm serious" / "no I'll pass") as a
+//      commitment device that self-ejects tire kickers,
+//   2. a "why work with him specifically" question that makes the applicant
+//      sell themselves before any call,
+//   3. a concrete goal selector,
+//   4. a decision-unit / significant-other question (handles the "let me ask
+//      my husband" stall before it happens on the call),
+//   5. a social handle for vetting,
+//   6. a MONEY question by cash-flow bucket with NO PRICE shown, so nobody
+//      abandons the form over a dollar figure; price is handled live on the
+//      call, where Joel closes.
 //
-// Legacy ?tier= links still land here; the tier defaults to 'be-there'.
+// We kept exactly two things her lean form does not have, because they are a
+// nurse's non-negotiables, not conversion fat:
+//   - one free-text "what would winning look like" (Joel reads it first), and
+//   - the doctor-alignment gate ("alongside your doctor, never instead"),
+//     which is both a liability screen and a real disqualifier.
+//
+// The previous 8-step clinical intake (readings, meds count, sleep, sodium
+// corner, etc.) is retired from the form. That depth belongs on the fit call,
+// not in front of a cold lead deciding whether to finish an application.
+//
+// POSTs to /api/coaching-apply with source: 'bethere-apply'; the API scores
+// fit (HOT / WARM / COLD) and the thank-you screen branches on it.
+//
 // HARD RULES honored: no pricing or dollar amounts in visible copy, zero
-// em/en dashes, fourth-grade reading level, warm RN voice, education
-// alongside her doctor, mobile-first at 375px.
+// em/en dashes, plain warm RN voice, education alongside her doctor,
+// mobile-first at 375px.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -23,47 +43,64 @@ const FIT_CALL_URL =
     (import.meta.env.VITE_CALENDLY_FIT_CALL_URL || import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL)) ||
   'https://calendly.com/braveworksrn/60min';
 
-// 2026-07-17 (Joel): welcome video, offer stack, and the "did you watch the
-// video" question were all removed. The accepted-track thank-you now goes
-// straight to booking the fit call; cost is discussed on the call, not on the
-// page.
-
 // ---- Option sets (visible copy: no dashes, no prices) ----
-const AGE_OPTIONS = ['Under 45', '45 to 54', '55 to 64', '65 to 74', '75 plus'];
-const READING_OPTIONS = ['Under 130/80', '130s to 140s', '150s to 160s', '170 plus', 'I do not know'];
-const HOME_CHECK_OPTIONS = ['Yes, most days', 'Sometimes', 'I own a cuff but rarely use it', 'No cuff at home'];
-const MEDS_OPTIONS = ['None', 'One', 'Two', 'Three or more'];
-const DOCTOR_OPTIONS = ['We work well together', 'Fine but visits feel rushed', 'Frustrated or dismissed', 'I do not have a regular doctor'];
-const DURATION_OPTIONS = ['Under 1 year', '1 to 3 years', '3 to 10 years', 'Over 10 years'];
-const TRIED_OPTIONS = ['Cut salt', 'Walking or exercise', 'Weight loss', 'Herbs or supplements', 'A diet program', 'Stress work', 'Prayer', 'Nothing formal yet'];
-const HAPPENED_OPTIONS = ['Worked for a while then faded', 'Numbers barely moved', 'Could not stick with it', 'Never really committed'];
-const CORNER_OPTIONS = ['Stress', 'Sugar', 'Sodium', 'Honestly not sure'];
-const SLEEP_OPTIONS = ['Solid most nights', 'Okay', 'Broken or short', 'Rough'];
-const STRESS_OPTIONS = ['Calm', 'Manageable', 'Heavy', 'Crushing'];
-const START_OPTIONS = ['This week', 'Within two weeks', 'Within a month', 'Just exploring for now'];
-const TIME_OPTIONS = ['30 minutes or more', '15 to 30', 'Under 15', 'Honestly none right now'];
-const TRACKING_OPTIONS = ['Yes', 'Mostly', 'That sounds hard'];
-const PLANT_OPTIONS = ['Excited', 'Willing to try', 'Hesitant', 'That is not for me'];
-const ALIGN_OPTIONS = ['Yes, that is what I want', 'I was hoping to get off my medications without my doctor', 'Not sure'];
-const GROUPS_OPTIONS = ['I love learning with others', 'Prefer one on one but open to a group', 'Groups are not for me'];
-// 2026-07-17 (Joel): replaced the old 3-option investComfort question with a
-// direct dollar-tier question. "Not willing" is the SOLE cold-lead signal now
-// (see scoreBeThere in api/coaching-apply.js, kept in exact-string sync with
-// NOT_WILLING here) - every other applicant gets the fit-call link, no more
-// gating on the old multi-factor flag/exploring heuristic.
-const NOT_WILLING = 'I am not willing to invest at this time';
-const INVEST_TIER_OPTIONS = ['$5,000 to $9,999 a year', '$10,000 to $24,999 a year', '$25,000 or more a year', NOT_WILLING];
-const DECISION_OPTIONS = ['Just me', 'My spouse or partner and me', 'An adult child or family member'];
-const FOUND_OPTIONS = ['TikTok', 'Facebook', 'YouTube', 'A friend', 'Other'];
+
+// STEP 1 — the gate. The "No" option is the whole point: making someone
+// declare intent out loud lifts completion and show-rate, and shames the
+// merely curious into self-selecting out. "No" scores COLD (see scoreBeThere
+// in api/coaching-apply.js, kept in exact-string sync with GATE_NO here).
+const GATE_YES = 'Yes. I am ready to do the work to get my numbers down.';
+const GATE_NO = 'No. I will pass for now.';
+const GATE_OPTIONS = [GATE_YES, GATE_NO];
+
+// STEP 3 — "why him specifically" makes them argue Joel's value to themselves.
+const WHY_JOEL_OPTIONS = [
+  'He is a real ICU and ER nurse, not just a coach',
+  'He treats the root cause, not just the number',
+  'He works alongside my doctor, not against him',
+  'I trust his approach after following his videos',
+  'I am out of other options and need this to work',
+  'All of the above',
+];
+
+const GOAL_OPTIONS = [
+  'Get my blood pressure down naturally',
+  'Lower or come off medications, with my doctor',
+  'Understand what is actually driving my numbers',
+  'Feel in control of my health again',
+  'I am not sure yet, I just know something has to change',
+];
+
+// STEP 4 — significant other. Identifies the decision unit so the "let me ask
+// my spouse" stall can be handled on the call, not after it.
+const PARTNER_OPTIONS = [
+  'Yes, and they support me doing this',
+  'Yes, but they are not fully on board yet',
+  'Yes, and we decide things like this together',
+  'No, it is just me',
+];
+
+// Doctor-alignment gate. Kept from the old form: it is a liability screen for
+// an RN and a genuine disqualifier. The middle option scores COLD.
+const OFF_MEDS = 'I was hoping to come off my medications without my doctor';
+const ALIGN_OPTIONS = ['Yes, that is exactly what I want', OFF_MEDS, 'I am not sure'];
+
+// STEP 5 — discovery + the money question.
+const FOUND_OPTIONS = ['TikTok', 'Instagram', 'Facebook', 'YouTube', 'A friend', 'Other'];
+
+// The money question, her way: cash-flow buckets, NO price shown. The third
+// option is the sole affordability disqualifier and scores COLD; the first
+// scores HOT. Exact strings synced with api/coaching-apply.js.
+const CASH_YES = 'Yes, I have the cash flow to invest in my health right now';
+const CASH_MAYBE = 'I may or may not, but I am resourceful and have access to what I need';
+const CASH_NO = 'No, I am month to month and cannot invest right now';
+const CASHFLOW_OPTIONS = [CASH_YES, CASH_MAYBE, CASH_NO];
 
 const STEP_TITLES = [
-  'About you',
-  'Your pressure today',
-  'Your story',
-  'The three corners',
-  'Readiness',
-  'How we work',
-  'The honest question',
+  'One honest question',
+  'You',
+  'What you want',
+  'Your life right now',
   'Last things',
 ];
 const TOTAL_STEPS = STEP_TITLES.length;
@@ -83,7 +120,7 @@ function OptionList({ name, options, value, onChange }) {
             style={{
               display: 'flex', alignItems: 'center', gap: '0.7rem',
               padding: '13px 15px', borderRadius: 10, cursor: 'pointer',
-              background: selected ? '#FFFFFF' : '#FFFFFF',
+              background: '#FFFFFF',
               border: `1px solid ${selected ? 'var(--clay, #B85A36)' : 'var(--line, #D8CFBD)'}`,
               boxShadow: selected ? '0 0 0 1px var(--clay, #B85A36)' : 'none',
             }}
@@ -114,50 +151,6 @@ function OptionList({ name, options, value, onChange }) {
   );
 }
 
-// Multi-select checkbox list.
-function CheckList({ name, options, values, onToggle }) {
-  return (
-    <div role="group" aria-label={name} style={{ display: 'grid', gap: '0.5rem' }}>
-      {options.map((o) => {
-        const checked = values.includes(o);
-        return (
-          <label
-            key={o}
-            className="bt-opt"
-            style={{
-              display: 'flex', alignItems: 'center', gap: '0.7rem',
-              padding: '13px 15px', borderRadius: 10, cursor: 'pointer',
-              background: '#FFFFFF',
-              border: `1px solid ${checked ? 'var(--sage, #4A5D4E)' : 'var(--line, #D8CFBD)'}`,
-              boxShadow: checked ? '0 0 0 1px var(--sage, #4A5D4E)' : 'none',
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={checked}
-              onChange={() => onToggle(o)}
-              style={{ position: 'absolute', opacity: 0, width: 1, height: 1 }}
-            />
-            <span
-              aria-hidden="true"
-              style={{
-                flexShrink: 0, width: 19, height: 19, borderRadius: 5,
-                border: `1.5px solid ${checked ? 'var(--sage, #4A5D4E)' : 'var(--line, #D8CFBD)'}`,
-                background: checked ? 'var(--sage, #4A5D4E)' : '#FFFFFF',
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                color: '#FFFFFF', fontSize: 13, fontWeight: 700, lineHeight: 1,
-              }}
-            >
-              {checked ? '✓' : ''}
-            </span>
-            <span style={{ color: 'var(--ink, #121110)', fontSize: '1rem', lineHeight: 1.45, fontWeight: checked ? 600 : 400 }}>{o}</span>
-          </label>
-        );
-      })}
-    </div>
-  );
-}
-
 function Field({ label, helper, optional, error, children }) {
   return (
     <div style={{ marginBottom: '1.6rem' }}>
@@ -176,7 +169,6 @@ function Field({ label, helper, optional, error, children }) {
 
 export default function BeThereApplyPage() {
   const [searchParams] = useSearchParams();
-  // Legacy ?tier= links still work; everything defaults to the Be There cohort.
   const tier = useMemo(() => searchParams.get('tier') || 'be-there', [searchParams]);
 
   const [step, setStep] = useState(1);
@@ -187,22 +179,16 @@ export default function BeThereApplyPage() {
   const topRef = useRef(null);
 
   const [form, setForm] = useState({
-    // Step 1
-    firstName: '', email: '', phone: '', ageRange: '',
-    // Step 2
-    readingRange: '', homeCheck: '', medsCount: '', doctorRelationship: '',
-    // Step 3
-    concernDuration: '', tried: [], whatHappened: '', story: '',
-    // Step 4
-    loudestCorner: '', sleep: '', stressLevel: '',
-    // Step 5
-    whyThisWeek: '', startWindow: '', dailyTime: '', trackingWillingness: '', plantBased: '',
-    // Step 6
-    medsAlignment: '', groupsFeel: '',
-    // Step 7
-    winning: '', pictureValue: '', investTier: '', decisionMakers: '',
-    // Step 8
-    foundJoel: '', anythingElse: '',
+    // Step 1 — gate
+    serious: '',
+    // Step 2 — you
+    firstName: '', lastName: '', email: '', phone: '',
+    // Step 3 — what you want
+    whyJoel: '', goal: '',
+    // Step 4 — your life
+    occupation: '', partnerStatus: '', winning: '', medsAlignment: '',
+    // Step 5 — last things
+    foundJoel: '', socialHandle: '', cashFlow: '',
   });
 
   useEffect(() => {
@@ -213,55 +199,39 @@ export default function BeThereApplyPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
   };
-  const toggleTried = (o) =>
-    setForm((prev) => ({
-      ...prev,
-      tried: prev.tried.includes(o) ? prev.tried.filter((x) => x !== o) : [...prev.tried, o],
-    }));
+
+  // If they tap "No" on the gate, there is no reason to march them through the
+  // rest. Record it and drop straight to the (gentle) cold thank-you.
+  function bailOnGate() {
+    track('bethere_apply_submitted', { fit: 'COLD', gate: 'no' });
+    setResult({ fitTier: 'COLD' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   function validateStep(s) {
     const e = {};
     if (s === 1) {
-      if (!form.firstName.trim()) e.firstName = 'Your first name helps Joel greet you.';
-      if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel can write back.';
-      if (!form.ageRange) e.ageRange = 'Pick one.';
+      if (!form.serious) e.serious = 'Pick one. An honest answer helps us both.';
     }
     if (s === 2) {
-      if (!form.readingRange) e.readingRange = 'Pick the closest one. A guess is fine.';
-      if (!form.homeCheck) e.homeCheck = 'Pick one.';
-      if (!form.medsCount) e.medsCount = 'Pick one. None is a fine answer.';
-      if (!form.doctorRelationship) e.doctorRelationship = 'Pick one.';
+      if (!form.firstName.trim()) e.firstName = 'Your first name helps Joel greet you.';
+      if (!form.lastName.trim()) e.lastName = 'Last name too, please.';
+      if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel can write back.';
+      if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'A real phone number, in case your application moves forward.';
     }
     if (s === 3) {
-      if (!form.concernDuration) e.concernDuration = 'Pick one.';
-      if (form.tried.length === 0) e.tried = 'Check at least one. Nothing formal yet counts.';
-      if (!form.whatHappened) e.whatHappened = 'Pick the closest one.';
-      if (form.story.trim().length < 20) e.story = 'A few honest sentences help Joel read your case well.';
+      if (!form.whyJoel) e.whyJoel = 'Pick the closest one.';
+      if (!form.goal) e.goal = 'Pick one.';
     }
     if (s === 4) {
-      if (!form.loudestCorner) e.loudestCorner = 'Pick one. Not sure is a fine answer.';
-      if (!form.sleep) e.sleep = 'Pick one.';
-      if (!form.stressLevel) e.stressLevel = 'Pick one.';
+      if (!form.occupation.trim()) e.occupation = 'A word or two is plenty.';
+      if (!form.partnerStatus) e.partnerStatus = 'Pick one.';
+      if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
+      if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
     }
     if (s === 5) {
-      if (form.whyThisWeek.trim().length < 10) e.whyThisWeek = 'A sentence is plenty.';
-      if (!form.startWindow) e.startWindow = 'Pick one.';
-      if (!form.dailyTime) e.dailyTime = 'Pick one.';
-      if (!form.trackingWillingness) e.trackingWillingness = 'Pick one.';
-      if (!form.plantBased) e.plantBased = 'Pick one.';
-    }
-    if (s === 6) {
-      if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
-      if (!form.groupsFeel) e.groupsFeel = 'Pick one.';
-    }
-    if (s === 7) {
-      if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
-      if (!form.pictureValue.trim()) e.pictureValue = 'A dollar figure, even a rough one, is what Joel needs here.';
-      if (!form.investTier) e.investTier = 'Pick one. Honesty helps us both.';
-      if (!form.decisionMakers) e.decisionMakers = 'Pick one.';
-    }
-    if (s === 8) {
       if (!form.foundJoel) e.foundJoel = 'Pick one.';
+      if (!form.cashFlow) e.cashFlow = 'Pick the honest one. It only decides the next step, not your worth.';
     }
     return e;
   }
@@ -277,29 +247,29 @@ export default function BeThereApplyPage() {
     const e = validateStep(step);
     setErrors(e);
     if (Object.keys(e).length > 0) return;
+    // The gate: a "No" ends it here, kindly.
+    if (step === 1 && form.serious === GATE_NO) {
+      bailOnGate();
+      return;
+    }
     const next = step + 1;
     setStep(next);
     track('bethere_apply_step', { step: next });
     if (topRef.current) topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // Local mirror of the server scoring, used only as a fallback if the
-  // response does not carry fitTier.
+  // Local mirror of the server scoring; fallback only if the response has no
+  // fitTier. Kept in sync with scoreBeThere in api/coaching-apply.js.
   function localFit() {
-    // 2026-07-17: cold is now decided SOLELY by the investment-tier answer
-    // (see NOT_WILLING). Every other applicant is warm/hot and gets the
-    // fit-call link - no more gating on the meds-alignment flag or the
-    // exploring+no-time combo.
-    if (form.investTier === NOT_WILLING) return 'COLD';
-    const hot =
-      (form.startWindow === 'This week' || form.startWindow === 'Within two weeks') &&
-      (form.dailyTime === '30 minutes or more' || form.dailyTime === '15 to 30') &&
-      (form.trackingWillingness === 'Yes' || form.trackingWillingness === 'Mostly');
-    return hot ? 'HOT' : 'WARM';
+    if (form.serious === GATE_NO) return 'COLD';
+    if (form.cashFlow === CASH_NO) return 'COLD';
+    if (form.medsAlignment === OFF_MEDS) return 'COLD';
+    if (form.cashFlow === CASH_YES) return 'HOT';
+    return 'WARM';
   }
 
   async function handleSubmit() {
-    const e = validateStep(8);
+    const e = validateStep(TOTAL_STEPS);
     setErrors(e);
     if (Object.keys(e).length > 0) return;
     setSubmitting(true);
@@ -311,34 +281,21 @@ export default function BeThereApplyPage() {
         body: JSON.stringify({
           source: 'bethere-apply',
           tier,
-          name: form.firstName.trim(),
+          name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
-          ageRange: form.ageRange,
-          readingRange: form.readingRange,
-          homeCheck: form.homeCheck,
-          medsCount: form.medsCount,
-          doctorRelationship: form.doctorRelationship,
-          concernDuration: form.concernDuration,
-          tried: form.tried,
-          whatHappened: form.whatHappened,
-          story: form.story.trim(),
-          loudestCorner: form.loudestCorner,
-          sleep: form.sleep,
-          stressLevel: form.stressLevel,
-          whyThisWeek: form.whyThisWeek.trim(),
-          startWindow: form.startWindow,
-          dailyTime: form.dailyTime,
-          trackingWillingness: form.trackingWillingness,
-          plantBased: form.plantBased,
-          medsAlignment: form.medsAlignment,
-          groupsFeel: form.groupsFeel,
+          serious: form.serious,
+          whyJoel: form.whyJoel,
+          goal: form.goal,
+          occupation: form.occupation.trim(),
+          partnerStatus: form.partnerStatus,
           winning: form.winning.trim(),
-          pictureValue: form.pictureValue.trim(),
-          investTier: form.investTier,
-          decisionMakers: form.decisionMakers,
+          medsAlignment: form.medsAlignment,
           foundJoel: form.foundJoel,
-          anythingElse: form.anythingElse.trim(),
+          socialHandle: form.socialHandle.trim(),
+          cashFlow: form.cashFlow,
         }),
       });
       const out = await res.json().catch(() => ({}));
@@ -357,8 +314,6 @@ export default function BeThereApplyPage() {
     }
   }
 
-  const inputStyle = {};
-
   // ---- Thank-you screens ----
   if (result) {
     const cold = result.fitTier === 'COLD';
@@ -366,16 +321,17 @@ export default function BeThereApplyPage() {
       <main className="min-h-screen" style={{ background: 'var(--cream, #FBF8F1)', color: 'var(--ink, #121110)' }}>
         <section style={{ maxWidth: 620, margin: '0 auto', padding: '3.5rem 1.25rem 4rem', textAlign: 'center' }}>
           <div className="text-xs font-bold uppercase" style={{ color: 'var(--clay, #B85A36)', letterSpacing: '0.14em', marginBottom: '1rem' }}>
-            APPLICATION RECEIVED
+            {cold ? 'THANK YOU' : 'APPLICATION RECEIVED'}
           </div>
           {cold ? (
             <>
               <h1 style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 'clamp(1.7rem, 5vw, 2.4rem)', lineHeight: 1.2, margin: '0 0 1rem' }}>
-                Thank you for your honesty.
+                Thank you for being honest.
               </h1>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 2rem' }}>
-                The best next step for you today is the free community and the starter kit.
-                Both meet you right where you are, and Joel is active in both.
+                Be There is not the right next step for you today, and that is completely okay.
+                The best place to start is the free community and the free quiz. Joel is active in
+                both, and everything you learn there still moves your numbers.
               </p>
               <div style={{ display: 'grid', gap: '0.75rem', maxWidth: 380, margin: '0 auto' }}>
                 <a
@@ -390,7 +346,7 @@ export default function BeThereApplyPage() {
                   href="https://bpquiz.com"
                   style={{ display: 'block', background: '#FFFFFF', color: 'var(--sage-deep, #2E3A30)', fontWeight: 700, textDecoration: 'none', padding: '0.95rem 1.3rem', borderRadius: 10, border: '1px solid var(--line, #D8CFBD)' }}
                 >
-                  Start with the free quiz
+                  Take the free quiz
                 </a>
               </div>
             </>
@@ -400,13 +356,10 @@ export default function BeThereApplyPage() {
                 Your application is in.
               </h1>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.75rem' }}>
-                Joel reads every word. If it looks like a fit, the next step is a short call
-                with him, where you will talk through your case and everything the program
-                involves. Book your time below.
+                Joel reads every word himself. If it looks like a fit, the next step is a short call
+                with him to talk through your case and everything the program involves. Book your
+                time below.
               </p>
-
-              {/* Book the fit call. Video, offer stack, and price were removed
-                  2026-07-17 per Joel; the call is where all of that is covered. */}
               <a
                 href={FIT_CALL_URL}
                 target="_blank"
@@ -483,142 +436,87 @@ export default function BeThereApplyPage() {
           {STEP_TITLES[step - 1]}
         </h1>
 
-        {/* STEP 1 — About you */}
+        {/* STEP 1 — the gate */}
         {step === 1 && (
           <>
+            <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
+              To be clear, you are here because you are serious about getting your blood pressure
+              down naturally, without adding more pills. Is that right?
+            </p>
+            <Field label="" error={errors.serious}>
+              <OptionList name="Serious gate" options={GATE_OPTIONS} value={form.serious} onChange={(v) => set('serious', v)} />
+            </Field>
+          </>
+        )}
+
+        {/* STEP 2 — you */}
+        {step === 2 && (
+          <>
             <Field label="First name" error={errors.firstName}>
-              <input className="bt-input" type="text" autoComplete="given-name" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="First name" style={inputStyle} />
+              <input className="bt-input" type="text" autoComplete="given-name" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="First name" />
+            </Field>
+            <Field label="Last name" error={errors.lastName}>
+              <input className="bt-input" type="text" autoComplete="family-name" value={form.lastName} onChange={(e) => set('lastName', e.target.value)} placeholder="Last name" />
             </Field>
             <Field label="Email" error={errors.email}>
               <input className="bt-input" type="email" autoComplete="email" inputMode="email" value={form.email} onChange={(e) => set('email', e.target.value)} placeholder="you@email.com" />
             </Field>
-            <Field label="Phone" optional helper="For a text if your application moves forward.">
+            <Field label="Phone" helper="For a text if your application moves forward." error={errors.phone}>
               <input className="bt-input" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="555 555 5555" />
             </Field>
-            <Field label="Age range" error={errors.ageRange}>
-              <OptionList name="Age range" options={AGE_OPTIONS} value={form.ageRange} onChange={(v) => set('ageRange', v)} />
-            </Field>
           </>
         )}
 
-        {/* STEP 2 — Your pressure today */}
-        {step === 2 && (
-          <>
-            <Field label="Where does your reading usually land?" error={errors.readingRange}>
-              <OptionList name="Current reading range" options={READING_OPTIONS} value={form.readingRange} onChange={(v) => set('readingRange', v)} />
-            </Field>
-            <Field label="Do you check at home?" error={errors.homeCheck}>
-              <OptionList name="Home checking" options={HOME_CHECK_OPTIONS} value={form.homeCheck} onChange={(v) => set('homeCheck', v)} />
-            </Field>
-            <Field label="How many blood pressure medications are you on?" helper="Whatever the number, your doctor stays in charge of it." error={errors.medsCount}>
-              <OptionList name="BP medications count" options={MEDS_OPTIONS} value={form.medsCount} onChange={(v) => set('medsCount', v)} />
-            </Field>
-            <Field label="How is your relationship with your doctor?" error={errors.doctorRelationship}>
-              <OptionList name="Relationship with your doctor" options={DOCTOR_OPTIONS} value={form.doctorRelationship} onChange={(v) => set('doctorRelationship', v)} />
-            </Field>
-          </>
-        )}
-
-        {/* STEP 3 — Your story */}
+        {/* STEP 3 — what you want */}
         {step === 3 && (
           <>
-            <Field label="How long has your pressure been a concern?" error={errors.concernDuration}>
-              <OptionList name="How long a concern" options={DURATION_OPTIONS} value={form.concernDuration} onChange={(v) => set('concernDuration', v)} />
+            <Field label="What makes you want to work with Joel specifically?" error={errors.whyJoel}>
+              <OptionList name="Why Joel" options={WHY_JOEL_OPTIONS} value={form.whyJoel} onChange={(v) => set('whyJoel', v)} />
             </Field>
-            <Field label="What have you tried?" helper="Check all that fit." error={errors.tried}>
-              <CheckList name="What have you tried" options={TRIED_OPTIONS} values={form.tried} onToggle={toggleTried} />
-            </Field>
-            <Field label="What usually happened?" error={errors.whatHappened}>
-              <OptionList name="What usually happened" options={HAPPENED_OPTIONS} value={form.whatHappened} onChange={(v) => set('whatHappened', v)} />
-            </Field>
-            <Field label="Tell Joel what is going on in your own words. What have the last two years with your health looked like?" error={errors.story}>
-              <textarea className="bt-input" rows={5} style={{ resize: 'vertical', minHeight: 120 }} value={form.story} onChange={(e) => set('story', e.target.value)} placeholder="Take your time. Joel reads every word." />
+            <Field label="Which of these best describes what you want?" error={errors.goal}>
+              <OptionList name="Goal" options={GOAL_OPTIONS} value={form.goal} onChange={(v) => set('goal', v)} />
             </Field>
           </>
         )}
 
-        {/* STEP 4 — The three corners */}
+        {/* STEP 4 — your life right now */}
         {step === 4 && (
           <>
-            <Field label="Which corner feels loudest in your life right now?" error={errors.loudestCorner}>
-              <OptionList name="Loudest corner" options={CORNER_OPTIONS} value={form.loudestCorner} onChange={(v) => set('loudestCorner', v)} />
+            <Field label="What is your current work, and how long have you done it?" error={errors.occupation}>
+              <input className="bt-input" type="text" value={form.occupation} onChange={(e) => set('occupation', e.target.value)} placeholder="e.g. Retired teacher, 8 years" />
             </Field>
-            <Field label="How is your sleep?" error={errors.sleep}>
-              <OptionList name="Sleep" options={SLEEP_OPTIONS} value={form.sleep} onChange={(v) => set('sleep', v)} />
+            <Field label="Do you have a significant other?" error={errors.partnerStatus}>
+              <OptionList name="Partner status" options={PARTNER_OPTIONS} value={form.partnerStatus} onChange={(v) => set('partnerStatus', v)} />
             </Field>
-            <Field label="A typical day's stress?" error={errors.stressLevel}>
-              <OptionList name="Typical stress" options={STRESS_OPTIONS} value={form.stressLevel} onChange={(v) => set('stressLevel', v)} />
+            <Field label="If the next 90 days went perfectly, what would winning look like for you?" helper="This is the most important answer on the whole application. Paint the real picture. Joel reads it first." error={errors.winning}>
+              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
             </Field>
-          </>
-        )}
-
-        {/* STEP 5 — Readiness */}
-        {step === 5 && (
-          <>
-            <Field label="What made this the week you applied?" error={errors.whyThisWeek}>
-              <textarea className="bt-input" rows={3} style={{ resize: 'vertical', minHeight: 88 }} value={form.whyThisWeek} onChange={(e) => set('whyThisWeek', e.target.value)} placeholder="A sentence is plenty." />
-            </Field>
-            <Field label="If accepted, when would you want to start?" error={errors.startWindow}>
-              <OptionList name="Start window" options={START_OPTIONS} value={form.startWindow} onChange={(v) => set('startWindow', v)} />
-            </Field>
-            <Field label="How much time could you give this daily?" error={errors.dailyTime}>
-              <OptionList name="Daily time" options={TIME_OPTIONS} value={form.dailyTime} onChange={(v) => set('dailyTime', v)} />
-            </Field>
-            <Field label="Willing to log morning and evening readings daily?" error={errors.trackingWillingness}>
-              <OptionList name="Tracking willingness" options={TRACKING_OPTIONS} value={form.trackingWillingness} onChange={(v) => set('trackingWillingness', v)} />
-            </Field>
-            <Field label="How do you feel about eating more plant-based whole foods?" error={errors.plantBased}>
-              <OptionList name="Plant-based foods" options={PLANT_OPTIONS} value={form.plantBased} onChange={(v) => set('plantBased', v)} />
-            </Field>
-          </>
-        )}
-
-        {/* STEP 6 — How we work */}
-        {step === 6 && (
-          <>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem', padding: '1rem 1.1rem', background: '#FFFFFF', border: '1px solid var(--sage-soft, #C5CDBF)', borderRadius: 12 }}>
-              Joel coaches alongside your doctor, never instead of them. Nobody here will ever tell you
-              to change a medication. Only your doctor does that.
+              Joel coaches alongside your doctor, never instead of them. Nobody here will ever tell
+              you to change a medication. Only your doctor does that.
             </p>
             <Field label="Does that sit right with you?" error={errors.medsAlignment}>
               <OptionList name="Meds alignment" options={ALIGN_OPTIONS} value={form.medsAlignment} onChange={(v) => set('medsAlignment', v)} />
             </Field>
-            <Field label="How do you feel about groups?" error={errors.groupsFeel}>
-              <OptionList name="Groups" options={GROUPS_OPTIONS} value={form.groupsFeel} onChange={(v) => set('groupsFeel', v)} />
-            </Field>
           </>
         )}
 
-        {/* STEP 7 — The honest question */}
-        {step === 7 && (
-          <>
-            <Field label="If the next 90 days went perfectly, what would winning look like for you?" helper="This is the most important question on the whole application. Paint the real picture." error={errors.winning}>
-              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
-            </Field>
-            <Field label="What would you say that picture is worth to you, in dollars?" helper="Whatever number is honest. Joel is not going to hold you to it, he just wants to understand how you see it." error={errors.pictureValue}>
-              <input className="bt-input" type="text" inputMode="numeric" value={form.pictureValue} onChange={(e) => set('pictureValue', e.target.value)} placeholder="e.g. $50,000" />
-            </Field>
-            <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              Be There is a serious 90 day commitment of time and resources, built to hold that picture
-              for the next 20 years, not just the next 90 days.
-            </p>
-            <Field label="What are you willing to invest right now to have that picture for the next 20 years?" error={errors.investTier}>
-              <OptionList name="Investment tier" options={INVEST_TIER_OPTIONS} value={form.investTier} onChange={(v) => set('investTier', v)} />
-            </Field>
-            <Field label="Who is part of this decision?" error={errors.decisionMakers}>
-              <OptionList name="Decision makers" options={DECISION_OPTIONS} value={form.decisionMakers} onChange={(v) => set('decisionMakers', v)} />
-            </Field>
-          </>
-        )}
-
-        {/* STEP 8 — Last things */}
-        {step === 8 && (
+        {/* STEP 5 — last things + the money question */}
+        {step === 5 && (
           <>
             <Field label="How did you find Joel?" error={errors.foundJoel}>
               <OptionList name="How found Joel" options={FOUND_OPTIONS} value={form.foundJoel} onChange={(v) => set('foundJoel', v)} />
             </Field>
-            <Field label="Anything else Joel should know?" optional>
-              <textarea className="bt-input" rows={3} style={{ resize: 'vertical', minHeight: 80 }} value={form.anythingElse} onChange={(e) => set('anythingElse', e.target.value)} placeholder="Anything that matters that we did not ask about." />
+            <Field label="Your Instagram handle or Facebook name" optional helper="So Joel can put a face to your story before you talk.">
+              <input className="bt-input" type="text" value={form.socialHandle} onChange={(e) => set('socialHandle', e.target.value)} placeholder="@yourhandle" />
+            </Field>
+            <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
+              If Joel could show you a real way to get your numbers down and keep them there, making
+              him the last coach you ever need for this, would you be willing and able to invest in
+              getting the help to do it?
+            </p>
+            <Field label="" error={errors.cashFlow}>
+              <OptionList name="Cash flow" options={CASHFLOW_OPTIONS} value={form.cashFlow} onChange={(v) => set('cashFlow', v)} />
             </Field>
           </>
         )}

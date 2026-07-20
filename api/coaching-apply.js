@@ -494,47 +494,74 @@ export default async function handler(req, res) {
 // still recorded as advisory flags in Joel's notify email, but no longer
 // affect the fit tier or gate the call link.
 // ---------------------------------------------------------------------------
-const BETHERE_OFF_MEDS = 'I was hoping to get off my medications without my doctor';
-// 2026-07-17 (Joel): investComfort (3-option comfort question) replaced by
-// investTier (dollar-tier question, floor $5,000/yr). NOT_WILLING is now the
-// SOLE cold-lead signal — exact string must match BeThereApplyPage.jsx's
-// NOT_WILLING constant. Every other applicant gets the fit-call link; the
-// old medsAlignment-flag / exploring+no-time COLD paths are removed.
-const BETHERE_NOT_WILLING = 'I am not willing to invest at this time';
+// 2026-07-20 REBUILD (modeled on the LifestyleU getfit application). The form
+// is now lean (5 steps) and pre-qualifies her way. Three COLD paths, all exact
+// string matches with BeThereApplyPage.jsx:
+//   - the opt-in GATE answered "No" (self-ejected tire kicker),
+//   - the cash-flow money bucket = month-to-month, no ability to invest,
+//   - the doctor-alignment gate = wants off meds without her doctor (a real
+//     liability disqualifier for an RN, not just a soft flag).
+// HOT when she has the cash flow outright; everyone else WARM.
+// Legacy fields (investTier, startWindow, dailyTime, trackingWillingness) may
+// still arrive from a cached old client for a short while; scoreBeThere falls
+// back to them so an in-flight old submission is never mis-scored.
+const BETHERE_OFF_MEDS_OLD = 'I was hoping to get off my medications without my doctor';
+const BETHERE_OFF_MEDS = 'I was hoping to come off my medications without my doctor';
+const BETHERE_GATE_NO = 'No. I will pass for now.';
+const BETHERE_CASH_YES = 'Yes, I have the cash flow to invest in my health right now';
+const BETHERE_CASH_NO = 'No, I am month to month and cannot invest right now';
+const BETHERE_NOT_WILLING = 'I am not willing to invest at this time'; // legacy
 
 function scoreBeThere(b) {
+  // New lean form.
+  if (b.serious === BETHERE_GATE_NO) return 'COLD';
+  if (b.cashFlow === BETHERE_CASH_NO) return 'COLD';
+  if (b.medsAlignment === BETHERE_OFF_MEDS || b.medsAlignment === BETHERE_OFF_MEDS_OLD) return 'COLD';
+  if (b.cashFlow === BETHERE_CASH_YES) return 'HOT';
+  // Legacy old-client fallbacks (only reached when the new fields are absent).
   if (b.investTier === BETHERE_NOT_WILLING) return 'COLD';
-  const hot =
+  if (
+    b.cashFlow === undefined && b.serious === undefined &&
     (b.startWindow === 'This week' || b.startWindow === 'Within two weeks') &&
     (b.dailyTime === '30 minutes or more' || b.dailyTime === '15 to 30') &&
-    (b.trackingWillingness === 'Yes' || b.trackingWillingness === 'Mostly');
-  return hot ? 'HOT' : 'WARM';
+    (b.trackingWillingness === 'Yes' || b.trackingWillingness === 'Mostly')
+  ) return 'HOT';
+  return 'WARM';
 }
 
 async function handleBeThere(req, res) {
   const b = req.body;
   const safe = (v) => (typeof v === 'string' ? v.trim() : '');
 
-  if (!safe(b.name)) return res.status(400).json({ error: 'First name is required' });
+  if (!safe(b.name)) return res.status(400).json({ error: 'Name is required' });
   if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
-  if (safe(b.story).length < 20) {
-    return res.status(400).json({ error: 'The "in your own words" answer is required. Joel reads it first.' });
+  // The lean form's required set. `serious` present => new client; old clients
+  // (no `serious`) fall back to the previous required set for a clean cutover.
+  const isNewForm = b.serious !== undefined;
+  if (isNewForm) {
+    if (!safe(b.serious)) return res.status(400).json({ error: 'The opt-in question is required.' });
+    if (safe(b.winning).length < 10) {
+      return res.status(400).json({ error: 'The "what would winning look like" answer is required. Joel reads it first.' });
+    }
+    if (!safe(b.medsAlignment)) return res.status(400).json({ error: 'The alongside-your-doctor question is required.' });
+    // cashFlow is only required when they passed the gate; a "No" answer bails
+    // client-side before the money question is ever shown.
+    if (b.serious !== BETHERE_GATE_NO && !safe(b.cashFlow)) {
+      return res.status(400).json({ error: 'The willingness-to-invest question is required.' });
+    }
+  } else {
+    if (safe(b.story).length < 20) return res.status(400).json({ error: 'The "in your own words" answer is required. Joel reads it first.' });
+    if (safe(b.winning).length < 10) return res.status(400).json({ error: 'The "what would winning look like" answer is required.' });
+    if (!safe(b.investTier)) return res.status(400).json({ error: 'The investment question is required' });
   }
-  if (safe(b.whyThisWeek).length < 10) {
-    return res.status(400).json({ error: 'The "what made this the week" answer is required.' });
-  }
-  if (safe(b.winning).length < 10) {
-    return res.status(400).json({ error: 'The "what would winning look like" answer is required.' });
-  }
-  if (!safe(b.pictureValue)) return res.status(400).json({ error: 'The dollar value of the health picture is required' });
-  if (!safe(b.startWindow)) return res.status(400).json({ error: 'When you want to start is required' });
-  if (!safe(b.investTier)) return res.status(400).json({ error: 'The investment question is required' });
 
   const trimmedEmail = b.email.trim().toLowerCase();
   const submittedAt = new Date().toISOString();
   const fitTier = scoreBeThere(b);
   const flags = [];
-  if (b.medsAlignment === BETHERE_OFF_MEDS) flags.push('off-meds seeker');
+  if (b.medsAlignment === BETHERE_OFF_MEDS || b.medsAlignment === BETHERE_OFF_MEDS_OLD) flags.push('off-meds seeker');
+  if (b.serious === BETHERE_GATE_NO) flags.push('gate: not serious');
+  if (b.partnerStatus === 'Yes, but they are not fully on board yet') flags.push('partner not on board');
   if (b.groupsFeel === 'Groups are not for me') flags.push('minor: groups not for her');
 
   const application = {
@@ -544,31 +571,27 @@ async function handleBeThere(req, res) {
     name: safe(b.name),
     email: trimmedEmail,
     phone: safe(b.phone),
+    // New lean-form fields.
+    serious: safe(b.serious),
+    whyJoel: safe(b.whyJoel),
+    goal: safe(b.goal),
+    occupation: safe(b.occupation),
+    partnerStatus: safe(b.partnerStatus),
+    winning: safe(b.winning),
+    medsAlignment: safe(b.medsAlignment),
+    foundJoel: safe(b.foundJoel),
+    socialHandle: safe(b.socialHandle),
+    cashFlow: safe(b.cashFlow),
+    // Legacy fields, still recorded if an old client submits them.
     ageRange: safe(b.ageRange),
     readingRange: safe(b.readingRange),
-    homeCheck: safe(b.homeCheck),
     medsCount: safe(b.medsCount),
     doctorRelationship: safe(b.doctorRelationship),
-    concernDuration: safe(b.concernDuration),
-    tried: Array.isArray(b.tried) ? b.tried.map((m) => safe(String(m))).filter(Boolean) : [],
-    whatHappened: safe(b.whatHappened),
     story: safe(b.story),
-    loudestCorner: safe(b.loudestCorner),
-    sleep: safe(b.sleep),
-    stressLevel: safe(b.stressLevel),
-    whyThisWeek: safe(b.whyThisWeek),
     startWindow: safe(b.startWindow),
-    dailyTime: safe(b.dailyTime),
-    trackingWillingness: safe(b.trackingWillingness),
-    plantBased: safe(b.plantBased),
-    medsAlignment: safe(b.medsAlignment),
-    groupsFeel: safe(b.groupsFeel),
     pictureValue: safe(b.pictureValue),
     investTier: safe(b.investTier),
     decisionMakers: safe(b.decisionMakers),
-    foundJoel: safe(b.foundJoel),
-    watchedVideo: safe(b.watchedVideo),
-    winning: safe(b.winning),
     anythingElse: safe(b.anythingElse),
     flags,
     fitTier,
@@ -593,50 +616,36 @@ async function handleBeThere(req, res) {
       </div>
       <div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>
-        ${wordsBlock('Her story (last two years)', application.story)}
         ${wordsBlock('What winning looks like (90 days)', application.winning)}
-        ${wordsBlock('What that picture is worth to her, in dollars', application.pictureValue)}
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Pressure today</h3>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit</h3>
         <table style="width:100%;border-collapse:collapse;">
-          ${row('Age range', application.ageRange)}
-          ${row('Reading range', application.readingRange)}
-          ${row('Checks at home', application.homeCheck)}
-          ${row('BP medications', application.medsCount)}
-          ${row('Doctor relationship', application.doctorRelationship)}
-        </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Story</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          ${row('Concern for', application.concernDuration)}
-          ${row('Has tried', application.tried.join(', '))}
-          ${row('What usually happened', application.whatHappened)}
-        </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Corners</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          ${row('Loudest corner', application.loudestCorner)}
-          ${row('Sleep', application.sleep)}
-          ${row('Typical stress', application.stressLevel)}
-        </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Readiness</h3>
-        <table style="width:100%;border-collapse:collapse;">
-          ${row('Why this week', application.whyThisWeek)}
-          ${row('Start window', application.startWindow)}
-          ${row('Daily time', application.dailyTime)}
-          ${row('Will log readings', application.trackingWillingness)}
-          ${row('Plant-based foods', application.plantBased)}
-        </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Screening + investment</h3>
-        <table style="width:100%;border-collapse:collapse;">
+          ${row('Serious (opt-in gate)', application.serious)}
+          ${row('Why Joel specifically', application.whyJoel)}
+          ${row('What she wants', application.goal)}
           ${row('Alongside-doctor framing', application.medsAlignment)}
-          ${row('Groups', application.groupsFeel)}
-          ${row('Investment tier (floor $5,000/yr)', application.investTier)}
-          ${row('Decision makers', application.decisionMakers)}
         </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Last things</h3>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Her life</h3>
         <table style="width:100%;border-collapse:collapse;">
-          ${row('Found Joel via', application.foundJoel)}
-          ${row('Watched the video', application.watchedVideo)}
-          ${row('Anything else', application.anythingElse)}
+          ${row('Work', application.occupation)}
+          ${row('Significant other', application.partnerStatus)}
         </table>
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Investment + source</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Cash flow (no price shown)', application.cashFlow)}
+          ${row('Found Joel via', application.foundJoel)}
+          ${row('Social handle (vet before call)', application.socialHandle)}
+        </table>
+        ${(application.story || application.pictureValue || application.investTier) ? `
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#9C9485;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Legacy fields (old form)</h3>
+        <table style="width:100%;border-collapse:collapse;">
+          ${application.story ? row('Story', application.story) : ''}
+          ${application.pictureValue ? row('Picture value ($)', application.pictureValue) : ''}
+          ${application.investTier ? row('Old invest tier', application.investTier) : ''}
+          ${application.decisionMakers ? row('Decision makers', application.decisionMakers) : ''}
+        </table>` : ''}
+        ${application.anythingElse ? `
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Anything else</h3>
+        <table style="width:100%;border-collapse:collapse;">${row('Anything else', application.anythingElse)}</table>` : ''}
         <p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ${escapeHtml(application.email)}. ${fitTier === 'COLD' ? 'Applicant was routed to the free community and starter kit (no call link shown).' : 'Applicant was shown the fit-call booking link with the 48-hour promise.'} Auto-ack sent.</p>
       </div>
     </body></html>`;
