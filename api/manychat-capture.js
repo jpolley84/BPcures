@@ -7,9 +7,13 @@
 // these emails out is for the flow itself to POST them here at capture time
 // (an "External Request" action in the ManyChat flow builder).
 //
-// Auth: shared secret in the x-manychat-secret header (MANYCHAT_CAPTURE_SECRET
-// env var). No IP rate limit — ManyChat's servers share IPs and a viral
-// comment spike would trip a per-IP limit.
+// Auth: shared secret in the x-manychat-secret header OR the "s" body field
+// (MANYCHAT_CAPTURE_SECRET env var). The body fallback exists because ManyChat
+// silently wiped the header value twice (2026-07-10 and again ~2026-07-19 —
+// 233+ captures rejected as 401s); picker-built request bodies have never
+// reverted, so the body path is the durable one. No IP rate limit —
+// ManyChat's servers share IPs and a viral comment spike would trip a
+// per-IP limit.
 //
 // Enrolls as a 'lead' (source manychat-dm) and sends the instant Day-1 lead
 // magnet, exactly like a quiz capture; the daily lead-cron then runs the arc.
@@ -41,9 +45,12 @@ async function alert(subject, text) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Shared-secret auth. If the env var isn't set, fail closed.
+  // Shared-secret auth: header OR body field "s" (see note above — ManyChat
+  // keeps wiping the header; the picker-built body is the durable carrier).
+  // If the env var isn't set, fail closed.
   const secret = process.env.MANYCHAT_CAPTURE_SECRET;
-  if (!secret || req.headers['x-manychat-secret'] !== secret) {
+  const bodySecret = req.body && typeof req.body.s === 'string' ? req.body.s : '';
+  if (!secret || (req.headers['x-manychat-secret'] !== secret && bodySecret !== secret)) {
     return res.status(401).json({ error: 'unauthorized' });
   }
 
