@@ -164,6 +164,49 @@ export default async function handler(req, res) {
     }
   }
 
+  // ── $1,997 "All In" 90-Day Program (bpquiz.com/allin) ────────────────
+  // Three ways to pay, all embedded inline on /allin:
+  //   allin-full     one-time $1,997        (reuses the live 199700 price)
+  //   allin-deposit  one-time $197 deposit  (locks the spot; $1,800 balance
+  //                  collected by Joel later)
+  //   allin-plan     subscription $367 every 2 weeks, capped at 6 charges
+  //                  ($2,202 over the 12-week program). The webhook
+  //                  (processAllIn) sets cancel_at after the 6th charge.
+  // Recognized in the webhook by metadata offer:'all-in' + plan; the specific
+  // price ids are a backstop. Joel is alerted on every All-In sale so he can
+  // build the buyer's assessment/onboarding.
+  if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan') {
+    const ALLIN_PRICES = {
+      'allin-full': process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',    // $1,997 one-time
+      'allin-deposit': process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S', // $197 one-time
+      'allin-plan': process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',    // $367 / 2wk recurring
+    };
+    const plan = tier === 'allin-full' ? 'full' : tier === 'allin-deposit' ? 'deposit' : 'plan';
+    const isSub = tier === 'allin-plan';
+    const metadata = {
+      funnel: 'braveworks-bp',
+      brand: 'braveworks-bp',
+      offer: 'all-in',
+      plan,
+      ...phMeta,
+    };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        mode: isSub ? 'subscription' : 'payment',
+        line_items: [{ price: ALLIN_PRICES[tier], quantity: 1 }],
+        metadata,
+        ...(isSub ? { subscription_data: { metadata } } : {}),
+        return_url: `${siteUrl}/allin-welcome?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout all-in error:', err.message);
+      return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
   const prices = TIER_PRICES[tier];
   if (!prices) return res.status(400).json({ error: 'Unknown tier' });
 

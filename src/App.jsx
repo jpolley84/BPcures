@@ -82,6 +82,10 @@ const DisclaimerPage = lazy(() => import('./pages/DisclaimerPage'));
 // Stripe payment link redirects to (2026-07-03; the redirect used to 404).
 const CaseReviewPage = lazy(() => import('./pages/CaseReviewPage'));
 const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPage'));
+// $1,997 "All In" 90-Day Program checkout (offer stack + embedded Stripe, 3 pay
+// options: full / deposit / bi-weekly plan). Focused checkout, no SiteLayout.
+const AllInPage = lazy(() => import('./pages/AllInPage'));
+const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
 // /score — tokenized "see my saved result" page for email links (2026-07-03).
 const ScorePage = lazy(() => import('./pages/ScorePage'));
 // /waitlist — BraveWorks BP iPhone-app waitlist (2026-07-05). Standalone
@@ -263,6 +267,13 @@ function App() {
               homepage sales letter. Both wrapped in SiteLayout. */}
           <Route path="/case-review" element={<SiteLayout><CaseReviewPage /></SiteLayout>} />
           <Route path="/case-review-confirmed" element={<SiteLayout><CaseReviewConfirmedPage /></SiteLayout>} />
+
+          {/* $1,997 All In 90-Day Program. /allin = focused checkout (offer
+              stack + embedded Stripe, 3 pay options), NO SiteLayout so nothing
+              leaks the click. /allin-welcome = post-purchase landing the
+              embedded checkout redirects to. */}
+          <Route path="/allin" element={<AllInPage />} />
+          <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
 
           {/* /score — tokenized saved-result page for email links:
               /score?e=<email>&t=<token> → GET /api/score-get. Gentle fallback

@@ -1170,6 +1170,212 @@ Next step: pull their quiz + corners, review the case, and email them their exac
   }
 }
 
+// ─── $1,997 "All In" 90-Day Program ───────────────────────────────────
+// Recognized by metadata offer:'all-in' + plan ('full'|'deposit'|'plan'), with
+// the specific price ids as a backstop. Env can override each price id.
+const ALLIN_FULL_PRICE_ID = process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7';
+const ALLIN_DEPOSIT_PRICE_ID = process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S';
+const ALLIN_PLAN_PRICE_ID = process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS';
+// Cap = 6 bi-weekly charges (day 0, ~14, ~28, ~42, ~56, ~70). cancel_at at
+// now + 78 days ends the subscription after the 6th charge and before a 7th
+// (which would bill ~day 84) can post.
+const ALLIN_PLAN_CANCEL_SECONDS = 78 * 24 * 60 * 60;
+
+// Resolve which All-In plan a session is (or null). Cheap metadata path first,
+// then a Stripe line-item price-id backstop.
+async function resolveAllInPlan(session) {
+  const md = session.metadata || {};
+  if (md.offer === 'all-in') {
+    if (md.plan === 'deposit') return 'deposit';
+    if (md.plan === 'plan') return 'plan';
+    return 'full';
+  }
+  // Backstop: inspect line items for an All-In price id.
+  try {
+    const stripe = getStripe();
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 5 });
+    for (const li of items.data) {
+      const pid = li.price?.id;
+      if (pid === ALLIN_DEPOSIT_PRICE_ID) return 'deposit';
+      if (pid === ALLIN_PLAN_PRICE_ID) return 'plan';
+      if (pid === ALLIN_FULL_PRICE_ID) return 'full';
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: all-in line-item check failed (non-fatal)', err.message);
+  }
+  return null;
+}
+
+function escAllIn(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Buyer confirmation for an All-In purchase. Best-effort; a send failure never
+// fails the webhook (the Joel alert is the fulfillment backstop).
+async function sendAllInConfirmation({ email, firstName, plan }) {
+  const name = firstName ? escAllIn(firstName) : 'there';
+  const unsubToken = signUnsubToken({ email });
+  const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
+  const planLine =
+    plan === 'deposit'
+      ? 'Your $197 deposit is in and your spot is locked. I will reach out about the remaining balance and your start date.'
+      : plan === 'plan'
+      ? 'Your first payment is in and your spot is locked. The rest of your plan runs automatically every two weeks across the 12 weeks.'
+      : 'You are all in, paid in full. Your spot is locked.';
+  const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.65;background:#FAF6EF;">
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">You are in &middot; Life Beyond the Numbers</p>
+<h2 style="margin:0 0 1rem;font-weight:600;">Welcome in, ${name}.</h2>
+<p>${planLine}</p>
+<p>Here is what happens next. I personally build your plan around your numbers, your medications, and your history, so before we begin I need to see your case. Watch your inbox over the next day or two for your intake, and fill it out as completely as you can. The more I see, the sharper your plan.</p>
+<p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk the 12 weeks with you.</p>
+<p style="margin-top:1.6rem;">I am glad you decided. Let's get to work.</p>
+<p style="margin-top:1.2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
+<hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
+<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">Reply to this email any time. Educational content only, not medical advice.${process.env.BUSINESS_POSTAL_ADDRESS ? ` BraveWorks RN &middot; ${escAllIn(process.env.BUSINESS_POSTAL_ADDRESS)}` : ''}</p>
+</body></html>`;
+  const text = `Welcome in, ${firstName || 'there'}.
+
+${planLine}
+
+Here is what happens next. I personally build your plan around your numbers, your medications, and your history, so before we begin I need to see your case. Watch your inbox over the next day or two for your intake, and fill it out as completely as you can.
+
+This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication.
+
+I am glad you decided. Let's get to work.
+
+-- Joel Polley, RN
+BraveWorks RN / BPQuiz.com`;
+  await getResend().emails.send({
+    from: FROM,
+    to: String(email).trim(),
+    replyTo: REPLY_TO,
+    subject: 'You are in — your first step is coming',
+    html,
+    text,
+    headers: {
+      'List-Unsubscribe': `<${unsubUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
+  });
+}
+
+// Alert Joel that an All-In buyer came in so he builds their assessment/onboarding.
+async function alertJoelAllIn({ sessionId, email, name, plan }) {
+  if (!process.env.RESEND_API_KEY) return;
+  const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
+  const planLine =
+    plan === 'deposit'
+      ? 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start.'
+      : plan === 'plan'
+      ? '6 x $367 bi-weekly plan ($2,202 over 12 weeks; subscription auto-capped after the 6th charge).'
+      : 'Paid in full ($1,997).';
+  try {
+    await getResend().emails.send({
+      from: 'BraveWorks Ops <joel@bpquiz.com>',
+      to,
+      replyTo: REPLY_TO,
+      subject: `[ACTION] New ALL IN buyer — build their assessment (${email || 'unknown'})`,
+      text: `A buyer just enrolled in the $1,997 All In 90-Day Program.
+
+Buyer:      ${name || '(no name)'} <${email || 'unknown'}>
+Payment:    ${planLine}
+Stripe session: ${sessionId}
+
+Next step: build their personalized assessment/intake and start their 12-week onboarding. Their automated confirmation ("You are in") has already gone out, so they are expecting their intake next.`,
+    });
+  } catch (err) {
+    console.error('stripe-webhook: failed to send all-in Joel alert', err.message);
+  }
+}
+
+// The full All-In workflow: idempotent per session, records a bwbp: marker,
+// caps the bi-weekly plan subscription at 6 charges, sends the buyer
+// confirmation, and alerts Joel. plan: 'full' | 'deposit' | 'plan'.
+async function processAllIn(session, plan = 'full') {
+  const customerEmail = session.customer_details?.email;
+  const customerName = session.customer_details?.name;
+  const firstName = firstNameOf(customerName);
+
+  if (!customerEmail) {
+    console.error('stripe-webhook: all-in session has no customer email', session.id);
+    await alertJoelAllIn({ sessionId: session.id, email: null, name: customerName, plan });
+    return { action: 'all_in', delivered: false, reason: 'no_email', plan };
+  }
+
+  const emailKey = String(customerEmail).trim().toLowerCase();
+  const doneKey = `bwbp:allindone:${session.id}`;
+  let progress = null;
+  try {
+    progress = await kv.get(doneKey);
+    if (progress && progress.completedAt) {
+      return { action: 'all_in', deduplicated: true, customer_email: customerEmail, plan };
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: allindone read failed (continuing)', err.message);
+  }
+  progress = progress || {};
+  const DONE_TTL = { ex: 60 * 60 * 24 * 45 };
+
+  // Buyer cohort record (separate key space from the drip state machine).
+  try {
+    await kv.set(`bwbp:allin:${emailKey}`, {
+      email: emailKey,
+      firstName,
+      sessionId: session.id,
+      plan,
+      confirmedAt: new Date().toISOString(),
+      status: 'awaiting_assessment',
+    });
+  } catch (err) {
+    console.warn('stripe-webhook: all-in KV record failed (non-fatal)', err.message);
+  }
+
+  // ── Plan: cap the subscription at 6 bi-weekly charges ──
+  // GUARDED so only an All-In subscription is ever touched: re-read the
+  // subscription and require the all-in marker (on it or the session) before
+  // writing cancel_at.
+  if (plan === 'plan' && session.subscription) {
+    try {
+      const stripe = getStripe();
+      const subId =
+        typeof session.subscription === 'string' ? session.subscription : session.subscription.id;
+      const sub = await stripe.subscriptions.retrieve(subId);
+      const smd = sub.metadata || {};
+      const sessionMd = session.metadata || {};
+      const isAllInSub = smd.offer === 'all-in' || sessionMd.offer === 'all-in';
+      if (!isAllInSub) {
+        console.warn('stripe-webhook: all-in plan session resolved but subscription lacks the marker, NOT capping', subId);
+      } else if (!sub.cancel_at) {
+        const cancelAt = Math.floor(Date.now() / 1000) + ALLIN_PLAN_CANCEL_SECONDS;
+        await stripe.subscriptions.update(subId, { cancel_at: cancelAt });
+      }
+    } catch (err) {
+      console.error('stripe-webhook: all-in plan cancel_at failed (cap the subscription manually)', err.message);
+    }
+  }
+
+  // ── Buyer confirmation (skip if a prior attempt of this session sent it) ──
+  let delivered = Boolean(progress.confirmationSentAt);
+  if (!delivered) {
+    try {
+      await sendAllInConfirmation({ email: customerEmail, firstName, plan });
+      delivered = true;
+      progress.confirmationSentAt = new Date().toISOString();
+      try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
+    } catch (err) {
+      console.error('stripe-webhook: all-in confirmation send failed', err.message);
+    }
+  }
+
+  // ── Alert Joel (always) ──
+  await alertJoelAllIn({ sessionId: session.id, email: customerEmail, name: customerName, plan });
+
+  progress.completedAt = new Date().toISOString();
+  try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
+
+  return { action: 'all_in', delivered, customer_email: customerEmail, plan };
+}
+
 // The full case-review workflow: record a bwbp:-namespaced marker (so a retry is
 // idempotent at the business level and the buyer record reflects it), bump the
 // monthly capacity counter, flag the buyer's drip record, cap a 3-pay
@@ -1622,6 +1828,17 @@ async function processCheckoutCompleted(event) {
   if (!customerEmail) {
     console.error('stripe-webhook: no customer_details.email on session', session.id);
     return { action: 'skipped', reason: 'no_email' };
+  }
+
+  // ── $1,997 "All In" 90-Day Program check (BEFORE the amount lookup) ──
+  // Recognized by metadata offer:'all-in' (stamped by create-embedded-checkout)
+  // or the specific All-In price ids. MUST run before AMOUNT_TO_TIER: the deposit
+  // is 19700 and the plan is a subscription, neither of which the amount map
+  // handles, and the full 199700 is unmapped (would alert Joel). Covers all three
+  // plans: 'full', 'deposit', 'plan' (subscription, capped at 6 bi-weekly charges).
+  const allInPlan = await resolveAllInPlan(session);
+  if (allInPlan) {
+    return await processAllIn(session, allInPlan);
   }
 
   // ── $297 case-review check (BEFORE the amount lookup) ──
