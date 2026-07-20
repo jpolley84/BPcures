@@ -29,20 +29,21 @@ import { track, getDistinctId } from '../utils/analytics';
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
-// ─── OFFER STACK — "Life Beyond the Numbers" 90-Day Women's Pressure &
-// Hormone Reset (Joel's final stack, 2026-07-20). Grouped as the doc's Final
-// Value Stack table; sums to $10,614. ───────────────────────────────────────
+// ─── OFFER STACK — "Life Beyond the Numbers": A 90-Day Personalized Health
+// Restoration Experience for Women Over 50 (Joel's updated copy, 2026-07-20).
+// The 9 experience components map onto the prior value table (assessment +
+// pathway combined into one line) so the $10,614 total holds exactly.
 const STACK = [
-  { label: 'Her Pressure & Hormone Map — your personalized onboarding assessment', value: 997 },
-  { label: 'Her Safety-First Emergency Plan — know your numbers and when to act', value: 497 },
-  { label: 'The Numbers Decoded Lab-Literacy System', value: 697 },
-  { label: 'The Herbal Blood-Pressure Support Vault, plus your Steady Start Box', value: 797 },
-  { label: 'The Food Freedom & Blood-Sugar Pathway', value: 997 },
+  { label: 'Your Pressure & Root-Driver Assessment, plus your Personalized 90-Day Health Pathway', value: 997 },
+  { label: 'Your Numbers Without Fear Safety Plan', value: 497 },
+  { label: 'The Numbers Decoded System, plus your Doctor Visit Advocacy Kit', value: 697 },
+  { label: 'The Food Freedom Blood-Sugar & Pressure Plan', value: 997 },
+  { label: 'The Herbal Support & Safety Vault, plus your Steady Start Box', value: 797 },
   { label: 'The Smarter Movement Method', value: 797 },
-  { label: 'Weekly Nurse-Led Transformation Coaching', value: 1800 },
-  { label: "The Love the Girl You're In Wellness Hub", value: 997 },
-  { label: '4 Program Bonuses (Symptom Sorting, Glow & Confidence, Doctor-Visit Advocacy Kit, Purpose & Energy Plan)', value: 1288 },
-  { label: 'Fast-Action Bonuses (Private Root-Driver Clarity Session + RestoreHER Replay Vault)', value: 1747 },
+  { label: 'Weekly Nurse-Led Coaching with Joel', value: 1800 },
+  { label: 'The Life Beyond the Numbers Community', value: 997 },
+  { label: '4 Included Bonuses (Symptom Sorting, Restaurant & Celebration Survival, 15-Minute Busy Woman, Stay-Beyond Maintenance)', value: 1288 },
+  { label: 'Fast-Action Bonuses (Private Root-Driver Clarity Session + RestoreHER Replay Pathway)', value: 1747 },
 ];
 const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 10,614
 
@@ -124,7 +125,7 @@ export default function AllInPage() {
         {/* Top strip */}
         <div style={{ textAlign: 'center', marginBottom: 'clamp(1rem, 2.5vw, 1.6rem)' }}>
           <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
-            Life Beyond the Numbers &middot; The 90-Day Women's Pressure &amp; Hormone Reset
+            Life Beyond the Numbers &middot; A 90-Day Health Restoration for Women Over 50
           </span>
           <h1 style={{ fontSize: 'clamp(1.5rem, 3.6vw, 2.2rem)', lineHeight: 1.12, margin: '0.5rem auto 0', maxWidth: '20ch', fontWeight: 700 }}>
             You are all in. Let's build your 12 weeks.
