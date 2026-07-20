@@ -109,7 +109,7 @@ const day0 = {
       p('That is what this is for.'),
       p('In my next note I want to show you why almost nobody I meet is dealing with just one trigger, and why that is actually good news.'),
       signoff(),
-      p('P.S. Save this email. You will want the Blueprint again later, I promise.'),
+      p('P.S. Save this email, you will want the Blueprint again later. And before you open it, hit reply and tell me one word: which trigger did your quiz name? I read every reply, and it helps me know who I am writing to.'),
     ].join('');
   },
   textBody: (ctx) => {
@@ -133,7 +133,7 @@ In my next note I want to show you why almost nobody I meet is dealing with just
 
 ${SIGNOFF_TEXT}
 
-P.S. Save this email. You will want the Blueprint again later, I promise.`;
+P.S. Save this email, you will want the Blueprint again later. And before you open it, hit reply and tell me one word: which trigger did your quiz name? I read every reply, and it helps me know who I am writing to.`;
   },
 };
 
@@ -152,7 +152,7 @@ const day2 = {
     p('What most people do not realize, and what I want you sitting with today, is that the #1 is rarely acting alone. It usually has one or two quieter triggers riding along with it, making it worse.'),
     p('We will get to those. For now, just start with the one you know.'),
     signoff(),
-    p('P.S. In my next note I want to tell you about a patient I have never been able to forget. She is part of why BraveWorks RN exists at all.'),
+    p('P.S. Hit reply with the word STACKED if you recognized a second trigger riding along with your first. One word is plenty. In my next note I want to tell you about a patient I have never been able to forget. She is part of why BraveWorks RN exists at all.'),
   ].join(''),
   textBody: (ctx) => `${ctx.firstName ? `${ctx.firstName}, can` : 'Can'} I tell you something that took me years to see clearly?
 
@@ -170,7 +170,7 @@ What most people do not realize is that the #1 is rarely acting alone. It usuall
 
 ${SIGNOFF_TEXT}
 
-P.S. In my next note I want to tell you about a patient I have never been able to forget. She is part of why BraveWorks RN exists at all.`,
+P.S. Hit reply with the word STACKED if you recognized a second trigger riding along with your first. One word is plenty. In my next note I want to tell you about a patient I have never been able to forget. She is part of why BraveWorks RN exists at all.`,
 };
 
 // ─── DAY 4 — Joel's story (epiphany bridge, zero offer) ───────────────
@@ -191,7 +191,7 @@ const day4 = {
     p(`You have already done that part. Your Blueprint is sitting in your inbox right now. <a href="${BLUEPRINT_URL}" style="color:${PALETTE.accentClay};font-weight:700;">(Or grab a fresh copy here.)</a>`),
     p('The next step, actually building a plan around your trigger instead of managing it alone, is something I built specifically for this. I will show you in my next note.'),
     signoff(),
-    p('P.S. If any part of her story sounded familiar, that is not a coincidence. That is the whole reason I do this.'),
+    p('P.S. If any part of her story sounded like yours, reply with the word ME. That is all. I will know what it means, and it is the whole reason I do this.'),
   ].join(''),
   textBody: (ctx) => `I still remember her face.
 
@@ -213,7 +213,7 @@ The next step, actually building a plan around your trigger instead of managing 
 
 ${SIGNOFF_TEXT}
 
-P.S. If any part of her story sounded familiar, that is not a coincidence. That is the whole reason I do this.`,
+P.S. If any part of her story sounded like yours, reply with the word ME. That is all. I will know what it means, and it is the whole reason I do this.`,
 };
 
 // ─── DAY 6 — Introduce the $17 Reset Kit (first offer) ────────────────
@@ -263,6 +263,39 @@ ${SIGNOFF_TEXT}
 
 P.S. You do not need to have this all figured out today. Even one trigger, handled well, changes more than people expect.`;
   },
+  // Martell A4: same-day evening resend for anyone still in 'lead' state
+  // (i.e. has not purchased). Swapped subject + short body, same single CTA.
+  resend: {
+    afterHours: 8,
+    windowHours: 30,
+    subject: (ctx) => (ctx.firstName ? `Left this open for you, ${ctx.firstName}` : 'Left this open for you'),
+    preheader: 'The $17 starting point from this morning, in case the day ran off with you.',
+    htmlBody: (ctx) => {
+      const name = triggerNameOf(ctx);
+      return [
+        p('Quick one, because days have a way of eating emails.'),
+        p('Earlier today I sent you the note about the <strong>BraveWorks BP Reset Kit</strong>. Short version: your Blueprint told you the what. The kit is the day-by-day how, for your exact trigger, for $17.'),
+        name ? p(`Yours is <strong>${name}</strong>. The kit picks up exactly there.`) : p('It picks up exactly where your quiz result left off.'),
+        ctaButton('Get the BP Reset Kit, $17', kitUrl(ctx)),
+        signoff(),
+        p('P.S. If today was not the day, that is fine. It will still be here tomorrow.'),
+      ].join('');
+    },
+    textBody: (ctx) => {
+      const name = triggerNameOf(ctx);
+      return `Quick one, because days have a way of eating emails.
+
+Earlier today I sent you the note about the BraveWorks BP Reset Kit. Short version: your Blueprint told you the what. The kit is the day-by-day how, for your exact trigger, for $17.
+
+${name ? `Yours is ${name}. The kit picks up exactly there.` : 'It picks up exactly where your quiz result left off.'}
+
+Get the BP Reset Kit, $17: ${kitUrl(ctx)}
+
+${SIGNOFF_TEXT}
+
+P.S. If today was not the day, that is fine. It will still be here tomorrow.`;
+    },
+  },
 };
 
 // ─── DAY 9 — The other 4 triggers + gentle second ask ─────────────────
@@ -307,6 +340,30 @@ One trigger at a time. That is not just a sign-off. It is the whole method.
 Joel Polley, RN
 
 P.S. No rush on any of this. Slow and real beats fast and abandoned, every time.`;
+  },
+  resend: {
+    afterHours: 8,
+    windowHours: 30,
+    subject: 'Circling back once (then I will drop it)',
+    preheader: 'This morning’s note about the second trigger, in case it slipped past.',
+    htmlBody: (ctx) => [
+      p('One more pass on this morning’s note, then I will leave it alone.'),
+      p('The short version: your loudest trigger almost never works alone. There is usually a quieter second one stacked underneath it, and your Blueprint already names all 5.'),
+      p('If you want the day-by-day plan for your #1, it is still $17 and still here:'),
+      ctaButton('Get the BP Reset Kit, $17', kitUrl(ctx)),
+      signoff(),
+      p('P.S. Either way, read past your own trigger in the Blueprint tonight. Three minutes. You will learn something about yourself.'),
+    ].join(''),
+    textBody: (ctx) => `One more pass on this morning's note, then I will leave it alone.
+
+The short version: your loudest trigger almost never works alone. There is usually a quieter second one stacked underneath it, and your Blueprint already names all 5.
+
+If you want the day-by-day plan for your #1, it is still $17 and still here:
+${kitUrl(ctx)}
+
+${SIGNOFF_TEXT}
+
+P.S. Either way, read past your own trigger in the Blueprint tonight. Three minutes. You will learn something about yourself.`,
   },
 };
 
@@ -408,7 +465,7 @@ P.S. You will keep hearing from me after this, just less often, and usually beca
 // scores, paidTier, caseReview, email, unsubUrl }; buildEmail appends the
 // compliance footer + shell.
 function wrap(day) {
-  return {
+  const wrapped = {
     subject: day.subject,
     htmlBody: (ctx) =>
       buildEmail({
@@ -425,6 +482,31 @@ function wrap(day) {
         unsubUrl: ctx.unsubUrl,
       }).text,
   };
+  // 2026-07-20: optional Martell-A4 resend variant. The engine sends this to
+  // records whose first send is afterHours..windowHours old and who are still
+  // in state (non-buyers), once, flagged `${sentFlag}Resent`.
+  if (day.resend) {
+    wrapped.resend = {
+      afterHours: day.resend.afterHours,
+      windowHours: day.resend.windowHours,
+      subject: day.resend.subject,
+      htmlBody: (ctx) =>
+        buildEmail({
+          preheader: day.resend.preheader || '',
+          bodyHtml: day.resend.htmlBody(ctx),
+          bodyText: day.resend.textBody(ctx),
+          unsubUrl: ctx.unsubUrl,
+        }).html,
+      textBody: (ctx) =>
+        buildEmail({
+          preheader: day.resend.preheader || '',
+          bodyHtml: day.resend.htmlBody(ctx),
+          bodyText: day.resend.textBody(ctx),
+          unsubUrl: ctx.unsubUrl,
+        }).text,
+    };
+  }
+  return wrapped;
 }
 
 export const LEAD_DAYS = {

@@ -81,7 +81,7 @@ export async function runStateCron({
 
   const MGET_BATCH = 100;
   const summary = {
-    label, state, scanned: 0, inState: 0, sentByDay: {},
+    label, state, scanned: 0, inState: 0, sentByDay: {}, resentByDay: {},
     skippedExcluded: 0, skippedWrongState: 0, skippedNoMatchingDay: 0,
     skippedAlreadySent: 0, skippedNoEnteredAt: 0, errors: 0,
   };
@@ -144,14 +144,40 @@ export async function runStateCron({
             }
           }
         }
+
+        // 2026-07-20 Martell A4 resend pass: a day may declare `.resend`
+        // ({ subject, htmlBody, textBody, afterHours?, windowHours? }). When
+        // the normal pass has nothing to send for this record, look for a
+        // resendable day whose first send happened afterHours..windowHours
+        // ago and re-send the swapped-subject variant ONCE. The record's
+        // state filter above means anyone who purchased (state flip) or
+        // unsubscribed never receives a resend.
+        let isResend = false;
+        let flagName = email && !sub[sentFlag(sendDay)] ? sentFlag(sendDay) : null;
+        if (!flagName) {
+          if (email) summary.skippedAlreadySent++;
+          email = null;
+          for (const dStr of Object.keys(daysMap)) {
+            const d = Number(dStr);
+            const dayEmail = daysMap[d];
+            if (!dayEmail.resend) continue;
+            const firstFlag = sentFlag(d);
+            if (!sub[firstFlag] || sub[`${firstFlag}Resent`]) continue;
+            const sentAtIso = sub[`${firstFlag}At`];
+            if (!sentAtIso) continue;
+            const hrsSince = (Date.now() - new Date(sentAtIso).getTime()) / 3600000;
+            const after = dayEmail.resend.afterHours ?? 8;
+            const windowH = dayEmail.resend.windowHours ?? 30;
+            if (hrsSince < after || hrsSince > windowH) continue;
+            email = dayEmail.resend;
+            flagName = `${firstFlag}Resent`;
+            sendDay = d;
+            isResend = true;
+            break;
+          }
+        }
         if (!email) {
           summary.skippedNoMatchingDay++;
-          continue;
-        }
-
-        const flagName = sentFlag(sendDay);
-        if (sub[flagName]) {
-          summary.skippedAlreadySent++;
           continue;
         }
 
@@ -191,7 +217,7 @@ export async function runStateCron({
         const subject = typeof email.subject === 'function' ? email.subject(ctx) : email.subject;
 
         if (DRY_RUN) {
-          console.log(`[DRY] ${label}: would send Day ${sendDay} to ${sub.email} — "${subject}"`);
+          console.log(`[DRY] ${label}: would ${isResend ? 'RESEND' : 'send'} Day ${sendDay} to ${sub.email} — "${subject}"`);
         } else {
           await resend.emails.send({
             from, to: sub.email, replyTo,
@@ -215,7 +241,11 @@ export async function runStateCron({
           });
         }
 
-        summary.sentByDay[sendDay] = (summary.sentByDay[sendDay] || 0) + 1;
+        if (isResend) {
+          summary.resentByDay[sendDay] = (summary.resentByDay[sendDay] || 0) + 1;
+        } else {
+          summary.sentByDay[sendDay] = (summary.sentByDay[sendDay] || 0) + 1;
+        }
         await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
       } catch (err) {
         summary.errors++;

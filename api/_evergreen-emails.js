@@ -39,12 +39,12 @@ function standingPSHtml(audience) {
   if (audience === 'buyer') {
     return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, the one door past the kit is the <a href="${SPRINT_URL}" style="color:#B85A36;font-weight:700;">30-Day Sprint</a>. I read your case myself, build your next 30 days in order, and we walk it through on a 1:1 call. I take 5 a month.</p>`;
   }
-  return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, your next step is the <a href="${KIT_URL}" style="color:#B85A36;font-weight:700;">$17 BP Reset Kit</a>, the 10-day plan built for your loudest trigger. No rush. It is here when you want it.</p>`;
+  return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, your next step is here: <a href="${KIT_URL}" style="color:#B85A36;font-weight:700;">Get the BP Reset Kit, $17</a>. The 10-day plan built for your loudest trigger. No rush. It is here when you want it.</p>`;
 }
 function standingPSText(audience) {
   if (audience === 'sprint') return `P.S. Whenever you are ready, there is one more room: my 90-day women's coaching group, Life Beyond the Numbers (${COACHING_URL}). And the daily tea, Steady, is here (${TEA_URL}).`;
   if (audience === 'buyer') return `P.S. Whenever you are ready, the one door past the kit is the 30-Day Sprint (${SPRINT_URL}). I read your case myself, build your next 30 days in order, and we walk it through on a 1:1 call. I take 5 a month.`;
-  return `P.S. Whenever you are ready, your next step is the $17 BP Reset Kit (${KIT_URL}), the 10-day plan built for your loudest trigger. No rush.`;
+  return `P.S. Whenever you are ready, your next step is here: Get the BP Reset Kit, $17 (${KIT_URL}). The 10-day plan built for your loudest trigger. No rush.`;
 }
 
 // Each entry: { key, subject, preview, pitch (bool), build(ctx) -> {bodyHtml, bodyText} }
