@@ -153,6 +153,19 @@ const TRIANGLE_CARDS = [
   },
 ];
 
+// Approved, permission-granted testimonials ONLY. Source of truth:
+// bpquiz-site/docs/testimonials.md. Every entry must have documented consent
+// and carries "Results not typical." NEVER add a quote here without a matching
+// GRANTED entry in that ledger. Joel's additional client wins get appended as
+// he confirms permission for each.
+const TESTIMONIALS = [
+  {
+    quote: 'My blood pressure is back to normal, 124/80. Reduced salt, started little exercises. I had a trigger that elevated it, and since then things have got back to normal.',
+    name: 'BraveWorks reader',
+    note: 'Shared with permission · results not typical',
+  },
+];
+
 const METHOD_STEPS = [
   { letter: 'B', title: 'Build Your Baseline', body: 'See what your days really look like, without shame, so you stop trying to fix everything and know where to begin.' },
   { letter: 'E', title: 'Examine Your Inputs', body: 'Find the stress, food, sleep, and routine patterns that keep pulling you backward.', strong: 'Clarity replaces guessing.' },
@@ -580,6 +593,23 @@ export default function BeThereLandingPage() {
         .lbn .apply-section .lbn-btn{background:var(--lclay);}
         .lbn .apply-section .lbn-btn:hover{background:var(--gold-deep);}
 
+        /* trust bar (hero social proof) */
+        .lbn .trust-bar{display:flex;align-items:center;gap:20px;margin-top:22px;flex-wrap:wrap;}
+        .lbn .trust-stat{display:flex;flex-direction:column;line-height:1.15;}
+        .lbn .trust-stat .tnum{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:26px;color:var(--gold-deep);}
+        .lbn .trust-stat .tlbl{font-size:12.5px;color:var(--lnk-soft);letter-spacing:.01em;}
+        .lbn .trust-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.5;}
+        /* testimonials */
+        .lbn .wins{padding:92px 0;background:linear-gradient(180deg,#FBF9F4,#F6F2E9);}
+        .lbn .wins .eyebrow,.lbn .wins h2{text-align:center;}
+        .lbn .wins h2{font-size:clamp(26px,3.4vw,36px);margin:6px auto 44px;max-width:760px;}
+        .lbn .wins-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;max-width:960px;margin:0 auto;}
+        .lbn .win-card{position:relative;background:#fff;border:1px solid rgba(46,74,71,.09);border-top:3px solid var(--gold);border-radius:18px;padding:34px 28px 26px;box-shadow:0 10px 30px rgba(70,60,35,.06);}
+        .lbn .win-mark{position:absolute;top:8px;left:20px;font-family:'Fraunces',Georgia,serif;font-size:64px;line-height:1;color:var(--gold);opacity:.35;}
+        .lbn .win-card blockquote{margin:0 0 18px;font-size:17px;line-height:1.6;color:var(--lnk);position:relative;z-index:1;}
+        .lbn .win-card figcaption{display:flex;flex-direction:column;border-top:1px solid #EEE7D8;padding-top:12px;}
+        .lbn .win-name{font-weight:600;color:var(--lnk);font-size:14.5px;}
+        .lbn .win-note{font-size:12px;color:var(--lnk-soft);font-style:italic;}
         /* faq */
         .lbn .faq{padding:96px 0;}
         .lbn .faq h2{text-align:center;font-size:clamp(28px,3.6vw,38px);margin-bottom:50px;}
@@ -689,6 +719,11 @@ export default function BeThereLandingPage() {
               to live your life again.
             </p>
             <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
+            <div className="trust-bar" data-rv>
+              <div className="trust-stat"><span className="tnum">550,000+</span><span className="tlbl">following Joel across platforms</span></div>
+              <div className="trust-dot" aria-hidden="true" />
+              <div className="trust-stat"><span className="tnum">1,300+</span><span className="tlbl">women inside the community</span></div>
+            </div>
             <p className="disclaimer">
               This is coaching, not medical treatment. Keep taking your medicine unless your
               doctor tells you to stop.
@@ -884,6 +919,31 @@ export default function BeThereLandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ===== TESTIMONIALS ===== */}
+      {/* Renders ONLY real, permission-granted wins from docs/testimonials.md.
+          Empty array -> section is skipped, never a "coming soon" placeholder,
+          never an invented quote. Grows as Joel confirms consent for more. */}
+      {TESTIMONIALS.length > 0 && (
+        <section className="wins">
+          <div className="wrap">
+            <span className="eyebrow" data-rv>In Their Words</span>
+            <h2 data-rv>Women Who Stopped Letting the Number Run the Room.</h2>
+            <div className="wins-grid" data-rv data-rv-child>
+              {TESTIMONIALS.map((t, i) => (
+                <figure className="win-card" key={i}>
+                  <div className="win-mark" aria-hidden="true">&ldquo;</div>
+                  <blockquote>{t.quote}</blockquote>
+                  <figcaption>
+                    <span className="win-name">{t.name}</span>
+                    <span className="win-note">{t.note}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ===== MEET JOEL ===== */}
       <section className="joel">
