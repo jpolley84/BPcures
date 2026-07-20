@@ -7,6 +7,7 @@ import {
   ArrowUp,
   BarChart3,
   Calendar,
+  Check,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -143,28 +144,45 @@ function RevenueTile({ stripe }) {
       </Tile>
     );
   }
-  const todayDelta = stripe.todayCustomers || 0;
+  // The headline is TODAY and it resets at midnight ET. The rolling total is
+  // demoted to a footnote: a big number that silently spans an unknown window
+  // is how you end up feeling fine on a bad day. History lives in Trends.
+  const todayOrders = stripe.todayOrders ?? stripe.todayCustomers ?? 0;
   const todayMoney = stripe.todayRevenue || '$0.00';
-  const trendUp = todayDelta > 0;
+  const aov = stripe.todayAovCents
+    ? `$${(stripe.todayAovCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
+    : null;
   return (
-    <Tile title="Revenue (Stripe live)">
+    <Tile title="Today (resets midnight ET)">
       <div className="flex items-baseline justify-between">
         <div
-          className="text-4xl text-stone-100 leading-none"
+          className={`text-4xl leading-none ${todayOrders > 0 ? 'text-stone-100' : 'text-stone-500'}`}
           style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}
         >
-          {stripe.revenue}
+          {todayMoney}
         </div>
         {Array.isArray(stripe.sparkline7d) && stripe.sparkline7d.some((v) => v > 0) && (
           <Sparkline values={stripe.sparkline7d} width={90} height={28} stroke="#10b981" />
         )}
       </div>
       <div className="text-sm text-stone-400 mt-2">
-        {stripe.customers} customers
+        {todayOrders} {todayOrders === 1 ? 'order' : 'orders'} today
+        {aov && <span className="text-stone-500"> · {aov} avg</span>}
       </div>
-      <div className={`text-xs mt-2 flex items-center gap-1 ${trendUp ? 'text-emerald-400' : 'text-stone-500'}`}>
-        {trendUp ? <ArrowUp size={12} /> : <ArrowDown size={12} className="opacity-30" />}
-        {todayDelta} today (+{todayMoney})
+
+      {Array.isArray(stripe.todayProducts) && stripe.todayProducts.length > 0 && (
+        <div className="mt-2 space-y-0.5">
+          {stripe.todayProducts.slice(0, 5).map((p) => (
+            <div key={p.label} className="flex items-center justify-between text-[11px] text-stone-500">
+              <span>{p.count} x {p.label}</span>
+              <span className="font-mono">${(p.cents / 100).toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="text-[11px] text-stone-600 mt-2 pt-2 border-t border-stone-700/40">
+        {stripe.revenue} across last {stripe.customers} charges · see Trends for 7d and 30d
       </div>
     </Tile>
   );
@@ -467,6 +485,302 @@ function ActivityStream({ events }) {
         })}
       </div>
     </Tile>
+  );
+}
+
+// ─── Todos ────────────────────────────────────────────────────────────
+// The running action list. Agents append to it (append-only, see
+// api/ops-todos.js); Joel is the only one who can tick items off.
+const URGENCY_STYLE = {
+  critical: { dot: 'bg-rose-500', text: 'text-rose-300', ring: 'border-rose-800/60', label: 'Critical' },
+  high: { dot: 'bg-amber-500', text: 'text-amber-300', ring: 'border-amber-800/60', label: 'High' },
+  normal: { dot: 'bg-sky-500', text: 'text-sky-300', ring: 'border-sky-800/50', label: 'Normal' },
+  low: { dot: 'bg-stone-500', text: 'text-stone-400', ring: 'border-stone-700/60', label: 'Low' },
+};
+
+function TodosTile({ passcode, refreshNonce }) {
+  const [todos, setTodos] = useState([]);
+  const [counts, setCounts] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showDone, setShowDone] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newUrgency, setNewUrgency] = useState('normal');
+  const [busyId, setBusyId] = useState(null);
+
+  const load = useCallback(async () => {
+    try {
+      const r = await fetch('/api/ops-todos', { headers: { 'X-Ops-Pass': passcode } });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      setTodos(j.todos || []);
+      setCounts(j.counts || null);
+      setError('');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [passcode]);
+
+  useEffect(() => { load(); }, [load, refreshNonce]);
+
+  async function toggle(t) {
+    setBusyId(t.id);
+    // Optimistic: ticking a box should feel instant, and load() reconciles.
+    setTodos((prev) => prev.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)));
+    try {
+      await fetch('/api/ops-todos', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-Ops-Pass': passcode },
+        body: JSON.stringify({ id: t.id, done: !t.done }),
+      });
+      await load();
+    } catch (e) {
+      setError(e.message);
+      await load();
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function add(e) {
+    e.preventDefault();
+    const title = newTitle.trim();
+    if (!title) return;
+    setNewTitle('');
+    await fetch('/api/ops-todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Ops-Pass': passcode },
+      body: JSON.stringify({ title, urgency: newUrgency, source: 'joel' }),
+    });
+    await load();
+  }
+
+  async function clearDone() {
+    await fetch('/api/ops-todos?clearDone=1', { method: 'DELETE', headers: { 'X-Ops-Pass': passcode } });
+    await load();
+  }
+
+  const visible = showDone ? todos : todos.filter((t) => !t.done);
+  const title = counts
+    ? `Action list (${counts.open} open${counts.critical ? ` · ${counts.critical} critical` : ''})`
+    : 'Action list';
+
+  return (
+    <Tile title={title}>
+      <form onSubmit={add} className="flex gap-2 mb-3">
+        <input
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          placeholder="Add an item..."
+          className="flex-1 bg-stone-800/70 border border-stone-700 rounded-md px-2.5 py-1.5 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-stone-500"
+        />
+        <select
+          value={newUrgency}
+          onChange={(e) => setNewUrgency(e.target.value)}
+          className="bg-stone-800/70 border border-stone-700 rounded-md px-2 py-1.5 text-xs text-stone-300 focus:outline-none"
+        >
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="normal">Normal</option>
+          <option value="low">Low</option>
+        </select>
+        <button type="submit" className="px-3 py-1.5 text-xs rounded-md bg-stone-700 hover:bg-stone-600 text-stone-100 transition-colors">
+          Add
+        </button>
+      </form>
+
+      {loading && <div className="text-xs text-stone-500">Loading...</div>}
+      {error && <div className="text-xs text-amber-400 mb-2">{error}</div>}
+
+      {!loading && visible.length === 0 && (
+        <div className="text-stone-500 text-sm italic">
+          {showDone ? 'Nothing here yet.' : 'Nothing open. Agents will raise items here as they find them.'}
+        </div>
+      )}
+
+      <div className="max-h-96 overflow-y-auto pr-1 space-y-1 -mx-1 px-1">
+        {visible.map((t) => {
+          const u = URGENCY_STYLE[t.urgency] || URGENCY_STYLE.normal;
+          return (
+            <div
+              key={t.id}
+              className={`flex items-start gap-2.5 py-2 px-2 rounded-md border ${u.ring} ${t.done ? 'opacity-45' : 'bg-stone-800/30'}`}
+            >
+              <button
+                onClick={() => toggle(t)}
+                disabled={busyId === t.id}
+                aria-label={t.done ? 'Reopen' : 'Mark done'}
+                className={`mt-0.5 w-4 h-4 shrink-0 rounded border transition-colors ${
+                  t.done ? 'bg-emerald-600 border-emerald-500' : 'border-stone-500 hover:border-stone-300'
+                }`}
+              >
+                {t.done && <Check size={12} className="text-white mx-auto" />}
+              </button>
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-2 ${u.dot}`} />
+              <div className="flex-1 min-w-0">
+                <div className={`text-xs leading-snug ${t.done ? 'line-through text-stone-500' : 'text-stone-200'}`}>
+                  {t.title}
+                </div>
+                {t.detail && <div className="text-[11px] text-stone-500 mt-0.5 leading-snug">{t.detail}</div>}
+                <div className="flex items-center gap-2 mt-1 text-[10px] text-stone-600">
+                  <span className={u.text}>{u.label}</span>
+                  {t.source && <span>· {t.source}</span>}
+                  {t.raisedCount > 1 && <span className="text-amber-500">· raised {t.raisedCount}x</span>}
+                  {t.createdAt && <span>· {timeAgo(t.createdAt)}</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-3 mt-3 pt-2 border-t border-stone-700/40 text-[10px] text-stone-500">
+        <button onClick={() => setShowDone((s) => !s)} className="hover:text-stone-300 transition-colors">
+          {showDone ? 'Hide completed' : `Show completed${counts?.done ? ` (${counts.done})` : ''}`}
+        </button>
+        {showDone && counts?.done > 0 && (
+          <button onClick={clearDone} className="hover:text-rose-400 transition-colors">
+            Clear completed
+          </button>
+        )}
+      </div>
+    </Tile>
+  );
+}
+
+// ─── Trends tab ───────────────────────────────────────────────────────
+// Deliberately separate from Overview: Overview is "today, reset at midnight",
+// this is "is today normal". Mixing them is how a daily number quietly becomes
+// a rolling number.
+function MiniBars({ series, valueOf, labelOf, accent = 'bg-emerald-500' }) {
+  const max = Math.max(1, ...series.map(valueOf));
+  return (
+    <div className="flex items-end gap-[3px] h-28">
+      {series.map((d, i) => {
+        const v = valueOf(d);
+        const pct = Math.round((v / max) * 100);
+        return (
+          <div key={i} className="flex-1 group relative flex flex-col justify-end h-full">
+            <div
+              className={`${accent} rounded-sm transition-all group-hover:opacity-100 opacity-80`}
+              style={{ height: `${Math.max(pct, v > 0 ? 3 : 1)}%` }}
+            />
+            <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block whitespace-nowrap bg-stone-950 border border-stone-700 rounded px-1.5 py-0.5 text-[10px] text-stone-200 z-10">
+              {labelOf(d)}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function TrendsTab({ passcode, refreshNonce }) {
+  const [days, setDays] = useState(7);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    fetch(`/api/ops-trends?days=${days}`, { headers: { 'X-Ops-Pass': passcode } })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((j) => { if (alive) { setData(j); setError(''); } })
+      .catch((e) => { if (alive) setError(e.message); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [days, passcode, refreshNonce]);
+
+  const rev = data?.revenue;
+  const traf = data?.traffic;
+  const money = (c) => `$${((c || 0) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+  return (
+    <>
+      <div className="flex items-center gap-2 mb-4">
+        {[7, 30].map((d) => (
+          <button
+            key={d}
+            onClick={() => setDays(d)}
+            className={`px-3 py-1.5 text-xs rounded-md border transition-colors ${
+              days === d
+                ? 'bg-stone-700 border-stone-600 text-stone-100'
+                : 'bg-stone-800/40 border-stone-700/60 text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            Last {d} days
+          </button>
+        ))}
+        {data?.timezone && <span className="text-[10px] text-stone-600 ml-2">days start midnight {data.timezone}</span>}
+      </div>
+
+      {loading && <div className="text-xs text-stone-500 mb-4">Loading...</div>}
+      {error && <div className="text-xs text-amber-400 mb-4">Error: {error}</div>}
+
+      {rev && !rev.error && (
+        <>
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <Tile title={`Revenue (${days}d)`}><div className="text-2xl text-stone-100">{money(rev.totalCents)}</div></Tile>
+            <Tile title="Orders"><div className="text-2xl text-stone-100">{rev.totalOrders}</div></Tile>
+            <Tile title="Avg / day"><div className="text-2xl text-stone-100">{money(rev.avgPerDayCents)}</div></Tile>
+            <Tile title="AOV"><div className="text-2xl text-stone-100">{money(rev.aov)}</div></Tile>
+          </section>
+
+          <section className="mb-4">
+            <Tile title={`Revenue by day${rev.bestDay ? ` · best ${rev.bestDay.date} ${money(rev.bestDay.cents)}` : ''}`}>
+              <MiniBars
+                series={rev.series}
+                valueOf={(d) => d.cents}
+                labelOf={(d) => `${d.date} · ${money(d.cents)} · ${d.orders} orders`}
+              />
+            </Tile>
+          </section>
+
+          {rev.products?.length > 0 && (
+            <section className="mb-4">
+              <Tile title={`What sold (${days}d)`}>
+                <div className="space-y-1">
+                  {rev.products.map((p) => (
+                    <div key={p.label} className="flex items-center justify-between text-xs py-1 border-b border-stone-700/30 last:border-0">
+                      <span className="text-stone-300">{p.count} x {p.label}</span>
+                      <span className="text-stone-400 font-mono">{money(p.cents)}</span>
+                    </div>
+                  ))}
+                </div>
+              </Tile>
+            </section>
+          )}
+        </>
+      )}
+
+      {rev?.error && <div className="text-xs text-amber-400 mb-4">Revenue unavailable: {rev.error}</div>}
+
+      <section className="mb-4">
+        <Tile title={`Traffic by day (${days}d)`}>
+          {traf && !traf.error ? (
+            <>
+              <div className="flex gap-6 mb-3 text-xs">
+                <span className="text-stone-400">Views <span className="text-stone-100">{traf.totalViews?.toLocaleString('en-US')}</span></span>
+                <span className="text-stone-400">Visitors <span className="text-stone-100">{traf.totalVisitors?.toLocaleString('en-US')}</span></span>
+              </div>
+              <MiniBars
+                series={traf.series}
+                valueOf={(d) => d.views}
+                labelOf={(d) => `${d.date} · ${d.views} views · ${d.visitors} visitors`}
+                accent="bg-sky-500"
+              />
+            </>
+          ) : (
+            <div className="text-xs text-stone-500 italic">
+              {traf?.why || traf?.error || 'Traffic unavailable.'}
+            </div>
+          )}
+        </Tile>
+      </section>
+    </>
   );
 }
 
@@ -1468,6 +1782,12 @@ export default function OpsDashboardPage() {
             label="Orders"
           />
           <TabButton
+            active={activeTab === 'trends'}
+            onClick={() => setActiveTab('trends')}
+            Icon={TrendingUp}
+            label="Trends"
+          />
+          <TabButton
             active={activeTab === 'traffic'}
             onClick={() => setActiveTab('traffic')}
             Icon={BarChart3}
@@ -1492,8 +1812,11 @@ export default function OpsDashboardPage() {
 
             {/* Zone 3 — action queue */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
-              <RepliesTile replies={state.replies} />
-              <JoelQueueTile items={state.joelQueue} />
+              <TodosTile passcode={passcode} refreshNonce={refreshNonce} />
+              <div className="space-y-3 sm:space-y-4">
+                <RepliesTile replies={state.replies} />
+                <JoelQueueTile items={state.joelQueue} />
+              </div>
             </section>
 
             {/* Zone 4 — activity */}
@@ -1502,6 +1825,8 @@ export default function OpsDashboardPage() {
             </section>
           </>
         )}
+
+        {activeTab === 'trends' && <TrendsTab passcode={passcode} refreshNonce={refreshNonce} />}
 
         {activeTab === 'orders' && <OrdersTab passcode={passcode} refreshNonce={refreshNonce} />}
 

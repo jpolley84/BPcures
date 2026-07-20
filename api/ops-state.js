@@ -19,6 +19,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+// Shared ET day boundaries so Overview ("today") and Trends (daily buckets)
+// can never disagree about where a day starts.
+import { etDayStartUnix, TZ } from './ops-trends.js';
 
 const FETCH_TIMEOUT_MS = 5000;
 
@@ -148,12 +151,14 @@ async function fetchStripe() {
     const succeeded = (data.data || []).filter((c) => c.status === 'succeeded' && !c.refunded);
     const totalCents = succeeded.reduce((s, c) => s + (c.amount || 0), 0);
 
-    // Today
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayUnix = Math.floor(todayStart.getTime() / 1000);
+    // Today — boundary is midnight America/New_York (Joel is in Louisville),
+    // NOT the server's local zone. Vercel functions run in UTC, so
+    // setHours(0,0,0,0) previously rolled the day over at 8pm ET and pushed
+    // evening sales onto "tomorrow".
+    const todayUnix = etDayStartUnix(0);
     const today = succeeded.filter((c) => c.created >= todayUnix);
     const todayCents = today.reduce((s, c) => s + (c.amount || 0), 0);
+    const todayOrders = today.length;
 
     // 7-day sparkline (cents per day, oldest → newest)
     const sparkline = [];
@@ -175,9 +180,25 @@ async function fetchStripe() {
       customers: succeeded.length,
       revenueCents: totalCents,
       revenue: `$${(totalCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-      todayCustomers: today.length,
+      todayCustomers: todayOrders,
+      todayOrders,
       todayRevenueCents: todayCents,
       todayRevenue: `$${(todayCents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+      todayAovCents: todayOrders ? Math.round(todayCents / todayOrders) : 0,
+      // Itemised so "today" is never just a total with no story behind it.
+      todayProducts: Object.entries(
+        today.reduce((acc, c) => {
+          const label = `$${((c.amount || 0) / 100).toFixed(2)}`;
+          acc[label] = acc[label] || { count: 0, cents: 0 };
+          acc[label].count += 1;
+          acc[label].cents += c.amount || 0;
+          return acc;
+        }, {}),
+      )
+        .map(([label, v]) => ({ label, ...v }))
+        .sort((a, b) => b.cents - a.cents),
+      dayStartsAt: new Date(todayUnix * 1000).toISOString(),
+      timezone: TZ,
       sparkline7d: sparkline,
     };
   } catch (e) {
