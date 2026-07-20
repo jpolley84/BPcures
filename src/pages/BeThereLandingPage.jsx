@@ -97,26 +97,26 @@ const PAYOFFS = [
   },
   {
     label: 'So You Can Go',
-    h: 'Book the trip without planning the whole vacation around what might go wrong.',
+    h: 'Book the trip without fear of what might go wrong.',
     p: 'Walk through the airport. Get on the cruise. Visit the children. Say yes to the weekend away, and feel like your life is still yours.',
   },
   {
     label: 'So You Can Show Up',
-    h: 'Bring your full self back to your business, your purpose, and the work you still want to do.',
-    p: 'Stop hiding because you feel tired, worried, or unlike yourself. Turn the camera on. Lead the room. Make plans beyond the next scare.',
+    h: 'Bring your full self back to your business, your purpose, and your work.',
+    p: 'Stop hiding because you feel tired or worried. Turn the camera on. Lead the room. Make plans past the next scare.',
   },
   {
     label: 'So You Can Feel Like You Again',
     h: 'Wake up with more energy, more trust in yourself, and less fear of your own body.',
-    p: 'Enjoy your food without guilt. Move without punishment. Look in the mirror and see a woman rebuilding, not waiting for something bad to happen.',
+    p: 'Enjoy your food without guilt. Move without punishment. Look in the mirror and see a woman rebuilding, not a woman waiting for bad news.',
   },
 ];
 
 const ROOT_LIST = [
   'Years of stress that never truly turned off.',
-  'Food choices built around survival, convenience, family, and habit.',
+  'Food choices built around getting through the day, not health.',
   'Sleep that keeps getting pushed to the bottom of the list.',
-  'Plans so strict that one hard day made the whole thing collapse.',
+  'Plans so strict that one hard day broke the whole thing.',
 ];
 
 const NOT_LIST = [
@@ -143,12 +143,12 @@ const TRIANGLE_CARDS = [
   },
   {
     h: 'Plate',
-    p: 'The salt, sugar, drinks, sauces, portions, and everyday food patterns that add up quietly. Not because you are careless, but because nobody showed you a realistic way through.',
+    p: 'The salt, sugar, drinks, sauces, and portions that add up quietly. Not because you are careless. Nobody ever showed you a way that works in real life.',
     so: 'So you can enjoy food and still feel proud of how you are caring for yourself.',
   },
   {
     h: 'Pattern',
-    p: 'The way you sleep, move, monitor, recover, restart, and keep promises to yourself when life gets busy.',
+    p: 'The way you sleep, move, check your numbers, recover, and restart when life gets busy.',
     so: 'So healthy stops being something you visit and becomes the way you live.',
   },
 ];
@@ -167,13 +167,13 @@ const TESTIMONIALS = [
 ];
 
 const METHOD_STEPS = [
-  { letter: 'B', title: 'Build Your Baseline', body: 'See what your days really look like, without shame, so you stop trying to fix everything and know where to begin.' },
-  { letter: 'E', title: 'Examine Your Inputs', body: 'Find the stress, food, sleep, and routine patterns that keep pulling you backward.', strong: 'Clarity replaces guessing.' },
-  { letter: 'T', title: 'Transform the Small Things', body: 'Make simple shifts that work with your family, your budget, your body, and your week.', strong: 'Small enough to start. Strong enough to matter.' },
-  { letter: 'H', title: 'Hold the Pattern', body: 'Learn how to keep going when motivation leaves, and how to restart fast when life gets messy.' },
-  { letter: 'E', title: 'Equip Yourself', body: 'Understand your patterns, track what matters, and stop walking through your health feeling confused and powerless.' },
-  { letter: 'R', title: 'Reclaim Your Confidence', body: 'Stop treating every reading, meal, or hard day like a verdict. Begin seeing yourself as a woman who knows how to care for herself.' },
-  { letter: 'E', title: 'Extend the Life You Love', body: 'Build your travel plan, holiday plan, hard-week plan, and life-after-the-program plan, so this becomes your new normal.' },
+  { letter: 'B', title: 'Build Your Baseline', body: 'See what your days really look like, without shame. You stop trying to fix everything and learn where to begin.' },
+  { letter: 'E', title: 'Examine Your Inputs', body: 'Find the stress, food, sleep, and routine patterns that keep pulling you backward.', strong: 'Clear answers replace guessing.' },
+  { letter: 'T', title: 'Transform the Small Things', body: 'Make simple changes that work with your family, your budget, your body, and your week.', strong: 'Small enough to start. Strong enough to matter.' },
+  { letter: 'H', title: 'Hold the Pattern', body: 'Learn how to keep going when the excitement fades, and how to restart fast when life gets messy.' },
+  { letter: 'E', title: 'Equip Yourself', body: 'Learn your patterns. Track what matters. Stop feeling confused about your own health.' },
+  { letter: 'R', title: 'Reclaim Your Confidence', body: 'Stop treating every reading or hard day like a final grade. See yourself as a woman who knows how to care for herself.' },
+  { letter: 'E', title: 'Extend the Life You Love', body: 'Build your travel plan, holiday plan, and hard-week plan, so this becomes your new normal.' },
 ];
 
 const POSSIBILITIES = [
@@ -207,20 +207,20 @@ const FOR_NO = [
 ];
 
 const APPLY_STEPS = [
-  'Complete the qualification questions',
-  'Receive calendar access if the program looks like a fit',
-  'Talk with Joel about your case and everything the program involves',
+  'Answer a few short questions',
+  'If it looks like a fit, you get a link to book a call',
+  'Talk with Joel about your case and the program',
   'Use the call to make a clear decision',
 ];
 
 const FAQS = [
   {
     q: 'What if I already know what I should be doing?',
-    a: 'Knowing is not the same as having a plan that survives work, family, stress, travel, and hard weeks. This is about turning what you know into what you live.',
+    a: 'Knowing is not the same as living it. Work, family, stress, and hard weeks break plans. This program turns what you know into what you live.',
   },
   {
-    q: 'What if I have tried before and could not stay consistent?',
-    a: 'This was built for the woman who has started, stopped, restarted, and blamed herself. You begin with support, simpler shifts, and a plan for how to bounce back.',
+    q: 'What if I have tried before and could not stay with it?',
+    a: 'This was built for the woman who started, stopped, and blamed herself. You begin with support, smaller steps, and a plan for how to bounce back.',
   },
   {
     q: 'Will I have to give up all the food I love?',
@@ -240,11 +240,11 @@ const FAQS = [
   },
   {
     q: 'Why do I have to apply?',
-    a: 'Because this is personal work and it is not the right fit for every woman. The application helps both sides see whether your goals, readiness, and desired support match the experience.',
+    a: 'Because this is personal work, and it is not the right fit for every woman. The application helps us both see if this is right for you.',
   },
   {
-    q: 'When will I see the investment?',
-    a: 'On your call with Joel. If your application looks like a fit, you receive calendar access, and Joel goes over everything the program involves, including the investment and payment options, so you can make a clear decision together.',
+    q: 'When will I see the cost?',
+    a: 'On your call with Joel. If your application fits, you book a call. Joel walks you through the whole program, the cost, and the payment options. Then you decide together.',
   },
   {
     q: 'Can I use HSA or FSA money?',
@@ -395,13 +395,15 @@ export default function BeThereLandingPage() {
         .lbn .final-banner{display:block;width:100%;border-radius:22px;margin:0 0 50px;box-shadow:0 18px 44px rgba(31,54,52,.18);border:1px solid rgba(201,164,76,.35);}
         .lbn .apply-banner{display:block;width:100%;border-radius:18px;margin:0 0 44px;border:1px solid rgba(201,164,76,.4);}
 
-        /* hero */
-        .lbn .hero{position:relative;padding:84px 0 76px;overflow:hidden;}
-        .lbn .hero-pulse{position:absolute;top:0;left:0;right:0;width:100%;opacity:0.45;pointer-events:none;}
-        .lbn .pulse-ring{animation:lbnBreathe 6s ease-in-out infinite;transform-origin:500px 80px;}
-        @keyframes lbnBreathe{0%,100%{opacity:0.35;transform:scale(1);}50%{opacity:0.6;transform:scale(1.04);}}
-        .lbn .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:56px;align-items:center;position:relative;z-index:2;}
-        .lbn .hero h1{font-size:clamp(42px,6.4vw,72px);letter-spacing:-0.01em;margin-bottom:20px;}
+        /* hero: white band that blends seamlessly into the white studio photo.
+           Eyebrow + H1 sit in the photo's built-in white space on desktop;
+           below 840px the overlay stacks above the image. */
+        .lbn .hero{position:relative;padding:34px 0 64px;background:linear-gradient(180deg,#FFFFFF 0%,#FFFFFF 84%,var(--bg) 100%);}
+        .lbn .hero-banner{position:relative;}
+        .lbn .hero-banner img{display:block;width:100%;height:auto;border-radius:0;}
+        .lbn .hero-overlay{position:absolute;left:28px;top:50%;transform:translateY(-50%);max-width:56%;}
+        .lbn .hero-body{padding-top:26px;}
+        .lbn .hero h1{font-size:clamp(30px,4.6vw,54px);letter-spacing:-0.01em;margin-bottom:0;}
         .lbn .hero .tagline{font-family:var(--serif);font-style:italic;font-size:clamp(21px,2.6vw,28px);color:var(--lteal);margin:0 0 22px;}
         .lbn .hero p.sub{font-size:18.5px;color:var(--lnk-soft);max-width:640px;margin:0 0 18px;}
         .lbn .hero .headline2{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.6vw,27px);color:var(--lteal);max-width:650px;margin:26px 0 30px;line-height:1.35;}
@@ -668,13 +670,15 @@ export default function BeThereLandingPage() {
 
         @media(max-width:840px){
           .lbn{font-size:17px;}
-          .lbn .hero-grid,.lbn .night-grid,.lbn .root-grid,.lbn .group-grid{grid-template-columns:1fr;}
+          .lbn .hero-overlay{position:static;transform:none;max-width:100%;padding:0 0 18px;}
+          .lbn .hero-banner img{height:230px;object-fit:cover;object-position:right center;}
+          .lbn .night-grid,.lbn .root-grid,.lbn .group-grid{grid-template-columns:1fr;}
           .lbn .payoff-grid,.lbn .contrast-grid,.lbn .fw-grid,.lbn .inc-grid{grid-template-columns:1fr;}
           .lbn .tri-grid,.lbn .possibility-grid{grid-template-columns:1fr;}
           .lbn .joel-grid{grid-template-columns:1fr;text-align:center;}
           .lbn .joel-photo{margin:0 auto;}
           .lbn .vpanel{min-height:280px;}
-          .lbn .hero{padding:60px 0 50px;}
+          .lbn .hero{padding:22px 0 50px;}
           .lbn .night,.lbn .desire,.lbn .root,.lbn .contrast,.lbn .triangle,.lbn .method,.lbn .joel,.lbn .possible,.lbn .included,.lbn .group,.lbn .forwho,.lbn .apply-section,.lbn .faq,.lbn .final{padding-top:64px;padding-bottom:64px;}
           .lbn .stickybar{display:block;}
         }
@@ -693,45 +697,46 @@ export default function BeThereLandingPage() {
 
       {/* ===== HERO ===== */}
       <section className="hero" ref={heroRef}>
-        <svg className="hero-pulse" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true">
-          <circle className="pulse-ring" cx="500" cy="80" r="40" fill="none" stroke="#C9A44C" strokeWidth="1" />
-          <circle className="pulse-ring" cx="500" cy="80" r="90" fill="none" stroke="#8FA189" strokeWidth="1" style={{ animationDelay: '1s' }} />
-          <circle className="pulse-ring" cx="500" cy="80" r="150" fill="none" stroke="#DCE3D3" strokeWidth="1" style={{ animationDelay: '2s' }} />
-        </svg>
-        <div className="wrap hero-grid">
-          <div className="hero-stage">
+        <div className="wrap hero-banner">
+          <img
+            src="/coaching/hero-seated.jpg"
+            alt="Joel Polley, RN, seated in an armchair"
+            width="851"
+            height="315"
+            loading="eager"
+            fetchPriority="high"
+          />
+          <div className="hero-overlay hero-stage">
             <span className="eyebrow">For Women Over 40 Who Are Done Letting the Cuff Run Their Life</span>
             <h1>Your Blood-Pressure Reading Is Not Your Future.</h1>
-            <p className="tagline">Reclaim your health. Reclaim your confidence. Reclaim your life. Fully.</p>
-            <p className="sub">
-              You are not looking for one more warning, one more pill to add, one more food to
-              fear, or one more plan you cannot keep.
-            </p>
-            <p className="sub">
-              You want to understand what keeps pulling your health in the wrong direction, and
-              make simple shifts you can still live with next month, next year, and on the days
-              life gets hard.
-            </p>
-            <p className="headline2">
-              Life Beyond the Numbers&trade; is a 90-day root-cause wellness coaching experience
-              that helps you get underneath the stress, food patterns, sleep, movement, and daily
-              habits that keep pulling you backward. So you can feel stronger, steadier, and free
-              to live your life again.
-            </p>
-            <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
-            <div className="trust-bar" data-rv>
-              <div className="trust-stat"><span className="tnum">550,000+</span><span className="tlbl">following Joel across platforms</span></div>
-              <div className="trust-dot" aria-hidden="true" />
-              <div className="trust-stat"><span className="tnum">1,300+</span><span className="tlbl">women inside the community</span></div>
-            </div>
-            <p className="disclaimer">
-              This is coaching, not medical treatment. Keep taking your medicine unless your
-              doctor tells you to stop.
-            </p>
           </div>
-          <div className="vpanel photo">
-            <img src="/coaching/hero-joel.jpg" alt="Joel Polley, RN, walking a sunlit stone path" loading="eager" />
+        </div>
+        <div className="wrap hero-body hero-stage">
+          <p className="tagline">Reclaim your health. Reclaim your confidence. Reclaim your life. Fully.</p>
+          <p className="sub">
+            You are not looking for one more warning. Not one more pill. Not one more food to
+            fear. Not one more plan you cannot keep.
+          </p>
+          <p className="sub">
+            You want to know what keeps pulling your health the wrong way. And you want simple
+            changes you can keep, even on the hard days.
+          </p>
+          <p className="headline2">
+            Life Beyond the Numbers&trade; is a 90 day coaching program with Joel. Together you
+            find what is really behind your number: stress, food, sleep, movement, and daily
+            habits. Then you change it, one small step at a time. So you can feel strong,
+            steady, and free to live your life again.
+          </p>
+          <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
+          <div className="trust-bar" data-rv>
+            <div className="trust-stat"><span className="tnum">550,000+</span><span className="tlbl">following Joel across platforms</span></div>
+            <div className="trust-dot" aria-hidden="true" />
+            <div className="trust-stat"><span className="tnum">1,300+</span><span className="tlbl">women inside the community</span></div>
           </div>
+          <p className="disclaimer">
+            This is coaching, not medical treatment. Keep taking your medicine unless your
+            doctor tells you to stop.
+          </p>
         </div>
       </section>
 
@@ -755,9 +760,8 @@ export default function BeThereLandingPage() {
                 happened.
               </p>
               <p>
-                You are wondering whether your children are going to see that frightened look on
-                your face again. Whether another bad night will become another rushed trip.
-                Whether this is slowly becoming the story of your life.
+                Will your kids see that scared look on your face again? Will another bad night
+                turn into another rushed trip? Is this slowly becoming the story of your life?
               </p>
             </div>
             <p className="closer">
@@ -772,8 +776,8 @@ export default function BeThereLandingPage() {
       <section className="turn-band">
         <div className="wrap" data-rv>
           <p>
-            That fear is not the end of this story. It is the moment you stop waiting for another
-            scare and start rebuilding the life you want to stay here for.
+            That fear is not the end of your story. It can be the moment you stop waiting for
+            the next scare and start taking your life back.
           </p>
         </div>
       </section>
@@ -813,19 +817,17 @@ export default function BeThereLandingPage() {
             <span className="eyebrow">Your Body Is Not Betraying You</span>
             <h2>There Is a Reason You Keep Getting Pulled Backward.</h2>
             <p className="intro">
-              You are not lazy. You are not weak. You are not failing because you could not live
-              on bland food, force yourself through painful workouts, or stay perfect while
-              carrying everyone else.
+              You are not lazy. You are not weak. You are not failing. Nobody can live on bland
+              food, painful workouts, and a perfect plan while carrying everyone else.
             </p>
-            <p className="intro">Your body has been responding to what it has been asked to carry.</p>
+            <p className="intro">Your body has simply been answering the load it was asked to carry.</p>
             <ul className="root-list">
               {ROOT_LIST.map((li) => (
                 <li key={li}>{li}</li>
               ))}
             </ul>
             <p className="no-shame">
-              You do not need more shame. You need to change the inputs in a way your real life
-              can hold.
+              You do not need more shame. You need changes your real life can hold.
             </p>
           </div>
           <div className="vpanel photo" data-rv>
@@ -882,6 +884,36 @@ export default function BeThereLandingPage() {
                 <p className="so-that">{c.so}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== MEET JOEL (moved up 2026-07-20: meet the guide BEFORE his
+          method, so the BE THERE plan lands with a face and a reason) ===== */}
+      <section className="joel">
+        <div className="wrap joel-grid" data-rv>
+          <img className="joel-photo" src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN, in navy scrubs with a stethoscope" width="260" height="260" loading="lazy" />
+          <div>
+            <span className="eyebrow">Your Guide</span>
+            <h2>Joel Has Seen What Happens When People Wait Too Long.</h2>
+            <div className="role">20 Years as a Registered Nurse · ICU &amp; Emergency Medicine</div>
+            <p>Joel has worked on the crisis side of health.</p>
+            <p>
+              He has seen the scared family. The rushed choices. The moment everyone wishes
+              they had acted sooner.
+            </p>
+            <p>But he has also seen the quieter problem.</p>
+            <p>
+              Women leave the hospital with a list of orders. But no one helps with the kitchen,
+              the schedule, the stress, or the hard week that knocks the whole plan down.
+            </p>
+            <p className="bold-line">
+              Joel helps you work on the life behind the number. That is where the real change
+              has to live.
+            </p>
+            <div style={{ marginTop: 26 }}>
+              <ApplyButton label="Apply to Work With Joel" position="joel" onApply={handleApply} />
+            </div>
           </div>
         </div>
       </section>
@@ -944,35 +976,6 @@ export default function BeThereLandingPage() {
           </div>
         </section>
       )}
-
-      {/* ===== MEET JOEL ===== */}
-      <section className="joel">
-        <div className="wrap joel-grid" data-rv>
-          <img className="joel-photo" src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN, in navy scrubs with a stethoscope" width="260" height="260" loading="lazy" />
-          <div>
-            <span className="eyebrow">Your Guide</span>
-            <h2>Joel Has Seen What Happens When People Wait Too Long.</h2>
-            <div className="role">20 Years as a Registered Nurse · ICU &amp; Emergency Medicine</div>
-            <p>Joel has worked on the crisis side of health.</p>
-            <p>
-              He has seen the frightened family. The rushed decisions. The moment everyone wishes
-              they had paid attention earlier.
-            </p>
-            <p>But he has also seen the quieter problem.</p>
-            <p>
-              Women leave with instructions, but no one walks into their kitchen, their schedule,
-              their stress, their family habits, or the hard week that knocks the whole plan down.
-            </p>
-            <p className="bold-line">
-              Joel helps you work on the life behind the number. That is where the real change has
-              to live.
-            </p>
-            <div style={{ marginTop: 26 }}>
-              <ApplyButton label="Apply to Work With Joel" position="joel" onApply={handleApply} />
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Video removed 2026-07-17 per Joel (landing page AND the /apply
           thank-you screen). No welcome video anywhere in the coaching funnel. */}
@@ -1080,8 +1083,8 @@ export default function BeThereLandingPage() {
           <span className="eyebrow" data-rv>The Next Step</span>
           <h2 data-rv>Apply to Work With Joel.</h2>
           <p className="lede" data-rv>
-            You do not have to have everything figured out. You only have to be ready to stop
-            pretending another warning will change what support can change.
+            You do not need it all figured out. You only need to be ready for real support,
+            not one more warning.
           </p>
           <ol className="apply-steps" data-rv data-rv-child>
             {APPLY_STEPS.map((li) => (
@@ -1135,10 +1138,8 @@ export default function BeThereLandingPage() {
           </span>
           <h2 data-rv>You Still Have Places to Go, People to Love, Work to Do, and Memories to Make.</h2>
           <p className="sub" data-rv>
-            You are not applying because you want to spend the rest of your life thinking about
-            blood pressure. You are applying because you are ready to stop letting it control
-            your peace, your plans, and the way your family looks at you when another scare
-            happens.
+            You are not here to spend the rest of your life thinking about blood pressure. You
+            are here to stop letting it control your peace, your plans, and your family.
           </p>
           <p className="brand-lines" data-rv>
             Reclaim your health.<br />Reclaim your confidence.<br />Reclaim your life. Fully.
