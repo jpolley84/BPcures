@@ -58,6 +58,84 @@ async function fetchWithTimeout(url, opts = {}, timeoutMs = FETCH_TIMEOUT_MS) {
 }
 
 // ── Stripe ──────────────────────────────────────────────────────────
+// ── Live activity feed ──────────────────────────────────────────────
+// Replaces the old data/activity-stream.json, a file committed on
+// 2026-04-30 that never updated again. The dashboard rendered it under a
+// "24h" header showing time-of-day only, so an 11-week-old feed read as if
+// it happened this morning (it still listed cold sends from the parked
+// Practice Launcher campaign). Stale data presented as live is worse than
+// no data, so the feed is now derived from real sources on every request.
+//
+// Sources: Stripe charges (sales, refunds) + KV tea ledger (orders placed,
+// orders shipped). Every entry carries a real ISO timestamp so the client
+// can render an honest date. Windowed to the last 24h, newest first.
+async function fetchActivity() {
+  const events = [];
+  const sinceMs = Date.now() - 24 * 60 * 60 * 1000;
+  const sinceUnix = Math.floor(sinceMs / 1000);
+
+  // Sales + refunds from Stripe.
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (key) {
+    try {
+      const r = await fetchWithTimeout(
+        `https://api.stripe.com/v1/charges?limit=100&created[gte]=${sinceUnix}`,
+        { headers: { Authorization: `Bearer ${key}` } },
+      );
+      if (r.ok) {
+        const d = await r.json();
+        for (const c of d.data || []) {
+          const who = c.billing_details?.email || c.receipt_email || 'unknown';
+          const amt = `$${((c.amount || 0) / 100).toFixed(2)}`;
+          if (c.refunded) {
+            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'refund', description: `Refund ${amt} → ${who}` });
+          } else if (c.status === 'succeeded') {
+            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'sale', description: `Sale ${amt} → ${who}` });
+          }
+        }
+      }
+    } catch { /* partial feed beats a 500 */ }
+  }
+
+  // Tea orders placed / shipped from the KV ledger.
+  const kvUrl = process.env.KV_REST_API_URL;
+  const kvToken = process.env.KV_REST_API_TOKEN;
+  if (kvUrl && kvToken) {
+    try {
+      const hdrs = { Authorization: `Bearer ${kvToken}` };
+      let cursor = '0';
+      const keys = [];
+      let guard = 0;
+      do {
+        const r = await fetchWithTimeout(`${kvUrl}/scan/${cursor}/match/tea:order:*/count/500`, { headers: hdrs });
+        if (!r.ok) break;
+        const j = await r.json();
+        cursor = j.result?.[0] ?? '0';
+        keys.push(...(j.result?.[1] || []));
+      } while (cursor !== '0' && ++guard < 10);
+
+      for (const k of keys) {
+        const r = await fetchWithTimeout(`${kvUrl}/get/${encodeURIComponent(k)}`, { headers: hdrs });
+        if (!r.ok) continue;
+        const raw = (await r.json()).result;
+        if (!raw) continue;
+        let o;
+        try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch { continue; }
+        const blend = o.blend === 'satin' ? 'Satin' : 'Steady';
+        if (o.at && new Date(o.at).getTime() >= sinceMs) {
+          events.push({ ts: new Date(o.at).toISOString(), type: 'tea-order', description: `Tea order (${blend}) → ${o.email || 'unknown'}` });
+        }
+        if (o.fulfilledAt && new Date(o.fulfilledAt).getTime() >= sinceMs) {
+          events.push({ ts: new Date(o.fulfilledAt).toISOString(), type: 'tea-shipped', description: `Tea shipped (${blend}) → ${o.email || 'unknown'}` });
+        }
+      }
+    } catch { /* partial feed beats a 500 */ }
+  }
+
+  events.sort((a, b) => new Date(b.ts) - new Date(a.ts));
+  return events.slice(0, 60);
+}
+
 async function fetchStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return { error: 'STRIPE_SECRET_KEY missing' };
@@ -195,9 +273,8 @@ export default async function handler(req, res) {
   const activityPath = path.join(dataDir, 'activity-stream.json');
 
   // Run live calls in parallel; read JSON state synchronously alongside
-  const [stripe, dripList] = await Promise.all([fetchStripe(), fetchDripList()]);
+  const [stripe, dripList, activity] = await Promise.all([fetchStripe(), fetchDripList(), fetchActivity()]);
   const heartbeat = readJsonFile(opsStatePath);
-  const activityRaw = readJsonFile(activityPath);
 
   // Compose response
   const response = {
@@ -214,7 +291,10 @@ export default async function handler(req, res) {
     deploy: heartbeat?.deploy || { error: 'No heartbeat data yet' },
     replies: heartbeat?.replies || { count: 0, recent: [] },
     joelQueue: heartbeat?.joelQueue || [],
-    activity: Array.isArray(activityRaw) ? activityRaw : (activityRaw?.events || []),
+    // Live, derived per request. Genuinely the last 24h, so an empty array
+    // means a quiet day and not a broken feed.
+    activity,
+    activityWindowHours: 24,
     heartbeatAge: heartbeat?.refreshedAt
       ? Math.floor((Date.now() - new Date(heartbeat.refreshedAt).getTime()) / 1000)
       : null,

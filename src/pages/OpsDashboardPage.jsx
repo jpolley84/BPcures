@@ -409,6 +409,10 @@ function JoelQueueTile({ items }) {
 
 // ─── Activity stream ──────────────────────────────────────────────────
 const ACTIVITY_ICONS = {
+  sale: DollarSign,
+  refund: DollarSign,
+  'tea-order': ClipboardList,
+  'tea-shipped': Mail,
   'cold-send': Mail,
   audit: FileText,
   quiz: ClipboardList,
@@ -419,11 +423,26 @@ const ACTIVITY_ICONS = {
   default: Activity,
 };
 
+// Render the LOCAL time, and prepend the date whenever the event is not from
+// today. The old version sliced chars 11-16 off the raw ISO string, which
+// showed UTC time-of-day and dropped the date entirely: a feed frozen since
+// April rendered as "14:21" and read like this morning. Never show a bare
+// clock time for something that might not be today.
+function stampOf(ts) {
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '--:--';
+  const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  const isToday = d.toDateString() === new Date().toDateString();
+  return isToday ? time : `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })} ${time}`;
+}
+
 function ActivityStream({ events }) {
   if (!Array.isArray(events) || events.length === 0) {
     return (
       <Tile title="Activity stream (24h)">
-        <div className="text-stone-500 text-sm italic">No events in the last 24 hours.</div>
+        <div className="text-stone-500 text-sm italic">
+          Nothing in the last 24 hours. This feed is live, so quiet means quiet.
+        </div>
       </Tile>
     );
   }
@@ -432,16 +451,17 @@ function ActivityStream({ events }) {
       <div className="max-h-80 overflow-y-auto pr-1 space-y-1.5 -mx-1 px-1">
         {events.map((e, i) => {
           const Icon = ACTIVITY_ICONS[e.type] || ACTIVITY_ICONS.default;
+          const isRefund = e.type === 'refund';
           return (
             <div
               key={i}
               className="flex items-start gap-3 text-xs text-stone-300 py-1.5 border-b border-stone-700/40 last:border-0"
             >
-              <Icon size={12} className="text-stone-500 mt-0.5 shrink-0" />
-              <span className="text-stone-500 font-mono shrink-0 w-12 text-right">
-                {(e.ts || '').slice(11, 16)}
+              <Icon size={12} className={`${isRefund ? 'text-rose-400' : 'text-stone-500'} mt-0.5 shrink-0`} />
+              <span className="text-stone-500 font-mono shrink-0 w-20 text-right">{stampOf(e.ts)}</span>
+              <span className={`flex-1 leading-snug ${isRefund ? 'text-rose-300' : ''}`}>
+                {e.description || JSON.stringify(e)}
               </span>
-              <span className="flex-1 leading-snug">{e.description || JSON.stringify(e)}</span>
             </div>
           );
         })}
