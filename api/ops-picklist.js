@@ -61,7 +61,7 @@ function addressLines(a) {
   return out.length ? out : ['(no shipping address on file)'];
 }
 
-async function loadUnfulfilled() {
+async function loadAllOrders() {
   const orders = [];
   let cursor = '0';
   let guard = 0;
@@ -70,7 +70,7 @@ async function loadUnfulfilled() {
     cursor = next;
     for (const key of batch) {
       const o = await kv.get(key);
-      if (o && !o.fulfilled) orders.push(o);
+      if (o) orders.push(o);
     }
   } while (cursor !== '0' && ++guard < 20);
   orders.sort((a, b) => new Date(a.at) - new Date(b.at)); // oldest first
@@ -82,16 +82,18 @@ export default async function handler(req, res) {
 
   let orders;
   try {
-    orders = await loadUnfulfilled();
+    orders = await loadAllOrders();
   } catch (err) {
     return res.status(500).json({ error: 'Failed to read orders: ' + err.message });
   }
+  const openCount = orders.filter((o) => !o.fulfilled).length;
+  const shippedCount = orders.length - openCount;
 
   const doc = new PDFDocument({
     size: 'LETTER',
     margins: { top: 54, bottom: 54, left: 54, right: 54 },
     bufferPages: true,
-    info: { Title: 'BraveWorks Tea — Packing List', Author: 'BraveWorks RN', Subject: 'Unfulfilled tea orders to ship' },
+    info: { Title: 'BraveWorks Tea — Order Report', Author: 'BraveWorks RN', Subject: 'All tea orders, fulfilled and unfulfilled' },
   });
 
   const chunks = [];
@@ -111,18 +113,18 @@ export default async function handler(req, res) {
 
   // ── Header ──
   doc.fillColor(CLAY).font('Helvetica-Bold').fontSize(9)
-    .text('BRAVEWORKS RN · TEA PACKING LIST', left, 46, { characterSpacing: 1.4 });
+    .text('BRAVEWORKS RN · TEA ORDER REPORT', left, 46, { characterSpacing: 1.4 });
   doc.fillColor(INK).font('Helvetica-Bold').fontSize(20)
-    .text(`${orders.length} order${orders.length === 1 ? '' : 's'} to ship`, left, 60);
+    .text(`${orders.length} order${orders.length === 1 ? '' : 's'} · ${openCount} to ship, ${shippedCount} shipped`, left, 60);
   doc.fillColor(MUTED).font('Helvetica').fontSize(10)
-    .text(`Generated ${dateLong(Date.now())} · oldest orders first`, left, 86);
+    .text(`Generated ${dateLong(Date.now())} · oldest first`, left, 86);
   doc.moveTo(left, 106).lineTo(left + contentW, 106).strokeColor(BORDER).lineWidth(1).stroke();
 
   let y = 122;
 
   if (orders.length === 0) {
     doc.fillColor(SAGE).font('Helvetica-Bold').fontSize(14)
-      .text('Nothing to ship. Every tea order is fulfilled.', left, y);
+      .text('No tea orders on record.', left, y);
     doc.end();
     return;
   }
@@ -147,10 +149,14 @@ export default async function handler(req, res) {
     const colX = left + 24;
     const colW = contentW - 24;
 
-    // name + ref + date row
-    doc.fillColor(INK).font('Helvetica-Bold').fontSize(13).text(shipName(o), colX, y, { width: colW - 150, continued: false });
+    // name + status + ref + date row
+    const shipped = !!o.fulfilled;
+    doc.fillColor(shipped ? MUTED : INK).font('Helvetica-Bold').fontSize(13)
+      .text(shipName(o), colX, y, { width: colW - 200, continued: false });
+    doc.fillColor(shipped ? SAGE : CLAY).font('Helvetica-Bold').fontSize(8)
+      .text(shipped ? 'SHIPPED' : 'TO SHIP', colX + colW - 200, y + 3, { width: 60, characterSpacing: 1 });
     doc.fillColor(MUTED).font('Helvetica').fontSize(9)
-      .text(`#${ref(o.sessionId)}  ·  ordered ${dateLong(o.at)}`, colX + colW - 150, y + 2, { width: 150, align: 'right' });
+      .text(`#${ref(o.sessionId)}  ·  ordered ${dateLong(o.at)}`, colX + colW - 140, y + 2, { width: 140, align: 'right' });
     y += 18;
 
     // SHIP TO

@@ -122,11 +122,14 @@ function PasscodePrompt({ onSubmit, error, busy }) {
 }
 
 // ─── Tile shell ───────────────────────────────────────────────────────
-function Tile({ title, children, className = '' }) {
+function Tile({ title, children, className = '', action = null }) {
   return (
     <div className={`rounded-xl border border-stone-700 bg-stone-800 p-5 ${className}`}>
-      <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-semibold mb-3">
-        {title}
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 font-semibold">
+          {title}
+        </div>
+        {action}
       </div>
       {children}
     </div>
@@ -781,6 +784,156 @@ function TrendsTab({ passcode, refreshNonce }) {
         </Tile>
       </section>
     </>
+  );
+}
+
+// ─── Today's Funnel (quiz takers + new drip emails) ───────────────────
+function FunnelTodayTile({ funnel }) {
+  const f = funnel || {};
+  if (f.error) {
+    return (
+      <Tile title="Today's Funnel">
+        <div className="text-stone-500 text-sm italic">Funnel counters unavailable.</div>
+      </Tile>
+    );
+  }
+  const Stat = ({ label, today, week }) => (
+    <div className="flex-1">
+      <div className="text-3xl text-stone-100 leading-none" style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 500 }}>
+        {today ?? 0}
+      </div>
+      <div className="text-xs text-stone-400 mt-1.5">{label}</div>
+      <div className="text-[10px] text-stone-600 mt-0.5">{week ?? 0} in last 7 days</div>
+    </div>
+  );
+  return (
+    <Tile title="Today's Funnel (resets midnight ET)">
+      <div className="flex gap-5">
+        <Stat label="quiz takers" today={f.quizToday} week={f.quizWeek} />
+        <div className="w-px bg-stone-700/50" />
+        <Stat label="new emails to drip" today={f.dripToday} week={f.dripWeek} />
+      </div>
+    </Tile>
+  );
+}
+
+// ─── Orders box (Overview) ─────────────────────────────────────────────
+// Today / 7d / 30d of orders (tea + kits), plus a top-right button that
+// downloads the full all-orders PDF report. Replaces the old Orders tab.
+const ORDER_WINDOWS = [
+  { key: 'today', label: 'Today', days: 0 },
+  { key: '7d', label: '7 days', days: 7 },
+  { key: '30d', label: '30 days', days: 30 },
+];
+function OrdersBox({ passcode, refreshNonce }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [win, setWin] = useState('today');
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfMsg, setPdfMsg] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/ops-orders', { headers: { 'X-Ops-Pass': passcode }, cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((j) => { if (alive) { setData(j); setError(''); } })
+      .catch((e) => { if (alive) setError(e.message); })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, [passcode, refreshNonce]);
+
+  // ET midnight for the window start.
+  const startMs = useMemo(() => {
+    const w = ORDER_WINDOWS.find((x) => x.key === win) || ORDER_WINDOWS[0];
+    const nowEt = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    nowEt.setHours(0, 0, 0, 0);
+    return nowEt.getTime() - w.days * 86400000;
+  }, [win]);
+
+  const rows = useMemo(() => {
+    const tea = Array.isArray(data?.tea) ? data.tea.map((o) => ({ ...o, kind: 'tea' })) : [];
+    const kits = Array.isArray(data?.kits) ? data.kits.map((o) => ({ ...o, kind: 'kit' })) : [];
+    return [...tea, ...kits]
+      .filter((o) => o.date && new Date(o.date).getTime() >= startMs)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [data, startMs]);
+
+  const revenue = rows.reduce((n, o) => n + (o.amountCents || 0), 0);
+
+  const downloadReport = async () => {
+    setPdfBusy(true); setPdfMsg('');
+    try {
+      const res = await fetch('/api/ops-picklist', { headers: { 'X-Ops-Pass': passcode }, cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tea-order-report-${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setPdfMsg(`Failed: ${e.message}`);
+      setTimeout(() => setPdfMsg(''), 3500);
+    } finally { setPdfBusy(false); }
+  };
+
+  const money = (c) => `$${((c || 0) / 100).toFixed(2)}`;
+  const label = (o) => (o.kind === 'tea'
+    ? `SVUTU ${o.blend === 'satin' ? 'Satin' : 'Steady'}`
+    : (o.item || o.product || money(o.amountCents)));
+
+  return (
+    <Tile
+      title={`Orders · ${rows.length}${rows.length ? ` · ${money(revenue)}` : ''}`}
+      action={(
+        <button
+          onClick={downloadReport}
+          disabled={pdfBusy}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] uppercase tracking-wider border border-emerald-800/60 bg-emerald-900/20 text-emerald-300 hover:text-emerald-100 hover:border-emerald-600 transition-colors disabled:opacity-50"
+          title="Full PDF report: all orders, fulfilled and unfulfilled, oldest first, with shipping info"
+        >
+          <Download size={11} /> {pdfMsg || (pdfBusy ? 'Building...' : 'PDF report')}
+        </button>
+      )}
+    >
+      <div className="flex items-center gap-1.5 mb-3">
+        {ORDER_WINDOWS.map((w) => (
+          <button
+            key={w.key}
+            onClick={() => setWin(w.key)}
+            className={`px-2.5 py-1 text-[11px] rounded-md border transition-colors ${
+              win === w.key ? 'bg-stone-700 border-stone-600 text-stone-100' : 'bg-stone-800/40 border-stone-700/60 text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            {w.label}
+          </button>
+        ))}
+      </div>
+
+      {loading && <div className="text-xs text-stone-500">Loading...</div>}
+      {error && <div className="text-xs text-amber-400">{error}</div>}
+      {!loading && rows.length === 0 && (
+        <div className="text-stone-500 text-sm italic">No orders in this window.</div>
+      )}
+
+      <div className="max-h-80 overflow-y-auto pr-1 space-y-1 -mx-1 px-1">
+        {rows.map((o, i) => (
+          <div key={i} className="flex items-center gap-3 text-xs py-1.5 border-b border-stone-700/40 last:border-0">
+            <span className="text-stone-500 font-mono shrink-0 w-16">{new Date(o.date).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+            <span className="text-stone-200 shrink-0 w-24 font-mono">{money(o.amountCents)}</span>
+            <span className={`shrink-0 ${o.kind === 'tea' ? 'text-emerald-300' : 'text-sky-300'}`}>{label(o)}</span>
+            <span className="text-stone-500 flex-1 truncate text-right">{o.email || o.name || ''}</span>
+            {o.kind === 'tea' && (
+              <span className={`shrink-0 text-[10px] ${o.status === 'fulfilled' || o.fulfilled ? 'text-stone-600' : 'text-amber-400'}`}>
+                {o.status === 'fulfilled' || o.fulfilled ? 'shipped' : 'to ship'}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </Tile>
   );
 }
 
@@ -1813,12 +1966,6 @@ export default function OpsDashboardPage() {
             label="Overview"
           />
           <TabButton
-            active={activeTab === 'orders'}
-            onClick={() => setActiveTab('orders')}
-            Icon={Package}
-            label="Orders"
-          />
-          <TabButton
             active={activeTab === 'trends'}
             onClick={() => setActiveTab('trends')}
             Icon={TrendingUp}
@@ -1834,26 +1981,21 @@ export default function OpsDashboardPage() {
 
         {activeTab === 'overview' && (
           <>
-            {/* Zone 1 — hero */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
+            {/* Zone 1 — today's numbers */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
               <RevenueTile stripe={state.stripe} />
-              <LeadPoolTile pool={state.pool} />
-              <FunnelTile funnel={state.funnel} />
+              <FunnelTodayTile funnel={state.funnelToday} />
             </section>
 
-            {/* Zone 2 — system pulse */}
+            {/* Zone 2 — orders (today / 7d / 30d + PDF report) */}
+            <section className="mb-4">
+              <OrdersBox passcode={passcode} refreshNonce={refreshNonce} />
+            </section>
+
+            {/* Zone 3 — system pulse + Joel's queue */}
             <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
-              <CronsTile crons={state.crons} />
               <DeployTile deploy={state.deploy} />
-            </section>
-
-            {/* Zone 3 — action queue */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4">
-              <TodosTile passcode={passcode} refreshNonce={refreshNonce} />
-              <div className="space-y-3 sm:space-y-4">
-                <RepliesTile replies={state.replies} />
-                <JoelQueueTile items={state.joelQueue} />
-              </div>
+              <JoelQueueTile items={state.joelQueue} />
             </section>
 
             {/* Zone 4 — activity */}
@@ -1864,8 +2006,6 @@ export default function OpsDashboardPage() {
         )}
 
         {activeTab === 'trends' && <TrendsTab passcode={passcode} refreshNonce={refreshNonce} />}
-
-        {activeTab === 'orders' && <OrdersTab passcode={passcode} refreshNonce={refreshNonce} />}
 
         {activeTab === 'traffic' && <TrafficTab passcode={passcode} refreshNonce={refreshNonce} />}
 

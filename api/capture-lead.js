@@ -32,6 +32,7 @@
 //   }
 
 import { kv } from '@vercel/kv';
+import { bumpMetric } from './_ops-metrics.js';
 
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium']);
 
@@ -100,6 +101,9 @@ export default async function handler(req, res) {
           : {}),
         lastCaptureAt: new Date().toISOString(),
       });
+      // Someone completed the quiz email gate (a re-submit still counts as a
+      // quiz taker for the day), but no new drip email was added.
+      await bumpMetric('quiz');
       return res.status(200).json({ ok: true, created: false });
     }
 
@@ -116,6 +120,10 @@ export default async function handler(req, res) {
       source: normSource || 'quiz-result',
       ...(normTags.length ? { tags: normTags } : {}),
     });
+    // Feeds the /ops "Today's Funnel" tile: a quiz taker AND a brand-new
+    // email added to the KV drip. Both never throw (analytics only).
+    await bumpMetric('quiz');
+    await bumpMetric('drip-new');
     return res.status(200).json({ ok: true, created: true });
   } catch (err) {
     console.error('capture-lead: KV write failed', err.message);

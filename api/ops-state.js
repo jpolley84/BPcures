@@ -72,6 +72,34 @@ async function fetchWithTimeout(url, opts = {}, timeoutMs = FETCH_TIMEOUT_MS) {
 // Sources: Stripe charges (sales, refunds) + KV tea ledger (orders placed,
 // orders shipped). Every entry carries a real ISO timestamp so the client
 // can render an honest date. Windowed to the last 24h, newest first.
+// Best-effort product label for a Stripe charge, so the activity feed shows
+// WHAT sold, not just the price (many products share a price). Priority:
+// (1) the charge/payment-link description Stripe sets, (2) a known amount map,
+// (3) fall back to the tea blend for a tea amount, (4) raw price. This is a
+// display label, not billing truth.
+const AMOUNT_PRODUCT = {
+  1700: 'BP Reset Kit',
+  1299: 'BP Cures book',
+  2700: 'Weekly Reset',
+  2900: 'SVUTU tea',
+  4700: 'Complete Kit',
+  9700: 'seminar / $97',
+  29700: 'Diagnostic ($297)',
+  69700: 'Be There (3-pay)',
+  199700: 'Be There ($1,997)',
+};
+function productForCharge(c) {
+  const desc = (c.description || '').trim();
+  if (desc && !/^(subscription|payment|charge)\b/i.test(desc)) return desc.slice(0, 42);
+  const meta = c.metadata || {};
+  if (meta.product) return String(meta.product).slice(0, 42);
+  if (meta.tier) return `tier: ${meta.tier}`;
+  const mapped = AMOUNT_PRODUCT[c.amount];
+  if (mapped) return mapped;
+  if (c.amount === 4800 || c.amount === 12000 || c.amount === 5400 || c.amount === 3300) return 'SVUTU tea';
+  return `$${((c.amount || 0) / 100).toFixed(2)} item`;
+}
+
 async function fetchActivity() {
   const events = [];
   const sinceMs = Date.now() - 24 * 60 * 60 * 1000;
@@ -90,10 +118,12 @@ async function fetchActivity() {
         for (const c of d.data || []) {
           const who = c.billing_details?.email || c.receipt_email || 'unknown';
           const amt = `$${((c.amount || 0) / 100).toFixed(2)}`;
+          const product = productForCharge(c);
           if (c.refunded) {
-            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'refund', description: `Refund ${amt} → ${who}` });
+            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'refund', description: `Refund ${amt} · ${product} → ${who}` });
           } else if (c.status === 'succeeded') {
-            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'sale', description: `Sale ${amt} → ${who}` });
+            // Show WHAT sold, not just the amount — many products share a price.
+            events.push({ ts: new Date(c.created * 1000).toISOString(), type: 'sale', description: `${amt} · ${product} → ${who}` });
           }
         }
       }
@@ -125,11 +155,11 @@ async function fetchActivity() {
         let o;
         try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch { continue; }
         const blend = o.blend === 'satin' ? 'Satin' : 'Steady';
-        if (o.at && new Date(o.at).getTime() >= sinceMs) {
-          events.push({ ts: new Date(o.at).toISOString(), type: 'tea-order', description: `Tea order (${blend}) → ${o.email || 'unknown'}` });
-        }
+        // The purchase itself already shows in the Stripe sale line above
+        // (now product-labelled). Here we only add the SHIPPED action, which
+        // is a distinct event the Stripe charge cannot represent.
         if (o.fulfilledAt && new Date(o.fulfilledAt).getTime() >= sinceMs) {
-          events.push({ ts: new Date(o.fulfilledAt).toISOString(), type: 'tea-shipped', description: `Tea shipped (${blend}) → ${o.email || 'unknown'}` });
+          events.push({ ts: new Date(o.fulfilledAt).toISOString(), type: 'tea-shipped', description: `Shipped · SVUTU ${blend} → ${o.email || 'unknown'}` });
         }
       }
     } catch { /* partial feed beats a 500 */ }
@@ -215,34 +245,44 @@ async function fetchDripList() {
   if (!process.env.KV_REST_API_URL) return { error: 'KV not configured' };
   try {
     const { kv } = await import('@vercel/kv');
-    const keys = await kv.keys('drip:*');
-    let total = 0, optedIn = 0, paused = 0, unsubscribed = 0, complete = 0, buyers = 0;
-    const dayDist = {};
-    for (const k of keys) {
-      const s = await kv.get(k);
-      if (!s || !s.email) continue;
-      total++;
-      if (s.unsubscribed) unsubscribed++;
-      if (s.paused) paused++;
-      if (s.complete) complete++;
-      if (s.optedIn) optedIn++;
-      if (Array.isArray(s.tags) && s.tags.some((t) =>
-        t === 'bpquiz-purchaser' || t === 'tier-1-buyer' || t === 'tier-2-buyer' || t === 'tier-3-buyer'
-      )) buyers++;
-      const d = s.lastSentDay || 0;
-      dayDist[d] = (dayDist[d] || 0) + 1;
-    }
-    const active = total - unsubscribed - paused - complete;
-    return {
-      subscribers: total,
-      active,
-      optedIn,
-      buyers,
-      unsubscribed,
-      paused,
-      complete,
-      byDay: dayDist,
+    // COUNT keys only via SCAN. The old version called kv.keys('drip:*')
+    // (throws "too many keys" once the list is large) and then GET every
+    // record (8,500 round-trips), which timed the dashboard out. The footer
+    // only needs the subscriber total, so we page cursors and count.
+    let total = 0;
+    let cursor = '0';
+    let guard = 0;
+    do {
+      const [next, batch] = await kv.scan(cursor, { match: 'drip:*', count: 1000 });
+      cursor = next;
+      total += batch.length;
+    } while (cursor !== '0' && ++guard < 60);
+    return { subscribers: total };
+  } catch (e) {
+    return { error: e.message || String(e) };
+  }
+}
+
+// ── Today's funnel (O(1) counters) ─────────────────────────────────
+// Quiz takers + brand-new drip emails today, read from the daily counters
+// bumped at the quiz email gate (api/_ops-metrics.js). Counters are
+// going-forward: they only reflect events after this shipped, which is
+// correct for a "today" tile. Also returns the 7-day sum for context.
+async function fetchFunnelToday() {
+  try {
+    const { kv } = await import('@vercel/kv');
+    const { etDate } = await import('./_ops-metrics.js');
+    const today = etDate();
+    const days = [];
+    for (let i = 0; i < 7; i++) days.push(etDate(new Date(Date.now() - i * 86400000)));
+    const readSum = async (name) => {
+      const vals = await Promise.all(days.map((d) => kv.get(`metric:${name}:${d}`)));
+      const today0 = Number(vals[0]) || 0;
+      const week = vals.reduce((s, v) => s + (Number(v) || 0), 0);
+      return { today: today0, week };
     };
+    const [quiz, drip] = await Promise.all([readSum('quiz'), readSum('drip-new')]);
+    return { date: today, quizToday: quiz.today, quizWeek: quiz.week, dripToday: drip.today, dripWeek: drip.week };
   } catch (e) {
     return { error: e.message || String(e) };
   }
@@ -294,7 +334,7 @@ export default async function handler(req, res) {
   const activityPath = path.join(dataDir, 'activity-stream.json');
 
   // Run live calls in parallel; read JSON state synchronously alongside
-  const [stripe, dripList, activity] = await Promise.all([fetchStripe(), fetchDripList(), fetchActivity()]);
+  const [stripe, dripList, activity, funnelToday] = await Promise.all([fetchStripe(), fetchDripList(), fetchActivity(), fetchFunnelToday()]);
   const heartbeat = readJsonFile(opsStatePath);
 
   // Compose response
@@ -308,6 +348,8 @@ export default async function handler(req, res) {
     mailchimp: dripList,
     pool: heartbeat?.pool || { error: 'No heartbeat data yet' },
     funnel: heartbeat?.funnel || { error: 'No heartbeat data yet' },
+    // Live "Today's Funnel": quiz takers + new drip emails, from O(1) counters.
+    funnelToday,
     crons: heartbeat?.crons || [],
     deploy: heartbeat?.deploy || { error: 'No heartbeat data yet' },
     replies: heartbeat?.replies || { count: 0, recent: [] },
