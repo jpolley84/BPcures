@@ -87,6 +87,8 @@ const AMOUNT_PRODUCT = {
   29700: 'Diagnostic ($297)',
   69700: 'Be There (3-pay)',
   199700: 'Be There ($1,997)',
+  49700: 'Sprint ($497)',
+  150000: 'Triangle Session ($1,500)',
 };
 function productForCharge(c) {
   const desc = (c.description || '').trim();
