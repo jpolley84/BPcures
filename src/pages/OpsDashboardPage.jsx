@@ -24,6 +24,7 @@ import {
   Search,
   Settings,
   TrendingUp,
+  Download,
   Users,
   Zap,
 } from 'lucide-react';
