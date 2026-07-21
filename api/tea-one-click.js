@@ -42,11 +42,27 @@ const TEA_TIERS = {
     priceId: 'price_1TqGiaHseZnO3rRZhSCeTi1H',
     amount: 4800,
     description: 'SVUTU Steady, 1-Month Supply',
+    blend: 'steady',
   },
   'tea-120': {
     priceId: 'price_1TqGiWHseZnO3rRZ9XnHorV0',
     amount: 12000,
     description: 'SVUTU Steady, 90-Day Supply',
+    blend: 'steady',
+  },
+  // 2026-07-21: SVUTU Satin (hormoneteas.com) on the embedded rail — the
+  // "double your order for a friend" post-purchase one-click.
+  'tea-satin-48': {
+    priceId: 'price_1TqGRCHseZnO3rRZBsF7Mvyu',
+    amount: 4800,
+    description: 'SVUTU Satin, 1-Month Supply',
+    blend: 'satin',
+  },
+  'tea-satin-120': {
+    priceId: 'price_1TqGR9HseZnO3rRZJ9ynNFKx',
+    amount: 12000,
+    description: 'SVUTU Satin, 90-Day Supply',
+    blend: 'satin',
   },
 };
 
@@ -145,7 +161,8 @@ export default async function handler(req, res) {
   // an unauthenticated caller.
   const md = originalSession.metadata || {};
   const isOurs =
-    md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp' || md.funnel === 'svutu-tea';
+    md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp' ||
+    md.funnel === 'svutu-tea' || md.blend === 'satin' || md.venture === 'svutu';
   if (!isOurs || originalSession.payment_status !== 'paid') {
     return res.status(409).json({ error: 'not_eligible', message: 'Session is not a paid BraveWorks purchase.' });
   }
@@ -192,6 +209,7 @@ export default async function handler(req, res) {
       },
       metadata: {
         funnel: 'svutu-tea',
+        blend: tierConfig.blend || 'steady',
         flow: 'tea_one_click',
         original_session: session_id,
         tier,
@@ -240,6 +258,7 @@ export default async function handler(req, res) {
       isSubscription: false,
       address: { line1, line2, city, state, postal_code, country },
       source: 'one_click_upsell',
+      blend: tierConfig.blend || 'steady',
       deviceDistinctId: originalSession.metadata?.ph_distinct_id || null,
     });
   } catch (err) {

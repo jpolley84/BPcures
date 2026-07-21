@@ -139,6 +139,38 @@ export default async function handler(req, res) {
   // triangle-webhook.js (KV shipping digest + Resend tag + confirmation
   // email), exactly like the payment-link path. Prices are the SAME live
   // price ids the payment links use (verified 2026-07-08).
+  // ── SVUTU Satin (hormoneteas.com, Annie's blend) embedded inline checkout ──
+  // 2026-07-21: Satin moved from Stripe Payment Links onto the SAME embedded
+  // rail as Steady so it gets a true post-purchase one-click "double your order
+  // for a friend" (api/tea-one-click.js). Card saved off_session; shipping
+  // collected inline. Recognized by the webhook via metadata blend:'satin'
+  // (NOT funnel:'svutu-tea' — that would route it to Steady fulfillment). The
+  // price ids are the SAME live Satin prices the payment links use.
+  if (tier === 'tea-satin-48' || tier === 'tea-satin-120') {
+    const SATIN_PRICES = {
+      'tea-satin-48': process.env.SATIN_48_PRICE_ID || 'price_1TqGRCHseZnO3rRZBsF7Mvyu',   // 1-Month $48
+      'tea-satin-120': process.env.SATIN_120_PRICE_ID || 'price_1TqGR9HseZnO3rRZJ9ynNFKx', // 90-Day $120
+    };
+    const metadata = { blend: 'satin', venture: 'svutu', offer: tier, ...phMeta };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        mode: 'payment',
+        line_items: [{ price: SATIN_PRICES[tier], quantity: 1 }],
+        metadata,
+        shipping_address_collection: { allowed_countries: ['US'] },
+        customer_creation: 'always',
+        payment_intent_data: { setup_future_usage: 'off_session' },
+        return_url: `${siteUrl}/satin-thanks?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout satin error:', err.message);
+      return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
   if (tier === 'tea-48' || tier === 'tea-120') {
     const TEA_PRICES = {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48

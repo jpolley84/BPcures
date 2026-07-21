@@ -86,6 +86,11 @@ const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPa
 // options: full / deposit / bi-weekly plan). Focused checkout, no SiteLayout.
 const AllInPage = lazy(() => import('./pages/AllInPage'));
 const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
+// SVUTU Satin (hormoneteas.com) on the embedded rail — Satin-branded checkout +
+// post-purchase "double your order for a friend" one-click. hormoneteas.com
+// buy buttons link here. Focused checkout, no SiteLayout.
+const SatinCheckoutPage = lazy(() => import('./pages/SatinCheckoutPage'));
+const SatinThanksPage = lazy(() => import('./pages/SatinThanksPage'));
 // /score — tokenized "see my saved result" page for email links (2026-07-03).
 const ScorePage = lazy(() => import('./pages/ScorePage'));
 // /waitlist — BraveWorks BP iPhone-app waitlist (2026-07-05). Standalone
@@ -274,6 +279,11 @@ function App() {
               embedded checkout redirects to. */}
           <Route path="/allin" element={<AllInPage />} />
           <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
+
+          {/* SVUTU Satin embedded checkout + post-purchase double-order OTO.
+              hormoneteas.com links here. No SiteLayout (Satin-branded, focused). */}
+          <Route path="/satin" element={<SatinCheckoutPage />} />
+          <Route path="/satin-thanks" element={<SatinThanksPage />} />
 
           {/* /score — tokenized saved-result page for email links:
               /score?e=<email>&t=<token> → GET /api/score-get. Gentle fallback
