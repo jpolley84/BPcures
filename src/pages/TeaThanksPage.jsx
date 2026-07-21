@@ -22,6 +22,11 @@ const TIER_LABEL = {
   'tea-120': '90-Day Supply',
 };
 
+// "Double your order for a friend or family" one-click: charge the SAME tier
+// the buyer just bought (so it truly doubles their order), to the same card,
+// shipped to the same address so they can hand it to someone they love.
+const DOUBLE_PRICE = { 'tea-48': 48, 'tea-120': 120 };
+
 export default function TeaThanksPage() {
   const [params] = useSearchParams();
   const sessionId = params.get('session_id') || '';
@@ -61,20 +66,24 @@ export default function TeaThanksPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
+  // Double their order: charge the SAME tier they just bought.
+  const doubleTier = tier === 'tea-120' ? 'tea-120' : 'tea-48';
+  const doublePrice = DOUBLE_PRICE[doubleTier];
+
   async function addPouch() {
     if (charging) return;
     setCharging(true);
-    track('tea_one_click_clicked', { from_tier: tier });
+    track('tea_gift_double_clicked', { from_tier: tier, double_tier: doubleTier });
     try {
       const res = await fetch('/api/tea-one-click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, tier: 'tea-48', reuse_session_shipping: true }),
+        body: JSON.stringify({ session_id: sessionId, tier: doubleTier, reuse_session_shipping: true }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setAdded(true);
-        track('tea_one_click_success', { from_tier: tier });
+        track('tea_gift_double_success', { from_tier: tier, double_tier: doubleTier });
       } else {
         setUpsellGone(true);
       }
@@ -107,7 +116,7 @@ export default function TeaThanksPage() {
               <div style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                 <CheckCircle2 size={20} color="var(--sage-deep, #2E3A30)" style={{ flexShrink: 0, marginTop: 2 }} />
                 <p style={{ margin: 0, color: 'var(--ink-soft, #2B2824)', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                  Extra pouch added. Same card, same address, ships together with your order. A second confirmation email is on its way.
+                  Done. Your order is doubled. A second pouch ships to the same address so you can put it right in their hands. Same card, no re-typing. A second confirmation email is on its way.
                 </p>
               </div>
             ) : (
@@ -118,8 +127,11 @@ export default function TeaThanksPage() {
                     One-time offer, one click
                   </span>
                 </div>
+                <p style={{ margin: '0 0 0.5rem', fontWeight: 700, fontSize: '1.05rem', color: 'var(--ink, #121110)' }}>
+                  Send one to someone you love.
+                </p>
                 <p style={{ margin: '0 0 1rem', color: 'var(--ink-soft, #2B2824)', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                  Add one more pouch (about 50 to 60 more cups) to this same shipment. Charged to the card you just used, shipped to the address you just entered. Nothing to re-type.
+                  You know someone whose numbers you worry about. Double your order and we will send a second {TIER_LABEL[doubleTier] || 'supply'} to your door, so you can hand it to your mother, your sister, your friend. Charged to the card you just used, shipped to the address you just entered. Nothing to re-type.
                 </p>
                 <button
                   type="button"
@@ -132,7 +144,15 @@ export default function TeaThanksPage() {
                     fontSize: '0.98rem', cursor: charging ? 'default' : 'pointer', opacity: charging ? 0.7 : 1,
                   }}
                 >
-                  {charging ? (<><Loader2 size={16} /> Adding...</>) : (<>Add 1 more pouch, $48 <ArrowRight size={15} /></>)}
+                  {charging ? (<><Loader2 size={16} /> Adding...</>) : (<>Yes, double my order for ${doublePrice} <ArrowRight size={15} /></>)}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setUpsellGone(true); track('tea_gift_double_declined', { from_tier: tier }); }}
+                  disabled={charging}
+                  style={{ display: 'block', margin: '0.7rem 0 0', padding: 0, background: 'none', border: 'none', color: 'var(--muted, #7A7061)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '2px' }}
+                >
+                  No thanks, just my order is fine.
                 </button>
               </>
             )}
