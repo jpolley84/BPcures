@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, initial-scale=1" />
+<title>Encore Flyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,900&family=Figtree:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{ --evergreen:#0F3D3E; --gold:#E3A83B; --coral:#DB4E2E; --cream:#FAF6EF; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#0A2C2D; }
+  .card{
+    position:relative; width:1080px; height:1350px; overflow:hidden;
+    font-family:"Figtree",system-ui,sans-serif; color:#fff;
+  }
+  .photo{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; object-position:50% 22%;
+  }
+  /* evergreen scrim: subtle at top, deep at bottom for text legibility */
+  .scrim{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(15,61,62,.55) 0%, rgba(15,61,62,0) 22%, rgba(10,44,45,0) 44%, rgba(10,44,45,.72) 64%, rgba(9,40,41,.97) 100%);
+  }
+  .frame{ position:absolute; inset:26px; border:2px solid rgba(227,168,59,.55); border-radius:26px; pointer-events:none; }
+
+  .top{ position:absolute; top:70px; left:0; right:0; text-align:center; }
+  .pill{
+    display:inline-block; background:var(--coral); color:#fff; font-family:"Fraunces",serif; font-weight:900;
+    font-size:36px; letter-spacing:10px; padding:12px 42px 12px 52px; border-radius:999px;
+    box-shadow:0 14px 34px -12px rgba(219,78,46,.7);
+  }
+  .top .sub{ margin-top:16px; font-weight:800; font-size:26px; letter-spacing:6px; color:#F1E7CE; text-shadow:0 2px 12px rgba(0,0,0,.5); }
+
+  .bottom{ position:absolute; left:0; right:0; bottom:78px; padding:0 70px; text-align:center; }
+  .title{ font-family:"Fraunces",serif; font-weight:900; font-size:118px; line-height:.94; letter-spacing:-1px; text-shadow:0 4px 24px rgba(0,0,0,.45); }
+  .title .g{ color:var(--gold); }
+  .kick{ font-family:"Fraunces",serif; font-style:italic; font-size:40px; color:#EAF1EC; margin-top:22px; text-shadow:0 2px 14px rgba(0,0,0,.5); }
+
+  .dateblock{ background:var(--cream); color:var(--evergreen); border-radius:22px; padding:24px 20px 26px; margin:34px auto 0; max-width:760px; box-shadow:0 20px 50px -18px rgba(0,0,0,.6); }
+  .dateblock .t1{ font-family:"Figtree"; font-weight:800; font-size:58px; letter-spacing:8px; color:var(--coral); }
+  .dateblock .t2{ font-family:"Fraunces",serif; font-weight:900; font-size:46px; margin-top:2px; }
+  .dateblock .t3{ font-weight:700; font-size:29px; color:#4A5A58; margin-top:8px; }
+
+  .host{ margin-top:30px; font-family:"Fraunces",serif; font-weight:900; font-size:40px; text-shadow:0 2px 12px rgba(0,0,0,.5); }
+  .host span{ display:block; font-family:"Figtree"; font-weight:600; font-size:24px; letter-spacing:2px; color:#CBD8D2; margin-top:2px; }
+
+  .url{ display:inline-block; margin-top:28px; background:var(--gold); color:var(--evergreen); font-weight:800; font-size:36px; padding:18px 46px; border-radius:999px; box-shadow:0 16px 36px -14px rgba(0,0,0,.6); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <img class="photo" src="/coaching/joel-scrubs.jpg" alt="Joel Polley, RN" />
+    <div class="scrim"></div>
+    <div class="frame"></div>
+
+    <div class="top">
+      <span class="pill">ENCORE</span>
+      <div class="sub">FREE LIVE MASTERCLASS</div>
+    </div>
+
+    <div class="bottom">
+      <div class="title">Beyond the <span class="g">Cuff</span></div>
+      <div class="kick">You missed it last night. Tonight, one more time.</div>
+
+      <div class="dateblock">
+        <div class="t1">TONIGHT</div>
+        <div class="t2">Tuesday, July 21</div>
+        <div class="t3">7:00 PM CT&nbsp; ·&nbsp; 8:00 PM ET&nbsp; ·&nbsp; 5:00 PM PT</div>
+      </div>
+
+      <div class="host">Joel Polley, RN<span>20 YEARS · ICU &amp; EMERGENCY MEDICINE</span></div>
+      <div class="url">bpquiz.com/masterclass</div>
+    </div>
+  </div>
+</body>
+</html>
