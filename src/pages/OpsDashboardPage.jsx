@@ -1862,14 +1862,12 @@ export default function OpsDashboardPage() {
     setLastFetched(null);
   }, []);
 
-  // Poll while authed
+  // Fetch a fresh scan ONCE when the page opens (and on each login). No
+  // background polling: the endpoint hits Stripe + scans KV, so we only run
+  // it when Joel actually opens the page. Manual refresh re-runs it on demand.
   useEffect(() => {
     if (!passcode) return;
     fetchState(passcode);
-    pollTimer.current = setInterval(() => fetchState(passcode), POLL_INTERVAL_MS);
-    return () => {
-      if (pollTimer.current) clearInterval(pollTimer.current);
-    };
   }, [passcode, fetchState]);
 
   // Tick "last refresh" indicator each second
@@ -2021,7 +2019,7 @@ export default function OpsDashboardPage() {
             heartbeat {state.heartbeatAge != null ? `${Math.floor(state.heartbeatAge / 60)}m` : '—'}
           </span>
           <span className="text-stone-700">·</span>
-          <span>polling every 10s</span>
+          <span>scanned on open · refresh for latest</span>
           {state.refreshedAt && (
             <>
               <span className="text-stone-700">·</span>
