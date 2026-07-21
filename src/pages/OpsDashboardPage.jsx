@@ -1140,6 +1140,35 @@ function OrdersTab({ passcode, refreshNonce }) {
     );
   };
 
+  // Download the full packing-list PDF (every unfulfilled order, name +
+  // address + date + items). The endpoint is passcode-gated, so we fetch it
+  // as a blob with the header rather than a plain <a href>, then trigger a
+  // download of the returned file.
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfMsg, setPdfMsg] = useState('');
+  const downloadPicklist = async () => {
+    setPdfBusy(true);
+    setPdfMsg('');
+    try {
+      const res = await fetch('/api/ops-picklist', { headers: { 'X-Ops-Pass': passcode }, cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tea-packing-list-${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setPdfMsg(`Failed: ${e.message}`);
+      setTimeout(() => setPdfMsg(''), 3500);
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
   if (loading && !data) {
     return (
       <div className="flex items-center gap-3 text-stone-400 text-sm py-16 justify-center">
@@ -1246,6 +1275,14 @@ function OrdersTab({ passcode, refreshNonce }) {
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] uppercase tracking-wider border border-stone-700 bg-stone-900/40 text-stone-400 hover:text-stone-100 hover:border-stone-600 transition-colors"
             >
               <Copy size={11} /> {copiedList || 'Copy shipping list'}
+            </button>
+            <button
+              onClick={downloadPicklist}
+              disabled={pdfBusy}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] uppercase tracking-wider border border-emerald-800/60 bg-emerald-900/20 text-emerald-300 hover:text-emerald-100 hover:border-emerald-600 transition-colors disabled:opacity-50"
+              title="Every unfulfilled tea order with name, address, date, and items"
+            >
+              <Download size={11} /> {pdfMsg || (pdfBusy ? 'Building...' : 'Packing list PDF')}
             </button>
           </div>
 
