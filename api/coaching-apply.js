@@ -513,13 +513,23 @@ const BETHERE_CASH_NO = 'No, I am month to month and cannot invest right now';
 const BETHERE_NOT_WILLING = 'I am not willing to invest at this time'; // legacy
 
 function scoreBeThere(b) {
-  // New lean form.
+  // 2026-07-22 (Joel): "I dont want the want off my medications without my
+  // doctor to screen anything out. also can't invest is also not a screen out.
+  // just push everyone through to a call if they applied."
+  //
+  // So neither the off-meds answer NOR the cash-flow answer disqualifies
+  // anyone any more. Both are still recorded as FLAGS on Joel's notify email
+  // (see the flags array below), so he walks into the call knowing, but they
+  // no longer route her away from one. The medication conversation is safer
+  // had live with an RN than settled by an automated decline.
+  //
+  // The ONLY remaining COLD path is an explicit self-ejection: she answered
+  // the opening gate with "No. I will pass for now." Sending that person a
+  // "I would like to move forward" note would be tone deaf, so she still gets
+  // the honest version instead.
   if (b.serious === BETHERE_GATE_NO) return 'COLD';
-  if (b.cashFlow === BETHERE_CASH_NO) return 'COLD';
-  if (b.medsAlignment === BETHERE_OFF_MEDS || b.medsAlignment === BETHERE_OFF_MEDS_OLD) return 'COLD';
   if (b.cashFlow === BETHERE_CASH_YES) return 'HOT';
   // Legacy old-client fallbacks (only reached when the new fields are absent).
-  if (b.investTier === BETHERE_NOT_WILLING) return 'COLD';
   if (
     b.cashFlow === undefined && b.serious === undefined &&
     (b.startWindow === 'This week' || b.startWindow === 'Within two weeks') &&
@@ -560,6 +570,9 @@ async function handleBeThere(req, res) {
   const fitTier = scoreBeThere(b);
   const flags = [];
   if (b.medsAlignment === BETHERE_OFF_MEDS || b.medsAlignment === BETHERE_OFF_MEDS_OLD) flags.push('off-meds seeker');
+  // 2026-07-22: cash flow no longer screens anyone out, so surface it here
+  // instead. Joel still wants to know before he picks up the phone.
+  if (b.cashFlow === BETHERE_CASH_NO || b.investTier === BETHERE_NOT_WILLING) flags.push('tight cash flow');
   if (b.serious === BETHERE_GATE_NO) flags.push('gate: not serious');
   if (b.partnerStatus === 'Yes, but they are not fully on board yet') flags.push('partner not on board');
   if (b.groupsFeel === 'Groups are not for me') flags.push('minor: groups not for her');
