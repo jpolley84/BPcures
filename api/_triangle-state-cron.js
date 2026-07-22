@@ -41,7 +41,14 @@ const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 // than by a real opt-in. Their stateEnteredAt is the migration timestamp, not
 // a genuine signup, so the day-N arc would re-onboard people who have been
 // with us for months. Matched on the `source` stamp the migration wrote.
-const LEGACY_MIGRATED_SOURCE = /^legacy-gap-lead-/i;
+// Verified against the live source distribution 2026-07-22 (8,344 records):
+//   legacy-broadcast-freegift-2026-07-16 .. 6308  <- the real cohort
+//   legacy-flash-migration-2026-07-17 ......  196  (also flashOnly)
+//   legacy-gap-lead-2026-07-17 .............    3
+// Everything else is a genuine opt-in (quiz-lead-magnet, quiz-result,
+// manychat-*, stripe-direct, coaching-optin, masterclass-page) and must
+// keep its full arc, so we anchor on the `legacy-` migration prefix only.
+const LEGACY_MIGRATED_SOURCE = /^legacy-/i;
 const RERUN_LEGACY_ARC = process.env.RERUN_LEGACY_ARC === '1';
 
 function daysBetween(isoA, now = Date.now()) {
