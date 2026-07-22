@@ -37,6 +37,13 @@ import { isAuthorizedCron } from './_triangle-cron-auth.js';
 const RATE_LIMIT_MS = 550;
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
+// Records created by a bulk backfill of already-on-the-list contacts, rather
+// than by a real opt-in. Their stateEnteredAt is the migration timestamp, not
+// a genuine signup, so the day-N arc would re-onboard people who have been
+// with us for months. Matched on the `source` stamp the migration wrote.
+const LEGACY_MIGRATED_SOURCE = /^legacy-gap-lead-/i;
+const RERUN_LEGACY_ARC = process.env.RERUN_LEGACY_ARC === '1';
+
 function daysBetween(isoA, now = Date.now()) {
   const a = new Date(isoA).getTime();
   if (Number.isNaN(a)) return -1;
@@ -83,7 +90,7 @@ export async function runStateCron({
   const summary = {
     label, state, scanned: 0, inState: 0, sentByDay: {}, resentByDay: {},
     skippedExcluded: 0, skippedWrongState: 0, skippedNoMatchingDay: 0,
-    skippedAlreadySent: 0, skippedNoEnteredAt: 0, errors: 0,
+    skippedAlreadySent: 0, skippedNoEnteredAt: 0, skippedLegacyRerun: 0, errors: 0,
   };
   const errors = [];
 
@@ -107,6 +114,21 @@ export async function runStateCron({
         // and bought long ago), so the shared engine skips them entirely.
         if (sub.flashOnly) {
           summary.skippedExcluded++;
+          continue;
+        }
+        // 2026-07-22 (Joel: "skip reruns"): the legacy-gap migration on
+        // 2026-07-17 enrolled ~7.7k EXISTING contacts into the lead arc and
+        // stamped stateEnteredAt = migration time, so this engine reads them
+        // as brand-new leads and walks them through onboarding again. The
+        // migration pre-suppressed Day 0 (leadDay0Sent set with no SentAt, so
+        // nobody got a second Blueprint) but Days 2 through 15 were flowing.
+        // These people have been on the list for months, so we stop the
+        // re-run. They stay eligible for evergreen at day 22 and land on the
+        // NEWSTART series instead, which is genuinely new to them.
+        // Genuine new captures carry a different source and are unaffected.
+        // Reversible: set RERUN_LEGACY_ARC=1 to let this cohort finish.
+        if (!RERUN_LEGACY_ARC && LEGACY_MIGRATED_SOURCE.test(sub.source || '')) {
+          summary.skippedLegacyRerun++;
           continue;
         }
         if (sub.state !== state) {
