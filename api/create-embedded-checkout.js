@@ -109,6 +109,7 @@ export default async function handler(req, res) {
       offer: 'case-review',
       plan: isThreePay ? '3pay' : 'full',
       ...phMeta,
+      ...abMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -151,7 +152,7 @@ export default async function handler(req, res) {
       'tea-satin-48': process.env.SATIN_48_PRICE_ID || 'price_1TqGRCHseZnO3rRZBsF7Mvyu',   // 1-Month $48
       'tea-satin-120': process.env.SATIN_120_PRICE_ID || 'price_1TqGR9HseZnO3rRZJ9ynNFKx', // 90-Day $120
     };
-    const metadata = { blend: 'satin', venture: 'svutu', offer: tier, ...phMeta };
+    const metadata = { blend: 'satin', venture: 'svutu', offer: tier, ...phMeta, ...abMeta };
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
@@ -176,7 +177,7 @@ export default async function handler(req, res) {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
     };
-    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta };
+    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta };
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
@@ -221,6 +222,7 @@ export default async function handler(req, res) {
       offer: 'all-in',
       plan,
       ...phMeta,
+      ...abMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({

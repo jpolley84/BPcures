@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Check, ShieldCheck, Lock } from 'lucide-react';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track, getDistinctId } from '../utils/analytics';
+import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
 
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
@@ -97,7 +97,7 @@ export default function AllInPage() {
             const res = await fetch('/api/create-embedded-checkout', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ tier: option.tier, email, ph_did: getDistinctId() }),
+              body: JSON.stringify({ tier: option.tier, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
             });
             if (!res.ok) throw new Error('start_failed');
             const data = await res.json();

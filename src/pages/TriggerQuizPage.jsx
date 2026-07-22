@@ -652,14 +652,38 @@ export default function TriggerQuizPage() {
                 marginBottom: '0.9rem',
               }}
             >
-              Quiz Complete
+              Your Result
             </div>
+            {/* 2026-07-21 (A/B fix): B was showing "check your email" and then
+                asking for $17 with nothing delivered on-page. Offer-viewers
+                converted to checkout at 25% vs A's 56%. She now gets her named
+                trigger, the why, and one concrete move she can make today
+                BEFORE the ask, so the offer lands on earned value. */}
             <h2 style={{ ...serif, fontSize: 'clamp(1.6rem, 5.5vw, 2.1rem)', margin: '0 0 0.7rem' }}>
-              Congratulations, you completed the quiz! 🎉
+              Your number one trigger is {t.name}.
             </h2>
-            <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.5rem' }}>
-              Your results, built around <strong>{t.name}</strong>, plus the full 5-trigger Blueprint, are on
-              their way to your email right now. Check your inbox in a few minutes.
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1rem' }}>
+              {t.copy}
+            </p>
+
+            <div
+              style={{
+                background: 'var(--cream, #FBF8F1)',
+                borderLeft: '3px solid var(--sage-deep, #2E3A30)',
+                borderRadius: 8,
+                padding: '0.9rem 1rem',
+                margin: '0 0 1.1rem',
+              }}
+            >
+              <div style={{ ...labelStyle, marginBottom: '0.35rem' }}>Start here today</div>
+              <p style={{ fontSize: '0.93rem', lineHeight: 1.6, color: 'var(--ink, #121110)', margin: 0 }}>
+                {t.lifestyle}
+              </p>
+            </div>
+
+            <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'var(--muted, #7A7061)', margin: '0 0 1.5rem' }}>
+              Your full write-up on {t.name.replace('The ', 'the ')}, plus the complete 5-trigger Blueprint, is
+              landing in your inbox right now.
             </p>
 
             <div
