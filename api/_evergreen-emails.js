@@ -28,6 +28,10 @@ const SPRINT_URL = u('/case-review', 'sprint');
 const COACHING_URL = u('/coaching', 'coaching');
 const TEA_URL = 'https://bpquiz.com/tea/?utm_source=email&utm_medium=evergreen&utm_campaign=tea';
 const SKOOL_URL = `${SKOOL_TRIAL_URL}?utm_source=email&utm_medium=evergreen&utm_campaign=weekly-reset`;
+// Affiliate rails. ALWAYS these tracked redirects, NEVER a raw product URL,
+// or the commission is lost. Both regenerate periodically (see memory).
+const MAGNESIUM_URL = u('/magnesium', 'magnesium');
+const SAFFRON_URL = u('/saffron', 'saffron');
 
 const first = (ctx) => ctx.firstName || 'friend';
 
@@ -424,6 +428,81 @@ export const EVERGREEN_LIBRARY = [
         p(`Joel Polley, RN`),
       ].join(''),
       bodyText: `Hey ${first(ctx)},\n\nLast letter. Trust. The one nobody can sell you, which is probably why you rarely hear it discussed in health content.\n\nResearchers went looking at a population that actually lives this pillar rather than talking about it, and measured whether faith and the community around it showed up in their blood pressure.\n\n${sourceText({ claim: 'Among older North American Seventh-day Adventists, people with both high religious involvement and high social interaction had lower systolic blood pressure than those with one or neither.', cite: 'Journal of Religion and Health, 2015', url: 'https://pubmed.ncbi.nlm.nih.gov/26337436/' })}\n\nNotice the shape of that result. It was not faith alone and it was not company alone. It was both together. Belief that stayed private did not carry the same signal as belief lived out among people.\n\nI will be straight with you about the limits. This is observational, and the honest state of this literature is mixed. One study I read while writing this found gratitude associated with higher cardiovascular reactivity, not lower. That is the opposite of the tidy story, and you deserve to know it exists rather than only hearing the studies that agree with me.\n\nSo here is what I can say without overreaching. The stress corner of the Triangle is not primarily about workload. It is about carrying something with no one to hand it to. A body that never gets to stand down stays in a pressure state, and the fastest way I know to stand down is not a technique. It is being genuinely known by somebody, and trusting that you are held by God rather than by your own grip.\n\nYour one thing this week. Tell one person the real answer when they ask how you are doing. Not the reflex answer. The real one.\n\nThat is the eight. Nutrition, Exercise, Water, Sunlight, Temperance, Air, Rest, Trust. Nobody does all eight well, including me. You are looking for the one that is loudest right now, and you are only working that one.\n\nNext time I write, we start on the remedies themselves, herb by herb, same rule as this series. Every number gets a source you can go check.\n\nOne trigger at a time,\nJoel Polley, RN`,
+    }),
+  },
+
+  // ══════════════════════════════════════════════════════════════════
+  // THE REMEDY SERIES — herb by herb. Same rule as NEWSTART: report
+  // what the trials FOUND, cite it, never promise the reader a result.
+  // Magnesium and saffron route through the TRACKED affiliate redirects
+  // (/magnesium, /saffron), never a raw product URL, or commission dies.
+  // ══════════════════════════════════════════════════════════════════
+
+  // MAGNESIUM — the deficiency frame, which is where the real story is.
+  {
+    key: 'remedy-magnesium',
+    subject: 'the mineral 9 out of 10 of us are short on',
+    preview: 'Correcting a shortage is not the same thing as taking a drug.',
+    pitch: false,
+    build: (ctx) => ({
+      bodyHtml: [
+        p(`Hey ${first(ctx)},`),
+        p(`New series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number I give you comes with a source you can go click.`),
+        p(`Starting with magnesium, because it is the one I get asked about most and the one most people get wrong in both directions.`),
+        p(`Here is the trap. If you look up the supplement trials, the average effect looks unimpressive. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg. People read that and shrug.`),
+        p(`But look at who is in those trials. They include plenty of people who already had enough magnesium. Give more of a nutrient to somebody who is not short on it and of course not much happens. That average is hiding the people it actually mattered for.`),
+        p(`Now look at how many of us are actually short.`),
+        sourceHtml({
+          claim: `Across NHANES data, roughly half of Americans take in less magnesium than the estimated requirement. Among adults 65 and older it is 83.3 percent, and among older African American adults specifically it reaches 90.6 percent.`,
+          cite: `Nutrients, NHANES 2005 to 2016`,
+          url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6316208/',
+        }),
+        p(`Nine out of ten. That is not a supplement pitch, that is a population running on empty.`),
+        p(`And magnesium is not a side character in this system. It is the mineral your blood vessels use to relax. Calcium tells muscle to contract, magnesium tells it to let go, and the smooth muscle wrapped around every artery you own runs on that balance. It is also one of the quietest reasons people cannot fall asleep, which loops straight back to the Rest pillar and the overnight dip we talked about.`),
+        p(`So the honest framing is this. Magnesium is not a drug you add. It is a shortage most of us are walking around with, and correcting a shortage behaves very differently than dosing someone who was already fine.`),
+        p(`Food first, always. Pumpkin seeds, black beans, almonds, spinach, cashews, dark leafy greens. That is the real answer and it always will be.`),
+        p(`If you want to supplement on top of that, the form matters more than the milligrams. Glycinate and citrate absorb well. Oxide is cheap and mostly gives people loose stools. I use and point people to this one: <a href="${MAGNESIUM_URL}" style="color:#B85A36;font-weight:700;">the magnesium I keep in my own kitchen</a>. Full transparency, that is an affiliate link, which means BraveWorks earns a small commission if you get it there. It costs you nothing extra and it is how these letters stay free.`),
+        p(`Two cautions I will not skip. If you have kidney disease, talk to your doctor before supplementing magnesium at all, because damaged kidneys cannot clear the excess. And magnesium can interfere with the absorption of some antibiotics and thyroid medication, so space them a few hours apart.`),
+        p(`Next letter, saffron. The number on that one genuinely surprised me.`),
+        p(`One trigger at a time,`),
+        p(`Joel Polley, RN`),
+      ].join(''),
+      bodyText: `Hey ${first(ctx)},\n\nNew series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number I give you comes with a source you can go click.\n\nStarting with magnesium, because it is the one I get asked about most and the one most people get wrong in both directions.\n\nHere is the trap. If you look up the supplement trials, the average effect looks unimpressive. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg. People read that and shrug.\n\nBut look at who is in those trials. They include plenty of people who already had enough magnesium. Give more of a nutrient to somebody who is not short on it and of course not much happens. That average is hiding the people it actually mattered for.\n\nNow look at how many of us are actually short.\n\n${sourceText({ claim: 'Across NHANES data, roughly half of Americans take in less magnesium than the estimated requirement. Among adults 65 and older it is 83.3 percent, and among older African American adults specifically it reaches 90.6 percent.', cite: 'Nutrients, NHANES 2005 to 2016', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6316208/' })}\n\nNine out of ten. That is not a supplement pitch, that is a population running on empty.\n\nAnd magnesium is not a side character in this system. It is the mineral your blood vessels use to relax. Calcium tells muscle to contract, magnesium tells it to let go, and the smooth muscle wrapped around every artery you own runs on that balance. It is also one of the quietest reasons people cannot fall asleep, which loops straight back to the Rest pillar and the overnight dip we talked about.\n\nSo the honest framing is this. Magnesium is not a drug you add. It is a shortage most of us are walking around with, and correcting a shortage behaves very differently than dosing someone who was already fine.\n\nFood first, always. Pumpkin seeds, black beans, almonds, spinach, cashews, dark leafy greens. That is the real answer and it always will be.\n\nIf you want to supplement on top of that, the form matters more than the milligrams. Glycinate and citrate absorb well. Oxide is cheap and mostly gives people loose stools. I use and point people to this one: ${MAGNESIUM_URL} . Full transparency, that is an affiliate link, which means BraveWorks earns a small commission if you get it there. It costs you nothing extra and it is how these letters stay free.\n\nTwo cautions I will not skip. If you have kidney disease, talk to your doctor before supplementing magnesium at all, because damaged kidneys cannot clear the excess. And magnesium can interfere with the absorption of some antibiotics and thyroid medication, so space them a few hours apart.\n\nNext letter, saffron. The number on that one genuinely surprised me.\n\nOne trigger at a time,\nJoel Polley, RN`,
+    }),
+  },
+
+  // SAFFRON — genuinely strong number; SSRI/SNRI deflect is mandatory.
+  {
+    key: 'remedy-saffron',
+    subject: 'the spice that moved pressure 7.49 points',
+    preview: 'Thirteen trials, 840 people. I did not expect this number.',
+    pitch: false,
+    build: (ctx) => ({
+      bodyHtml: [
+        p(`Hey ${first(ctx)},`),
+        p(`I owe you an admission on this one. When I started pulling the research for this series, I had saffron filed under nice but probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.`),
+        p(`That is not what I found.`),
+        sourceHtml({
+          claim: `Across 13 randomized controlled trials covering 840 patients with metabolic syndrome and related conditions, saffron outperformed placebo on systolic blood pressure by 7.49 mmHg.`,
+          cite: `Systematic review and meta-analysis, 2024`,
+          url: 'https://pubmed.ncbi.nlm.nih.gov/38796446/',
+        }),
+        p(`To put that in context for you. That is in the same neighborhood as hibiscus, better than the average magnesium result, and it is coming from a spice most people only think about in rice.`),
+        p(`There is a second trial I liked even more, because of what it says about stacking. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together. Saffron alone brought the group average down. Saffron plus training brought it down considerably further than either did by itself.`),
+        p(`That is the whole BraveWorks thesis in one experiment. Nothing here is a magic bullet, and the things that work, work better stacked on top of each other. A spice on top of movement beats a spice by itself.`),
+        p(`Why would saffron do anything at all. The active compounds, crocin and safranal, appear to work on the lining of the vessels and on the stress side of the picture, which is the corner most people underestimate. That is also why saffron shows up so often in mood research.`),
+        p(`Which brings me to the part I will not soften.`),
+        callout({
+          kicker: 'READ THIS BEFORE YOU BUY ANY SAFFRON',
+          body: `Saffron acts on serotonin. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. This is not me being cautious for legal reasons. Stacking two serotonergic things without supervision is a real risk and it is not worth it.`,
+        }),
+        p(`That also goes for anyone pregnant, and anyone on blood thinners.`),
+        p(`If none of that applies to you, the trials generally used around 30 mg a day of a standardized extract. Quality varies wildly with saffron because it is the most expensive spice on earth and adulteration is common. Here is the one I use and vetted: <a href="${SAFFRON_URL}" style="color:#B85A36;font-weight:700;">the saffron I recommend</a>. Same transparency as last time, that is an affiliate link and BraveWorks earns a small commission. Costs you nothing extra.`),
+        p(`And the standing rule, which has not changed and will not. Nothing here replaces what your doctor prescribed. Keep taking it exactly as directed. What I teach runs alongside your care.`),
+        p(`One trigger at a time,`),
+        p(`Joel Polley, RN`),
+      ].join(''),
+      bodyText: `Hey ${first(ctx)},\n\nI owe you an admission on this one. When I started pulling the research for this series, I had saffron filed under nice but probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.\n\nThat is not what I found.\n\n${sourceText({ claim: 'Across 13 randomized controlled trials covering 840 patients with metabolic syndrome and related conditions, saffron outperformed placebo on systolic blood pressure by 7.49 mmHg.', cite: 'Systematic review and meta-analysis, 2024', url: 'https://pubmed.ncbi.nlm.nih.gov/38796446/' })}\n\nTo put that in context for you. That is in the same neighborhood as hibiscus, better than the average magnesium result, and it is coming from a spice most people only think about in rice.\n\nThere is a second trial I liked even more, because of what it says about stacking. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together. Saffron alone brought the group average down. Saffron plus training brought it down considerably further than either did by itself.\n\nThat is the whole BraveWorks thesis in one experiment. Nothing here is a magic bullet, and the things that work, work better stacked on top of each other. A spice on top of movement beats a spice by itself.\n\nWhy would saffron do anything at all. The active compounds, crocin and safranal, appear to work on the lining of the vessels and on the stress side of the picture, which is the corner most people underestimate. That is also why saffron shows up so often in mood research.\n\nWhich brings me to the part I will not soften.\n\nREAD THIS BEFORE YOU BUY ANY SAFFRON\nSaffron acts on serotonin. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. This is not me being cautious for legal reasons. Stacking two serotonergic things without supervision is a real risk and it is not worth it.\n\nThat also goes for anyone pregnant, and anyone on blood thinners.\n\nIf none of that applies to you, the trials generally used around 30 mg a day of a standardized extract. Quality varies wildly with saffron because it is the most expensive spice on earth and adulteration is common. Here is the one I use and vetted: ${SAFFRON_URL} . Same transparency as last time, that is an affiliate link and BraveWorks earns a small commission. Costs you nothing extra.\n\nAnd the standing rule, which has not changed and will not. Nothing here replaces what your doctor prescribed. Keep taking it exactly as directed. What I teach runs alongside your care.\n\nOne trigger at a time,\nJoel Polley, RN`,
     }),
   },
 ];
