@@ -283,10 +283,11 @@ export default function TriggerLanding() {
             {/* 2026-07-22 (Joel) TEST: the kit poster used to be quiz-only, so
                 someone who already wanted the kit had no way to buy it and
                 then never saw it again. Two doors now: take the quiz, or skip
-                straight to checkout. Skip goes to the $47 COMPLETE kit (all
-                three corners) because without the quiz we do not know her
-                corner, and /pay?tier=corner with no corner has no product to
-                describe. */}
+                straight to checkout. Skip goes to the $17 STRESS corner as
+                STAGE ONE of the Triangle Reset, per Joel: "we always start
+                with stress." That fixes the no-corner problem (a skip buyer
+                has no quiz result) without guessing, and keeps the quiz
+                meaningful since it sets which stage comes next. */}
             <div className="bpq-hero-doors">
               <button
                 type="button"
@@ -299,14 +300,14 @@ export default function TriggerLanding() {
                 type="button"
                 className="bpq-door bpq-door-secondary"
                 onClick={() => {
-                  track('skip_quiz_clicked', { source: 'hero_doors', tier: 'complete', value: 47 });
-                  navigate('/pay?tier=complete&src=skipquiz');
+                  track('skip_quiz_clicked', { source: 'hero_doors', tier: 'corner', corner: 'stress', stage: 1, value: 17 });
+                  navigate('/pay?tier=corner&corner=stress&src=skipquiz');
                 }}
               >
-                Skip the quiz. Send me the kit, $47
+                Skip the quiz. Start Stage One, $17
               </button>
               <p className="bpq-door-note">
-                The quiz is free and tells you which of the three pressures is loudest for you. Skip it and you get all three corners.
+                Stage One of the full Triangle Reset is stress, because that is where we always start. The quiz is free and tells you which stage comes after it.
               </p>
             </div>
 
