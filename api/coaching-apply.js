@@ -505,6 +505,41 @@ export default async function handler(req, res) {
 // Legacy fields (investTier, startWindow, dailyTime, trackingWillingness) may
 // still arrive from a cached old client for a short while; scoreBeThere falls
 // back to them so an in-flight old submission is never mis-scored.
+// ---------------------------------------------------------------------------
+// 2026-07-22 (Joel): DELAY the applicant ack. The /apply thank-you now says
+// Joel will review the application and email if she is a good fit. An ack that
+// lands in seconds saying "I have gone through your application" makes that
+// claim obviously untrue and exposes the automation. Delaying it ~3 hours
+// makes the page honest without changing a word of the email.
+//
+// Guard-railed to sane hours: never before 8am or after 9pm Central, so an
+// 11pm applicant gets it at 8am rather than at 2 in the morning. Delivered by
+// Resend's native scheduledAt (SDK 6.x), so no cron is involved.
+function ctOffsetMs(d) {
+  try {
+    const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const ct = new Date(d.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+    return ct.getTime() - utc.getTime();
+  } catch {
+    return -5 * 3600 * 1000; // CDT fallback
+  }
+}
+
+function applicantAckSendAt(now = new Date()) {
+  const off = ctOffsetMs(now);
+  let target = new Date(now.getTime() + 3 * 3600 * 1000);
+  const ct = new Date(target.getTime() + off); // CT wall clock, read via getUTC*
+  const hour = ct.getUTCHours();
+  if (hour >= 21) {
+    const bumped = Date.UTC(ct.getUTCFullYear(), ct.getUTCMonth(), ct.getUTCDate() + 1, 8, 0, 0);
+    target = new Date(bumped - off);
+  } else if (hour < 8) {
+    const bumped = Date.UTC(ct.getUTCFullYear(), ct.getUTCMonth(), ct.getUTCDate(), 8, 0, 0);
+    target = new Date(bumped - off);
+  }
+  return target.toISOString();
+}
+
 const BETHERE_OFF_MEDS_OLD = 'I was hoping to get off my medications without my doctor';
 const BETHERE_OFF_MEDS = 'I was hoping to come off my medications without my doctor';
 const BETHERE_GATE_NO = 'No. I will pass for now.';
@@ -758,11 +793,13 @@ async function handleBeThere(req, res) {
       <p style="margin:0 0 16px;">That is not the end of it. The free community and the daily emails are open to you, and there is real help in both. If your situation changes, write back and tell me. I will take another look.</p>
       <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever you do next, do it alongside your doctor, never instead of them.</p>`;
 
+    const scheduledAt = applicantAckSendAt();
     const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
       subject: ackSubject,
+      scheduledAt,
       html: `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
       <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
       ${isCold ? coldBody : movingForwardBody}
