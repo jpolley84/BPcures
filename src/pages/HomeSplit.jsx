@@ -12,6 +12,7 @@
 import { useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
 import TriggerLanding from './TriggerLanding';
+import MasterclassBanner from '../components/MasterclassBanner';
 import { track, registerSuperProps } from '../utils/analytics.js';
 
 const STORAGE_KEY = 'bpq_ab_home';
@@ -74,5 +75,12 @@ export default function HomeSplit() {
   // still stamp the super property before any other event fires.
   registerSuperProps({ ab_home_variant: variant });
 
-  return variant === 'b' ? <TriggerLanding /> : <CheckoutPage />;
+  // 2026-07-22 (Joel): the free-masterclass banner rides above BOTH variants,
+  // so A and B get it identically and it stays out of the split's copy.
+  return (
+    <>
+      <MasterclassBanner />
+      {variant === 'b' ? <TriggerLanding /> : <CheckoutPage />}
+    </>
+  );
 }

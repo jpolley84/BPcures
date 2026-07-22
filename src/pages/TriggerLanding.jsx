@@ -201,6 +201,25 @@ export default function TriggerLanding() {
         }
         .bpq-hero-poster:hover { transform: translateY(-3px); box-shadow: 0 32px 65px rgba(18, 17, 16, 0.3); }
         .bpq-hero-poster:focus-visible { outline: 3px solid var(--clay, #B85A36); outline-offset: 3px; }
+        /* Two doors under the kit poster: quiz, or straight to checkout. */
+        .bpq-hero-doors { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.9rem; }
+        .bpq-door {
+          width: 100%; border-radius: 10px; padding: 0.95rem 1.1rem; cursor: pointer;
+          font-size: 1rem; font-weight: 700; font-family: inherit; line-height: 1.25;
+          transition: transform .12s ease, background .15s ease, border-color .15s ease;
+        }
+        .bpq-door:hover { transform: translateY(-1px); }
+        .bpq-door-primary { background: var(--clay, #B85A36); color: #fff; border: 2px solid var(--clay, #B85A36); }
+        .bpq-door-primary:hover { background: var(--clay-deep, #9C4527); }
+        .bpq-door-secondary { background: transparent; color: var(--ink, #121110); border: 2px solid var(--line, #D8CFBD); }
+        .bpq-door-secondary:hover { border-color: var(--ink, #121110); }
+        .bpq-door:focus-visible { outline: 3px solid var(--clay, #B85A36); outline-offset: 2px; }
+        .bpq-door-note { margin: 0.2rem 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--muted, #7A7061); text-align: center; }
+        @media (min-width: 640px) {
+          .bpq-hero-doors { flex-direction: row; flex-wrap: wrap; }
+          .bpq-door { flex: 1 1 0; min-width: 210px; }
+          .bpq-door-note { flex-basis: 100%; }
+        }
         .bpq-stickybar {
           position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display: none;
           background: rgba(46, 58, 48, 0.97); backdrop-filter: blur(8px);
@@ -260,6 +279,37 @@ export default function TriggerLanding() {
                 />
               </picture>
             </button>
+
+            {/* 2026-07-22 (Joel) TEST: the kit poster used to be quiz-only, so
+                someone who already wanted the kit had no way to buy it and
+                then never saw it again. Two doors now: take the quiz, or skip
+                straight to checkout. Skip goes to the $47 COMPLETE kit (all
+                three corners) because without the quiz we do not know her
+                corner, and /pay?tier=corner with no corner has no product to
+                describe. */}
+            <div className="bpq-hero-doors">
+              <button
+                type="button"
+                className="bpq-door bpq-door-primary"
+                onClick={() => startQuiz('hero_doors')}
+              >
+                Take the free 90-second quiz
+              </button>
+              <button
+                type="button"
+                className="bpq-door bpq-door-secondary"
+                onClick={() => {
+                  track('skip_quiz_clicked', { source: 'hero_doors', tier: 'complete', value: 47 });
+                  navigate('/pay?tier=complete&src=skipquiz');
+                }}
+              >
+                Skip the quiz. Send me the kit, $47
+              </button>
+              <p className="bpq-door-note">
+                The quiz is free and tells you which of the three pressures is loudest for you. Skip it and you get all three corners.
+              </p>
+            </div>
+
             <div className="bpq-hero-steps">
               <div style={{ ...labelStyle, marginBottom: '0.55rem' }}>How it works</div>
               {HOW_IT_WORKS.map((step) => (

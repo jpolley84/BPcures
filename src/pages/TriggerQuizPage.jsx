@@ -696,6 +696,20 @@ export default function TriggerQuizPage() {
               }}
             >
               <div style={{ ...labelStyle, marginBottom: '0.7rem' }}>While that lands in your inbox</div>
+              {/* 2026-07-22 (Joel): the kit poster shows on the landing page and
+                  then she never saw it again, so the offer arrived with nothing
+                  to look at. Same vault image, back at the moment of the ask. */}
+              <picture>
+                <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
+                <img
+                  src="/images/kit-vault-hero.jpg"
+                  alt="The 10-Day BP Reset Kit: protocols, herb guides, recipes, and tools for the three pressures behind your numbers."
+                  width="1672"
+                  height="941"
+                  loading="lazy"
+                  style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 10, marginBottom: '0.9rem' }}
+                />
+              </picture>
               <h3 style={{ ...serif, fontSize: '1.3rem', margin: '0 0 0.6rem', color: 'var(--ink, #121110)' }}>
                 The BP Reset Kit for {t.name.replace('The ', 'the ')}
               </h3>
