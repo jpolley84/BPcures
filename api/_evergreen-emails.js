@@ -49,6 +49,23 @@ function sourceText({ claim, cite, url }) {
   return `THE RESEARCH\n${claim.replace(/<[^>]+>/g, '')}\n${cite}: ${url}`;
 }
 
+// ── Where-I-get-mine block ───────────────────────────────────────────
+// Affiliate CTA lives at the BOTTOM, after the teaching is done (Joel,
+// 2026-07-22). The lesson has to stand on its own whether or not anyone
+// ever clicks. Disclosure is always inside the block, never buried.
+function affiliateBlockHtml({ heading, body, label, url }) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:30px 0 6px;">
+    <tr><td style="border-top:2px solid #D9D2C4;padding:22px 0 0;">
+      <p style="font-size:12px;letter-spacing:1.6px;color:#B85A36;font-weight:800;margin:0 0 8px;">${heading}</p>
+      <p style="font-size:15px;line-height:1.7;color:#2B2824;margin:0 0 16px;">${body}</p>
+      <a href="${url}" style="display:inline-block;background:#B85A36;color:#fff;font-weight:700;font-size:15px;text-decoration:none;padding:13px 28px;border-radius:999px;">${label}</a>
+      <p style="font-size:12px;line-height:1.6;color:#8A8275;margin:14px 0 0;">Affiliate link. BraveWorks earns a small commission if you buy through it, at no extra cost to you. It is how these letters stay free. I only send you to things I use myself.</p>
+    </td></tr></table>`;
+}
+function affiliateBlockText({ heading, body, label, url }) {
+  return `${heading}\n${body.replace(/<[^>]+>/g, '')}\n${label}: ${url}\nAffiliate link. BraveWorks earns a small commission if you buy through it, at no extra cost to you. It is how these letters stay free. I only send you to things I use myself.`;
+}
+
 // ── Standing P.S., branched by ladder position ───────────────────────
 // audience: 'lead' (no purchase) | 'buyer' (kit, no Sprint) | 'sprint' (bought Sprint)
 // `alt` (true on odd library indexes) swaps the primary ladder ask for the
@@ -441,68 +458,158 @@ export const EVERGREEN_LIBRARY = [
   // MAGNESIUM — the deficiency frame, which is where the real story is.
   {
     key: 'remedy-magnesium',
-    subject: 'the mineral 9 out of 10 of us are short on',
-    preview: 'Correcting a shortage is not the same thing as taking a drug.',
+    subject: 'why your magnesium blood test told you almost nothing',
+    preview: 'The lab can read normal while your tissues are running on empty. Here is why.',
     pitch: false,
     build: (ctx) => ({
       bodyHtml: [
+        h2('Magnesium, properly explained'),
         p(`Hey ${first(ctx)},`),
-        p(`New series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number I give you comes with a source you can go click.`),
-        p(`Starting with magnesium, because it is the one I get asked about most and the one most people get wrong in both directions.`),
-        p(`Here is the trap. If you look up the supplement trials, the average effect looks unimpressive. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg. People read that and shrug.`),
-        p(`But look at who is in those trials. They include plenty of people who already had enough magnesium. Give more of a nutrient to somebody who is not short on it and of course not much happens. That average is hiding the people it actually mattered for.`),
-        p(`Now look at how many of us are actually short.`),
+        p(`New series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number comes with a source you can go click.`),
+        p(`Starting with magnesium, because it is the one I get asked about most, and because there is a piece of it almost nobody explains properly.`),
+
+        h2('1. It is a calcium channel blocker. Literally.'),
+        p(`If your doctor has ever mentioned amlodipine or nifedipine, those are calcium channel blockers. They work by stopping calcium from flooding into the muscle cells wrapped around your arteries. Less calcium in, less squeeze, wider vessel, lower pressure.`),
+        p(`Magnesium works on that same switch. Calcium is the signal that tells muscle to contract. Magnesium is the signal that tells it to let go. They sit on opposite ends of the same seesaw, and the smooth muscle around every artery you own runs on that balance.`),
         sourceHtml({
-          claim: `Across NHANES data, roughly half of Americans take in less magnesium than the estimated requirement. Among adults 65 and older it is 83.3 percent, and among older African American adults specifically it reaches 90.6 percent.`,
+          claim: `Magnesium acts as a calcium antagonist at the vessel wall, blocking calcium entry, lowering peripheral vascular resistance, and stimulating the release of nitric oxide and prostacyclin, the body's own vasodilators.`,
+          cite: `Circulation Research; Role of magnesium in hypertension`,
+          url: 'https://pubmed.ncbi.nlm.nih.gov/16762312/',
+        }),
+        p(`So it is not a vague wellness mineral. It is working the same lever a prescription works, as a nutrient, at nutrient strength.`),
+
+        h2('2. It turns down the stress signal at the nerve ending'),
+        p(`This is the part that ties into the corner most people underestimate.`),
+        p(`Your sympathetic nerves release norepinephrine, the chemical that tightens vessels and drives pressure up when you are stressed. Magnesium blocks a specific calcium channel at those nerve endings, and when that channel is blocked, less norepinephrine comes out.`),
+        sourceHtml({
+          claim: `Magnesium inhibits norepinephrine release by blocking N-type calcium channels at peripheral sympathetic nerve endings.`,
+          cite: `Hypertension (American Heart Association)`,
+          url: 'https://www.ahajournals.org/doi/10.1161/01.HYP.0000146536.68208.84',
+        }),
+        p(`Read that alongside the Stress corner and it should click. Magnesium is not calming you down in a fuzzy sense. It is reducing the actual chemical output of your stress nerves.`),
+
+        h2('3. Why your blood test did not tell you what you think'),
+        p(`Here is the piece I really want you to have, because I have watched people get waved off with it.`),
+        p(`Somebody suspects they are low, asks for a magnesium level, it comes back normal, and that is the end of the conversation. But only about 1 percent of the magnesium in your body is in your bloodstream. The rest is in bone and inside your cells. Your body will strip magnesium out of tissue to keep the blood number steady, because the blood number is what keeps your heart rhythm safe.`),
+        sourceHtml({
+          claim: `Serum magnesium has not been validated as a reliable indicator of body magnesium status, because extracellular magnesium is roughly 1 percent of the total. Tissue depletion can occur while blood levels stay in the normal range, a state called normomagnesemic magnesium deficiency.`,
+          cite: `NIH Dietary Reference Intakes; Interpreting Magnesium Status`,
+          url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5812344/',
+        }),
+        p(`A normal magnesium level rules out an emergency. It does not rule out a shortage. Those are different questions and they get confused constantly.`),
+
+        h2('4. How common is the shortage'),
+        sourceHtml({
+          claim: `Roughly half of Americans take in less magnesium than the estimated average requirement. Among adults 65 and older it is 83.3 percent. Among older African American adults specifically it reaches 90.6 percent.`,
           cite: `Nutrients, NHANES 2005 to 2016`,
           url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6316208/',
         }),
         p(`Nine out of ten. That is not a supplement pitch, that is a population running on empty.`),
-        p(`And magnesium is not a side character in this system. It is the mineral your blood vessels use to relax. Calcium tells muscle to contract, magnesium tells it to let go, and the smooth muscle wrapped around every artery you own runs on that balance. It is also one of the quietest reasons people cannot fall asleep, which loops straight back to the Rest pillar and the overnight dip we talked about.`),
-        p(`So the honest framing is this. Magnesium is not a drug you add. It is a shortage most of us are walking around with, and correcting a shortage behaves very differently than dosing someone who was already fine.`),
-        p(`Food first, always. Pumpkin seeds, black beans, almonds, spinach, cashews, dark leafy greens. That is the real answer and it always will be.`),
-        p(`If you want to supplement on top of that, the form matters more than the milligrams. Glycinate and citrate absorb well. Oxide is cheap and mostly gives people loose stools. I use and point people to this one: <a href="${MAGNESIUM_URL}" style="color:#B85A36;font-weight:700;">the magnesium I keep in my own kitchen</a>. Full transparency, that is an affiliate link, which means BraveWorks earns a small commission if you get it there. It costs you nothing extra and it is how these letters stay free.`),
-        p(`Two cautions I will not skip. If you have kidney disease, talk to your doctor before supplementing magnesium at all, because damaged kidneys cannot clear the excess. And magnesium can interfere with the absorption of some antibiotics and thyroid medication, so space them a few hours apart.`),
+        p(`And it explains something about the trial data. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg on average. Modest. But those trials include plenty of people who already had enough. Give more of a nutrient to somebody who is not short on it and not much happens. The average is diluted by the people it was never going to help.`),
+        p(`Which is the honest way to think about this. Magnesium is not a drug you add on top of a working system. It is a gap most of us are walking around with, and closing a gap behaves very differently than dosing someone who was already fine.`),
+
+        h2('5. Food first. Always.'),
+        p(`Adults need roughly 310 to 420 mg a day. Where it actually lives:`),
+        p(`Pumpkin seeds, about 156 mg in an ounce, the richest common source there is. Chia seeds, about 111 mg. Almonds and cashews, 74 to 80 mg an ounce. Cooked spinach, about 78 mg a half cup. Black beans, about 60 mg a half cup. Dark leafy greens generally.`),
+        p(`Magnesium sits at the center of the chlorophyll molecule, which is why green plants are where you find it. If your plate is green, you are eating magnesium. That is not a coincidence, that is the chemistry.`),
+
+        h2('6. If you supplement, the form matters more than the number'),
+        p(`This is where most people waste money. The milligrams on the front of the bottle mean very little compared to what form it is in.`),
+        p(`<strong>Glycinate</strong> absorbs well and is gentle on the gut. This is the one I point most people to, and the one to take in the evening, because glycine itself supports sleep.`),
+        p(`<strong>Citrate</strong> absorbs well and pulls water into the bowel, so it is the right pick if you are also constipated, and the wrong pick if you are not.`),
+        p(`<strong>Malate</strong> is well tolerated and often used when fatigue is part of the picture.`),
+        p(`<strong>Oxide</strong> is what is in most cheap bottles. It is poorly absorbed and mostly gives people loose stools. If the label says oxide and the price seems too good, that is why.`),
+
+        h2('Before you take any of it'),
+        p(`If you have kidney disease, talk to your doctor before supplementing magnesium at all. Damaged kidneys cannot clear the excess and it can build to a dangerous level. This one matters.`),
+        p(`Magnesium also blocks the absorption of some antibiotics and of thyroid medication, so separate them by a few hours.`),
+        p(`And the standing rule. Keep taking what your doctor prescribed, exactly as directed. What I teach runs alongside your care, never instead of it.`),
         p(`Next letter, saffron. The number on that one genuinely surprised me.`),
         p(`One trigger at a time,`),
         p(`Joel Polley, RN`),
+        affiliateBlockHtml({
+          heading: 'WHERE I GET MINE',
+          body: 'If you decide to supplement, this is the magnesium I keep in my own kitchen and the one I point people to. Glycinate form, taken in the evening.',
+          label: 'See the magnesium I use',
+          url: MAGNESIUM_URL,
+        }),
       ].join(''),
-      bodyText: `Hey ${first(ctx)},\n\nNew series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number I give you comes with a source you can go click.\n\nStarting with magnesium, because it is the one I get asked about most and the one most people get wrong in both directions.\n\nHere is the trap. If you look up the supplement trials, the average effect looks unimpressive. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg. People read that and shrug.\n\nBut look at who is in those trials. They include plenty of people who already had enough magnesium. Give more of a nutrient to somebody who is not short on it and of course not much happens. That average is hiding the people it actually mattered for.\n\nNow look at how many of us are actually short.\n\n${sourceText({ claim: 'Across NHANES data, roughly half of Americans take in less magnesium than the estimated requirement. Among adults 65 and older it is 83.3 percent, and among older African American adults specifically it reaches 90.6 percent.', cite: 'Nutrients, NHANES 2005 to 2016', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6316208/' })}\n\nNine out of ten. That is not a supplement pitch, that is a population running on empty.\n\nAnd magnesium is not a side character in this system. It is the mineral your blood vessels use to relax. Calcium tells muscle to contract, magnesium tells it to let go, and the smooth muscle wrapped around every artery you own runs on that balance. It is also one of the quietest reasons people cannot fall asleep, which loops straight back to the Rest pillar and the overnight dip we talked about.\n\nSo the honest framing is this. Magnesium is not a drug you add. It is a shortage most of us are walking around with, and correcting a shortage behaves very differently than dosing someone who was already fine.\n\nFood first, always. Pumpkin seeds, black beans, almonds, spinach, cashews, dark leafy greens. That is the real answer and it always will be.\n\nIf you want to supplement on top of that, the form matters more than the milligrams. Glycinate and citrate absorb well. Oxide is cheap and mostly gives people loose stools. I use and point people to this one: ${MAGNESIUM_URL} . Full transparency, that is an affiliate link, which means BraveWorks earns a small commission if you get it there. It costs you nothing extra and it is how these letters stay free.\n\nTwo cautions I will not skip. If you have kidney disease, talk to your doctor before supplementing magnesium at all, because damaged kidneys cannot clear the excess. And magnesium can interfere with the absorption of some antibiotics and thyroid medication, so space them a few hours apart.\n\nNext letter, saffron. The number on that one genuinely surprised me.\n\nOne trigger at a time,\nJoel Polley, RN`,
+      bodyText: `MAGNESIUM, PROPERLY EXPLAINED\n\nHey ${first(ctx)},\n\nNew series. We did the eight pillars, now we do the remedies themselves, one at a time, same rule as before. Every number comes with a source you can go click.\n\nStarting with magnesium, because it is the one I get asked about most, and because there is a piece of it almost nobody explains properly.\n\n1. IT IS A CALCIUM CHANNEL BLOCKER. LITERALLY.\n\nIf your doctor has ever mentioned amlodipine or nifedipine, those are calcium channel blockers. They work by stopping calcium from flooding into the muscle cells wrapped around your arteries. Less calcium in, less squeeze, wider vessel, lower pressure.\n\nMagnesium works on that same switch. Calcium is the signal that tells muscle to contract. Magnesium is the signal that tells it to let go. They sit on opposite ends of the same seesaw, and the smooth muscle around every artery you own runs on that balance.\n\n${sourceText({ claim: "Magnesium acts as a calcium antagonist at the vessel wall, blocking calcium entry, lowering peripheral vascular resistance, and stimulating the release of nitric oxide and prostacyclin, the body's own vasodilators.", cite: 'Circulation Research; Role of magnesium in hypertension', url: 'https://pubmed.ncbi.nlm.nih.gov/16762312/' })}\n\nSo it is not a vague wellness mineral. It is working the same lever a prescription works, as a nutrient, at nutrient strength.\n\n2. IT TURNS DOWN THE STRESS SIGNAL AT THE NERVE ENDING\n\nThis is the part that ties into the corner most people underestimate.\n\nYour sympathetic nerves release norepinephrine, the chemical that tightens vessels and drives pressure up when you are stressed. Magnesium blocks a specific calcium channel at those nerve endings, and when that channel is blocked, less norepinephrine comes out.\n\n${sourceText({ claim: 'Magnesium inhibits norepinephrine release by blocking N-type calcium channels at peripheral sympathetic nerve endings.', cite: 'Hypertension (American Heart Association)', url: 'https://www.ahajournals.org/doi/10.1161/01.HYP.0000146536.68208.84' })}\n\nRead that alongside the Stress corner and it should click. Magnesium is not calming you down in a fuzzy sense. It is reducing the actual chemical output of your stress nerves.\n\n3. WHY YOUR BLOOD TEST DID NOT TELL YOU WHAT YOU THINK\n\nHere is the piece I really want you to have, because I have watched people get waved off with it.\n\nSomebody suspects they are low, asks for a magnesium level, it comes back normal, and that is the end of the conversation. But only about 1 percent of the magnesium in your body is in your bloodstream. The rest is in bone and inside your cells. Your body will strip magnesium out of tissue to keep the blood number steady, because the blood number is what keeps your heart rhythm safe.\n\n${sourceText({ claim: 'Serum magnesium has not been validated as a reliable indicator of body magnesium status, because extracellular magnesium is roughly 1 percent of the total. Tissue depletion can occur while blood levels stay in the normal range, a state called normomagnesemic magnesium deficiency.', cite: 'NIH Dietary Reference Intakes; Interpreting Magnesium Status', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5812344/' })}\n\nA normal magnesium level rules out an emergency. It does not rule out a shortage. Those are different questions and they get confused constantly.\n\n4. HOW COMMON IS THE SHORTAGE\n\n${sourceText({ claim: 'Roughly half of Americans take in less magnesium than the estimated average requirement. Among adults 65 and older it is 83.3 percent. Among older African American adults specifically it reaches 90.6 percent.', cite: 'Nutrients, NHANES 2005 to 2016', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6316208/' })}\n\nNine out of ten. That is not a supplement pitch, that is a population running on empty.\n\nAnd it explains something about the trial data. Pooling 38 randomized trials, magnesium moved systolic pressure about 2.81 mmHg on average. Modest. But those trials include plenty of people who already had enough. Give more of a nutrient to somebody who is not short on it and not much happens. The average is diluted by the people it was never going to help.\n\nWhich is the honest way to think about this. Magnesium is not a drug you add on top of a working system. It is a gap most of us are walking around with, and closing a gap behaves very differently than dosing someone who was already fine.\n\n5. FOOD FIRST. ALWAYS.\n\nAdults need roughly 310 to 420 mg a day. Where it actually lives:\n\nPumpkin seeds, about 156 mg in an ounce, the richest common source there is. Chia seeds, about 111 mg. Almonds and cashews, 74 to 80 mg an ounce. Cooked spinach, about 78 mg a half cup. Black beans, about 60 mg a half cup. Dark leafy greens generally.\n\nMagnesium sits at the center of the chlorophyll molecule, which is why green plants are where you find it. If your plate is green, you are eating magnesium. That is not a coincidence, that is the chemistry.\n\n6. IF YOU SUPPLEMENT, THE FORM MATTERS MORE THAN THE NUMBER\n\nThis is where most people waste money. The milligrams on the front of the bottle mean very little compared to what form it is in.\n\nGlycinate absorbs well and is gentle on the gut. This is the one I point most people to, and the one to take in the evening, because glycine itself supports sleep.\n\nCitrate absorbs well and pulls water into the bowel, so it is the right pick if you are also constipated, and the wrong pick if you are not.\n\nMalate is well tolerated and often used when fatigue is part of the picture.\n\nOxide is what is in most cheap bottles. It is poorly absorbed and mostly gives people loose stools. If the label says oxide and the price seems too good, that is why.\n\nBEFORE YOU TAKE ANY OF IT\n\nIf you have kidney disease, talk to your doctor before supplementing magnesium at all. Damaged kidneys cannot clear the excess and it can build to a dangerous level. This one matters.\n\nMagnesium also blocks the absorption of some antibiotics and of thyroid medication, so separate them by a few hours.\n\nAnd the standing rule. Keep taking what your doctor prescribed, exactly as directed. What I teach runs alongside your care, never instead of it.\n\nNext letter, saffron. The number on that one genuinely surprised me.\n\nOne trigger at a time,\nJoel Polley, RN\n\n${affiliateBlockText({ heading: 'WHERE I GET MINE', body: 'If you decide to supplement, this is the magnesium I keep in my own kitchen and the one I point people to. Glycinate form, taken in the evening.', label: 'See the magnesium I use', url: MAGNESIUM_URL })}`,
     }),
   },
 
   // SAFFRON — genuinely strong number; SSRI/SNRI deflect is mandatory.
   {
     key: 'remedy-saffron',
-    subject: 'the spice that moved pressure 7.49 points',
-    preview: 'Thirteen trials, 840 people. I did not expect this number.',
+    subject: 'I expected this one to be hype. It was not.',
+    preview: 'Thirteen trials, 840 people, and three compounds worth knowing by name.',
     pitch: false,
     build: (ctx) => ({
       bodyHtml: [
+        h2('Saffron, properly explained'),
         p(`Hey ${first(ctx)},`),
-        p(`I owe you an admission on this one. When I started pulling the research for this series, I had saffron filed under nice but probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.`),
+        p(`I owe you an admission on this one. When I started pulling research for this series, I had saffron filed under probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.`),
         p(`That is not what I found.`),
+
+        h2('1. The number'),
         sourceHtml({
           claim: `Across 13 randomized controlled trials covering 840 patients with metabolic syndrome and related conditions, saffron outperformed placebo on systolic blood pressure by 7.49 mmHg.`,
           cite: `Systematic review and meta-analysis, 2024`,
           url: 'https://pubmed.ncbi.nlm.nih.gov/38796446/',
         }),
-        p(`To put that in context for you. That is in the same neighborhood as hibiscus, better than the average magnesium result, and it is coming from a spice most people only think about in rice.`),
-        p(`There is a second trial I liked even more, because of what it says about stacking. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together. Saffron alone brought the group average down. Saffron plus training brought it down considerably further than either did by itself.`),
-        p(`That is the whole BraveWorks thesis in one experiment. Nothing here is a magic bullet, and the things that work, work better stacked on top of each other. A spice on top of movement beats a spice by itself.`),
-        p(`Why would saffron do anything at all. The active compounds, crocin and safranal, appear to work on the lining of the vessels and on the stress side of the picture, which is the corner most people underestimate. That is also why saffron shows up so often in mood research.`),
-        p(`Which brings me to the part I will not soften.`),
-        callout({
-          kicker: 'READ THIS BEFORE YOU BUY ANY SAFFRON',
-          body: `Saffron acts on serotonin. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. This is not me being cautious for legal reasons. Stacking two serotonergic things without supervision is a real risk and it is not worth it.`,
+        p(`For context: that is in the same neighborhood as hibiscus, larger than the average magnesium result, and it is coming from a spice most people only think about in rice.`),
+        p(`One honest caveat so you can weigh it properly. Those trials were largely in people with metabolic syndrome and related conditions, not the general population. That is a group with a lot of room to move. It is real evidence, and it is not a promise about you specifically.`),
+
+        h2('2. Three compounds worth knowing by name'),
+        p(`Saffron is the dried stigma of a crocus flower, and it carries over 150 active compounds. Three of them do most of the work, and here is the elegant part: they map onto the three things your senses notice.`),
+        p(`<strong>Crocin</strong> is the color. Water soluble, deep red, and the compound most of the cardiovascular research points at.`),
+        p(`<strong>Safranal</strong> is the smell. The volatile oil responsible for that distinctive aroma when you open the jar.`),
+        p(`<strong>Picrocrocin</strong> is the taste. The bitter note underneath the floral.`),
+        p(`Color, aroma, bitterness. If a saffron has no real bitterness and no real smell, you are looking at something dyed to look the part. Which becomes very relevant in a minute.`),
+
+        h2('3. How it actually works on a vessel'),
+        p(`This is where I got interested, because saffron is not doing one thing. It appears to be working several levers at once.`),
+        sourceHtml({
+          claim: `Saffron constituents induce endothelium-dependent relaxation by increasing eNOS activity, the enzyme that makes nitric oxide. Its flavonoids inhibit angiotensin converting enzyme, the same target as a major class of blood pressure medication, and it also appears to act on calcium handling inside vascular smooth muscle.`,
+          cite: `Saffron induced relaxation in isolated aorta; endothelial mechanisms`,
+          url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6094428/',
         }),
-        p(`That also goes for anyone pregnant, and anyone on blood thinners.`),
-        p(`If none of that applies to you, the trials generally used around 30 mg a day of a standardized extract. Quality varies wildly with saffron because it is the most expensive spice on earth and adulteration is common. Here is the one I use and vetted: <a href="${SAFFRON_URL}" style="color:#B85A36;font-weight:700;">the saffron I recommend</a>. Same transparency as last time, that is an affiliate link and BraveWorks earns a small commission. Costs you nothing extra.`),
-        p(`And the standing rule, which has not changed and will not. Nothing here replaces what your doctor prescribed. Keep taking it exactly as directed. What I teach runs alongside your care.`),
+        p(`Notice the ACE line. If you take lisinopril or another medication ending in pril, that is an ACE inhibitor. Saffron appears to nudge the same enzyme, gently, from food. That is also exactly why you do not stack it casually, which I will get to.`),
+        p(`And it is a serious antioxidant, which matters because oxidative stress is one of the things that stiffens arteries over time.`),
+
+        h2('4. The trial that proves the whole method'),
+        p(`There is a second study I liked even more than the meta-analysis. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together.`),
+        p(`Saffron alone brought the group average down. Training alone brought it down. Saffron plus training brought it down further than either did by itself, landing near 137 systolic against 153 in the control group.`),
+        p(`That is the entire BraveWorks thesis inside one experiment. Nothing here is a magic bullet, and the things that work, work better stacked. A spice on top of movement beats a spice on its own, every time. If you take one idea from this letter, take that one.`),
+
+        h2('5. Most saffron sold is not saffron'),
+        p(`Saffron is the most expensive spice on earth by weight, which means it is also one of the most counterfeited. This is worth knowing whether or not you ever buy any from me.`),
+        sourceHtml({
+          claim: `The most frequent saffron adulterants are safflower, corn stigma and turmeric powder, along with calendula, beet and red pepper. Powdered saffron is substantially easier to adulterate than whole threads, which is why threads are preferred where authenticity matters.`,
+          cite: `Detection of botanical adulterants in saffron powder`,
+          url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10474180/',
+        }),
+        p(`So: buy threads, not powder. Powder is where the corn silk and turmeric hide.`),
+        p(`A kitchen test that costs you nothing. Drop a few threads in warm water and wait. Real saffron releases its color slowly, over several minutes, and the threads stay red while the water turns gold. Dyed imposters bleed color immediately and the thread itself goes pale. Real saffron should also smell distinctly, and taste bitter rather than sweet.`),
+
+        h2('Before you buy any saffron, read this'),
+        callout({
+          kicker: 'THIS PART IS NOT OPTIONAL',
+          body: `Saffron acts on serotonin, which is why it also shows up in mood research. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. I am not saying this to cover myself. Stacking two serotonergic things without supervision is a real risk and it is not worth it to you.`,
+        }),
+        p(`The same goes if you are pregnant, and if you are on a blood thinner.`),
+        p(`If none of that applies to you, trials generally used around 30 mg a day of a standardized extract. In cooking, a pinch steeped in warm water and added to a dish is the traditional route, and food is never the wrong place to start.`),
+        p(`And the standing rule, which has not changed and will not. Keep taking what your doctor prescribed, exactly as directed. What I teach runs alongside your care, never instead of it.`),
         p(`One trigger at a time,`),
         p(`Joel Polley, RN`),
+        affiliateBlockHtml({
+          heading: 'WHERE I GET MINE',
+          body: 'Given how much counterfeit saffron is out there, sourcing is most of the battle. This is the one I use and vetted myself.',
+          label: 'See the saffron I use',
+          url: SAFFRON_URL,
+        }),
       ].join(''),
-      bodyText: `Hey ${first(ctx)},\n\nI owe you an admission on this one. When I started pulling the research for this series, I had saffron filed under nice but probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.\n\nThat is not what I found.\n\n${sourceText({ claim: 'Across 13 randomized controlled trials covering 840 patients with metabolic syndrome and related conditions, saffron outperformed placebo on systolic blood pressure by 7.49 mmHg.', cite: 'Systematic review and meta-analysis, 2024', url: 'https://pubmed.ncbi.nlm.nih.gov/38796446/' })}\n\nTo put that in context for you. That is in the same neighborhood as hibiscus, better than the average magnesium result, and it is coming from a spice most people only think about in rice.\n\nThere is a second trial I liked even more, because of what it says about stacking. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together. Saffron alone brought the group average down. Saffron plus training brought it down considerably further than either did by itself.\n\nThat is the whole BraveWorks thesis in one experiment. Nothing here is a magic bullet, and the things that work, work better stacked on top of each other. A spice on top of movement beats a spice by itself.\n\nWhy would saffron do anything at all. The active compounds, crocin and safranal, appear to work on the lining of the vessels and on the stress side of the picture, which is the corner most people underestimate. That is also why saffron shows up so often in mood research.\n\nWhich brings me to the part I will not soften.\n\nREAD THIS BEFORE YOU BUY ANY SAFFRON\nSaffron acts on serotonin. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. This is not me being cautious for legal reasons. Stacking two serotonergic things without supervision is a real risk and it is not worth it.\n\nThat also goes for anyone pregnant, and anyone on blood thinners.\n\nIf none of that applies to you, the trials generally used around 30 mg a day of a standardized extract. Quality varies wildly with saffron because it is the most expensive spice on earth and adulteration is common. Here is the one I use and vetted: ${SAFFRON_URL} . Same transparency as last time, that is an affiliate link and BraveWorks earns a small commission. Costs you nothing extra.\n\nAnd the standing rule, which has not changed and will not. Nothing here replaces what your doctor prescribed. Keep taking it exactly as directed. What I teach runs alongside your care.\n\nOne trigger at a time,\nJoel Polley, RN`,
+      bodyText: `SAFFRON, PROPERLY EXPLAINED\n\nHey ${first(ctx)},\n\nI owe you an admission on this one. When I started pulling research for this series, I had saffron filed under probably overhyped. Expensive spice, big claims, thin evidence. That is what I expected to find.\n\nThat is not what I found.\n\n1. THE NUMBER\n\n${sourceText({ claim: 'Across 13 randomized controlled trials covering 840 patients with metabolic syndrome and related conditions, saffron outperformed placebo on systolic blood pressure by 7.49 mmHg.', cite: 'Systematic review and meta-analysis, 2024', url: 'https://pubmed.ncbi.nlm.nih.gov/38796446/' })}\n\nFor context: that is in the same neighborhood as hibiscus, larger than the average magnesium result, and it is coming from a spice most people only think about in rice.\n\nOne honest caveat so you can weigh it properly. Those trials were largely in people with metabolic syndrome and related conditions, not the general population. That is a group with a lot of room to move. It is real evidence, and it is not a promise about you specifically.\n\n2. THREE COMPOUNDS WORTH KNOWING BY NAME\n\nSaffron is the dried stigma of a crocus flower, and it carries over 150 active compounds. Three of them do most of the work, and here is the elegant part: they map onto the three things your senses notice.\n\nCrocin is the color. Water soluble, deep red, and the compound most of the cardiovascular research points at.\n\nSafranal is the smell. The volatile oil responsible for that distinctive aroma when you open the jar.\n\nPicrocrocin is the taste. The bitter note underneath the floral.\n\nColor, aroma, bitterness. If a saffron has no real bitterness and no real smell, you are looking at something dyed to look the part. Which becomes very relevant in a minute.\n\n3. HOW IT ACTUALLY WORKS ON A VESSEL\n\nThis is where I got interested, because saffron is not doing one thing. It appears to be working several levers at once.\n\n${sourceText({ claim: 'Saffron constituents induce endothelium-dependent relaxation by increasing eNOS activity, the enzyme that makes nitric oxide. Its flavonoids inhibit angiotensin converting enzyme, the same target as a major class of blood pressure medication, and it also appears to act on calcium handling inside vascular smooth muscle.', cite: 'Saffron induced relaxation in isolated aorta; endothelial mechanisms', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6094428/' })}\n\nNotice the ACE line. If you take lisinopril or another medication ending in pril, that is an ACE inhibitor. Saffron appears to nudge the same enzyme, gently, from food. That is also exactly why you do not stack it casually, which I will get to.\n\nAnd it is a serious antioxidant, which matters because oxidative stress is one of the things that stiffens arteries over time.\n\n4. THE TRIAL THAT PROVES THE WHOLE METHOD\n\nThere is a second study I liked even more than the meta-analysis. Researchers took hypertensive men aged 60 to 70 and split them four ways: control, resistance training only, saffron only, and both together.\n\nSaffron alone brought the group average down. Training alone brought it down. Saffron plus training brought it down further than either did by itself, landing near 137 systolic against 153 in the control group.\n\nThat is the entire BraveWorks thesis inside one experiment. Nothing here is a magic bullet, and the things that work, work better stacked. A spice on top of movement beats a spice on its own, every time. If you take one idea from this letter, take that one.\n\n5. MOST SAFFRON SOLD IS NOT SAFFRON\n\nSaffron is the most expensive spice on earth by weight, which means it is also one of the most counterfeited. This is worth knowing whether or not you ever buy any from me.\n\n${sourceText({ claim: 'The most frequent saffron adulterants are safflower, corn stigma and turmeric powder, along with calendula, beet and red pepper. Powdered saffron is substantially easier to adulterate than whole threads, which is why threads are preferred where authenticity matters.', cite: 'Detection of botanical adulterants in saffron powder', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10474180/' })}\n\nSo: buy threads, not powder. Powder is where the corn silk and turmeric hide.\n\nA kitchen test that costs you nothing. Drop a few threads in warm water and wait. Real saffron releases its color slowly, over several minutes, and the threads stay red while the water turns gold. Dyed imposters bleed color immediately and the thread itself goes pale. Real saffron should also smell distinctly, and taste bitter rather than sweet.\n\nBEFORE YOU BUY ANY SAFFRON, READ THIS\n\nTHIS PART IS NOT OPTIONAL\nSaffron acts on serotonin, which is why it also shows up in mood research. If you take an antidepressant, an SSRI or SNRI, or any other serotonergic medication, do not add saffron on your own. Take this email to your prescriber and ask them first. I am not saying this to cover myself. Stacking two serotonergic things without supervision is a real risk and it is not worth it to you.\n\nThe same goes if you are pregnant, and if you are on a blood thinner.\n\nIf none of that applies to you, trials generally used around 30 mg a day of a standardized extract. In cooking, a pinch steeped in warm water and added to a dish is the traditional route, and food is never the wrong place to start.\n\nAnd the standing rule, which has not changed and will not. Keep taking what your doctor prescribed, exactly as directed. What I teach runs alongside your care, never instead of it.\n\nOne trigger at a time,\nJoel Polley, RN\n\n${affiliateBlockText({ heading: 'WHERE I GET MINE', body: 'Given how much counterfeit saffron is out there, sourcing is most of the battle. This is the one I use and vetted myself.', label: 'See the saffron I use', url: SAFFRON_URL })}`,
     }),
   },
 ];
