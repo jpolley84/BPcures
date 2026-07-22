@@ -704,18 +704,55 @@ async function handleBeThere(req, res) {
   }
 
   // 3. Auto-ack to applicant. No prices, no dashes, alongside-doctor footer.
+  //
+  // 2026-07-22 (Joel) REWRITE: "make the auto reply to the application be this
+  // form of email instead of the calendly." Five of the first six applicants
+  // were sent at a booking link and never booked, so the ack now opens a
+  // REPLY conversation instead: screened, moving forward, phone or Zoom, and
+  // she names the times.
+  //
+  // Deliberately NO fixed time slots here. A stored email cannot hold real
+  // slots: they go stale, and every applicant would receive the identical
+  // three, so two people booking the same slot is a matter of when. Inverting
+  // it (she proposes, Joel confirms) is collision-proof and never rots.
+  //
+  // Branched on fit: only HOT/WARM get the move-forward invite. COLD exists
+  // for real reasons (no cash flow, or wanting off medications without her
+  // doctor, which is a liability disqualifier for an RN), so a COLD applicant
+  // must never be told Joel wants to move forward.
   try {
     const firstName = application.name.split(' ')[0] || 'there';
+    const isCold = fitTier === 'COLD';
+    const ackSubject = isCold
+      ? `Your Be There application is in, ${firstName}`
+      : `Your application, ${firstName} (let us find a time)`;
+
+    const movingForwardBody = `
+      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
+      <p style="margin:0 0 16px;">I read every word personally. I have gone through your application, and <strong>I would like to move forward if you are still interested.</strong></p>
+      <p style="margin:0 0 16px;">The next step is a conversation, just the two of us. Would you rather do a <strong>phone call or a Zoom</strong>? Either is fine with me.</p>
+      <p style="margin:0 0 8px;">Just reply to this email and tell me two things:</p>
+      <ol style="margin:0 0 16px;padding-left:20px;">
+        <li style="margin:0 0 6px;">Phone or Zoom.</li>
+        <li style="margin:0 0 6px;">Two or three times over the next week that suit you, and your time zone.</li>
+      </ol>
+      <p style="margin:0 0 16px;">I will work around your schedule and send the confirmation back. No booking page to wrestle with.</p>
+      <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever we build together works alongside your doctor, never instead of them.</p>`;
+
+    const coldBody = `
+      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
+      <p style="margin:0 0 16px;">I read every word personally. Based on what you shared, I do not think the 90 day program is the right step for you right now, and I would rather tell you that plainly than take your money for something that is not the fit.</p>
+      <p style="margin:0 0 16px;">That is not the end of it. The free community and the daily emails are open to you, and there is real help in both. If your situation changes, write back and tell me. I will take another look.</p>
+      <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever you do next, do it alongside your doctor, never instead of them.</p>`;
+
     const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
-      subject: `Your Be There application is in, ${firstName}`,
+      subject: ackSubject,
       html: `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
       <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
-      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
-      <p style="margin:0 0 16px;">I read every word personally. You will hear from me within 48 hours, usually sooner. If this is your fit, I will tell you exactly what comes next. If it is not, I will tell you that too, and point you somewhere honest.</p>
-      <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever we build together works alongside your doctor, never instead of them.</p>
+      ${isCold ? coldBody : movingForwardBody}
       <p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel Polley</p>
       <p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RN, BraveWorks</p>
       <p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>
