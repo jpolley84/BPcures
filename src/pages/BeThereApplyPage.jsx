@@ -37,11 +37,10 @@ import { track } from '../utils/analytics';
 
 const SERIF = "'Fraunces', 'Times New Roman', serif";
 
-// Fit-call booking link for accepted-track applicants (HOT / WARM).
-const FIT_CALL_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env &&
-    (import.meta.env.VITE_CALENDLY_FIT_CALL_URL || import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL)) ||
-  'https://calendly.com/braveworksrn/60min';
+// 2026-07-22: the fit-call booking link was REMOVED from the thank-you screen.
+// Applicants now wait for Joel's email instead of self-booking, so there is no
+// FIT_CALL_URL here any more. The env vars (VITE_CALENDLY_FIT_CALL_URL /
+// VITE_CALENDLY_DIAGNOSTIC_URL) are still used elsewhere in the site.
 
 // ---- Option sets (visible copy: no dashes, no prices) ----
 
@@ -355,22 +354,22 @@ export default function BeThereApplyPage() {
               <h1 style={{ fontFamily: SERIF, fontWeight: 600, fontSize: 'clamp(1.7rem, 5vw, 2.4rem)', lineHeight: 1.2, margin: '0 0 1rem' }}>
                 Your application is in.
               </h1>
-              <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.75rem' }}>
-                Joel reads every word himself. If it looks like a fit, the next step is a short call
-                with him to talk through your case and everything the program involves. Book your
-                time below.
+              {/* 2026-07-22 (Joel): the booking link is gone. Five of the first
+                  six applicants were sent at a calendar and never booked, so the
+                  next step is now an email from Joel, not a page they have to
+                  act on. "switch to check your email i will review the
+                  application and if i feel they are a good fit i'll send them an
+                  email with the next steps." */}
+              <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
+                <strong>Check your email.</strong>
               </p>
-              <a
-                href={FIT_CALL_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => track('bethere_call_booked_clicked')}
-                style={{ display: 'inline-block', width: '100%', maxWidth: 380, background: 'var(--clay, #B85A36)', color: '#FFFFFF', fontWeight: 700, textDecoration: 'none', padding: '1rem 1.4rem', borderRadius: 10 }}
-              >
-                Book my fit call
-              </a>
-              <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.88rem', lineHeight: 1.6, maxWidth: '44ch', margin: '1rem auto 0' }}>
-                If the calendar does not work for you, Joel will reach out within 48 hours.
+              <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
+                Joel reads every word himself. He will review your application, and if he feels you
+                are a good fit, he will send you an email with the next steps.
+              </p>
+              <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto' }}>
+                Nothing else for you to do right now. If you do not see anything from him, check your
+                spam folder before you assume the worst.
               </p>
             </>
           )}
