@@ -4,8 +4,11 @@
 // of the external hand-off (the step where 11/11 checkout-reachers were bailing).
 //
 // Contract:
-//   POST { tier?='corner', corner?, email? }
+//   POST { tier?='corner', corner?, email?, ph_did?, ab_variant? }
 //   200  { clientSecret }
+//   500  { error, code, ... }   'challenge-*' tiers only, when the price is
+//                               not configured. The page must render an honest
+//                               failure state on this, never a live spinner.
 // The client mounts the embedded checkout with this clientSecret; on completion
 // Stripe redirects the top frame to return_url (/welcome), where delivery shows.
 //
@@ -56,6 +59,68 @@ const CASE_REVIEW_3PAY_PRICE =
 // Drift, stillness = The Stillness Trigger). Keep in sync with PayPage
 // VALID_CORNERS and _kit-manifest KIT_CORNERS.
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
+
+// ─── The Three Pressures Challenge (bpquiz.com/challenge) ─────────────
+// 2026-07-26. Five live nights, Mon 2026-08-03 through Fri 2026-08-07,
+// 7:00pm CT. Two seats: General Admission $47 (challenge-ga) and VIP $97
+// (challenge-vip). Both include the $17 10-Day BP Reset Kit.
+//
+// DELIBERATELY NO HARDCODED FALLBACK PRICE ID. Every other offer in this file
+// carries `process.env.X || 'price_...'` because those prices exist and are
+// live. The challenge prices DO NOT EXIST YET (creating them is a financial
+// write that needs Joel's explicit approval, which has not been given). A
+// fallback here would either 500 inside Stripe or, far worse, inherit another
+// product's id and charge a buyer $17 for a $97 seat. So: read the env var,
+// and if it is absent or malformed, fail LOUD with a distinct error code the
+// page renders as its honest "checkout is not open yet" state.
+const CHALLENGE_COHORT = '2026-08-03';           // cohort id, also the Night 1 date
+const CHALLENGE_START_CT = '2026-08-03T19:00:00'; // Night 1, 7:00pm CT
+const CHALLENGE_PRICE_ENV = {
+  'challenge-ga': 'CHALLENGE_GA_PRICE_ID',
+  'challenge-vip': 'CHALLENGE_VIP_PRICE_ID',
+};
+
+// Wrong-product tripwire. If either challenge env var is ever pointed at a
+// price this site already sells (a copy/paste slip in the Vercel dashboard),
+// the buyer would be charged the wrong amount for the wrong thing and the
+// webhook would deliver the wrong product. Cheaper to refuse than to refund.
+// Built from the ids already declared above so it cannot drift.
+function knownOtherPriceIds() {
+  return new Set(
+    [
+      TIER_PRICES.corner.sale,
+      TIER_PRICES.corner.regular,
+      TIER_PRICES.complete.sale,
+      TIER_PRICES.complete.regular,
+      CASE_REVIEW_PRICE_ID,
+      CASE_REVIEW_3PAY_PRICE,
+      process.env.SATIN_48_PRICE_ID || 'price_1TqGRCHseZnO3rRZBsF7Mvyu',
+      process.env.SATIN_120_PRICE_ID || 'price_1TqGR9HseZnO3rRZJ9ynNFKx',
+      process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',
+      process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0',
+      process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',
+      process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S',
+      process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',
+    ].filter(Boolean)
+  );
+}
+
+// Resolve a challenge tier to its price id, or an error reason. Never throws,
+// never guesses, never falls back to another product.
+function resolveChallengePrice(tier) {
+  const envName = CHALLENGE_PRICE_ENV[tier];
+  const raw = process.env[envName];
+  const priceId = typeof raw === 'string' ? raw.trim() : '';
+  if (!priceId) return { ok: false, reason: 'unset', envName };
+  if (!/^price_[A-Za-z0-9]+$/.test(priceId)) return { ok: false, reason: 'malformed', envName };
+  if (knownOtherPriceIds().has(priceId)) return { ok: false, reason: 'collision', envName };
+  const otherTier = tier === 'challenge-ga' ? 'challenge-vip' : 'challenge-ga';
+  const otherRaw = process.env[CHALLENGE_PRICE_ENV[otherTier]];
+  if (typeof otherRaw === 'string' && otherRaw.trim() === priceId) {
+    return { ok: false, reason: 'collision', envName };
+  }
+  return { ok: true, priceId, envName };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -238,6 +303,74 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error('create-embedded-checkout all-in error:', err.message);
       return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
+  // ── The Three Pressures Challenge, GA $47 / VIP $97 ──────────────────
+  // Same branch shape as All-In above: server-owned price, one-time payment,
+  // embedded, metadata stamped so the sale is attributable and the webhook can
+  // route it. Differences that matter:
+  //   - the price id comes ONLY from env, with no fallback (see above);
+  //   - NO setup_future_usage. The page promises "nothing here renews" and has
+  //     no post-purchase one-click, so Stripe must not render save-card /
+  //     future-charge consent language at the pay button (the 2026-07-13
+  //     panel finding on the kit tier).
+  //   - metadata.offer = 'challenge' is the ONLY safe way to recognize this
+  //     sale. Amount routing cannot: 4700 and 9700 are already mapped to the
+  //     Complete kit in triangle-webhook AMOUNT_TO_TIER. See the P0 note in
+  //     the header of api/challenge-signup.js.
+  if (tier === 'challenge-ga' || tier === 'challenge-vip') {
+    const resolved = resolveChallengePrice(tier);
+    if (!resolved.ok) {
+      // Loud, specific, and never a silent charge. The page shows its
+      // "Checkout is not open yet" state on this code and captures the email
+      // through /api/challenge-signup instead.
+      console.error(
+        `create-embedded-checkout: challenge price unusable (tier=${tier}, env=${resolved.envName}, reason=${resolved.reason}). ` +
+          'Refusing to create a session rather than charge the wrong product.'
+      );
+      return res.status(500).json({
+        error: 'challengeCheckoutUnavailable',
+        code: 'CHALLENGE_PRICE_NOT_CONFIGURED',
+        reason: resolved.reason, // 'unset' | 'malformed' | 'collision'
+        tier,
+        message: 'Checkout for this challenge is not open yet.',
+      });
+    }
+    const seat = tier === 'challenge-vip' ? 'vip' : 'ga';
+    const metadata = {
+      funnel: 'braveworks-bp',
+      brand: 'braveworks-bp',
+      offer: 'challenge',
+      challenge: 'three-pressures',
+      // Full tier key, not 'ga'/'vip' on its own: md.tier === 'recordings' is a
+      // RestoreHER guard in the legacy webhook, so keep this namespace distinct.
+      tier,
+      seat,
+      cohort: CHALLENGE_COHORT,
+      cohort_start_ct: CHALLENGE_START_CT,
+      ...phMeta,
+      ...abMeta,
+    };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        mode: 'payment',
+        line_items: [{ price: resolved.priceId, quantity: 1 }],
+        metadata,
+        customer_creation: 'always',
+        return_url: `${siteUrl}/challenge-confirmed?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout challenge error:', err.message);
+      return res.status(500).json({
+        error: 'challengeCheckoutUnavailable',
+        code: 'CHALLENGE_CHECKOUT_FAILED',
+        tier,
+        message: 'Checkout for this challenge is not open yet.',
+      });
     }
   }
 

@@ -1,470 +1,1730 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Check, Star, Shield, Clock, Users, Mail, Play, BookOpen, Video, MessageCircle, Zap } from 'lucide-react';
+// ChallengePage (route: /challenge) - the sales page for "The Three Pressures
+// Challenge", a 5 night LIVE paid cohort. REBUILT WHOLESALE 2026-07-26.
+//
+// WHY THE OLD PAGE DIED, AND WHAT THIS ONE MAY NOT DO
+// The May build at this route was retired 2026-07-04 for price jump countdowns,
+// 50 seat caps, a Monday 10 PM class that no longer existed, an expired
+// RestoreHER ticket bonus, and a signup form whose endpoint 410s. The
+// 2026-07-25 full system audit then found fabricated testimonials and phantom
+// compare-at prices across the site. So this page carries hard rules:
+//   - NO seat cap. No "only 40 spots". No "12 left".
+//   - NO tier shown as SOLD OUT.
+//   - NO invented value tags. The only dollar figures on this page are prices
+//     something has actually sold for ($17 kit, $47 GA, $97 VIP) and arithmetic
+//     derived from them. KIT_STACK_TOTAL ($209) is deliberately NOT used as an
+//     anchor: it is a sum of per item value tags, which is exactly the pattern
+//     the audit spent a week removing.
+//   - NO fake deadline. There is ONE real deadline and it is honest: a live
+//     Monday night call cannot be attended on Tuesday. The countdown targets
+//     that instant and degrades to a closed-doors waitlist when it passes.
+//   - NO testimonials. Joel has no consented ones. Where a launch page would
+//     put social proof, this page puts earned authority instead.
+//
+// STRIPE STATUS: no price exists for this challenge yet. Creating one is a
+// financial write and Joel has not approved it. api/create-embedded-checkout.js
+// reads process.env.CHALLENGE_GA_PRICE_ID / CHALLENGE_VIP_PRICE_ID with NO
+// hardcoded fallback and fails loudly when they are unset. This page therefore
+// degrades honestly: a click that cannot reach a payment form shows the
+// "Checkout is not open yet" card within 3 seconds and captures the interest at
+// /api/challenge-signup. It never shows a spinner that does not resolve.
+//
+// Standalone: own minimal header, no site Navbar, no competing exits. The only
+// outbound links are the legally required Disclaimer / Terms / Privacy.
+// Mobile first: fold budgeted against 390 x 659 (real iPhone Safari with the
+// address bar expanded), inputs at 16px so iOS does not zoom on focus, tap
+// targets 48px.
+//
+// ZERO em dashes in visible copy. NEWSTART clean. Education alongside the
+// doctor, never a clinical outcome claim, never a medication change.
 
-// 2026-05-10: both prior links ($397 VIP + $397 Premium) were deactivated in
-// the Phase A Stripe cleanup — clicks were 404'ing. Repoint to the active
-// $97 BP Triangle Challenge so the /challenge page stops bleeding clicks.
-const VIP_LINK = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
-const PREMIUM_LINK = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { ArrowRight, Check, ChevronDown, Lock, ShieldCheck } from 'lucide-react';
+import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
+import { KIT_FILE_COUNT, KIT_PRICE } from '../data/kitStack';
+import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
 
-const fade = { initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } };
+/* ==========================================================================
+   CHALLENGE CONFIG - change prices and dates HERE and nowhere else.
+   Tier prices are ORCHESTRATOR DEFAULTS chosen 2026-07-26, not dictated by
+   Joel. Every price string on the page is derived from GA_PRICE / VIP_PRICE
+   and KIT_PRICE, so one edit here moves the whole page.
+   The two Stripe price ids are SERVER side only:
+     process.env.CHALLENGE_GA_PRICE_ID
+     process.env.CHALLENGE_VIP_PRICE_ID
+   with no fallback, so a missing id fails loudly instead of charging the
+   wrong product. Nothing about them is exposed to the browser.
+   ========================================================================== */
+const CHALLENGE = {
+  NAME: 'The Three Pressures Challenge',
+  SUBTITLE: 'Five nights live with Joel Polley, RN',
+  // Must match api/create-embedded-checkout.js and api/challenge-signup.js exactly,
+  // or PostHog events cannot be joined to Stripe metadata or the KV records.
+  COHORT_ID: '2026-08-03',
 
+  // Mon Aug 3, 7:00pm CT. Doors close at this exact instant.
+  START_ISO_CT: '2026-08-03T19:00:00',
+  START_DATE_LABEL: 'Monday, August 3',
+  END_DATE_LABEL: 'Friday, August 7',
+  DATE_RANGE_LABEL: 'August 3 to 7',
+  DATE_RANGE_SHORT: 'Aug 3',
+  TIME_LABEL_CT: '7:00pm CT',
+  TIME_LABEL_ET: '8:00pm ET',
+  NIGHT_LENGTH: 'about 60 minutes',
+
+  GA_PRICE: 47,
+  VIP_PRICE: 97,
+  GA_TIER: 'challenge-ga',
+  VIP_TIER: 'challenge-vip',
+
+  LOG_DUE_LABEL: 'Sunday, August 9',
+  VIP_REFUND_BY_LABEL: 'August 17',
+  SUPPORT_EMAIL: 'braveworksrn@gmail.com',
+};
+
+const NIGHT_COUNT = 5;
+const usd = (n) => '$' + Number(n).toLocaleString('en-US');
+const GA_PER_NIGHT = (CHALLENGE.GA_PRICE / NIGHT_COUNT).toFixed(2);        // 9.40
+const GA_LESS_KIT = CHALLENGE.GA_PRICE - KIT_PRICE;                        // 30
+const GA_LESS_KIT_PER_NIGHT = Math.round(GA_LESS_KIT / NIGHT_COUNT);       // 6
+const VIP_LESS_KIT = CHALLENGE.VIP_PRICE - KIT_PRICE;                      // 80
+
+/* ── Stripe: one instance at module load (same pattern as PayPage / AllInPage).
+      Null when the publishable key is unset, which routes straight to the
+      honest "checkout is not open yet" card instead of a dead button. ── */
+const pk = STRIPE_PUBLISHABLE_KEY();
+const stripePromise = pk ? loadStripe(pk) : null;
+
+/* ── palette ─────────────────────────────────────────────────────────────── */
+const C = {
+  ink: 'var(--ink, #121110)',
+  inkSoft: 'var(--ink-soft, #2B2824)',
+  paper: 'var(--paper, #F7F3EC)',
+  paperWarm: 'var(--paper-warm, #EFE8DB)',
+  cream: 'var(--cream, #FBF8F1)',
+  line: 'var(--line, #D8CFBD)',
+  muted: 'var(--muted, #7A7061)',
+  sage: 'var(--sage, #4A5D4E)',
+  sageDeep: 'var(--sage-deep, #2E3A30)',
+  sageSoft: 'var(--sage-soft, #C5CDBF)',
+  clay: 'var(--clay, #B85A36)',
+  claySoft: 'var(--clay-soft, #E8B799)',
+  gold: 'var(--gold, #C8A252)',
+};
+
+/* ==========================================================================
+   TIMEZONE + COUNTDOWN
+   ctOffsetMs is the approach used by MasterclassBanner.jsx: resolve the real
+   America/Chicago offset at an instant instead of hardcoding -5 or -6, so the
+   November DST change cannot slide the target by an hour. MasterclassBanner
+   targets a RECURRING weekday; this targets a FIXED datetime, so the helper
+   below converts one CT wall clock string into one real instant.
+   ========================================================================== */
+function ctOffsetMs(d) {
+  try {
+    const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
+    const ct = new Date(d.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+    return ct.getTime() - utc.getTime();
+  } catch {
+    return -5 * 3600 * 1000; // CDT fallback
+  }
+}
+
+// 'YYYY-MM-DDTHH:mm:ss' read as America/Chicago wall time, returned as a real
+// instant. Two passes: the first uses the offset at the naive instant, the
+// second re-reads the offset at the corrected instant, which is what makes it
+// correct on either side of a DST boundary.
+export function ctInstant(isoLocal) {
+  const [datePart, timePart = '00:00:00'] = String(isoLocal).split('T');
+  const [y, mo, d] = datePart.split('-').map(Number);
+  const [h, mi, s] = timePart.split(':').map(Number);
+  const naive = Date.UTC(y, (mo || 1) - 1, d || 1, h || 0, mi || 0, s || 0);
+  let instant = naive - ctOffsetMs(new Date(naive));
+  instant = naive - ctOffsetMs(new Date(instant));
+  return new Date(instant);
+}
+
+const START_AT = ctInstant(CHALLENGE.START_ISO_CT);
+
+function parts(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return {
+    d: Math.floor(s / 86400),
+    h: Math.floor((s % 86400) / 3600),
+    m: Math.floor((s % 3600) / 60),
+    s: s % 60,
+  };
+}
+
+/* ==========================================================================
+   ANALYTICS
+   Every event is prefixed chal_ and stamped with the cohort, so this funnel is
+   separable from the kit funnel, the quiz funnel, /allin, /coaching and the
+   homepage A/B test in PostHog.
+   ========================================================================== */
+function t(event, props) {
+  track(event, { page: 'challenge', cohort: CHALLENGE.COHORT_ID, ...(props || {}) });
+}
+
+/* ==========================================================================
+   NIGHT CURRICULUM
+   ========================================================================== */
+const NIGHTS = [
+  {
+    n: 1,
+    when: 'MONDAY, AUGUST 3',
+    title: 'Your Real Number',
+    promise: 'Most home readings are wrong in a way that changes decisions. Tonight you learn to take one you can actually trust.',
+    cover: 'How to sit, where the cuff goes, why the first reading is almost never the right one, why the doctor’s office reading runs high on so many people, and why the number moves between morning and night on purpose.',
+    walk: 'Take a correct reading tonight, in both arms, and write the first line in your 5-Day Log.',
+  },
+  {
+    n: 2,
+    when: 'TUESDAY, AUGUST 4',
+    title: 'Stress Pressure',
+    promise: 'The pressure that runs at 2am, in the parking lot, and every time the phone rings at the wrong hour.',
+    cover: 'What the stress hormone does to a blood vessel and to sodium in your body, why sleep before midnight is worth more than sleep after it, ten minutes of morning light and what it does to the whole next day, slow breathing you can do sitting in a chair, and gratitude practiced out loud as the one thing Joel has watched calm a room fastest.',
+    walk: 'Run tonight’s wind down and tomorrow’s first ten minutes, both written on one page.',
+  },
+  {
+    n: 3,
+    when: 'WEDNESDAY, AUGUST 5',
+    title: 'Sugar Pressure',
+    promise: 'The corner almost nobody connects to blood pressure, and the one that changes the most in a week.',
+    cover: 'What a spike does to the inside of a vessel, why the 3pm crash and the 9pm snack are the same event, two meals instead of six, the plate that does not require counting anything, and the ten minute walk after eating that does the work of a much longer one.',
+    walk: 'Build tomorrow’s plate, and take one walk after one meal. That is the whole assignment.',
+  },
+  {
+    n: 4,
+    when: 'THURSDAY, AUGUST 6',
+    title: 'Sodium Pressure',
+    promise: 'It was never the salt shaker. It is the bread, the jar, the can, and the restaurant.',
+    cover: 'Where sodium actually hides in a normal American week, why potassium matters at least as much as sodium and where to get it from plants, how much water is enough and when to stop drinking it, and how to read one label in ten seconds.',
+    walk: 'Run a fifteen minute kitchen sweep and read any label in the store without doing math.',
+  },
+  {
+    n: 5,
+    when: 'FRIDAY, AUGUST 7',
+    title: 'The Conversation',
+    promise: 'The night this whole week was built for. You do not walk into that office hoping. You walk in prepared.',
+    cover: 'How to put five days of readings on one page a busy doctor will actually look at, the exact words that open the conversation instead of starting a fight, what to ask about your current medication, what to ask about your labs, how to ask for a follow up date, and the one line that keeps you and your doctor on the same side of the table.',
+    walk: 'Your completed log, your one page summary filled in, and the words written down. And with this said plainly, because it matters more than anything else in the week: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Your job is to walk in with better information than you have ever had.',
+    walkLabel: 'You walk away with:',
+  },
+];
+
+/* ==========================================================================
+   TIERS
+   ========================================================================== */
+const TIERS = [
+  {
+    key: CHALLENGE.GA_TIER,
+    kicker: 'GENERAL ADMISSION',
+    price: CHALLENGE.GA_PRICE,
+    priceLine: `${usd(CHALLENGE.GA_PRICE)} one time`,
+    underPrice: `That is $${GA_PER_NIGHT} a night, and ${usd(KIT_PRICE)} of it is a kit you keep forever.`,
+    headline: 'For the person who wants to learn it and do it.',
+    cta: `Join General Admission, ${usd(CHALLENGE.GA_PRICE)}`,
+    accent: C.clay,
+    items: [
+      `All five live nights with Joel on Zoom, ${CHALLENGE.DATE_RANGE_LABEL}, ${CHALLENGE.TIME_LABEL_CT}, ${CHALLENGE.NIGHT_LENGTH} each`,
+      'The replay of every night, posted by noon CT the next day, yours to keep',
+      'The 5-Night Workbook, one printable page per night, so nothing depends on you taking notes',
+      'The 5-Day Log sheet you fill in from Night 1 and hand to your doctor on Night 5',
+      `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads, delivered the minute you register`,
+      'One short email every morning with the single action for that day',
+    ],
+  },
+  {
+    key: CHALLENGE.VIP_TIER,
+    kicker: 'VIP',
+    price: CHALLENGE.VIP_PRICE,
+    priceLine: `${usd(CHALLENGE.VIP_PRICE)} one time`,
+    underPrice: 'One payment. Nothing after the five nights.',
+    headline: 'For the person with real questions and no one to ask.',
+    cta: `Join VIP, ${usd(CHALLENGE.VIP_PRICE)}`,
+    accent: C.sageDeep,
+    items: [
+      'Everything in General Admission',
+      'Thirty minutes of live Q and A after every night, VIP room only, cameras optional, microphone optional',
+      { lead: 'The 48-Hour Answer:', rest: ' any question you submit by 5:00pm CT gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not. Every question, every night, all five nights.' },
+      'The Q and A replays as well as the teaching replays, so you hear what everyone else asked',
+      'The expanded Doctor Conversation Sheet used on Night 5: the opening words, the questions to ask about your medication, the questions to ask about your labs, and how to ask for a follow up date',
+    ],
+  },
+];
+
+/* ==========================================================================
+   FAQ
+   ========================================================================== */
+const FAQ = [
+  {
+    q: 'Is this medical advice? Are you telling me to change my medication?',
+    a: 'No, and absolutely not. This is education and lifestyle support, not medical advice, diagnosis, or treatment. I am a registered nurse, not your prescribing physician. Everything I teach is meant to work alongside your doctor’s care and never instead of it. Never start, stop, or adjust medication without your doctor. If anything I say ever seems to contradict your doctor, your doctor wins.',
+  },
+  {
+    q: 'Will any of this interfere with my blood pressure medication?',
+    a: 'That is exactly the right question to ask, and the honest answer is that I cannot answer it for you specifically, because I do not know your history, your kidneys, or your other prescriptions. What I can tell you is that everything on Nights 2, 3 and 4 is food, water, sleep, sunlight, walking and breathing. On Night 5 I teach you how to bring all of it to your doctor and ask directly. That conversation is the whole point of the week.',
+  },
+  {
+    q: 'Do I have to be on camera?',
+    a: 'No. Ever. Most people keep the camera off and the microphone off the entire week, and that is completely normal. You can sit in your recliner in whatever you are already wearing. VIP questions can be typed instead of spoken.',
+  },
+  {
+    q: 'What if I miss a night?',
+    a: 'You get the replay of every night, posted by noon CT the next day, and it is yours to keep. Nothing is scheduled to expire. If Wednesday is your grandson’s ball game, watch it Thursday morning with breakfast. The work still stacks.',
+  },
+  {
+    q: 'So is this just replays? Why do I need to show up live?',
+    a: 'It is genuinely live. I am on the call, not a recording of me, and on VIP nights I answer real questions from real people in the room. The replays exist so life does not knock you out of the week, not so you can skip it. The people who show up live get more out of it, every time.',
+  },
+  {
+    q: 'I am not technical. Is Zoom hard?',
+    a: 'No. You will get one email with one blue link. Tap the link, and you are in. That is the entire technical requirement. If it does not work, reply to that email and we will get you in before the call starts. You do not need an account, a password, or a camera.',
+  },
+  {
+    q: 'I am 68 and I take four pills. Is this for me?',
+    a: 'Yes. Most of the people in this room will be over fifty and already on medication. That is who I built it for. If you take nothing yet and your doctor said "let’s watch it," you are also in the right place, and honestly you may get the most out of it.',
+  },
+  {
+    q: 'How much time will this take each day?',
+    a: 'One hour a night for the call, and each night’s action is designed to fit in the time you already spend. A ten minute walk after a meal. Ten minutes of morning light. Writing two numbers on a page. I am not asking you to add an hour of chores to your day.',
+  },
+  {
+    q: 'Do I need to buy anything? Supplements, equipment, special food?',
+    a: 'No. You need a home blood pressure cuff, and if you already take readings at home you already own one. Everything about food is built from ordinary grocery store plants. There is no supplement I am going to tell you to buy at the end, and there is no product pitch on Night 5.',
+  },
+  {
+    q: `What is the difference between this and the ${usd(KIT_PRICE)} kit?`,
+    a: 'The kit is the written protocol you follow at your own pace. This is five live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. Both tiers of the challenge include the kit, so you are not choosing between them.',
+  },
+  {
+    q: 'What if it does not work for me?',
+    a: `Read the guarantee section above, because I wrote it plainly on purpose. Short version: the kit inside your seat carries a 30-day Feel-It-or-Free promise either way. VIP is refundable in full if you did the work and still felt it was not worth it. General Admission is refundable for any reason right up until we start. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
+  },
+  {
+    q: 'Is this a Christian program?',
+    a: 'I am a Christian and it shows up in how I teach, particularly on the night we talk about rest and gratitude. You will not be preached at, and you do not have to share my faith to belong in that room. Everything taught is plant based, natural, and practical.',
+  },
+];
+
+/* ==========================================================================
+   PAGE
+   ========================================================================== */
 export default function ChallengePage() {
+  const [left, setLeft] = useState(() => START_AT.getTime() - Date.now());
+  const doorsClosed = left <= 0;
+
+  // Checkout state machine: idle -> mounting -> mounted | failed.
+  // 'failed' is a real, readable card, never a spinner that never resolves.
+  const [activeTier, setActiveTier] = useState(null);
+  const [checkoutState, setCheckoutState] = useState('idle');
+  // Bumped on every seat click. Without it, clicking the SAME tier again after
+  // a failure would not change activeTier, the effect would never re-run, and
+  // the buyer would sit on a spinner forever. That is the one state this page
+  // is not allowed to have.
+  const [checkoutAttempt, setCheckoutAttempt] = useState(0);
+  const checkoutRef = useRef(null);
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    const startedAlready = START_AT.getTime() - Date.now() <= 0;
+    t('chal_page_view', {
+      doors_open: !startedAlready,
+      ga_price: CHALLENGE.GA_PRICE,
+      vip_price: CHALLENGE.VIP_PRICE,
+    });
+    if (startedAlready) t('chal_doors_closed_view');
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setLeft(START_AT.getTime() - Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Choose a seat: record the click, arm the checkout panel, scroll to it.
+  const chooseTier = useCallback((tierKey, location, price) => {
+    t('chal_cta_click', { location, tier: tierKey, price });
+    setActiveTier(tierKey);
+    setCheckoutState('mounting');
+    setCheckoutAttempt((n) => n + 1);
+    window.setTimeout(() => {
+      try {
+        panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch { /* older Safari */ }
+    }, 40);
+  }, []);
+
+  // Mount (or remount) the embedded Stripe checkout for the chosen tier.
+  // A 3 second watchdog guarantees the buyer sees an answer either way: the
+  // server has NO fallback price id for these tiers on purpose, so a missing
+  // CHALLENGE_GA_PRICE_ID / CHALLENGE_VIP_PRICE_ID must surface as a clear
+  // message rather than a hang.
+  useEffect(() => {
+    // Doors closing mid-session tears the form down: nobody buys a seat to a
+    // call that is already running.
+    if (!activeTier || doorsClosed) return undefined;
+    let checkout;
+    let cancelled = false;
+    let settled = false;
+
+    const fail = (reason) => {
+      if (cancelled || settled) return;
+      settled = true;
+      setCheckoutState('failed');
+      t('chal_checkout_failed', { tier: activeTier, reason });
+    };
+
+    // 12s, not 3s. A 50+ audience on mobile data was being shown the failure
+    // card while Stripe was still legitimately loading.
+    const watchdog = window.setTimeout(() => fail('timeout'), 12000);
+
+    async function init() {
+      if (!stripePromise) {
+        fail('no_publishable_key');
+        return;
+      }
+      try {
+        let email = '';
+        try { email = localStorage.getItem('bwbp_lead_email') || ''; } catch { /* private mode */ }
+        const stripe = await stripePromise;
+        checkout = await stripe.initEmbeddedCheckout({
+          fetchClientSecret: async () => {
+            const res = await fetch('/api/create-embedded-checkout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                tier: activeTier,
+                email,
+                ph_did: getDistinctId(),
+                ab_variant: getAbHomeVariant(),
+              }),
+            });
+            if (!res.ok) {
+              // The endpoint answers a missing CHALLENGE_*_PRICE_ID with
+              // { error: 'challengeCheckoutUnavailable', code, ... }. Carry
+              // that code into the failure event so the reason is legible in
+              // PostHog instead of a generic start_failed.
+              let code = `http_${res.status}`;
+              try {
+                const body = await res.json();
+                code = body.code || body.error || code;
+              } catch { /* non-JSON error body */ }
+              throw new Error(code);
+            }
+            const data = await res.json();
+            if (!data.clientSecret) throw new Error('no_secret');
+            return data.clientSecret;
+          },
+        });
+        if (cancelled) { checkout.destroy(); return; }
+        checkout.mount(checkoutRef.current);
+        if (settled) { checkout.destroy(); return; }
+        settled = true;
+        window.clearTimeout(watchdog);
+        setCheckoutState('mounted');
+        t('chal_checkout_mounted', {
+          tier: activeTier,
+          price: activeTier === CHALLENGE.VIP_TIER ? CHALLENGE.VIP_PRICE : CHALLENGE.GA_PRICE,
+        });
+      } catch (err) {
+        fail(err && err.message ? String(err.message).slice(0, 60) : 'init_error');
+      }
+    }
+
+    init();
+    return () => {
+      cancelled = true;
+      window.clearTimeout(watchdog);
+      try { if (checkout) checkout.destroy(); } catch { /* already gone */ }
+    };
+  }, [activeTier, checkoutAttempt, doorsClosed]);
+
+  const goToSeats = useCallback((location) => {
+    t('chal_cta_click', { location, tier: 'seats_anchor' });
+    document.getElementById('seats')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
+  const goToWaitlist = useCallback((location) => {
+    t('chal_cta_click', { location, tier: 'waitlist_anchor' });
+    document.getElementById('next-cohort')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
+
+  const ctx = { doorsClosed, chooseTier, goToSeats, goToWaitlist };
+
   return (
-    <div style={{ background: 'var(--paper)' }}>
-      <HeroSection />
-      <TriangleExplainer />
-      <FreeTier />
-      <VIPTier />
-      {/* PremiumTier hidden 2026-05-05 — Premium $397 paused.
-          Component preserved for fast restore when we re-test that tier. */}
-      {/* <PremiumTier /> */}
-      <GuaranteeSection />
-      <WhyThisPrice />
-      <FinalCTA />
+    <div style={{ background: C.paper, color: C.ink, minHeight: '100vh', paddingBottom: 92 }}>
+      <ChallengeStyles />
+      <MiniHeader />
+
+      <Hero {...ctx} left={left} />
+      <Problem />
+      <AuthorityShort />
+      <Nights {...ctx} />
+      <ValueBand />
+      <Seats
+        {...ctx}
+        activeTier={activeTier}
+        checkoutState={checkoutState}
+        checkoutRef={checkoutRef}
+        panelRef={panelRef}
+      />
+      <PriceReasoning />
+      <AuthorityLong {...ctx} />
+      <Guarantee {...ctx} />
+      <Urgency {...ctx} left={left} />
+      <Faq />
+      <FaqCta {...ctx} />
+      <Close {...ctx} />
+      <MedicationDisclaimer />
       <PageFooter />
+
+      <StickyBar {...ctx} />
     </div>
   );
 }
 
-/* ---- HERO ---- */
-function HeroSection() {
+/* ==========================================================================
+   SCOPED CSS
+   Media queries, the sticky bar, spinner keyframes and focus rings. Class
+   prefix chal- so nothing here can leak into another page.
+   ========================================================================== */
+function ChallengeStyles() {
   return (
-    <section style={{ background: 'var(--sage-deep)', color: 'var(--cream)', padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(2.5rem, 6vw, 4rem)' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--clay)', display: 'inline-block' }} />
-            <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--clay-soft)' }}>
-              The BP Triangle Method™ · By Joel Polley, RN
-            </span>
-          </div>
+    <style>{`
+      .chal-wrap { max-width: 720px; margin: 0 auto; padding-left: 18px; padding-right: 18px; }
+      .chal-wide { max-width: 900px; }
+      .chal-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+        width: 100%; min-height: 54px; padding: 0.9rem 1.2rem; border: none; border-radius: 12px;
+        font-weight: 800; font-size: 1.02rem; line-height: 1.25; cursor: pointer;
+        text-decoration: none; text-align: center;
+        transition: transform 0.12s ease, background 0.16s ease;
+      }
+      .chal-btn:active { transform: scale(0.988); }
+      .chal-btn:disabled { opacity: 0.7; cursor: default; }
+      .chal-link {
+        display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+        min-height: 48px; padding: 0.5rem 0.25rem; background: none; border: none;
+        font-size: 0.95rem; font-weight: 600; cursor: pointer;
+        text-decoration: underline; text-underline-offset: 4px;
+      }
+      .chal-tiers { display: grid; gap: 1.1rem; }
+      .chal-input {
+        width: 100%; font-size: 16px; min-height: 50px; padding: 0.7rem 0.85rem;
+        border: 1px solid ${C.line}; border-radius: 10px; background: #FFFFFF; color: ${C.ink};
+        font-family: inherit;
+      }
+      .chal-faq-q {
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem;
+        width: 100%; min-height: 56px; padding: 0.85rem 0; background: none; border: none;
+        text-align: left; cursor: pointer; font-family: inherit; font-size: 1rem;
+        font-weight: 700; line-height: 1.4; color: ${C.ink};
+      }
+      .chal-sticky {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+        background: ${C.sageDeep}; border-top: 1px solid rgba(251,248,241,0.14);
+        padding-bottom: env(safe-area-inset-bottom);
+        transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      }
+      .chal-spin {
+        width: 22px; height: 22px; border-radius: 50%;
+        border: 2px solid ${C.line}; border-top-color: ${C.clay};
+        animation: chal-spin 0.9s linear infinite;
+      }
+      @keyframes chal-spin { to { transform: rotate(360deg); } }
+      .chal-btn:focus-visible, .chal-link:focus-visible, .chal-faq-q:focus-visible, .chal-input:focus-visible {
+        outline: 3px solid ${C.clay}; outline-offset: 2px;
+      }
+      @media (min-width: 860px) {
+        .chal-tiers { grid-template-columns: 1fr 1fr; align-items: start; }
+        .chal-sticky { display: none; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .chal-btn, .chal-sticky { transition: none; }
+        .chal-spin { animation-duration: 3s; }
+      }
+    `}</style>
+  );
+}
 
-          <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-5)', fontWeight: 400, lineHeight: 1.05, letterSpacing: '-0.03em', margin: '0 0 1.25rem', fontVariationSettings: '"SOFT" 50, "opsz" 120' }}>
-            The BP <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)' }}>Triangle.</em>
-          </h1>
+/* ==========================================================================
+   MINIMAL HEADER
+   Brand mark only. Deliberately NOT a link: this is a sales page and a logo
+   that navigates home is a competing exit.
+   ========================================================================== */
+function MiniHeader() {
+  return (
+    <header
+      style={{
+        background: C.sageDeep, color: C.cream,
+        padding: '8px 18px', display: 'flex', alignItems: 'center', gap: '0.55rem',
+        justifyContent: 'center',
+      }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          width: 20, height: 20, borderRadius: '50%', background: 'rgba(251,248,241,0.1)',
+          border: '1px solid rgba(251,248,241,0.28)', display: 'grid', placeItems: 'center',
+          fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '0.6rem', lineHeight: 1,
+        }}
+      >
+        JP
+      </span>
+      <span style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+        BraveWorks RN
+      </span>
+    </header>
+  );
+}
 
-          <p style={{ fontSize: 'var(--step-1)', lineHeight: 1.55, color: 'rgba(251,248,241,0.8)', margin: '0 0 2rem', maxWidth: '52ch' }}>
-            Pressure. Stress. Sugar. Three corners. One loop. Calm the loop and your numbers come home — your doctor signs off — the pill bottle goes in the drawer. 30 days starts your shift. The path runs 6 months to free.
+/* ==========================================================================
+   HERO
+   Fold budget, measured at 390 x 659 (iPhone Safari, address bar expanded):
+     header strip            0   ->  36
+     eyebrow                52   ->  67
+     H1 (3 lines @ 30/1.14) 79   -> 182
+     subheadline (3 lines) 194   -> 269
+     date + time block     281   -> 335
+     the promise (4 lines) 347   -> 439
+     PRIMARY CTA (54px)    453   -> 507
+     trust microline       517   -> 555
+     secondary text link   565   -> 609
+   Countdown starts around 625, i.e. just below the fold, which is the stated
+   priority order: the button never moves down to make room for the clock.
+   ========================================================================== */
+function Hero({ doorsClosed, chooseTier, goToWaitlist, left }) {
+  return (
+    <section style={{ background: C.cream, borderBottom: `1px solid ${C.line}`, paddingTop: 16, paddingBottom: 22 }}>
+      <div className="chal-wrap">
+        <p
+          style={{
+            margin: 0, fontSize: 11, fontWeight: 800, letterSpacing: '0.12em',
+            textTransform: 'uppercase', color: C.clay, lineHeight: 1.35,
+          }}
+        >
+          Live on Zoom &middot; {CHALLENGE.DATE_RANGE_LABEL} &middot; Joel Polley, RN
+        </p>
+
+        <h1
+          style={{
+            fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: 30, lineHeight: 1.14,
+            letterSpacing: '-0.02em', margin: '12px 0 0', color: C.ink,
+          }}
+        >
+          You got the prescription.{' '}
+          <span style={{ color: C.clay }}>Did anyone ever give you the explanation?</span>
+        </h1>
+
+        <p style={{ margin: '12px 0 0', fontSize: 16.5, lineHeight: 1.5, color: C.inkSoft }}>
+          Five nights, live, with a nurse who spent twenty years in an ICU watching what these numbers actually do.
+        </p>
+
+        {/* Date and time block: the rest of the approved subheadline, promoted
+            to its own scannable row so the fold carries the logistics. */}
+        <div
+          style={{
+            margin: '12px 0 0', padding: '8px 12px', border: `1px solid ${C.line}`,
+            borderLeft: `4px solid ${C.sage}`, borderRadius: 10, background: C.paperWarm,
+            fontSize: 13, lineHeight: 1.4, fontWeight: 600, color: C.inkSoft,
+          }}
+        >
+          {CHALLENGE.DATE_RANGE_LABEL} &middot; {CHALLENGE.TIME_LABEL_CT}, {CHALLENGE.TIME_LABEL_ET} &middot; one hour a night, from your own chair.
+        </div>
+
+        <p style={{ margin: '12px 0 0', fontSize: 16, lineHeight: 1.44, fontWeight: 700, color: C.ink }}>
+          By Friday you will know what your number is made of, how to take a reading you can trust, and the exact words to bring to your next appointment.
+        </p>
+
+        <div style={{ marginTop: 14 }}>
+          {doorsClosed ? (
+            <button type="button" className="chal-btn" style={{ background: C.sage, color: C.cream }} onClick={() => goToWaitlist('hero')}>
+              Tell me about the next one <ArrowRight size={17} aria-hidden />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="chal-btn"
+              style={{ background: C.clay, color: '#FFFFFF' }}
+              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'hero', CHALLENGE.GA_PRICE)}
+            >
+              Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+            </button>
+          )}
+        </div>
+
+        <p style={{ margin: '10px 0 0', fontSize: 12.5, lineHeight: 1.5, color: C.muted }}>
+          Joel Polley, RN &middot; 20 years ICU and emergency &middot; Every seat includes the {usd(KIT_PRICE)} 10-Day BP Reset Kit.
+        </p>
+
+        <div style={{ marginTop: 10 }}>
+          <a
+            href="#nights"
+            className="chal-link"
+            style={{ color: C.clay }}
+            onClick={() => t('chal_cta_click', { location: 'hero_secondary', tier: 'nights_anchor' })}
+          >
+            See what happens each night
+          </a>
+        </div>
+
+        <div style={{ marginTop: 14 }}>
+          <Countdown left={left} label="Doors close when Night 1 begins:" tone="light" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   COUNTDOWN
+   Fixed target. When it passes it does not go negative and does not freeze: it
+   states plainly that the cohort has started and points at the waitlist.
+   ========================================================================== */
+function Countdown({ left, label, tone = 'light' }) {
+  const dark = tone === 'dark';
+  const closed = left <= 0;
+  const { d, h, m, s } = parts(left);
+
+  const box = {
+    border: `1px solid ${dark ? 'rgba(251,248,241,0.22)' : C.line}`,
+    background: dark ? 'rgba(251,248,241,0.06)' : C.paperWarm,
+    borderRadius: 12, padding: '10px 12px', textAlign: 'center',
+  };
+
+  if (closed) {
+    return (
+      <div style={box}>
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, fontWeight: 700, color: dark ? C.cream : C.ink }}>
+          Night 1 is already underway. This cohort has started.
+        </p>
+      </div>
+    );
+  }
+
+  const cell = (n, lbl) => (
+    <span key={lbl} style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', minWidth: 52 }}>
+      <strong
+        style={{
+          fontFamily: 'Fraunces, serif', fontSize: '1.5rem', lineHeight: 1.05,
+          fontVariantNumeric: 'tabular-nums', color: dark ? C.cream : C.ink,
+        }}
+      >
+        {String(n).padStart(2, '0')}
+      </strong>
+      <span
+        style={{
+          fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 3,
+          color: dark ? 'rgba(251,248,241,0.65)' : C.muted,
+        }}
+      >
+        {lbl}
+      </span>
+    </span>
+  );
+
+  return (
+    <div style={box}>
+      <p
+        style={{
+          margin: '0 0 6px', fontSize: 11, fontWeight: 800, letterSpacing: '0.12em',
+          textTransform: 'uppercase', color: dark ? C.claySoft : C.clay,
+        }}
+      >
+        {label}
+      </p>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem', flexWrap: 'wrap' }}
+        aria-label={`${d} days, ${h} hours, ${m} minutes and ${s} seconds until Night 1`}
+      >
+        {cell(d, 'days')}{cell(h, 'hrs')}{cell(m, 'min')}{cell(s, 'sec')}
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
+   PROBLEM
+   ========================================================================== */
+function Problem() {
+  return (
+    <section style={{ padding: '38px 0 34px' }}>
+      <div className="chal-wrap">
+        <Kicker>The part nobody had time for</Kicker>
+        <H2>The appointment was fifteen minutes. Twelve of them were paperwork.</H2>
+
+        <Body>
+          You got a cuff on your arm, a number read out loud, and a slip of paper. Lisinopril. Losartan. Amlodipine. Hydrochlorothiazide. Metoprolol. Maybe two of them. Maybe four.
+        </Body>
+        <Body>Nobody sat down and drew you a picture of what the number is made of.</Body>
+        <Body>
+          Nobody told you that the reading they took, right after you rushed in from the parking lot and sat down talking, with your arm resting somewhere near your knee, is probably not your real number.
+        </Body>
+        <Body>Nobody explained why the dose went up last year when you were doing everything they told you.</Body>
+        <Body>
+          So here is what happens. Year after year, you take the pill. You watch the number. You feel a small drop in your stomach every time the cuff tightens, because you do not know what it is about to say, and you do not know what you could have done differently anyway.
+        </Body>
+        <Body>
+          That is not a discipline problem. That is an information problem. And it is the only kind of problem I can actually help with.
+        </Body>
+
+        <blockquote
+          style={{
+            margin: '22px 0 0', padding: '14px 16px', borderLeft: `4px solid ${C.clay}`,
+            background: C.paperWarm, borderRadius: '0 12px 12px 0',
+          }}
+        >
+          <p style={{ margin: 0, fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '1.12rem', lineHeight: 1.45, color: C.ink }}>
+            You have been managing one number for years. Five nights is enough to learn what is behind it.
           </p>
+        </blockquote>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <a href="#free" className="btn btn-lg" style={{ background: 'var(--clay)', color: 'var(--cream)', padding: '0.95rem 1.5rem', borderRadius: 12, fontWeight: 600, fontSize: '1rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              Send my free map <ArrowRight size={16} />
-            </a>
-            <a href="#vip" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, border: '1px solid rgba(251,248,241,0.25)', color: 'var(--cream)', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
-              Walk it with Joel <ArrowRight size={14} />
-            </a>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '2rem', color: 'rgba(251,248,241,0.6)', fontSize: '0.88rem' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(251,248,241,0.08)', border: '1px solid rgba(251,248,241,0.15)', display: 'grid', placeItems: 'center', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '0.9rem', color: 'var(--cream)' }}>JP</div>
-            <span>Joel Polley, RN · 20 years ICU & Emergency</span>
-          </div>
-        </motion.div>
+        <p style={{ margin: '18px 0 0', fontSize: '1rem', lineHeight: 1.6, fontWeight: 700, color: C.ink }}>
+          This is not about doing more. It is about finally seeing the thing you have been fighting blind.
+        </p>
       </div>
     </section>
   );
 }
 
-/* ---- TRIANGLE EXPLAINER ---- */
-function TriangleExplainer() {
+/* ==========================================================================
+   AUTHORITY, SHORT
+   ========================================================================== */
+function AuthorityShort() {
   return (
-    <section id="triangle" style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The Triangle</span>
-          <h2 className="display-m" style={{ margin: '0 0 1.5rem', maxWidth: '20ch' }}>
-            Three corners. One <em className="ital-display" style={{ color: 'var(--clay)' }}>loop.</em>
-          </h2>
+    <section style={{ padding: '0 0 34px' }}>
+      <div className="chal-wrap">
+        <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '18px 18px' }}>
+          <Kicker tone="sage">Who is teaching this</Kicker>
+          <p style={{ margin: '10px 0 0', fontSize: '1rem', lineHeight: 1.62, color: C.inkSoft }}>
+            Joel Polley has been a registered nurse for twenty years, most of it in intensive care and the emergency department. He is the one who was in the room at 3am. He now teaches natural, plant based, doctor alongside health at bpquiz.com, and he is the only person who will be on these calls.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-          <div style={{ display: 'grid', gap: '1.25rem', marginBottom: '2rem' }}>
-            <TriangleCorner
-              icon="🔺"
-              title="Stress"
-              text="Your stress hormone tightens your vessels and holds on to sodium. Your body acts like it is in danger all day long."
-            />
-            <TriangleCorner
-              icon="🔺"
-              title="Sugar"
-              text="Spikes inflame your artery walls and feed your stress hormone. The spike-crash loop runs all day."
-            />
-            <TriangleCorner
-              icon="🔺"
-              title="Pressure"
-              text="High pressure thins your vessel lining, which makes the other two corners worse the next day."
-            />
-          </div>
+/* ==========================================================================
+   THE FIVE NIGHTS
+   Hormozi Value Equation: this section is the Time Delay crusher. Five
+   evenings, five finished things, a physical artifact on Friday.
+   ========================================================================== */
+function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
+  return (
+    <section id="nights" style={{ background: C.paperWarm, padding: '38px 0 36px', borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
+      <div className="chal-wrap">
+        <Kicker>What happens each night</Kicker>
+        <H2>Five nights. Three pressures. One conversation.</H2>
 
-          <div style={{ background: 'var(--paper-warm)', borderRadius: 16, padding: 'clamp(1.5rem, 3vw, 2rem)', border: '1px solid var(--line)' }}>
-            <p style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-1)', lineHeight: 1.5, margin: 0, color: 'var(--ink)', fontVariationSettings: '"SOFT" 70, "opsz" 72' }}>
-              Each corner feeds the next two. Pull on one and the other two pull back. <strong style={{ color: 'var(--clay)' }}>30 days softens all three at once.</strong>
+        <p style={{ margin: '0 0 20px', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
+          Your blood pressure has three everyday drivers. Stress. Sugar. Sodium. We call them the Three Pressures, and they pull on each other, which is why working just one of them never holds. Monday we find your real number. Tuesday, Wednesday and Thursday we take the pressures one at a time. Friday we put it all in your hand for your doctor. You walk away from every single night with something done, not something to think about.
+        </p>
+
+        <div style={{ display: 'grid', gap: '0.9rem' }}>
+          {NIGHTS.map((night) => (
+            <article
+              key={night.n}
+              style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '16px 16px' }}
+            >
+              <p style={{ margin: 0, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.clay }}>
+                Night {night.n} &middot; {night.when}
+              </p>
+              <h3 style={{ margin: '6px 0 0', fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: '1.3rem', lineHeight: 1.2, color: C.ink }}>
+                {night.title}
+              </h3>
+              <p style={{ margin: '8px 0 0', fontSize: 15, lineHeight: 1.55, fontWeight: 600, color: C.inkSoft }}>
+                {night.promise}
+              </p>
+              <p style={{ margin: '10px 0 0', fontSize: 14.5, lineHeight: 1.6, color: C.inkSoft }}>
+                <strong style={{ color: C.ink }}>We cover: </strong>
+                {night.cover}
+              </p>
+              <div
+                style={{
+                  marginTop: 12, paddingTop: 10, borderTop: `1px solid ${C.line}`,
+                  display: 'flex', gap: '0.55rem', alignItems: 'flex-start',
+                }}
+              >
+                <Check size={17} strokeWidth={2.6} style={{ color: C.sage, flexShrink: 0, marginTop: 3 }} aria-hidden />
+                <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.55, color: C.inkSoft }}>
+                  <strong style={{ color: C.ink }}>{night.walkLabel || 'You walk away able to: '}</strong>
+                  {night.walkLabel ? ' ' : ''}
+                  {night.walk}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p style={{ margin: '22px 0 0', textAlign: 'center', fontSize: '1.05rem', fontWeight: 800, color: C.ink }}>
+          Five nights. Five things done. Nothing to catch up on.
+        </p>
+
+        <div style={{ marginTop: 16 }}>
+          {doorsClosed ? (
+            <button type="button" className="chal-btn" style={{ background: C.sage, color: C.cream }} onClick={() => goToWaitlist('after_nights')}>
+              Tell me about the next one <ArrowRight size={17} aria-hidden />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="chal-btn"
+              style={{ background: C.clay, color: '#FFFFFF' }}
+              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_nights', CHALLENGE.GA_PRICE)}
+            >
+              Save my seat for all five nights, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   VALUE BAND
+   The Effort and Sacrifice half of the Value Equation, stated as what the week
+   actually costs the buyer in time and friction.
+   ========================================================================== */
+const VALUE_ROWS = [
+  { k: 'One hour a night', v: `${CHALLENGE.NIGHT_LENGTH} on Zoom, five nights, then the week is over.` },
+  { k: 'From your own chair', v: 'Camera off, microphone off, whatever you are already wearing.' },
+  { k: 'Nothing to buy', v: 'The home cuff you already own. Ordinary grocery store plants. No supplements.' },
+  { k: 'Nothing to catch up on', v: 'One action per night, sized to the time you already spend.' },
+  { k: 'No note taking', v: 'One printable page per night, plus a short morning email with that day’s single action.' },
+  { k: 'Replays included', v: 'Every night posted by noon CT the next day, yours to keep.' },
+];
+
+function ValueBand() {
+  return (
+    <section style={{ padding: '36px 0 32px' }}>
+      <div className="chal-wrap">
+        <Kicker tone="sage">What it costs you, besides money</Kicker>
+        <H2>One hour a night. That is the ask.</H2>
+        <div style={{ display: 'grid', gap: '0.7rem' }}>
+          {VALUE_ROWS.map((row) => (
+            <div key={row.k} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+              <Check size={17} strokeWidth={2.6} style={{ color: C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: C.inkSoft }}>
+                <strong style={{ color: C.ink }}>{row.k}. </strong>{row.v}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   SEATS: the two tiers + the single checkout mount point
+   ========================================================================== */
+function Seats({ doorsClosed, chooseTier, goToWaitlist, activeTier, checkoutState, checkoutRef, panelRef }) {
+  return (
+    <section id="seats" style={{ background: C.sageDeep, color: C.cream, padding: '38px 0 36px' }}>
+      <div className="chal-wrap chal-wide">
+        <Kicker tone="onDark">Two ways in</Kicker>
+        <h2
+          style={{
+            fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: 'clamp(1.6rem, 5.5vw, 2.1rem)',
+            lineHeight: 1.16, letterSpacing: '-0.02em', margin: '8px 0 10px', color: C.cream,
+          }}
+        >
+          Pick your seat.
+        </h2>
+        <p style={{ margin: '0 0 22px', fontSize: 15, lineHeight: 1.6, color: 'rgba(251,248,241,0.82)' }}>
+          Both tiers get all five live nights and all five replays. Both include the full 10-Day BP Reset Kit, which is the kit this site sells on its own for {usd(KIT_PRICE)}. The difference is whether you want to ask me questions directly.
+        </p>
+
+        <div className="chal-tiers">
+          {TIERS.map((tier) => (
+            <TierCard
+              key={tier.key}
+              tier={tier}
+              doorsClosed={doorsClosed}
+              onChoose={() => chooseTier(tier.key, 'tier_card', tier.price)}
+              onWaitlist={() => goToWaitlist('tier_card')}
+              active={activeTier === tier.key}
+            />
+          ))}
+        </div>
+
+        {/* Single checkout mount point, directly under the cards. */}
+        <div ref={panelRef} style={{ marginTop: 20 }}>
+          {doorsClosed ? null : (
+            <CheckoutPanel activeTier={activeTier} state={checkoutState} containerRef={checkoutRef} />
+          )}
+        </div>
+
+        {doorsClosed && (
+          <div
+            style={{
+              marginTop: 18, border: '1px solid rgba(251,248,241,0.22)', borderRadius: 14,
+              padding: '16px', background: 'rgba(251,248,241,0.06)',
+            }}
+          >
+            <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: 'rgba(251,248,241,0.9)' }}>
+              <strong style={{ color: C.cream }}>Registration for the August cohort is closed.</strong>{' '}
+              Night 1 is already underway. Leave your name and email below and I will tell you first when the next one is on the calendar.
             </p>
+            <div style={{ marginTop: 12 }}>
+              <button type="button" className="chal-btn" style={{ background: C.clay, color: '#FFFFFF' }} onClick={() => goToWaitlist('seats_closed')}>
+                Tell me about the next one <ArrowRight size={17} aria-hidden />
+              </button>
+            </div>
           </div>
-        </motion.div>
+        )}
       </div>
     </section>
   );
 }
 
-function TriangleCorner({ icon, title, text }) {
+function TierCard({ tier, doorsClosed, onChoose, onWaitlist, active }) {
+  const isVip = tier.key === CHALLENGE.VIP_TIER;
   return (
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-      <span style={{ fontSize: '1.25rem', flexShrink: 0, marginTop: 2 }}>{icon}</span>
-      <div>
-        <strong style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem', display: 'block', marginBottom: '0.2rem' }}>{title}</strong>
-        <span style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>{text}</span>
+    <div
+      style={{
+        background: C.cream, color: C.ink, borderRadius: 16,
+        border: active ? `3px solid ${C.clay}` : `1px solid ${C.line}`,
+        padding: '18px 16px', display: 'flex', flexDirection: 'column',
+      }}
+    >
+      <p style={{ margin: 0, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', color: isVip ? C.sage : C.clay }}>
+        {tier.kicker}
+      </p>
+      <p style={{ margin: '8px 0 0', fontFamily: 'Fraunces, serif', fontSize: '2rem', fontWeight: 500, lineHeight: 1, color: C.ink }}>
+        {tier.priceLine}
+      </p>
+      <p style={{ margin: '6px 0 0', fontSize: 13, lineHeight: 1.5, color: C.muted }}>{tier.underPrice}</p>
+      <h3 style={{ margin: '12px 0 0', fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: '1.2rem', lineHeight: 1.25, color: C.ink }}>
+        {tier.headline}
+      </h3>
+
+      <ul style={{ listStyle: 'none', margin: '14px 0 0', padding: 0, display: 'grid', gap: '0.65rem', flex: 1 }}>
+        {tier.items.map((item, i) => {
+          const isObj = typeof item === 'object';
+          return (
+            <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start' }}>
+              <Check size={17} strokeWidth={2.6} style={{ color: isVip ? C.sage : C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
+              <span style={{ fontSize: 14.5, lineHeight: 1.55, color: C.inkSoft }}>
+                {isObj ? (<><strong style={{ color: C.ink }}>{item.lead}</strong>{item.rest}</>) : item}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div style={{ marginTop: 18 }}>
+        {doorsClosed ? (
+          <button type="button" className="chal-btn" style={{ background: C.sage, color: C.cream }} onClick={onWaitlist}>
+            Tell me about the next one
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="chal-btn"
+            style={{ background: isVip ? C.sageDeep : C.clay, color: '#FFFFFF' }}
+            onClick={onChoose}
+          >
+            {tier.cta} <ArrowRight size={17} aria-hidden />
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
-/* ---- FREE TIER ---- */
-function FreeTier() {
-  const [email, setEmail] = useState('');
+/* ==========================================================================
+   CHECKOUT PANEL
+   Three honest states. There is no fourth state where the buyer waits forever.
+   ========================================================================== */
+function CheckoutPanel({ activeTier, state, containerRef }) {
+  if (!activeTier) return null;
+  const tier = TIERS.find((x) => x.key === activeTier);
+  const failed = state === 'failed';
+
+  return (
+    <div
+      style={{
+        background: C.cream, color: C.ink, borderRadius: 16, border: `1px solid ${C.line}`,
+        padding: '16px', scrollMarginTop: 16,
+      }}
+    >
+      <p style={{ margin: 0, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.sage }}>
+        {failed ? 'One moment of honesty' : `Checkout · ${tier ? tier.kicker : ''}`}
+      </p>
+
+      {!failed && (
+        <p style={{ margin: '6px 0 12px', fontSize: 14, lineHeight: 1.5, color: C.muted }}>
+          <Lock size={13} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 5 }} aria-hidden />
+          Secure checkout by Stripe. One payment. Nothing here renews.
+        </p>
+      )}
+
+      {state === 'mounting' && (
+        <div style={{ display: 'flex', gap: '0.7rem', alignItems: 'center', padding: '18px 0' }}>
+          <span className="chal-spin" aria-hidden />
+          <span style={{ fontSize: 15, color: C.inkSoft }} role="status">Opening checkout...</span>
+        </div>
+      )}
+
+      {/* Stripe mounts here. Hidden until it actually mounts so a failed attempt
+          never leaves an empty grey box on the page. */}
+      <div ref={containerRef} style={{ display: state === 'mounted' ? 'block' : 'none', minHeight: state === 'mounted' ? 320 : 0 }} />
+
+      {failed && <CheckoutUnavailable tier={tier} />}
+    </div>
+  );
+}
+
+function CheckoutUnavailable({ tier }) {
+  return (
+    <div style={{ marginTop: 8 }}>
+      <p style={{ margin: '0 0 8px', fontSize: 15.5, lineHeight: 1.6, color: C.ink }}>
+        <strong>Checkout is not open yet.</strong> This one is on me, not on you. The payment link for this challenge is not live at the moment. Leave your name and email and I will send you the seat link the second it is working, or write me directly at{' '}
+        <a href={`mailto:${CHALLENGE.SUPPORT_EMAIL}`} style={{ color: C.clay, fontWeight: 700 }}>
+          {CHALLENGE.SUPPORT_EMAIL}
+        </a>.
+      </p>
+      <SignupForm
+        intent="seat-link"
+        tier={tier ? tier.key : undefined}
+        buttonLabel="Send me the seat link"
+        buttonBg={C.clay}
+        successLine="You are on the list. I will send the seat link the moment it is live."
+        microcopy="Nothing was charged."
+        event="chal_seatlink_submit"
+      />
+    </div>
+  );
+}
+
+/* ==========================================================================
+   PRICE REASONING
+   Every figure below is derived from real transaction prices. No stack totals,
+   no compare-at, no invented value tags.
+   ========================================================================== */
+function PriceReasoning() {
+  return (
+    <section style={{ padding: '32px 0 30px' }}>
+      <div className="chal-wrap">
+        <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '18px 16px' }}>
+          <h3 style={{ margin: 0, fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: '1.25rem', lineHeight: 1.25, color: C.ink }}>
+            Why it costs what it costs.
+          </h3>
+          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
+            General Admission is {usd(CHALLENGE.GA_PRICE)} and includes a {usd(KIT_PRICE)} kit, so the five live nights come out to {usd(GA_LESS_KIT)}. {usd(GA_LESS_KIT_PER_NIGHT)} a night for an hour with a nurse.
+          </p>
+          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
+            VIP is {usd(CHALLENGE.VIP_PRICE)}, which is {usd(VIP_LESS_KIT)} after the kit, for the same five nights plus a written answer to every question you ask. Most people pay more than that for one visit they leave with more questions than they came in with.
+          </p>
+          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
+            There is no third tier, no upsell during the calls, and nothing here renews. One payment, and the week is yours.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   AUTHORITY, LONG
+   This is where a launch page puts a testimonial block. Joel has no consented
+   testimonials, so this is earned authority instead, which is true and does
+   not require anyone else's words.
+   ========================================================================== */
+const ICU_LESSONS = [
+  {
+    lead: 'I watched what happens when nobody explains anything.',
+    rest: ' People arrived on four medications who could not tell me what a single one of them did. Not because they were not smart. Because nobody ever had fifteen spare minutes.',
+  },
+  {
+    lead: 'I saw how many readings were simply wrong.',
+    rest: ' Wrong cuff, wrong arm, wrong position, taken thirty seconds after somebody rushed down a hallway. Then real decisions got made on that number.',
+  },
+  {
+    lead: 'I learned that the body always tells you what is driving it, if you know how to read the pattern.',
+    rest: ' Not one number. The pattern across a week. That is the single most useful thing I know, and it is teachable in an evening.',
+  },
+  {
+    lead: 'I found out the pill was never the enemy and never the whole answer.',
+    rest: ' The medication does an important job. It quiets one corner. The other two keep pulling. That is not a controversial opinion. That is just how the loop works.',
+  },
+];
+
+function AuthorityLong({ goToSeats }) {
+  return (
+    <section style={{ background: C.ink, color: C.cream, padding: '38px 0 34px' }}>
+      <div className="chal-wrap">
+        <Kicker tone="onDark">Why I teach this the way I do</Kicker>
+        <h2
+          style={{
+            fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: 'clamp(1.55rem, 5.4vw, 2.05rem)',
+            lineHeight: 1.18, letterSpacing: '-0.02em', margin: '8px 0 16px', color: C.cream,
+          }}
+        >
+          I do not have a wall of testimonials. I have twenty years of nights.
+        </h2>
+
+        <DarkBody>
+          I am not going to show you a row of smiling strangers with quotes under them. Half the internet does that, and a good number of those quotes were written by somebody who was paid to write them. I will not do it. If I ever put a customer&rsquo;s words on this page, that customer will have said yes in writing first.
+        </DarkBody>
+        <DarkBody>So instead, here is what actually qualifies me.</DarkBody>
+        <DarkBody>
+          For twenty years I worked intensive care and emergency. I am the nurse who stood at the head of the bed at three in the morning. I am the one who hung the drip when the pressure would not come down, and the one who sat with the family in the hallway afterward.
+        </DarkBody>
+        <DarkBody>Here is what those years taught me that I could not have learned anywhere else.</DarkBody>
+
+        <div style={{ display: 'grid', gap: '0.85rem', margin: '18px 0 0' }}>
+          {ICU_LESSONS.map((row) => (
+            <div key={row.lead} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+              <Check size={18} strokeWidth={2.6} style={{ color: C.sageSoft, flexShrink: 0, marginTop: 3 }} aria-hidden />
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.6, color: 'rgba(251,248,241,0.86)' }}>
+                <strong style={{ color: C.cream }}>{row.lead}</strong>{row.rest}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 18 }}>
+          <DarkBody>
+            I left the bedside to teach this because I got tired of meeting people at the worst possible moment, when everything I knew arrived ten years too late to be useful to them.
+          </DarkBody>
+          <DarkBody>
+            Five nights is early. Five nights is useful. That is why I am doing it live instead of writing another PDF.
+          </DarkBody>
+        </div>
+
+        <p style={{ margin: '18px 0 0', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '1rem', color: 'rgba(251,248,241,0.7)' }}>
+          Joel Polley, RN &middot; BraveWorks RN &middot; Louisville, Kentucky
+        </p>
+
+        <div style={{ marginTop: 6 }}>
+          <button type="button" className="chal-link" style={{ color: C.claySoft }} onClick={() => goToSeats('authority_long')}>
+            See the two seats <ArrowRight size={15} aria-hidden />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   GUARANTEE
+   Myron's asymmetry: the paid up tier carries the performance guarantee, the
+   entry tier does not. Adapted so it is not a trap: the VIP condition is
+   identical to the homework, and GA gets a clean pre-event window plus the
+   kit's own promise, so nobody is ever left refund-less.
+   ========================================================================== */
+function Guarantee({ doorsClosed, chooseTier, goToWaitlist }) {
+  return (
+    <section style={{ padding: '38px 0 34px' }}>
+      <div className="chal-wrap">
+        <Kicker tone="sage">Your protection</Kicker>
+        <H2>Three promises, all written plainly.</H2>
+
+        <PromiseCard title="Promise 1 · The kit, either way">
+          Every seat includes the 10-Day BP Reset Kit, and that kit carries the same promise it always has on this site. Run the full 10-day plan. If you do not feel a difference, reply with the word REFUND and your money comes back. Keep the books either way. No hoops, no fine print. Thirty days.
+        </PromiseCard>
+
+        <PromiseCard title="Promise 2 · VIP, the did-the-work guarantee">
+          <>
+            VIP is {usd(CHALLENGE.VIP_PRICE)}. Here is how you get all of it back if the week does not earn it.
+            <br /><br />
+            Do the work. That means: be on all five nights or watch all five replays, and email me your completed 5-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is it. The log is the thing I am asking you to build anyway, and I tell you where to send it on Night 1.
+            <br /><br />
+            If you did that and you still feel the week was not worth {usd(CHALLENGE.VIP_PRICE)}, reply REFUND by {CHALLENGE.VIP_REFUND_BY_LABEL} and I send back the full {usd(CHALLENGE.VIP_PRICE)}. You keep the kit. You keep the workbook. You keep the replays. I do not ask you to prove anything else and I do not ask you why.
+          </>
+        </PromiseCard>
+
+        <PromiseCard title="Promise 3 · General Admission, plain terms">
+          <>
+            General Admission is fully refundable for any reason right up until {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_CT}. Change your mind, reply REFUND, done.
+            <br /><br />
+            Once Night 1 has happened I cannot un-hold a live call, so the live portion is not refundable after that point. I would rather tell you that in advance than bury it. The kit inside your General Admission seat still carries its own 30-day Feel-It-or-Free promise, so you are never left holding nothing.
+          </>
+        </PromiseCard>
+
+        <p style={{ margin: '16px 0 0', fontSize: 13, lineHeight: 1.6, color: C.muted }}>
+          Refunds are processed within 5 to 10 business days to the original payment method, same as everything else on this site.
+        </p>
+
+        <div style={{ marginTop: 18 }}>
+          {doorsClosed ? (
+            <button type="button" className="chal-btn" style={{ background: C.sage, color: C.cream }} onClick={() => goToWaitlist('after_guarantee')}>
+              Tell me about the next one <ArrowRight size={17} aria-hidden />
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="chal-btn"
+              style={{ background: C.clay, color: '#FFFFFF' }}
+              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_guarantee', CHALLENGE.GA_PRICE)}
+            >
+              Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PromiseCard({ title, children }) {
+  return (
+    <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '16px', marginBottom: '0.9rem' }}>
+      <p style={{ margin: 0, display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.sage }}>
+        <ShieldCheck size={15} strokeWidth={2.4} aria-hidden />
+        <span>{title}</span>
+      </p>
+      <p style={{ margin: '10px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>{children}</p>
+    </div>
+  );
+}
+
+/* ==========================================================================
+   URGENCY
+   Priestley: the cohort start date IS the demand engineering. No manufactured
+   scarcity is needed, and none is permitted here.
+   ========================================================================== */
+function Urgency({ doorsClosed, left }) {
+  return (
+    <section style={{ background: C.paperWarm, padding: '36px 0 34px', borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
+      <div className="chal-wrap">
+        <Kicker>One real deadline</Kicker>
+        <H2>Doors close Monday at {CHALLENGE.TIME_LABEL_CT}, because that is when we start.</H2>
+
+        <Body>
+          There is no price jump waiting on Tuesday. There is no seat counter ticking down. There is no bonus that disappears at midnight. I have taken all of that off this page on purpose, because a trust brand cannot run a fake clock.
+        </Body>
+        <Body>
+          There is exactly one real deadline, and it is this: Night 1 is live at {CHALLENGE.TIME_LABEL_CT} on {CHALLENGE.START_DATE_LABEL}. You cannot join a call that has already happened. When that clock hits zero, registration for this cohort closes and this page stops taking new seats.
+        </Body>
+        <Body>
+          If you are reading this on Sunday, you have time. If you are reading it Monday afternoon, you have hours. If you are reading it Tuesday, I am sorry, and you can leave your email below for whenever I run the next one.
+        </Body>
+
+        <div style={{ marginTop: 18 }}>
+          <Countdown left={left} label="Night 1 begins in:" tone="light" />
+        </div>
+
+        <div id="next-cohort" style={{ marginTop: 18, scrollMarginTop: 16 }}>
+          {doorsClosed ? (
+            <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '16px' }}>
+              <p style={{ margin: '0 0 12px', fontSize: 15.5, lineHeight: 1.6, color: C.ink }}>
+                <strong>Registration for the August cohort is closed.</strong> Night 1 is already underway. Leave your name and email and I will tell you first when the next one is on the calendar. No spam, and no charge for being on the list.
+              </p>
+              <SignupForm
+                intent="waitlist"
+                buttonLabel="Tell me about the next one"
+                buttonBg={C.sage}
+                successLine="You are on the list. Watch your inbox."
+                microcopy="Free. Unsubscribe anytime."
+                event="chal_waitlist_submit"
+              />
+            </div>
+          ) : (
+            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: C.muted }}>
+              Once that clock reaches zero this page stops taking seats and shows a form for the next cohort instead.
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   SIGNUP FORM (waitlist + seat-link capture)
+   Posts to /api/challenge-signup, which owns the per-IP rate limiter, the
+   email validation and the KV write. A non-ok response is surfaced honestly
+   with Joel's real address as the fallback, never swallowed into a fake
+   success state.
+   ========================================================================== */
+function SignupForm({ intent, tier, buttonLabel, buttonBg, successLine, microcopy, event }) {
   const [name, setName] = useState('');
-  const [status, setStatus] = useState('idle');
+  const [email, setEmail] = useState('');
+  const [state, setState] = useState('idle'); // idle | sending | done | error
 
   async function submit(e) {
     e.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
-    setStatus('sending');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setState('error');
+      return;
+    }
+    setState('sending');
     try {
-      await fetch('/api/challenge-signup', {
+      // intent is EXPLICIT. The endpoint defaults an intent-less body to
+      // 'waitlist', and a seat-link capture silently filed as a waitlist would
+      // lose the one signal that matters: a live buyer hit a dead checkout.
+      const res = await fetch('/api/challenge-signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
+        body: JSON.stringify({
+          intent,
+          email: email.trim(),
+          firstName: name.trim(),
+          ...(tier ? { tier } : {}),
+        }),
       });
-    } catch {}
-    setStatus('done');
+      const ok = res.ok;
+      setState(ok ? 'done' : 'error');
+      t(event, { intent, tier: tier || null, ok, status: res.status });
+    } catch {
+      setState('error');
+      t(event, { intent, tier: tier || null, ok: false, status: 0 });
+    }
+  }
+
+  if (state === 'done') {
+    return (
+      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', background: C.paperWarm, border: `1px solid ${C.line}`, borderRadius: 12, padding: '14px' }}>
+        <Check size={19} strokeWidth={2.6} style={{ color: C.sage, flexShrink: 0, marginTop: 2 }} aria-hidden />
+        <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: C.ink }}>{successLine}</p>
+      </div>
+    );
   }
 
   return (
-    <section id="free" style={{ padding: 'clamp(2rem, 4vw, 3rem) 0 clamp(3rem, 6vw, 5rem)' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <div style={{ background: 'var(--cream)', borderRadius: 20, border: '2px solid var(--line)', padding: 'clamp(1.75rem, 4vw, 2.5rem)', position: 'relative' }}>
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--sage)', fontWeight: 600, marginBottom: '0.75rem' }}>
-              🆓 The Free 30-Day Map
-            </div>
+    <form onSubmit={submit} style={{ display: 'grid', gap: '0.6rem' }}>
+      <label style={{ display: 'block' }}>
+        <span style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 4, color: C.inkSoft }}>First name</span>
+        <input
+          className="chal-input"
+          type="text"
+          autoComplete="given-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="First name"
+        />
+      </label>
+      <label style={{ display: 'block' }}>
+        <span style={{ display: 'block', fontSize: 13, fontWeight: 700, marginBottom: 4, color: C.inkSoft }}>Email address</span>
+        <input
+          className="chal-input"
+          type="email"
+          required
+          autoComplete="email"
+          inputMode="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+        />
+      </label>
+      <button
+        type="submit"
+        className="chal-btn"
+        style={{ background: buttonBg, color: '#FFFFFF' }}
+        disabled={state === 'sending'}
+      >
+        {state === 'sending' ? 'Sending...' : buttonLabel}
+      </button>
+      {state === 'error' && (
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: C.clay }} role="alert">
+          That did not go through. Check the address, or write me directly at{' '}
+          <a href={`mailto:${CHALLENGE.SUPPORT_EMAIL}`} style={{ color: C.clay, fontWeight: 700 }}>{CHALLENGE.SUPPORT_EMAIL}</a> and I will add you by hand.
+        </p>
+      )}
+      <p style={{ margin: 0, fontSize: 12.5, color: C.muted }}>{microcopy}</p>
+    </form>
+  );
+}
 
-            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-3)', fontWeight: 400, lineHeight: 1.15, margin: '0 0 1rem', letterSpacing: '-0.02em' }}>
-              30 days. 30 short emails. The full map.
-            </h3>
+/* ==========================================================================
+   FAQ
+   Accordion on every viewport. First two open by default.
+   ========================================================================== */
+function Faq() {
+  const [open, setOpen] = useState(() => new Set([0, 1]));
 
-            <p style={{ color: 'var(--ink-soft)', lineHeight: 1.6, margin: '0 0 1.5rem', maxWidth: '52ch' }}>
-              The same map Joel hands his own family — the one he has watched ICU patients walk in on 5 pills and walk out on 2, sometimes 1. Free. One short email at 6 AM, for 30 mornings.
-            </p>
+  const toggle = (i) => {
+    setOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(i)) {
+        next.delete(i);
+      } else {
+        next.add(i);
+        t('chal_faq_open', { index: i, question: FAQ[i].q.slice(0, 80) });
+      }
+      return next;
+    });
+  };
 
-            {status === 'done' ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 1.25rem', background: 'var(--sage)', borderRadius: 12, color: 'var(--cream)' }}>
-                <Check size={20} />
-                <div>
-                  <strong style={{ display: 'block' }}>You're in.</strong>
-                  <span style={{ fontSize: '0.9rem', opacity: 0.85 }}>Friday 8 AM EST — watch your inbox.</span>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={submit} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                <input type="text" placeholder="First name" value={name} onChange={e => setName(e.target.value)} style={{ padding: '0.85rem 1rem', border: '1px solid var(--line)', borderRadius: 10, background: 'var(--paper)', fontSize: '0.95rem', flex: '0 0 140px' }} />
-                <input type="email" required placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: '0.85rem 1rem', border: '1px solid var(--line)', borderRadius: 10, background: 'var(--paper)', fontSize: '0.95rem', flex: '1 1 200px', minWidth: 0 }} />
-                <button type="submit" disabled={status === 'sending'} style={{ padding: '0.85rem 1.5rem', background: 'var(--sage)', color: 'var(--cream)', borderRadius: 10, fontWeight: 600, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', border: 'none', cursor: 'pointer' }}>
-                  {status === 'sending' ? 'Sending…' : 'Send my map'} <ArrowRight size={16} />
+  return (
+    <section style={{ padding: '38px 0 20px' }}>
+      <div className="chal-wrap">
+        <Kicker>Straight answers</Kicker>
+        <H2>The questions people actually ask me.</H2>
+
+        <div style={{ borderTop: `1px solid ${C.line}` }}>
+          {FAQ.map((item, i) => {
+            const isOpen = open.has(i);
+            return (
+              <div key={item.q} style={{ borderBottom: `1px solid ${C.line}` }}>
+                <button
+                  type="button"
+                  className="chal-faq-q"
+                  aria-expanded={isOpen}
+                  aria-controls={`chal-faq-a-${i}`}
+                  id={`chal-faq-q-${i}`}
+                  onClick={() => toggle(i)}
+                >
+                  <span>{item.q}</span>
+                  <ChevronDown
+                    size={20}
+                    aria-hidden
+                    style={{
+                      flexShrink: 0, marginTop: 2, color: C.clay,
+                      transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.2s ease',
+                    }}
+                  />
                 </button>
-              </form>
-            )}
-
-            <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '0.75rem' }}>
-              Free. Unsubscribe anytime.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ---- VIP TIER ---- */
-function VIPTier() {
-  return (
-    <section id="vip" style={{ background: 'var(--paper-warm)', padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <div style={{ background: 'var(--ink)', borderRadius: 22, padding: 'clamp(2rem, 4vw, 3rem)', color: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
-
-            <div style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--clay-soft)', fontWeight: 600, marginBottom: '0.75rem' }}>
-              ⭐ The 30-Day Live Map · Pre-Launch Price
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-4)', fontWeight: 500, letterSpacing: '-0.02em' }}>$97</span>
-              <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '1.1rem' }}>$147</span>
-              <span style={{ background: 'var(--clay)', color: 'var(--cream)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.65rem', borderRadius: 999 }}>Save $50</span>
-            </div>
-
-            <p style={{ fontSize: '0.88rem', color: 'rgba(251,248,241,0.5)', marginBottom: '1.5rem' }}>
-              $3.23 a day for 30 days. Less than one pill co-pay.
-            </p>
-
-            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 400, lineHeight: 1.2, margin: '0 0 0.5rem', fontVariationSettings: '"SOFT" 60, "opsz" 72' }}>
-              For the woman who wants Joel on the call.
-            </h3>
-            <p style={{ color: 'rgba(251,248,241,0.75)', lineHeight: 1.6, margin: '0 0 1.75rem' }}>
-              Everything in the free map, plus Joel live with you every Monday. 50 seats per cohort.
-            </p>
-
-            <div style={{ display: 'grid', gap: '0.85rem', marginBottom: '2rem' }}>
-              <FeatureRow icon={<BookOpen size={16} />} text="The full Be There in 30 book — 560 pages, every chapter expanded" />
-              <FeatureRow icon={<BookOpen size={16} />} text="3 supporting books: BP Cure + Overmedicated Boomer + Cook For Life" />
-              <FeatureRow icon={<Play size={16} />} text="Mondays 10 PM ET live with Joel — your numbers, your questions, his eyes on the data" />
-              <FeatureRow icon={<Video size={16} />} text="Lifetime replays of every call" />
-              <FeatureRow icon={<Users size={16} />} text="The Skool room — where the women already ahead share what worked" />
-              <FeatureRow icon={<Zap size={16} />} text="4 fast-start bonuses: 7-Day BP Drop Map · Triangle Tracker · Joel's Stall Cheat Sheet · 30-Day Future Self Journal" />
-            </div>
-
-            <div style={{ background: 'rgba(251,248,241,0.06)', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.75rem', border: '1px solid rgba(251,248,241,0.1)' }}>
-              <span style={{ fontSize: '0.82rem', color: 'rgba(251,248,241,0.5)' }}>Total value: </span>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem', fontWeight: 500 }}>$777</span>
-              <span style={{ fontSize: '0.82rem', color: 'rgba(251,248,241,0.5)' }}> · Your price: </span>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem', fontWeight: 500, color: 'var(--clay-soft)' }}>$97</span>
-            </div>
-
-            <a href={VIP_LINK} target="_top" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'var(--clay)', color: 'var(--cream)', padding: '1rem 2rem', borderRadius: 12, fontWeight: 700, fontSize: '1.05rem', textDecoration: 'none', transition: 'transform 0.15s' }}>
-              Yes — Joel on Mondays ($97) <ArrowRight size={16} />
-            </a>
-
-            <p style={{ fontSize: '0.78rem', color: 'rgba(251,248,241,0.4)', marginTop: '0.75rem' }}>
-              Pre-launch price. Next cohort opens at $147 on Friday 8 AM ET.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ---- PREMIUM TIER ---- */
-function PremiumTier() {
-  return (
-    <section id="premium" style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <div style={{ background: 'linear-gradient(135deg, #6C3483 0%, #4A2D5E 100%)', borderRadius: 22, padding: 'clamp(2rem, 4vw, 3rem)', color: 'var(--cream)', position: 'relative', overflow: 'hidden' }}>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-              <span style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--clay-soft)', fontWeight: 600 }}>
-                🌟 Premium · 50 Seats · Hard Cap
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-4)', fontWeight: 500, letterSpacing: '-0.02em' }}>$397</span>
-              <span style={{ textDecoration: 'line-through', opacity: 0.5, fontSize: '1.1rem' }}>$497</span>
-              <span style={{ background: 'var(--clay)', color: 'var(--cream)', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0.3rem 0.65rem', borderRadius: 999 }}>Save $100</span>
-            </div>
-
-            <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-2)', fontWeight: 400, lineHeight: 1.2, margin: '0.5rem 0 0.75rem', fontVariationSettings: '"SOFT" 60, "opsz" 72' }}>
-              The 50-seat problem.
-            </h3>
-
-            <p style={{ color: 'rgba(251,248,241,0.8)', lineHeight: 1.6, margin: '0 0 1.5rem', maxWidth: '52ch' }}>
-              Premium includes a personal 15-minute Loom video review — I sit down, watch your numbers, look at your protocol, and film you a video walking through what to fix. Just you. Just me. From my kitchen.
-            </p>
-
-            <p style={{ color: 'rgba(251,248,241,0.65)', lineHeight: 1.6, margin: '0 0 1.75rem', fontSize: '0.92rem' }}>
-              At 50 seats, that's 12.5 hours of recording I can fit into a launch month without quality dropping. Past 50, I can't. The cap protects you, not me.
-            </p>
-
-            <div style={{ display: 'grid', gap: '0.85rem', marginBottom: '1.75rem' }}>
-              <FeatureRow icon={<Check size={16} />} text="Everything in VIP" highlight />
-              <FeatureRow icon={<Video size={16} />} text="Joel's personal Loom review of YOUR protocol" highlight />
-              <FeatureRow icon={<Star size={16} />} text="RestoreHER Virtual Ticket (June 24–25 — Barbara O'Neill keynoting, Annie teaching)" highlight />
-              <FeatureRow icon={<MessageCircle size={16} />} text="Skip-the-line Q&A in every Monday call" />
-              <FeatureRow icon={<Clock size={16} />} text="24-hour early access to all replays" />
-              <FeatureRow icon={<Users size={16} />} text="Premium Skool room — direct line to Joel" />
-            </div>
-
-            <div style={{ background: 'rgba(251,248,241,0.08)', borderRadius: 14, padding: '1.25rem 1.5rem', marginBottom: '1.75rem', border: '1px solid rgba(251,248,241,0.15)' }}>
-              <p style={{ fontSize: '0.92rem', lineHeight: 1.6, margin: 0, color: 'rgba(251,248,241,0.85)' }}>
-                <strong>The math that matters:</strong> The RestoreHER virtual ticket alone is $297 at everydaynurse.com. Premium is $100 more — and gets you the ticket, the Loom review, and everything else.
-              </p>
-              <p style={{ fontSize: '0.92rem', lineHeight: 1.6, margin: '0.75rem 0 0', color: 'rgba(251,248,241,0.85)' }}>
-                You can buy a $297 ticket. Or you can buy a <strong>$397 transformation.</strong>
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.75rem' }}>
-              <span style={{ fontSize: '0.82rem', color: 'rgba(251,248,241,0.5)' }}>Total value: </span>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem', fontWeight: 500 }}>$1,662</span>
-              <span style={{ fontSize: '0.82rem', color: 'rgba(251,248,241,0.5)' }}> · Your price: </span>
-              <span style={{ fontFamily: 'Fraunces, serif', fontSize: '1.1rem', fontWeight: 500, color: 'var(--clay-soft)' }}>$397</span>
-            </div>
-
-            <a href={PREMIUM_LINK} target="_top" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#FFFFFF', color: '#6C3483', padding: '1rem 2rem', borderRadius: 12, fontWeight: 700, fontSize: '1.05rem', textDecoration: 'none' }}>
-              Claim Your Seat — $397 <ArrowRight size={16} />
-            </a>
-
-            <p style={{ fontSize: '0.78rem', color: 'rgba(251,248,241,0.4)', marginTop: '0.75rem' }}>
-              Pre-launch price. Jumps to $497 Friday 8 AM. Gone at 50 seats.
-            </p>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-function FeatureRow({ icon, text, highlight }) {
-  return (
-    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-      <span style={{ color: highlight ? 'var(--clay-soft)' : 'rgba(251,248,241,0.5)', marginTop: 2, flexShrink: 0 }}>{icon}</span>
-      <span style={{ fontSize: '0.95rem', lineHeight: 1.5, color: 'rgba(251,248,241,0.9)' }}>{text}</span>
-    </div>
-  );
-}
-
-/* ---- GUARANTEES ---- */
-function GuaranteeSection() {
-  return (
-    <section style={{ background: 'var(--paper-warm)', padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>Your protection</span>
-          <h2 className="display-m" style={{ margin: '0 0 2rem' }}>
-            Three guarantees. <em className="ital-display" style={{ color: 'var(--clay)' }}>Zero risk.</em>
-          </h2>
-
-          <div style={{ display: 'grid', gap: '1.25rem' }}>
-            {/* VIP Guarantees */}
-            <div style={{ background: 'var(--cream)', borderRadius: 18, padding: 'clamp(1.5rem, 3vw, 2rem)', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--sage)', fontWeight: 600, marginBottom: '1rem' }}>
-                <Shield size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 6 }} />
-                Triple Guarantee · VIP
+                {isOpen && (
+                  <p
+                    id={`chal-faq-a-${i}`}
+                    role="region"
+                    aria-labelledby={`chal-faq-q-${i}`}
+                    style={{ margin: '0 0 16px', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}
+                  >
+                    {item.a}
+                  </p>
+                )}
               </div>
-
-              <div style={{ display: 'grid', gap: '1rem' }}>
-                <GuaranteeItem
-                  title="Numbers Guarantee"
-                  text="Complete the 30 days. If your BP hasn't dropped, full refund. Keep the books."
-                />
-                <GuaranteeItem
-                  title="Time Guarantee"
-                  text="Under 20 minutes a day or full refund."
-                />
-                <GuaranteeItem
-                  title="Better-Than-Money-Back Promise"
-                  text="If you refund, I'll send you the RestoreHER Virtual Ticket ($297 value) free as my apology for missing."
-                />
-              </div>
-            </div>
-
-            {/* Premium Guarantee */}
-            <div style={{ background: 'var(--cream)', borderRadius: 18, padding: 'clamp(1.5rem, 3vw, 2rem)', border: '2px solid var(--gold)' }}>
-              <div style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--gold)', fontWeight: 600, marginBottom: '1rem' }}>
-                <Shield size={14} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 6 }} />
-                Iron-Clad Guarantee · Premium
-              </div>
-
-              <GuaranteeItem
-                title="The Premium Promise"
-                text="If after your Loom review and 30 days your numbers haven't moved — full refund. Keep the books. Keep the ticket. Plus a second free Loom review when you're ready to try again."
-              />
-            </div>
-          </div>
-        </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
 }
 
-function GuaranteeItem({ title, text }) {
+function FaqCta({ doorsClosed, chooseTier, goToWaitlist }) {
   return (
-    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-      <Check size={18} style={{ color: 'var(--sage)', marginTop: 2, flexShrink: 0 }} />
-      <div>
-        <strong style={{ fontFamily: 'Fraunces, serif', display: 'block', marginBottom: '0.15rem' }}>{title}</strong>
-        <span style={{ color: 'var(--ink-soft)', lineHeight: 1.55, fontSize: '0.95rem' }}>{text}</span>
-      </div>
-    </div>
-  );
-}
-
-/* ---- WHY THIS PRICE ---- */
-function WhyThisPrice() {
-  return (
-    <section style={{ padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800 }}>
-        <motion.div {...fade}>
-          <span className="kicker kicker-dot" style={{ marginBottom: '1rem' }}>The reasoning</span>
-          <h2 className="display-s" style={{ margin: '0 0 1.5rem' }}>
-            Why $97?
-          </h2>
-
-          <div style={{ display: 'grid', gap: '1.25rem', color: 'var(--ink-soft)', lineHeight: 1.65 }}>
-            <p style={{ margin: 0 }}>
-              <strong style={{ color: 'var(--ink)' }}>VIP is $97</strong> because that's roughly what one month of BP medication costs the average person. I priced it to be a wash on month one — and an investment for the rest of your life.
-            </p>
-            <p style={{ margin: 0 }}>
-              <strong style={{ color: 'var(--ink)' }}>It includes everything in the Kit</strong> — the 10-Day Reset Challenge, the Full-Stack BP Activation, the Graduation phase, the complete herb formulary — plus weekly Monday 10pm ET group coaching for 4 weeks where I walk through your numbers live.
-            </p>
-            <p style={{ margin: 0 }}>
-              <strong style={{ color: 'var(--ink)' }}>Cohort pricing exists</strong> because the Monday calls only run for 4 weeks per cohort. After this cohort closes, the next opens at $147. Every cohort is hard-capped at 50 seats so the calls stay personal.
-            </p>
-          </div>
-        </motion.div>
+    <section style={{ padding: '4px 0 34px' }}>
+      <div className="chal-wrap">
+        {doorsClosed ? (
+          <button type="button" className="chal-btn" style={{ background: C.sage, color: C.cream }} onClick={() => goToWaitlist('after_faq')}>
+            Tell me about the next one <ArrowRight size={17} aria-hidden />
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="chal-btn"
+            style={{ background: C.clay, color: '#FFFFFF' }}
+            onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_faq', CHALLENGE.GA_PRICE)}
+          >
+            Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+          </button>
+        )}
       </div>
     </section>
   );
 }
 
-/* ---- FINAL CTA ---- */
-function FinalCTA() {
+/* ==========================================================================
+   THE CLOSE
+   ========================================================================== */
+function Close({ doorsClosed, chooseTier, goToWaitlist }) {
   return (
-    <section style={{ background: 'var(--sage-deep)', color: 'var(--cream)', padding: 'clamp(3rem, 6vw, 5rem) 0' }}>
-      <div className="shell" style={{ maxWidth: 800, textAlign: 'center' }}>
-        <motion.div {...fade}>
-          <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 'var(--step-4)', fontWeight: 400, lineHeight: 1.1, margin: '0 0 1.5rem', letterSpacing: '-0.02em' }}>
-            Lock your seat <em style={{ fontStyle: 'italic', color: 'var(--clay-soft)' }}>now.</em>
-          </h2>
+    <section style={{ background: C.sageDeep, color: C.cream, padding: '40px 0 36px' }}>
+      <div className="chal-wrap" style={{ textAlign: 'center' }}>
+        <h2
+          style={{
+            fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: 'clamp(1.8rem, 6.4vw, 2.5rem)',
+            lineHeight: 1.12, letterSpacing: '-0.02em', margin: '0 0 18px', color: C.cream,
+          }}
+        >
+          Five nights. Then you know.
+        </h2>
 
-          <p style={{ color: 'rgba(251,248,241,0.7)', fontSize: '1rem', lineHeight: 1.6, margin: '0 auto 2rem', maxWidth: '44ch' }}>
-            VIP enrollment for THIS cohort closes Friday May 14 at midnight. After that the next cohort opens at $147. 50 seats max — the calls stay personal because the room stays small.
+        <div style={{ textAlign: 'left' }}>
+          <DarkBody>Here is what I want for you, and I am going to say it as plainly as I know how.</DarkBody>
+          <DarkBody>
+            I want you to sit down at the end of next Friday with a piece of paper in your hand. Five days of your own readings, taken correctly, at the same times, in your own home. Underneath them, three things you changed and why. And down at the bottom, in your own handwriting, the questions you are going to ask at your next appointment.
+          </DarkBody>
+          <DarkBody>
+            Not hoping. Not guessing. Not sitting there while somebody reads a number off a machine and writes something down without telling you what it means.
+          </DarkBody>
+          <DarkBody>Prepared. For the first time in years.</DarkBody>
+          <DarkBody>
+            That is the whole thing. That is what five evenings buys you. Whether your number does anything at all in that week is between you, your body, and your doctor, and I will never promise you otherwise. But walking in prepared is entirely within your reach, and it starts Monday at seven.
+          </DarkBody>
+          <DarkBody>I have watched a lot of people meet this too late. Not you. Not this time.</DarkBody>
+          <DarkBody>I will see you Monday night.</DarkBody>
+        </div>
+
+        <p style={{ margin: '18px 0 0', textAlign: 'left', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '1.2rem', color: C.cream }}>
+          Joel
+        </p>
+        <p style={{ margin: '2px 0 0', textAlign: 'left', fontSize: 13, color: 'rgba(251,248,241,0.68)' }}>
+          Joel Polley, RN &middot; BraveWorks RN
+        </p>
+
+        <div style={{ marginTop: 22 }}>
+          {doorsClosed ? (
+            <button type="button" className="chal-btn" style={{ background: C.clay, color: '#FFFFFF', fontSize: '1.08rem', minHeight: 58 }} onClick={() => goToWaitlist('final_close')}>
+              Tell me about the next one <ArrowRight size={18} aria-hidden />
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="chal-btn"
+                style={{ background: C.clay, color: '#FFFFFF', fontSize: '1.08rem', minHeight: 58 }}
+                onClick={() => chooseTier(CHALLENGE.GA_TIER, 'final_close', CHALLENGE.GA_PRICE)}
+              >
+                Yes, save my seat for August 3 <ArrowRight size={18} aria-hidden />
+              </button>
+              <button
+                type="button"
+                className="chal-btn"
+                style={{ background: 'transparent', color: C.cream, border: '1.5px solid rgba(251,248,241,0.5)', marginTop: 10, fontWeight: 700 }}
+                onClick={() => chooseTier(CHALLENGE.VIP_TIER, 'final_close_vip', CHALLENGE.VIP_PRICE)}
+              >
+                Join VIP instead, {usd(CHALLENGE.VIP_PRICE)}
+              </button>
+            </>
+          )}
+        </div>
+
+        <p style={{ margin: '12px 0 0', fontSize: 13, lineHeight: 1.6, color: 'rgba(251,248,241,0.68)' }}>
+          {CHALLENGE.DATE_RANGE_LABEL} &middot; {CHALLENGE.TIME_LABEL_CT}, {CHALLENGE.TIME_LABEL_ET} &middot; one hour a night &middot; replays included &middot; secure checkout
+        </p>
+
+        <p style={{ margin: '24px 0 0', fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '0.95rem', color: 'rgba(251,248,241,0.5)' }}>
+          Genetics writes the recipe. Lifestyle bakes the cake. Be your own steward.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ==========================================================================
+   MEDICATION DISCLAIMER
+   Copied byte for byte from src/pages/CheckoutPage.jsx (variant A's footer
+   legal block). Do not paraphrase, shorten, or reorder.
+   ========================================================================== */
+function MedicationDisclaimer() {
+  return (
+    <section style={{ background: C.paperWarm, padding: '26px 0' }}>
+      <div className="chal-wrap">
+        <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center', color: C.muted, fontSize: 12, lineHeight: 1.6 }}>
+          <p style={{ margin: '0 0 8px' }}>
+            These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, or prevent any disease.
           </p>
-
-          <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="#free" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, border: '1px solid rgba(251,248,241,0.25)', color: 'var(--cream)', textDecoration: 'none', fontWeight: 500 }}>
-              Join Free
-            </a>
-            <a href={VIP_LINK} target="_top" rel="noopener" style={{ padding: '0.95rem 1.5rem', borderRadius: 12, background: 'var(--clay)', color: 'var(--cream)', textDecoration: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-              VIP — $97 <ArrowRight size={14} />
-            </a>
-          </div>
-
-          <p style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '0.92rem', color: 'rgba(251,248,241,0.45)', marginTop: '2.5rem' }}>
-            Genetics writes the recipe. Lifestyle bakes the cake. Be your own doctor.
+          <p style={{ margin: '0 0 8px' }}>
+            Educational and lifestyle content only. Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or adjust medication without your doctor.
           </p>
-        </motion.div>
+          <p style={{ margin: '0 0 12px' }}>
+            Results not typical. Most readers see modest results or none.
+          </p>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ---- FOOTER ---- */
 function PageFooter() {
   return (
-    <footer style={{ background: 'var(--ink)', color: 'rgba(251,248,241,0.4)', padding: '2rem 0', textAlign: 'center', fontSize: '0.78rem', lineHeight: 1.6 }}>
-      <div className="shell">
-        <p style={{ margin: '0 0 0.5rem' }}>
-          BraveWorks RN · Joel Polley, RN · Naturopathic practitioner · <a href="https://bpquiz.com" style={{ color: 'rgba(251,248,241,0.5)' }}>bpquiz.com</a>
+    <footer style={{ background: C.ink, color: 'rgba(251,248,241,0.5)', padding: '20px 0 26px', textAlign: 'center', fontSize: 12, lineHeight: 1.7 }}>
+      <div className="chal-wrap">
+        <p style={{ margin: '0 0 8px' }}>
+          <a href="/disclaimer" style={{ color: 'rgba(251,248,241,0.6)', textDecoration: 'underline', textUnderlineOffset: 2 }}>Disclaimer</a>
+          {' · '}
+          <a href="/terms" style={{ color: 'rgba(251,248,241,0.6)', textDecoration: 'underline', textUnderlineOffset: 2 }}>Terms</a>
+          {' · '}
+          <a href="/privacy" style={{ color: 'rgba(251,248,241,0.6)', textDecoration: 'underline', textUnderlineOffset: 2 }}>Privacy</a>
         </p>
-        <p style={{ margin: '0 0 0.5rem' }}>
-          TikTok: <a href="https://tiktok.com/@braveworksrn" style={{ color: 'var(--clay-soft)' }}>@braveworksrn</a>
-        </p>
-        <p style={{ margin: 0 }}>
-          Educational content only. Not medical advice. Always complement — never replace — care from your physician.
-        </p>
+        <p style={{ margin: 0 }}>&copy; 2026 BraveWorks RN. All rights reserved.</p>
       </div>
     </footer>
   );
+}
+
+/* ==========================================================================
+   STICKY MOBILE BAR
+   Appears past scrollY 600, same threshold CheckoutPage uses. Slides in via
+   transform instead of popping. Hidden at 860px and up.
+   ========================================================================== */
+function StickyBar({ doorsClosed, chooseTier, goToWaitlist }) {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 600);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <div
+      className="chal-sticky"
+      style={{ transform: show ? 'translateY(0)' : 'translateY(115%)' }}
+      aria-hidden={!show}
+    >
+      <div
+        style={{
+          maxWidth: 720, margin: '0 auto', minHeight: 64, padding: '8px 16px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.8rem',
+        }}
+      >
+        <span style={{ fontSize: 12, fontWeight: 700, color: C.gold, lineHeight: 1.35 }}>
+          {doorsClosed
+            ? 'August cohort has started'
+            : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · ${usd(CHALLENGE.GA_PRICE)}`}
+        </span>
+        <button
+          type="button"
+          onClick={() =>
+            doorsClosed
+              ? goToWaitlist('sticky_bar')
+              : chooseTier(CHALLENGE.GA_TIER, 'sticky_bar', CHALLENGE.GA_PRICE)}
+          style={{
+            background: C.clay, color: '#FFFFFF', border: 'none', borderRadius: 999,
+            fontWeight: 800, fontSize: 14, minHeight: 48, padding: '0 20px',
+            cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+          }}
+          tabIndex={show ? 0 : -1}
+        >
+          {doorsClosed ? 'Next cohort' : 'Save my seat'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ==========================================================================
+   SMALL SHARED BITS
+   ========================================================================== */
+function Kicker({ children, tone = 'clay' }) {
+  const color = tone === 'sage' ? C.sage : tone === 'onDark' ? C.claySoft : C.clay;
+  return (
+    <p style={{ margin: 0, fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color }}>
+      {children}
+    </p>
+  );
+}
+
+function H2({ children }) {
+  return (
+    <h2
+      style={{
+        fontFamily: 'Fraunces, serif', fontWeight: 500, fontSize: 'clamp(1.55rem, 5.4vw, 2.05rem)',
+        lineHeight: 1.18, letterSpacing: '-0.02em', margin: '8px 0 16px', color: C.ink,
+      }}
+    >
+      {children}
+    </h2>
+  );
+}
+
+function Body({ children }) {
+  return <p style={{ margin: '0 0 14px', fontSize: 15.5, lineHeight: 1.68, color: C.inkSoft }}>{children}</p>;
+}
+
+function DarkBody({ children }) {
+  return <p style={{ margin: '0 0 14px', fontSize: 15.5, lineHeight: 1.68, color: 'rgba(251,248,241,0.85)' }}>{children}</p>;
 }

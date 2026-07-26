@@ -1906,6 +1906,45 @@ async function processCheckoutCompleted(event) {
     return { action: 'skipped', reason: 'foreign_funnel', amount: amountCents };
   }
 
+  // ── The Three Pressures Challenge (2026-07-26) ──
+  // MUST run BEFORE the AMOUNT_TO_TIER lookup. The challenge sells at $47 and
+  // $97, and both of those amounts already map to existing kit tiers, so
+  // without this branch a challenge buyer would be silently delivered the
+  // Complete Triangle Reset or the 1:1 call instead of a seat. We route on the
+  // explicit metadata marker, never on price, because price collides.
+  if (session.metadata?.offer === 'challenge') {
+    const seat = session.metadata?.tier === 'challenge-vip' ? 'vip' : 'ga';
+    const cohort = session.metadata?.cohort || 'unknown';
+    const doneKey = `bwbp:challengedone:${session.id}`;
+    try {
+      if (await kv.get(doneKey)) {
+        return { action: 'challenge_recorded', seat, cohort, deduplicated: true, customer_email: customerEmail };
+      }
+    } catch { /* KV read failure falls through to a re-send, which the signup endpoint dedupes by email */ }
+
+    // Registration + confirmation live in api/challenge-signup.js so the paid
+    // and the (future) free path share one record shape and one email.
+    const regRes = await fetch(`${SITE_URL}/api/challenge-signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // sessionId ONLY. challenge-signup.js deliberately derives the buyer's
+      // address and seat from the Stripe session itself and ignores the body,
+      // so that a stranger cannot POST someone else's email and be mailed the
+      // Zoom link. Passing more here would be ignored at best, misleading at worst.
+      body: JSON.stringify({ intent: 'register', sessionId: session.id }),
+    }).catch((err) => ({ ok: false, statusText: err?.message || 'network error' }));
+
+    if (!regRes || !regRes.ok) {
+      // Throw, do NOT return. A returned failure would let the outer handler
+      // write the done marker and ack 200, and Stripe would never retry, which
+      // is exactly how a paid buyer gets permanently lost (see the 2026-07-25
+      // audit finding on stripe-webhook.js:729).
+      throw new Error(`challenge registration failed for ${session.id}: ${regRes?.statusText || 'unknown'}`);
+    }
+    try { await kv.set(doneKey, Date.now(), { ex: 60 * 60 * 24 * 30 }); } catch { /* non-fatal */ }
+    return { action: 'challenge_recorded', seat, cohort, customer_email: customerEmail };
+  }
+
   const tier = AMOUNT_TO_TIER[amountCents];
   if (!tier) {
     // Unmapped amount — buyer paid but we have no delivery mapping. Log loudly

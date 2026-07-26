@@ -31,6 +31,9 @@ const TriggerQuizPage = lazy(() => import('./pages/TriggerQuizPage'));
 const FoodsGuideLanding = lazy(() => import('./pages/FoodsGuideLanding'));
 const FoodsGuideThanks = lazy(() => import('./pages/FoodsGuideThanks'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
+// The challenge checkout's return_url. Without this route a paying buyer lands
+// on the SPA catch-all and sees nothing at the exact moment they have just paid.
+const ChallengeConfirmedPage = lazy(() => import('./pages/ChallengeConfirmedPage'));
 const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
 const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
@@ -207,12 +210,35 @@ function App() {
               + UTM attribution. */}
           <Route path="/start" element={<SiteLayout><QuizPage /></SiteLayout>} />
 
-          {/* 2026-07-04: /challenge RETIRED. The page was the May pre-launch
-              build (price-jump countdowns, 50-seat caps, Monday 10 PM copy,
-              expired RestoreHER ticket bonus, signup form whose endpoint now
-              410s) — fake scarcity on a trust brand. The $97 shadow seat is
-              sold by direct Stripe link from the tier-1 Day-20 email instead. */}
-          <Route path="/challenge" element={<Navigate to="/" replace />} />
+          {/* /challenge HISTORY - read this before you touch it.
+
+              2026-07-04 RETIRED (redirected to '/'). The page was the May
+              pre-launch build: price-jump countdowns, 50-seat caps, Monday
+              10 PM copy, an expired RestoreHER ticket bonus, and a signup
+              form whose endpoint 410s. Fake scarcity on a trust brand. The
+              2026-07-25 full-system audit found the same pattern elsewhere
+              on the site (fabricated testimonials, phantom compare-at
+              prices) and it was all stripped out.
+
+              2026-07-26 REBUILT and re-routed for the live 5-day cohort
+              starting Mon 2026-08-03, 7:00pm CT. It is back WITHOUT the
+              tactics that killed it. Rules for this route, permanently:
+                - NO seat cap and no "X spots left" unless Joel confirms a
+                  real, enforced cap.
+                - NO tier shown as SOLD OUT.
+                - NO invented "(value)" tags. Every dollar figure must be a
+                  price something has actually sold for.
+                - NO countdown to a manufactured deadline. The ONLY honest
+                  deadline is the cohort start datetime, because you cannot
+                  join a live call that already happened. Counting down to
+                  that is fine; anything else is not.
+                - NO testimonials until Joel has consented ones (see
+                  docs/testimonials.md). Earned authority instead: 20 years
+                  ICU and Emergency nursing.
+              If you are about to re-add a seat cap, that is exactly why this
+              page was deleted the first time. */}
+          <Route path="/challenge" element={<ChallengePage />} />
+          <Route path="/challenge-confirmed" element={<ChallengeConfirmedPage />} />
 
           {/* Practice Launcher — three-stage funnel (standalone, no SiteLayout) */}
           <Route path="/launcher" element={<LauncherPage />} />
