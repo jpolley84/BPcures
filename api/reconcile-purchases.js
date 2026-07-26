@@ -204,6 +204,12 @@ export default async function handler(req, res) {
         sessionId: session.id,
         markSession: true,
         deviceDistinctId: session.metadata?.ph_distinct_id || null,
+        // 2026-07-26: the reconciler was the ONE session-keyed caller that
+        // dropped the homepage A/B variant (every webhook call site passes
+        // it), so backfilled purchases landed unattributed and the arms could
+        // not be compared on the metric that decides the test. The metadata is
+        // already on the session; it just was never read.
+        abHomeVariant: session.metadata?.ab_home_variant || null,
       });
       if (captured) {
         backfilledRows.push({

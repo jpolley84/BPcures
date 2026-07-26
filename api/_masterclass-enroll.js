@@ -1,4 +1,4 @@
-// api/_masterclass-enroll.js — shared "Beyond the Cuff" registration core.
+// api/_masterclass-enroll.js: shared "Beyond the Cuff" registration core.
 //
 // 2026-07-26 (foods101-v1): extracted VERBATIM from api/masterclass-register.js
 // so more than one funnel can put someone in Monday night's class without
@@ -30,7 +30,7 @@ import { Resend } from 'resend';
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
-// Weekly Zoom (Mondays 7pm CT) — provided by Joel 2026-07-20.
+// Weekly Zoom (Mondays 7pm CT), provided by Joel 2026-07-20.
 const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
 const ZOOM_MEETING_ID = '818 9344 4167';
 const ZOOM_PASSCODE = '846248';
@@ -58,8 +58,19 @@ export function cleanUtm(utm) {
   return Object.keys(out).length ? out : undefined;
 }
 
-function confirmationEmail({ firstName }) {
+// The consent basis printed in the footer. This is the ONLY true line for
+// someone who filled in the form on public/masterclass/index.html. Every other
+// funnel must pass its own `provenance`, or the email states a consent basis
+// that never happened (foods101 leads never visited /masterclass).
+const DEFAULT_PROVENANCE = 'you saved a seat at bpquiz.com/masterclass';
+
+// `provenance` is caller-supplied, never body-supplied: masterclass-register.js
+// passes an explicit field list, so an unauthenticated POST cannot steer this
+// wording. It is cleaned and escaped anyway, because it lands in Joel-branded
+// HTML.
+function confirmationEmail({ firstName, provenance }) {
   const name = firstName ? escapeHtml(firstName) : 'friend';
+  const why = escapeHtml(clean(provenance, 160) || DEFAULT_PROVENANCE);
   const postal = process.env.BUSINESS_POSTAL_ADDRESS
     ? `<p style="color:#9A9A9A;font-size:0.78rem;margin-top:0.4rem;">BraveWorks RN &middot; ${escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS)}</p>`
     : '';
@@ -67,19 +78,19 @@ function confirmationEmail({ firstName }) {
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Beyond the Cuff &middot; Free Live Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
-<p><strong>Beyond the Cuff &mdash; Take Charge of Your Numbers</strong> runs live every Monday night at <strong>7:00 pm Central</strong> (8:00 pm Eastern &middot; 5:00 pm Pacific).</p>
+<p><strong>Beyond the Cuff - Take Charge of Your Numbers</strong> runs live every Monday night at <strong>7:00 pm Central</strong> (8:00 pm Eastern &middot; 5:00 pm Pacific).</p>
 <div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
   <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
   <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>
   <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
   <a href="${ZOOM_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> so Monday night finds you ready.</p>
 </div>
-<p><strong>What we'll cover:</strong> the 3 hidden daily triggers quietly driving your numbers up &mdash; the habit almost nobody connects to their readings, the "healthy" trap working against you, and the one everyone blames for the wrong reason.</p>
+<p><strong>What we'll cover:</strong> the 3 hidden daily triggers quietly driving your numbers up. The habit almost nobody connects to their readings, the "healthy" trap working against you, and the one everyone blames for the wrong reason.</p>
 <p><strong>Do one thing before Monday:</strong> if you haven't taken the free BP quiz yet, it takes 2 minutes and tells you which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B93C20;">Take it here</a>.</p>
 <p>Questions? Just reply. I read these myself.</p>
-<p style="margin-top:2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
+<p style="margin-top:2rem;">Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
-<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because you saved a seat at bpquiz.com/masterclass. Educational content only &mdash; not medical advice. Don't want class emails? Reply "remove" and I'll take you off.</p>
+<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because ${why}. Educational content only, not medical advice. Never start, stop, or adjust medication without your doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
 ${postal}
 </body></html>`;
 }
@@ -93,6 +104,12 @@ ${postal}
  * @param {string} [opts.phone]
  * @param {string} [opts.source]           attribution label stored on the record
  * @param {object} [opts.utm]              { utm_source, utm_medium, utm_campaign }
+ * @param {string} [opts.provenance]       the true consent basis for THIS caller,
+ *                                         printed in the confirmation footer as
+ *                                         "You're getting this because <provenance>."
+ *                                         Defaults to the /masterclass form basis.
+ *                                         Pass it whenever the registrant did not
+ *                                         fill in the form on /masterclass.
  * @param {boolean}[opts.sendConfirmation] default true; set false to register silently
  * @returns {Promise<{ already: boolean }>}
  * @throws  {Error} when KV is not configured or the record write fails
@@ -103,6 +120,7 @@ export async function registerMasterclass({
   phone,
   source,
   utm,
+  provenance,
   sendConfirmation = true,
 } = {}) {
   if (!process.env.KV_REST_API_URL) {
@@ -119,7 +137,7 @@ export async function registerMasterclass({
   const normUtm = cleanUtm(utm);
   const recordKey = `masterclass:reg:${normEmail}`;
 
-  // Idempotent path — already registered. No second confirmation, no second
+  // Idempotent path, already registered. No second confirmation, no second
   // INCR, no record reset.
   const existing = await kv.get(recordKey);
   if (existing && existing.email) {
@@ -144,7 +162,7 @@ export async function registerMasterclass({
     console.warn('masterclass-enroll: sadd/incr failed (non-fatal)', err.message);
   }
 
-  // Enroll into the lead-nurture drip (bwbp:drip:*) — the same machine the
+  // Enroll into the lead-nurture drip (bwbp:drip:*), the same machine the
   // quiz EmailGate feeds via capture-lead.js. Rules mirrored from there:
   // enrich-only if a record exists (never reset state/timer, never demote a
   // buyer back to 'lead'); new emails start at Day 0 of the lead sequence.
@@ -196,7 +214,7 @@ export async function registerMasterclass({
     }
   }
 
-  // Confirmation email — non-fatal if it bounces or Resend hiccups.
+  // Confirmation email, non-fatal if it bounces or Resend hiccups.
   if (sendConfirmation && process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
@@ -204,8 +222,8 @@ export async function registerMasterclass({
         from: FROM_ADDRESS,
         to: normEmail,
         reply_to: REPLY_TO,
-        subject: 'Your seat is saved — Beyond the Cuff (Monday night)',
-        html: confirmationEmail({ firstName }),
+        subject: 'Your seat is saved for Beyond the Cuff (Monday night)',
+        html: confirmationEmail({ firstName, provenance }),
       });
     } catch (err) {
       console.warn('masterclass-enroll: confirmation send failed (non-fatal)', err.message);

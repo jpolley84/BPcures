@@ -54,6 +54,17 @@ const VALID_TIERS = new Set(['corner', 'complete', 'tea-48', 'tea-120']);
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
 const TEA_TIERS = new Set(['tea-48', 'tea-120']);
 
+// 2026-07-26: ?src= names the funnel that sent this buyer to the register.
+// ALLOWLISTED, never echoed raw: /pay takes an arbitrary ?src= from anyone on
+// the internet, and an unbounded property value would blow up PostHog
+// cardinality (and the funnel_version value space with it).
+//   foods101 = the 101 Foods squeeze -> thank-you OTO (FoodsGuideThanks.jsx:40)
+//   skipquiz = TriggerLanding's skip-the-quiz buy link
+const VALID_SRC = new Set(['foods101', 'skipquiz']);
+// Only funnels with their OWN label appear here; everything else keeps
+// 'annie-v2', so variant A and the existing dashboards do not move.
+const FUNNEL_BY_SRC = { foods101: 'foods101-v1' };
+
 // label = short product label; triggerName = the quiz result name used in the
 // personalized hook and the "Built for your ..." badge.
 const TRIGGER_META = {
@@ -71,6 +82,7 @@ function readContext() {
   // $47 complete link silently degrades to the generic $17 register.
   let tier = 'corner';
   let corner = null;
+  let src = '';
   let sabbathOverride = null; // 'force' | 'off' | null
   try {
     const params = new URLSearchParams(window.location.search);
@@ -80,6 +92,8 @@ function readContext() {
     // quiz-skipper gets the Stress kit), else the quiz result, else null.
     const urlCorner = params.get('corner');
     if (VALID_CORNERS.has(urlCorner)) corner = urlCorner;
+    const s = params.get('src');
+    src = VALID_SRC.has(s) ? s : '';
     sabbathOverride = params.get('sabbath');
   } catch {
     /* defaults hold */
@@ -98,7 +112,7 @@ function readContext() {
   } catch {
     /* private mode */
   }
-  return { tier, corner, email, sabbathOverride };
+  return { tier, corner, src, email, sabbathOverride };
 }
 
 // Mirrors SabbathGate's host scope: only the apex storefront rests.
@@ -195,7 +209,12 @@ const sectionLabel = {
 };
 
 export default function PayPage() {
-  const { tier, corner, email: initialEmail, sabbathOverride } = useMemo(readContext, []);
+  const { tier, corner, src, email: initialEmail, sabbathOverride } = useMemo(readContext, []);
+  // Derived per view, never a persisted super property: this register serves
+  // several live funnels at once, and a device-global label would follow the
+  // buyer into every later event. '' src keeps the historic 'annie-v2' label,
+  // so nothing that reads the existing dashboards moves.
+  const funnelVersion = FUNNEL_BY_SRC[src] || 'annie-v2';
   // Prefill locks Stripe's email field (customer_email is not editable in
   // embedded checkout), so a typo'd quiz email or a shared device needs an
   // escape hatch: clearing this re-creates the session with a typeable field.
@@ -216,7 +235,7 @@ export default function PayPage() {
   const meta = corner ? TRIGGER_META[corner] : null;
 
   useEffect(() => {
-    track('pay_page_viewed', { funnel_version: 'annie-v2', tier, ...(corner ? { corner } : {}) });
+    track('pay_page_viewed', { funnel_version: funnelVersion, src, tier, ...(corner ? { corner } : {}) });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -247,7 +266,7 @@ export default function PayPage() {
     async function init() {
       if (!stripePromise) {
         setError('Checkout is briefly unavailable. Please refresh in a moment, or use the button on the previous page again.');
-        track('checkout_start_failed', { funnel_version: 'annie-v2', tier, stage: 'no_key' });
+        track('checkout_start_failed', { funnel_version: funnelVersion, src, tier, stage: 'no_key' });
         return;
       }
       try {
@@ -257,7 +276,11 @@ export default function PayPage() {
             const res = await fetch('/api/create-embedded-checkout', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ tier, corner, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
+              // src rides along so the server can stamp the originating funnel
+              // onto the Stripe session metadata (and from there onto the
+              // server-side purchase event). Extra body keys are ignored by
+              // older server builds, so this is safe either way.
+              body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
             });
             if (!res.ok) throw new Error('start_failed');
             const data = await res.json();
@@ -272,12 +295,13 @@ export default function PayPage() {
         checkout.mount(containerRef.current);
         setMounted(true);
         setError('');
-        track('checkout_form_mounted', { funnel_version: 'annie-v2', tier });
+        track('checkout_form_mounted', { funnel_version: funnelVersion, src, tier });
       } catch (err) {
         setMounted(false);
         setError('The order form did not load. Your card was NOT charged. Tap below to try again.');
         track('checkout_start_failed', {
-          funnel_version: 'annie-v2',
+          funnel_version: funnelVersion,
+          src,
           tier,
           // 'no_secret' is a session-creation failure too (API 200 without a
           // clientSecret); only true mount/stripe-js failures land in 'mount'.
@@ -298,7 +322,10 @@ export default function PayPage() {
         /* already gone */
       }
     };
-  }, [tier, corner, email, sabbathOverride, retryKey, sabbathTick]);
+    // src + funnelVersion are stable primitives derived once from the URL, so
+    // listing them cannot re-mint a Stripe session; they are here only to keep
+    // the dependency list honest.
+  }, [tier, corner, src, funnelVersion, email, sabbathOverride, retryKey, sabbathTick]);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--cream, #FBF8F1)' }}>
@@ -466,8 +493,15 @@ export default function PayPage() {
                   marginBottom: '0.2rem',
                 }}
               >
-                <span>Total value</span>
-                <span style={{ textDecoration: 'line-through', textDecorationColor: 'var(--clay, #B85A36)' }}>
+                {/* 2026-07-26: the strikethrough is GONE, deliberately. $209
+                    is an honest sum of the eleven solo values, but it has
+                    never been charged as a price, so rendering it crossed out
+                    (and calling it "Total value" next to $17) read as a
+                    former-price claim. The guide this funnel delivers promises
+                    "no crossed out numbers that never existed". Same wording
+                    as the guide and the 101 Foods OTO page. */}
+                <span>Real value of the eleven documents</span>
+                <span style={{ whiteSpace: 'nowrap', color: 'var(--clay, #B85A36)' }}>
                   ${KIT_STACK_TOTAL}
                 </span>
               </div>

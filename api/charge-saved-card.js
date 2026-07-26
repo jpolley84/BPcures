@@ -195,6 +195,11 @@ export default async function handler(req, res) {
   // $30 reset-kit OTO). These are direct PaymentIntents — they never hit
   // the checkout.session.completed webhook, so without this the upsell
   // revenue would be invisible to PostHog.
+  // markSession is deliberately NOT set: this is a different charge attributed
+  // to a session that already has its own purchase event (see _posthog.js).
+  // deviceDistinctId + abHomeVariant are copied off the parent session so this
+  // upsell lands on the same PostHog person as the clicks and can be split by
+  // A/B arm, the same way every other capturePurchase caller does it.
   await capturePurchase({
     email: customerEmail,
     amountCents: tierConfig.amount,
@@ -202,6 +207,8 @@ export default async function handler(req, res) {
     product: tierConfig.description,
     source: 'one_click_upsell',
     sessionId: session_id,
+    deviceDistinctId: originalSession.metadata?.ph_distinct_id || null,
+    abHomeVariant: originalSession.metadata?.ab_home_variant || null,
   });
 
   return res.status(200).json({

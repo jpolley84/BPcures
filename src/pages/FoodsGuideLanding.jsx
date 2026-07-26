@@ -6,8 +6,8 @@
 // email. No site nav, no footer menu, no competing offer above the fold.
 // The only outbound links are the masterclass banner (owner mandate, and the
 // measured leak via masterclass_banner_click), the legally required
-// Terms/Privacy line, and one buy-ready text link at the very bottom that
-// preserves the 2026-07-22 "skip the quiz" door.
+// Terms/Privacy/Disclaimer line, and one buy-ready text link at the very
+// bottom that preserves the 2026-07-22 "skip the quiz" door.
 //
 // Hook: the number (101) plus the specificity (foods AND herbs, for blood
 // pressure). Story: the nurse who watched people do everything right.
@@ -22,6 +22,17 @@
 // the only numbers, both previously verified by Joel), educational verbs
 // only (supports / steadies / helps), never cure or treat.
 //
+// Consent: this form does TWO things, so it discloses both before the address
+// is taken. The payload sends autoMasterclass: true, which registers the
+// address for the free Monday class and sends a second email. The micro-copy
+// under the CTA says so. Do not quietly widen what the form does without
+// widening that sentence at the same time.
+//
+// The compliance footer is copied verbatim from variant A (CheckoutPage.jsx
+// :1061 to :1067). The audience is mostly ON blood pressure medication, so
+// the "never start, stop, or adjust medication without your doctor" line is
+// mandatory, and keeping it identical across arms keeps the A/B honest.
+//
 // Props: showBanner - HomeSplit already renders MasterclassBanner above both
 // A/B variants, so it passes showBanner={false}. The direct /101foods route
 // renders the banner itself (default true).
@@ -29,7 +40,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import MasterclassBanner from '../components/MasterclassBanner';
-import { track, identify, registerSuperProps } from '../utils/analytics.js';
+import { track, identify } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v1';
 const CTA_LABEL = 'YES! Send Me My 101 Foods Guide';
@@ -47,8 +58,13 @@ const wrap = {
 
 // Top padding is 1rem, not the 1.75rem in the spec sketch: the live
 // MasterclassBanner measures 79px at 390px (it wraps), not the 44px the fold
-// budget assumed, and the wordmark header is an addition. Verified at
-// 390 x 844, the submit button has to stay above the fold and it wins.
+// budget assumed, and the wordmark header is an addition.
+//
+// FOLD TARGET: 390 x 659, NOT 390 x 844. 844 is the full logical screen of an
+// iPhone 12/13/14 with zero browser chrome, which no real visitor ever sees.
+// Safari on load shows about 659px with the address bar expanded, and about
+// 745px once it collapses. Budget against 659 and measure at 390x659 and
+// 375x667. The email input and the submit button both have to clear it.
 const shell = {
   maxWidth: 640,
   margin: '0 auto',
@@ -69,14 +85,15 @@ const eyebrowStyle = {
   background: 'var(--sage-soft, #C5CDBF)',
   padding: '0.32rem 0.7rem',
   borderRadius: 999,
-  marginBottom: '0.6rem',
+  marginBottom: '0.45rem',
   lineHeight: 1.25,
 };
 
 const h1Style = {
   ...serif,
   fontSize: 'clamp(1.75rem, 6.2vw, 2.45rem)',
-  lineHeight: 1.14,
+  lineHeight: 1.08, // tightened from 1.14 for the 659px fold budget; do not
+  // go below this, the descenders in "Steady Blood Pressure" need the room
   letterSpacing: '-0.01em',
   margin: '0 0 0.5rem',
 };
@@ -86,7 +103,7 @@ const subStyle = {
   lineHeight: 1.45,
   color: 'var(--ink-soft, #2B2824)',
   maxWidth: '42ch',
-  margin: '0 0 0.75rem',
+  margin: '0 0 0.5rem',
 };
 
 const ctaStyle = {
@@ -142,26 +159,31 @@ const labelStyle = {
 
 /* ─── copy ─────────────────────────────────────────────────────────── */
 
+// Three bullets, not four. The fourth cost 41px of fold budget and the row
+// is floored by the cover art anyway, so the fourth bought nothing.
 const PROBLEMS = [
   'You take the pills. The numbers still climb.',
   'You were told to cut salt. Nobody said what to eat instead.',
-  'Forty bottles in the supplement aisle. Zero answers.',
   'Seven minutes with the doctor, and half of it is the cuff.',
 ];
 
-// Mirrors the guide's own table of contents (spec section 6.2). Counts sum
-// to 101 exactly, which is the whole promise of the title.
+// SOURCE OF TRUTH: the ten .sectionhead h2 + .range pairs in
+// content/101-foods/101-foods-bp.html (lines 665, 739, 866, 958, 1032, 1093,
+// 1183, 1270, 1326, 1368). These names and counts were read off that file,
+// not invented to hit a total. If the guide is re-cut, re-read the .range
+// lines and update here, or this table starts lying about the artifact.
+// Item ranges are noted so the arithmetic can be re-checked in one pass.
 const GUIDE_SECTIONS = [
-  ['Leafy greens and cruciferous', 12],
-  ['Roots and nitrate rich vegetables', 8],
-  ['Alliums and aromatics', 6],
-  ['Fruit and berries', 14],
-  ['Beans, peas and lentils', 10],
-  ['Whole grains', 9],
-  ['Nuts and seeds', 10],
-  ['Kitchen herbs and spices', 12],
-  ['Caffeine free teas and infusions', 8],
-  ['Healing herbs to ask your prescriber about', 12],
+  ['The Foundation Ten', 10],                          // items 1 to 10
+  ['Greens and vegetables', 19],                       // 11 to 29
+  ['Fruits and sweet plants', 13],                     // 30 to 42
+  ['Beans, lentils and soy', 10],                      // 43 to 52
+  ['Grains and smart carbs', 8],                       // 53 to 60
+  ['Nuts, seeds and good fats', 12],                   // 61 to 72
+  ['Kitchen herbs and spices', 12],                    // 73 to 84
+  ['Caffeine free drinks and infusions', 7],           // 85 to 91
+  ['Ferments, sea vegetables and flavour builders', 5], // 92 to 96
+  ['Herbs to ask your prescriber about first', 5],     // 97 to 101
 ];
 
 const TRUST_CHIPS = [
@@ -190,6 +212,13 @@ function readUtm() {
 
 // Base props ride on every event this page fires, so no event can be
 // orphaned from the arm it belongs to.
+//
+// Deliberately NO utm_* here. posthog-js already attaches the session's
+// campaign params to every event; spreading readUtm() in would overwrite
+// those with empty strings whenever this particular URL has no utm on it,
+// which is exactly how campaign attribution died before. readUtm() is kept
+// for the two places that genuinely need an explicit value: the /api/lead
+// -magnet payload and buildTags().
 function baseProps() {
   let entry = 'direct';
   let viewportW = 0;
@@ -197,7 +226,7 @@ function baseProps() {
     entry = window.location.pathname === '/' ? 'homepage_b' : 'direct';
     viewportW = window.innerWidth || 0;
   } catch { /* noop */ }
-  return { funnel_version: FUNNEL_VERSION, entry, viewport_w: viewportW, ...readUtm() };
+  return { funnel_version: FUNNEL_VERSION, entry, viewport_w: viewportW };
 }
 
 function Check() {
@@ -269,7 +298,7 @@ function GuideCover() {
       <img
         src="/images/foods101-cover.png"
         className="bpq-cover"
-        alt="101 Foods And Herbs That Help Steady Blood Pressure, a free guide by Joel Polley, RN"
+        alt="101 Foods And Herbs That Help Steady Blood Pressure, a free guide by Annie Chitate, RN and Joel Polley, RN"
         width="96"
         height="124"
         fetchPriority="high"
@@ -309,8 +338,13 @@ export default function FoodsGuideLanding({ showBanner = true }) {
   // and that is what gets attributed on submit.
   const positionRef = useRef('fold');
 
+  // No registerSuperProps({ funnel_version }) here on purpose. posthog
+  // .register writes a PERSISTENT device level super property (about a year),
+  // so it would stamp foods101-v1 on every later event that device ever
+  // fires, including annie-v2 pages. baseProps() already puts funnel_version
+  // on every event this page sends, so the register call bought nothing and
+  // cost accuracy everywhere else.
   useEffect(() => {
-    registerSuperProps({ funnel_version: FUNNEL_VERSION });
     let referrer = '';
     try { referrer = document.referrer || ''; } catch { /* noop */ }
     track('foods101_landing_viewed', { ...baseProps(), layout: 'squeeze-v1', referrer });
@@ -428,10 +462,12 @@ export default function FoodsGuideLanding({ showBanner = true }) {
       // Handed to the thank-you page so its resend field prefills instead of
       // making a 70 year old retype her address. Deliberately NOT the
       // bpq_foods101 key, which means "this person really did opt in".
+      // `entry` rides along because the thank-you page sits at
+      // /101foods-thanks and can never work out which arm sent it.
       try {
         sessionStorage.setItem(
           'bpq_foods101_retry',
-          JSON.stringify({ email: cleanEmail, firstName: cleanName, at: Date.now() }),
+          JSON.stringify({ email: cleanEmail, firstName: cleanName, at: Date.now(), entry: base.entry }),
         );
       } catch { /* private mode */ }
       setBusy(false);
@@ -446,13 +482,17 @@ export default function FoodsGuideLanding({ showBanner = true }) {
     try {
       sessionStorage.setItem(
         'bpq_foods101',
-        JSON.stringify({ email: cleanEmail, firstName: cleanName, at: Date.now() }),
+        JSON.stringify({ email: cleanEmail, firstName: cleanName, at: Date.now(), entry: base.entry }),
       );
     } catch { /* private mode */ }
 
     track('foods101_optin_succeeded', {
       ...base,
       deduped: Boolean(data.deduped),
+      // Suppressed means a previously unsubscribed address: the API returns
+      // 200 and routes to ?capture=failed, but nothing broke and no email
+      // went out. Without this prop those look identical to real failures.
+      suppressed: Boolean(data.suppressed),
       email_sent: Boolean(data.emailSent),
       masterclass_registered: Boolean(data.masterclass && data.masterclass.registered),
       masterclass_already: Boolean(data.masterclass && data.masterclass.already),
@@ -460,7 +500,12 @@ export default function FoodsGuideLanding({ showBanner = true }) {
     });
 
     setBusy(false);
-    navigate(typeof data.redirect === 'string' && data.redirect ? data.redirect : THANKS_ROUTE);
+    // Router state, not just sessionStorage: the thank-you page must be able
+    // to tell a real opt-in from a cold direct hit even when Web Storage is
+    // blocked (private mode, in app browsers), because it decides whether to
+    // claim "your guide is sent" on the strength of it.
+    const dest = typeof data.redirect === 'string' && data.redirect ? data.redirect : THANKS_ROUTE;
+    navigate(dest, { state: { optin: true, email: cleanEmail, firstName: cleanName } });
   }
 
   function onSkipToKit() {
@@ -512,8 +557,8 @@ export default function FoodsGuideLanding({ showBanner = true }) {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '0.75rem',
-            paddingBottom: '0.5rem',
-            marginBottom: '0.6rem',
+            paddingBottom: '0.3rem',
+            marginBottom: '0.35rem',
             borderBottom: '1px solid var(--line-soft, #E8E1D1)',
           }}
         >
@@ -541,12 +586,13 @@ export default function FoodsGuideLanding({ showBanner = true }) {
           <p style={subStyle}>
             The plant foods, kitchen herbs, and caffeine free teas a nurse would point to if he had
             twenty minutes with you and nothing to sell. Most of it is already at your grocery store.
-            Some of it is already in your kitchen.
           </p>
 
           {/* Cover and problem bullets sit side by side even at 390px. The
-              fold contract depends on this row NOT stacking. */}
-          <div className="bpq-fold-row" style={{ margin: '0 0 0.8rem' }}>
+              fold contract depends on this row NOT stacking. Row height is
+              floored by the cover (about 127px), so three bullets is the
+              efficient count: a fourth adds height, a second saves nothing. */}
+          <div className="bpq-fold-row" style={{ margin: '0 0 0.55rem' }}>
             <GuideCover />
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, flex: '1 1 0', minWidth: 0 }}>
               {PROBLEMS.map((item) => (
@@ -578,10 +624,10 @@ export default function FoodsGuideLanding({ showBanner = true }) {
               background: '#fff',
               border: '1px solid var(--line, #D8CFBD)',
               borderRadius: 12,
-              padding: '0.8rem',
+              padding: '0.7rem',
             }}
           >
-            <div className="bpq-field" style={{ marginBottom: '0.5rem' }}>
+            <div className="bpq-field" style={{ marginBottom: '0.4rem' }}>
               <label htmlFor="foods101-name" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' }}>
                 First name
               </label>
@@ -608,7 +654,7 @@ export default function FoodsGuideLanding({ showBanner = true }) {
               )}
             </div>
 
-            <div className="bpq-field" style={{ marginBottom: '0.6rem' }}>
+            <div className="bpq-field" style={{ marginBottom: '0.5rem' }}>
               <label htmlFor="foods101-email" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' }}>
                 Your best email
               </label>
@@ -645,8 +691,15 @@ export default function FoodsGuideLanding({ showBanner = true }) {
             </button>
           </form>
 
-          <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
-            Free. In your inbox in about a minute. Nothing to buy.
+          {/* Consent disclosure. Submitting this form ALSO registers the
+              address for the free Monday class (autoMasterclass: true in the
+              onSubmit payload) and sends a second email. That has to be said
+              here, before the address is taken, not on the thank-you page
+              afterwards. Do not promise an unsubscribe the seat emails do
+              not carry. */}
+          <p style={{ textAlign: 'center', fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
+            Free. In your inbox in about a minute. Nothing to buy. You also get a free seat at
+            Monday&apos;s live class, Beyond the Cuff, in a second email.
           </p>
         </div>
 
@@ -687,14 +740,15 @@ export default function FoodsGuideLanding({ showBanner = true }) {
             ))}
           </ul>
           <p style={{ fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
-            Plus a one page starter sheet with the first seven to buy this week: beets, spinach,
-            garlic, oats, flaxseed, black beans, hibiscus. And a page on what to ask your prescriber
-            before you change anything.
+            Plus a ten day starter that names the single item to add on each day, beginning with
+            spinach, water and oats. And a page to read before you change anything, on what to ask
+            your prescriber first.
           </p>
         </div>
 
         <p style={{ textAlign: 'center', fontSize: '0.8rem', lineHeight: 1.5, color: 'var(--muted, #7A7061)', margin: '0 0 1.5rem' }}>
-          Your information is never shared with anyone. One click unsubscribe, any time.
+          Your information is never shared with anyone. Every guide email carries a one click
+          unsubscribe link.
         </p>
 
         {/* ─── Trust band: real numbers only ────────────────────── */}
@@ -788,8 +842,9 @@ export default function FoodsGuideLanding({ showBanner = true }) {
           <button type="button" className="bpq-cta" style={ctaStyle} onClick={() => jumpToForm('bottom')}>
             {CTA_LABEL} <ArrowRight size={18} aria-hidden="true" />
           </button>
-          <p style={{ textAlign: 'center', fontSize: '0.82rem', color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
-            Free. In your inbox in about a minute. Nothing to buy.
+          <p style={{ textAlign: 'center', fontSize: '0.82rem', lineHeight: 1.45, color: 'var(--muted, #7A7061)', margin: '0.6rem 0 0' }}>
+            Free. In your inbox in about a minute. Nothing to buy. You also get a free seat at
+            Monday&apos;s live class, Beyond the Cuff, in a second email.
           </p>
         </div>
 
@@ -804,19 +859,41 @@ export default function FoodsGuideLanding({ showBanner = true }) {
           </Link>
         </p>
 
-        {/* ─── Compliance footer ────────────────────────────────── */}
-        <p
+        {/* ─── Compliance footer ────────────────────────────────────
+            Wording is copied verbatim from variant A (CheckoutPage.jsx:1061
+            to :1067) so both A/B arms carry the identical disclosure and the
+            treatment arm is never held to the weaker standard. The audience
+            is mostly ON medication, so the do-not-adjust line is required,
+            not optional. /terms /privacy /disclaimer are all real SPA routes
+            (App.jsx:385-387), so <Link> is correct here; the plain <a> rule
+            applies only to the static /masterclass page. ─────────────── */}
+        <div
           style={{
             textAlign: 'center',
             color: 'var(--muted, #7A7061)',
             fontSize: '0.8rem',
+            lineHeight: 1.6,
             maxWidth: '58ch',
             margin: '1.6rem auto 0',
           }}
         >
-          This is education and lifestyle support, not medical advice, diagnosis, or treatment.
-          See our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
-        </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            This is education and lifestyle support, not medical advice, diagnosis, or treatment.
+            Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or
+            adjust medication without your doctor.
+          </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            These statements have not been evaluated by the FDA. This product is not intended to
+            diagnose, treat, or prevent any disease.
+          </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            Results not typical. Most readers see modest results or none.
+          </p>
+          <p style={{ margin: 0 }}>
+            See our <Link to="/terms">Terms</Link>, <Link to="/privacy">Privacy Policy</Link>, and{' '}
+            <Link to="/disclaimer">Disclaimer</Link>.
+          </p>
+        </div>
       </div>
 
       {/* ─── Sticky mobile CTA (mobile only, after the hero) ─────── */}

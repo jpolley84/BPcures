@@ -174,7 +174,13 @@ async function handleOptin(req, res) {
   // Tombstoned address (previously unsubscribed). Legally we cannot mail them,
   // so we do not pretend we did: send them to the failed branch, where the
   // guide is one click away as a direct download.
-  const redirect = result.suppressed ? THANKS_FAILED : THANKS_PATH;
+  // &reason=suppressed so the thank-you page can say what actually happened.
+  // Without it an unsubscribed reader is told "Something broke on our end,
+  // not yours", which is false and reads as a bug to the one person who has
+  // already told us to stop emailing them.
+  const redirect = result.suppressed
+    ? `${THANKS_FAILED}&reason=suppressed`
+    : THANKS_PATH;
 
   return res.status(200).json({
     success: true,

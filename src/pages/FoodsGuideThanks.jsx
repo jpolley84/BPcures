@@ -13,14 +13,20 @@
 // pattern and this brand cannot afford one.
 //
 // Honesty rules baked in:
-//   - The confirmation only claims the guide was sent when it actually was.
-//     ?capture=failed swaps in a repair form instead of a false confirmation.
+//   - The confirmation only claims the guide was sent when the opt-in really
+//     ran. A cold direct hit with no opt-in signal, and ?capture=failed, both
+//     get the repair form plus a direct download, never a false confirmation.
+//   - An email address is only printed back to the visitor when it came from
+//     THIS funnel. The shared 'bwbp_lead_email' key (also written by the quiz)
+//     may prefill the repair field, but it is never shown as "sent to".
 //   - The masterclass block only claims a saved seat when the opt-in (which
 //     auto registers) actually happened. Direct hits get "save your seat".
-//   - No fake compare-at, no seat counters, no countdown on the $17 offer. The
-//     only timer is the real Monday 7pm CT class, computed by the SAME
-//     nextMondayCT() the site banner uses.
-//   - Stack values and the $209 anchor come from src/data/kitStack.js, the one
+//   - NO compare-at price anywhere. The $209 is the honest sum of the eleven
+//     solo values, it has never been charged, so it is never struck through.
+//   - No seat counters, no countdown on the $17 offer. The only timer is the
+//     real Monday 7pm CT class, computed by the SAME nextMondayCT() the site
+//     banner uses.
+//   - Stack values and the $209 sum come from src/data/kitStack.js, the one
 //     source shared with the register, so the two can never drift.
 //
 // NEWSTART doctrine clean: plant based whole food framing only, and the copy
@@ -30,7 +36,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { KIT_STACK, KIT_STACK_TOTAL, KIT_PRICE, KIT_FILE_COUNT } from '../data/kitStack.js';
 import { nextMondayCT } from '../components/MasterclassBanner.jsx';
-import { track, registerSuperProps } from '../utils/analytics.js';
+import { track, getAbHomeVariant } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v1';
 
@@ -110,40 +116,76 @@ function parts(ms) {
   };
 }
 
-// Every event carries these. Empty strings rather than undefined so a PostHog
-// breakdown never shows a null bucket.
+// Which arm sent them here. This page's own pathname is ALWAYS
+// /101foods-thanks, so it can never tell the homepage-B arm from direct
+// /101foods traffic: the answer has to come from the record the squeeze wrote.
+// Absent or stale record reads 'unknown', which is the truth, rather than
+// 'direct', which is a guess that happens to be wrong half the time.
+const RECORD_KEYS = ['bpq_foods101', 'bpq_foods101_retry'];
+const RECORD_FRESH_MS = 30 * 60 * 1000;
+
+function readRecord() {
+  try {
+    for (const key of RECORD_KEYS) {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) continue;
+      const rec = JSON.parse(raw);
+      if (rec && typeof rec === 'object') return { key, rec };
+    }
+  } catch {
+    /* private mode or corrupt record */
+  }
+  return { key: '', rec: null };
+}
+
+function readEntry() {
+  const { rec } = readRecord();
+  if (!rec || typeof rec.entry !== 'string' || !rec.entry) return 'unknown';
+  // A bookmark opened next week must not replay last week's arm.
+  if (typeof rec.at === 'number' && Date.now() - rec.at > RECORD_FRESH_MS) return 'unknown';
+  return rec.entry;
+}
+
+// Every event carries these. Campaign params are deliberately NOT stamped
+// here: posthog-js already carries the session's utm_* as super properties,
+// and this page has no query string of its own, so writing empty strings over
+// them would delete the campaign the visitor actually arrived on.
 function baseProps() {
   const props = {
     funnel_version: FUNNEL_VERSION,
-    entry: 'direct',
-    utm_source: '',
-    utm_medium: '',
-    utm_campaign: '',
+    entry: 'unknown',
     viewport_w: 0,
   };
   try {
-    props.entry = window.location.pathname === '/' ? 'homepage_b' : 'direct';
+    props.entry = readEntry();
     props.viewport_w = window.innerWidth || 0;
-    const params = new URLSearchParams(window.location.search);
-    props.utm_source = params.get('utm_source') || '';
-    props.utm_medium = params.get('utm_medium') || '';
-    props.utm_campaign = params.get('utm_campaign') || '';
   } catch {
     /* defaults hold */
   }
   return props;
 }
 
-// Who is this visitor? Router state wins (the squeeze navigates with it), then
-// the sessionStorage record the squeeze wrote, then ?email= on the URL, then
-// the lead email PayPage already prefills from. Every path is optional: a cold
-// direct hit renders the page fine with no email at all.
-function readOptinContext(stateEmail, stateFirstName) {
+// Who is this visitor? Router state wins (the squeeze can navigate with it),
+// then the sessionStorage record the squeeze wrote, then ?email= on the URL,
+// then the lead email PayPage already prefills from. Every path is optional: a
+// cold direct hit renders the page fine with no email at all.
+//
+// Two flags are load bearing and must not be collapsed into one:
+//   optin        - this visitor really did submit the squeeze form. ONLY the
+//                  router state and this funnel's own sessionStorage record
+//                  set it. It is what licenses "your guide is sent".
+//   emailFromOptin - the address came from this funnel, so it is safe to print
+//                  back. 'bwbp_lead_email' is shared with the quiz gates
+//                  (QuizPage, TriggerQuizPage), so an address read from there
+//                  may prefill the repair field but is NEVER displayed.
+function readOptinContext(state) {
   const ctx = {
     email: '',
     firstName: '',
     optin: false,
+    emailFromOptin: false,
     captureFailed: false,
+    suppressed: false,
     source: 'direct',
   };
 
@@ -156,17 +198,29 @@ function readOptinContext(stateEmail, stateFirstName) {
   try {
     const params = new URLSearchParams(window.location.search);
     ctx.captureFailed = params.get('capture') === 'failed';
-    ctx.email = takeEmail(params.get('email'));
+    // The endpoints append &reason=suppressed for an unsubscribed address.
+    // Nothing broke in that case, so the copy must not say it did.
+    ctx.suppressed = params.get('reason') === 'suppressed';
+    const queried = takeEmail(params.get('email'));
+    if (queried) {
+      ctx.email = queried;
+      ctx.emailFromOptin = true;
+    }
   } catch {
     /* no search params available */
   }
 
-  const routed = takeEmail(stateEmail);
+  // Router state, when the squeeze passes it. Storage independent, so a
+  // private-mode or in-app-browser opt-in still gets the true confirmation.
+  const routed = takeEmail(state && state.email);
   if (routed) {
     ctx.email = routed;
+    ctx.emailFromOptin = true;
+    ctx.optin = true;
     ctx.source = 'redirect';
   }
-  if (stateFirstName) ctx.firstName = takeName(stateFirstName);
+  if (state && state.optin) ctx.optin = true;
+  if (state && state.firstName) ctx.firstName = takeName(state.firstName);
 
   try {
     const raw = sessionStorage.getItem('bpq_foods101');
@@ -175,10 +229,13 @@ function readOptinContext(stateEmail, stateFirstName) {
       const stored = takeEmail(rec && rec.email);
       if (stored) {
         ctx.optin = true;
-        if (!ctx.email) ctx.email = stored;
+        if (!ctx.email) {
+          ctx.email = stored;
+          ctx.emailFromOptin = true;
+        }
         if (!ctx.firstName) ctx.firstName = takeName(rec.firstName);
         // Fresh record means they landed here from the squeeze, not a bookmark.
-        if (typeof rec.at === 'number' && Date.now() - rec.at < 30 * 60 * 1000) {
+        if (typeof rec.at === 'number' && Date.now() - rec.at < RECORD_FRESH_MS) {
           ctx.source = 'redirect';
         }
       }
@@ -187,6 +244,28 @@ function readOptinContext(stateEmail, stateFirstName) {
     /* private mode or corrupt record: treat as a direct hit */
   }
 
+  // The squeeze writes this one when the capture died, purely so the repair
+  // field prefills instead of making a 70 year old retype her address. It is
+  // deliberately NOT an opt-in signal.
+  if (!ctx.email) {
+    try {
+      const raw = sessionStorage.getItem('bpq_foods101_retry');
+      if (raw) {
+        const rec = JSON.parse(raw);
+        const stored = takeEmail(rec && rec.email);
+        if (stored) {
+          ctx.email = stored;
+          if (!ctx.firstName) ctx.firstName = takeName(rec.firstName);
+        }
+      }
+    } catch {
+      /* private mode or corrupt record */
+    }
+  }
+
+  // Last resort, and prefill ONLY: this key is shared with the quiz gates, so
+  // the address may belong to a different funnel entirely. emailFromOptin
+  // stays false, which keeps it out of every line of visible copy.
   if (!ctx.email) {
     try {
       ctx.email = takeEmail(localStorage.getItem('bwbp_lead_email'));
@@ -230,14 +309,16 @@ export default function FoodsGuideThanks() {
   const location = useLocation();
 
   const ctx = useMemo(
-    () => readOptinContext(location.state && location.state.email, location.state && location.state.firstName),
+    () => readOptinContext(location.state),
     // Read once on mount. The router state does not change under this page.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
-  // The guide is confirmed sent unless the squeeze told us the capture died.
-  const [delivered, setDelivered] = useState(!ctx.captureFailed);
+  // The guide is only confirmed sent when this visitor actually opted in AND
+  // the capture did not fail. A cold direct hit has no opt-in signal at all,
+  // so it gets the repair form and a download link, not a false confirmation.
+  const [delivered, setDelivered] = useState(ctx.optin && !ctx.captureFailed);
   // A seat is only claimed when the opt-in actually ran (it auto registers).
   const [registered, setRegistered] = useState(ctx.optin && !ctx.captureFailed);
 
@@ -284,16 +365,19 @@ export default function FoodsGuideThanks() {
     }
   }, [target]);
 
-  // Page view.
+  // Page view. funnel_version is NOT registered as a super property here:
+  // posthog.register() is device-persistent for a year, so it would relabel
+  // every later event on this device, including annie-v2 ones. baseProps()
+  // already stamps funnel_version on all of this funnel's events.
   useEffect(() => {
-    registerSuperProps({ funnel_version: FUNNEL_VERSION });
     track('foods101_thanks_viewed', {
       ...baseProps(),
       optin: ctx.optin,
       capture_failed: ctx.captureFailed,
+      suppressed: ctx.suppressed,
       source: ctx.source,
     });
-  }, [ctx.optin, ctx.captureFailed, ctx.source]);
+  }, [ctx.optin, ctx.captureFailed, ctx.suppressed, ctx.source]);
 
   // Offer block seen (fires once).
   useEffect(() => {
@@ -355,7 +439,8 @@ export default function FoodsGuideThanks() {
       const base = baseProps();
       track('foods101_oto_cta_clicked', { ...base, placement, value: KIT_PRICE, corner: 'stress' });
       // Parity with variant A's funnel: without this the two arms cannot be
-      // compared in the same PostHog funnel.
+      // compared in the same PostHog funnel. homepage_variant is the same
+      // property name CheckoutPage fires, so the breakdown lines up.
       track('checkout_clicked', {
         ...base,
         product: 'bp-corner-reset',
@@ -363,6 +448,7 @@ export default function FoodsGuideThanks() {
         source: 'foods101-oto',
         corner: 'stress',
         placement,
+        homepage_variant: getAbHomeVariant(),
       });
       // Meta pixel, same shape CheckoutPage.handleBuyNow fires, so paid
       // attribution matches between arms. Purchase fires server side.
@@ -421,25 +507,61 @@ export default function FoodsGuideThanks() {
         err.status = res.status;
         throw err;
       }
-      setResendState('sent');
+      let data = {};
+      try {
+        data = await res.json();
+      } catch {
+        /* tolerate an empty body */
+      }
+
+      // An unsubscribed address is a 200, but nothing was mailed. Saying
+      // "sent" there would be a plain false statement, so it gets its own
+      // state and its own copy. Do NOT flip delivered.
+      if (data && data.suppressed) {
+        setResendState('suppressed');
+        track('foods101_guide_resend_suppressed', baseProps());
+        return;
+      }
+
+      // Keep whatever the squeeze recorded (the arm, and anything added
+      // later) instead of overwriting the record with a thinner one.
+      const prior = readRecord().rec || {};
+
+      setResendState(data && data.deduped ? 'deduped' : 'sent');
       setDelivered(true);
       setRegistered(true);
       try {
         localStorage.setItem('bwbp_lead_email', clean);
         sessionStorage.setItem(
           'bpq_foods101',
-          JSON.stringify({ email: clean, firstName: ctx.firstName || '', at: Date.now() }),
+          JSON.stringify({ ...prior, email: clean, firstName: ctx.firstName || '', at: Date.now() }),
         );
       } catch {
         /* storage blocked: the send still happened */
       }
-      track('foods101_guide_resend_succeeded', baseProps());
+      track('foods101_guide_resend_succeeded', { ...baseProps(), deduped: Boolean(data && data.deduped) });
     } catch (err) {
       setResendState('error');
       setResendError('That did not go through. Try once more, or email joel@bpquiz.com and I will send it by hand.');
       track('foods101_guide_resend_failed', { ...baseProps(), http_status: err.status || 0 });
     }
   }
+
+  // Repair branch copy. Three genuinely different situations land here, and
+  // only one of them is an error on our side, so only one of them says so.
+  const repairMode = ctx.suppressed ? 'suppressed' : ctx.captureFailed ? 'failed' : 'cold';
+  const repairHead = {
+    suppressed: 'Your guide is right here.',
+    failed: 'Your guide did not go out. Let us fix that.',
+    cold: 'Get your 101 Foods Guide.',
+  }[repairMode];
+  const repairBody = {
+    suppressed:
+      'You unsubscribed from my emails, so I cannot put this one in your inbox. Nothing broke, and the file is still yours.',
+    failed: 'Something broke on our end, not yours. Put your email in again and I will send it now.',
+    cold: 'Put your email in below and I will send it now, or take it straight from here.',
+  }[repairMode];
+  const repairCta = repairMode === 'failed' ? 'Send it again' : 'Send me the guide';
 
   const countCell = (n, lbl) => (
     <span style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', minWidth: 46 }}>
@@ -493,7 +615,11 @@ export default function FoodsGuideThanks() {
       `}</style>
 
       {/* ===== 1. Pattern interrupt. Urgent, and true: the guide really is
-          sent, and the kit really is only offered here at this moment. ===== */}
+          sent. Do NOT claim the kit is exclusive to this page. The same
+          $17 offer at the same CHECKOUT_URL is linked from the squeeze
+          (FoodsGuideLanding.jsx), printed twice in the guide PDF
+          (101-foods-bp.html), and sent in the evergreen drip
+          (api/_evergreen-emails.js). ===== */}
       <div
         role="alert"
         style={{
@@ -512,7 +638,7 @@ export default function FoodsGuideThanks() {
       >
         <strong style={{ fontWeight: 800, letterSpacing: '0.01em' }}>WAIT, DO NOT LEAVE THIS PAGE.</strong>{' '}
         {delivered
-          ? 'Your guide is sent. This next part I only show here.'
+          ? 'Your guide is sent. One more thing goes with it.'
           : 'Your guide needs one more step, and so does the part below.'}
       </div>
 
@@ -533,7 +659,7 @@ export default function FoodsGuideThanks() {
                 Congratulations. Your 101 Foods Guide is in your email.
               </h1>
               <p style={{ fontSize: '0.84rem', lineHeight: 1.5, margin: 0, opacity: 0.93 }}>
-                {ctx.email ? (
+                {ctx.emailFromOptin && ctx.email ? (
                   <>
                     Sent to <strong style={{ wordBreak: 'break-word' }}>{ctx.email}</strong> from joel@bpquiz.com.{' '}
                   </>
@@ -559,10 +685,22 @@ export default function FoodsGuideThanks() {
           ) : (
             <>
               <h1 style={{ ...serif, fontSize: '1.3rem', lineHeight: 1.2, margin: '0 0 0.4rem' }}>
-                Your guide did not go out. Let us fix that.
+                {repairHead}
               </h1>
               <p style={{ fontSize: '0.85rem', lineHeight: 1.55, margin: '0 0 0.6rem', opacity: 0.93 }}>
-                Something broke on our end, not yours. Put your email in again and I will send it now.
+                {repairBody}{' '}
+                <a
+                  href={GUIDE_PDF}
+                  onClick={() => downloadGuide('repair')}
+                  style={{
+                    color: 'var(--cream, #FBF8F1)',
+                    fontWeight: 700,
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '3px',
+                  }}
+                >
+                  Download the guide right here.
+                </a>
               </p>
               <form onSubmit={handleResend} noValidate>
                 <label htmlFor="foods101-resend" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
@@ -587,7 +725,7 @@ export default function FoodsGuideThanks() {
                   aria-busy={resendState === 'sending'}
                   style={{ ...ctaStyle, minHeight: 50, marginTop: '0.5rem', fontSize: '0.98rem' }}
                 >
-                  {resendState === 'sending' ? 'Sending your guide...' : 'Send it again'}
+                  {resendState === 'sending' ? 'Sending your guide...' : repairCta}
                 </button>
                 {resendError ? (
                   <p role="alert" style={{ margin: '0.5rem 0 0', fontSize: '0.82rem', color: '#FFD9C9' }}>
@@ -598,15 +736,30 @@ export default function FoodsGuideThanks() {
             </>
           )}
 
-          {resendState === 'sent' ? (
+          {resendState === 'sent' || resendState === 'deduped' ? (
             <p style={{ margin: '0.55rem 0 0', fontSize: '0.85rem', lineHeight: 1.5 }}>
-              Sent. Check your inbox in about a minute, or{' '}
+              {resendState === 'deduped'
+                ? 'You already have this one from me. Check your inbox, or '
+                : 'Sent. Check your inbox in about a minute, or '}
               <a
                 href={GUIDE_PDF}
                 onClick={() => downloadGuide('retry')}
                 style={{ color: 'var(--cream, #FBF8F1)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}
               >
                 download it right here.
+              </a>
+            </p>
+          ) : null}
+
+          {resendState === 'suppressed' ? (
+            <p style={{ margin: '0.55rem 0 0', fontSize: '0.85rem', lineHeight: 1.5 }}>
+              That address is unsubscribed, so I cannot mail it there.{' '}
+              <a
+                href={GUIDE_PDF}
+                onClick={() => downloadGuide('suppressed')}
+                style={{ color: 'var(--cream, #FBF8F1)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}
+              >
+                Download it right here.
               </a>
             </p>
           ) : null}
@@ -637,7 +790,7 @@ export default function FoodsGuideThanks() {
               margin: '0 0 0.4rem',
             }}
           >
-            Grab the complete step by step blueprint to steady your blood pressure{' '}
+            Grab the complete step by step blueprint built to help steady blood pressure{' '}
             <em style={{ fontStyle: 'italic', color: 'var(--clay, #B85A36)' }}>naturally</em>.
           </h2>
           <p
@@ -653,9 +806,14 @@ export default function FoodsGuideThanks() {
             tomorrow morning.
           </p>
 
+          {/* NOT a compare-at price. $209 is the honest sum of the eleven solo
+              values in kitStack.js and has never been charged, so it is a
+              plain span, never a strikethrough. Same sentence the guide
+              itself prints, so the PDF and this page agree. */}
           <p style={{ margin: '0 0 0.55rem', fontSize: '1rem', lineHeight: 1.4 }}>
             <span style={{ color: 'var(--muted, #7A7061)' }}>
-              <s style={{ color: 'var(--clay, #B85A36)' }}>${KIT_STACK_TOTAL}</s> of material.
+              Eleven documents,{' '}
+              <span style={{ color: 'var(--clay, #B85A36)' }}>${KIT_STACK_TOTAL}</span> of material.
             </span>{' '}
             <strong style={{ fontWeight: 800 }}>You pay ${KIT_PRICE}, one time.</strong>
           </p>
@@ -668,30 +826,13 @@ export default function FoodsGuideThanks() {
           </p>
         </div>
 
-        {/* ===== 5. What is inside, shown not told ===== */}
-        <div style={{ marginTop: '0.95rem' }}>
-          <p style={{ ...labelStyle, textAlign: 'center', margin: '0 0 0.4rem' }}>What is inside the kit</p>
-          <button
-            type="button"
-            className="bpq-kit-poster"
-            onClick={() => buyKit('image')}
-            aria-label={`See the complete 10-Day BP Reset Kit and add it for $${KIT_PRICE}`}
-          >
-            <picture>
-              <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
-              <img
-                src="/images/kit-vault-hero.jpg"
-                alt="The 10-Day BP Reset Kit: the protocols, herb guides, plant based recipes, doctor sheet, and trackers that come with the kit. By Joel Polley, RN."
-                width="1672"
-                height="941"
-                loading="lazy"
-                style={{ display: 'block', width: '100%', height: 'auto' }}
-              />
-            </picture>
-          </button>
-        </div>
-
-        {/* ===== 6. The stack, itemized. Values and total come from the shared
+        {/* ===== 5. The stack, itemized. This sits DIRECTLY under the CTA on
+            purpose. The kit poster used to sit here, and 200px of image
+            between the button and the list pushed the first stack row a full
+            screen below the fold on a 390px phone: the itemized eleven is
+            what justifies the price, so it reads first and the poster
+            reinforces it afterwards. Do not put anything back between the
+            CTA block and this card. Values and total come from the shared
             module, so the register and this page can never disagree. ===== */}
         <div
           style={{
@@ -714,8 +855,8 @@ export default function FoodsGuideThanks() {
               fontSize: '0.92rem',
             }}
           >
-            <span style={{ color: 'var(--muted, #7A7061)' }}>Total value</span>
-            <s style={{ color: 'var(--clay, #B85A36)', fontWeight: 600 }}>${KIT_STACK_TOTAL}</s>
+            <span style={{ color: 'var(--muted, #7A7061)' }}>Real value of the eleven documents</span>
+            <span style={{ color: 'var(--clay, #B85A36)', fontWeight: 600 }}>${KIT_STACK_TOTAL}</span>
           </div>
           <div
             style={{
@@ -730,6 +871,30 @@ export default function FoodsGuideThanks() {
             <span style={{ fontWeight: 700 }}>You pay today</span>
             <span style={{ color: 'var(--clay, #B85A36)', fontWeight: 800 }}>${KIT_PRICE}</span>
           </div>
+        </div>
+
+        {/* ===== 6. What is inside, shown not told. Below the itemized stack,
+            not above it. ===== */}
+        <div style={{ marginTop: '0.95rem' }}>
+          <p style={{ ...labelStyle, textAlign: 'center', margin: '0 0 0.4rem' }}>What is inside the kit</p>
+          <button
+            type="button"
+            className="bpq-kit-poster"
+            onClick={() => buyKit('image')}
+            aria-label={`See the complete 10-Day BP Reset Kit and add it for $${KIT_PRICE}`}
+          >
+            <picture>
+              <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
+              <img
+                src="/images/kit-vault-hero.jpg"
+                alt="The 10-Day BP Reset Kit: the protocols, herb guides, plant based recipes, doctor sheet, and trackers that come with the kit. By Joel Polley, RN."
+                width="1672"
+                height="941"
+                loading="lazy"
+                style={{ display: 'block', width: '100%', height: 'auto' }}
+              />
+            </picture>
+          </button>
         </div>
 
         {/* ===== 7. Risk reversal, same terms as the register ===== */}
@@ -865,8 +1030,11 @@ export default function FoodsGuideThanks() {
           </a>
         </div>
 
-        {/* ===== 10. Compliance ===== */}
-        <p
+        {/* ===== 10. Compliance. Same wording variant A already ships
+            (CheckoutPage.jsx), so both arms of the test are held to the same
+            standard. The audience is mostly ON medication, so the do-not-
+            change-your-medication line is not optional. ===== */}
+        <div
           style={{
             textAlign: 'center',
             color: 'var(--muted, #7A7061)',
@@ -876,9 +1044,23 @@ export default function FoodsGuideThanks() {
             margin: '2rem auto 0',
           }}
         >
-          This is education and lifestyle support, not medical advice, diagnosis, or treatment.
-          See our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
-        </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            This is education and lifestyle support, not medical advice, diagnosis, or treatment.
+            Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or
+            adjust medication without your doctor.
+          </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            These statements have not been evaluated by the FDA. This product is not intended to
+            diagnose, treat, or prevent any disease.
+          </p>
+          <p style={{ margin: '0 0 0.5rem' }}>
+            Results not typical. Most readers see modest results or none.
+          </p>
+          <p style={{ margin: 0 }}>
+            See our <Link to="/terms">Terms</Link>, <Link to="/privacy">Privacy Policy</Link>, and{' '}
+            <Link to="/disclaimer">Disclaimer</Link>.
+          </p>
+        </div>
       </div>
 
       {/* ===== 11. Sticky mobile bar, after the offer CTA scrolls away ===== */}

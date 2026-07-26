@@ -136,6 +136,16 @@ export default async function handler(req, res) {
         ...(originalSession.metadata?.ph_distinct_id
           ? { ph_distinct_id: originalSession.metadata.ph_distinct_id }
           : {}),
+        // 2026-07-26: carry the A/B arm through the one-click upgrade too.
+        // Without this the /oto upsell that every corner buyer lands on
+        // produced purchases with no variant, which is half of why the last
+        // homepage test could not be read.
+        ...(originalSession.metadata?.ab_home_variant
+          ? { ab_home_variant: originalSession.metadata.ab_home_variant }
+          : {}),
+        ...(originalSession.metadata?.funnel_src
+          ? { funnel_src: originalSession.metadata.funnel_src }
+          : {}),
       },
     }, {
       idempotencyKey: idemKey,

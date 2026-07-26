@@ -1,4 +1,4 @@
-// api/_foods101-capture.js — the 101 Foods squeeze capture core (foods101-v1).
+// api/_foods101-capture.js: the 101 Foods squeeze capture core (foods101-v1).
 //
 // Russell Brunson lead funnel, step 1: the squeeze page's ONLY job is the
 // email. This module is what happens the moment it lands. It is deliberately a
@@ -21,8 +21,13 @@
 //      never took a quiz the line "your loudest driver is the one your quiz
 //      named," which is both wrong and obviously automated.
 //   5. Auto-register Monday night's masterclass (Joel: the class is an
-//      automatic addition at opt-in, not a second decision). Non-fatal.
-//   6. Alert Joel on any partial failure. A capture is never lost silently.
+//      automatic addition at opt-in, not a second decision). Non-fatal. The
+//      seat email states THIS funnel's consent basis, not the /masterclass
+//      form's, because these people never visited that page.
+//   6. Classify the outcome into one field, then alert Joel on any partial
+//      failure. A capture is never lost silently, and a suppressed (already
+//      unsubscribed) address is a distinct, successful outcome, never counted
+//      or reported as a failure.
 //
 // The guide is LINKED, never attached. It is a large PDF and Resend's
 // attachment ceiling plus inbox-provider size penalties are not worth it for a
@@ -51,8 +56,11 @@ function getResend() {
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
-// The magnet itself. Produced by scripts/build-101-foods-pdf.mjs into
-// public/downloads/. Linked, not attached (see header note).
+// The magnet itself. Source of truth is content/101-foods/101-foods-bp.html,
+// rendered by hand to public/downloads/101-foods-bp.pdf (38 A4 pages). There is
+// NO build script: scripts/build-101-foods-pdf.mjs does not exist (checked
+// 2026-07-26), so nothing regenerates this PDF automatically and nothing pins
+// its pagination. Linked, not attached (see header note).
 export const FOODS101_FILE = '101-foods-bp.pdf';
 export const FOODS101_URL = `${SITE_URL}/downloads/${FOODS101_FILE}`;
 
@@ -65,8 +73,11 @@ export const FOODS101_TAGS = ['foods101', 'no-quiz'];
 const SEND_GUARD_TTL_S = 60 * 60 * 24 * 30;
 const sendGuardKey = (email) => `foods101:sent:${email}`;
 
+// Bounded on purpose. This value is escaped everywhere it reaches HTML, but it
+// also rides in a subject line and in KV records, so an unbounded token from an
+// unauthenticated endpoint has no business being kept whole.
 function firstNameOf(name) {
-  return String(name || '').trim().split(/\s+/)[0] || '';
+  return String(name || '').trim().split(/\s+/)[0].slice(0, 40) || '';
 }
 
 // Sanitize caller-supplied tags the same way capture-lead.js does: short
@@ -89,9 +100,20 @@ function cleanUtmForStore(utm) {
 }
 
 // ─── The guide email ──────────────────────────────────────────────────
-// Beat sheet (spec foods101-v1 §4.2.3): deliver the guide, point at the seven
-// on page 3, one line of the nurse story, name the second email so the Monday
-// seat does not read as a glitch, sign off, P.S. save this.
+// Beat sheet (spec foods101-v1 §4.2.3): deliver the guide, point at Section One
+// (the Foundation Ten), one line of the nurse story, name the second email so
+// the Monday seat does not read as a glitch, sign off, P.S. save this.
+//
+// PAGE NUMBER, VERIFIED 2026-07-26 against public/downloads/101-foods-bp.pdf
+// (`pdftotext -f 14 -l 15 public/downloads/101-foods-bp.pdf -`). Page 14 opens
+// "SECTION ONE OF TEN / The Foundation Ten / ITEMS 1 TO 10 / IF YOU ONLY EVER
+// ACT ON ONE PAGE, MAKE IT THIS ONE". Page 3 is the prose Welcome page and has
+// ZERO items on it, so never send anyone there. Items 1 to 6 sit on page 14 and
+// 7 to 10 on page 15, so never write "there are ten items on that page" either.
+// 101 - 10 = 91, so the closing clause is "ninety one". The PDF prints no page
+// numbers and nothing pins pagination: re-run that pdftotext check before
+// changing this number.
+//
 // ZERO offer in this email. The tripwire lives on the thank-you page, which is
 // where the visitor already is when this sends.
 //
@@ -109,7 +131,7 @@ export function renderFoodsEmail({ firstName, unsubUrl, alreadyBooked = false })
     p('Here it is, exactly like I promised.'),
     p('<strong>101 Foods And Herbs That Help Steady Blood Pressure.</strong> Plant foods, kitchen herbs, and caffeine free teas, grouped so you know what goes in the cart this week instead of guessing in the supplement aisle.'),
     ctaButton('Open your 101 Foods guide (PDF)', FOODS101_URL),
-    p('Do not try to read all 101 tonight. Turn to page 3. There are seven items on that page, and those seven are your whole first week. Buy those, use those, and let the other ninety four wait their turn.'),
+    p('Do not try to read all 101 tonight. Turn to page 14. Section one is the Foundation Ten, and those ten are the ones we would put in the cart first. Buy those, use those, and let the other ninety one wait their turn.'),
     p(`If the button does not work in your email app, here is the plain link: <a href="${FOODS101_URL}" style="color:${PALETTE.accentClay};font-weight:700;">${FOODS101_URL}</a>`),
     p('I spent twenty years in ICU and emergency medicine watching careful people take every pill on time, cut the salt shaker, do everything they were told, and still watch the numbers climb. It was almost never effort. It was that nobody ever showed them what to put on the plate instead.'),
     p('That is what this list is for.'),
@@ -127,7 +149,7 @@ Here it is, exactly like I promised.
 
 Open your guide: ${FOODS101_URL}
 
-Do not try to read all 101 tonight. Turn to page 3. There are seven items on that page, and those seven are your whole first week. Buy those, use those, and let the other ninety four wait their turn.
+Do not try to read all 101 tonight. Turn to page 14. Section one is the Foundation Ten, and those ten are the ones we would put in the cart first. Buy those, use those, and let the other ninety one wait their turn.
 
 I spent twenty years in ICU and emergency medicine watching careful people take every pill on time, cut the salt shaker, do everything they were told, and still watch the numbers climb. It was almost never effort. It was that nobody ever showed them what to put on the plate instead.
 
@@ -167,8 +189,16 @@ P.S. Save this email. The download link stays good, and you are going to want th
  * @returns {Promise<{
  *   email: string, deduped: boolean, suppressed: boolean, enrolled: boolean,
  *   emailSent: boolean, masterclass: { registered: boolean, already: boolean },
- *   enrollError: string|null, sendError: string|null
+ *   enrollError: string|null, sendError: string|null,
+ *   outcome: 'sent'|'deduped'|'suppressed'|'send_failed'|'not_sent'
  * }>}
+ *
+ * `outcome` is the single field an HTTP layer should branch on. It exists so a
+ * SUPPRESSED capture stops being counted as a failure: an unsubscribed address
+ * that opts in again is an honored opt-out, not an error. Only 'send_failed' is
+ * an error state (and only that one, plus enrollError, raises the ops alert).
+ * A suppressed capture must never be reported to the visitor, to analytics, or
+ * to Joel as a broken capture.
  */
 export async function captureFoods101({
   email,
@@ -194,6 +224,7 @@ export async function captureFoods101({
     masterclass: { registered: false, already: false },
     enrollError: null,
     sendError: null,
+    outcome: 'not_sent',
   };
 
   const hasKv = Boolean(process.env.KV_REST_API_URL);
@@ -222,7 +253,7 @@ export async function captureFoods101({
   let triangleWritable = false;
 
   if (hasKv) {
-    // 2a. Legacy rail — drip:<email>. Subscriber store + suppression store.
+    // 2a. Legacy rail, drip:<email>. Subscriber store + suppression store.
     try {
       const dripKey = `drip:${emailLower}`;
       if (legacyRecord) {
@@ -280,7 +311,7 @@ export async function captureFoods101({
       console.error('foods101: legacy drip enroll failed', err.message);
     }
 
-    // 2b. Triangle rail — bwbp:drip:<email>. This is the rail the live crons
+    // 2b. Triangle rail, bwbp:drip:<email>. This is the rail the live crons
     // read (triangle-lead-cron, then evergreen-cron). corner and trigger stay
     // null on purpose: no quiz was taken, so nothing may claim one was.
     if (!isUnsubscribed) {
@@ -430,6 +461,11 @@ export async function captureFoods101({
   // ── 4. MASTERCLASS AUTO-REGISTER ────────────────────────────────────
   // Joel: the class is an automatic addition at opt-in, not a second
   // decision. Never fatal to the capture, and never for a tombstoned address.
+  //
+  // Deliberately NOT gated on the guide having sent. The registration is the
+  // asset and registerMasterclass is idempotent; gating it on Resend would cost
+  // a real seat every time Resend hiccups. The seat email stands alone because
+  // `provenance` below names the actual reason it arrived.
   if (autoMasterclass && !suppressed) {
     try {
       const r = await registerMasterclass({
@@ -437,6 +473,11 @@ export async function captureFoods101({
         name: firstName,
         source: FOODS101_SOURCE,
         utm: normUtm || undefined,
+        // These people never visited /masterclass. The module's default footer
+        // line ("you saved a seat at bpquiz.com/masterclass") would state a
+        // consent basis that never happened, so state the real one. Caller
+        // supplied, so no request body can steer it.
+        provenance: 'you asked for the 101 Foods guide at bpquiz.com and your free seat came with it',
         sendConfirmation: true,
       });
       result.masterclass = { registered: true, already: Boolean(r.already) };
@@ -445,8 +486,24 @@ export async function captureFoods101({
     }
   }
 
-  // ── 5. ALERT on partial failure ─────────────────────────────────────
+  // ── 5. CLASSIFY THE OUTCOME ─────────────────────────────────────────
+  // One field for callers to branch on, so nobody has to re-derive intent from
+  // four booleans. 'suppressed' is a SUCCESSFUL, non-error outcome: the address
+  // is tombstoned, we honored it, and nothing broke. Only 'send_failed' is an
+  // error. HTTP layers must not report a suppression as a capture failure.
+  result.outcome = result.suppressed
+    ? 'suppressed'
+    : result.sendError
+      ? 'send_failed'
+      : result.emailSent
+        ? 'sent'
+        : result.deduped
+          ? 'deduped'
+          : 'not_sent';
+
+  // ── 6. ALERT on partial failure ─────────────────────────────────────
   // Never lose a capture silently. Mirrors lead-magnet.js's alert.
+  // Suppression is NOT a failure and deliberately does not reach this block.
   if (result.enrollError || result.sendError) {
     try {
       await getResend().emails.send({
@@ -457,9 +514,20 @@ export async function captureFoods101({
 
 Email: ${emailLower}
 Source: ${normSource}
+Outcome: ${result.outcome}
 KV enroll: ${result.enrollError ? `FAILED - ${result.enrollError}` : 'ok'}
-Guide send: ${result.sendError ? `FAILED - ${result.sendError}` : (result.deduped ? 'skipped (already sent)' : 'ok')}
-Masterclass: ${result.masterclass.registered ? (result.masterclass.already ? 'already registered' : 'registered') : 'not registered'}
+Guide send: ${result.sendError
+  ? `FAILED - ${result.sendError}`
+  : result.suppressed
+    ? 'skipped on purpose (address is unsubscribed, this is not a failure)'
+    : result.deduped
+      ? 'skipped (already sent)'
+      : result.emailSent ? 'ok' : 'not attempted'}
+Masterclass: ${result.suppressed
+  ? 'skipped on purpose (address is unsubscribed)'
+  : result.masterclass.registered
+    ? (result.masterclass.already ? 'already registered' : 'registered')
+    : 'not registered'}
 
 If the enroll failed, add them by hand (no cron knows this person exists).
 If only the send failed, they did NOT get the guide: the triangle Day 0 safety net delivers the Blueprint, not the 101 Foods list, so this one needs a manual resend.`,

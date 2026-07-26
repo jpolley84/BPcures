@@ -601,7 +601,9 @@ export default async function handler(req, res) {
       enrolled: f.enrolled,
       emailSent: f.emailSent,
       masterclass: f.masterclass,
-      redirect: f.suppressed ? thanksFailed : thanks,
+      // &reason=suppressed: an unsubscribed address is a successful outcome,
+      // not a breakage, and the thank-you page branches on this to say so.
+      redirect: f.suppressed ? `${thanksFailed}&reason=suppressed` : thanks,
     });
   }
 
