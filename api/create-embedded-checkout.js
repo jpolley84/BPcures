@@ -61,9 +61,9 @@ const CASE_REVIEW_3PAY_PRICE =
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
 
 // ─── The Three Pressures Challenge (bpquiz.com/challenge) ─────────────
-// 2026-07-26. Five live nights, Mon 2026-08-03 through Fri 2026-08-07,
-// 7:00pm CT. Two seats: General Admission $47 (challenge-ga) and VIP $97
-// (challenge-vip). Both include the $17 10-Day BP Reset Kit.
+// 2026-07-26. Five live nights, Tue 2026-08-04 through Sun 2026-08-09,
+// 7:00pm CT. ONE seat at $97 (challenge-ga), which includes the $17 10-Day
+// BP Reset Kit. The GA/VIP split was collapsed on 2026-07-26 at Joel's call.
 //
 // DELIBERATELY NO HARDCODED FALLBACK PRICE ID. Every other offer in this file
 // carries `process.env.X || 'price_...'` because those prices exist and are
@@ -73,8 +73,8 @@ const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness'
 // product's id and charge a buyer $17 for a $97 seat. So: read the env var,
 // and if it is absent or malformed, fail LOUD with a distinct error code the
 // page renders as its honest "checkout is not open yet" state.
-const CHALLENGE_COHORT = '2026-08-03';           // cohort id, also the Night 1 date
-const CHALLENGE_START_CT = '2026-08-03T19:00:00'; // Night 1, 7:00pm CT
+const CHALLENGE_COHORT = '2026-08-04';           // cohort id, also the Night 1 date
+const CHALLENGE_START_CT = '2026-08-04T19:00:00'; // Night 1, 7:00pm CT
 const CHALLENGE_PRICE_ENV = {
   'challenge-ga': 'CHALLENGE_GA_PRICE_ID',
   'challenge-vip': 'CHALLENGE_VIP_PRICE_ID',

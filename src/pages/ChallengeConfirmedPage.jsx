@@ -34,11 +34,12 @@ const SUPPORT_EMAIL = 'braveworksrn@gmail.com';
 
 // Kept in sync with the CHALLENGE config block in src/pages/ChallengePage.jsx.
 const NIGHTS = [
-  ['Night 1', 'Monday, August 3', 'Your Real Number'],
-  ['Night 2', 'Tuesday, August 4', 'Stress Pressure'],
-  ['Night 3', 'Wednesday, August 5', 'Sugar Pressure'],
-  ['Night 4', 'Thursday, August 6', 'Sodium Pressure'],
-  ['Night 5', 'Friday, August 7', 'The Conversation'],
+  ['Night 1', 'Tuesday, August 4', 'Your Real Number'],
+  ['Night 2', 'Wednesday, August 5', 'Stress Pressure'],
+  ['Night 3', 'Thursday, August 6', 'Sugar Pressure'],
+  ['Night 4', 'Friday, August 7', 'Sodium Pressure'],
+  // Saturday is the Sabbath, so Night 5 is Sunday.
+  ['Night 5', 'Sunday, August 9', 'The Conversation'],
 ];
 
 function readParams() {
@@ -102,7 +103,6 @@ export default function ChallengeConfirmedPage() {
     return () => { cancelled = true; };
   }, [sessionId, tier]);
 
-  const isVip = tier === 'challenge-vip';
 
   return (
     <div style={{ background: CREAM, minHeight: '100vh', color: INK, fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -122,7 +122,7 @@ export default function ChallengeConfirmedPage() {
         {(state === 'confirmed' || state === 'already') && (
           <>
             <h1 style={{ fontSize: '1.55rem', margin: '0 0 0.5rem', lineHeight: 1.15 }}>
-              You are in{isVip ? ', and you are VIP' : ''}.
+              You are in.
             </h1>
             <p style={{ fontSize: '1.02rem', color: '#3A4A48' }}>
               {state === 'already'

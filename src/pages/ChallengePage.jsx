@@ -22,7 +22,7 @@
 //
 // STRIPE STATUS: no price exists for this challenge yet. Creating one is a
 // financial write and Joel has not approved it. api/create-embedded-checkout.js
-// reads process.env.CHALLENGE_GA_PRICE_ID / CHALLENGE_VIP_PRICE_ID with NO
+// reads process.env.CHALLENGE_GA_PRICE_ID with NO
 // hardcoded fallback and fails loudly when they are unset. This page therefore
 // degrades honestly: a click that cannot reach a payment form shows the
 // "Checkout is not open yet" card within 3 seconds and captures the interest at
@@ -47,11 +47,10 @@ import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
 /* ==========================================================================
    CHALLENGE CONFIG - change prices and dates HERE and nowhere else.
    Tier prices are ORCHESTRATOR DEFAULTS chosen 2026-07-26, not dictated by
-   Joel. Every price string on the page is derived from GA_PRICE / VIP_PRICE
+   Joel. Every price string on the page is derived from SEAT_PRICE
    and KIT_PRICE, so one edit here moves the whole page.
    The two Stripe price ids are SERVER side only:
-     process.env.CHALLENGE_GA_PRICE_ID
-     process.env.CHALLENGE_VIP_PRICE_ID
+     process.env.CHALLENGE_GA_PRICE_ID   (the single seat)
    with no fallback, so a missing id fails loudly instead of charging the
    wrong product. Nothing about them is exposed to the browser.
    ========================================================================== */
@@ -60,34 +59,39 @@ const CHALLENGE = {
   SUBTITLE: 'Five nights live with Joel Polley, RN',
   // Must match api/create-embedded-checkout.js and api/challenge-signup.js exactly,
   // or PostHog events cannot be joined to Stripe metadata or the KV records.
-  COHORT_ID: '2026-08-03',
+  COHORT_ID: '2026-08-04',
 
-  // Mon Aug 3, 7:00pm CT. Doors close at this exact instant.
-  START_ISO_CT: '2026-08-03T19:00:00',
-  START_DATE_LABEL: 'Monday, August 3',
-  END_DATE_LABEL: 'Friday, August 7',
-  DATE_RANGE_LABEL: 'August 3 to 7',
-  DATE_RANGE_SHORT: 'Aug 3',
+  // Tue Aug 4, 7:00pm CT. Doors close at this exact instant.
+  // 2026-07-26 (Joel): moved off Monday. That also clears the collision with
+  // the FREE Beyond the Cuff masterclass, which runs Mondays at this same hour.
+  START_ISO_CT: '2026-08-04T19:00:00',
+  START_DATE_LABEL: 'Tuesday, August 4',
+  END_DATE_LABEL: 'Sunday, August 9',
+  // Five nights, NOT five consecutive dates: Saturday is the Sabbath and this
+  // site's own gate closes commerce Friday sundown to Saturday sundown, so
+  // Night 5 moves to Sunday rather than running on it.
+  DATE_RANGE_LABEL: 'August 4 to 9',
+  DATE_RANGE_SHORT: 'Aug 4',
   TIME_LABEL_CT: '7:00pm CT',
   TIME_LABEL_ET: '8:00pm ET',
   NIGHT_LENGTH: 'about 60 minutes',
 
-  GA_PRICE: 47,
-  VIP_PRICE: 97,
-  GA_TIER: 'challenge-ga',
-  VIP_TIER: 'challenge-vip',
+  // 2026-07-26 (Joel): "it will be 97 for the 5 day challenge". ONE seat, one
+  // price. The two-tier GA/VIP split is gone; the single seat carries what VIP
+  // carried, since that is what $97 was buying.
+  SEAT_PRICE: 97,
+  SEAT_TIER: 'challenge-ga',
 
-  LOG_DUE_LABEL: 'Sunday, August 9',
-  VIP_REFUND_BY_LABEL: 'August 17',
+  LOG_DUE_LABEL: 'Monday, August 10',
+  REFUND_BY_LABEL: 'August 19',
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
 
 const NIGHT_COUNT = 5;
 const usd = (n) => '$' + Number(n).toLocaleString('en-US');
-const GA_PER_NIGHT = (CHALLENGE.GA_PRICE / NIGHT_COUNT).toFixed(2);        // 9.40
-const GA_LESS_KIT = CHALLENGE.GA_PRICE - KIT_PRICE;                        // 30
-const GA_LESS_KIT_PER_NIGHT = Math.round(GA_LESS_KIT / NIGHT_COUNT);       // 6
-const VIP_LESS_KIT = CHALLENGE.VIP_PRICE - KIT_PRICE;                      // 80
+const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 19.40
+const SEAT_LESS_KIT = CHALLENGE.SEAT_PRICE - KIT_PRICE;                    // 80
+const SEAT_LESS_KIT_PER_NIGHT = Math.round(SEAT_LESS_KIT / NIGHT_COUNT);   // 16
 
 /* ── Stripe: one instance at module load (same pattern as PayPage / AllInPage).
       Null when the publishable key is unset, which routes straight to the
@@ -172,7 +176,7 @@ function t(event, props) {
 const NIGHTS = [
   {
     n: 1,
-    when: 'MONDAY, AUGUST 3',
+    when: 'TUESDAY, AUGUST 4',
     title: 'Your Real Number',
     promise: 'Most home readings are wrong in a way that changes decisions. Tonight you learn to take one you can actually trust.',
     cover: 'How to sit, where the cuff goes, why the first reading is almost never the right one, why the doctor’s office reading runs high on so many people, and why the number moves between morning and night on purpose.',
@@ -180,7 +184,7 @@ const NIGHTS = [
   },
   {
     n: 2,
-    when: 'TUESDAY, AUGUST 4',
+    when: 'WEDNESDAY, AUGUST 5',
     title: 'Stress Pressure',
     promise: 'The pressure that runs at 2am, in the parking lot, and every time the phone rings at the wrong hour.',
     cover: 'What the stress hormone does to a blood vessel and to sodium in your body, why sleep before midnight is worth more than sleep after it, ten minutes of morning light and what it does to the whole next day, slow breathing you can do sitting in a chair, and gratitude practiced out loud as the one thing Joel has watched calm a room fastest.',
@@ -188,7 +192,7 @@ const NIGHTS = [
   },
   {
     n: 3,
-    when: 'WEDNESDAY, AUGUST 5',
+    when: 'THURSDAY, AUGUST 6',
     title: 'Sugar Pressure',
     promise: 'The corner almost nobody connects to blood pressure, and the one that changes the most in a week.',
     cover: 'What a spike does to the inside of a vessel, why the 3pm crash and the 9pm snack are the same event, two meals instead of six, the plate that does not require counting anything, and the ten minute walk after eating that does the work of a much longer one.',
@@ -196,7 +200,7 @@ const NIGHTS = [
   },
   {
     n: 4,
-    when: 'THURSDAY, AUGUST 6',
+    when: 'FRIDAY, AUGUST 7',
     title: 'Sodium Pressure',
     promise: 'It was never the salt shaker. It is the bread, the jar, the can, and the restaurant.',
     cover: 'Where sodium actually hides in a normal American week, why potassium matters at least as much as sodium and where to get it from plants, how much water is enough and when to stop drinking it, and how to read one label in ten seconds.',
@@ -204,7 +208,7 @@ const NIGHTS = [
   },
   {
     n: 5,
-    when: 'FRIDAY, AUGUST 7',
+    when: 'SUNDAY, AUGUST 9',
     title: 'The Conversation',
     promise: 'The night this whole week was built for. You do not walk into that office hoping. You walk in prepared.',
     cover: 'How to put five days of readings on one page a busy doctor will actually look at, the exact words that open the conversation instead of starting a fight, what to ask about your current medication, what to ask about your labs, how to ask for a follow up date, and the one line that keeps you and your doctor on the same side of the table.',
@@ -216,40 +220,29 @@ const NIGHTS = [
 /* ==========================================================================
    TIERS
    ========================================================================== */
+// 2026-07-26 (Joel): ONE seat at $97. The GA/VIP split is gone. Everything that
+// was behind the VIP wall is simply included, because $97 was the VIP price.
+// A single-option page also removes the classic two-tier failure mode, where a
+// reader spends their decision energy comparing columns instead of deciding.
 const TIERS = [
   {
-    key: CHALLENGE.GA_TIER,
-    kicker: 'GENERAL ADMISSION',
-    price: CHALLENGE.GA_PRICE,
-    priceLine: `${usd(CHALLENGE.GA_PRICE)} one time`,
-    underPrice: `That is $${GA_PER_NIGHT} a night, and ${usd(KIT_PRICE)} of it is a kit you keep forever.`,
-    headline: 'For the person who wants to learn it and do it.',
-    cta: `Join General Admission, ${usd(CHALLENGE.GA_PRICE)}`,
+    key: CHALLENGE.SEAT_TIER,
+    kicker: 'YOUR SEAT',
+    price: CHALLENGE.SEAT_PRICE,
+    priceLine: `${usd(CHALLENGE.SEAT_PRICE)} one time`,
+    underPrice: `That is $${SEAT_PER_NIGHT} a night, and ${usd(KIT_PRICE)} of it is a kit you keep forever. One payment, nothing after the five nights.`,
+    headline: 'Everything is included. There is no upgrade to buy.',
+    cta: `Save my seat, ${usd(CHALLENGE.SEAT_PRICE)}`,
     accent: C.clay,
     items: [
       `All five live nights with Joel on Zoom, ${CHALLENGE.DATE_RANGE_LABEL}, ${CHALLENGE.TIME_LABEL_CT}, ${CHALLENGE.NIGHT_LENGTH} each`,
-      'The replay of every night, posted by noon CT the next day, yours to keep',
+      'Thirty minutes of live Q and A after every night. Cameras optional, microphone optional. Type your question if you would rather not speak.',
+      { lead: 'The 48-Hour Answer:', rest: ' any question you submit by 5:00pm CT gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not. Every question, every night, all five nights.' },
+      'The replay of every night, teaching and Q and A both, posted by noon CT the next day and yours to keep',
       'The 5-Night Workbook, one printable page per night, so nothing depends on you taking notes',
       'The 5-Day Log sheet you fill in from Night 1 and hand to your doctor on Night 5',
+      'The Doctor Conversation Sheet used on Night 5: the opening words, what to ask about your medication, what to ask about your labs, and how to ask for a follow up date',
       `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads, delivered the minute you register`,
-      'One short email every morning with the single action for that day',
-    ],
-  },
-  {
-    key: CHALLENGE.VIP_TIER,
-    kicker: 'VIP',
-    price: CHALLENGE.VIP_PRICE,
-    priceLine: `${usd(CHALLENGE.VIP_PRICE)} one time`,
-    underPrice: 'One payment. Nothing after the five nights.',
-    headline: 'For the person with real questions and no one to ask.',
-    cta: `Join VIP, ${usd(CHALLENGE.VIP_PRICE)}`,
-    accent: C.sageDeep,
-    items: [
-      'Everything in General Admission',
-      'Thirty minutes of live Q and A after every night, VIP room only, cameras optional, microphone optional',
-      { lead: 'The 48-Hour Answer:', rest: ' any question you submit by 5:00pm CT gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not. Every question, every night, all five nights.' },
-      'The Q and A replays as well as the teaching replays, so you hear what everyone else asked',
-      'The expanded Doctor Conversation Sheet used on Night 5: the opening words, the questions to ask about your medication, the questions to ask about your labs, and how to ask for a follow up date',
     ],
   },
 ];
@@ -300,7 +293,7 @@ const FAQ = [
   },
   {
     q: 'What if it does not work for me?',
-    a: `Read the guarantee section above, because I wrote it plainly on purpose. Short version: the kit inside your seat carries a 30-day Feel-It-or-Free promise either way. VIP is refundable in full if you did the work and still felt it was not worth it. General Admission is refundable for any reason right up until we start. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
+    a: `Read the guarantee section above, because I wrote it plainly on purpose. Short version: the kit inside your seat carries a 30-day Feel-It-or-Free promise either way. Your seat is refundable for any reason right up until we start, and refundable in full after that if you did the work and still felt it was not worth it. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
   },
   {
     q: 'Is this a Christian program?',
@@ -331,8 +324,7 @@ export default function ChallengePage() {
     const startedAlready = START_AT.getTime() - Date.now() <= 0;
     t('chal_page_view', {
       doors_open: !startedAlready,
-      ga_price: CHALLENGE.GA_PRICE,
-      vip_price: CHALLENGE.VIP_PRICE,
+      seat_price: CHALLENGE.SEAT_PRICE,
     });
     if (startedAlready) t('chal_doors_closed_view');
   }, []);
@@ -358,7 +350,7 @@ export default function ChallengePage() {
   // Mount (or remount) the embedded Stripe checkout for the chosen tier.
   // A 3 second watchdog guarantees the buyer sees an answer either way: the
   // server has NO fallback price id for these tiers on purpose, so a missing
-  // CHALLENGE_GA_PRICE_ID / CHALLENGE_VIP_PRICE_ID must surface as a clear
+  // CHALLENGE_GA_PRICE_ID must surface as a clear
   // message rather than a hang.
   useEffect(() => {
     // Doors closing mid-session tears the form down: nobody buys a seat to a
@@ -425,7 +417,7 @@ export default function ChallengePage() {
         setCheckoutState('mounted');
         t('chal_checkout_mounted', {
           tier: activeTier,
-          price: activeTier === CHALLENGE.VIP_TIER ? CHALLENGE.VIP_PRICE : CHALLENGE.GA_PRICE,
+          price: CHALLENGE.SEAT_PRICE,
         });
       } catch (err) {
         fail(err && err.message ? String(err.message).slice(0, 60) : 'init_error');
@@ -647,9 +639,9 @@ function Hero({ doorsClosed, chooseTier, goToWaitlist, left }) {
               type="button"
               className="chal-btn"
               style={{ background: C.clay, color: '#FFFFFF' }}
-              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'hero', CHALLENGE.GA_PRICE)}
+              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'hero', CHALLENGE.SEAT_PRICE)}
             >
-              Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+              Save my seat, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
             </button>
           )}
         </div>
@@ -872,9 +864,9 @@ function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
               type="button"
               className="chal-btn"
               style={{ background: C.clay, color: '#FFFFFF' }}
-              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_nights', CHALLENGE.GA_PRICE)}
+              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_nights', CHALLENGE.SEAT_PRICE)}
             >
-              Save my seat for all five nights, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+              Save my seat for all five nights, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
             </button>
           )}
         </div>
@@ -982,7 +974,6 @@ function Seats({ doorsClosed, chooseTier, goToWaitlist, activeTier, checkoutStat
 }
 
 function TierCard({ tier, doorsClosed, onChoose, onWaitlist, active }) {
-  const isVip = tier.key === CHALLENGE.VIP_TIER;
   return (
     <div
       style={{
@@ -991,7 +982,7 @@ function TierCard({ tier, doorsClosed, onChoose, onWaitlist, active }) {
         padding: '18px 16px', display: 'flex', flexDirection: 'column',
       }}
     >
-      <p style={{ margin: 0, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', color: isVip ? C.sage : C.clay }}>
+      <p style={{ margin: 0, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.clay }}>
         {tier.kicker}
       </p>
       <p style={{ margin: '8px 0 0', fontFamily: 'Fraunces, serif', fontSize: '2rem', fontWeight: 500, lineHeight: 1, color: C.ink }}>
@@ -1007,7 +998,7 @@ function TierCard({ tier, doorsClosed, onChoose, onWaitlist, active }) {
           const isObj = typeof item === 'object';
           return (
             <li key={i} style={{ display: 'flex', gap: '0.55rem', alignItems: 'flex-start' }}>
-              <Check size={17} strokeWidth={2.6} style={{ color: isVip ? C.sage : C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
+              <Check size={17} strokeWidth={2.6} style={{ color: C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
               <span style={{ fontSize: 14.5, lineHeight: 1.55, color: C.inkSoft }}>
                 {isObj ? (<><strong style={{ color: C.ink }}>{item.lead}</strong>{item.rest}</>) : item}
               </span>
@@ -1025,7 +1016,7 @@ function TierCard({ tier, doorsClosed, onChoose, onWaitlist, active }) {
           <button
             type="button"
             className="chal-btn"
-            style={{ background: isVip ? C.sageDeep : C.clay, color: '#FFFFFF' }}
+            style={{ background: C.clay, color: '#FFFFFF' }}
             onClick={onChoose}
           >
             {tier.cta} <ArrowRight size={17} aria-hidden />
@@ -1115,10 +1106,7 @@ function PriceReasoning() {
             Why it costs what it costs.
           </h3>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
-            General Admission is {usd(CHALLENGE.GA_PRICE)} and includes a {usd(KIT_PRICE)} kit, so the five live nights come out to {usd(GA_LESS_KIT)}. {usd(GA_LESS_KIT_PER_NIGHT)} a night for an hour with a nurse.
-          </p>
-          <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
-            VIP is {usd(CHALLENGE.VIP_PRICE)}, which is {usd(VIP_LESS_KIT)} after the kit, for the same five nights plus a written answer to every question you ask. Most people pay more than that for one visit they leave with more questions than they came in with.
+            A seat is {usd(CHALLENGE.SEAT_PRICE)} and includes the {usd(KIT_PRICE)} kit, so the five live nights come out to {usd(SEAT_LESS_KIT)}. That is {usd(SEAT_LESS_KIT_PER_NIGHT)} a night for an hour with a nurse, and a written answer to every question you ask.
           </p>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
             There is no third tier, no upsell during the calls, and nothing here renews. One payment, and the week is yours.
@@ -1229,21 +1217,19 @@ function Guarantee({ doorsClosed, chooseTier, goToWaitlist }) {
           Every seat includes the 10-Day BP Reset Kit, and that kit carries the same promise it always has on this site. Run the full 10-day plan. If you do not feel a difference, reply with the word REFUND and your money comes back. Keep the books either way. No hoops, no fine print. Thirty days.
         </PromiseCard>
 
-        <PromiseCard title="Promise 2 · VIP, the did-the-work guarantee">
+        <PromiseCard title="Promise 2 · Change your mind before we start">
           <>
-            VIP is {usd(CHALLENGE.VIP_PRICE)}. Here is how you get all of it back if the week does not earn it.
-            <br /><br />
-            Do the work. That means: be on all five nights or watch all five replays, and email me your completed 5-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is it. The log is the thing I am asking you to build anyway, and I tell you where to send it on Night 1.
-            <br /><br />
-            If you did that and you still feel the week was not worth {usd(CHALLENGE.VIP_PRICE)}, reply REFUND by {CHALLENGE.VIP_REFUND_BY_LABEL} and I send back the full {usd(CHALLENGE.VIP_PRICE)}. You keep the kit. You keep the workbook. You keep the replays. I do not ask you to prove anything else and I do not ask you why.
+            Your seat is fully refundable for any reason right up until {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_CT}. Change your mind, reply REFUND, done. No reason needed.
           </>
         </PromiseCard>
 
-        <PromiseCard title="Promise 3 · General Admission, plain terms">
+        <PromiseCard title="Promise 3 · The did-the-work guarantee">
           <>
-            General Admission is fully refundable for any reason right up until {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_CT}. Change your mind, reply REFUND, done.
+            Once Night 1 has happened I cannot un-hold a live call, so here is what replaces a blanket refund after that point.
             <br /><br />
-            Once Night 1 has happened I cannot un-hold a live call, so the live portion is not refundable after that point. I would rather tell you that in advance than bury it. The kit inside your General Admission seat still carries its own 30-day Feel-It-or-Free promise, so you are never left holding nothing.
+            Do the work. That means: be on all five nights or watch all five replays, and email me your completed 5-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is the thing I am asking you to build anyway, and I tell you where to send it on Night 1.
+            <br /><br />
+            If you did that and you still feel the week was not worth {usd(CHALLENGE.SEAT_PRICE)}, reply REFUND by {CHALLENGE.REFUND_BY_LABEL} and I send back the full {usd(CHALLENGE.SEAT_PRICE)}. You keep the kit. You keep the workbook. You keep the replays. I do not ask you to prove anything else and I do not ask you why.
           </>
         </PromiseCard>
 
@@ -1261,9 +1247,9 @@ function Guarantee({ doorsClosed, chooseTier, goToWaitlist }) {
               type="button"
               className="chal-btn"
               style={{ background: C.clay, color: '#FFFFFF' }}
-              onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_guarantee', CHALLENGE.GA_PRICE)}
+              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_guarantee', CHALLENGE.SEAT_PRICE)}
             >
-              Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+              Save my seat, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
             </button>
           )}
         </div>
@@ -1514,9 +1500,9 @@ function FaqCta({ doorsClosed, chooseTier, goToWaitlist }) {
             type="button"
             className="chal-btn"
             style={{ background: C.clay, color: '#FFFFFF' }}
-            onClick={() => chooseTier(CHALLENGE.GA_TIER, 'after_faq', CHALLENGE.GA_PRICE)}
+            onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_faq', CHALLENGE.SEAT_PRICE)}
           >
-            Save my seat, {usd(CHALLENGE.GA_PRICE)} <ArrowRight size={17} aria-hidden />
+            Save my seat, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
           </button>
         )}
       </div>
@@ -1574,17 +1560,9 @@ function Close({ doorsClosed, chooseTier, goToWaitlist }) {
                 type="button"
                 className="chal-btn"
                 style={{ background: C.clay, color: '#FFFFFF', fontSize: '1.08rem', minHeight: 58 }}
-                onClick={() => chooseTier(CHALLENGE.GA_TIER, 'final_close', CHALLENGE.GA_PRICE)}
+                onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'final_close', CHALLENGE.SEAT_PRICE)}
               >
-                Yes, save my seat for August 3 <ArrowRight size={18} aria-hidden />
-              </button>
-              <button
-                type="button"
-                className="chal-btn"
-                style={{ background: 'transparent', color: C.cream, border: '1.5px solid rgba(251,248,241,0.5)', marginTop: 10, fontWeight: 700 }}
-                onClick={() => chooseTier(CHALLENGE.VIP_TIER, 'final_close_vip', CHALLENGE.VIP_PRICE)}
-              >
-                Join VIP instead, {usd(CHALLENGE.VIP_PRICE)}
+                Yes, save my seat for {CHALLENGE.START_DATE_LABEL.replace('Tuesday, ', '')} <ArrowRight size={18} aria-hidden />
               </button>
             </>
           )}
@@ -1674,14 +1652,14 @@ function StickyBar({ doorsClosed, chooseTier, goToWaitlist }) {
         <span style={{ fontSize: 12, fontWeight: 700, color: C.gold, lineHeight: 1.35 }}>
           {doorsClosed
             ? 'August cohort has started'
-            : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · ${usd(CHALLENGE.GA_PRICE)}`}
+            : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · ${usd(CHALLENGE.SEAT_PRICE)}`}
         </span>
         <button
           type="button"
           onClick={() =>
             doorsClosed
               ? goToWaitlist('sticky_bar')
-              : chooseTier(CHALLENGE.GA_TIER, 'sticky_bar', CHALLENGE.GA_PRICE)}
+              : chooseTier(CHALLENGE.SEAT_TIER, 'sticky_bar', CHALLENGE.SEAT_PRICE)}
           style={{
             background: C.clay, color: '#FFFFFF', border: 'none', borderRadius: 999,
             fontWeight: 800, fontSize: 14, minHeight: 48, padding: '0 20px',

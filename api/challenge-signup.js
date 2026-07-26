@@ -1,9 +1,12 @@
-// api/challenge-signup.js — The Three Pressures Challenge, cohort 2026-08-03.
+// api/challenge-signup.js — The Three Pressures Challenge, cohort 2026-08-04.
 //
-// Five live nights with Joel Polley, RN. Monday 2026-08-03 through Friday
-// 2026-08-07, 7:00pm CT (8:00pm ET), about 60 minutes a night. Two paid seats:
-// General Admission $47 and VIP $97. Sold from bpquiz.com/challenge through
-// api/create-embedded-checkout.js (tiers 'challenge-ga' / 'challenge-vip').
+// Five live nights with Joel Polley, RN. Tuesday 2026-08-04 through Sunday
+// 2026-08-09, 7:00pm CT (8:00pm ET), about 60 minutes a night. ONE seat at $97
+// (2026-07-26, Joel). Sold from bpquiz.com/challenge through
+// api/create-embedded-checkout.js, tier key 'challenge-ga'.
+// Nights run Tue, Wed, Thu, Fri, then SUNDAY. Saturday is skipped: it is the
+// Sabbath, and this site's own gate closes commerce Friday sundown to Saturday
+// sundown, so running a paid session then would contradict both.
 //
 // ── WHAT REPLACED WHAT (2026-07-26) ───────────────────────────────────
 // This file used to serve the RETIRED free 30-Day Pressure Triangle Challenge.
@@ -39,12 +42,12 @@
 //   whose whole purpose is the email.
 //
 // ── KV KEYS ───────────────────────────────────────────────────────────
-//   challenge:2026-08-03:reg:<email>       registration record (durable truth)
-//   challenge:2026-08-03:members           SET of registered emails
-//   challenge:2026-08-03:count             INCR, ops only
-//   challenge:2026-08-03:session:<cs_id>   NX idempotency claim per Stripe session
-//   challenge:2026-08-03:interest:<email>  waitlist / seat-link record
-//   challenge:2026-08-03:interest          SET of interested emails
+//   challenge:2026-08-04:reg:<email>       registration record (durable truth)
+//   challenge:2026-08-04:members           SET of registered emails
+//   challenge:2026-08-04:count             INCR, ops only
+//   challenge:2026-08-04:session:<cs_id>   NX idempotency claim per Stripe session
+//   challenge:2026-08-04:interest:<email>  waitlist / seat-link record
+//   challenge:2026-08-04:interest          SET of interested emails
 //   cs-rl:<ip> / cs-rl-reg:<ip>            per-IP rate limit counters
 //
 // Dedupe is by EMAIL (SADD / per-email record), never by a per-request flag.
@@ -61,16 +64,14 @@
 // _masterclass-enroll.js: never reset state, never demote a buyer, never
 // restart a timer.
 //
-// ── P0 THAT THIS FILE CANNOT FIX ──────────────────────────────────────
-// A challenge sale is $47 (4700) or $97 (9700). BOTH amounts are already
-// mapped to the Complete kit in triangle-webhook.js AMOUNT_TO_TIER. The
-// checkout stamps metadata.offer = 'challenge' so the sale is recognizable,
-// but triangle-webhook.js still needs a resolveChallenge() branch placed
-// BEFORE the amount lookup, exactly like the all-in and case-review branches.
-// Without it, a GA buyer is emailed the Complete Triangle kit, is moved into
-// the buyer state machine, and never gets a Zoom link. Do not set
-// CHALLENGE_GA_PRICE_ID / CHALLENGE_VIP_PRICE_ID in Vercel until that branch
-// exists (triangle-webhook.js is outside this task's scope).
+// ── THE AMOUNT COLLISION, AND HOW IT IS HANDLED (RESOLVED 2026-07-26) ──
+// A challenge sale is $97 (9700), an amount ALREADY mapped to a kit tier in
+// triangle-webhook.js AMOUNT_TO_TIER. Routing by price would therefore deliver
+// a challenge buyer the wrong product. The checkout stamps
+// metadata.offer = 'challenge', and triangle-webhook.js now branches on that
+// marker BEFORE the amount lookup, calling this endpoint's 'register' intent.
+// That branch THROWS on failure rather than returning, so Stripe retries
+// instead of the buyer being silently lost.
 //
 // ── ENV ───────────────────────────────────────────────────────────────
 //   Required to take registrations:
@@ -117,32 +118,32 @@ import {
 // Stripe (env-driven, see api/create-embedded-checkout.js) and are quoted here
 // only as display strings for the confirmation email.
 const CHALLENGE = {
-  cohort: '2026-08-03',
+  cohort: '2026-08-04',
   name: 'The Three Pressures Challenge',
   subtitle: 'Five nights live with Joel Polley, RN',
-  startIsoCt: '2026-08-03T19:00:00',
-  startLabel: 'Monday, August 3',
-  endLabel: 'Friday, August 7',
+  startIsoCt: '2026-08-04T19:00:00',
+  startLabel: 'Tuesday, August 4',
+  endLabel: 'Sunday, August 9',
   timeCt: '7:00pm CT',
   timeEt: '8:00pm ET',
   nightLength: 'about 60 minutes',
-  gaPriceLabel: '$47',
-  vipPriceLabel: '$97',
+  seatPriceLabel: '$97',
   pageUrl: `${SITE_URL}/challenge`,
   nights: [
-    { n: 1, date: 'Monday, August 3', title: 'Your Real Number' },
-    { n: 2, date: 'Tuesday, August 4', title: 'Stress Pressure' },
-    { n: 3, date: 'Wednesday, August 5', title: 'Sugar Pressure' },
-    { n: 4, date: 'Thursday, August 6', title: 'Sodium Pressure' },
-    { n: 5, date: 'Friday, August 7', title: 'The Conversation' },
+    { n: 1, date: 'Tuesday, August 4', title: 'Your Real Number' },
+    { n: 2, date: 'Wednesday, August 5', title: 'Stress Pressure' },
+    { n: 3, date: 'Thursday, August 6', title: 'Sugar Pressure' },
+    { n: 4, date: 'Friday, August 7', title: 'Sodium Pressure' },
+    // Saturday is the Sabbath and this site's own gate closes commerce Friday
+    // sundown to Saturday sundown, so Night 5 is Sunday, not Saturday.
+    { n: 5, date: 'Sunday, August 9', title: 'The Conversation' },
   ],
 };
 
 // Zoom details for THIS cohort. Env only. There is deliberately no fallback to
 // the weekly "Beyond the Cuff" room in _masterclass-enroll.js: that is a
-// different, free class, and Night 1 lands on the same Monday at the same hour
-// (an open question for Joel). Sending paid registrants into the free room
-// would be the wrong room and the wrong audience.
+// different, free class. Night 1 is a Tuesday, so it no longer collides with
+// that Monday class, but they are still separate rooms and separate audiences.
 const ZOOM = {
   url: (process.env.CHALLENGE_ZOOM_URL || '').trim(),
   meetingId: (process.env.CHALLENGE_ZOOM_MEETING_ID || '').trim(),
