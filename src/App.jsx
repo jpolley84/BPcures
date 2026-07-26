@@ -27,6 +27,9 @@ const QuizPage = lazy(() => import('./pages/QuizPage'));
 // homepage split routes here). Landing lives in pages/TriggerLanding.jsx and
 // renders via HomeSplit; the quiz + email gate + results live at /triggers.
 const TriggerQuizPage = lazy(() => import('./pages/TriggerQuizPage'));
+// 2026-07-26 foods101-v1: the squeeze + its tripwire thank-you page.
+const FoodsGuideLanding = lazy(() => import('./pages/FoodsGuideLanding'));
+const FoodsGuideThanks = lazy(() => import('./pages/FoodsGuideThanks'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
 const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
@@ -166,10 +169,23 @@ function App() {
               /offer redirect. (CheckoutPage renders standalone — its own
               header/footer/social bar, no SiteLayout.) */}
           {/* 2026-07-16: '/' now renders HomeSplit (50/50 A/B). Variant 'a'
-              is CheckoutPage exactly as before; variant 'b' is the Annie-v2
-              TriggerLanding. Vanity subdomains still bypass the split. */}
+              is CheckoutPage exactly as before. Vanity subdomains still bypass
+              the split. */}
+          {/* 2026-07-26 (Joel, foods101-v1): variant 'b' is no longer the
+              Annie-v2 TriggerLanding. It is now FoodsGuideLanding, a Brunson
+              squeeze page for the free "101 Foods and Herbs" guide, which
+              hands off to /101foods-thanks where the $17 kit is the tripwire.
+              "lets get rid of page B as it stands." TriggerLanding.jsx is left
+              on disk but is no longer rendered by any route: /triggers and
+              /quiz still serve TriggerQuizPage, so the quiz itself is intact. */}
           <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <HomeSplit />} />
           <Route path="/offer" element={<Navigate to="/" replace />} />
+
+          {/* 101 Foods funnel — the squeeze is also reachable directly (for ad
+              and email traffic that should skip the A/B split entirely), and
+              the thank-you page carries the $17 offer. */}
+          <Route path="/101foods" element={<FoodsGuideLanding />} />
+          <Route path="/101foods-thanks" element={<FoodsGuideThanks />} />
 
           {/* Quiz moved to /quiz — for SEO landing, email CTAs, and warm
               traffic that wants the diagnostic before buying. */}

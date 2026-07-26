@@ -6,6 +6,11 @@ import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
 import { looksLikeValidEmail } from './_email-validation.js';
 import { p, ctaButton, buildEmail, PALETTE } from './_triangle-email.js';
+// foods101-v1 (2026-07-26). The 101 Foods squeeze posts here with
+// magnet:'foods101' per the funnel spec §4.1; api/foods101-optin.js is the
+// dedicated front door for the same core. See the delegation block at the top
+// of handler() — it is the ONLY foods101 code in this file, on purpose.
+import { captureFoods101 } from './_foods101-capture.js';
 
 // Local alias for the imported helper (keeps the call-site readable + matches
 // the convention used in this file).
@@ -550,6 +555,54 @@ export default async function handler(req, res) {
   if (!rl.ok) {
     console.warn(`lead-magnet: rate-limited ip=${ip} count=${rl.count}`);
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+  }
+
+  // ── foods101-v1 DELEGATION (2026-07-26) ───────────────────────────────
+  // The 101 Foods squeeze (homepage variant B + /101foods) posts here with
+  // magnet:'foods101'. That funnel has its own capture rules (no quiz, no
+  // trigger, guide LINKED not attached, masterclass auto-registered, per-email
+  // NX send guard), all of which live in _foods101-capture.js so the dedicated
+  // endpoint api/foods101-optin.js and this path can never drift.
+  //
+  // Everything BELOW this block is the untouched quiz-capture path. Do not
+  // thread foods101 conditionals through it.
+  if (req.body?.magnet === 'foods101') {
+    if (!looksLikeValidEmail(req.body?.email)) {
+      return res.status(400).json({ error: 'Valid email is required' });
+    }
+    const f = await captureFoods101({
+      email: req.body.email,
+      name: req.body.name,
+      tags: req.body.tags,
+      utm: req.body.utm,
+      source: req.body.source,
+      autoMasterclass: req.body.autoMasterclass !== false,
+    });
+    const thanks = '/101foods-thanks';
+    const thanksFailed = `${thanks}?capture=failed`;
+    if (!f.enrolled && !f.emailSent && !f.deduped && !f.suppressed) {
+      return res.status(500).json({ error: 'Capture failed', redirect: thanksFailed });
+    }
+    if (f.sendError) {
+      // Stored, but the guide never left. Not a 200: the visitor is owed the
+      // file and the thank-you page's failed branch is where they get it.
+      return res.status(502).json({
+        error: 'Guide send failed',
+        enrolled: f.enrolled,
+        emailSent: false,
+        redirect: thanksFailed,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      magnet: 'foods101',
+      deduped: f.deduped,
+      suppressed: f.suppressed,
+      enrolled: f.enrolled,
+      emailSent: f.emailSent,
+      masterclass: f.masterclass,
+      redirect: f.suppressed ? thanksFailed : thanks,
+    });
   }
 
   const {

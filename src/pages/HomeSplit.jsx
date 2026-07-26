@@ -11,7 +11,7 @@
 // no tracking crash.
 import { useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
-import TriggerLanding from './TriggerLanding';
+import FoodsGuideLanding from './FoodsGuideLanding';
 import MasterclassBanner from '../components/MasterclassBanner';
 import { track, registerSuperProps } from '../utils/analytics.js';
 
@@ -80,7 +80,7 @@ export default function HomeSplit() {
   return (
     <>
       <MasterclassBanner />
-      {variant === 'b' ? <TriggerLanding /> : <CheckoutPage />}
+      {variant === 'b' ? <FoodsGuideLanding /> : <CheckoutPage />}
     </>
   );
 }
