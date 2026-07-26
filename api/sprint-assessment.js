@@ -14,6 +14,22 @@ import { kv } from '@vercel/kv';
 import { Resend } from 'resend';
 
 const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+const CALENDLY_URL = process.env.CALENDLY_BOOKING_URL || 'https://calendly.com/braveworksrn/60min';
+
+// Uploaded lab documents ride in as base64 in the JSON body, so cap the body
+// under Vercel's limit and validate hard: photos/PDFs only, <=6 files, <=4MB.
+export const config = { api: { bodyParser: { sizeLimit: '4.5mb' } } };
+
+const MAX_ATTACHMENTS = 6;
+const MAX_ATTACH_BYTES = 4_000_000;
+const ALLOWED_ATTACH = /^(image\/(jpeg|png|webp|heic|heif)|application\/pdf)$/i;
+
+// Optional structured labs shown to Joel in the [ACTION] email.
+const LAB_LABELS = {
+  bp: 'Latest BP', bpDate: 'Reading date', pulse: 'Resting HR', weight: 'Weight',
+  a1c: 'A1C / glucose', cholesterol: 'Cholesterol (total/LDL)', potassium: 'Potassium',
+  magnesium: 'Magnesium', kidney: 'Kidney (eGFR/creatinine)', thyroid: 'Thyroid (TSH)',
+};
 
 const FIELDS = [
   ['name', 'Name', 120],
@@ -44,6 +60,30 @@ export default async function handler(req, res) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Valid email required' });
   }
+
+  // Optional structured labs (each capped, unknown keys ignored).
+  const labs = {};
+  const rawLabs = req.body.labs && typeof req.body.labs === 'object' ? req.body.labs : {};
+  for (const key of Object.keys(LAB_LABELS)) {
+    const v = clean(rawLabs[key], 80);
+    if (v) labs[key] = v;
+  }
+
+  // Uploaded documents -> Resend attachments. Validate hard; skip bad ones
+  // rather than failing the whole submission (the text answers still matter).
+  const attachments = [];
+  const rawAtt = Array.isArray(req.body.attachments) ? req.body.attachments.slice(0, MAX_ATTACHMENTS) : [];
+  let attachTotal = 0;
+  for (const a of rawAtt) {
+    if (!a || typeof a.contentBase64 !== 'string') continue;
+    const type = String(a.type || '').toLowerCase();
+    if (!ALLOWED_ATTACH.test(type)) continue;
+    const bytes = Math.ceil((a.contentBase64.length * 3) / 4);
+    if (bytes <= 0 || attachTotal + bytes > MAX_ATTACH_BYTES) continue;
+    attachTotal += bytes;
+    const filename = clean(a.filename, 120) || `document-${attachments.length + 1}`;
+    attachments.push({ filename, content: a.contentBase64 });
+  }
   if (!data.readings && !data.struggle && !data.goal) {
     return res.status(400).json({ error: 'Please fill in the assessment before sending' });
   }
@@ -63,6 +103,8 @@ export default async function handler(req, res) {
     await kv.set(key, {
       ...data,
       email,
+      labs,
+      attachmentNames: attachments.map((a) => a.filename),
       submittedAt,
       ...(prior ? { history: [...(prior.history || []), { ...prior, history: undefined }].slice(-5) } : {}),
     });
@@ -79,6 +121,12 @@ export default async function handler(req, res) {
 
   // The whole point: Joel gets every answer, reply-to goes to the buyer.
   const lines = FIELDS.map(([key, label]) => `${label.toUpperCase()}\n${data[key] || '(blank)'}`).join('\n\n');
+  const labLines = Object.keys(labs).length
+    ? '\n\nRECENT LAB VALUES\n' + Object.entries(labs).map(([k, v]) => `  ${LAB_LABELS[k]}: ${v}`).join('\n')
+    : '\n\nRECENT LAB VALUES\n  (none entered)';
+  const attachLine = attachments.length
+    ? `\n\nUPLOADED DOCUMENTS (${attachments.length}) attached to this email:\n` + attachments.map((a) => `  ${a.filename}`).join('\n')
+    : '\n\nUPLOADED DOCUMENTS\n  (none)';
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
@@ -86,7 +134,8 @@ export default async function handler(req, res) {
       to: JOEL_NOTIFY,
       replyTo: email,
       subject: `[ACTION] Sprint assessment in: ${data.name || email}`,
-      text: `A Sprint buyer finished their deep assessment. Build their 30-day plan and get the call scheduled.\n\n${lines}\n\nSubmitted: ${submittedAt}\nKV: bwbp:assessment:${email}\n\nReply to this email to reach them directly.`,
+      text: `A Sprint buyer finished their deep assessment. Build their 30-day plan and get the call scheduled.\n\n${lines}${labLines}${attachLine}\n\nSubmitted: ${submittedAt}\nKV: bwbp:assessment:${email}\n\nReply to this email to reach them directly.`,
+      ...(attachments.length ? { attachments } : {}),
     });
   } catch (err) {
     console.error('sprint-assessment: Joel alert failed', err.message);
@@ -100,8 +149,8 @@ export default async function handler(req, res) {
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: email,
       replyTo: JOEL_NOTIFY,
-      subject: 'Got it. Your case is on my desk.',
-      text: `Hi ${data.name ? data.name.split(' ')[0] : 'there'},\n\nYour assessment just landed on my desk, and I have read enough already to tell you this was worth doing.\n\nHere is what happens next. I sit down with your full case and build your 30 days, in order, for your body and your life. It lands in your inbox within 2 business days, along with the link to pick a time for our 1:1 call.\n\nIf anything changes with your numbers before then, just reply to this email.\n\nTalk soon,\nJoel Polley, RN\n\nThis is education and lifestyle support alongside your doctor, never instead of them. Your doctor makes every medication call.`,
+      subject: 'Got it. Now book our call.',
+      text: `Hi ${data.name ? data.name.split(' ')[0] : 'there'},\n\nYour assessment just landed on my desk, and I have read enough already to tell you this was worth doing.\n\nOne thing left, and it is the important one: book our 1:1 onboarding call. That call is where I walk you through your case and we set your 30 days in motion. Pick a time here:\n\n${CALENDLY_URL}\n\nBefore we talk, I sit down with everything you sent, your answers, your numbers, and any documents you uploaded, and I come to the call with your plan already taking shape.\n\nIf anything changes with your numbers before then, just reply to this email.\n\nTalk soon,\nJoel Polley, RN\n\nThis is education and lifestyle support alongside your doctor, never instead of them. Your doctor makes every medication call.`,
     });
   } catch (err) {
     console.error('sprint-assessment: buyer confirmation failed (Joel alert OK)', err.message);
