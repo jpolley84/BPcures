@@ -95,12 +95,16 @@ const CASH_MAYBE = 'I may or may not, but I am resourceful and have access to wh
 const CASH_NO = 'No, I am month to month and cannot invest right now';
 const CASHFLOW_OPTIONS = [CASH_YES, CASH_MAYBE, CASH_NO];
 
+// 2026-07-27: collapsed 5 steps to 3. PostHog showed 61 people started the
+// wizard and only 12 finished (80% abandon). Every "Continue" tap is a place
+// to leak, so we cut the number of taps in half: the gate stays standalone
+// (it is the commitment device), then everything else folds into two screens.
+// No fields removed, so scoring (serious / medsAlignment / cashFlow) and the
+// API contract are untouched.
 const STEP_TITLES = [
   'One honest question',
-  'You',
-  'What you want',
+  'About you',
   'Your life right now',
-  'Last things',
 ];
 const TOTAL_STEPS = STEP_TITLES.length;
 
@@ -217,18 +221,14 @@ export default function BeThereApplyPage() {
       if (!form.lastName.trim()) e.lastName = 'Last name too, please.';
       if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel can write back.';
       if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'A real phone number, in case your application moves forward.';
-    }
-    if (s === 3) {
       if (!form.whyJoel) e.whyJoel = 'Pick the closest one.';
       if (!form.goal) e.goal = 'Pick one.';
     }
-    if (s === 4) {
+    if (s === 3) {
       if (!form.occupation.trim()) e.occupation = 'A word or two is plenty.';
       if (!form.partnerStatus) e.partnerStatus = 'Pick one.';
       if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
       if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
-    }
-    if (s === 5) {
       if (!form.foundJoel) e.foundJoel = 'Pick one.';
       if (!form.cashFlow) e.cashFlow = 'Pick the honest one. It only decides the next step, not your worth.';
     }
@@ -361,15 +361,16 @@ export default function BeThereApplyPage() {
                   application and if i feel they are a good fit i'll send them an
                   email with the next steps." */}
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
-                <strong>Check your email.</strong>
+                Joel reads every word himself. <strong>Watch your email in the next few hours</strong>
+                {' '}for a personal note from him with your next step.
               </p>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
-                Joel reads every word himself. He will review your application, and if he feels you
-                are a good fit, he will send you an email with the next steps.
+                When it lands, <strong>just reply to it.</strong> That reply is how you and Joel find
+                a time to talk, so keep an eye out and answer when you can.
               </p>
               <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto' }}>
-                Nothing else for you to do right now. If you do not see anything from him, check your
-                spam folder before you assume the worst.
+                Add joel@bpquiz.com to your contacts so it does not slip into spam. That is the only
+                thing you need to do right now.
               </p>
             </>
           )}
@@ -448,7 +449,7 @@ export default function BeThereApplyPage() {
           </>
         )}
 
-        {/* STEP 2 — you */}
+        {/* STEP 2 — about you + what you want (merged) */}
         {step === 2 && (
           <>
             <Field label="First name" error={errors.firstName}>
@@ -463,12 +464,6 @@ export default function BeThereApplyPage() {
             <Field label="Phone" helper="For a text if your application moves forward." error={errors.phone}>
               <input className="bt-input" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="555 555 5555" />
             </Field>
-          </>
-        )}
-
-        {/* STEP 3 — what you want */}
-        {step === 3 && (
-          <>
             <Field label="What makes you want to work with Joel specifically?" error={errors.whyJoel}>
               <OptionList name="Why Joel" options={WHY_JOEL_OPTIONS} value={form.whyJoel} onChange={(v) => set('whyJoel', v)} />
             </Field>
@@ -478,8 +473,8 @@ export default function BeThereApplyPage() {
           </>
         )}
 
-        {/* STEP 4 — your life right now */}
-        {step === 4 && (
+        {/* STEP 3 — your life + the money question (merged) */}
+        {step === 3 && (
           <>
             <Field label="What is your current work, and how long have you done it?" error={errors.occupation}>
               <input className="bt-input" type="text" value={form.occupation} onChange={(e) => set('occupation', e.target.value)} placeholder="e.g. Retired teacher, 8 years" />
@@ -497,12 +492,6 @@ export default function BeThereApplyPage() {
             <Field label="Does that sit right with you?" error={errors.medsAlignment}>
               <OptionList name="Meds alignment" options={ALIGN_OPTIONS} value={form.medsAlignment} onChange={(v) => set('medsAlignment', v)} />
             </Field>
-          </>
-        )}
-
-        {/* STEP 5 — last things + the money question */}
-        {step === 5 && (
-          <>
             <Field label="How did you find Joel?" error={errors.foundJoel}>
               <OptionList name="How found Joel" options={FOUND_OPTIONS} value={form.foundJoel} onChange={(v) => set('foundJoel', v)} />
             </Field>

@@ -454,7 +454,7 @@ export default async function handler(req, res) {
       <p style="margin:0 0 16px;">Your application for the <strong>BP Triangle Freedom Sprint</strong> just landed in my inbox. Thank you for putting your real picture in front of me.</p>
       <p style="margin:0 0 16px;">Here's what happens next:</p>
       <ol style="margin:0 0 16px;padding-left:20px;">
-        <li style="margin:0 0 8px;">I read every application personally. Usually inside 3-5 business days.</li>
+        <li style="margin:0 0 8px;">I read every application personally. You will hear from me within 48 hours, usually sooner.</li>
         <li style="margin:0 0 8px;">If we're a fit on the application, I'll reach out to schedule a 20-minute fit call by phone. Price and structure are walked through there.</li>
         <li style="margin:0 0 8px;">If we're a fit on the call, you'll get a Stripe invoice for the cohort. No payment is collected until that point.</li>
       </ol>
