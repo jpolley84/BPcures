@@ -70,9 +70,9 @@ const CASE_REVIEW_3PAY_PRICE =
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
 
 // ─── The Three Pressures Challenge (bpquiz.com/challenge) ─────────────
-// 2026-07-26. Five live nights, Tue 2026-08-04 through Sun 2026-08-09,
-// 7:00pm CT. ONE seat at $97 (challenge-ga), which includes the $17 10-Day
-// BP Reset Kit. The GA/VIP split was collapsed on 2026-07-26 at Joel's call.
+// 2026-07-27. Three live nights, Tue 2026-08-04 through Thu 2026-08-06,
+// 7:00pm CT. ONE seat at $17 founding (challenge-ga) = the 10-Day BP Reset Kit,
+// with the three nights riding along. GA/VIP split collapsed 2026-07-26.
 //
 // DELIBERATELY NO HARDCODED FALLBACK PRICE ID. Every other offer in this file
 // carries `process.env.X || 'price_...'` because those prices exist and are

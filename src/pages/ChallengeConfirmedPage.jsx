@@ -35,11 +35,8 @@ const SUPPORT_EMAIL = 'braveworksrn@gmail.com';
 // Kept in sync with the CHALLENGE config block in src/pages/ChallengePage.jsx.
 const NIGHTS = [
   ['Night 1', 'Tuesday, August 4', 'Your Real Number'],
-  ['Night 2', 'Wednesday, August 5', 'Stress Pressure'],
-  ['Night 3', 'Thursday, August 6', 'Sugar Pressure'],
-  ['Night 4', 'Friday, August 7', 'Sodium Pressure'],
-  // Saturday is the Sabbath, so Night 5 is Sunday.
-  ['Night 5', 'Sunday, August 9', 'The Conversation'],
+  ['Night 2', 'Wednesday, August 5', 'The Three Pressures'],
+  ['Night 3', 'Thursday, August 6', 'The Conversation'],
 ];
 
 function readParams() {
@@ -135,7 +132,7 @@ export default function ChallengeConfirmedPage() {
             </p>
 
             <div style={{ background: '#FFFFFF', border: '1px solid #E4DACE', borderRadius: 12, padding: '1rem 1.1rem', margin: '1.2rem 0' }}>
-              <p style={{ margin: '0 0 0.6rem', fontWeight: 700 }}>Your five nights</p>
+              <p style={{ margin: '0 0 0.6rem', fontWeight: 700 }}>Your three nights</p>
               {NIGHTS.map(([n, date, title]) => (
                 <div key={n} style={{ display: 'flex', gap: '0.6rem', padding: '0.32rem 0', fontSize: '0.93rem', borderBottom: '1px solid #F2EAE0' }}>
                   <span style={{ color: CLAY, fontWeight: 700, minWidth: 56 }}>{n}</span>
@@ -151,7 +148,7 @@ export default function ChallengeConfirmedPage() {
             <div style={{ background: '#F4E6DE', borderRadius: 12, padding: '0.9rem 1.1rem', margin: '1.2rem 0' }}>
               <p style={{ margin: '0 0 0.35rem', fontWeight: 700 }}>What happens next</p>
               <p style={{ margin: 0, fontSize: '0.95rem', color: '#3A4A48' }}>
-                Watch your inbox for the join details. Save that email. It is the same room all five nights,
+                Watch your inbox for the join details. Save that email. It is the same room all three nights,
                 so you only need the one link. If it has not arrived within about an hour, check your spam
                 folder first, then write to {SUPPORT_EMAIL} and I will send it by hand.
               </p>

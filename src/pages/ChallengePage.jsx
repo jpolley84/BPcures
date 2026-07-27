@@ -59,7 +59,7 @@ import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
    ========================================================================== */
 const CHALLENGE = {
   NAME: 'The Three Pressures Challenge',
-  SUBTITLE: 'Five nights live with Joel Polley, RN',
+  SUBTITLE: 'Three nights live with Joel Polley, RN',
   // Must match api/create-embedded-checkout.js and api/challenge-signup.js exactly,
   // or PostHog events cannot be joined to Stripe metadata or the KV records.
   COHORT_ID: '2026-08-04',
@@ -69,11 +69,10 @@ const CHALLENGE = {
   // the FREE Beyond the Cuff masterclass, which runs Mondays at this same hour.
   START_ISO_CT: '2026-08-04T19:00:00',
   START_DATE_LABEL: 'Tuesday, August 4',
-  END_DATE_LABEL: 'Sunday, August 9',
-  // Five nights, NOT five consecutive dates: Saturday is the Sabbath and this
-  // site's own gate closes commerce Friday sundown to Saturday sundown, so
-  // Night 5 moves to Sunday rather than running on it.
-  DATE_RANGE_LABEL: 'August 4 to 9',
+  END_DATE_LABEL: 'Thursday, August 6',
+  // 2026-07-27 (Joel): three consecutive nights, Tue/Wed/Thu Aug 4-6. No
+  // Sabbath collision now (the week ends Thursday), so no date is skipped.
+  DATE_RANGE_LABEL: 'August 4 to 6',
   DATE_RANGE_SHORT: 'Aug 4',
   TIME_LABEL_CT: '7:00pm CT',
   TIME_LABEL_ET: '8:00pm ET',
@@ -99,18 +98,18 @@ const CHALLENGE = {
   VIP_PRICE: 47,
   VIP_TIER: 'challenge-vip',
 
-  LOG_DUE_LABEL: 'Monday, August 10',
-  REFUND_BY_LABEL: 'August 19',
+  LOG_DUE_LABEL: 'Friday, August 7',
+  REFUND_BY_LABEL: 'August 16',
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
 
-const NIGHT_COUNT = 5;
+const NIGHT_COUNT = 3;
 const usd = (n) => '$' + Number(n).toLocaleString('en-US');
-const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 3.40
+const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 5.67
 // At founding-cohort pricing the ticket costs exactly what the kit costs on its
 // own, so "price minus the kit" is zero and the old per-night-after-kit maths
 // no longer says anything. The honest framing is simpler and stronger: the kit
-// alone is the whole ticket price, and the five nights ride along with it.
+// alone is the whole ticket price, and the three nights ride along with it.
 
 /* ── Stripe: one instance at module load (same pattern as PayPage / AllInPage).
       Null when the publishable key is unset, which routes straight to the
@@ -199,38 +198,22 @@ const NIGHTS = [
     title: 'Your Real Number',
     promise: 'Most home readings are wrong in a way that changes decisions. Tonight you learn to take one you can actually trust.',
     cover: 'How to sit, where the cuff goes, why the first reading is almost never the right one, why the doctor’s office reading runs high on so many people, and why the number moves between morning and night on purpose.',
-    walk: 'Take a correct reading tonight, in both arms, and write the first line in your 5-Day Log.',
+    walk: 'Take a correct reading tonight, in both arms, and write the first line in your 3-Day Log.',
   },
   {
     n: 2,
     when: 'WEDNESDAY, AUGUST 5',
-    title: 'Stress Pressure',
-    promise: 'The pressure that runs at 2am, in the parking lot, and every time the phone rings at the wrong hour.',
-    cover: 'What the stress hormone does to a blood vessel and to sodium in your body, why sleep before midnight is worth more than sleep after it, ten minutes of morning light and what it does to the whole next day, slow breathing you can do sitting in a chair, and gratitude practiced out loud as the one thing Joel has watched calm a room fastest.',
-    walk: 'Run tonight’s wind down and tomorrow’s first ten minutes, both written on one page.',
+    title: 'The Three Pressures',
+    promise: 'Stress, sugar, and sodium pull on each other, which is why working just one never holds. Tonight you take all three.',
+    cover: 'Stress: what the stress hormone does to a vessel and to sodium in your body, sleep before midnight, ten minutes of morning light, and slow breathing you can do in a chair. Sugar: why the 3pm crash and the 9pm snack are the same event, two meals instead of six, and the ten minute walk after eating that does the work of a much longer one. Sodium: where it actually hides in a normal week, why potassium matters at least as much, and how to read one label in ten seconds.',
+    walk: 'One page for tomorrow: your wind down, your plate, and the one label rule. Three pressures, one sheet.',
   },
   {
     n: 3,
     when: 'THURSDAY, AUGUST 6',
-    title: 'Sugar Pressure',
-    promise: 'The corner almost nobody connects to blood pressure, and the one that changes the most in a week.',
-    cover: 'What a spike does to the inside of a vessel, why the 3pm crash and the 9pm snack are the same event, two meals instead of six, the plate that does not require counting anything, and the ten minute walk after eating that does the work of a much longer one.',
-    walk: 'Build tomorrow’s plate, and take one walk after one meal. That is the whole assignment.',
-  },
-  {
-    n: 4,
-    when: 'FRIDAY, AUGUST 7',
-    title: 'Sodium Pressure',
-    promise: 'It was never the salt shaker. It is the bread, the jar, the can, and the restaurant.',
-    cover: 'Where sodium actually hides in a normal American week, why potassium matters at least as much as sodium and where to get it from plants, how much water is enough and when to stop drinking it, and how to read one label in ten seconds.',
-    walk: 'Run a fifteen minute kitchen sweep and read any label in the store without doing math.',
-  },
-  {
-    n: 5,
-    when: 'SUNDAY, AUGUST 9',
     title: 'The Conversation',
     promise: 'The night this whole week was built for. You do not walk into that office hoping. You walk in prepared.',
-    cover: 'How to put five days of readings on one page a busy doctor will actually look at, the exact words that open the conversation instead of starting a fight, what to ask about your current medication, what to ask about your labs, how to ask for a follow up date, and the one line that keeps you and your doctor on the same side of the table.',
+    cover: 'How to put three days of readings on one page a busy doctor will actually look at, the exact words that open the conversation instead of starting a fight, what to ask about your current medication, what to ask about your labs, how to ask for a follow up date, and the one line that keeps you and your doctor on the same side of the table.',
     walk: 'Your completed log, your one page summary filled in, and the words written down. And with this said plainly, because it matters more than anything else in the week: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Your job is to walk in with better information than you have ever had.',
     walkLabel: 'You walk away with:',
   },
@@ -249,18 +232,18 @@ const TIERS = [
     kicker: 'YOUR SEAT',
     price: CHALLENGE.SEAT_PRICE,
     priceLine: `${usd(CHALLENGE.SEAT_PRICE)} one time`,
-    underPrice: `That is $${SEAT_PER_NIGHT} a night. The ${usd(KIT_PRICE)} BP Reset Kit is included, so the kit alone is the price of the ticket and the five nights come with it. One payment, nothing after.`,
+    underPrice: `That is $${SEAT_PER_NIGHT} a night. The ${usd(KIT_PRICE)} BP Reset Kit is included, so the kit alone is the price of the ticket and the three nights come with it. One payment, nothing after.`,
     headline: 'Everything is included. There is no upgrade to buy.',
     cta: `Save my seat, ${usd(CHALLENGE.SEAT_PRICE)}`,
     accent: C.clay,
     items: [
-      `All five live nights with Joel on Zoom, ${CHALLENGE.DATE_RANGE_LABEL}, ${CHALLENGE.TIME_LABEL_CT}, ${CHALLENGE.NIGHT_LENGTH} each`,
+      `All three live nights with Joel on Zoom, ${CHALLENGE.DATE_RANGE_LABEL}, ${CHALLENGE.TIME_LABEL_CT}, ${CHALLENGE.NIGHT_LENGTH} each`,
       'Thirty minutes of live Q and A after every night. Cameras optional, microphone optional. Type your question if you would rather not speak.',
-      { lead: 'The 48-Hour Answer:', rest: ' any question you submit by 5:00pm CT gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not. Every question, every night, all five nights.' },
+      { lead: 'The 48-Hour Answer:', rest: ' any question you submit by 5:00pm CT gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not. Every question, every night, all three nights.' },
       'The replay of every night, teaching and Q and A both, posted by noon CT the next day and yours to keep',
-      'The 5-Night Workbook, one printable page per night, so nothing depends on you taking notes',
-      'The 5-Day Log sheet you fill in from Night 1 and hand to your doctor on Night 5',
-      'The Doctor Conversation Sheet used on Night 5: the opening words, what to ask about your medication, what to ask about your labs, and how to ask for a follow up date',
+      'The 3-Night Workbook, one printable page per night, so nothing depends on you taking notes',
+      'The 3-Day Log sheet you fill in from Night 1 and hand to your doctor on Night 3',
+      'The Doctor Conversation Sheet used on Night 3: the opening words, what to ask about your medication, what to ask about your labs, and how to ask for a follow up date',
       `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads, delivered the minute you register`,
     ],
   },
@@ -276,7 +259,7 @@ const FAQ = [
   },
   {
     q: 'Will any of this interfere with my blood pressure medication?',
-    a: 'That is exactly the right question to ask, and the honest answer is that I cannot answer it for you specifically, because I do not know your history, your kidneys, or your other prescriptions. What I can tell you is that everything on Nights 2, 3 and 4 is food, water, sleep, sunlight, walking and breathing. On Night 5 I teach you how to bring all of it to your doctor and ask directly. That conversation is the whole point of the week.',
+    a: 'That is exactly the right question to ask, and the honest answer is that I cannot answer it for you specifically, because I do not know your history, your kidneys, or your other prescriptions. What I can tell you is that everything on Night 2 is food, water, sleep, sunlight, walking and breathing. On Night 3 I teach you how to bring all of it to your doctor and ask directly. That conversation is the whole point of the week.',
   },
   {
     q: 'Do I have to be on camera?',
@@ -304,11 +287,11 @@ const FAQ = [
   },
   {
     q: 'Do I need to buy anything? Supplements, equipment, special food?',
-    a: 'No. You need a home blood pressure cuff, and if you already take readings at home you already own one. Everything about food is built from ordinary grocery store plants. There is no supplement I am going to tell you to buy at the end, and there is no product pitch on Night 5.',
+    a: 'No. You need a home blood pressure cuff, and if you already take readings at home you already own one. Everything about food is built from ordinary grocery store plants. There is no supplement I am going to tell you to buy at the end, and there is no product pitch on Night 3.',
   },
   {
     q: `What is the difference between this and the ${usd(KIT_PRICE)} kit?`,
-    a: 'The kit is the written protocol you follow at your own pace. This is five live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. Both tiers of the challenge include the kit, so you are not choosing between them.',
+    a: 'The kit is the written protocol you follow at your own pace. This is three live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. Your seat includes the kit, so you are not choosing between them.',
   },
   {
     q: 'What if it does not work for me?',
@@ -629,7 +612,7 @@ function Hero({ doorsClosed, chooseTier, goToWaitlist, left }) {
         </h1>
 
         <p style={{ margin: '12px 0 0', fontSize: 16.5, lineHeight: 1.5, color: C.inkSoft }}>
-          Five nights, live, with a nurse who spent twenty years in an ICU watching what these numbers actually do.
+          Three nights, live, with a nurse who spent twenty years in an ICU watching what these numbers actually do.
         </p>
 
         {/* Date and time block: the rest of the approved subheadline, promoted
@@ -645,7 +628,7 @@ function Hero({ doorsClosed, chooseTier, goToWaitlist, left }) {
         </div>
 
         <p style={{ margin: '12px 0 0', fontSize: 16, lineHeight: 1.44, fontWeight: 700, color: C.ink }}>
-          By Friday you will know what your number is made of, how to take a reading you can trust, and the exact words to bring to your next appointment.
+          By Thursday you will know what your number is made of, how to take a reading you can trust, and the exact words to bring to your next appointment.
         </p>
 
         <div style={{ marginTop: 14 }}>
@@ -787,7 +770,7 @@ function Problem() {
           }}
         >
           <p style={{ margin: 0, fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '1.12rem', lineHeight: 1.45, color: C.ink }}>
-            You have been managing one number for years. Five nights is enough to learn what is behind it.
+            You have been managing one number for years. Three nights is enough to learn what is behind it.
           </p>
         </blockquote>
 
@@ -818,19 +801,19 @@ function AuthorityShort() {
 }
 
 /* ==========================================================================
-   THE FIVE NIGHTS
-   Hormozi Value Equation: this section is the Time Delay crusher. Five
-   evenings, five finished things, a physical artifact on Friday.
+   THE THREE NIGHTS
+   Hormozi Value Equation: this section is the Time Delay crusher. Three
+   evenings, three finished things, a physical artifact on Thursday.
    ========================================================================== */
 function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
   return (
     <section id="nights" style={{ background: C.paperWarm, padding: '38px 0 36px', borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}` }}>
       <div className="chal-wrap">
         <Kicker>What happens each night</Kicker>
-        <H2>Five nights. Three pressures. One conversation.</H2>
+        <H2>Three nights. Three pressures. One conversation.</H2>
 
         <p style={{ margin: '0 0 20px', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
-          Your blood pressure has three everyday drivers. Stress. Sugar. Sodium. We call them the Three Pressures, and they pull on each other, which is why working just one of them never holds. Monday we find your real number. Tuesday, Wednesday and Thursday we take the pressures one at a time. Friday we put it all in your hand for your doctor. You walk away from every single night with something done, not something to think about.
+          Your blood pressure has three everyday drivers. Stress. Sugar. Sodium. We call them the Three Pressures, and they pull on each other, which is why working just one of them never holds. Tuesday we find your real number. Wednesday we take all three pressures together. Thursday we put it all in your hand for your doctor. You walk away from every single night with something done, not something to think about.
         </p>
 
         <div style={{ display: 'grid', gap: '0.9rem' }}>
@@ -870,7 +853,7 @@ function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
         </div>
 
         <p style={{ margin: '22px 0 0', textAlign: 'center', fontSize: '1.05rem', fontWeight: 800, color: C.ink }}>
-          Five nights. Five things done. Nothing to catch up on.
+          Three nights. Three things done. Nothing to catch up on.
         </p>
 
         <div style={{ marginTop: 16 }}>
@@ -885,7 +868,7 @@ function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
               style={{ background: C.clay, color: '#FFFFFF' }}
               onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_nights', CHALLENGE.SEAT_PRICE)}
             >
-              Save my seat for all five nights, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
+              Save my seat for all three nights, {usd(CHALLENGE.SEAT_PRICE)} <ArrowRight size={17} aria-hidden />
             </button>
           )}
         </div>
@@ -900,7 +883,7 @@ function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
    actually costs the buyer in time and friction.
    ========================================================================== */
 const VALUE_ROWS = [
-  { k: 'One hour a night', v: `${CHALLENGE.NIGHT_LENGTH} on Zoom, five nights, then the week is over.` },
+  { k: 'One hour a night', v: `${CHALLENGE.NIGHT_LENGTH} on Zoom, three nights, then the week is over.` },
   { k: 'From your own chair', v: 'Camera off, microphone off, whatever you are already wearing.' },
   { k: 'Nothing to buy', v: 'The home cuff you already own. Ordinary grocery store plants. No supplements.' },
   { k: 'Nothing to catch up on', v: 'One action per night, sized to the time you already spend.' },
@@ -946,7 +929,7 @@ function Seats({ doorsClosed, chooseTier, goToWaitlist, activeTier, checkoutStat
           Pick your seat.
         </h2>
         <p style={{ margin: '0 0 22px', fontSize: 15, lineHeight: 1.6, color: 'rgba(251,248,241,0.82)' }}>
-          Both tiers get all five live nights and all five replays. Both include the full 10-Day BP Reset Kit, which is the kit this site sells on its own for {usd(KIT_PRICE)}. The difference is whether you want to ask me questions directly.
+          Your seat includes all three live nights and all three replays, plus the full 10-Day BP Reset Kit, which is the kit this site sells on its own for {usd(KIT_PRICE)}. Everything is included. There is nothing else to buy.
         </p>
 
         <div className="chal-tiers">
@@ -1125,7 +1108,7 @@ function PriceReasoning() {
             Why it costs what it costs.
           </h3>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
-            A founding seat is {usd(CHALLENGE.SEAT_PRICE)}, and it includes the 10-Day BP Reset Kit, all {KIT_FILE_COUNT} documents, which sells on this site for exactly {usd(KIT_PRICE)} on its own. So the kit is the whole ticket price and the five live nights ride along with it. The next cohort is {usd(CHALLENGE.NEXT_COHORT_PRICE)}, and I would rather fill this first room than protect the price.
+            A founding seat is {usd(CHALLENGE.SEAT_PRICE)}, and it includes the 10-Day BP Reset Kit, all {KIT_FILE_COUNT} documents, which sells on this site for exactly {usd(KIT_PRICE)} on its own. So the kit is the whole ticket price and the three live nights ride along with it. The next cohort is {usd(CHALLENGE.NEXT_COHORT_PRICE)}, and I would rather fill this first room than protect the price.
           </p>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
             There is no third tier, no upsell during the calls, and nothing here renews. One payment, and the week is yours.
@@ -1200,7 +1183,7 @@ function AuthorityLong({ goToSeats }) {
             I left the bedside to teach this because I got tired of meeting people at the worst possible moment, when everything I knew arrived ten years too late to be useful to them.
           </DarkBody>
           <DarkBody>
-            Five nights is early. Five nights is useful. That is why I am doing it live instead of writing another PDF.
+            Three nights is early. Three nights is useful. That is why I am doing it live instead of writing another PDF.
           </DarkBody>
         </div>
 
@@ -1246,7 +1229,7 @@ function Guarantee({ doorsClosed, chooseTier, goToWaitlist }) {
           <>
             Once Night 1 has happened I cannot un-hold a live call, so here is what replaces a blanket refund after that point.
             <br /><br />
-            Do the work. That means: be on all five nights or watch all five replays, and email me your completed 5-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is the thing I am asking you to build anyway, and I tell you where to send it on Night 1.
+            Do the work. That means: be on all three nights or watch all three replays, and email me your completed 3-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is the thing I am asking you to build anyway, and I tell you where to send it on Night 1.
             <br /><br />
             If you did that and you still feel the week was not worth {usd(CHALLENGE.SEAT_PRICE)}, reply REFUND by {CHALLENGE.REFUND_BY_LABEL} and I send back the full {usd(CHALLENGE.SEAT_PRICE)}. You keep the kit. You keep the workbook. You keep the replays. I do not ask you to prove anything else and I do not ask you why.
           </>
@@ -1542,20 +1525,20 @@ function Close({ doorsClosed, chooseTier, goToWaitlist }) {
             lineHeight: 1.12, letterSpacing: '-0.02em', margin: '0 0 18px', color: C.cream,
           }}
         >
-          Five nights. Then you know.
+          Three nights. Then you know.
         </h2>
 
         <div style={{ textAlign: 'left' }}>
           <DarkBody>Here is what I want for you, and I am going to say it as plainly as I know how.</DarkBody>
           <DarkBody>
-            I want you to sit down at the end of next Friday with a piece of paper in your hand. Five days of your own readings, taken correctly, at the same times, in your own home. Underneath them, three things you changed and why. And down at the bottom, in your own handwriting, the questions you are going to ask at your next appointment.
+            I want you to sit down at the end of next Thursday with a piece of paper in your hand. Three days of your own readings, taken correctly, at the same times, in your own home. Underneath them, three things you changed and why. And down at the bottom, in your own handwriting, the questions you are going to ask at your next appointment.
           </DarkBody>
           <DarkBody>
             Not hoping. Not guessing. Not sitting there while somebody reads a number off a machine and writes something down without telling you what it means.
           </DarkBody>
           <DarkBody>Prepared. For the first time in years.</DarkBody>
           <DarkBody>
-            That is the whole thing. That is what five evenings buys you. Whether your number does anything at all in that week is between you, your body, and your doctor, and I will never promise you otherwise. But walking in prepared is entirely within your reach, and it starts Monday at seven.
+            That is the whole thing. That is what three evenings buys you. Whether your number does anything at all in that week is between you, your body, and your doctor, and I will never promise you otherwise. But walking in prepared is entirely within your reach, and it starts Tuesday at seven.
           </DarkBody>
           <DarkBody>I have watched a lot of people meet this too late. Not you. Not this time.</DarkBody>
           <DarkBody>I will see you Monday night.</DarkBody>
