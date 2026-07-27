@@ -1115,6 +1115,77 @@ export default async function handler(req, res) {
 //     if someone bails repeatedly)
 //   - Also enrolls them in `drip:*` KV so they get the educational drip
 //     starting tomorrow morning even if they don't click back to buy
+// 2026-07-26 — OWNERSHIP GUARD for cart recovery.
+//
+// This is a SHARED Stripe account: BraveWorks BP, RestoreHER, both SVUTU teas,
+// chinhair, the Engine and ERQuiz all mint sessions on it. Without this, every
+// abandoner across every brand would be emailed a BraveWorks "$17 BP kit"
+// recovery from joel@bpquiz.com. In the 60 days before this shipped, 32 of 236
+// email-bearing expired sessions were foreign (svutu-tea 12, satin 1,
+// restoreher-replay 1, untagged 13).
+//
+// This is a POSITIVE ALLOWLIST, deliberately not the FOREIGN_FUNNELS denylist
+// used on the completion path above. That set contains 'braveworks-bp' (foreign
+// to THIS file's completion handler, because triangle-webhook.js owns it), and
+// 196 of those same 236 sessions carry exactly that funnel. Reusing it here
+// would skip 83% of the people we are trying to recover.
+//
+// Order of evidence: explicit brand/funnel metadata first, then the return
+// domain, which resolved 99.8% of charges in the 2026-07-26 revenue analysis.
+function isBraveWorksBpSession(session) {
+  const md = session.metadata || {};
+  const blob = `${md.brand || ''} ${md.funnel || ''} ${md.venture || ''} ${md.offer || ''} ${md.slug || ''}`.toLowerCase();
+
+  // Anything positively identifying another venture is out, no matter what else
+  // the session says.
+  if (/restoreher|everydaynurse|annie|satin|chinhair|svutu|engine|erquiz|samson/.test(blob)) {
+    return false;
+  }
+  if (/braveworks-bp|bpquiz|blood-pressure|blood-sugar|cortisol|triangle|bp-reset|challenge/.test(blob)) {
+    return true;
+  }
+  // Untagged legacy sessions: fall back to where Stripe was told to return the
+  // buyer. bpquiz.com / bpcures.com are ours; anything else is not.
+  const urls = `${session.success_url || ''} ${session.cancel_url || ''}`.toLowerCase();
+  if (/restoreherhormones|everydaynurse|chinhair|hormoneteas|erquiz/.test(urls)) return false;
+  return /bpquiz\.com|bpcures\.com/.test(urls);
+}
+
+// Recovery copy has to match what they actually walked away from. A $1,997
+// /allin abandoner being told "your $17 kit is still here" reads as a mistake
+// and burns the lead. Amounts are the session's own total, in cents.
+function recoveryOfferFor(session) {
+  const cents = Number(session.amount_total || 0);
+  if (cents >= 29700) {
+    return {
+      band: 'high',
+      subject: 'You were looking at working with me directly',
+      lead: 'You started checking out for one of the programs where I build the plan with you, and did not finish.',
+      cta: 'https://bpquiz.com/coaching',
+      ctaLabel: 'Pick that back up',
+      body: 'No pressure at all. These are the ones people think hardest about, and they should. If something specific stopped you, a question about whether it fits your situation or what it actually involves, hit reply and ask me. I answer these myself.',
+    };
+  }
+  if (cents >= 4000) {
+    return {
+      band: 'mid',
+      subject: 'Your order is still sitting there',
+      lead: 'You started a checkout on bpquiz.com and did not finish.',
+      cta: 'https://bpquiz.com/',
+      ctaLabel: 'Finish where you left off',
+      body: 'No worries, life gets in the way. It is all still there whenever you are ready. If a question stopped you, hit reply and ask me. I read every one of these.',
+    };
+  }
+  return {
+    band: 'kit',
+    subject: 'Your BP Reset Kit is still here',
+    lead: 'You started a checkout for the BP Reset Kit but did not finish.',
+    cta: 'https://bpquiz.com/',
+    ctaLabel: 'Get the kit',
+    body: 'No worries, life gets in the way. It is a $17 protocol I built for adults whose blood pressure has been creeping up despite doing everything they were told. Twenty years of ICU nursing condensed into a step by step reset across all three pressures: stress, sugar and sodium. If a question stopped you, hit reply. I read every email myself.',
+  };
+}
+
 async function processCheckoutExpired(event) {
   const session = event.data?.object || {};
   const email = (session.customer_details?.email || '').trim().toLowerCase();
@@ -1122,6 +1193,14 @@ async function processCheckoutExpired(event) {
   if (!email || !email.includes('@')) {
     return { recovered: false, reason: 'no_email_captured' };
   }
+
+  // Never email another venture's abandoner from joel@bpquiz.com.
+  if (!isBraveWorksBpSession(session)) {
+    console.log(`stripe-webhook: cart-recovery SKIPPED, not a BraveWorks BP session (${session.id})`);
+    return { recovered: false, reason: 'foreign_funnel' };
+  }
+
+  const offer = recoveryOfferFor(session);
 
   // 2026-05-25 — guard against the "paid customer gets abandoned-cart email"
   // bug. Stripe fires checkout.session.expired on any unpaid session, even
@@ -1181,22 +1260,36 @@ async function processCheckoutExpired(event) {
     console.warn('stripe-webhook: cart-recovery dedupe check failed (continuing)', err.message);
   }
 
-  // Enroll into the drip:* nurture if they're not already there.
-  // Mirrors the lead-magnet enrollment pattern (2026-05-13).
+  // Enroll into the CURRENT nurture machine.
+  //
+  // 2026-07-26 fix: this used to write `drip:<email>`, the LEGACY store. That
+  // store still drives drip-cron's retired 30-day Pressure Triangle arc, so
+  // every recovered abandoner was being queued into a dead sequence with
+  // lastSentDay:0. The live machine is `bwbp:drip:*` (triangle-lead-cron).
+  //
+  // Enrich only, exactly like _masterclass-enroll.js: never reset an existing
+  // record's state, never demote a buyer, never restart their timer. Someone
+  // who abandoned a cart may well already be mid-sequence.
   try {
-    const dripKey = `drip:${email}`;
+    const dripKey = `bwbp:drip:${email}`;
     const existing = await kv.get(dripKey);
     if (!existing) {
       await kv.set(dripKey, {
         email,
         firstName: '',
-        cohort: 'cart-abandoned',
+        state: 'lead',
+        stateEnteredAt: new Date().toISOString(),
         enrolledAt: new Date().toISOString(),
-        lastSentDay: 0,
         optedIn: true,
         source: 'cart-abandoned',
-        tags: ['cart-abandoned', 'bpquiz-checkout'],
+        tags: ['cart-abandoned', 'bpquiz-checkout', `band-${offer.band}`],
       });
+    } else {
+      // Already known. Add the tag for segmentation, touch nothing else.
+      const tags = Array.isArray(existing.tags) ? existing.tags : [];
+      if (!tags.includes('cart-abandoned')) {
+        await kv.set(dripKey, { ...existing, tags: [...tags, 'cart-abandoned'] });
+      }
     }
   } catch (err) {
     console.warn('stripe-webhook: cart-abandoned drip enrollment failed', err.message);
@@ -1204,17 +1297,15 @@ async function processCheckoutExpired(event) {
 
   // Send recovery email — warm, no shame, single CTA
   try {
-    const html = renderCartRecoveryEmail();
+    const html = renderCartRecoveryEmail(offer);
     const text = `Hey,
 
-You started a checkout for the BP Reset Kit but didn't finish. No worries — life gets in the way.
+${offer.lead}
 
-The kit's still here whenever you're ready:
-https://bpquiz.com/
+${offer.ctaLabel}:
+${offer.cta}
 
-It's a $17 protocol I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step reset that calms all three corners of the Triangle: Stress, Sugar, and Sodium.
-
-If you had a question that stopped you, hit reply — I read every email myself.
+${offer.body}
 
 Joel Polley, RN
 BraveWorks
@@ -1223,7 +1314,7 @@ BraveWorks
       from: FROM_CUSTOMER,
       to: email,
       replyTo: REPLY_TO_CUSTOMER,
-      subject: 'You got distracted — your BP Reset Kit is still here',
+      subject: offer.subject,
       html,
       text,
     });
@@ -1240,7 +1331,7 @@ BraveWorks
       subject: `[stripe-event] cart-expired (recovery sent) — ${email}`,
       text: `Checkout session expired without payment.
 Email: ${email}
-Recovery email + drip enrollment fired.
+Recovery email + drip enrollment fired. Band: ${offer.band}. Amount: ${((session.amount_total||0)/100).toFixed(2)}
 Session: ${session.id}
 Created: ${new Date(session.created * 1000).toISOString()}
 `,
@@ -1252,7 +1343,10 @@ Created: ${new Date(session.created * 1000).toISOString()}
   return { recovered: true, email };
 }
 
-function renderCartRecoveryEmail() {
+// Takes the banded offer from recoveryOfferFor() so the HTML says the same
+// thing as the plain-text part. It used to hardcode the $17 kit, which meant a
+// $1,997 abandoner was told their kit was waiting.
+function renderCartRecoveryEmail(offer) {
   return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#FBF8F1;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#2C2A26;line-height:1.6;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;">
     <tr><td align="center" style="padding:24px 16px;">
@@ -1263,21 +1357,15 @@ function renderCartRecoveryEmail() {
           </div>
           <p style="font-size:17px;margin:18px 0 14px;">Hey,</p>
           <p style="font-size:15px;margin:0 0 14px;">
-            You started a checkout for the BP Reset Kit but didn't finish. No worries — life gets in the way.
-          </p>
-          <p style="font-size:15px;margin:0 0 18px;">
-            The kit's still here whenever you're ready:
+            ${offer.lead}
           </p>
           <p style="margin:0 0 24px;text-align:center;">
-            <a href="https://bpquiz.com/" style="display:inline-block;padding:14px 28px;background:#3F5A3C;color:#FBF8F1;text-decoration:none;border-radius:8px;font-size:16px;font-weight:600;">
-              Finish your order →
+            <a href="${offer.cta}" style="display:inline-block;padding:14px 28px;background:#3F5A3C;color:#FBF8F1;text-decoration:none;border-radius:8px;font-size:16px;font-weight:600;">
+              ${offer.ctaLabel} →
             </a>
           </p>
           <p style="font-size:15px;margin:0 0 14px;">
-            It's a <strong>$17 protocol</strong> I built for adults whose blood pressure has been creeping up despite "doing everything right." Twenty years of ICU experience condensed into a step-by-step reset that calms all three corners of the Triangle: Stress, Sugar, and Sodium.
-          </p>
-          <p style="font-size:15px;margin:0 0 14px;">
-            If you had a question that stopped you, hit reply — I read every email myself.
+            ${offer.body}
           </p>
           <p style="font-size:15px;margin:0 0 4px;font-weight:600;">Joel Polley, RN</p>
           <p style="font-size:13px;margin:0 0 24px;color:#5B564C;font-style:italic;">BraveWorks</p>
