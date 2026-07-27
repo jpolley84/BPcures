@@ -282,6 +282,19 @@ export default function PayPage() {
               // older server builds, so this is safe either way.
               body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
             });
+            // 409 already_purchased: the duplicate-purchase guard
+            // (api/_dupe-guard.js) saw a completed paid order for this email
+            // and tier in the last 30 minutes. Surface the real reason instead
+            // of the generic "did not load" message, which previously led
+            // buyers to try again and get charged twice.
+            if (res.status === 409) {
+              const dupe = await res.json().catch(() => ({}));
+              if (dupe.error === 'already_purchased') {
+                const e = new Error('already_purchased');
+                e.userMessage = dupe.message;
+                throw e;
+              }
+            }
             if (!res.ok) throw new Error('start_failed');
             const data = await res.json();
             if (!data.clientSecret) throw new Error('no_secret');
@@ -298,7 +311,11 @@ export default function PayPage() {
         track('checkout_form_mounted', { funnel_version: funnelVersion, src, tier });
       } catch (err) {
         setMounted(false);
-        setError('The order form did not load. Your card was NOT charged. Tap below to try again.');
+        setError(
+          err?.message === 'already_purchased' && err.userMessage
+            ? err.userMessage
+            : 'The order form did not load. Your card was NOT charged. Tap below to try again.',
+        );
         track('checkout_start_failed', {
           funnel_version: funnelVersion,
           src,

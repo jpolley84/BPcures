@@ -19,6 +19,7 @@
 // ZERO secrets in the client. Secrets come from process.env.
 
 import Stripe from 'stripe';
+import { recentPurchase } from './_dupe-guard.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -156,6 +157,28 @@ export default async function handler(req, res) {
       ? req.body.ab_variant
       : '';
   const abMeta = abVariant ? { ab_home_variant: abVariant } : {};
+
+  // ── Duplicate-purchase guard (2026-07-27) ──
+  // If this email completed a paid purchase of this same tier in the last 30
+  // minutes, do not mint another Checkout Session. See api/_dupe-guard.js for
+  // the dispute data that motivated this: 43% of lifetime disputes traced to
+  // double charges, and each chargeback costs the sale plus a ~$15 fee plus
+  // dispute-ratio damage.
+  //
+  // Fail-open by construction: recentPurchase() returns null on any KV error,
+  // so an infrastructure problem can never block a paying customer. It also
+  // requires an email, so anonymous checkouts are unaffected.
+  if (email) {
+    const prior = await recentPurchase(email, tier);
+    if (prior) {
+      return res.status(409).json({
+        error: 'already_purchased',
+        message:
+          'It looks like this order just went through. Check your email for the receipt and your download link. If you meant to buy a second one, write to braveworksrn@gmail.com and we will set it up by hand.',
+        purchasedAt: prior.at,
+      });
+    }
+  }
 
   // ── $297 case review (paid in full OR 3-pay) ──
   // Both land on /case-review-confirmed. The metadata markers (offer + plan,

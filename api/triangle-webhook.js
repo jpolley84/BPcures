@@ -31,6 +31,7 @@ import {
 import { modulesForTier, bundleNameForTier, bundleLabelForTier } from './_kit-manifest.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { capturePurchase } from './_triangle-posthog.js';
+import { markPurchase } from './_dupe-guard.js';
 
 // ─── AMOUNT_TO_TIER (3-tier ladder) ───────────────────────────────────
 // cents → tier key. The ladder is cumulative good-better-best. Amount-routing
@@ -1828,6 +1829,18 @@ async function processCheckoutCompleted(event) {
   if (!customerEmail) {
     console.error('stripe-webhook: no customer_details.email on session', session.id);
     return { action: 'skipped', reason: 'no_email' };
+  }
+
+  // Duplicate-purchase guard (2026-07-27): record that this email just bought
+  // this tier, so api/create-embedded-checkout.js refuses to mint a second
+  // Checkout Session for the same thing inside the next 30 minutes. See
+  // api/_dupe-guard.js. The kit branch stamps metadata.tier, the newer branches
+  // stamp metadata.offer, so read both. Best-effort and awaited only briefly:
+  // markPurchase swallows its own errors, so this can never fail the webhook or
+  // delay fulfillment below.
+  const dupeTier = session.metadata?.tier || session.metadata?.offer || '';
+  if (dupeTier) {
+    await markPurchase(customerEmail, dupeTier, session.id);
   }
 
   // ── $1,997 "All In" 90-Day Program check (BEFORE the amount lookup) ──
