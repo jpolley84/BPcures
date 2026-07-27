@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, ArrowRight, Check, Compass } from 'lucide-react';
+import { X, ArrowRight, Check, BookOpen } from 'lucide-react';
 
-// Exit-intent / dwell popup. The homepage sells the $17 kit hard; this is the
-// soft landing for a visitor about to bounce. Instead of asking for the sale
-// again, it offers the FREE 90-second quiz (a lower-commitment entry that still
-// captures the email and routes back to the $17 kit on its results page).
-// Same-tab navigation to /quiz. Fresh localStorage key so visitors who saw the
-// prior Skool popup still get this one once.
-const QUIZ_URL = '/quiz?utm_source=exit_intent&utm_medium=popup&utm_campaign=quiz';
-const POPUP_KEY = 'quizExitPopupShown';
+// Exit-intent / dwell popup. Variant A of the homepage sells the $17 kit hard;
+// this is the soft landing for a visitor about to bounce. Instead of asking for
+// the sale again, it offers the FREE 101 Foods and Herbs guide (the same lead
+// magnet variant B leads with), which captures the email and drops the visitor
+// into the nurture sequence that sells the $17 kit later. Same-tab navigation to
+// /101foods (the guide opt-in). Fresh localStorage key so visitors who saw the
+// prior quiz popup still get this one once.
+const GUIDE_URL = '/101foods?utm_source=exit_intent&utm_medium=popup&utm_campaign=foods101';
+const POPUP_KEY = 'foodsGuideExitPopupShown';
 
 const STACK = [
-  'Which Pressure is loudest for you: Stress, Sugar, or Pipe',
-  'Your personalized first step, built from your answers',
-  '4 questions, about 90 seconds, completely free',
+  '101 everyday foods, kitchen herbs, and caffeine free teas',
+  'Grouped so you know exactly what goes in the cart this week',
+  'From a nurse, free, in your inbox in about a minute',
 ];
 
 export default function ExitIntentPopup() {
@@ -41,8 +42,8 @@ export default function ExitIntentPopup() {
 
   const close = () => setVisible(false);
 
-  const goToQuiz = () => {
-    window.location.href = QUIZ_URL;
+  const goToGuide = () => {
+    window.location.href = GUIDE_URL;
   };
 
   return (
@@ -75,20 +76,20 @@ export default function ExitIntentPopup() {
                 background: 'linear-gradient(135deg, var(--sage-soft) 0%, var(--clay-soft, #f4e8e1) 100%)',
                 display: 'grid', placeItems: 'center',
               }}>
-                <Compass size={30} style={{ color: 'var(--clay)' }} />
+                <BookOpen size={30} style={{ color: 'var(--clay)' }} />
               </div>
 
               <span className="kicker kicker-dot" style={{ color: 'var(--clay)' }}>Before you go</span>
 
               <h2 className="display-s" style={{ marginTop: '0.6rem', marginBottom: '0.5rem', lineHeight: 1.2 }}>
-                Find your loudest <em className="ital-display" style={{ color: 'var(--clay)' }}>Pressure</em>
+                Get the free <em className="ital-display" style={{ color: 'var(--clay)' }}>101</em> Foods &amp; Herbs guide
               </h2>
 
               <p style={{
                 color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.5,
                 marginBottom: '1.1rem', maxWidth: '34ch', marginInline: 'auto',
               }}>
-                Not sure where to start? Take the free 90-second quiz and see which of the 3 Pressures is driving your numbers.
+                The plant foods, kitchen herbs, and caffeine free teas a nurse would point to first for steadier blood pressure. Yours free, nothing to buy.
               </p>
 
               <ul style={{
@@ -113,16 +114,16 @@ export default function ExitIntentPopup() {
               }}>
                 <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--ink)', lineHeight: 1.5 }}>
                   <strong>100% free.</strong><br />
-                  Your result on the very next screen.
+                  In your inbox in about a minute.
                 </p>
               </div>
 
               <button
-                onClick={goToQuiz}
+                onClick={goToGuide}
                 className="btn btn-ink"
                 style={{ width: '100%', fontSize: '1.05rem', padding: '1rem 1.5rem' }}
               >
-                Take the free quiz
+                Send me the free guide
                 <ArrowRight size={18} className="arrow" />
               </button>
 
@@ -130,7 +131,7 @@ export default function ExitIntentPopup() {
                 fontSize: '0.75rem', color: 'var(--muted)',
                 textAlign: 'center', marginTop: '0.75rem', lineHeight: 1.5,
               }}>
-                Free and private. AND not instead of your doctor.
+                Free and private. Education alongside your doctor, never instead.
               </p>
             </div>
           </motion.div>
