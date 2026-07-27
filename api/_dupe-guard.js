@@ -31,6 +31,19 @@
 // is keyed on (email, tier) and is only consulted by the embedded-checkout
 // endpoint, so that flow is untouched.
 //
+// PHYSICAL TEA TIERS ARE EXEMPT ENTIRELY. Do not remove the exemption.
+// An upsell-safety audit on 2026-07-27 found that the "it only affects the
+// one-click" reasoning above was NOT sufficient: bpquiz.com/tea's own buy
+// buttons point at /pay?tier=tea-48 (public/tea/index.html:436,450,822, with
+// data-pay empty, so no payment-link fallback exists there). The embedded
+// checkout is therefore the ONLY manual route to a second pouch, and the
+// /tea-thanks one-click cannot serve a buyer who wants pouch #2 shipped to a
+// different address, because it reuses the first order's shipping. Guarding
+// tea would have silently killed real $48 sales on ~44% of 30d revenue.
+// The exemption list lives in api/create-embedded-checkout.js
+// (DUPE_GUARD_EXEMPT_TIERS). markPurchase still writes tea keys; they are
+// simply never consulted, which keeps this module free of product knowledge.
+//
 // FAIL-OPEN. Every function here swallows its own errors and returns the
 // permissive answer. A KV outage must never block a paying customer. The cost
 // of a false block (a lost sale, silently) is strictly worse than the cost of a

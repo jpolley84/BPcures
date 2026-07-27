@@ -21,6 +21,14 @@
 import Stripe from 'stripe';
 import { recentPurchase } from './_dupe-guard.js';
 
+// Tiers the duplicate-purchase guard must NEVER block. These are physical
+// consumables that customers really do buy twice in a row (a second pouch, or
+// the same pouch shipped to someone else). See the guard block inside the
+// handler for the full reasoning.
+const DUPE_GUARD_EXEMPT_TIERS = new Set([
+  'tea-48', 'tea-120', 'tea-satin-48', 'tea-satin-120',
+]);
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // 2026-07-01 (Joel): $17 is the PERMANENT price, "leave it at what it is forever."
@@ -159,6 +167,20 @@ export default async function handler(req, res) {
   const abMeta = abVariant ? { ab_home_variant: abVariant } : {};
 
   // ── Duplicate-purchase guard (2026-07-27) ──
+  // EXEMPTION (added same day, after an upsell-safety audit): physical
+  // consumables are legitimately bought twice in a row. bpquiz.com/tea's buy
+  // buttons point at /pay?tier=tea-48 (public/tea/index.html:436,450,822 —
+  // data-pay is empty, so there is NO payment-link fallback on that page), which
+  // means the embedded checkout is the ONLY manual route to a second pouch.
+  // A buyer who wants pouch #2 sent to a different address cannot use the
+  // /tea-thanks one-click at all (it reuses the first order's shipping), so
+  // guarding tea would have destroyed a real $48 sale on the tier that is ~44%
+  // of 30d revenue.
+  //
+  // Every dispute that motivated this guard was the $17 DIGITAL kit
+  // (see api/_dupe-guard.js). Digital goods have no reason to be bought twice
+  // in 30 minutes; tea does. Losing a real sale is the worse error, which is
+  // the same reasoning behind the guard being fail-open.
   // If this email completed a paid purchase of this same tier in the last 30
   // minutes, do not mint another Checkout Session. See api/_dupe-guard.js for
   // the dispute data that motivated this: 43% of lifetime disputes traced to
@@ -168,7 +190,7 @@ export default async function handler(req, res) {
   // Fail-open by construction: recentPurchase() returns null on any KV error,
   // so an infrastructure problem can never block a paying customer. It also
   // requires an email, so anonymous checkouts are unaffected.
-  if (email) {
+  if (email && !DUPE_GUARD_EXEMPT_TIERS.has(tier)) {
     const prior = await recentPurchase(email, tier);
     if (prior) {
       return res.status(409).json({
