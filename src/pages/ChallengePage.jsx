@@ -10,10 +10,13 @@
 //   - NO seat cap. No "only 40 spots". No "12 left".
 //   - NO tier shown as SOLD OUT.
 //   - NO invented value tags. The only dollar figures on this page are prices
-//     something has actually sold for ($17 kit, $47 GA, $97 VIP) and arithmetic
+//     something has actually sold for ($17 kit and founding ticket, $47 VIP
+//     upgrade) or genuinely will sell for ($97 next cohort), plus arithmetic
 //     derived from them. KIT_STACK_TOTAL ($209) is deliberately NOT used as an
-//     anchor: it is a sum of per item value tags, which is exactly the pattern
-//     the audit spent a week removing.
+//     anchor: it is a sum of per item value tags, and the 2026-07-25 audit found
+//     at least two of those tags overstate the real price (Overmedicated Boomers
+//     tagged $17 against a $9.99 live price, Cook For Life tagged $27 while it
+//     is given away). Do not reach for it here.
 //   - NO fake deadline. There is ONE real deadline and it is honest: a live
 //     Monday night call cannot be attended on Tuesday. The countdown targets
 //     that instant and degrades to a closed-doors waitlist when it passes.
@@ -76,11 +79,25 @@ const CHALLENGE = {
   TIME_LABEL_ET: '8:00pm ET',
   NIGHT_LENGTH: 'about 60 minutes',
 
-  // 2026-07-26 (Joel): "it will be 97 for the 5 day challenge". ONE seat, one
-  // price. The two-tier GA/VIP split is gone; the single seat carries what VIP
-  // carried, since that is what $97 was buying.
-  SEAT_PRICE: 97,
+  // 2026-07-26 (Joel, revised): FOUNDING COHORT pricing. The ticket is $17 for
+  // this first cohort and $97 for the next one.
+  //
+  // NEXT_PRICE is deliberately a FUTURE price, not a struck past one. The $97
+  // has never been charged, so rendering it as a crossed-out "was" would be a
+  // phantom compare-at, which is the exact 16 CFR 233 finding the 2026-07-25
+  // audit raised three times on this site and the reason this route was retired
+  // on 2026-07-04. Stated as "the next cohort is $97" it is simply true, and it
+  // stays true only if cohort 2 actually sells at $97. Do not restyle this as a
+  // strikethrough without changing what it claims.
+  SEAT_PRICE: 17,
+  NEXT_COHORT_PRICE: 97,
   SEAT_TIER: 'challenge-ga',
+
+  // The immediate post-purchase upgrade. Live Q and A after every night plus
+  // every replay, yours to keep. Sold ONLY on /challenge-upgrade, never on this
+  // page, so the first decision stays a single clean yes.
+  VIP_PRICE: 47,
+  VIP_TIER: 'challenge-vip',
 
   LOG_DUE_LABEL: 'Monday, August 10',
   REFUND_BY_LABEL: 'August 19',
@@ -89,9 +106,11 @@ const CHALLENGE = {
 
 const NIGHT_COUNT = 5;
 const usd = (n) => '$' + Number(n).toLocaleString('en-US');
-const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 19.40
-const SEAT_LESS_KIT = CHALLENGE.SEAT_PRICE - KIT_PRICE;                    // 80
-const SEAT_LESS_KIT_PER_NIGHT = Math.round(SEAT_LESS_KIT / NIGHT_COUNT);   // 16
+const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 3.40
+// At founding-cohort pricing the ticket costs exactly what the kit costs on its
+// own, so "price minus the kit" is zero and the old per-night-after-kit maths
+// no longer says anything. The honest framing is simpler and stronger: the kit
+// alone is the whole ticket price, and the five nights ride along with it.
 
 /* ── Stripe: one instance at module load (same pattern as PayPage / AllInPage).
       Null when the publishable key is unset, which routes straight to the
@@ -230,7 +249,7 @@ const TIERS = [
     kicker: 'YOUR SEAT',
     price: CHALLENGE.SEAT_PRICE,
     priceLine: `${usd(CHALLENGE.SEAT_PRICE)} one time`,
-    underPrice: `That is $${SEAT_PER_NIGHT} a night, and ${usd(KIT_PRICE)} of it is a kit you keep forever. One payment, nothing after the five nights.`,
+    underPrice: `That is $${SEAT_PER_NIGHT} a night. The ${usd(KIT_PRICE)} BP Reset Kit is included, so the kit alone is the price of the ticket and the five nights come with it. One payment, nothing after.`,
     headline: 'Everything is included. There is no upgrade to buy.',
     cta: `Save my seat, ${usd(CHALLENGE.SEAT_PRICE)}`,
     accent: C.clay,
@@ -1106,7 +1125,7 @@ function PriceReasoning() {
             Why it costs what it costs.
           </h3>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
-            A seat is {usd(CHALLENGE.SEAT_PRICE)} and includes the {usd(KIT_PRICE)} kit, so the five live nights come out to {usd(SEAT_LESS_KIT)}. That is {usd(SEAT_LESS_KIT_PER_NIGHT)} a night for an hour with a nurse, and a written answer to every question you ask.
+            A founding seat is {usd(CHALLENGE.SEAT_PRICE)}, and it includes the 10-Day BP Reset Kit, all {KIT_FILE_COUNT} documents, which sells on this site for exactly {usd(KIT_PRICE)} on its own. So the kit is the whole ticket price and the five live nights ride along with it. The next cohort is {usd(CHALLENGE.NEXT_COHORT_PRICE)}, and I would rather fill this first room than protect the price.
           </p>
           <p style={{ margin: '12px 0 0', fontSize: 15, lineHeight: 1.65, color: C.inkSoft }}>
             There is no third tier, no upsell during the calls, and nothing here renews. One payment, and the week is yours.
