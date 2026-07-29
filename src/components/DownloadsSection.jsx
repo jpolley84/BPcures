@@ -13,15 +13,12 @@
 
 import { Download, FileText } from 'lucide-react';
 
+// 2026-07-29: trimmed to the current ladder (Joel declutter). Legacy BP/
+// Cortisol/Blood Sugar PDFs removed from post-purchase surfaces; their files
+// still serve at /downloads/* for anyone with a direct link.
 const ALL_FILES = [
-  { name: 'BP Reset Day 1 + Full Challenge', file: 'bp-reset-day1-and-beyond.pdf', category: 'BP' },
   { name: 'BP Reset Kit (8-PDF zip)', file: 'bp-reset-kit.zip', category: 'BP' },
-  { name: 'BP Reset Book (full guide)', file: 'bp-reset-book.pdf', category: 'BP' },
   { name: 'The 10-Day Nurse\'s Reset Companion', file: 'bp-cures-10-day-reset.pdf', category: 'BP' },
-  { name: '10-Day Cortisol Cure', file: 'cortisol-cure-10-day.pdf', category: 'Cortisol' },
-  { name: 'Cortisol Day 1: Diagnosis', file: 'cortisol-day1-diagnosis.pdf', category: 'Cortisol' },
-  { name: '10-Day Blood Sugar Reset', file: 'blood-sugar-reset-10-day.pdf', category: 'Blood Sugar' },
-  { name: 'Blood Sugar Day 1', file: 'blood-sugar-day1.pdf', category: 'Blood Sugar' },
   { name: 'Cook For Life Cookbook', file: 'cook-for-life-cookbook.pdf', category: 'Kitchen' },
   { name: 'Overmedicated Boomers (bonus)', file: 'overmedicated-boomers.pdf', category: 'Bonus' },
 ];

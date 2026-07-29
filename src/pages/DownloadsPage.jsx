@@ -31,31 +31,9 @@ import TeaOffer from '../components/TeaOffer';
 const groups = [
   {
     title: 'Blood Pressure',
-    desc: 'Every BP protocol Joel publishes. Start with the Day 1 quick win and the master Reset Kit.',
+    desc: 'The full clinical Reset Kit in one download.',
     files: [
-      { name: 'BP Reset Day 1 + Full Challenge', desc: 'Day-by-day BP protocol with checklists. Start here.', file: 'bp-reset-day1-and-beyond.pdf' },
       { name: 'BP Reset Kit (8-PDF zip)', desc: 'The full clinical system: hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates.', file: 'bp-reset-kit.zip' },
-      { name: 'BP Reset Book (full deep-dive guide)', desc: 'The complete BP Reset book. Every protocol explained in depth.', file: 'bp-reset-book.pdf' },
-      { name: 'Master Blood Pressure Document', desc: 'The full protocol. What to take, when to take it, how much.', file: 'master-blood-pressure-document.pdf' },
-      { name: 'Top 10 Herbs Deep Dive', desc: 'Each herb matched to the drug it mimics, with dosages your doctor never learned in med school.', file: 'top-10-herbs-deep-dive.pdf' },
-      { name: 'White Coat Syndrome Guide', desc: 'Why your readings at the doctor are probably wrong, and the 2-minute trick nurses use to get real numbers.', file: 'white-coat-syndrome-guide.pdf' },
-      { name: 'Blood Pressure FAQ', desc: "25 questions you're too afraid to ask your doctor, answered plainly by a nurse who's heard them all.", file: 'blood-pressure-faq.pdf' },
-    ],
-  },
-  {
-    title: 'Cortisol',
-    desc: 'For the stress corner of the Triangle: Stress, Sugar, Sodium.',
-    files: [
-      { name: '10-Day Cortisol Cure (full protocol)', desc: 'Day-by-day cortisol reset with adrenal-recovery guide.', file: 'cortisol-cure-10-day.pdf' },
-      { name: 'Cortisol Day 1: Wired and Tired Diagnosis', desc: 'Self-diagnose your cortisol pattern. Day 1 of the protocol.', file: 'cortisol-day1-diagnosis.pdf' },
-    ],
-  },
-  {
-    title: 'Blood Sugar',
-    desc: 'For the glucose corner: insulin resistance, meal timing, food sequencing.',
-    files: [
-      { name: '10-Day Blood Sugar Reset (full protocol)', desc: 'Day-by-day glucose reset with herb stack + meal timing.', file: 'blood-sugar-reset-10-day.pdf' },
-      { name: 'Blood Sugar Day 1', desc: 'Day 1 of the blood sugar protocol. Quick win.', file: 'blood-sugar-day1.pdf' },
     ],
   },
   {
@@ -75,12 +53,10 @@ const TRIANGLE_CORNERS = [
   { key: 'sodium', label: 'Sodium' },
 ];
 
-// 2026-07-16 Annie-v2: the two extra quiz triggers, each its own 3-piece set
-// (not part of the Triangle; sold at the $17 corner tier).
-const EXTRA_TRIGGERS_LIST = [
-  { key: 'sleep', label: 'The Midnight Drift' },
-  { key: 'stillness', label: 'The Stillness Trigger' },
-];
+// 2026-07-16 Annie-v2 sleep/stillness trigger sets were removed from the
+// library on 2026-07-29 (Joel: declutter to the current Triangle ladder).
+// Their files still serve at /downloads/* for anyone with a direct link.
+const EXTRA_TRIGGERS_LIST = [];
 
 // Build the "Your Triangle Kit" groups from the manifest. Same {title, desc,
 // files:[{name, desc, href}]} shape the legacy groups use, except each file
