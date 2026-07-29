@@ -221,9 +221,17 @@ function App() {
               on the site (fabricated testimonials, phantom compare-at
               prices) and it was all stripped out.
 
-              2026-07-26 REBUILT and re-routed for the live 5-day cohort
-              starting Mon 2026-08-03, 7:00pm CT. It is back WITHOUT the
-              tactics that killed it. Rules for this route, permanently:
+              2026-07-26 REBUILT and re-routed for a live cohort. It is back
+              WITHOUT the tactics that killed it.
+
+              2026-07-28 REDESIGNED (Joel) onto the ivory/gold editorial
+              layout he supplied as an HTML comp, and re-scoped: THREE nights,
+              Tue to Thu 2026-08-04 to 06, 7:00pm to 8:00pm ET, two seats
+              ($17 GA, $47 VIP, VIP adding a Bonus Day on Sun 2026-08-09 at
+              11:00am ET). The comp came from Annie's Women of Power build;
+              only its DESIGN was ported. Never put her brand, her copy, or
+              her event's dates on this route. Rules for this route,
+              permanently:
                 - NO seat cap and no "X spots left" unless Joel confirms a
                   real, enforced cap.
                 - NO tier shown as SOLD OUT.

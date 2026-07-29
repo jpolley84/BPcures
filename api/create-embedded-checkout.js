@@ -70,9 +70,15 @@ const CASE_REVIEW_3PAY_PRICE =
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness']);
 
 // ─── The Three Pressures Challenge (bpquiz.com/challenge) ─────────────
-// 2026-07-27. Three live nights, Tue 2026-08-04 through Thu 2026-08-06,
-// 7:00pm CT. ONE seat at $17 founding (challenge-ga) = the 10-Day BP Reset Kit,
-// with the three nights riding along. GA/VIP split collapsed 2026-07-26.
+// 2026-07-28. Three live nights, Tue 2026-08-04 through Thu 2026-08-06,
+// 7:00pm to 8:00pm ET. TWO seats, both sold on /challenge:
+//   challenge-ga  $17 founding = the 10-Day BP Reset Kit with the three nights
+//                 riding along (the kit alone sells for $17).
+//   challenge-vip $47          = all of that plus a FOURTH live session, the
+//                 Bonus Day, Sunday 2026-08-09 at 11:00am ET.
+// The GA/VIP split was collapsed on 2026-07-26 and restored on 2026-07-28 with
+// this new VIP definition. VIP is no longer "live Q and A plus replays sold on
+// /challenge-upgrade": that page was never built, so VIP was sellable nowhere.
 //
 // DELIBERATELY NO HARDCODED FALLBACK PRICE ID. Every other offer in this file
 // carries `process.env.X || 'price_...'` because those prices exist and are
@@ -83,7 +89,13 @@ const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness'
 // and if it is absent or malformed, fail LOUD with a distinct error code the
 // page renders as its honest "checkout is not open yet" state.
 const CHALLENGE_COHORT = '2026-08-04';           // cohort id, also the Night 1 date
-const CHALLENGE_START_CT = '2026-08-04T19:00:00'; // Night 1, 7:00pm CT
+// 2026-07-28 (Joel): the call moved to 7:00pm EASTERN (was 7:00pm CT, which is
+// 8:00pm ET). Both wall clocks below describe the SAME instant, and both are
+// stamped into Stripe metadata so a later reader does not have to guess which
+// zone an ambiguous string meant. Mirrored in src/pages/ChallengePage.jsx
+// (START_ISO_ET) and api/challenge-signup.js (startIsoEt).
+const CHALLENGE_START_ET = '2026-08-04T19:00:00'; // Night 1, 7:00pm ET
+const CHALLENGE_START_CT = '2026-08-04T18:00:00'; // the same instant, 6:00pm CT
 const CHALLENGE_PRICE_ENV = {
   'challenge-ga': 'CHALLENGE_GA_PRICE_ID',
   'challenge-vip': 'CHALLENGE_VIP_PRICE_ID',
@@ -393,6 +405,7 @@ export default async function handler(req, res) {
       tier,
       seat,
       cohort: CHALLENGE_COHORT,
+      cohort_start_et: CHALLENGE_START_ET,
       cohort_start_ct: CHALLENGE_START_CT,
       ...phMeta,
       ...abMeta,

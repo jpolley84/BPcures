@@ -1,11 +1,14 @@
 // api/challenge-signup.js — The Three Pressures Challenge, cohort 2026-08-04.
 //
 // Three live nights with Joel Polley, RN. Tuesday 2026-08-04 through Thursday
-// 2026-08-06, 7:00pm CT (8:00pm ET), about 60 minutes a night. ONE seat at $17
-// founding (2026-07-27, Joel; $97 next cohort). Sold from bpquiz.com/challenge
-// through api/create-embedded-checkout.js, tier key 'challenge-ga'.
-// Nights run Tue, Wed, Thu (Aug 4-6). The week ends Thursday, so no Sabbath
-// collision and no date is skipped.
+// 2026-08-06, 7:00pm to 8:00pm ET (6:00pm CT), about 60 minutes a night.
+// TWO seats, both sold from bpquiz.com/challenge through
+// api/create-embedded-checkout.js:
+//   'challenge-ga'   $17 founding (2026-07-27, Joel; $97 next cohort)
+//   'challenge-vip'  $47, adds the Bonus Day, Sunday 2026-08-09, 11:00am ET
+// Nights run Tue, Wed, Thu (Aug 4-6). The week ends Thursday and the Bonus Day
+// is a Sunday, so nothing collides with the Sabbath gate (Friday sundown to
+// Saturday sundown) and no date is skipped.
 //
 // ── WHAT REPLACED WHAT (2026-07-26) ───────────────────────────────────
 // This file used to serve the RETIRED free 30-Day Pressure Triangle Challenge.
@@ -120,15 +123,32 @@ const CHALLENGE = {
   cohort: '2026-08-04',
   name: 'The Three Pressures Challenge',
   subtitle: 'Three nights live with Joel Polley, RN',
-  startIsoCt: '2026-08-04T19:00:00',
+  // 2026-07-28 (Joel): the call moved to SEVEN PM EASTERN. It previously ran
+  // 7:00pm CT, which is 8:00pm ET. 7:00pm ET is 6:00pm CT, so the instant below
+  // is now expressed in EASTERN wall time and every label moved with it. The
+  // same change is mirrored in src/pages/ChallengePage.jsx (START_ISO_ET) and
+  // api/create-embedded-checkout.js (CHALLENGE_START_ET).
+  startIsoEt: '2026-08-04T19:00:00',
   startLabel: 'Tuesday, August 4',
   endLabel: 'Thursday, August 6',
-  timeCt: '7:00pm CT',
-  timeEt: '8:00pm ET',
+  timeEt: '7:00pm ET',
+  timeCt: '6:00pm CT',
+  timeWindowEt: '7:00pm to 8:00pm ET',
   nightLength: 'about 60 minutes',
+  logDueLabel: 'Friday, August 7',
+  refundByLabel: 'August 16',
   // 2026-07-27 (Joel): founding-cohort seat is $17 (the kit price). $97 is the
   // NEXT cohort. Must match ChallengePage SEAT_PRICE and what Stripe charges.
   seatPriceLabel: '$17',
+  // 2026-07-28 (Joel): VIP is $47 and is now a seat sold on /challenge, not a
+  // post-purchase upsell. It adds a FOURTH session on Sunday morning.
+  // This key was referenced twice in the guarantee copy below but never
+  // defined, so every VIP confirmation rendered the refund amount blank.
+  vipPriceLabel: '$47',
+  vipDayLabel: 'Sunday, August 9',
+  vipTimeEt: '11:00am ET',
+  vipTimeCt: '10:00am CT',
+  vipLength: 'about 90 minutes',
   pageUrl: `${SITE_URL}/challenge`,
   nights: [
     { n: 1, date: 'Tuesday, August 4', title: 'Your Real Number' },
@@ -311,7 +331,7 @@ function zoomHtml() {
   if (!ZOOM.url) {
     return callout({
       kicker: 'Your join link',
-      body: `The Zoom room for this cohort goes out in its own email before ${esc(CHALLENGE.startLabel)}. Watch for it, and if it has not landed by Monday afternoon, reply to this email and I will send it to you by hand.`,
+      body: `The Zoom room for this cohort goes out in its own email before ${esc(CHALLENGE.startLabel)}. Watch for it, and if it has not landed by Tuesday afternoon, reply to this email and I will send it to you by hand.`,
     });
   }
   const details = [
@@ -334,7 +354,7 @@ function zoomHtml() {
 
 function zoomText() {
   if (!ZOOM.url) {
-    return `Your join link: the Zoom room for this cohort goes out in its own email before ${CHALLENGE.startLabel}. If it has not landed by Monday afternoon, reply to this email and I will send it by hand.`;
+    return `Your join link: the Zoom room for this cohort goes out in its own email before ${CHALLENGE.startLabel}. If it has not landed by Tuesday afternoon, reply to this email and I will send it by hand.`;
   }
   const bits = [`Join on Zoom: ${ZOOM.url}`];
   if (ZOOM.meetingId) bits.push(`Meeting ID: ${ZOOM.meetingId}`);
@@ -353,33 +373,40 @@ function registrationEmail({ firstName, isVip, email }) {
   const unsubUrl = unsubUrlFor(email);
   const provenance = `you registered for ${CHALLENGE.name} at bpquiz.com/challenge`;
 
+  // 2026-07-28: VIP is the FOURTH DAY, not a nightly side room. The previous
+  // copy here described a 5-night cohort with a pre-call VIP room and promised
+  // an "expanded Doctor Conversation Sheet on Night 5". There is no Night 5.
   const vipHtml = isVip
     ? [
-        h2('Your VIP room'),
+        h2('Your Bonus Day'),
         p(
-          `After every night I stay on for thirty minutes of live Q and A in the VIP room. Cameras optional, microphone optional. Type your question if you would rather not speak.`
+          `You have the VIP seat, so you get a fourth live session: <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}</strong> (${esc(CHALLENGE.vipTimeCt)}), about ninety minutes.`
         ),
         p(
-          `<strong>The 48-Hour Answer.</strong> Reply to this email with any question by 5:00pm CT and it gets answered. Live on that night's call if there is time, and in writing within 48 hours if there is not. Every question, every night, all three nights.`
+          `It sits on Sunday and not inside the week for one reason: by Sunday you finally have three days of your own readings to look at. There is nothing to look at on Tuesday. We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying.`
         ),
         p(
-          `On Night 5 you also get the expanded Doctor Conversation Sheet: the opening words, the questions to ask about your medication, the questions to ask about your labs, and how to ask for a follow up date.`
+          `Then questions, until they run out rather than until the hour does, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too, and it is yours to keep alongside the other three.`
         ),
       ].join('')
     : '';
 
-  const guaranteeHtml = isVip
-    ? p(
-        `<strong>Your guarantee.</strong> Be on all three nights or watch all three replays, then email me your completed 3-Day Log by Thursday, August 6. If you did that and still feel the week was not worth ${esc(CHALLENGE.vipPriceLabel)}, reply REFUND by August 16 and I send back the full ${esc(CHALLENGE.vipPriceLabel)}. You keep the kit, the workbook, and the replays.`
-      )
-    : p(
-        `<strong>Your guarantee.</strong> General Admission is fully refundable for any reason right up until ${esc(CHALLENGE.startLabel)} at ${esc(CHALLENGE.timeCt)}. Change your mind, reply REFUND, done. After Night 1 I cannot un-hold a live call, so the live portion is not refundable past that point. The 10-Day BP Reset Kit inside your seat still carries its own 30-day Feel-It-or-Free promise either way.`
-      );
+  // 2026-07-28: BOTH tiers get the same three promises, because that is what
+  // /challenge advertises. The GA branch previously said "after Night 1 the
+  // live portion is not refundable", which directly contradicted Promise 3 on
+  // the sales page ("reply REFUND by August 16 and I send back every dollar",
+  // written with no tier restriction and rendered to every reader). The page is
+  // the offer the buyer accepted, so the receipt may not narrow it afterward.
+  // Only the price label differs between tiers.
+  const priceLabel = isVip ? CHALLENGE.vipPriceLabel : CHALLENGE.seatPriceLabel;
+  const guaranteeHtml = p(
+    `<strong>Your guarantee.</strong> Your seat is fully refundable for any reason right up until ${esc(CHALLENGE.startLabel)} at ${esc(CHALLENGE.timeEt)}. Change your mind, reply REFUND, done. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${esc(CHALLENGE.logDueLabel)}. If you did that and still feel the week was not worth ${esc(priceLabel)}, reply REFUND by ${esc(CHALLENGE.refundByLabel)} and I send back the full ${esc(priceLabel)}. You keep the kit, the workbook, and the replays. The 10-Day BP Reset Kit inside your seat also carries its own 30-day Feel-It-or-Free promise either way.`
+  );
 
   const bodyHtml = [
     p(`Hey ${name},`),
     p(
-      `Your seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three nights, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeCt)} and ${esc(CHALLENGE.timeEt)}, ${esc(CHALLENGE.nightLength)} a night. You can watch from your own chair with the camera off.`
+      `Your seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three nights, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a night. You can watch from your own chair with the camera off.`
     ),
     zoomHtml(),
     h2('The three nights'), // 3-night schedule
@@ -387,7 +414,7 @@ function registrationEmail({ firstName, isVip, email }) {
     p(
       `Every night has a replay, posted by noon CT the next day, and it is yours to keep. If Wednesday is your grandson's ball game, watch it Thursday morning. The work still stacks.`
     ),
-    h2('Two things before Monday'),
+    h2('Two things before Tuesday'),
     p(
       `<strong>One.</strong> Find your home blood pressure cuff and put it somewhere you will see it. That is the only equipment for the whole week.`
     ),
@@ -400,13 +427,13 @@ function registrationEmail({ firstName, isVip, email }) {
     p(
       `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. My job is to walk you in with better information than you have ever had.`
     ),
-    p(`I will see you Monday night.`),
+    p(`I will see you Tuesday night.`),
     p(`Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Joel Polley, RN &middot; BraveWorks RN &middot; Louisville, Kentucky</span>`),
   ].join('');
 
   const bodyText = `Hey ${firstName || 'friend'},
 
-Your seat is saved for ${CHALLENGE.name}. Three nights, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeCt} and ${CHALLENGE.timeEt}, ${CHALLENGE.nightLength} a night. You can watch from your own chair with the camera off.
+Your seat is saved for ${CHALLENGE.name}. Three nights, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a night. You can watch from your own chair with the camera off.
 
 ${zoomText()}
 
@@ -415,35 +442,31 @@ ${nightsText()}
 
 Every night has a replay, posted by noon CT the next day, and it is yours to keep.
 
-TWO THINGS BEFORE MONDAY
+TWO THINGS BEFORE TUESDAY
 One. Find your home blood pressure cuff. That is the only equipment for the whole week.
 Two. Your 10-Day BP Reset Kit comes in a separate email. If it has not landed within the hour, reply to this one and I will send it by hand.
 ${
   isVip
     ? `
-YOUR VIP ROOM
-Thirty minutes of live Q and A after every night. Cameras optional, microphone optional.
-The 48-Hour Answer: reply to this email with any question by 5:00pm CT and it gets answered, live on that night's call if there is time and in writing within 48 hours if there is not.
-On Night 5 you also get the expanded Doctor Conversation Sheet.
+YOUR BONUS DAY
+You have the VIP seat, so you get a fourth live session: ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), about ninety minutes.
+It sits on Sunday because by then you finally have three days of your own readings to look at. We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying.
+Then questions until they run out, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too.
 `
     : ''
 }
-${
-  isVip
-    ? `YOUR GUARANTEE. Be on all three nights or watch all three replays, then email me your completed 3-Day Log by Thursday, August 6. If you did that and still feel the week was not worth ${CHALLENGE.vipPriceLabel}, reply REFUND by August 16 and I send back the full ${CHALLENGE.vipPriceLabel}. You keep the kit, the workbook, and the replays.`
-    : `YOUR GUARANTEE. General Admission is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeCt}. After Night 1 the live portion is not refundable. The kit inside your seat still carries its own 30-day Feel-It-or-Free promise either way.`
-}
+YOUR GUARANTEE. Your seat is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeEt}. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${CHALLENGE.logDueLabel}. If you did that and still feel the week was not worth ${priceLabel}, reply REFUND by ${CHALLENGE.refundByLabel} and I send back the full ${priceLabel}. You keep the kit, the workbook, and the replays. The kit also carries its own 30-day Feel-It-or-Free promise either way.
 
 You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. My job is to walk you in with better information than you have ever had.
 
-I will see you Monday night.
+I will see you Tuesday night.
 
 Joel
 Joel Polley, RN . BraveWorks RN . Louisville, Kentucky`;
 
   return {
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {
-      preheader: `Three nights, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeCt}. Everything you need is in here.`,
+      preheader: `Three nights, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt}. Everything you need is in here.`,
     }),
     text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,

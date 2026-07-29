@@ -140,8 +140,18 @@ export default function ChallengeConfirmedPage() {
                   <span style={{ color: '#6A7A78' }}>{title}</span>
                 </div>
               ))}
+              {tier === 'challenge-vip' && (
+                <div style={{ display: 'flex', gap: '0.6rem', padding: '0.32rem 0', fontSize: '0.93rem', borderBottom: '1px solid #F2EAE0' }}>
+                  <span style={{ color: CLAY, fontWeight: 700, minWidth: 56 }}>Bonus</span>
+                  <span style={{ flex: 1 }}>Sunday, August 9</span>
+                  <span style={{ color: '#6A7A78' }}>The Bonus Day</span>
+                </div>
+              )}
               <p style={{ margin: '0.7rem 0 0', fontSize: '0.93rem', color: '#4A5A58' }}>
-                Every night starts at 7:00pm CT, which is 8:00pm ET, and runs about an hour.
+                Every night starts at 7:00pm ET, which is 6:00pm CT, and runs about an hour.
+                {tier === 'challenge-vip'
+                  ? ' Your VIP Bonus Day is Sunday, August 9 at 11:00am ET (10:00am CT) and runs about ninety minutes.'
+                  : ''}
               </p>
             </div>
 
