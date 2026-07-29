@@ -28,9 +28,16 @@
 //     route once. They are NOT ported. The only dollar figures here are prices
 //     something has actually sold for ($17 kit and founding seat, $47 VIP) or
 //     genuinely will sell for ($97 next cohort).
-//   - NO struck compare-at price. The comp's hero reads "from <s>$197</s> $67".
-//     A price never charged cannot be struck through. NEXT_COHORT_PRICE is
-//     stated forward ("the next cohort is $97"), never backward.
+//   - Struck prices are allowed ONLY as FORWARD-LOOKING REGULAR PRICES, and
+//     only the two Joel confirmed on 2026-07-29 he will actually charge:
+//     $97 General and $297 VIP, starting with cohort 2. Every strikethrough on
+//     the page is labelled "Regular price", never "was" or "originally", and
+//     the price-reasoning block states outright that nobody has ever paid those
+//     figures for this challenge. That forward framing is the whole legal
+//     basis (16 CFR 233.1 permits a bona fide regular price). A bare
+//     "<s>$97</s> $17" implying a former price would NOT be allowed, which is
+//     what the comp does ("from <s>$197</s> $67") and what retired this route.
+//     If cohort 2 does not sell at those prices, the strikethroughs come down.
 //   - NO fake deadline. There is ONE real deadline and it is honest: a live
 //     Tuesday night call cannot be attended on Wednesday. The countdown targets
 //     that instant and degrades to a closed-doors waitlist when it passes.
@@ -115,6 +122,33 @@ const CHALLENGE = {
   SEAT_PRICE: 17,
   NEXT_COHORT_PRICE: 97,
   SEAT_TIER: 'challenge-ga',
+
+  // REGULAR PRICES, shown struck through beside the founding price.
+  //
+  // 2026-07-29 (Joel, explicit): these are the REAL cohort-2 prices and he has
+  // confirmed he will charge them. That confirmation is the entire legal basis
+  // for the strikethrough, so read this before touching it.
+  //
+  // 16 CFR 233.1 permits comparing to your own regular price only when that
+  // price is bona fide: actually charged, or genuinely intended to be charged,
+  // rather than invented to manufacture a discount. This challenge has NEVER
+  // sold at any price (it is Cohort One, and the proof section says so), so a
+  // bare "<s>$97</s>" implying a former price for THIS product would be a
+  // fictitious former price, which is exactly the finding that retired this
+  // route on 2026-07-04 and appeared three times in the 2026-07-25 audit.
+  //
+  // What makes it lawful here is the FORWARD framing: every strikethrough on
+  // this page is labelled "Regular price", never "was" or "originally", and the
+  // copy states plainly that the regular price starts at the next cohort.
+  // Checked before shipping: $97 has 10 lifetime charges but none for this
+  // product (5 RestoreHER replay, 2 case review, 3 for the discontinued 30-Day
+  // Reset Challenge VIP); $297 has exactly 1 lifetime charge and it is the
+  // Sprint, a different offer.
+  //
+  // IF COHORT 2 DOES NOT ACTUALLY SELL AT $97 / $297, THESE MUST COME DOWN.
+  // A regular price that never materialises is retroactively fictitious.
+  GA_REGULAR_PRICE: 97,
+  VIP_REGULAR_PRICE: 297,
 
   // 2026-07-28 (Joel): VIP is now a SEAT SOLD ON THIS PAGE, not a post-purchase
   // upsell. It is everything in the $17 seat plus a fourth session: a bonus
@@ -329,10 +363,11 @@ const TIERS = [
     name: 'General',
     who: 'For the person who wants to be in the room.',
     price: CHALLENGE.SEAT_PRICE,
+    regular: CHALLENGE.GA_REGULAR_PRICE,
     time: `${CHALLENGE.DATE_RANGE_LABEL} · ${CHALLENGE.TIME_WINDOW_ET}`,
     cta: `Save my seat, ${usd(CHALLENGE.SEAT_PRICE)}`,
     featured: false,
-    note: 'Founding cohort price.',
+    note: `Founding cohort price. Regular price ${usd(CHALLENGE.GA_REGULAR_PRICE)} from the next cohort on.`,
     items: GA_ITEMS,
     out: [
       `The Bonus Day, ${CHALLENGE.VIP_DAY_SHORT}, where we read your three days of readings together`,
@@ -344,11 +379,12 @@ const TIERS = [
     name: 'VIP',
     who: 'For the person who wants their own numbers looked at.',
     price: CHALLENGE.VIP_PRICE,
+    regular: CHALLENGE.VIP_REGULAR_PRICE,
     time: `${CHALLENGE.DATE_RANGE_LABEL} plus ${CHALLENGE.VIP_DAY_SHORT}`,
     cta: `Save my VIP seat, ${usd(CHALLENGE.VIP_PRICE)}`,
     featured: true,
     ribbon: 'Includes the fourth day',
-    note: 'Founding cohort price.',
+    note: `Founding cohort price. Regular price ${usd(CHALLENGE.VIP_REGULAR_PRICE)} from the next cohort on.`,
     items: [
       { lead: 'Everything in General.', rest: '' },
       {
@@ -768,6 +804,11 @@ function ChallengeStyles() {
       .tpc-dateline { font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: .78rem; color: ${C.ink}; margin-bottom: 16px; line-height: 1.6; }
       .tpc-price { font-family: ${SERIF}; font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 600; margin-bottom: 6px; color: ${C.ink}; }
       .tpc-price b { color: ${C.bronze}; }
+      /* No opacity fade on struck prices. At .6 the hero strike measured
+         2.78:1, failing AA even at large-text size, and a regular price the
+         buyer cannot read is a disclosure that does not disclose. The
+         strikethrough itself carries the de-emphasis. */
+      .tpc-price s { color: ${C.dim}; font-weight: 500; text-decoration-thickness: 2px; }
       .tpc-pricenote { font-size: .82rem; color: ${C.dim}; margin-bottom: 20px; }
       .tpc-herobtn { max-width: 520px; margin: 0 auto; }
 
@@ -846,6 +887,11 @@ function ChallengeStyles() {
       .tpc-ribbon { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: ${C.gold}; color: ${C.ink}; font-size: .6rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; white-space: nowrap; }
       .tpc-tier h3 { font-size: 1.9rem; }
       .tpc-tier .who { font-size: .88rem; color: ${C.dim}; margin: 6px 0 14px; }
+      /* .85rem not .78rem: this line is the compare-at disclosure and the
+         audience is largely 50+, so it may not be the smallest text on the
+         card. Solid colour, no opacity, for the same reason as above. */
+      .tpc-tier .reg { font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: ${C.dim}; margin-bottom: 3px; }
+      .tpc-tier .reg s { text-decoration-thickness: 2px; }
       .tpc-tier .amt { font-family: ${SERIF}; font-size: 3rem; font-weight: 700; line-height: 1; color: ${C.ink}; }
       .tpc-tier .time { font-size: .8rem; color: ${C.bronze}; font-weight: 700; margin-top: 8px; letter-spacing: .04em; }
       .tpc-tier .rule { height: 1px; background: rgba(138,96,61,.2); margin: 18px 0; }
@@ -1067,11 +1113,17 @@ function Hero({ doorsClosed, chooseTier, goToSeats, goToWaitlist, left }) {
           <Countdown left={left} label="Doors close when Night 1 begins" tone="light" />
         </div>
 
+        {/* "Regular" sits inside the strike element's own line on purpose. The
+            hero is what gets screenshotted and pasted into a Facebook comment
+            without the note underneath it, and a bare struck $97 next to $17
+            reads as a former price. */}
         <div className="tpc-price">
-          Seats from <b>{usd(CHALLENGE.SEAT_PRICE)}</b>
+          Regular <s>{usd(CHALLENGE.GA_REGULAR_PRICE)}</s>, founding cohort{' '}
+          <b>{usd(CHALLENGE.SEAT_PRICE)}</b>
         </div>
         <div className="tpc-pricenote">
-          Founding cohort pricing. The next cohort is {usd(CHALLENGE.NEXT_COHORT_PRICE)}.
+          Founding cohort pricing. Regular price {usd(CHALLENGE.GA_REGULAR_PRICE)} for General and{' '}
+          {usd(CHALLENGE.VIP_REGULAR_PRICE)} for VIP, starting with the next cohort.
         </div>
 
         <div className="tpc-herobtn">
@@ -1473,7 +1525,8 @@ function Tickets({
 
         <p style={{ textAlign: 'center', marginTop: 30, fontSize: '.88rem', color: C.dim }}>
           Doors close {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_ET}, because that is when
-          Night 1 begins. The next cohort is {usd(CHALLENGE.NEXT_COHORT_PRICE)}.
+          Night 1 begins. Regular prices of {usd(CHALLENGE.GA_REGULAR_PRICE)} and{' '}
+          {usd(CHALLENGE.VIP_REGULAR_PRICE)} start with the next cohort.
         </p>
       </div>
     </section>
@@ -1486,6 +1539,11 @@ function TierCard({ tier, doorsClosed, active, onChoose, onWaitlist }) {
       {tier.ribbon ? <div className="tpc-ribbon">{tier.ribbon}</div> : null}
       <h3>{tier.name}</h3>
       <div className="who">{tier.who}</div>
+      {/* "Regular price" label, never "was". See GA_REGULAR_PRICE in the config
+          block for why the wording is load bearing. */}
+      <div className="reg">
+        Regular price <s>{usd(tier.regular)}</s>
+      </div>
       <div className="amt">{usd(tier.price)}</div>
       <div className="time">{tier.time}</div>
       <div className="rule" />
@@ -1633,15 +1691,22 @@ function PriceReasoning() {
             A founding seat is {usd(CHALLENGE.SEAT_PRICE)}, and it includes the 10-Day BP Reset Kit,
             all {KIT_FILE_COUNT} documents, which sells on this site for exactly {usd(KIT_PRICE)} on
             its own. So the kit is the whole ticket price and the three live nights ride along with
-            it. That is {'$'}{SEAT_PER_NIGHT} a night. The next cohort is{' '}
-            {usd(CHALLENGE.NEXT_COHORT_PRICE)}, and I would rather fill this first room than protect
-            the price.
+            it. That is {'$'}{SEAT_PER_NIGHT} a night.
           </p>
-          <p style={{ color: C.dim, fontSize: '.96rem', margin: 0 }}>
+          <p style={{ color: C.dim, fontSize: '.96rem' }}>
             VIP is {usd(CHALLENGE.VIP_PRICE)} and the difference is one thing: the fourth day on{' '}
             {CHALLENGE.VIP_DAY_LABEL}, where we read real logs out loud and I answer questions until
             they run out. There is no third tier, no upsell during the calls, and nothing here
             renews. One payment, and the week is yours.
+          </p>
+          <p style={{ color: C.dim, fontSize: '.96rem', margin: 0 }}>
+            <strong style={{ color: C.ink }}>About the crossed out prices.</strong> The regular
+            prices are {usd(CHALLENGE.GA_REGULAR_PRICE)} and{' '}
+            {usd(CHALLENGE.VIP_REGULAR_PRICE)}, and that is what the next cohort pays. They are not
+            prices anybody was ever charged for this challenge, because this is the first time it
+            has been run. I would rather fill this first room than protect the price, so the
+            founding cohort gets it at {usd(CHALLENGE.SEAT_PRICE)} and{' '}
+            {usd(CHALLENGE.VIP_PRICE)}. That is the whole trick, and there is not a second one.
           </p>
         </div>
       </div>

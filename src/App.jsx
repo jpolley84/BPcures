@@ -235,8 +235,13 @@ function App() {
                 - NO seat cap and no "X spots left" unless Joel confirms a
                   real, enforced cap.
                 - NO tier shown as SOLD OUT.
-                - NO invented "(value)" tags. Every dollar figure must be a
-                  price something has actually sold for.
+                - NO invented "(value)" tags, and no stack totals.
+                - Every dollar figure must be a price something has actually
+                  sold for, OR a regular price Joel has confirmed he will
+                  charge. 2026-07-29 he confirmed $97 General and $297 VIP as
+                  real cohort-2 prices, so those two may be shown struck
+                  through and labelled "Regular price". Never "was". If
+                  cohort 2 does not sell at them, they come down.
                 - NO countdown to a manufactured deadline. The ONLY honest
                   deadline is the cohort start datetime, because you cannot
                   join a live call that already happened. Counting down to
