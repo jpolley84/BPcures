@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SVUTU Steady — The BP Triangle Tea · Hibiscus &amp; Hawthorn, Steeped Slow</title>
-<meta name="description" content="A caffeine-free ruby tea of hibiscus & hawthorn — Anchor 1 of The BP Triangle Method. Blended by a nurse to support healthy blood pressure, alongside your doctor's care. Never instead of it.">
+<title>SVUTU Steady — The BP Triangle Tea · Reformulated, 12 Botanicals With Hormone Support</title>
+<meta name="description" content="A caffeine-free ruby tea, now reformulated to twelve whole botanicals that add hormone support alongside blood pressure. Anchor 1 of The BP Triangle Method. Blended by a nurse, to join your doctor's care and never replace it.">
 <link rel="canonical" href="https://bpquiz.com/tea">
-<meta property="og:title" content="SVUTU Steady — The BP Triangle Tea">
-<meta property="og:description" content="Hibiscus & hawthorn, steeped slow. Anchor 1 of The BP Triangle Method. Blended by a nurse."><meta property="og:url" content="https://bpquiz.com/tea">
+<meta property="og:title" content="SVUTU Steady — Reformulated With Hormone Support">
+<meta property="og:description" content="Twelve botanicals, steeped slow. Now with spearmint, fennel, sage and raspberry leaf for hormone support. Blended by a nurse."><meta property="og:url" content="https://bpquiz.com/tea">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
 
@@ -195,7 +195,8 @@
 
   .science{ background:var(--cream);}
 
-  /* ---- Every-herb research list — all 8 botanicals, each with a real study link ---- */
+  /* ---- Every-herb research list — all 12 botanicals; 11 carry a study link,
+         red raspberry leaf is marked as having none (2026 reformulation) ---- */
   .reslist{ margin:44px auto 0; max-width:860px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px 26px;}
   .resrow{ display:grid; grid-template-columns:130px 1fr auto; gap:16px; align-items:center; padding:16px 0; border-bottom:1px solid var(--line);}
   .resrow:last-child{ border-bottom:none;}
@@ -208,6 +209,37 @@
     .resrow{ grid-template-columns:1fr auto; gap:6px 14px;}
     .resrow .rwhat{ grid-column:1 / -1; order:3;}
   }
+  /* Divider announcing the four herbs added in the 2026 reformulation. */
+  .resgroup{ margin:6px -26px; padding:12px 26px; background:var(--sage-soft); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+             font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--sage-deep);}
+  /* Red raspberry leaf: the one botanical with no citation. Styled so it reads
+     as a deliberate disclosure, not a broken row. */
+  .resrow.noresearch .rname small{ color:var(--muted);}
+  .resrow .rlink.nolink{ color:var(--muted); font-style:italic; font-weight:500; text-decoration:none; cursor:default;}
+
+  /* ---- Full gram breakdown of the 100g pouch ---- */
+  .amounts{ width:100%; border-collapse:collapse; margin:26px 0 22px; font-size:14px; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .amounts caption{ caption-side:top; text-align:left; font-family:'Montserrat',sans-serif; font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--sage-deep); padding:0 0 10px;}
+  .amounts th, .amounts td{ text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  .amounts thead th{ font-family:'Montserrat',sans-serif; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--sage-deep); font-weight:700; background:var(--sage-soft);}
+  .amounts tbody th{ font-weight:600; color:var(--ink);}
+  .amounts tbody td:first-of-type{ font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600;}
+  .amounts tbody td{ color:var(--brown);}
+  .amounts tr.new th, .amounts tr.new td{ background:var(--gold-soft);}
+  .amounts .newtag{ display:inline-block; margin-left:6px; font-family:'Montserrat',sans-serif; font-size:9px; letter-spacing:.12em; text-transform:uppercase; font-weight:700;
+                    color:#fff; background:var(--gold); border-radius:3px; padding:2px 5px; vertical-align:middle;}
+  .amounts tfoot th, .amounts tfoot td{ border-bottom:none; font-weight:700; color:var(--ink); background:var(--sage-soft);}
+  @media(max-width:640px){
+    .amounts{ font-size:13px;}
+    .amounts th, .amounts td{ padding:9px 10px;}
+  }
+
+  /* Reformulation banner in the hero. */
+  .newblend{ margin:0 0 16px; padding:14px 16px; border:1px solid var(--ruby); border-left:4px solid var(--ruby); border-radius:0 10px 10px 0;
+             background:rgba(155,29,49,.05); font-size:14.5px; line-height:1.6; color:var(--brown);}
+  .newblend b{ color:var(--ruby-deep);}
+  /* Gold ring marks the four hormone-support additions in the tag cloud. */
+  .itag.hormone{ border-color:var(--gold); box-shadow:inset 0 0 0 1px rgba(192,160,106,.5);}
 
   .term{ border-bottom:1.5px dotted var(--ruby); cursor:pointer; color:var(--ruby-deep); font-weight:500; position:relative;}
   .pop{ display:none; position:absolute; bottom:130%; left:50%; transform:translateX(-50%); width:240px; background:var(--ink); color:var(--cream); font-size:12.5px; line-height:1.5; padding:12px 14px; border-radius:8px; z-index:var(--z-pop); box-shadow:0 10px 30px rgba(59,49,40,.3); font-weight:400; text-transform:none; text-align:left;}
@@ -401,18 +433,25 @@
         <button class="thumb-btn" type="button" style="all:unset;display:contents;"><img class="thumb" src="/tea/img/story-5-ritual.webp" data-full="/tea/img/story-5-ritual.webp" alt="A simple daily ritual: steep, cover, enjoy"></button>
       </div>
       <div class="hbcap">The daily cup for the season your numbers changed</div>
-      <div class="hbsub">Hibiscus and hawthorn, steeped slow. Blended by a nurse with 20 years in the ICU, taste-checked by another.</div>
+      <div class="hbsub">Twelve botanicals, steeped slow. Blended by a nurse with 20 years in the ICU, taste-checked by another.</div>
     </div>
 
     <div class="buyhead">
-      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · 50-60 cups per pouch</div>
+      <div class="eyebrow">N° 01 · Caffeine-free herbal tea · 50-60 cups per pouch · Reformulated 2026</div>
       <h1>SVUTU <span class="i">Steady</span></h1>
-      <p class="whatis">The number keeps creeping up. The doctor keeps saying "let's watch it." You already cut the salt, you take everything on time, and that 3 p.m. coffee is not doing your readings any favors. <b>Steady was blended by a nurse for exactly that person</b>: a tart, ruby, caffeine-free cup of eight whole botanicals, led by hibiscus and hawthorn, the two herbs researchers have studied most for healthy blood pressure.&dagger; One warm cup a day that joins your doctor's plan, never replaces it.</p>
+      <div class="newblend">
+        <b>New blend.</b> Steady has been reformulated from eight botanicals to twelve. The four
+        additions, <b>spearmint, fennel seed, sage and red raspberry leaf</b>, were chosen for
+        hormone support, so one cup now works on both fronts. Same pouch, same price, nothing
+        removed.
+      </div>
+      <p class="whatis">The number keeps creeping up. The doctor keeps saying "let's watch it." You already cut the salt, you take everything on time, and that 3 p.m. coffee is not doing your readings any favors. And somewhere in the same season, the sleep changed, the temperature changed, and the mood changed too. <b>Steady was blended by a nurse for exactly that person</b>: a tart, ruby, caffeine-free cup of twelve whole botanicals, led by hibiscus and hawthorn for blood pressure and now joined by spearmint, fennel, sage and raspberry leaf for hormone support.&dagger; One warm cup a day that joins your doctor's plan, never replaces it.</p>
       <div class="claimblock">
         <div class="chead">Made for the person who...</div>
         <ul class="benefits">
           <li>Watches the cuff number tick a little higher at every checkup</li>
           <li>Has heard "let's keep an eye on it" one too many times</li>
+          <li>Is in the season where the sleep, the temperature and the mood all changed at once</li>
           <li>Already cut the salt and started walking, and wants one daily habit that actually tastes good</li>
           <li>Wants a warm cup at 3 p.m. that is not caffeine pushing the readings the wrong way</li>
         </ul>
@@ -420,6 +459,7 @@
         <ul class="benefits">
           <li>Tart, ruby, bright. Genuinely good hot or over ice. Zero caffeine, zero sugar, nothing artificial.</li>
           <li>Hibiscus and hawthorn, the two herbs researchers have studied most for healthy blood pressure&dagger;</li>
+          <li><b>New:</b> spearmint, fennel seed and sage, the three added for hormone support, each with its trial linked below&dagger;</li>
         </ul>
         <div class="foot">&dagger;Statements refer to published research on individual herbs and are not health claims about this product. Steady is a food, not a medicine. It is not intended to diagnose, treat, cure, or prevent any disease, and it never replaces your doctor's care. Studies linked in <a href="#science">The Science, Simply</a> below.</div>
       </div>
@@ -469,7 +509,7 @@
     </div>
     <div class="wrap">
       <div class="tstat"><div class="n">RN×2</div><div class="l">Nurse-blended · nurse-checked</div></div>
-      <div class="tstat"><div class="n">8</div><div class="l">Whole botanicals</div></div>
+      <div class="tstat"><div class="n">12</div><div class="l">Whole botanicals</div></div>
       <div class="tstat"><div class="n">0</div><div class="l">Caffeine · sugar · fillers</div></div>
       <div class="tstat"><div class="n">100%</div><div class="l">Heavy-metal tested</div></div>
     </div>
@@ -508,9 +548,31 @@
   <div class="wrap insidegrid" style="grid-template-columns:1fr; max-width:760px;">
     <div>
       <div class="kicker" style="text-align:left;">The garden, measured</div>
-      <h2 class="head">Eight botanicals. Two studied leads. Every amount disclosed.</h2>
-      <p>Hibiscus makes the cup tart and ruby. <b>Hawthorn</b> rounds it out. Those two carry the research, so they carry the blend, in amounts we print in full, no proprietary blend. <b>Every other herb earns its place</b>: lemongrass and nettle studied for the vessels, ginger and chamomile for blood sugar, lavender and chamomile for the stress that pushes numbers up. Not one herb is in here just for looks.</p>
-      <p>No fillers, no flavored dust, no hidden percentages. Cut-and-sifted, food-grade, blended by a nurse who reads the research and links it below.</p>
+      <h2 class="head">Twelve botanicals. Every gram printed.</h2>
+      <p>Hibiscus makes the cup tart and ruby. <b>Hawthorn</b> rounds it out. Those two still carry the blood-pressure side. <b>Every other herb earns its place</b>: lemongrass and nettle studied for the vessels, ginger and chamomile for blood sugar, lavender and chamomile for the stress that pushes numbers up.</p>
+      <p><b>The 2026 reformulation added four.</b> Spearmint, fennel seed and sage each have a human trial behind them on the hormone side, linked below. Red raspberry leaf is the one exception on this whole page and we say so plainly: it is here for traditional use and for the way it rounds the cup, and it does not have a clinical trial we are willing to cite.</p>
+      <p>No fillers, no flavored dust, no hidden percentages, no proprietary blend. Here is the entire 100g pouch, to the gram.</p>
+
+      <table class="amounts">
+        <caption>Every botanical in a 100g pouch, by weight</caption>
+        <thead><tr><th scope="col">Botanical</th><th scope="col">Per 100g</th><th scope="col">Why it is in the cup</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Hibiscus</th><td>25 g</td><td>Blood pressure</td></tr>
+          <tr class="new"><th scope="row">Spearmint <span class="newtag">new</span></th><td>18 g</td><td>Hormone support</td></tr>
+          <tr class="new"><th scope="row">Red raspberry leaf <span class="newtag">new</span></th><td>10 g</td><td>Traditional use, no trial cited</td></tr>
+          <tr><th scope="row">Lemongrass</th><td>10 g</td><td>Vessels</td></tr>
+          <tr><th scope="row">Hawthorn leaf &amp; flower</th><td>9 g</td><td>Blood pressure</td></tr>
+          <tr class="new"><th scope="row">Fennel seed <span class="newtag">new</span></th><td>7 g</td><td>Hormone support</td></tr>
+          <tr><th scope="row">Nettle leaf</th><td>6 g</td><td>Sodium and water (animal evidence)</td></tr>
+          <tr><th scope="row">Chamomile</th><td>5 g</td><td>Stress, blood sugar</td></tr>
+          <tr class="new"><th scope="row">Sage <span class="newtag">new</span></th><td>5 g</td><td>Hormone support</td></tr>
+          <tr><th scope="row">Ginger</th><td>2 g</td><td>Blood pressure, blood sugar</td></tr>
+          <tr><th scope="row">Calendula petals</th><td>2 g</td><td>Whole-body, human trial</td></tr>
+          <tr><th scope="row">Lavender</th><td>1 g</td><td>Stress, and the cup's character</td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Total</th><td>100 g</td><td>Nothing else. No filler, no carrier, no flavoring.</td></tr></tfoot>
+      </table>
+      <p>Cut-and-sifted, food-grade, blended by a nurse who reads the research and links it below.</p>
       <img class="sectimg" src="/tea/img/steady-flatlay.webp" alt="SVUTU Steady pouch surrounded by its whole botanicals: hibiscus, chamomile, lavender, lemongrass, and a brewed ruby cup" width="1000" height="1249" loading="lazy">
       <div class="ingtags">
         <span class="itag hero">Hibiscus<span class="pop">The tart, ruby workhorse. Studied in a Tufts RCT and meta-analyses for lowering systolic blood pressure. <a href="https://pubmed.ncbi.nlm.nih.gov/20018807/" target="_blank" rel="noopener">See the study →</a></span></span>
@@ -520,9 +582,13 @@
         <span class="itag">Nettle<span class="pop">In animal research, nettle leaf was studied for lower blood pressure and for helping the body clear sodium and water — the Sodium corner. <a href="https://pubmed.ncbi.nlm.nih.gov/30097121/" target="_blank" rel="noopener">See the study →</a></span></span>
         <span class="itag">Chamomile<span class="pop">A placebo-controlled trial studied chamomile for easing anxiety — the Stress corner — and diabetic trials studied it for blood sugar. <a href="https://pubmed.ncbi.nlm.nih.gov/19593179/" target="_blank" rel="noopener">See the trial →</a></span></span>
         <span class="itag">Calendula<span class="pop">The one human trial of swallowed calendula gave a daily capsule and found it helped the body's own tissue repair — real human evidence that oral calendula does something systemic, though that study measured wound healing, not blood pressure. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9827526/" target="_blank" rel="noopener">See the study →</a></span></span>
-        <span class="itag">Lavender<span class="pop">In a trial with high-blood-pressure patients, lavender was studied for lower blood pressure, heart rate and cortisol — the Stress corner. Just a whisper in the cup. <a href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the trial →</a></span></span>
+        <span class="itag">Lavender<span class="pop">In a trial with high-blood-pressure patients, lavender was studied for lower blood pressure, heart rate and cortisol — the Stress corner. That trial used aromatherapy and massage, not a drink, so this is a whisper in the cup for its calming character more than a claim of its own. <a href="https://pubmed.ncbi.nlm.nih.gov/35708557/" target="_blank" rel="noopener">See the trial →</a></span></span>
+        <span class="itag hormone">Spearmint<span class="pop"><b>New.</b> A 30-day randomized trial in 42 women with PCOS studied spearmint tea twice daily and reported a significant drop in free and total testosterone. Read the honest limit: the objective hair-growth measure did <b>not</b> improve significantly, so we make no claim about unwanted hair. <a href="https://pubmed.ncbi.nlm.nih.gov/19585478/" target="_blank" rel="noopener">See the trial →</a></span></span>
+        <span class="itag hormone">Fennel seed<span class="pop"><b>New.</b> A meta-analysis of 12 randomized trials studied fennel for period pain, and a triple-blind trial in 90 postmenopausal women studied it for overall menopause symptom score. Both used concentrated capsules, not tea, and one other menopause trial found no difference from placebo. Fennel has estrogen-like activity in lab studies: ask your doctor first if you have a hormone-sensitive condition, and skip it in pregnancy or nursing. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7697926/" target="_blank" rel="noopener">See the meta-analysis →</a></span></span>
+        <span class="itag hormone">Sage<span class="pop"><b>New.</b> A placebo-controlled trial in 80 women studied sage extract for menopause symptom score and hot-flash severity. Read the limits: that trial was funded by the company making the tested product, ran only four weeks, and used a standardized extract rather than tea. Sage contains thujone, so skip it in pregnancy or nursing and check with your doctor if you have a seizure disorder. <a href="https://pubmed.ncbi.nlm.nih.gov/33615001/" target="_blank" rel="noopener">See the trial →</a></span></span>
+        <span class="itag hormone">Red raspberry leaf<span class="pop"><b>New, and the honest one.</b> Long traditional use in women's herbalism, and it rounds out the cup. We could not find a clinical trial we were willing to cite, so we are not citing one. It is in the blend for tradition and for taste, and we would rather tell you that than dress it up.</span></span>
       </div>
-      <p class="ingnote">Tap any herb — every one carries published research, linked in plain language. Every batch is third-party tested for identity and heavy metals.</p>
+      <p class="ingnote">Tap any herb. Eleven of the twelve carry published research, linked in plain language, and the twelfth says plainly that it does not. Every batch is third-party tested for identity and heavy metals.</p>
     </div>
   </div>
 </section>
@@ -532,7 +598,7 @@
   <div class="wrap">
     <div class="kicker">The science, simply</div>
     <h2 class="head">Every herb, and the study behind it.</h2>
-    <p class="sectlede">We do not make promises about your numbers. We tell you what the research actually says, and what it does not. Each tag below is one herb, one plain-English finding, one real citation. If an herb had no study worth citing, it did not go in the blend. Read them before you buy. That is the point.</p>
+    <p class="sectlede">We do not make promises about your numbers. We tell you what the research actually says, and what it does not. Each row below is one herb, one plain-English finding, one real citation, and where a study has a hole in it we print the hole. <b>Eleven of the twelve carry a study. Red raspberry leaf does not, and it is listed anyway, marked, rather than quietly left off this page.</b> Read them before you buy. That is the point.</p>
 
     <div class="reslist" style="margin-top:10px;">
       <div class="resrow">
@@ -575,9 +641,32 @@
         <span class="rwhat">The only human trial of swallowed calendula found it aided the body's tissue repair (studied for wound healing, not blood pressure).</span>
         <a class="rlink" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9827526/" target="_blank" rel="noopener">See the study →</a>
       </div>
+
+      <div class="resgroup">Added in the 2026 reformulation, for hormone support</div>
+
+      <div class="resrow">
+        <span class="rname">Spearmint<small>Hormone · human RCT</small></span>
+        <span class="rwhat">A 30-day randomized trial in 42 women with PCOS studied spearmint tea twice daily and reported a significant drop in free and total testosterone. The objective hair-growth measure did <b>not</b> improve significantly, so we claim nothing about unwanted hair.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/19585478/" target="_blank" rel="noopener">See the trial →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Fennel seed<small>Hormone · meta-analysis</small></span>
+        <span class="rwhat">A meta-analysis of 12 randomized trials studied fennel for period pain; a triple-blind trial in 90 postmenopausal women studied it for menopause symptom score. Both used concentrated capsules, not tea, and a separate menopause trial found no difference from placebo.</span>
+        <a class="rlink" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7697926/" target="_blank" rel="noopener">See the meta-analysis →</a>
+      </div>
+      <div class="resrow">
+        <span class="rname">Sage<small>Hormone · human RCT</small></span>
+        <span class="rwhat">A placebo-controlled trial in 80 women studied sage extract for menopause symptom score and hot-flash severity. It was funded by the company making the tested product, ran four weeks, and used a standardized extract rather than tea. The widely quoted "64%" figure comes from a different, open-label study with no placebo group, and we do not use it.</span>
+        <a class="rlink" href="https://pubmed.ncbi.nlm.nih.gov/33615001/" target="_blank" rel="noopener">See the trial →</a>
+      </div>
+      <div class="resrow noresearch">
+        <span class="rname">Red raspberry leaf<small>Traditional use only</small></span>
+        <span class="rwhat"><b>No trial cited, on purpose.</b> Long traditional use in women's herbalism and it rounds out the cup, but we did not find clinical evidence we were willing to put our name to. Listing it here with nothing beside it is the honest version.</span>
+        <span class="rlink nolink">No citation</span>
+      </div>
     </div>
 
-    <p class="scinote">†Statements describe published research on the herbs, not promises about your readings. Some studies are in animals or the lab, or on outcomes other than blood pressure (calendula's human trial measured tissue repair), and we label those honestly. Steady is a food, not a medicine, and it joins your doctor's plan — it never replaces it.</p>
+    <p class="scinote">&dagger;Statements describe published research on the herbs, not promises about your readings, your cycle or your symptoms. We label the weak spots rather than hide them: nettle's evidence is animal-only; calendula's human trial measured tissue repair, not blood pressure; lavender's trial used aromatherapy, not a drink; the fennel and sage trials used concentrated capsules and extracts, not tea, and the sage trial was industry-funded and four weeks long; red raspberry leaf has no trial cited at all. Steady is a food, not a medicine, and it joins your doctor's plan. It never replaces it.</p>
     <div style="text-align:center; margin-top:30px;"><a class="btn-solid" href="#buy">Try Steady — 60-day money-back guarantee</a></div>
   </div>
 </section>
@@ -746,11 +835,11 @@
       </details>
       <details class="faqitem">
         <summary>What if I'm pregnant or nursing?</summary>
-        <div class="a">Check with your doctor before starting. Hibiscus and hawthorn are active herbs, so pregnancy and nursing are a conversation to have with your provider first — and a company that tells you otherwise isn't reading the same research we are.</div>
+        <div class="a">Please do not start Steady while pregnant or nursing without your doctor's say-so, and we would rather you simply waited. The reformulated blend contains fennel and sage: fennel is not recommended in pregnancy or breastfeeding, and sage contains thujone, which is also one to avoid then. Hibiscus and hawthorn are active herbs on top of that. This is a genuine "ask your provider first," not a formality, and a company that tells you otherwise isn't reading the same research we are.</div>
       </details>
       <details class="faqitem">
         <summary>Any side effects I should know about?</summary>
-        <div class="a">Steady contains chamomile and calendula — skip it if you're allergic to plants in the daisy family. It's also naturally tart (that's the hibiscus), so like any tart drink, rinse with water after your cup to be kind to tooth enamel. If you take any medication or manage a health condition, run the blend past your provider first.</div>
+        <div class="a">A few, and they matter more since the reformulation. Steady contains chamomile and calendula, so skip it if you're allergic to plants in the daisy family. It contains <b>fennel</b>, which has estrogen-like activity in laboratory studies, so ask your doctor first if you have a hormone-sensitive condition. It contains <b>sage</b>, which contains thujone, so check with your doctor if you have a seizure disorder, and avoid it in pregnancy or nursing. <b>Hawthorn</b> can interact with cardiac medications, so tell your prescriber if you take anything for your heart or blood pressure. It's also naturally tart (that's the hibiscus), so like any tart drink, rinse with water after your cup to be kind to tooth enamel. If you take any medication or manage a health condition, run the blend past your provider first.</div>
       </details>
       <details class="faqitem">
         <summary>How much should I drink, and when will I notice anything?</summary>
@@ -770,7 +859,7 @@
       </details>
       <details class="faqitem">
         <summary>Is it vegan? What's NOT in it?</summary>
-        <div class="a">Entirely plants. No caffeine, no sugar or sweeteners, no flavoring, no fillers, no "natural flavors" — nothing but the eight botanicals on the label.</div>
+        <div class="a">Entirely plants. No caffeine, no sugar or sweeteners, no flavoring, no fillers, no "natural flavors" — nothing but the twelve botanicals on the label, and every gram of them is printed in the table above.</div>
       </details>
       <details class="faqitem">
         <summary>Will I be drinking this forever?</summary>
@@ -810,7 +899,7 @@
       <a href="#" onclick="return false">Terms</a>
     </div>
     <div class="paymarks">Secure checkout by Stripe · Visa · Mastercard · Amex · Apple Pay · Google Pay</div>
-    <p class="disc">Steady is a tea, not a medicine. Enjoy it alongside your doctor's care, never instead of it. If you take medication, are pregnant or nursing, or have a health condition, tell your doctor before making Steady a daily habit, and keep monitoring your blood pressure with them. Contains botanicals in the daisy family. These statements have not been evaluated by the FDA, and Steady is not intended to diagnose, treat, cure, or prevent any disease.</p>
+    <p class="disc">Steady is a tea, not a medicine. Enjoy it alongside your doctor's care, never instead of it. If you take medication, are pregnant or nursing, or have a health condition, tell your doctor before making Steady a daily habit, and keep monitoring your blood pressure with them. Contains botanicals in the daisy family (chamomile, calendula). Contains fennel, which has estrogen-like activity in laboratory studies: ask your doctor first if you have a hormone-sensitive condition. Contains sage, a source of thujone: not for use in pregnancy or nursing, and ask your doctor if you have a seizure disorder. Contains hawthorn, which can interact with cardiac medications. These statements have not been evaluated by the FDA, and Steady is not intended to diagnose, treat, cure, or prevent any disease.</p>
     <p style="margin-top:16px; letter-spacing:.18em; font-size:10px; text-transform:uppercase;">© SVUTU · Back to the roots, back to the soil, back to the body's own wisdom</p>
   </div>
 </footer>

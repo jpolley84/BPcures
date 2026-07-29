@@ -920,16 +920,35 @@ Forward this delivery address to the creator to fulfill. Stripe session: ${sessi
 // visible copy, per the email system's rule.
 const TEA_EMAIL_FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
-// Verified BP / BP-driver research, one study per botanical, mirroring the site.
+// One study per botanical, mirroring public/tea/index.html. Keep the two in
+// sync: this flyer goes to every tea buyer and the site is what they read
+// before ordering, so a drift between them is a buyer being told two things.
+//
+// 2026-07-29 REFORMULATION: Steady went from 8 botanicals to 12. Spearmint,
+// fennel seed and sage were added for hormone support; red raspberry leaf was
+// added for traditional use and carries NO citation on purpose (url: null),
+// which the flyer renders as an explicit "no citation" line rather than
+// dropping the row. Also fixed a drift found the same day: the calendula entry
+// here still pointed at the animal lipid study (PMC10578091) that the SITE
+// replaced on 2026-07-10 with the human oral-calendula trial (PMC9827526).
+//
+// Caveats are part of the citation, not decoration. Do not trim them: the
+// spearmint trial's objective hair measure did NOT reach significance, the
+// fennel and sage trials used capsules/extracts rather than tea, and the sage
+// trial was funded by the maker of the tested product.
 const TEA_RESEARCH = [
   { name: 'Hibiscus', corner: 'Sodium', what: 'A Tufts RCT and meta-analyses studied it for lowering systolic blood pressure in adults.', url: 'https://pubmed.ncbi.nlm.nih.gov/20018807/' },
-  { name: 'Hawthorn', corner: 'Arterial pressure', what: 'A 2025 meta-analysis of clinical trials studied it for lower systolic pressure in hypertension.', url: 'https://pubmed.ncbi.nlm.nih.gov/40732315/' },
+  { name: 'Hawthorn', corner: 'Arterial pressure', what: 'A 2025 meta-analysis of clinical trials studied it for lower systolic pressure in hypertension. It can interact with cardiac medications, so tell your prescriber.', url: 'https://pubmed.ncbi.nlm.nih.gov/40732315/' },
   { name: 'Lemongrass', corner: 'Vascular', what: 'A 2022 review ties it to vessel relaxing (nitric oxide) and mild diuretic activity.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9598547/' },
   { name: 'Ginger', corner: 'Sodium and Sugar', what: 'A meta-analysis studied it for healthy blood pressure, and other trials for blood sugar.', url: 'https://pubmed.ncbi.nlm.nih.gov/30972845/' },
-  { name: 'Nettle', corner: 'Sodium', what: 'Animal research studied it for lower blood pressure and for clearing sodium and water.', url: 'https://pubmed.ncbi.nlm.nih.gov/30097121/' },
+  { name: 'Nettle', corner: 'Sodium', what: 'Animal research studied it for lower blood pressure and for clearing sodium and water. Animal evidence only.', url: 'https://pubmed.ncbi.nlm.nih.gov/30097121/' },
   { name: 'Chamomile', corner: 'Stress and Sugar', what: 'A placebo controlled trial studied it for anxiety, and diabetic trials for blood sugar.', url: 'https://pubmed.ncbi.nlm.nih.gov/19593179/' },
-  { name: 'Lavender', corner: 'Stress', what: 'A trial in high blood pressure patients studied it for lower blood pressure, heart rate and cortisol.', url: 'https://pubmed.ncbi.nlm.nih.gov/35708557/' },
-  { name: 'Calendula', corner: 'Gentlest evidence', what: 'Animal research studied it for antioxidant support and healthier lipids on a high sugar diet.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10578091/' },
+  { name: 'Lavender', corner: 'Stress', what: 'A trial in high blood pressure patients studied it for lower blood pressure, heart rate and cortisol. That trial used aromatherapy, not a drink.', url: 'https://pubmed.ncbi.nlm.nih.gov/35708557/' },
+  { name: 'Calendula', corner: 'Whole body', what: 'The only human trial of swallowed calendula found it aided the body’s own tissue repair. That study measured wound healing, not blood pressure.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9827526/' },
+  { name: 'Spearmint', corner: 'New, hormone support', what: 'A 30 day randomized trial in 42 women with PCOS studied spearmint tea twice daily and reported a significant drop in free and total testosterone. The objective hair growth measure did not improve significantly, so no claim is made about unwanted hair.', url: 'https://pubmed.ncbi.nlm.nih.gov/19585478/' },
+  { name: 'Fennel seed', corner: 'New, hormone support', what: 'A meta-analysis of 12 randomized trials studied fennel for period pain, and a triple blind trial in 90 postmenopausal women studied it for menopause symptom score. Both used concentrated capsules rather than tea. Ask your doctor first if you have a hormone sensitive condition, and skip it in pregnancy or nursing.', url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC7697926/' },
+  { name: 'Sage', corner: 'New, hormone support', what: 'A placebo controlled trial in 80 women studied sage extract for menopause symptom score and hot flash severity. It was funded by the maker of the tested product, ran four weeks, and used an extract rather than tea. Sage contains thujone: avoid in pregnancy or nursing, and ask your doctor if you have a seizure disorder.', url: 'https://pubmed.ncbi.nlm.nih.gov/33615001/' },
+  { name: 'Red raspberry leaf', corner: 'New, traditional use', what: 'Long traditional use in women’s herbalism, and it rounds out the cup. We did not find a clinical trial we were willing to cite, so we are not citing one.', url: null },
 ];
 
 function teaFlyerHtml() {
@@ -937,13 +956,19 @@ function teaFlyerHtml() {
     <tr><td style="padding:13px 0;border-bottom:1px solid ${PALETTE.lineSoft};font-family:${TEA_EMAIL_FONT};">
       <div style="font-size:15px;font-weight:700;color:${PALETTE.ink};">${r.name} <span style="font-weight:600;font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:${PALETTE.sage};">${r.corner}</span></div>
       <div style="font-size:13.5px;line-height:1.55;color:${PALETTE.inkSoft};margin:4px 0 6px;">${r.what}</div>
-      <a href="${r.url}" style="font-size:12.5px;font-weight:700;color:${PALETTE.clay};text-decoration:none;">See the research &rarr;</a>
+      ${r.url
+        ? `<a href="${r.url}" style="font-size:12.5px;font-weight:700;color:${PALETTE.clay};text-decoration:none;">See the research &rarr;</a>`
+        : `<span style="font-size:12.5px;font-weight:600;font-style:italic;color:${PALETTE.muted || PALETTE.inkSoft};">No citation, and we would rather say so.</span>`}
     </td></tr>`).join('');
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:6px 0 10px;border-collapse:collapse;">${rows}</table>`;
 }
 
 function teaFlyerText() {
-  return TEA_RESEARCH.map((r) => `- ${r.name} (${r.corner}): ${r.what}\n  ${r.url}`).join('\n');
+  return TEA_RESEARCH.map((r) => (
+    r.url
+      ? `- ${r.name} (${r.corner}): ${r.what}\n  ${r.url}`
+      : `- ${r.name} (${r.corner}): ${r.what}\n  No citation, and we would rather say so.`
+  )).join('\n');
 }
 
 function teaOrderLines(items) {
@@ -984,7 +1009,7 @@ export function buildTeaConfirmationEmail({ firstName, items, amountCents, addre
       body: `Every pouch is hand crafted and packaged with love by my family, so give us a few days. Your order will ship within <b>5 to 7 business days</b>, and you will get a note the moment it is on its way.`,
     }),
     h2('While your tea travels, here is what is in your cup'),
-    p(`Steady is eight whole botanicals, and every one earns its place. Here is what researchers have studied each for, with the study one tap away, the same research we show on the site.`),
+    p(`Steady is now <strong>twelve</strong> whole botanicals. We reformulated it in 2026: spearmint, fennel seed and sage were added for hormone support, and red raspberry leaf for traditional use. Here is what researchers have studied each for, with the study one tap away, the same research we show on the site, and the same caveats.`),
     teaFlyerHtml(),
     p(`<a href="${SITE_URL}/tea/#science" style="color:${PALETTE.clay};font-weight:700;text-decoration:none;">See the full science on the site &rarr;</a>`),
     h2('How to brew it'),
@@ -1009,7 +1034,7 @@ WHEN IT SHIPS
 Every pouch is hand crafted and packaged with love by my family, so give us a few days. Your order will ship within 5 to 7 business days, and you will get a note the moment it is on its way.
 
 WHILE YOUR TEA TRAVELS, HERE IS WHAT IS IN YOUR CUP
-Steady is eight whole botanicals, and every one earns its place. Here is what researchers have studied each for:
+Steady is now TWELVE whole botanicals. We reformulated it in 2026: spearmint, fennel seed and sage were added for hormone support, and red raspberry leaf for traditional use. Here is what researchers have studied each for:
 
 ${teaFlyerText()}
 
