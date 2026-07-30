@@ -143,7 +143,10 @@ export function resolveHomeVariant() {
   let assignedNow = false;
 
   if (!stored) {
-    const assigned = Math.random() < 0.5 ? 'a' : 'b';
+    // 2026-07-30 (Joel): test concluded, A won on lead->sale conversion
+    // (6.1% vs 3.8%) and revenue per lead (+69%). All new traffic goes to A;
+    // ?ab=b still works as a forced preview override above.
+    const assigned = 'a';
     if (!persistHomeVariant(assigned)) {
       // Private mode / storage blocked: render 'a' but leave the device
       // UNCOHORTED. The assignment could never be sticky, and stamping it
