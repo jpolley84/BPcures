@@ -42,6 +42,7 @@ const groups = [
     files: [
       { name: 'Cook For Life Cookbook', desc: 'Plant-based recipes built to lower BP and stabilize blood sugar.', file: 'cook-for-life-cookbook.pdf' },
       { name: 'Overmedicated Boomers (bonus)', desc: 'The complete book on getting off prescription overload. Included with every purchase.', file: 'overmedicated-boomers.pdf' },
+      { name: 'The Lemonade Detox', desc: 'The full lemonade cleanse protocol: the drink, the daily rhythm, and how to come off it the right way.', file: 'lemonade-detox.pdf' },
     ],
   },
 ];

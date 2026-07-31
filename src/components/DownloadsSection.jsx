@@ -21,6 +21,7 @@ const ALL_FILES = [
   { name: 'The 10-Day Nurse\'s Reset Companion', file: 'bp-cures-10-day-reset.pdf', category: 'BP' },
   { name: 'Cook For Life Cookbook', file: 'cook-for-life-cookbook.pdf', category: 'Kitchen' },
   { name: 'Overmedicated Boomers (bonus)', file: 'overmedicated-boomers.pdf', category: 'Bonus' },
+  { name: 'The Lemonade Detox', file: 'lemonade-detox.pdf', category: 'Kitchen' },
 ];
 
 export default function DownloadsSection({ variant = 'compact', title }) {
