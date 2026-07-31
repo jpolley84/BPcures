@@ -56,11 +56,11 @@ function getResend() {
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 
-// The magnet itself. Source of truth is content/101-foods/101-foods-bp.html,
-// rendered by hand to public/downloads/101-foods-bp.pdf (38 A4 pages). There is
-// NO build script: scripts/build-101-foods-pdf.mjs does not exist (checked
-// 2026-07-26), so nothing regenerates this PDF automatically and nothing pins
-// its pagination. Linked, not attached (see header note).
+// The magnet itself. 2026-07-31: replaced with the co-branded Annie Chitate +
+// Joel Polley version, "THE BALANCED BP RESET" (55 pages, was 38). There is
+// NO build script: scripts/build-101-foods-pdf.mjs does not exist, so nothing
+// regenerates this PDF automatically and nothing pins its pagination. Linked,
+// not attached (see header note).
 export const FOODS101_FILE = '101-foods-bp.pdf';
 export const FOODS101_URL = `${SITE_URL}/downloads/${FOODS101_FILE}`;
 
@@ -100,19 +100,18 @@ function cleanUtmForStore(utm) {
 }
 
 // ─── The guide email ──────────────────────────────────────────────────
-// Beat sheet (spec foods101-v1 §4.2.3): deliver the guide, point at Section One
-// (the Foundation Ten), one line of the nurse story, name the second email so
+// Beat sheet (spec foods101-v1 §4.2.3): deliver the guide, point at the start
+// of the Masterlist, one line of the nurse story, name the second email so
 // the Monday seat does not read as a glitch, sign off, P.S. save this.
 //
-// PAGE NUMBER, VERIFIED 2026-07-26 against public/downloads/101-foods-bp.pdf
-// (`pdftotext -f 14 -l 15 public/downloads/101-foods-bp.pdf -`). Page 14 opens
-// "SECTION ONE OF TEN / The Foundation Ten / ITEMS 1 TO 10 / IF YOU ONLY EVER
-// ACT ON ONE PAGE, MAKE IT THIS ONE". Page 3 is the prose Welcome page and has
-// ZERO items on it, so never send anyone there. Items 1 to 6 sit on page 14 and
-// 7 to 10 on page 15, so never write "there are ten items on that page" either.
-// 101 - 10 = 91, so the closing clause is "ninety one". The PDF prints no page
-// numbers and nothing pins pagination: re-run that pdftotext check before
-// changing this number.
+// PAGE NUMBER, VERIFIED 2026-07-31 against the new co-branded PDF (extracted
+// via pypdf, all 55 pages). Page 36 opens "101 Hormone Support Foods -
+// Masterlist", item 1 (Flax Seeds) through item 4 (Avocado); item 5 (Tofu)
+// starts page 37, and the list runs sequentially through item 101 (Sprouted
+// Lentils) on page 55. Unlike the old PDF, there is NO curated "Foundation
+// Ten" subsection in this version, so do not claim one. The PDF prints no
+// page numbers and nothing pins pagination: re-verify with pypdf before
+// changing this number if the file is replaced again.
 //
 // ZERO offer in this email. The tripwire lives on the thank-you page, which is
 // where the visitor already is when this sends.
@@ -131,7 +130,7 @@ export function renderFoodsEmail({ firstName, unsubUrl, alreadyBooked = false })
     p('Here it is, exactly like I promised.'),
     p('<strong>101 Foods And Herbs That Help Steady Blood Pressure.</strong> Plant foods, kitchen herbs, and caffeine free teas, grouped so you know what goes in the cart this week instead of guessing in the supplement aisle.'),
     ctaButton('Open your 101 Foods guide (PDF)', FOODS101_URL),
-    p('Do not try to read all 101 tonight. Turn to page 14. Section one is the Foundation Ten, and those ten are the ones we would put in the cart first. Buy those, use those, and let the other ninety one wait their turn.'),
+    p('Do not try to read all 101 tonight. Turn to page 36. That is where the Masterlist starts, item one is flax seeds. Pick two or three to add to your cart this week, then come back for more next time you shop.'),
     p(`If the button does not work in your email app, here is the plain link: <a href="${FOODS101_URL}" style="color:${PALETTE.accentClay};font-weight:700;">${FOODS101_URL}</a>`),
     p('I spent twenty years in ICU and emergency medicine watching careful people take every pill on time, cut the salt shaker, do everything they were told, and still watch the numbers climb. It was almost never effort. It was that nobody ever showed them what to put on the plate instead.'),
     p('That is what this list is for.'),
@@ -149,7 +148,7 @@ Here it is, exactly like I promised.
 
 Open your guide: ${FOODS101_URL}
 
-Do not try to read all 101 tonight. Turn to page 14. Section one is the Foundation Ten, and those ten are the ones we would put in the cart first. Buy those, use those, and let the other ninety one wait their turn.
+Do not try to read all 101 tonight. Turn to page 36. That is where the Masterlist starts, item one is flax seeds. Pick two or three to add to your cart this week, then come back for more next time you shop.
 
 I spent twenty years in ICU and emergency medicine watching careful people take every pill on time, cut the salt shaker, do everything they were told, and still watch the numbers climb. It was almost never effort. It was that nobody ever showed them what to put on the plate instead.
 
