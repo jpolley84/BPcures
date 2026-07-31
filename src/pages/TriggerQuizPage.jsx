@@ -92,6 +92,7 @@ const QUESTIONS = [
       { key: 'sodium', text: 'Most days. Easy wins over cooking.' },
       { key: 'sleep', text: 'Late at night, when I should be winding down instead.' },
       { key: 'stillness', text: 'Often, and I eat it sitting at a desk or on the couch.' },
+      { key: 'none', text: "I cook almost everything myself, so this doesn't really apply." },
     ],
   },
   {

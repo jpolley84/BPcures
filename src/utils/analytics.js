@@ -142,6 +142,13 @@ export function resolveHomeVariant() {
   let stored = readStoredHomeVariant();
   let assignedNow = false;
 
+  // Self-heal any device stuck on 'b' from before the kill shipped. The test
+  // is over and A won decisively, so nobody should keep seeing B just because
+  // they were bucketed in before this date. Falls through to the same
+  // (re)assignment path below, which re-persists 'a'. The explicit ?ab=b
+  // forced-preview branch above already returned, so this never fights it.
+  if (stored === 'b') stored = null;
+
   if (!stored) {
     // 2026-07-30 (Joel): test concluded, A won on lead->sale conversion
     // (6.1% vs 3.8%) and revenue per lead (+69%). All new traffic goes to A;
