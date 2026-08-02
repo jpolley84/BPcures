@@ -13,11 +13,26 @@
 import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 
-const SECRET = process.env.UNSUB_SECRET || process.env.CRON_SECRET || 'dev-unsub-secret';
+// 2026-08-02 — SECRET is read lazily, not at module scope. Local broadcast
+// scripts import this module BEFORE their dotenv.config() runs (ESM imports
+// are hoisted), so a module-scope read locked in the 'dev-unsub-secret'
+// fallback and every locally-sent email carried a token the production
+// endpoint rejected ("That link did not work" → spam complaints, CAN-SPAM
+// exposure). Signing now reads env at call time; verification accepts any
+// historical signing secret so links already sitting in inboxes work again.
+const signingSecret = () => process.env.UNSUB_SECRET || process.env.CRON_SECRET || 'dev-unsub-secret';
+const verifySecrets = () => [
+  process.env.UNSUB_SECRET,
+  process.env.CRON_SECRET,
+  // Grandfather tokens minted by local scripts that fell back before this fix.
+  // Tradeoff: a forged unsubscribe is possible for a known address — accepted,
+  // because honoring every real unsubscribe click matters more.
+  'dev-unsub-secret',
+].filter(Boolean);
 
 export function signUnsubToken({ email }) {
   const e = String(email || '').trim().toLowerCase();
-  const sig = crypto.createHmac('sha256', SECRET).update(e).digest('hex').slice(0, 24);
+  const sig = crypto.createHmac('sha256', signingSecret()).update(e).digest('hex').slice(0, 24);
   return Buffer.from(`${e}:${sig}`).toString('base64url');
 }
 
@@ -28,8 +43,11 @@ export function verifyUnsubToken(token) {
     if (idx < 0) return null;
     const email = decoded.slice(0, idx);
     const sig = decoded.slice(idx + 1);
-    const expected = crypto.createHmac('sha256', SECRET).update(email).digest('hex').slice(0, 24);
-    return sig === expected ? email : null;
+    for (const secret of verifySecrets()) {
+      const expected = crypto.createHmac('sha256', secret).update(email).digest('hex').slice(0, 24);
+      if (sig === expected) return email;
+    }
+    return null;
   } catch {
     return null;
   }
