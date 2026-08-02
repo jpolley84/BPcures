@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, XCircle, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Star, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, ShoppingBag, Calendar, Heart, Users, Loader2, Play, TrendingUp, Shield, Zap, Stethoscope, Leaf, Activity, ArrowRight } from 'lucide-react';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 import { useHomeVariant } from '@/hooks/useHomeVariant';
 // 2026-06-08 — exit-intent / dwell popup now drives the about-to-bounce
@@ -641,30 +641,54 @@ const CheckoutPage = () => {
             </div>
           </AnimatedSection>
 
-          {/* Testimonials. 2026-06-08: lead quote is now a BP-number +
-              physician-oversight story (was a weight-loss / "off 2 meds"
-              quote with no doctor context). Every quote now keeps the doctor
-              in the loop. "Results not typical" note added below. */}
+          {/* PROOF — 2026-08-02 rewrite.
+              The 2026-07-25 full-system audit found four FABRICATED testimonials
+              here (Michael T./Denver, Deborah R./Houston, Maureen K./Tampa,
+              Jackie B.) carrying invented clinical outcomes — invented systolic
+              drops, invented glucose numbers, invented doctors cutting doses.
+              Commit 0a7bca8 (2026-05-20) states the identities were made up.
+              This is the highest-traffic page on the site and the winner of the
+              homepage A/B test, so it was also the most-seen lie we shipped.
+
+              REMOVED. Replaced with (a) the one quote we actually have written
+              consent for (docs/testimonials.md, 2026-07-06, anonymous by her
+              default) and (b) earned authority, which is what the brand bible
+              says to use when proof does not exist yet.
+
+              RULE, no exceptions: nothing goes in this block without a
+              `permission: GRANTED` entry in docs/testimonials.md. If you have
+              no consented quote, you have no testimonial — write [FILL] and
+              stop. Never invent a person, a city, an age, or a number. */}
           <AnimatedSection className="pt-14 pb-4">
-            <h3 className="text-center font-bold text-[18px] text-[#2C3E50] mb-8">What people are saying</h3>
-            <div className="grid gap-5 sm:grid-cols-2">
+            <h3 className="text-center font-bold text-[18px] text-[#2C3E50] mb-3">Why you can trust this</h3>
+            <p className="text-center mx-auto mb-8" style={{ color: 'var(--muted-gray)', fontSize: '14px', lineHeight: '1.6', maxWidth: '460px' }}>
+              We do not run testimonials we cannot prove. Here is the one reader win we have written
+              permission to share, and the reason to trust the rest.
+            </p>
+
+            <div className="testimonial-card p-6 mb-5">
+              <p className="text-[#4A4A4A] italic text-[15px] mb-4 leading-relaxed">
+                "I had a trigger that elevated my blood pressure and since then things have got back to
+                normal. Reduced salt, started little exercises. My blood pressure is back to normal, 124/80."
+              </p>
+              <p className="text-[#9CA3AF] text-[13px] font-medium">
+                BraveWorks reader, shared with permission · July 2026 · Results not typical.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-3">
               {[
-                { quote: "My numbers went from the 150s/90s to the 130s/80s over six weeks, and my doctor and I are watching it together.", source: 'Michael T., 61 · Denver, CO' },
-                { quote: "I was on Lisinopril for 9 years. After 3 weeks on the protocol my systolic dropped 18 points and my doctor cut my dose in half. First time in a decade anyone suggested I might need less medication.", source: 'Deborah R., 54 · Houston, TX' },
-                { quote: "Fasting glucose went from 134 to 112. Resting heart rate from 86 to 74. My cardiologist asked what I changed. I showed him Joel's protocol and he said 'keep doing that.'", source: 'Maureen K., 62 · Tampa, FL' },
-                { quote: "I was on 14 BP pills and my pressure was still high. I started doing what Joel taught me, and it came down so far my doctor told me I could start coming off my meds.", source: 'Jackie B.' },
-              ].map((t, i) => (
+                { big: '20 years', small: 'ICU and ER nursing. Joel has watched what blood pressure does when nobody catches it early.' },
+                { big: 'RN', small: 'A licensed nurse wrote every page. The protocol keeps your doctor in the loop, never around them.' },
+                { big: 'Cited', small: 'Every herb in the kit carries a human study you can look up yourself. No cherry-picked blog science.' },
+              ].map((c, i) => (
                 <div key={i} className="testimonial-card p-6 flex flex-col h-full">
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(5)].map((_, j) => (
-                      <Star key={j} size={14} className="fill-[#F39C12] text-[#F39C12]" />
-                    ))}
-                  </div>
-                  <p className="text-[#4A4A4A] italic text-[15px] mb-4 flex-grow leading-relaxed">"{t.quote}"</p>
-                  <p className="text-[#9CA3AF] text-[13px] font-medium">{t.source}</p>
+                  <p className="font-bold text-[20px] text-[#2C3E50] mb-2">{c.big}</p>
+                  <p className="text-[#4A4A4A] text-[14px] leading-relaxed">{c.small}</p>
                 </div>
               ))}
             </div>
+
             <p className="text-center mt-6" style={{ color: 'var(--muted-gray)', fontSize: '12px', lineHeight: '1.5' }}>
               Results not typical. Most readers see modest results or none. Always work with your doctor.
             </p>

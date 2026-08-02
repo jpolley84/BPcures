@@ -2,7 +2,7 @@
 //
 // Fires the _tier-2-emails.js sequence to every drip:* record where
 // state === 'tier-2'. 10 emails over 30 days. Fulfills the 30-day
-// promise: chapter walkthroughs (Stress/Sugar/Pipe Pressure), bonus
+// promise: chapter walkthroughs (Stress/Sugar/Sodium Pressure), bonus
 // kit deliveries (Cortisol Day 9, Blood Sugar Day 12, Cookbook Day 30
 // graduation gift), Monday 10 PM ET Zoom reminders, Skool VIP onboarding,
 // Cohort 2 upsell Days 18-30.

@@ -14,7 +14,21 @@
 // This helper checks three auth paths in order — accept any:
 //   1. Authorization: Bearer ${CRON_SECRET}        — Vercel cron (current)
 //   2. Authorization: Bearer ${CRON_AUTH_TOKEN}    — manual curl triggers
-//   3. x-vercel-cron: 1                            — Vercel cron (legacy)
+//   3. x-vercel-cron: 1                            — Vercel cron (legacy),
+//      ONLY when neither secret is configured (see the security note below)
+//
+// ⚠️ SECURITY FIX 2026-08-02 — the legacy header was an open bypass.
+// `x-vercel-cron` is a plain request header. Anyone can send it. Until today
+// this helper returned true for ANY request carrying it, unconditionally,
+// which meant every cron endpoint in a PUBLIC repo was callable by an
+// anonymous caller — including the ones that send thousands of emails.
+// Verified live by the 2026-07-25 full-system audit: 200 with the header,
+// 401 without.
+//
+// The header is now honored ONLY as a bootstrap fallback when no secret is
+// configured at all (fresh/dev deploys). Once CRON_SECRET or CRON_AUTH_TOKEN
+// exists, Bearer auth is mandatory and the header alone proves nothing.
+// Both are set in production, so in prod the header path is dead.
 //
 // Setup required (one-time per project):
 //   • In Vercel project Settings → Environment Variables, add:
@@ -41,7 +55,9 @@ export function isAuthorizedCron(req) {
   if (manualToken && bearer && bearer === manualToken) return true;
 
   // 3. Vercel cron (legacy header): x-vercel-cron: 1
-  if (req.headers['x-vercel-cron'] === '1') return true;
+  //    Bootstrap fallback ONLY. A request header is not a credential — if
+  //    either secret is configured, this path must not grant access.
+  if (!cronSecret && !manualToken && req.headers['x-vercel-cron'] === '1') return true;
 
   return false;
 }
@@ -53,6 +69,8 @@ export function cronAuthSource(req) {
   const bearer = auth.replace(/^Bearer\s+/i, '').trim();
   if (process.env.CRON_SECRET && bearer === process.env.CRON_SECRET) return 'vercel-bearer';
   if (process.env.CRON_AUTH_TOKEN && bearer === process.env.CRON_AUTH_TOKEN) return 'manual-bearer';
-  if (req.headers['x-vercel-cron'] === '1') return 'vercel-header-legacy';
+  if (!process.env.CRON_SECRET && !process.env.CRON_AUTH_TOKEN && req.headers['x-vercel-cron'] === '1') {
+    return 'vercel-header-legacy-bootstrap';
+  }
   return null;
 }

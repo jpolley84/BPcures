@@ -297,8 +297,11 @@ const PRESSURE_TO_CORNER = {
 // proof, curiosity-hook tails. Every headline leads with the dream not the
 // problem. Zero negatives in customer-facing copy.
 // RESULT_TIPS — keyed by Pressure id. Each tip set creates desire for the
-// matched kit (Pipe = BP Reset Kit, Stress = Cortisol kit, Sugar = Blood
-// Sugar kit). The `all` set covers the whole-Triangle reader.
+// matched kit (`pipes` = the SODIUM corner = BP Reset Kit, Stress = Cortisol
+// kit, Sugar = Blood Sugar kit). The `all` set covers the whole-Triangle reader.
+// NOTE: `pipes` is an INTERNAL key only, deliberately frozen so the product
+// category and Stripe mapping never move (see line ~177). The customer-facing
+// label is "Sodium" everywhere. Do not rename the key; do not print it.
 const RESULT_TIPS = {
   pipes: [
     {
@@ -1704,25 +1707,30 @@ function HowItWorks() {
    Testimonials — quiet, editorial
    ------------------------------------------------------------------ */
 
+// 2026-08-02 — FABRICATED TESTIMONIALS REMOVED.
+// This array held three invented readers (Linda M./62, Paul D./48, Rachel T./55)
+// with invented clinical numbers, each labelled "Verified buyer" — a claim that
+// was false. Found by the 2026-07-25 full-system audit; identities confirmed
+// invented in commit 0a7bca8. "Verified buyer" on an invented person is the
+// worst version of this mistake, so it is gone entirely.
+//
+// Only entries with `permission: GRANTED` in docs/testimonials.md may appear
+// here. Today that is exactly one, anonymous by her own default. If the array
+// is empty the section does not render — that is intended, not a bug.
+// Never invent a person, an age, a city, a product, or a number.
 const TESTIMONIALS = [
   {
-    quote: "148/94 to 128/82 in eleven days. I brought Joel's protocol to my next appointment and we built a plan together.",
-    author: 'Linda M.',
-    meta: 'Verified buyer · BP Reset Kit · Age 62',
-  },
-  {
-    quote: "I stopped waking at 3 a.m. by day four. By week two my resting heart rate dropped from 88 to 72. Joel explains things the way a nurse at your bedside would.",
-    author: 'Paul D.',
-    meta: 'Verified buyer · Cortisol Reset · Age 48',
-  },
-  {
-    quote: "Fasting glucose went from 138 to 109 in three weeks. I finally understand why my blood sugar swings were spiking my blood pressure. The cookbook alone paid for itself.",
-    author: 'Rachel T.',
-    meta: 'Verified buyer · Complete Bundle · Age 55',
+    quote: "I had a trigger that elevated my blood pressure and since then things have got back to normal. Reduced salt, started little exercises. My blood pressure is back to normal, 124/80.",
+    author: 'BraveWorks reader',
+    meta: 'Shared with permission · July 2026',
   },
 ];
 
 function Testimonials() {
+  // Renders nothing when we have no consented quotes. Do not "fix" this by
+  // adding filler — an empty proof section is honest, an invented one is not.
+  if (TESTIMONIALS.length === 0) return null;
+
   return (
     <section className="section surface-sage-deep" style={{ color: 'var(--cream)' }}>
       <div className="shell">
@@ -1731,7 +1739,7 @@ function Testimonials() {
           <span className="line" style={{ background: 'rgba(251, 248, 241, 0.2)' }} />
         </div>
         <h2 className="display-m" style={{ maxWidth: '20ch', margin: '0 0 clamp(2.5rem, 5vw, 4rem)', color: 'var(--cream)' }}>
-          Women already on the <em className="ital-display" style={{ color: 'var(--clay-soft)' }}>path.</em>
+          Already on the <em className="ital-display" style={{ color: 'var(--clay-soft)' }}>path.</em>
         </h2>
 
         <div style={{
