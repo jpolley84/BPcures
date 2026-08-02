@@ -43,7 +43,7 @@ const STACK = [
   { label: 'Weekly Nurse-Led Coaching with Joel', value: 1800 },
   { label: 'The Life Beyond the Numbers Community', value: 997 },
   { label: '4 Included Bonuses (Symptom Sorting, Restaurant & Celebration Survival, 15-Minute Busy Woman, Stay-Beyond Maintenance)', value: 1288 },
-  { label: 'Fast-Action Bonuses (Private Root-Driver Clarity Session + RestoreHER Replay Pathway)', value: 1747 },
+  { label: 'Fast-Action Bonus (Private Root-Driver Clarity Session)', value: 1747 },
 ];
 const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 10,614
 
