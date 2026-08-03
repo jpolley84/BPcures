@@ -23,13 +23,22 @@
 //   POST { intent, ... }   intent is one of:
 //
 //   'register'   { sessionId }                      -> paid seat confirmation
-//     The ONLY path that emails the Zoom join details, because the Zoom room
-//     IS the product. The seat is proven by retrieving the Stripe Checkout
-//     Session server-side and requiring: status complete, payment_status paid,
+//     The paid path (VIP since 2026-08-03; GA historically). The seat is
+//     proven by retrieving the Stripe Checkout Session server-side and
+//     requiring: status complete, payment_status paid,
 //     metadata.offer === 'challenge', metadata.cohort === this cohort. The
 //     buyer's address comes from the SESSION, never from the request body, so
 //     a stranger cannot POST someone else's email and be sent the link.
 //     Idempotent per session id and per email. 200 { ok, already, tier, ... }
+//
+//   'free-register' { email, firstName? }           -> FREE GA seat (2026-08-03)
+//     GA went free; this is its whole registration path. No Stripe, proof of
+//     nothing beyond a working address. Sends the same confirmation email in
+//     its 'free' variant: no kit promise (kit is VIP-only now), no refund
+//     language, and an honest VIP invitation instead. Same K.reg record shape
+//     as the paid path, amountCents 0, owes WITHOUT 'kit'. Idempotent per
+//     email. Note the emailed Zoom details now go to unpaid addresses too;
+//     that is inherent to a free cohort, not a leak.
 //
 //   'waitlist'   { email, firstName? }              -> doors-closed capture
 //     "Tell me about the next one." No Zoom link, no seat, no charge.
@@ -368,7 +377,7 @@ function zoomText() {
 // Wording follows the approved /challenge copy document. Zero em dashes in
 // visible copy. No clinical outcome promised anywhere. No seat count, no
 // countdown, no scarcity: the only deadline is that Night 1 is live.
-function registrationEmail({ firstName, isVip, email }) {
+function registrationEmail({ firstName, isVip, email, free = false }) {
   const name = firstName ? esc(firstName) : 'friend';
   const unsubUrl = unsubUrlFor(email);
   const provenance = `you registered for ${CHALLENGE.name} at bpquiz.com/challenge`;
@@ -399,14 +408,29 @@ function registrationEmail({ firstName, isVip, email }) {
   // the offer the buyer accepted, so the receipt may not narrow it afterward.
   // Only the price label differs between tiers.
   const priceLabel = isVip ? CHALLENGE.vipPriceLabel : CHALLENGE.seatPriceLabel;
-  const guaranteeHtml = p(
-    `<strong>Your guarantee.</strong> Your seat is fully refundable for any reason right up until ${esc(CHALLENGE.startLabel)} at ${esc(CHALLENGE.timeEt)}. Change your mind, reply REFUND, done. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${esc(CHALLENGE.logDueLabel)}. If you did that and still feel the week was not worth ${esc(priceLabel)}, reply REFUND by ${esc(CHALLENGE.refundByLabel)} and I send back the full ${esc(priceLabel)}. You keep the kit, the workbook, and the replays. The 10-Day BP Reset Kit inside your seat also carries its own 30-day Feel-It-or-Free promise either way.`
-  );
+  // 2026-08-03: the FREE seat has no refund to promise and no kit to deliver
+  // (kit moved into VIP), so its "plain part" is a plain statement instead of
+  // a guarantee, and its second prep item becomes the honest VIP invitation.
+  const guaranteeHtml = free
+    ? p(
+        `<strong>Your seat is free.</strong> Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
+      )
+    : p(
+        `<strong>Your guarantee.</strong> Your seat is fully refundable for any reason right up until ${esc(CHALLENGE.startLabel)} at ${esc(CHALLENGE.timeEt)}. Change your mind, reply REFUND, done. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${esc(CHALLENGE.logDueLabel)}. If you did that and still feel the week was not worth ${esc(priceLabel)}, reply REFUND by ${esc(CHALLENGE.refundByLabel)} and I send back the full ${esc(priceLabel)}. You keep the kit, the workbook, and the replays. The 10-Day BP Reset Kit inside your seat also carries its own 30-day Feel-It-or-Free promise either way.`
+      );
+
+  const secondPrepHtml = free
+    ? p(
+        `<strong>Two.</strong> If you want the fourth day, the VIP seat is ${esc(CHALLENGE.vipPriceLabel)}: the Bonus Day on ${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}, where we read real logs out loud and answer questions until they run out, plus the complete 10-Day BP Reset Kit, all eleven downloads, delivered the minute you upgrade. <a href="${SITE_URL}/challenge" style="color:${PALETTE.clay};font-weight:600;">Upgrade here</a>, or just come free on Tuesday. Both are honest choices.`
+      )
+    : p(
+        `<strong>Two.</strong> Your 10-Day BP Reset Kit comes in a separate email from me. If it has not landed within the hour, reply to this one and I will send it by hand.`
+      );
 
   const bodyHtml = [
     p(`Hey ${name},`),
     p(
-      `Your seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three nights, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a night. You can watch from your own chair with the camera off.`
+      `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three nights, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a night. You can watch from your own chair with the camera off.`
     ),
     zoomHtml(),
     h2('The three nights'), // 3-night schedule
@@ -418,9 +442,7 @@ function registrationEmail({ firstName, isVip, email }) {
     p(
       `<strong>One.</strong> Find your home blood pressure cuff and put it somewhere you will see it. That is the only equipment for the whole week.`
     ),
-    p(
-      `<strong>Two.</strong> Your 10-Day BP Reset Kit comes in a separate email from me. If it has not landed within the hour, reply to this one and I will send it by hand.`
-    ),
+    secondPrepHtml,
     vipHtml,
     h2('The plain part'),
     guaranteeHtml,
@@ -433,7 +455,7 @@ function registrationEmail({ firstName, isVip, email }) {
 
   const bodyText = `Hey ${firstName || 'friend'},
 
-Your seat is saved for ${CHALLENGE.name}. Three nights, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a night. You can watch from your own chair with the camera off.
+Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three nights, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a night. You can watch from your own chair with the camera off.
 
 ${zoomText()}
 
@@ -444,7 +466,11 @@ Every night has a replay, posted by noon CT the next day, and it is yours to kee
 
 TWO THINGS BEFORE TUESDAY
 One. Find your home blood pressure cuff. That is the only equipment for the whole week.
-Two. Your 10-Day BP Reset Kit comes in a separate email. If it has not landed within the hour, reply to this one and I will send it by hand.
+${
+  free
+    ? `Two. If you want the fourth day, the VIP seat is ${CHALLENGE.vipPriceLabel}: the Bonus Day on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt}, plus the complete 10-Day BP Reset Kit, all eleven downloads. Upgrade at ${SITE_URL}/challenge, or just come free on Tuesday. Both are honest choices.`
+    : `Two. Your 10-Day BP Reset Kit comes in a separate email. If it has not landed within the hour, reply to this one and I will send it by hand.`
+}
 ${
   isVip
     ? `
@@ -455,7 +481,11 @@ Then questions until they run out, and a second pass at the doctor conversation 
 `
     : ''
 }
-YOUR GUARANTEE. Your seat is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeEt}. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${CHALLENGE.logDueLabel}. If you did that and still feel the week was not worth ${priceLabel}, reply REFUND by ${CHALLENGE.refundByLabel} and I send back the full ${priceLabel}. You keep the kit, the workbook, and the replays. The kit also carries its own 30-day Feel-It-or-Free promise either way.
+${
+  free
+    ? `YOUR SEAT IS FREE. Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
+    : `YOUR GUARANTEE. Your seat is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeEt}. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${CHALLENGE.logDueLabel}. If you did that and still feel the week was not worth ${priceLabel}, reply REFUND by ${CHALLENGE.refundByLabel} and I send back the full ${priceLabel}. You keep the kit, the workbook, and the replays. The kit also carries its own 30-day Feel-It-or-Free promise either way.`
+}
 
 You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. My job is to walk you in with better information than you have ever had.
 
@@ -674,7 +704,10 @@ async function handleRegister(req, res) {
     source: 'challenge-checkout',
     // Delivery obligations Joel owes this seat, written down so the ops
     // dashboard and any later cron can read them instead of re-deriving.
-    owes: isVip ? ['three-nights', 'replays', 'workbook', 'kit', 'qa', '48-hour-answer'] : ['three-nights', 'replays', 'workbook', 'kit'],
+    // 2026-08-03: VIP gained the Bonus Day; the kit is VIP-only now. The paid
+    // GA branch below is unreachable from the page (GA went free) but stays
+    // correct for any in-flight session that paid $17 under the old terms.
+    owes: isVip ? ['three-nights', 'replays', 'workbook', 'kit', 'bonus-day', 'qa', '48-hour-answer'] : ['three-nights', 'replays', 'workbook', 'kit'],
     confirmationSentAt: null,
   };
 
@@ -789,6 +822,109 @@ ${isVip ? '\nVIP. You owe this person live Q and A after every night plus a writ
   });
 }
 
+// ─── Intent: free-register (the free GA seat, 2026-08-03) ─────────────
+// GA went FREE on 2026-08-03 (Joel). The free seat carries the three nights,
+// replays and workbook. It does NOT carry the kit: the kit moved into the $47
+// VIP seat (Joel's explicit call, same day). This handler is the free seat's
+// whole registration path: no Stripe, no session, proof of nothing beyond a
+// working email address. It reuses the SAME K.reg record shape as the paid
+// path so the ops dashboard, the digest, and any later cron read one shape.
+async function handleFreeRegister(req, res) {
+  const rawEmail = req.body?.email;
+  if (!looksLikeValidEmail(rawEmail)) {
+    return res.status(400).json({ error: 'invalidEmail', message: 'Valid email is required' });
+  }
+  const email = rawEmail.trim().toLowerCase();
+  const firstName = firstNameOf(req.body?.firstName || req.body?.name || '');
+
+  const kvUp = Boolean(process.env.KV_REST_API_URL);
+
+  // Idempotent by EMAIL, exactly like the paid path. A second submit (or a
+  // paid VIP buyer who also fills the free form) never gets a second email.
+  if (kvUp) {
+    try {
+      const existing = await kv.get(K.reg(email));
+      if (existing && existing.confirmationSentAt) {
+        return res
+          .status(200)
+          .json({ ok: true, already: true, emailed: true, tier: existing.tier || 'challenge-ga', firstName, email, cohort: CHALLENGE.cohort });
+      }
+    } catch (err) {
+      console.warn('challenge-signup: free registration lookup failed (continuing)', err.message);
+    }
+  }
+
+  const record = {
+    email,
+    firstName,
+    fullName: clean(req.body?.name || firstName),
+    tier: 'challenge-ga',
+    seat: 'ga',
+    cohort: CHALLENGE.cohort,
+    challenge: 'three-pressures',
+    amountCents: 0,
+    currency: 'usd',
+    stripeSessionId: null,
+    stripeCustomerId: null,
+    registeredAt: new Date().toISOString(),
+    source: 'challenge-free-registration',
+    // NO 'kit' here. The kit belongs to VIP only since 2026-08-03. If you add
+    // it back you are promising 17 downloads to every free signup.
+    owes: ['three-nights', 'replays', 'workbook'],
+    confirmationSentAt: null,
+  };
+
+  if (kvUp) {
+    try {
+      await kv.set(K.reg(email), record);
+      await kv.sadd(K.members, email);
+      await kv.incr(K.count);
+    } catch (err) {
+      console.error('challenge-signup: free registration write failed', err.message);
+      return res.status(500).json({ error: 'storageFailed' });
+    }
+    // A free registrant is a LEAD, not a buyer. promoteToBuyer stays false.
+    await touchTriangleRecord(email, firstName, ['challenge-2026-08', 'challenge-ga', 'challenge-free'], {
+      promoteToBuyer: false,
+    });
+  }
+
+  const { html, text } = registrationEmail({ firstName, isVip: false, email, free: true });
+  const unsubUrl = unsubUrlFor(email);
+  try {
+    await getResend().emails.send({
+      from: FROM,
+      to: email,
+      replyTo: REPLY_TO,
+      subject: `Your free seat is saved: three nights, starting ${CHALLENGE.startLabel}`,
+      html,
+      text,
+      ...(unsubUrl
+        ? {
+            headers: {
+              'List-Unsubscribe': `<${unsubUrl}>`,
+              'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
+          }
+        : {}),
+    });
+    if (kvUp) {
+      try {
+        await kv.set(K.reg(email), { ...record, confirmationSentAt: new Date().toISOString() });
+      } catch { /* stamp only, non-fatal */ }
+    }
+  } catch (err) {
+    console.error('challenge-signup: free confirmation send failed', err.message);
+    // The seat IS registered; tell the page the truth so it can say "check
+    // your email, and if nothing arrives reply". No lock to release: the free
+    // path has no session lock, and confirmationSentAt was never stamped, so
+    // a resubmit retries the send.
+    return res.status(200).json({ ok: true, already: false, emailed: false, tier: 'challenge-ga', firstName, email, cohort: CHALLENGE.cohort });
+  }
+
+  return res.status(200).json({ ok: true, already: false, emailed: true, tier: 'challenge-ga', firstName, email, cohort: CHALLENGE.cohort });
+}
+
 // ─── Intent: waitlist / seat-link (no seat, no Zoom link) ─────────────
 async function handleInterest(req, res, mode) {
   const rawEmail = req.body?.email;
@@ -891,16 +1027,22 @@ export default async function handler(req, res) {
 
   const explicit = typeof req.body.intent === 'string' ? req.body.intent : '';
   const intent = explicit || (req.body.sessionId || req.body.session_id ? 'register' : 'waitlist');
-  if (!['register', 'waitlist', 'seat-link'].includes(intent)) {
+  if (!['register', 'free-register', 'waitlist', 'seat-link'].includes(intent)) {
     return res.status(400).json({ error: 'unknownIntent' });
   }
 
   // Rate-limit FIRST so nobody can exhaust Resend or burn sender reputation.
+  // free-register gets its own bucket: it is the page's PRIMARY signup now
+  // (2026-08-03, GA went free), so it needs more headroom than the interest
+  // forms, but it sends a real confirmation email so it cannot share
+  // register's near-unlimited bucket either.
   const ip = getClientIp(req);
   const rl =
     intent === 'register'
       ? await checkRateLimit(ip, { prefix: 'cs-rl-reg', limit: 60 })
-      : await checkRateLimit(ip, { prefix: 'cs-rl', limit: 10 });
+      : intent === 'free-register'
+        ? await checkRateLimit(ip, { prefix: 'cs-rl-free', limit: 20 })
+        : await checkRateLimit(ip, { prefix: 'cs-rl', limit: 10 });
   if (!rl.ok) {
     console.warn(`challenge-signup: rate-limited ip=${ip} intent=${intent} count=${rl.count}`);
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
@@ -908,6 +1050,7 @@ export default async function handler(req, res) {
 
   try {
     if (intent === 'register') return await handleRegister(req, res);
+    if (intent === 'free-register') return await handleFreeRegister(req, res);
     return await handleInterest(req, res, intent);
   } catch (err) {
     console.error(`challenge-signup: unhandled failure (intent=${intent})`, err.message);

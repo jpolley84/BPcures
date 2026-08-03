@@ -1979,6 +1979,32 @@ async function processCheckoutCompleted(event) {
       // audit finding on stripe-webhook.js:729).
       throw new Error(`challenge registration failed for ${session.id}: ${regRes?.statusText || 'unknown'}`);
     }
+
+    // ── VIP kit delivery (2026-08-03) ──
+    // The kit moved OUT of the (now free) GA seat and INTO the $47 VIP. Until
+    // today NOTHING delivered the kit for challenge buyers at all: the
+    // confirmation email promised it "in a separate email" and no code sent
+    // that email. VIP buyers now receive exactly what a $17 kit buyer gets
+    // (tier 'corner'; corner resolves through modulesForTier's own fallback).
+    // A send failure THROWS so Stripe retries; registration above is already
+    // idempotent by email, and the kitdone marker stops a double kit send.
+    if (seat === 'vip') {
+      const vipKitKey = `bwbp:kitdone:${session.id}`;
+      let vipKitDone = false;
+      try { vipKitDone = Boolean(await kv.get(vipKitKey)); } catch { /* treat as not done */ }
+      if (!vipKitDone) {
+        const vipFirstName = String(session.customer_details?.name || '').trim().split(/\s+/)[0] || '';
+        await sendBuyerDelivery({
+          email: customerEmail,
+          firstName: vipFirstName,
+          tier: 'corner',
+          corner: null,
+          scores: null,
+        });
+        try { await kv.set(vipKitKey, Date.now(), { ex: 60 * 60 * 24 * 30 }); } catch { /* non-fatal */ }
+      }
+    }
+
     try { await kv.set(doneKey, Date.now(), { ex: 60 * 60 * 24 * 30 }); } catch { /* non-fatal */ }
     return { action: 'challenge_recorded', seat, cohort, customer_email: customerEmail };
   }

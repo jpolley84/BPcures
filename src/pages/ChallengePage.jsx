@@ -109,8 +109,8 @@ const CHALLENGE = {
   TIME_LABEL_CT: '6:00pm CT',
   NIGHT_LENGTH: 'one hour',
 
-  // FOUNDING COHORT pricing. The seat is $17 for this first cohort and $97 for
-  // the next one.
+  // FOUNDING COHORT pricing. GA went FREE on 2026-08-03 (was $17); the next
+  // cohort is $97.
   //
   // NEXT_COHORT_PRICE is deliberately a FUTURE price, not a struck past one.
   // The $97 has never been charged, so rendering it as a crossed-out "was"
@@ -119,7 +119,12 @@ const CHALLENGE = {
   // was retired on 2026-07-04. Stated as "the next cohort is $97" it is simply
   // true, and it stays true only if cohort 2 actually sells at $97. Do not
   // restyle this as a strikethrough without changing what it claims.
-  SEAT_PRICE: 17,
+  // 2026-08-03 (Joel): GA is FREE for the founding cohort. The seat is a
+  // registration (name + email -> /api/challenge-signup intent 'free-register'),
+  // NOT a $0 Stripe checkout. The kit moved OUT of the free seat and INTO the
+  // $47 VIP (Joel's explicit call, same conversation), so a free registrant is
+  // promised the three nights, the replays and the workbook, and nothing else.
+  SEAT_PRICE: 0,
   NEXT_COHORT_PRICE: 97,
   SEAT_TIER: 'challenge-ga',
 
@@ -171,7 +176,6 @@ const CHALLENGE = {
 
 const NIGHT_COUNT = 3;
 const usd = (n) => '$' + Number(n).toLocaleString('en-US');
-const SEAT_PER_NIGHT = (CHALLENGE.SEAT_PRICE / NIGHT_COUNT).toFixed(2);    // 5.67
 
 /* ── Stripe: one instance at module load (same pattern as PayPage / AllInPage).
       Null when the publishable key is unset, which routes straight to the
@@ -343,18 +347,18 @@ const VIP_NIGHT = {
    comparison, not invented value. What is NOT kept is the "($997 value)" tag
    the comp puts beside every bullet.
    ========================================================================== */
+// 2026-08-03: GA is free and lost the kit and the 48-Hour Answer, both of
+// which moved to VIP (the kit by Joel's explicit call; the written-answer
+// service because promising personal written answers to an uncapped free room
+// is a promise that cannot be kept). The free seat's list is only things that
+// scale to any room size: the live nights, the replays, the printables.
 const GA_ITEMS = [
   `All three live nights on Zoom, ${CHALLENGE.DATE_RANGE_LABEL}, ${CHALLENGE.TIME_WINDOW_ET}`,
   'Thirty minutes of live Q and A after every night, cameras and microphones optional',
-  {
-    lead: 'The 48-Hour Answer:',
-    rest: ' any question you submit by 5:00pm ET gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not.',
-  },
   'The replay of every night, teaching and Q and A both, posted by noon the next day and yours to keep',
   'The 3-Night Workbook, one printable page per night, so nothing depends on you taking notes',
   'The 3-Day Log sheet you fill in from Night 1 and hand to your doctor on Night 3',
   'The Doctor Conversation Sheet used on Night 3',
-  `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads, delivered the minute you register`,
 ];
 
 const TIERS = [
@@ -362,16 +366,17 @@ const TIERS = [
     key: CHALLENGE.SEAT_TIER,
     name: 'General',
     who: 'For the person who wants to be in the room.',
-    price: CHALLENGE.SEAT_PRICE,
+    price: 0,
+    free: true,
     regular: CHALLENGE.GA_REGULAR_PRICE,
     time: `${CHALLENGE.DATE_RANGE_LABEL} · ${CHALLENGE.TIME_WINDOW_ET}`,
-    cta: `Save my seat, ${usd(CHALLENGE.SEAT_PRICE)}`,
     featured: false,
-    note: `Founding cohort price. Regular price ${usd(CHALLENGE.GA_REGULAR_PRICE)} from the next cohort on.`,
+    note: `Free for the founding cohort. Regular price ${usd(CHALLENGE.GA_REGULAR_PRICE)} from the next cohort on.`,
     items: GA_ITEMS,
     out: [
       `The Bonus Day, ${CHALLENGE.VIP_DAY_SHORT}, where we read your three days of readings together`,
-      'Your questions answered live on the Bonus Day',
+      `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads`,
+      'The 48-Hour Answer: every question you submit answered in writing',
     ],
   },
   {
@@ -379,21 +384,29 @@ const TIERS = [
     name: 'VIP',
     who: 'For the person who wants their own numbers looked at.',
     price: CHALLENGE.VIP_PRICE,
+    free: false,
     regular: CHALLENGE.VIP_REGULAR_PRICE,
     time: `${CHALLENGE.DATE_RANGE_LABEL} plus ${CHALLENGE.VIP_DAY_SHORT}`,
     cta: `Save my VIP seat, ${usd(CHALLENGE.VIP_PRICE)}`,
     featured: true,
-    ribbon: 'Includes the fourth day',
+    ribbon: 'The fourth day + the kit',
     note: `Founding cohort price. Regular price ${usd(CHALLENGE.VIP_REGULAR_PRICE)} from the next cohort on.`,
     items: [
-      { lead: 'Everything in General.', rest: '' },
+      { lead: 'Everything in the free seat.', rest: '' },
       {
         lead: `The Bonus Day, ${CHALLENGE.VIP_DAY_LABEL}, ${CHALLENGE.VIP_TIME_ET}:`,
         rest: ` a fourth live session, ${CHALLENGE.VIP_LENGTH}, three days after the challenge ends and with your own readings finally in hand.`,
       },
       'We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying',
       'Open questions until they run out, not until the hour does',
-      'A second pass at the doctor conversation, with the exact wording for whatever your log turned up',
+      {
+        lead: `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads,`,
+        rest: ' delivered to your inbox the minute you upgrade. The kit sells on this site for $17 on its own.',
+      },
+      {
+        lead: 'The 48-Hour Answer:',
+        rest: ' any question you submit by 5:00pm ET gets answered. Live on that night’s call if there is time, and in writing within 48 hours if there is not.',
+      },
       'The Bonus Day replay, yours to keep alongside the other three',
     ],
     out: [],
@@ -472,7 +485,7 @@ const FAQ = [
   },
   {
     q: 'What is the difference between General and VIP?',
-    a: `General is the three live nights, the replays, the workbook, the log, and the ${usd(KIT_PRICE)} kit. VIP is all of that plus a fourth session on ${CHALLENGE.VIP_DAY_LABEL} at ${CHALLENGE.VIP_TIME_ET}, which is the one where we read real logs out loud and I answer questions until they run out. The reason it sits on Sunday and not inside the week is simple: on Sunday you finally have three days of your own readings to look at. There is nothing to look at on Tuesday. If you only want the teaching, take General. If you want your own numbers looked at before you see your doctor, take VIP.`,
+    a: `General is free, and it is the whole challenge: the three live nights, the replays, the workbook and the log. VIP is ${usd(CHALLENGE.VIP_PRICE)} and adds three things: a fourth session on ${CHALLENGE.VIP_DAY_LABEL} at ${CHALLENGE.VIP_TIME_ET}, where we read real logs out loud and I answer questions until they run out; the complete ${usd(KIT_PRICE)} 10-Day BP Reset Kit, delivered the minute you upgrade; and the 48-Hour Answer, where every question you submit gets answered in writing. The Bonus Day sits on Sunday and not inside the week for a simple reason: on Sunday you finally have three days of your own readings to look at. If you only want the teaching, come free. If you want your own numbers looked at before you see your doctor, take VIP.`,
   },
   {
     q: 'Do I have to be on camera?',
@@ -504,11 +517,11 @@ const FAQ = [
   },
   {
     q: `What is the difference between this and the ${usd(KIT_PRICE)} kit?`,
-    a: 'The kit is the written protocol you follow at your own pace. This is three live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. Your seat includes the kit, so you are not choosing between them.',
+    a: 'The kit is the written protocol you follow at your own pace. This is three live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. The free seat does not include the kit; the VIP seat does, along with the Bonus Day. So you can come free and buy the kit separately, or take VIP and get both together.',
   },
   {
     q: 'What if it does not work for me?',
-    a: `Read the guarantee section above, because I wrote it plainly on purpose. Short version: the kit inside your seat carries a 30-day Feel-It-or-Free promise either way. Your seat is refundable for any reason right up until we start, and refundable in full after that if you did the work and still felt it was not worth it. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
+    a: `The free seat costs you nothing but the hours, so there is nothing to refund and nothing to lose but three evenings. For VIP, read the guarantee section above, because I wrote it plainly on purpose: refundable for any reason before we start, refundable in full after that if you did the work and still felt it was not worth it, and the kit inside it carries its own 30-day Feel-It-or-Free promise. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
   },
   {
     q: 'Will something be sold at the end?',
@@ -1081,7 +1094,7 @@ function SiteHeader({ doorsClosed, goToSeats, goToWaitlist }) {
 /* ==========================================================================
    HERO
    ========================================================================== */
-function Hero({ doorsClosed, chooseTier, goToSeats, goToWaitlist, left }) {
+function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
   return (
     <section className="tpc-hero" id="top">
       <div className="tpc-wrap">
@@ -1118,12 +1131,11 @@ function Hero({ doorsClosed, chooseTier, goToSeats, goToWaitlist, left }) {
             without the note underneath it, and a bare struck $97 next to $17
             reads as a former price. */}
         <div className="tpc-price">
-          Regular <s>{usd(CHALLENGE.GA_REGULAR_PRICE)}</s>, founding cohort{' '}
-          <b>{usd(CHALLENGE.SEAT_PRICE)}</b>
+          Regular <s>{usd(CHALLENGE.GA_REGULAR_PRICE)}</s>, founding cohort <b>FREE</b>
         </div>
         <div className="tpc-pricenote">
-          Founding cohort pricing. Regular price {usd(CHALLENGE.GA_REGULAR_PRICE)} for General and{' '}
-          {usd(CHALLENGE.VIP_REGULAR_PRICE)} for VIP, starting with the next cohort.
+          Free for the founding cohort; the next cohort pays {usd(CHALLENGE.GA_REGULAR_PRICE)}. VIP
+          adds the Bonus Day and the complete kit for {usd(CHALLENGE.VIP_PRICE)}.
         </div>
 
         <div className="tpc-herobtn">
@@ -1135,9 +1147,9 @@ function Hero({ doorsClosed, chooseTier, goToSeats, goToWaitlist, left }) {
             <button
               type="button"
               className="tpc-btn tpc-btn-gold"
-              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'hero', CHALLENGE.SEAT_PRICE)}
+              onClick={() => goToSeats('hero')}
             >
-              Yes! Save My Seat, {usd(CHALLENGE.SEAT_PRICE)}
+              Yes! Save My Free Seat
             </button>
           )}
           <div className="tpc-cta-sub">
@@ -1283,7 +1295,7 @@ function Identity() {
 /* ==========================================================================
    SO YOU CAN
    ========================================================================== */
-function SoYouCan({ doorsClosed, chooseTier, goToWaitlist }) {
+function SoYouCan({ doorsClosed, goToSeats, goToWaitlist }) {
   return (
     <section className="tpc-sec" style={{ background: `linear-gradient(180deg, ${C.ivory}, ${C.cream})` }}>
       <div className="tpc-wrap">
@@ -1313,9 +1325,9 @@ function SoYouCan({ doorsClosed, chooseTier, goToWaitlist }) {
             <button
               type="button"
               className="tpc-btn tpc-btn-ink"
-              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_soyoucan', CHALLENGE.SEAT_PRICE)}
+              onClick={() => goToSeats('after_soyoucan')}
             >
-              Yes! Save My Seat
+              Yes! Save My Free Seat
             </button>
           )}
         </div>
@@ -1328,7 +1340,7 @@ function SoYouCan({ doorsClosed, chooseTier, goToWaitlist }) {
    THE NIGHTS TABLE
    Three nights, plus the VIP fourth day as the highlighted final row.
    ========================================================================== */
-function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
+function Nights({ doorsClosed, goToSeats, goToWaitlist }) {
   return (
     <section className="tpc-sec tpc-ink" id="nights">
       <div className="tpc-wrap">
@@ -1396,9 +1408,9 @@ function Nights({ doorsClosed, chooseTier, goToWaitlist }) {
             <button
               type="button"
               className="tpc-btn tpc-btn-gold"
-              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_nights', CHALLENGE.SEAT_PRICE)}
+              onClick={() => goToSeats('after_nights')}
             >
-              Yes! Save My Seat, {usd(CHALLENGE.SEAT_PRICE)}
+              Yes! Save My Free Seat
             </button>
           )}
         </div>
@@ -1479,9 +1491,9 @@ function Tickets({
           <span className="tpc-eyebrow">Choose Your Seat</span>
           <h2>Two Ways In</h2>
           <p>
-            Both seats include all three live nights, all three replays, and the full 10-Day BP
-            Reset Kit, which this site sells on its own for {usd(KIT_PRICE)}. The only difference is
-            the fourth day.
+            The free seat is the whole challenge: all three live nights, all three replays, the
+            workbook and the log. VIP adds the fourth day, the complete 10-Day BP Reset Kit
+            (which this site sells on its own for {usd(KIT_PRICE)}), and the 48-Hour Answer.
           </p>
         </div>
 
@@ -1525,8 +1537,9 @@ function Tickets({
 
         <p style={{ textAlign: 'center', marginTop: 30, fontSize: '.88rem', color: C.dim }}>
           Doors close {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_ET}, because that is when
-          Night 1 begins. Regular prices of {usd(CHALLENGE.GA_REGULAR_PRICE)} and{' '}
-          {usd(CHALLENGE.VIP_REGULAR_PRICE)} start with the next cohort.
+          Night 1 begins. The free seat is founding-cohort only: regular prices of{' '}
+          {usd(CHALLENGE.GA_REGULAR_PRICE)} and {usd(CHALLENGE.VIP_REGULAR_PRICE)} start with the
+          next cohort.
         </p>
       </div>
     </section>
@@ -1544,7 +1557,7 @@ function TierCard({ tier, doorsClosed, active, onChoose, onWaitlist }) {
       <div className="reg">
         Regular price <s>{usd(tier.regular)}</s>
       </div>
-      <div className="amt">{usd(tier.price)}</div>
+      <div className="amt">{tier.free ? 'FREE' : usd(tier.price)}</div>
       <div className="time">{tier.time}</div>
       <div className="rule" />
       <ul>
@@ -1564,6 +1577,19 @@ function TierCard({ tier, doorsClosed, active, onChoose, onWaitlist }) {
         <button type="button" className="tpc-btn tpc-btn-out" onClick={onWaitlist}>
           Tell me about the next one
         </button>
+      ) : tier.free ? (
+        /* The free seat IS a registration, not a checkout. The form lives
+           right in the card: zero clicks between wanting the seat and having
+           it, which is the whole point of free. */
+        <div id="free-seat" style={{ scrollMarginTop: 90 }}>
+          <SignupForm
+            intent="free-register"
+            buttonLabel="Save my free seat"
+            successLine="You are in. Your seat is saved, and your confirmation is on its way to your inbox."
+            microcopy="Free. No card, nothing renews. Unsubscribe anytime."
+            event="chal_free_register_submit"
+          />
+        </div>
       ) : (
         <button
           type="button"
@@ -1686,26 +1712,25 @@ function PriceReasoning() {
     <section className="tpc-sec" style={{ paddingTop: 0 }}>
       <div className="tpc-wrap tpc-narrow">
         <div style={{ background: C.white, border: '1px solid rgba(138,96,61,.22)', borderRadius: 10, padding: '28px 24px' }}>
-          <h3 style={{ fontSize: '1.5rem', marginBottom: 14 }}>Why it costs what it costs.</h3>
+          <h3 style={{ fontSize: '1.5rem', marginBottom: 14 }}>Why the seat is free.</h3>
           <p style={{ color: C.dim, fontSize: '.96rem' }}>
-            A founding seat is {usd(CHALLENGE.SEAT_PRICE)}, and it includes the 10-Day BP Reset Kit,
-            all {KIT_FILE_COUNT} documents, which sells on this site for exactly {usd(KIT_PRICE)} on
-            its own. So the kit is the whole ticket price and the three live nights ride along with
-            it. That is {'$'}{SEAT_PER_NIGHT} a night.
+            This is Cohort One, and I would rather fill this first room than charge for it. The
+            free seat is the whole challenge: three live nights, three replays, the workbook and
+            the log. No card, nothing renews, and there is no catch waiting on Night 3.
           </p>
           <p style={{ color: C.dim, fontSize: '.96rem' }}>
-            VIP is {usd(CHALLENGE.VIP_PRICE)} and the difference is one thing: the fourth day on{' '}
-            {CHALLENGE.VIP_DAY_LABEL}, where we read real logs out loud and I answer questions until
-            they run out. There is no third tier, no upsell during the calls, and nothing here
-            renews. One payment, and the week is yours.
+            VIP is {usd(CHALLENGE.VIP_PRICE)} and it buys two real things: the fourth day on{' '}
+            {CHALLENGE.VIP_DAY_LABEL}, where we read real logs out loud and I answer questions
+            until they run out, and the complete 10-Day BP Reset Kit, all {KIT_FILE_COUNT}{' '}
+            downloads, which sells on this site for {usd(KIT_PRICE)} on its own. There is no third
+            tier and no upsell during the calls. One payment, and the week is yours.
           </p>
           <p style={{ color: C.dim, fontSize: '.96rem', margin: 0 }}>
             <strong style={{ color: C.ink }}>About the crossed out prices.</strong> The regular
             prices are {usd(CHALLENGE.GA_REGULAR_PRICE)} and{' '}
             {usd(CHALLENGE.VIP_REGULAR_PRICE)}, and that is what the next cohort pays. They are not
             prices anybody was ever charged for this challenge, because this is the first time it
-            has been run. I would rather fill this first room than protect the price, so the
-            founding cohort gets it at {usd(CHALLENGE.SEAT_PRICE)} and{' '}
+            has been run. The founding cohort gets the room free and VIP at{' '}
             {usd(CHALLENGE.VIP_PRICE)}. That is the whole trick, and there is not a second one.
           </p>
         </div>
@@ -1720,7 +1745,7 @@ function PriceReasoning() {
    ones, so this is earned authority instead, which is true and does not
    require anyone else's words.
    ========================================================================== */
-function Proof({ doorsClosed, chooseTier, goToWaitlist }) {
+function Proof({ doorsClosed, goToSeats, goToWaitlist }) {
   return (
     <section className="tpc-sec tpc-ink">
       <div className="tpc-wrap">
@@ -1760,9 +1785,9 @@ function Proof({ doorsClosed, chooseTier, goToWaitlist }) {
             <button
               type="button"
               className="tpc-btn tpc-btn-gold"
-              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'after_proof', CHALLENGE.SEAT_PRICE)}
+              onClick={() => goToSeats('after_proof')}
             >
-              I Will Be One of the First, {usd(CHALLENGE.SEAT_PRICE)}
+              I Will Be One of the First, Free
             </button>
           )}
         </div>
@@ -1864,26 +1889,27 @@ function Guarantee() {
           <div className="tpc-gseal" aria-hidden>&#10022;</div>
           <h3>Three Promises, Written Plainly</h3>
           <p>
-            I am not asking you to trust me. I am asking you to show up, and letting you keep your
-            money if I do not hold up my end.
+            The free seat has nothing to refund, so its promise is simpler: no card, no catch,
+            nothing renews, and nothing is sold to you on the calls. The promises below are for
+            the {usd(CHALLENGE.VIP_PRICE)} VIP seat, because that is the only money on this page.
           </p>
 
           <div className="tpc-promise">
             <div className="lbl">Promise 1 &middot; The kit, either way</div>
             <p>
-              Every seat includes the 10-Day BP Reset Kit, and that kit carries the same promise it
-              always has on this site. Run the full 10-day plan. If you do not feel a difference,
-              reply with the word REFUND and your money comes back. Keep the books either way. No
-              hoops, no fine print. Thirty days.
+              The VIP seat includes the 10-Day BP Reset Kit, and that kit carries the same promise
+              it always has on this site. Run the full 10-day plan. If you do not feel a
+              difference, reply with the word REFUND and your money comes back. Keep the books
+              either way. No hoops, no fine print. Thirty days.
             </p>
           </div>
 
           <div className="tpc-promise">
             <div className="lbl">Promise 2 &middot; Change your mind before we start</div>
             <p>
-              Your seat is fully refundable for any reason right up until {CHALLENGE.START_DATE_LABEL}{' '}
-              at {CHALLENGE.TIME_LABEL_ET}. Change your mind, reply REFUND, done. No reason needed.
-              That applies to both seats.
+              Your VIP seat is fully refundable for any reason right up until{' '}
+              {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_ET}. Change your mind, reply
+              REFUND, done. No reason needed.
             </p>
           </div>
 
@@ -1899,10 +1925,10 @@ function Guarantee() {
               you to build anyway, and I tell you where to send it on Night 1.
             </p>
             <p style={{ marginBottom: 0 }}>
-              If you did that and you still feel the week was not worth what you paid, reply REFUND
-              by {CHALLENGE.REFUND_BY_LABEL} and I send back every dollar. You keep the kit. You keep
-              the workbook. You keep the replays. I do not ask you to prove anything else and I do
-              not ask you why.
+              If you did that and you still feel it was not worth the {usd(CHALLENGE.VIP_PRICE)},
+              reply REFUND by {CHALLENGE.REFUND_BY_LABEL} and I send back every dollar. You keep the
+              kit. You keep the workbook. You keep the replays. I do not ask you to prove anything
+              else and I do not ask you why.
             </p>
           </div>
 
@@ -2142,7 +2168,7 @@ function Faq() {
 /* ==========================================================================
    THE CLOSE
    ========================================================================== */
-function Close({ doorsClosed, chooseTier, goToWaitlist }) {
+function Close({ doorsClosed, goToSeats, goToWaitlist }) {
   return (
     <section className="tpc-final">
       <div className="tpc-wrap">
@@ -2167,9 +2193,9 @@ function Close({ doorsClosed, chooseTier, goToWaitlist }) {
             <button
               type="button"
               className="tpc-btn tpc-btn-gold"
-              onClick={() => chooseTier(CHALLENGE.SEAT_TIER, 'final_close', CHALLENGE.SEAT_PRICE)}
+              onClick={() => goToSeats('final_close')}
             >
-              Yes! Save My Seat, {CHALLENGE.DATE_RANGE_LABEL}
+              Yes! Save My Free Seat, {CHALLENGE.DATE_RANGE_LABEL}
             </button>
           )}
           <p style={{ fontSize: '.8rem', color: C.creamDim, marginTop: 14 }}>
@@ -2257,8 +2283,8 @@ function StickyBar({ doorsClosed, chooseTier, goToWaitlist, goToSeats, activeTie
           {doorsClosed
             ? 'August cohort has started'
             : chosen
-              ? `${chosen.name} seat · ${usd(chosen.price)}`
-              : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · from ${usd(CHALLENGE.SEAT_PRICE)}`}
+              ? `${chosen.name} seat · ${chosen.free ? 'FREE' : usd(chosen.price)}`
+              : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · FREE`}
         </span>
         <button
           type="button"
@@ -2266,11 +2292,10 @@ function StickyBar({ doorsClosed, chooseTier, goToWaitlist, goToSeats, activeTie
           tabIndex={show ? 0 : -1}
           onClick={() => {
             if (doorsClosed) return goToWaitlist('sticky_bar');
-            if (chosen) return goToSeats('sticky_bar_return');
-            return chooseTier(CHALLENGE.SEAT_TIER, 'sticky_bar', CHALLENGE.SEAT_PRICE);
+            return goToSeats(chosen ? 'sticky_bar_return' : 'sticky_bar');
           }}
         >
-          {doorsClosed ? 'Next cohort' : chosen ? 'Back to checkout' : 'Save my seat'}
+          {doorsClosed ? 'Next cohort' : chosen ? 'Back to checkout' : 'Save my free seat'}
         </button>
       </div>
     </div>
