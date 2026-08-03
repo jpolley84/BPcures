@@ -22,6 +22,7 @@
 
 import { PostHog } from 'posthog-node';
 import { kv } from '@vercel/kv';
+import { sendTikTokPurchase } from './_tiktok-events.js';
 
 let _client = null;
 function getClient() {
@@ -82,6 +83,31 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
       console.warn('posthog capturePurchase: marker read failed (capturing anyway)', err.message);
     }
   }
+
+  // ── TikTok Events API (server-side conversion) ──────────────────────
+  // Wired HERE rather than at the six webhook call sites because every paid
+  // path already funnels through this function: tier checkout, $97 call,
+  // $297 case review, All-In, one-click OTO, and the reconciliation cron. One
+  // wire-up covers them all and a new payment path cannot forget to report.
+  //
+  // Placed AFTER the marker check so a Stripe webhook retry of an already
+  // captured session does not re-send. TikTok's own event_id dedupe is the
+  // backstop if the marker write failed on the previous attempt.
+  //
+  // Awaited but never throwing: sendTikTokPurchase swallows its own errors and
+  // caps itself at 4s, so it cannot stall or fail fulfillment.
+  //
+  // KNOWN COUPLING: this sits below the `if (!client || !email) return false`
+  // guard above, so if PostHog is ever unconfigured the TikTok send is skipped
+  // too. Acceptable today (PostHog is configured in prod and the pair share a
+  // "purchase happened" trigger); if PostHog is ever removed, lift this block
+  // out rather than losing ad attribution silently.
+  await sendTikTokPurchase({
+    email: emailId,
+    amountCents,
+    sessionId,        // === the browser's event_id, see _tiktok-events.js
+    tier,
+  });
 
   try {
     if (deviceId) {

@@ -47,7 +47,12 @@ export default async function handler(req, res) {
     const sessionParams = {
       mode: 'payment',
       line_items: lineItems,
-      success_url: successUrl || `${siteUrl}/success`,
+      // session_id is threaded through so SuccessPage can stamp the SAME
+      // event_id the Stripe webhook sends to TikTok's Events API, letting
+      // TikTok dedupe the browser and server copies of one sale. Callers that
+      // pass their own successUrl simply get no browser-side TikTok purchase
+      // (see trackPixels) and the server copy stands alone — never a double.
+      success_url: successUrl || `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || siteUrl,
     };
 

@@ -16,7 +16,11 @@ export default function SuccessPage() {
     const upsellAccepted = searchParams.get('upsell') === 'accepted';
     const purchaseValue = upsellAccepted ? 47.00 : 17.00;
     track('purchase_completed', { value: purchaseValue, currency: 'USD', upsell_accepted: upsellAccepted });
-    trackPixels('purchase', { value: purchaseValue });
+    // session_id (stamped on success_url by api/checkout.js) is the shared
+    // dedupe key with the server-side TikTok Events API call. Absent on legacy
+    // entry paths, in which case trackPixels skips TikTok and lets the server
+    // copy stand alone rather than risk double-counting the sale.
+    trackPixels('purchase', { value: purchaseValue, eventId: searchParams.get('session_id') || undefined });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -224,29 +224,53 @@ const PIXEL_EVENTS = {
   purchase: { fb: 'Purchase', tt: 'CompletePayment', ga: 'purchase' },
 };
 
-export function trackPixels(event, { value, currency = 'USD', contentName, ...extra } = {}) {
+// `eventId` is the browser half of server-side conversion deduplication. The
+// Stripe webhook reports the same purchase to TikTok's Events API stamped with
+// the Stripe checkout session id (see api/_tiktok-events.js); passing the same
+// id here lets TikTok collapse the two into one conversion.
+//
+// The guard below is deliberate and load-bearing: for a 'purchase' with NO
+// eventId we skip TikTok entirely rather than send an unkeyed duplicate. The
+// server copy always fires and is the more reliable of the two, so skipping
+// costs nothing, while sending would inflate reported conversions and quietly
+// corrupt the ad account's optimization signal. Meta and GA4 are unaffected —
+// nothing is sent to them server-side, so their browser event is the only one.
+export function trackPixels(event, { value, currency = 'USD', contentName, eventId, ...extra } = {}) {
   const names = PIXEL_EVENTS[event];
   if (!names || typeof window === 'undefined') return;
+  const tiktokWouldDouble = event === 'purchase' && !eventId;
 
   // Each pixel is wrapped separately: one network throwing (blocked by an
   // ad blocker, script half-loaded) must never stop the others, and must
   // never bubble into checkout navigation.
   try {
     if (window.fbq) {
-      window.fbq('track', names.fb, {
-        ...(value != null ? { value, currency } : {}),
-        ...(contentName ? { content_name: contentName } : {}),
-        ...extra,
-      });
+      window.fbq(
+        'track',
+        names.fb,
+        {
+          ...(value != null ? { value, currency } : {}),
+          ...(contentName ? { content_name: contentName } : {}),
+          ...extra,
+        },
+        // Meta's dedupe key lives in a third argument, not the payload.
+        // Harmless today (nothing is sent to Meta server-side) and already
+        // correct if a Conversions API is ever added.
+        ...(eventId ? [{ eventID: String(eventId) }] : []),
+      );
     }
   } catch { /* pixel errors never block UX */ }
 
   try {
-    if (window.ttq) {
-      window.ttq.track(names.tt, {
-        ...(value != null ? { value, currency } : {}),
-        ...(contentName ? { content_name: contentName } : {}),
-      });
+    if (window.ttq && !tiktokWouldDouble) {
+      window.ttq.track(
+        names.tt,
+        {
+          ...(value != null ? { value, currency } : {}),
+          ...(contentName ? { content_name: contentName } : {}),
+        },
+        ...(eventId ? [{ event_id: String(eventId) }] : []),
+      );
     }
   } catch { /* pixel errors never block UX */ }
 
