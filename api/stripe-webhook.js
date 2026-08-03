@@ -1132,9 +1132,35 @@ export default async function handler(req, res) {
 //
 // Order of evidence: explicit brand/funnel metadata first, then the return
 // domain, which resolved 99.8% of charges in the 2026-07-26 revenue analysis.
+// 2026-08-02 — STEADY TEA IS OURS. The guard below rejects anything matching
+// /svutu/, which was written to keep Annie's Satin tea out. It also caught
+// Joel's Steady tea, whose sessions carry `funnel: svutu-tea`. Result: for as
+// long as the tea has been on sale, EVERY tea abandoner was silently skipped
+// while the $17 kit got automatic recovery. Found 2026-08-02 via Paula Nabors,
+// whose declined $48 sat untouched for 17 days.
+//
+// The split is by storefront, not by the SVUTU name:
+//   Steady  -> bpquiz.com/tea            -> ours, recover it
+//   Satin   -> hormoneteas.com           -> Annie's, never email from joel@
+function isSteadyTeaSession(session) {
+  const md = session.metadata || {};
+  const blob = `${md.brand || ''} ${md.funnel || ''} ${md.venture || ''} ${md.offer || ''} ${md.slug || ''}`.toLowerCase();
+  if (/satin|hormoneteas|annie|restoreher|everydaynurse/.test(blob)) return false;
+  const urls = `${session.success_url || ''} ${session.cancel_url || ''}`.toLowerCase();
+  if (/hormoneteas|restoreherhormones|everydaynurse|chinhair/.test(urls)) return false;
+  // Explicit tea tagging, or the tea SKU prices returning to our own domain.
+  if (/svutu-tea|steady|tea-\d+/.test(blob)) return true;
+  const dollars = Number(session.amount_total || 0) / 100;
+  return [48, 96, 120, 240].includes(dollars) && /bpquiz\.com/.test(urls);
+}
+
 function isBraveWorksBpSession(session) {
   const md = session.metadata || {};
   const blob = `${md.brand || ''} ${md.funnel || ''} ${md.venture || ''} ${md.offer || ''} ${md.slug || ''}`.toLowerCase();
+
+  // Our own tea is checked BEFORE the foreign-venture sweep, because its
+  // metadata says "svutu" and would otherwise be thrown out with Satin.
+  if (isSteadyTeaSession(session)) return true;
 
   // Anything positively identifying another venture is out, no matter what else
   // the session says.
@@ -1154,8 +1180,36 @@ function isBraveWorksBpSession(session) {
 // Recovery copy has to match what they actually walked away from. A $1,997
 // /allin abandoner being told "your $17 kit is still here" reads as a mistake
 // and burns the lead. Amounts are the session's own total, in cents.
-function recoveryOfferFor(session) {
+// 2026-08-02 — a declined card and an abandoned cart are NOT the same event and
+// must not get the same email. Telling someone "your card was declined" when
+// they simply closed the tab is a false statement about their bank; telling a
+// declined buyer "your order is still sitting there" hides the actual reason
+// nothing arrived. `cardWasAttempted` decides which, and it is derived from
+// whether the session's PaymentIntent produced a real failed charge.
+function recoveryOfferFor(session, cardWasAttempted = false) {
   const cents = Number(session.amount_total || 0);
+
+  if (isSteadyTeaSession(session)) {
+    if (cardWasAttempted) {
+      return {
+        band: 'tea-declined',
+        subject: 'Your tea order did not go through',
+        lead: 'I was going back through our orders and saw yours never completed. Your card was declined by your bank, so the order stopped there. Nothing was charged, and nothing shipped.',
+        cta: 'https://bpquiz.com/tea',
+        ctaLabel: 'Order the Steady Tea',
+        body: 'That happens more than people realize, and it is almost never anything to do with you. Banks flag a first-time charge from a small company they do not recognize, especially online. A quick call to them, or just running it again, usually clears it. It comes with a 60 day guarantee either way. And if you have changed your mind, that is completely fine too, I just did not want you thinking it was on its way when it was not.',
+      };
+    }
+    return {
+      band: 'tea-abandoned',
+      subject: 'Your tea is still in the cart',
+      lead: 'You started an order for the Steady tea on bpquiz.com and did not finish. Nothing was charged.',
+      cta: 'https://bpquiz.com/tea',
+      ctaLabel: 'Finish your order',
+      body: 'No worries, life gets in the way. It is the blend I put together for the sodium corner, and it comes with a 60 day guarantee: drink it, give it an honest run, and if it does nothing for you, tell me and I will refund you. If a question stopped you, hit reply and ask me. I read every one of these myself.',
+    };
+  }
+
   if (cents >= 29700) {
     return {
       band: 'high',
@@ -1200,7 +1254,35 @@ async function processCheckoutExpired(event) {
     return { recovered: false, reason: 'foreign_funnel' };
   }
 
-  const offer = recoveryOfferFor(session);
+  // Did they actually put a card in, or just walk away? Stripe expires BOTH
+  // cases into the same webhook, so we ask the PaymentIntent. A failed charge
+  // means the issuer refused them; no charge means they never got that far.
+  // Best-effort: if the lookup fails we fall back to the gentler abandoned copy,
+  // which is never wrong in a way that accuses someone's bank.
+  let cardWasAttempted = false;
+  try {
+    if (session.payment_intent) {
+      const pi = await getStripe().paymentIntents.retrieve(
+        typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent.id
+      );
+      if (pi?.latest_charge) {
+        const ch = await getStripe().charges.retrieve(
+          typeof pi.latest_charge === 'string' ? pi.latest_charge : pi.latest_charge.id
+        );
+        // Stripe's own risk block is NOT a bank decline. Never coach someone
+        // past a fraud control we applied; drop the recovery entirely.
+        if (ch?.outcome?.type === 'blocked') {
+          console.log(`stripe-webhook: cart-recovery SKIPPED — Stripe blocked ${session.id} as too risky`);
+          return { recovered: false, reason: 'stripe_risk_blocked' };
+        }
+        cardWasAttempted = ch?.status === 'failed';
+      }
+    }
+  } catch (err) {
+    console.warn('stripe-webhook: card-attempt lookup failed (defaulting to abandoned copy)', err.message);
+  }
+
+  const offer = recoveryOfferFor(session, cardWasAttempted);
 
   // 2026-05-25 — guard against the "paid customer gets abandoned-cart email"
   // bug. Stripe fires checkout.session.expired on any unpaid session, even
@@ -1215,17 +1297,29 @@ async function processCheckoutExpired(event) {
   //      truth, catches edge cases where KV hasn't synced yet)
   // If either says paid → skip entirely. Do NOT enroll in cart-abandoned
   // cohort, do NOT send recovery email.
-  try {
-    const drip = await kv.get(`drip:${email}`);
-    if (drip?.isPaidCustomer) {
-      console.log(`stripe-webhook: cart-recovery SKIPPED — ${email} is already a paid customer (KV)`);
-      return { recovered: false, reason: 'already_paid_kv' };
+  // 2026-08-02 — this guard is now PRODUCT-AWARE. "Already a paid customer"
+  // is the right skip for the kit funnel (don't tell a buyer their kit is
+  // waiting), but it is the WRONG skip for the tea: an existing $17 buyer who
+  // abandons a $48 tea order is our single warmest possible lead, and the old
+  // any-charge test silently dropped them. Real cases found 2026-08-02:
+  // stellapreowei38@ and maxinej489@, both kit buyers, both abandoned tea,
+  // neither ever contacted. For tea we only skip if they bought THE TEA.
+  const isTea = isSteadyTeaSession(session);
+  const TEA_DOLLARS = [48, 96, 120, 240];
+
+  if (!isTea) {
+    try {
+      const drip = await kv.get(`drip:${email}`);
+      if (drip?.isPaidCustomer) {
+        console.log(`stripe-webhook: cart-recovery SKIPPED — ${email} is already a paid customer (KV)`);
+        return { recovered: false, reason: 'already_paid_kv' };
+      }
+    } catch (err) {
+      console.warn('stripe-webhook: cart-recovery KV paid-check failed (continuing to Stripe fallback)', err.message);
     }
-  } catch (err) {
-    console.warn('stripe-webhook: cart-recovery KV paid-check failed (continuing to Stripe fallback)', err.message);
   }
 
-  // Stripe fallback — search customers by email and check for any
+  // Stripe fallback — search customers by email and check for a relevant
   // successful charge. Catches cases where the buyer paid through a
   // different funnel before KV had a chance to sync.
   try {
@@ -1235,8 +1329,12 @@ async function processCheckoutExpired(event) {
       limit: 5,
     });
     for (const c of customers.data) {
-      const charges = await stripeClient.charges.list({ customer: c.id, limit: 5 });
-      const succeeded = charges.data.find(ch => ch.status === 'succeeded');
+      const charges = await stripeClient.charges.list({ customer: c.id, limit: 20 });
+      const succeeded = charges.data.find((ch) => {
+        if (ch.status !== 'succeeded') return false;
+        // Tea abandoners are only "already paid" if they paid a TEA amount.
+        return isTea ? TEA_DOLLARS.includes(ch.amount / 100) : true;
+      });
       if (succeeded) {
         console.log(`stripe-webhook: cart-recovery SKIPPED — ${email} has succeeded charge ${succeeded.id} on customer ${c.id}`);
         return { recovered: false, reason: 'already_paid_stripe' };
@@ -1246,9 +1344,13 @@ async function processCheckoutExpired(event) {
     console.warn('stripe-webhook: cart-recovery Stripe paid-check failed (continuing — recovery may send)', err.message);
   }
 
-  // Dedupe per-email so a chronic bailer doesn't get spammed
+  // Dedupe per-email so a chronic bailer doesn't get spammed.
+  // 2026-08-02 — scoped per product line. The key used to be global, so a
+  // kit recovery inside the last 30 days would silently swallow a tea
+  // recovery for the same person, which is a different product and a
+  // legitimately different message.
   try {
-    const recoveryKey = `cart-recovery-sent:${email}`;
+    const recoveryKey = isTea ? `cart-recovery-sent:tea:${email}` : `cart-recovery-sent:${email}`;
     const alreadySent = await kv.get(recoveryKey);
     if (alreadySent) {
       console.log(`stripe-webhook: cart-recovery already sent to ${email} at ${alreadySent.sentAt}, skipping`);
