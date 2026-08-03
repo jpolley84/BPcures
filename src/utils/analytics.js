@@ -203,3 +203,60 @@ export function identify(email, props) {
     if (enabled && email) posthog.identify(email.trim().toLowerCase(), props);
   } catch { /* noop */ }
 }
+
+// ─── Ad-pixel fan-out ─────────────────────────────────────────────────
+// One call fires the same conversion to every pixel that is actually
+// loaded. Each loader in index.html is env-gated, so an unconfigured
+// pixel simply is not on window and is skipped here — no errors, no
+// need to touch call sites when a pixel is switched on or off.
+//
+// Event-name mapping (the three networks disagree on naming):
+//   canonical            Meta (fbq)          TikTok (ttq)        GA4 (gtag)
+//   'add_to_cart'        AddToCart           AddToCart           add_to_cart
+//   'begin_checkout'     InitiateCheckout    InitiateCheckout    begin_checkout
+//   'purchase'           Purchase            CompletePayment     purchase
+//
+// PostHog is NOT called here. It has its own richer track() and its
+// event names are already established in dashboards.
+const PIXEL_EVENTS = {
+  add_to_cart: { fb: 'AddToCart', tt: 'AddToCart', ga: 'add_to_cart' },
+  begin_checkout: { fb: 'InitiateCheckout', tt: 'InitiateCheckout', ga: 'begin_checkout' },
+  purchase: { fb: 'Purchase', tt: 'CompletePayment', ga: 'purchase' },
+};
+
+export function trackPixels(event, { value, currency = 'USD', contentName, ...extra } = {}) {
+  const names = PIXEL_EVENTS[event];
+  if (!names || typeof window === 'undefined') return;
+
+  // Each pixel is wrapped separately: one network throwing (blocked by an
+  // ad blocker, script half-loaded) must never stop the others, and must
+  // never bubble into checkout navigation.
+  try {
+    if (window.fbq) {
+      window.fbq('track', names.fb, {
+        ...(value != null ? { value, currency } : {}),
+        ...(contentName ? { content_name: contentName } : {}),
+        ...extra,
+      });
+    }
+  } catch { /* pixel errors never block UX */ }
+
+  try {
+    if (window.ttq) {
+      window.ttq.track(names.tt, {
+        ...(value != null ? { value, currency } : {}),
+        ...(contentName ? { content_name: contentName } : {}),
+      });
+    }
+  } catch { /* pixel errors never block UX */ }
+
+  try {
+    if (window.gtag) {
+      window.gtag('event', names.ga, {
+        ...(value != null ? { value, currency } : {}),
+        ...(contentName ? { items: [{ item_name: contentName }] } : {}),
+        ...extra,
+      });
+    }
+  } catch { /* pixel errors never block UX */ }
+}

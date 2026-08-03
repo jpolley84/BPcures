@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Check, Download, ArrowRight } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
 import TeaOffer from '../components/TeaOffer';
-import { track } from '../utils/analytics.js';
+import { track, trackPixels } from '../utils/analytics.js';
 
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
@@ -16,10 +16,7 @@ export default function SuccessPage() {
     const upsellAccepted = searchParams.get('upsell') === 'accepted';
     const purchaseValue = upsellAccepted ? 47.00 : 17.00;
     track('purchase_completed', { value: purchaseValue, currency: 'USD', upsell_accepted: upsellAccepted });
-    try {
-      if (typeof window === 'undefined' || !window.fbq) return;
-      window.fbq('track', 'Purchase', { value: purchaseValue, currency: 'USD' });
-    } catch { /* pixel errors never block UX */ }
+    trackPixels('purchase', { value: purchaseValue });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -36,7 +36,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { KIT_STACK, KIT_STACK_TOTAL, KIT_PRICE, KIT_FILE_COUNT } from '../data/kitStack.js';
 import { nextMondayCT } from '../components/MasterclassBanner.jsx';
-import { track, getAbHomeVariant } from '../utils/analytics.js';
+import { track, getAbHomeVariant, trackPixels } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v1';
 
@@ -450,25 +450,17 @@ export default function FoodsGuideThanks() {
         placement,
         homepage_variant: getAbHomeVariant(),
       });
-      // Meta pixel, same shape CheckoutPage.handleBuyNow fires, so paid
-      // attribution matches between arms. Purchase fires server side.
-      try {
-        if (typeof window !== 'undefined' && window.fbq) {
-          window.fbq('track', 'AddToCart', {
-            value: 17.0,
-            currency: 'USD',
-            content_name: 'BP Corner Reset',
-            funnel_version: FUNNEL_VERSION,
-          });
-          window.fbq('track', 'InitiateCheckout', {
-            value: 17.0,
-            currency: 'USD',
-            funnel_version: FUNNEL_VERSION,
-          });
-        }
-      } catch {
-        /* pixel errors must never block checkout */
-      }
+      // Same shape CheckoutPage.handleBuyNow fires, so paid attribution
+      // matches between A/B arms. Purchase fires on the success page.
+      trackPixels('add_to_cart', {
+        value: 17.0,
+        contentName: 'BP Corner Reset',
+        funnel_version: FUNNEL_VERSION,
+      });
+      trackPixels('begin_checkout', {
+        value: 17.0,
+        funnel_version: FUNNEL_VERSION,
+      });
       navigate(CHECKOUT_URL);
     },
     [navigate],

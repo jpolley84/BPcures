@@ -94,6 +94,50 @@
         window.fbq('track', 'PageView');
       })();
     </script>
+
+    <!-- TikTok Pixel — env-gated, same contract as Meta above. Set
+         VITE_TIKTOK_PIXEL_ID in Vercel env to activate; until then the
+         placeholder survives substitution and this no-ops. Conversion
+         events (AddToCart, InitiateCheckout, CompletePayment) fire from
+         app code via trackPixels() in src/utils/analytics.js. -->
+    <script>
+      (function () {
+        var TT_ID = "%VITE_TIKTOK_PIXEL_ID%";
+        if (!TT_ID || TT_ID.indexOf('%') === 0) return; // no id set → skip
+        !function (w, d, t) {
+          w.TiktokAnalyticsObject = t; var ttq = w[t] = w[t] || [];
+          ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+          ttq.setAndDefer = function (o, m) { o[m] = function () { o.push([m].concat(Array.prototype.slice.call(arguments, 0))); }; };
+          for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+          ttq.instance = function (id) { var o = ttq._i[id] || []; for (var n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(o, ttq.methods[n]); return o; };
+          ttq.load = function (e, n) {
+            var s = "https://analytics.tiktok.com/i18n/pixel/events.js";
+            ttq._i = ttq._i || {}; ttq._i[e] = []; ttq._i[e]._u = s;
+            ttq._t = ttq._t || {}; ttq._t[e] = +new Date(); ttq._o = ttq._o || {}; ttq._o[e] = n || {};
+            var a = d.createElement("script"); a.type = "text/javascript"; a.async = !0; a.src = s + "?sdkid=" + e + "&lib=" + t;
+            var r = d.getElementsByTagName("script")[0]; r.parentNode.insertBefore(a, r);
+          };
+          ttq.load(TT_ID); ttq.page();
+        }(window, document, 'ttq');
+      })();
+    </script>
+
+    <!-- GA4 — env-gated. Set VITE_GA4_ID (G-XXXXXXXXXX) in Vercel env.
+         PostHog (project 467819) remains the primary product analytics;
+         this is here for Google Ads conversion import. -->
+    <script>
+      (function () {
+        var GA_ID = "%VITE_GA4_ID%";
+        if (!GA_ID || GA_ID.indexOf('%') === 0) return; // no id set → skip
+        var s = document.createElement('script');
+        s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', GA_ID);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Promoted from @import in src/index.css 2026-05-11 so the browser

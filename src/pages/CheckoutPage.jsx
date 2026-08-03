@@ -15,7 +15,7 @@ import { lazy, Suspense } from 'react';
 const ExitIntentPopup = lazy(() => import('../components/ExitIntentPopup'));
 // HomepageEmailCapture ("Get Day 1 free") — REMOVED from the page 2026-07-05 at
 // Joel's request. Component preserved at src/components/HomepageEmailCapture.jsx.
-import { track } from '../utils/analytics.js';
+import { track, trackPixels } from '../utils/analytics.js';
 
 // TRIANGLE MIGRATION: the front product is the $17 Corner Reset, one corner,
 // Stress by default. The actual charge is fixed by the Stripe Price behind the
@@ -112,14 +112,11 @@ const CheckoutPage = () => {
     // PostHog purchase-intent signal.
     track('checkout_clicked', { product: 'bp-corner-reset', value: 17.00, source: 'checkout-page', homepage_variant: hpVariant });
 
-    // Meta Pixel AddToCart / InitiateCheckout for ad attribution. The Purchase
-    // event fires server-side after the webhook confirms.
-    try {
-      if (typeof window !== 'undefined' && window.fbq) {
-        window.fbq('track', 'AddToCart', { value: 17.00, currency: 'USD', content_name: 'BP Corner Reset', homepage_variant: hpVariant });
-        window.fbq('track', 'InitiateCheckout', { value: 17.00, currency: 'USD', homepage_variant: hpVariant });
-      }
-    } catch { /* pixel errors must never block checkout */ }
+    // Ad-pixel AddToCart / InitiateCheckout for attribution, fanned out to
+    // every configured pixel (Meta / TikTok / GA4). Purchase fires on the
+    // success page after the webhook confirms.
+    trackPixels('add_to_cart', { value: 17.00, contentName: 'BP Corner Reset', homepage_variant: hpVariant });
+    trackPixels('begin_checkout', { value: 17.00, homepage_variant: hpVariant });
 
     // Inline checkout: Stress corner by default. PayPage lets ?corner and the
     // stored quiz result override this for buyers who already know their corner.
