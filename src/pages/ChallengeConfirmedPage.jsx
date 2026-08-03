@@ -34,8 +34,8 @@ const SUPPORT_EMAIL = 'braveworksrn@gmail.com';
 
 // Kept in sync with the CHALLENGE config block in src/pages/ChallengePage.jsx.
 const NIGHTS = [
-  ['Night 1', 'Tuesday, August 4', 'Your Real Number'],
-  ['Night 2', 'Wednesday, August 5', 'The Three Pressures'],
+  ['Night 1', 'Tuesday, August 4', 'Your Signals, On One Page'],
+  ['Night 2', 'Wednesday, August 5', 'One Connected Story'],
   ['Night 3', 'Thursday, August 6', 'The Conversation'],
 ];
 
@@ -106,7 +106,7 @@ export default function ChallengeConfirmedPage() {
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.1rem 3rem' }}>
 
         <div style={{ fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: CLAY, fontWeight: 800, marginBottom: '0.9rem' }}>
-          BraveWorks RN
+          Women of Power Rising
         </div>
 
         {state === 'working' && (
@@ -124,7 +124,7 @@ export default function ChallengeConfirmedPage() {
             <p style={{ fontSize: '1.02rem', color: '#3A4A48' }}>
               {state === 'already'
                 ? 'You were already registered, so nothing was charged twice and nothing was sent twice.'
-                : 'Your seat for The Three Pressures Challenge is confirmed.'}
+                : 'Your seat for The Women of Power Rising Challenge is confirmed.'}
               {' '}
               {email
                 ? <>Your confirmation is on its way to <strong>{email}</strong>.</>
@@ -209,8 +209,8 @@ export default function ChallengeConfirmedPage() {
         <div style={{ marginTop: '2.2rem', paddingTop: '0.9rem', borderTop: '1px solid #E4DACE', fontSize: '0.76rem', color: '#8A8A8A', lineHeight: 1.5 }}>
           <p style={{ margin: '0 0 0.4rem' }}>
             Educational and lifestyle content only. Not medical advice, diagnosis, or treatment.
-            Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or
-            adjust medication without your doctor.
+            Annie Chitate and Joel Polley are Registered Nurses, not prescribing physicians. Never
+            start, stop, or adjust medication without your doctor.
           </p>
           <p style={{ margin: 0 }}>
             <Link to="/terms" style={{ color: '#8A8A8A' }}>Terms</Link>{' · '}

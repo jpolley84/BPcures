@@ -1,4 +1,4 @@
-// api/challenge-signup.js — The Three Pressures Challenge, cohort 2026-08-04.
+// api/challenge-signup.js — The Women of Power Rising Challenge, cohort 2026-08-04.
 //
 // Three live nights with Joel Polley, RN. Tuesday 2026-08-04 through Thursday
 // 2026-08-06, 7:00pm to 8:00pm ET (6:00pm CT), about 60 minutes a night.
@@ -130,8 +130,11 @@ import {
 // only as display strings for the confirmation email.
 const CHALLENGE = {
   cohort: '2026-08-04',
-  name: 'The Three Pressures Challenge',
-  subtitle: 'Three nights live with Joel Polley, RN',
+  // 2026-08-03 (Joel, explicit): renamed to the Women of Power Rising
+  // Challenge, co-hosted with Annie Chitate, RN (Everyday Nurse Annie).
+  // "Connected story" positioning; mechanics unchanged.
+  name: 'The Women of Power Rising Challenge',
+  subtitle: 'Three nights live with Annie Chitate, RN and Joel Polley, RN',
   // 2026-07-28 (Joel): the call moved to SEVEN PM EASTERN. It previously ran
   // 7:00pm CT, which is 8:00pm ET. 7:00pm ET is 6:00pm CT, so the instant below
   // is now expressed in EASTERN wall time and every label moved with it. The
@@ -160,8 +163,8 @@ const CHALLENGE = {
   vipLength: 'about 90 minutes',
   pageUrl: `${SITE_URL}/challenge`,
   nights: [
-    { n: 1, date: 'Tuesday, August 4', title: 'Your Real Number' },
-    { n: 2, date: 'Wednesday, August 5', title: 'The Three Pressures' },
+    { n: 1, date: 'Tuesday, August 4', title: 'Your Signals, On One Page' },
+    { n: 2, date: 'Wednesday, August 5', title: 'One Connected Story' },
     { n: 3, date: 'Thursday, August 6', title: 'The Conversation' },
   ],
 };
@@ -392,7 +395,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
           `You have the VIP seat, so you get a fourth live session: <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}</strong> (${esc(CHALLENGE.vipTimeCt)}), about ninety minutes.`
         ),
         p(
-          `It sits on Sunday and not inside the week for one reason: by Sunday you finally have three days of your own readings to look at. There is nothing to look at on Tuesday. We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying.`
+          `It is a smaller, private session with Annie and Joel. It sits on Sunday and not inside the week for one reason: by Sunday you finally have three days of your own readings to look at. There is nothing to look at on Tuesday. We read real logs out loud together, including yours if you want it read, and show you what the pattern across a week is actually saying.`
         ),
         p(
           `Then questions, until they run out rather than until the hour does, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too, and it is yours to keep alongside the other three.`
@@ -447,10 +450,10 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     h2('The plain part'),
     guaranteeHtml,
     p(
-      `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. My job is to walk you in with better information than you have ever had.`
+      `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.`
     ),
-    p(`I will see you Tuesday night.`),
-    p(`Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Joel Polley, RN &middot; BraveWorks RN &middot; Louisville, Kentucky</span>`),
+    p(`We will see you Tuesday night.`),
+    p(`Annie and Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Annie Chitate, RN &middot; Joel Polley, RN &middot; Louisville, Kentucky</span>`),
   ].join('');
 
   const bodyText = `Hey ${firstName || 'friend'},
@@ -476,7 +479,7 @@ ${
     ? `
 YOUR BONUS DAY
 You have the VIP seat, so you get a fourth live session: ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), about ninety minutes.
-It sits on Sunday because by then you finally have three days of your own readings to look at. We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying.
+It is a smaller, private session with Annie and Joel. It sits on Sunday because by then you finally have three days of your own readings to look at. We read real logs out loud together, including yours if you want it read, and show you what the pattern across a week is actually saying.
 Then questions until they run out, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too.
 `
     : ''
@@ -487,12 +490,12 @@ ${
     : `YOUR GUARANTEE. Your seat is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeEt}. After that I cannot un-hold a live call, so here is what replaces it: be on all three nights or watch all three replays, then email me your completed 3-Day Log by ${CHALLENGE.logDueLabel}. If you did that and still feel the week was not worth ${priceLabel}, reply REFUND by ${CHALLENGE.refundByLabel} and I send back the full ${priceLabel}. You keep the kit, the workbook, and the replays. The kit also carries its own 30-day Feel-It-or-Free promise either way.`
 }
 
-You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. My job is to walk you in with better information than you have ever had.
+You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.
 
-I will see you Tuesday night.
+We will see you Tuesday night.
 
-Joel
-Joel Polley, RN . BraveWorks RN . Louisville, Kentucky`;
+Annie and Joel
+Annie Chitate, RN . Joel Polley, RN . Louisville, Kentucky`;
 
   return {
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {

@@ -1,5 +1,15 @@
-// ChallengePage (route: /challenge) - the sales page for "The Three Pressures
-// Challenge", a 3 night LIVE paid cohort.
+// ChallengePage (route: /challenge) - the sales page for "The Women of Power
+// Rising Challenge", a 3 night LIVE cohort (free GA + $47 VIP).
+//
+// RENAMED + REPOSITIONED 2026-08-03 (Joel, explicit): the challenge is now the
+// WOMEN OF POWER RISING CHALLENGE, co-hosted by Annie Chitate, RN (Everyday
+// Nurse Annie) and Joel Polley, RN (the BP Guy). The positioning is the
+// "connected story": blood pressure, hormones, sleep, weight, energy and mood
+// are not separate problems, they are connected signals. Annie appearing on
+// this BP-domain page is BY JOEL'S EXPLICIT REQUEST in that same message; the
+// usual two-venture separation rule is intentionally overridden here and only
+// here. Mechanics (free GA registration, $47 VIP, tier keys, cohort id, kit,
+// guarantee) are unchanged from the 2026-08-03 free conversion.
 //
 // REDESIGNED 2026-07-28 (Joel). Joel supplied an HTML comp he wanted this route
 // to look like: the ivory / gold / cocoa editorial layout from the Women of
@@ -84,8 +94,8 @@ import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
    wrong product. Nothing about them is exposed to the browser.
    ========================================================================== */
 const CHALLENGE = {
-  NAME: 'The Three Pressures Challenge',
-  SUBTITLE: 'Three nights live with Joel Polley, RN',
+  NAME: 'The Women of Power Rising Challenge',
+  SUBTITLE: 'Three nights live with Annie Chitate, RN and Joel Polley, RN',
   // Must match api/create-embedded-checkout.js and api/challenge-signup.js exactly,
   // or PostHog events cannot be joined to Stripe metadata or the KV records.
   COHORT_ID: '2026-08-04',
@@ -304,17 +314,17 @@ const NIGHTS = [
   {
     n: '01',
     when: 'TUE AUG 4',
-    title: 'Your Real Number',
+    title: 'Your Signals, On One Page',
     promise:
-      'Most home readings are wrong in a way that changes decisions. Tonight you learn to take one you can actually trust.',
-    walk: 'A correct reading, taken tonight in both arms, and the first line of your 3-Day Log.',
+      'Blood pressure, sleep, energy, mood: tonight you stop guessing and start writing them down where a pattern can finally show itself. Most home readings are wrong in a way that changes decisions, so you also learn to take one you can trust.',
+    walk: 'A correct reading, taken tonight, and the first line of your 3-Day Log.',
   },
   {
     n: '02',
     when: 'WED AUG 5',
-    title: 'The Three Pressures',
+    title: 'One Connected Story',
     promise:
-      'Stress, sugar and sodium pull on each other, which is why working just one never holds. Tonight you take all three.',
+      'Blood pressure, blood sugar, hormones, stress and sleep pull on each other, which is why chasing one symptom at a time never holds. Tonight Annie and Joel draw you the whole picture, and hand you the simple framework underneath it.',
     walk: 'One page for tomorrow: your wind down, your plate, and the one label rule.',
   },
   {
@@ -334,7 +344,7 @@ const VIP_NIGHT = {
   when: 'SUN AUG 9',
   title: 'The Bonus Day',
   promise:
-    'A fourth session on Sunday morning, after you have three days of your own readings in hand. We read them together and answer the questions the first three nights raised.',
+    'A smaller, private session with Annie and Joel on Sunday morning, after you have three days of your own readings in hand. We read them together and answer the questions the first three nights raised.',
   walk: 'Your own numbers looked at out loud, and your questions answered before your appointment.',
 };
 
@@ -365,7 +375,7 @@ const TIERS = [
   {
     key: CHALLENGE.SEAT_TIER,
     name: 'General',
-    who: 'For the person who wants to be in the room.',
+    who: 'For the woman who wants to be in the room.',
     price: 0,
     free: true,
     regular: CHALLENGE.GA_REGULAR_PRICE,
@@ -382,7 +392,7 @@ const TIERS = [
   {
     key: CHALLENGE.VIP_TIER,
     name: 'VIP',
-    who: 'For the person who wants their own numbers looked at.',
+    who: 'For the woman who wants her own numbers looked at, privately.',
     price: CHALLENGE.VIP_PRICE,
     free: false,
     regular: CHALLENGE.VIP_REGULAR_PRICE,
@@ -397,7 +407,7 @@ const TIERS = [
         lead: `The Bonus Day, ${CHALLENGE.VIP_DAY_LABEL}, ${CHALLENGE.VIP_TIME_ET}:`,
         rest: ` a fourth live session, ${CHALLENGE.VIP_LENGTH}, three days after the challenge ends and with your own readings finally in hand.`,
       },
-      'We read real logs out loud together, including yours if you want it read, and I show you what the pattern across a week is actually saying',
+      'A smaller, private educational Q and A with Annie and Joel: we read real logs out loud together, including yours if you want it read, and show you what the pattern across a week is actually saying',
       'Open questions until they run out, not until the hour does',
       {
         lead: `The complete 10-Day BP Reset Kit, all ${KIT_FILE_COUNT} downloads,`,
@@ -417,18 +427,18 @@ const TIERS = [
    THE SO-YOU-CAN LIST (the comp's two column serif list)
    ========================================================================== */
 const SO_YOU_CAN = [
-  ['So you finally know ', 'what the number is made of', ', instead of only what it is.'],
+  ['So you finally see why treating ', 'every symptom separately', ' has left you confused.'],
+  ['So you can read blood pressure, blood sugar, hormones, stress and sleep as ', 'connected signals', ', not separate problems.'],
+  ['So you stop letting random diets, supplements and internet advice pick your starting point for you.'],
   ['So you can take a reading at home and ', 'trust it', '.'],
   ['So the cuff tightening on your arm stops feeling like a verdict.'],
   ['So you understand why the dose went up that year you did everything right.'],
   ['So you walk into that appointment with ', 'a page in your hand', ', not a hope in your chest.'],
   ['So you can ask about your own labs and understand the answer.'],
-  ['So you stop guessing which of the three pressures is the one pulling hardest on you.'],
   ['So a normal grocery store is enough. ', 'No supplements to buy', '.'],
-  ['So your family stops asking how it went and hearing "fine, I guess."'],
   ['So you and your doctor are on ', 'the same side of the table', '.'],
   ['So the next twenty years are something you are steering, not watching.'],
-  ['So you never again nod along to something about your own body that you did not follow.'],
+  ['So you get back to being ', 'the woman you have been trying to get back to', '.'],
 ];
 
 /* ==========================================================================
@@ -438,9 +448,9 @@ const SO_YOU_CAN = [
    ========================================================================== */
 const PROOF = [
   {
-    n: '20',
-    h: 'Years at the bedside',
-    p: 'Registered nurse, most of it in intensive care and the emergency department. The one standing at the head of the bed at three in the morning.',
+    n: '2',
+    h: 'Nurses, live in the room',
+    p: 'Annie Chitate, RN, the Everyday Nurse, on the hormone side of the story, and Joel Polley, RN, twenty years in intensive care and emergency, on the blood pressure side. Both live, both taking questions.',
   },
   {
     n: '3',
@@ -455,7 +465,7 @@ const PROOF = [
 ];
 
 const QUALIFY_YES = [
-  'You have a blood pressure number you have been managing for a while, and nobody ever really explained it to you.',
+  'Your blood pressure, hormones, sleep, weight, energy or mood have each been treated as a separate problem, and nobody ever connected them for you.',
   'You take a medication, or your doctor said "let us watch it," and you want to understand what is underneath the number either way.',
   'You are willing to take a reading three days in a row and write it down.',
   'You want to work alongside your doctor, not around them.',
@@ -463,7 +473,7 @@ const QUALIFY_YES = [
 ];
 
 const QUALIFY_NO = [
-  'You want someone to tell you to stop taking your medication. I will never do that, and I will say so on every night.',
+  'You want someone to tell you to stop taking your medication. We will never do that, and we will say so on every night.',
   'You want a guarantee that a number will move. Nobody honest can give you that.',
   'You want to buy the replays and never show up. This one only pays you back if you do the work.',
   'You are looking for a supplement to buy at the end. There is not one.',
@@ -475,17 +485,17 @@ const QUALIFY_NO = [
 const FAQ = [
   {
     q: 'Is this medical advice? Are you telling me to change my medication?',
-    a: 'No, and absolutely not. This is education and lifestyle support, not medical advice, diagnosis, or treatment. I am a registered nurse, not your prescribing physician. Everything I teach is meant to work alongside your doctor’s care and never instead of it. Never start, stop, or adjust medication without your doctor. If anything I say ever seems to contradict your doctor, your doctor wins.',
+    a: 'No, and absolutely not. This is education and lifestyle support, not medical advice, diagnosis, or treatment. We are registered nurses, not your prescribing physicians. Everything we teach is meant to work alongside your doctor’s care and never instead of it. Never start, stop, or adjust medication without your doctor. If anything we say ever seems to contradict your doctor, your doctor wins.',
     open: true,
   },
   {
     q: 'Will any of this interfere with my blood pressure medication?',
-    a: 'That is exactly the right question to ask, and the honest answer is that I cannot answer it for you specifically, because I do not know your history, your kidneys, or your other prescriptions. What I can tell you is that everything on Night 2 is food, water, sleep, sunlight, walking and breathing. On Night 3 I teach you how to bring all of it to your doctor and ask directly. That conversation is the whole point of the week.',
+    a: 'That is exactly the right question to ask, and the honest answer is that we cannot answer it for you specifically, because we do not know your history, your kidneys, or your other prescriptions. What we can tell you is that everything on Night 2 is food, water, sleep, sunlight, walking and breathing. On Night 3 we teach you how to bring all of it to your doctor and ask directly. That conversation is the whole point of the week.',
     open: true,
   },
   {
     q: 'What is the difference between General and VIP?',
-    a: `General is free, and it is the whole challenge: the three live nights, the replays, the workbook and the log. VIP is ${usd(CHALLENGE.VIP_PRICE)} and adds three things: a fourth session on ${CHALLENGE.VIP_DAY_LABEL} at ${CHALLENGE.VIP_TIME_ET}, where we read real logs out loud and I answer questions until they run out; the complete ${usd(KIT_PRICE)} 10-Day BP Reset Kit, delivered the minute you upgrade; and the 48-Hour Answer, where every question you submit gets answered in writing. The Bonus Day sits on Sunday and not inside the week for a simple reason: on Sunday you finally have three days of your own readings to look at. If you only want the teaching, come free. If you want your own numbers looked at before you see your doctor, take VIP.`,
+    a: `General is free, and it is the whole challenge: the three live nights, the replays, the workbook and the log. VIP is ${usd(CHALLENGE.VIP_PRICE)} and adds three things: a smaller, private fourth session with Annie and Joel on ${CHALLENGE.VIP_DAY_LABEL} at ${CHALLENGE.VIP_TIME_ET}, where we read real logs out loud and answer questions until they run out; the complete ${usd(KIT_PRICE)} 10-Day BP Reset Kit, delivered the minute you upgrade; and the 48-Hour Answer, where every question you submit gets answered in writing. The Bonus Day sits on Sunday and not inside the week for a simple reason: on Sunday you finally have three days of your own readings to look at. If you only want the teaching, come free. If you want your own numbers looked at before you see your doctor, take VIP.`,
   },
   {
     q: 'Do I have to be on camera?',
@@ -497,7 +507,7 @@ const FAQ = [
   },
   {
     q: 'So is this just replays? Why do I need to show up live?',
-    a: 'It is genuinely live. I am on the call, not a recording of me, and I answer real questions from real people in the room. The replays exist so life does not knock you out of the week, not so you can skip it. The people who show up live get more out of it, every time.',
+    a: 'It is genuinely live. Annie and Joel are on the call, not recordings, and we answer real questions from real people in the room. The replays exist so life does not knock you out of the week, not so you can skip it. The people who show up live get more out of it, every time.',
   },
   {
     q: 'I am not technical. Is Zoom hard?',
@@ -505,31 +515,31 @@ const FAQ = [
   },
   {
     q: 'I am 68 and I take four pills. Is this for me?',
-    a: 'Yes. Most of the people in this room will be over fifty and already on medication. That is who I built it for. If you take nothing yet and your doctor said "let us watch it," you are also in the right place, and honestly you may get the most out of it.',
+    a: 'Yes. Most of the women in this room will be over forty and already on at least one medication. That is who we built it for. If you take nothing yet and your doctor said "let us watch it," you are also in the right place, and honestly you may get the most out of it.',
   },
   {
     q: 'How much time will this take each day?',
-    a: 'One hour a night for the call, and each night’s action is designed to fit in the time you already spend. A ten minute walk after a meal. Ten minutes of morning light. Writing two numbers on a page. I am not asking you to add an hour of chores to your day.',
+    a: 'One hour a night for the call, and each night’s action is designed to fit in the time you already spend. A ten minute walk after a meal. Ten minutes of morning light. Writing two numbers on a page. We are not asking you to add an hour of chores to your day.',
   },
   {
     q: 'Do I need to buy anything? Supplements, equipment, special food?',
-    a: 'No. You need a home blood pressure cuff, and if you already take readings at home you already own one. Everything about food is built from ordinary grocery store plants. There is no supplement I am going to tell you to buy at the end, and there is no product pitch on Night 3.',
+    a: 'No. You need a home blood pressure cuff, and if you already take readings at home you already own one. Everything about food is built from ordinary grocery store plants. There is no supplement we are going to tell you to buy at the end, and there is no product pitch on Night 3.',
   },
   {
     q: `What is the difference between this and the ${usd(KIT_PRICE)} kit?`,
-    a: 'The kit is the written protocol you follow at your own pace. This is three live nights where I teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. The free seat does not include the kit; the VIP seat does, along with the Bonus Day. So you can come free and buy the kit separately, or take VIP and get both together.',
+    a: 'The kit is the written protocol you follow at your own pace. This is three live nights where we teach you the reasoning behind it, answer questions in real time, and walk you to the doctor conversation at the end. The free seat does not include the kit; the VIP seat does, along with the Bonus Day. So you can come free and buy the kit separately, or take VIP and get both together.',
   },
   {
     q: 'What if it does not work for me?',
-    a: `The free seat costs you nothing but the hours, so there is nothing to refund and nothing to lose but three evenings. For VIP, read the guarantee section above, because I wrote it plainly on purpose: refundable for any reason before we start, refundable in full after that if you did the work and still felt it was not worth it, and the kit inside it carries its own 30-day Feel-It-or-Free promise. And I will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
+    a: `The free seat costs you nothing but the hours, so there is nothing to refund and nothing to lose but three evenings. For VIP, read the guarantee section above, because we wrote it plainly on purpose: refundable for any reason before we start, refundable in full after that if you did the work and still felt it was not worth it, and the kit inside it carries its own 30-day Feel-It-or-Free promise. And we will say the thing most people will not say: results are not typical, most readers see modest results or none, and the people who see the most are the people who actually do the work.`,
   },
   {
     q: 'Will something be sold at the end?',
-    a: 'I would rather tell you now than surprise you on Thursday. The three nights stand completely on their own. You will leave with your log and your doctor conversation whether you ever buy anything else or not. If you want to keep going with support afterward there will be an invitation, and you are free to ignore it. There is no pitch inside Night 3.',
+    a: 'We would rather tell you now than surprise you on Thursday. The three nights stand completely on their own. You will leave with your log and your doctor conversation whether you ever buy anything else or not. If you want to keep going with support afterward there will be an invitation, and you are free to ignore it. There is no pitch inside Night 3.',
   },
   {
     q: 'Is this a Christian program?',
-    a: 'I am a Christian and it shows up in how I teach, particularly on the night we talk about rest and gratitude. You will not be preached at, and you do not have to share my faith to belong in that room. Everything taught is plant based, natural, and practical.',
+    a: 'We are Christians and it shows up in how we teach, particularly on the night we talk about rest and gratitude. You will not be preached at, and you do not have to share our faith to belong in that room. Everything taught is plant based, natural, and practical.',
   },
 ];
 
@@ -1075,8 +1085,8 @@ function SiteHeader({ doorsClosed, goToSeats, goToWaitlist }) {
       <div className="tpc-wrap">
         <nav className="tpc-nav">
           <div className="tpc-mark">
-            <span className="badge" aria-hidden>JP</span>
-            <span className="name">BraveWorks RN</span>
+            <span className="badge" aria-hidden>WP</span>
+            <span className="name">Women of Power Rising</span>
           </div>
           <button
             type="button"
@@ -1098,22 +1108,24 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
   return (
     <section className="tpc-hero" id="top">
       <div className="tpc-wrap">
-        <div className="tpc-kick">Live on Zoom &middot; Three Nights &middot; Founding Cohort</div>
-        <div className="tpc-pres">BraveWorks RN presents</div>
-        <div className="tpc-name">The Three <span>Pressures</span> Challenge</div>
+        <div className="tpc-kick">Live on Zoom &middot; Three Nights &middot; Free Founding Cohort</div>
+        <div className="tpc-pres">Everyday Nurse Annie and Joel, the BP Guy, present</div>
+        <div className="tpc-name">Women of Power <span>Rising</span></div>
 
-        <h1 className="tpc-h1">
-          You got the prescription. <span>Did anyone ever give you the explanation?</span>
+        <h1 className="tpc-h1" style={{ maxWidth: '32ch' }}>
+          Your blood pressure, hormones, sleep, weight, energy and mood are not separate problems.{' '}
+          <span>They are telling one connected story.</span>
         </h1>
 
         <p className="tpc-sub">
-          Three nights, live, with a nurse who spent twenty years in an ICU watching what these
-          numbers actually do. By Thursday you will know what your number is made of, how to take a
-          reading you can trust, and the exact words to bring to your next appointment.
+          Three nights, live, with two registered nurses: Annie Chitate on the hormone side of the
+          story and Joel Polley, twenty years in intensive care and emergency, on the blood
+          pressure side. By Thursday you will see your numbers as connected signals, know how to
+          take a reading you can trust, and have the exact words to bring to your next appointment.
         </p>
 
         <div className="tpc-strip">
-          This is <b>NOT</b> another list of things to cut out. It is <b>the explanation.</b>
+          Your body is <b>NOT</b> betraying you. It is asking you to <b>pay attention.</b>
         </div>
 
         <div className="tpc-dateline">
@@ -1153,8 +1165,8 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
             </button>
           )}
           <div className="tpc-cta-sub">
-            Joel Polley, RN &middot; 20 years ICU and emergency &middot; Every seat includes the{' '}
-            {usd(KIT_PRICE)} 10-Day BP Reset Kit.
+            Annie Chitate, RN and Joel Polley, RN &middot; Free seat, no card needed &middot; VIP
+            adds the Bonus Day and the {usd(KIT_PRICE)} kit.
           </div>
           <div style={{ marginTop: 6 }}>
             <button type="button" className="tpc-link" onClick={() => goToSeats('hero_secondary')}>
@@ -1239,7 +1251,7 @@ function Scanner() {
           </div>
           <div>
             <div className="l">Who It Is For</div>
-            <div className="v">Anyone managing a number</div>
+            <div className="v">Women tired of chasing symptoms</div>
             <div className="s">On medication or watching it. Alongside your doctor, never instead.</div>
           </div>
         </div>
@@ -1255,15 +1267,16 @@ function Reframe() {
   return (
     <section className="tpc-sec tpc-reframe">
       <div className="tpc-wrap">
-        <div className="small">You do not need more willpower.</div>
+        <div className="small">You do not need another random fix.</div>
         <div className="big">
-          You have had willpower<br />for twenty years.<br />You need <span>the explanation.</span>
+          Your body is not<br />betraying you.<br />It is asking you to <span>pay attention.</span>
         </div>
         <p className="body">
-          You cut the salt. You walked. You took the pill exactly as written. And the number still
-          does whatever it wants, and nobody ever sat down and drew you a picture of why.{' '}
+          You treated the blood pressure over here, the sleep over there, the energy and the mood
+          and the weight each with their own fix, and none of it ever held, because nobody ever sat
+          down and drew you the picture of how they pull on each other.{' '}
           <strong>That is not a discipline problem. That is an information problem, and it is the
-          only kind of problem I can actually help with.</strong>
+          only kind of problem we can actually help with.</strong>
         </p>
       </div>
     </section>
@@ -1281,10 +1294,10 @@ function Identity() {
           Who I Built These Three Nights For
         </span>
         <div className="you">
-          You who got handed a slip of paper and no explanation.<br />
+          You who got handed a different answer for every symptom.<br />
           You who has <span>taken the pill for nine years</span> and still cannot say what it does.<br />
           You whose dose went up the year you <span>did everything right.</span><br />
-          You who feels your stomach drop every time the cuff tightens.
+          You who can feel <span>the woman you are trying to get back to</span> waiting under all of it.
         </div>
         <div className="end">You are not a difficult patient. You are an uninformed one, and that is fixable.</div>
       </div>
@@ -1346,11 +1359,12 @@ function Nights({ doorsClosed, goToSeats, goToWaitlist }) {
       <div className="tpc-wrap">
         <div className="tpc-head">
           <span className="tpc-eyebrow">The Curriculum</span>
-          <h2 style={{ color: '#fff' }}>Three Nights. Three Pressures. One Conversation.</h2>
+          <h2 style={{ color: '#fff' }}>Three Nights. One Connected Story. One Conversation.</h2>
           <p>
-            Your blood pressure has three everyday drivers. Stress. Sugar. Sodium. They pull on each
-            other, which is why working just one of them never holds. You walk away from every
-            single night with something done, not something to think about.
+            Blood pressure, blood sugar, hormones, stress and sleep pull on each other, which is
+            why treating any one of them alone never holds. Annie carries the hormone side, Joel
+            carries the blood pressure side, and you walk away from every single night with
+            something done, not something to think about.
           </p>
         </div>
 
@@ -1433,10 +1447,10 @@ function Artifact() {
         <div className="tpc-rm">
           <div className="tpc-book">
             <div className="tpc-book-c">
-              <div className="tpc-book-b">BraveWorks RN</div>
+              <div className="tpc-book-b">Annie + Joel, RNs</div>
               <div className="tpc-book-r" />
               <div className="tpc-book-t">The 3-Day Log</div>
-              <div className="tpc-book-s">Three Pressures Challenge &middot; Cohort One</div>
+              <div className="tpc-book-s">Women of Power Rising &middot; Cohort One</div>
             </div>
           </div>
           <div>
@@ -1526,7 +1540,7 @@ function Tickets({
           <div className="tpc-checkout" style={{ textAlign: 'center' }}>
             <p style={{ margin: '0 0 14px', color: C.text }}>
               <strong>Registration for the August cohort is closed.</strong> Night 1 is already
-              underway. Leave your name and email and I will tell you first when the next one is on
+              underway. Leave your name and email and we will tell you first when the next one is on
               the calendar.
             </p>
             <button type="button" className="tpc-btn tpc-btn-ink" onClick={() => goToWaitlist('tickets_closed')}>
@@ -1714,13 +1728,14 @@ function PriceReasoning() {
         <div style={{ background: C.white, border: '1px solid rgba(138,96,61,.22)', borderRadius: 10, padding: '28px 24px' }}>
           <h3 style={{ fontSize: '1.5rem', marginBottom: 14 }}>Why the seat is free.</h3>
           <p style={{ color: C.dim, fontSize: '.96rem' }}>
-            This is Cohort One, and I would rather fill this first room than charge for it. The
+            This is Cohort One, and we would rather fill this first room than charge for it. The
             free seat is the whole challenge: three live nights, three replays, the workbook and
             the log. No card, nothing renews, and there is no catch waiting on Night 3.
           </p>
           <p style={{ color: C.dim, fontSize: '.96rem' }}>
-            VIP is {usd(CHALLENGE.VIP_PRICE)} and it buys two real things: the fourth day on{' '}
-            {CHALLENGE.VIP_DAY_LABEL}, where we read real logs out loud and I answer questions
+            VIP is {usd(CHALLENGE.VIP_PRICE)} and it buys two real things: a smaller, private
+            fourth day with Annie and Joel on{' '}
+            {CHALLENGE.VIP_DAY_LABEL}, where we read real logs out loud and answer questions
             until they run out, and the complete 10-Day BP Reset Kit, all {KIT_FILE_COUNT}{' '}
             downloads, which sells on this site for {usd(KIT_PRICE)} on its own. There is no third
             tier and no upsell during the calls. One payment, and the week is yours.
@@ -1753,17 +1768,17 @@ function Proof({ doorsClosed, goToSeats, goToWaitlist }) {
           <span className="tpc-eyebrow" style={{ display: 'block', marginBottom: 16 }}>Let Us Be Honest</span>
           <div className="big">You will not find testimonials on this page.</div>
           <p>
-            This is <b>Cohort One.</b> The Three Pressures Challenge has never been run before.
+            This is <b>Cohort One.</b> The Women of Power Rising Challenge has never been run before.
           </p>
           <p>
-            I could have waited a year, run it quietly, collected the quotes, then shown you a wall
+            We could have waited a year, run it quietly, collected the quotes, then shown you a wall
             of smiling strangers and charged four times as much. Half the internet does that, and a
-            good number of those quotes were written by somebody who was paid to write them. I will
+            good number of those quotes were written by somebody who was paid to write them. We will
             not do it. If a customer&rsquo;s words ever appear on this page, that customer will have
             said yes in writing first.
           </p>
           <p><b>But then you would not be here.</b> You would be in cohort five, paying full price.</p>
-          <p>So here is what I can show you instead.</p>
+          <p>So here is what we can show you instead.</p>
         </div>
 
         <div className="tpc-pgrid">
@@ -1839,37 +1854,36 @@ function Host() {
       <div className="tpc-wrap">
         <div className="tpc-an">
           <div className="tpc-ph">
-            <div className="cap">Joel Polley, RN<br />Louisville, Kentucky</div>
+            <div className="cap">Annie Chitate, RN<br />Joel Polley, RN<br />Louisville, Kentucky</div>
           </div>
           <div>
-            <span className="tpc-eyebrow" style={{ display: 'block', marginBottom: 12 }}>Your Host</span>
+            <span className="tpc-eyebrow" style={{ display: 'block', marginBottom: 12 }}>Your Hosts</span>
             <div className="tpc-an-q">
-              &ldquo;I got tired of meeting people at the worst possible moment.&rdquo;
+              &ldquo;We got tired of meeting people at the worst possible moment.&rdquo;
             </div>
             <p style={{ color: C.dim }}>
-              For twenty years I worked intensive care and emergency. I am the nurse who stood at the
-              head of the bed at three in the morning. I hung the drip when the pressure would not
-              come down, and I sat with the family in the hallway afterward.
+              <strong>Joel Polley, RN</strong>, the BP Guy: twenty years in intensive care and
+              emergency, the nurse standing at the head of the bed at three in the morning. He
+              watched people arrive on four medications who could not say what a single one did,
+              and real decisions get made on home readings that were simply taken wrong.
             </p>
             <p style={{ color: C.dim }}>
-              People arrived on four medications who could not tell me what a single one of them did.
-              Not because they were not smart. Because nobody ever had fifteen spare minutes. And I
-              saw how many readings were simply wrong: wrong cuff, wrong arm, wrong position, taken
-              thirty seconds after somebody rushed down a hallway. Then real decisions got made on
-              that number.
+              <strong>Annie Chitate, RN</strong>, Everyday Nurse Annie: a registered nurse who
+              teaches women how hormones, sleep, energy, weight and mood move together, and why
+              chasing them one symptom at a time keeps so many women stuck and confused.
             </p>
             <div className="tpc-an-hi">
-              The pill was never the enemy and never the whole answer. It quiets one corner. The
-              other two keep pulling.
+              A pill quiets one signal. The others keep pulling. The story only makes sense when
+              you read them together.
             </div>
             <p style={{ color: C.dim }}>
-              I left the bedside to teach this because everything I knew kept arriving ten years too
-              late to be useful. Three nights is early. Three nights is useful. That is why I am
-              doing it live instead of writing another PDF.
+              We are teaching this live, together, because everything we knew from the bedside kept
+              arriving ten years too late to be useful. Three nights is early. Three nights is
+              useful. That is why it is live instead of another PDF.
             </p>
             <div className="tpc-an-n">
-              Joel Polley, RN
-              <span>BraveWorks RN &middot; 20 Years ICU and Emergency</span>
+              Annie Chitate, RN &middot; Joel Polley, RN
+              <span>Women of Power Rising &middot; Everyday Nurse &middot; BraveWorks RN</span>
             </div>
           </div>
         </div>
@@ -1916,19 +1930,19 @@ function Guarantee() {
           <div className="tpc-promise">
             <div className="lbl">Promise 3 &middot; The did-the-work guarantee</div>
             <p>
-              Once Night 1 has happened I cannot un-hold a live call, so here is what replaces a
+              Once Night 1 has happened we cannot un-hold a live call, so here is what replaces a
               blanket refund after that point.
             </p>
             <p>
               Do the work. That means: be on all three nights or watch all three replays, and email
-              me your completed 3-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is the thing I am asking
-              you to build anyway, and I tell you where to send it on Night 1.
+              us your completed 3-Day Log by {CHALLENGE.LOG_DUE_LABEL}. That is the thing we are
+              asking you to build anyway, and we tell you where to send it on Night 1.
             </p>
             <p style={{ marginBottom: 0 }}>
               If you did that and you still feel it was not worth the {usd(CHALLENGE.VIP_PRICE)},
-              reply REFUND by {CHALLENGE.REFUND_BY_LABEL} and I send back every dollar. You keep the
-              kit. You keep the workbook. You keep the replays. I do not ask you to prove anything
-              else and I do not ask you why.
+              reply REFUND by {CHALLENGE.REFUND_BY_LABEL} and we send back every dollar. You keep the
+              kit. You keep the workbook. You keep the replays. We do not ask you to prove anything
+              else and we do not ask you why.
             </p>
           </div>
 
@@ -1961,7 +1975,7 @@ function Deadline({ doorsClosed, left }) {
 
         <p style={{ color: C.creamDim }}>
           There is no price jump waiting on Wednesday. There is no seat counter ticking down. There
-          is no bonus that disappears at midnight. I have taken all of that off this page on purpose,
+          is no bonus that disappears at midnight. We have taken all of that off this page on purpose,
           because a trust brand cannot run a fake clock.
         </p>
         <p style={{ color: C.creamDim }}>
@@ -1980,7 +1994,7 @@ function Deadline({ doorsClosed, left }) {
             <div style={{ background: 'rgba(245,239,231,.07)', border: '1px solid rgba(213,168,75,.3)', borderRadius: 10, padding: '24px 20px' }}>
               <p style={{ color: C.creamText, fontSize: '.96rem' }}>
                 <strong>Registration for the August cohort is closed.</strong> Leave your name and
-                email and I will tell you first when the next one is on the calendar. No spam, and no
+                email and we will tell you first when the next one is on the calendar. No spam, and no
                 charge for being on the list.
               </p>
               <SignupForm
@@ -2176,7 +2190,7 @@ function Close({ doorsClosed, goToSeats, goToWaitlist }) {
           One More Thing
         </span>
         <div className="lines">
-          Every appointment you left with more questions than you came in with.<br />
+          Every symptom treated on its own while the rest kept pulling.<br />
           Every number read out loud without an explanation.<br />
           Every year you did what you were told and watched it go up anyway.<br />
           <em style={{ color: C.goldSoft }}>None of that was you failing.</em>
@@ -2204,9 +2218,9 @@ function Close({ doorsClosed, goToSeats, goToWaitlist }) {
           </p>
         </div>
 
-        <div className="signoff">Joel</div>
+        <div className="signoff">Annie and Joel</div>
         <p style={{ fontSize: '.78rem', color: C.creamDim, margin: '4px 0 0' }}>
-          Joel Polley, RN &middot; BraveWorks RN
+          Annie Chitate, RN &middot; Joel Polley, RN
         </p>
         <p style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: '.95rem', color: 'rgba(198,184,166,.7)', marginTop: 26 }}>
           Genetics writes the recipe. Lifestyle bakes the cake. Be your own steward.
@@ -2225,16 +2239,18 @@ function PageFooter() {
   return (
     <footer className="tpc-footer">
       <div className="tpc-wrap">
-        <div className="fb">BraveWorks RN</div>
+        <div className="fb">Women of Power Rising</div>
         <div className="fs">{CHALLENGE.NAME} &middot; Cohort One</div>
-        <p style={{ margin: 0 }}>Stress. Sugar. Sodium. Alongside your doctor, never instead of them.</p>
+        <p style={{ margin: 0 }}>One connected story. Alongside your doctor, never instead of them.</p>
         <p className="disc">
           These statements have not been evaluated by the FDA. This product is not intended to
           diagnose, treat, or prevent any disease.
         </p>
         <p className="disc">
-          Educational and lifestyle content only. Joel Polley is a Registered Nurse, not a
-          prescribing physician. Never start, stop, or adjust medication without your doctor.
+          This presentation is for general education only and does not replace personalized medical
+          advice, diagnosis, or treatment. Annie Chitate and Joel Polley are Registered Nurses, not
+          prescribing physicians. Do not stop or change prescribed medications without speaking
+          with your healthcare professional.
         </p>
         <p className="disc">Results not typical. Most readers see modest results or none.</p>
         <div className="tpc-flinks">
