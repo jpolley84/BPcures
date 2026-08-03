@@ -1,14 +1,21 @@
 // MasterclassBanner — slim top strip promoting the free "Beyond the Cuff"
-// masterclass, with a live countdown to the next Monday 7pm CT session.
+// masterclass, with a live countdown to the next Monday 7pm ET session.
 //
 // 2026-07-22 (Joel): "on bpquiz.com i want both sites to have a banner and
 // link to the free masterclass sign up. also i want the masterclass to be a
 // timer for next monday." Rendered once in HomeSplit so BOTH A/B homepage
 // variants get it identically.
 //
-// The class runs every Monday 7:00pm CT. The countdown targets the NEXT
-// Monday 7pm CT; once that moment passes it rolls to the following week.
-// Timezone is resolved from America/Chicago at runtime (not a hardcoded
+// 2026-08-03 (Joel): class moved from 7:00pm CT to 7:00pm ET (one hour
+// earlier in Central, 6:00pm CT). This file is the ONE place the anchor is
+// computed; public/masterclass/index.html and registered/index.html each
+// carry their own inline copy of this same math (static pages, no shared JS
+// module) and must be changed in the same pass or the site and the countdown
+// drift apart. See api/_masterclass-enroll.js for the confirmation email.
+//
+// The class runs every Monday 7:00pm ET. The countdown targets the NEXT
+// Monday 7pm ET; once that moment passes it rolls to the following week.
+// Timezone is resolved from America/New_York at runtime (not a hardcoded
 // offset) so it stays correct across the DST change.
 //
 // /masterclass is a STATIC page (public/masterclass/), excluded from the SPA
@@ -18,27 +25,27 @@
 import { useEffect, useState } from 'react';
 import { track } from '../utils/analytics';
 
-// Offset (ms) of America/Chicago from UTC at a given instant.
-function ctOffsetMs(d) {
+// Offset (ms) of America/New_York from UTC at a given instant.
+function etOffsetMs(d) {
   try {
     const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const ct = new Date(d.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-    return ct.getTime() - utc.getTime();
+    const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    return et.getTime() - utc.getTime();
   } catch {
-    return -5 * 3600 * 1000; // CDT fallback
+    return -4 * 3600 * 1000; // EDT fallback
   }
 }
 
-// The next Monday 7:00pm CT as a real instant.
-export function nextMondayCT(now = new Date()) {
-  const off = ctOffsetMs(now);
-  const ctNow = new Date(now.getTime() + off); // wall clock, read via getUTC*
-  const day = ctNow.getUTCDay(); // 0 Sun, 1 Mon
+// The next Monday 7:00pm ET as a real instant.
+export function nextMondayET(now = new Date()) {
+  const off = etOffsetMs(now);
+  const etNow = new Date(now.getTime() + off); // wall clock, read via getUTC*
+  const day = etNow.getUTCDay(); // 0 Sun, 1 Mon
   const addDays = (1 - day + 7) % 7;
   let target = Date.UTC(
-    ctNow.getUTCFullYear(), ctNow.getUTCMonth(), ctNow.getUTCDate() + addDays, 19, 0, 0,
+    etNow.getUTCFullYear(), etNow.getUTCMonth(), etNow.getUTCDate() + addDays, 19, 0, 0,
   );
-  if (target <= ctNow.getTime()) target += 7 * 24 * 3600 * 1000;
+  if (target <= etNow.getTime()) target += 7 * 24 * 3600 * 1000;
   return new Date(target - off);
 }
 
@@ -55,14 +62,14 @@ function parts(ms) {
 const CLAY = 'var(--clay, #B85A36)';
 
 export default function MasterclassBanner() {
-  const [target, setTarget] = useState(() => nextMondayCT());
+  const [target, setTarget] = useState(() => nextMondayET());
   const [left, setLeft] = useState(() => target.getTime() - Date.now());
 
   useEffect(() => {
     const id = setInterval(() => {
       const rem = target.getTime() - Date.now();
       if (rem <= 0) {
-        const next = nextMondayCT();
+        const next = nextMondayET();
         setTarget(next);
         setLeft(next.getTime() - Date.now());
       } else {
@@ -76,7 +83,7 @@ export default function MasterclassBanner() {
   const dateLabel = (() => {
     try {
       return target.toLocaleDateString('en-US', {
-        timeZone: 'America/Chicago', weekday: 'long', month: 'long', day: 'numeric',
+        timeZone: 'America/New_York', weekday: 'long', month: 'long', day: 'numeric',
       });
     } catch { return 'Monday'; }
   })();
@@ -104,7 +111,7 @@ export default function MasterclassBanner() {
           Free
         </span>
         <strong style={{ fontWeight: 700 }}>Beyond the Cuff</strong>
-        <span style={{ opacity: 0.92 }}>live {dateLabel}, 7pm CT</span>
+        <span style={{ opacity: 0.92 }}>live {dateLabel}, 7pm ET</span>
       </span>
 
       <span style={{ display: 'inline-flex', gap: '0.55rem', alignItems: 'center' }} aria-label="Time until the masterclass">

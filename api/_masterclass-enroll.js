@@ -30,7 +30,7 @@ import { Resend } from 'resend';
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
-// Weekly Zoom (Mondays 7pm CT), provided by Joel 2026-07-20.
+// Weekly Zoom (Mondays 7pm ET / 6pm CT, moved 2026-08-03), provided by Joel 2026-07-20.
 const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
 const ZOOM_MEETING_ID = '818 9344 4167';
 const ZOOM_PASSCODE = '846248';
@@ -78,7 +78,7 @@ function confirmationEmail({ firstName, provenance }) {
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Beyond the Cuff &middot; Free Live Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
-<p><strong>Beyond the Cuff - Take Charge of Your Numbers</strong> runs live every Monday night at <strong>7:00 pm Central</strong> (8:00 pm Eastern &middot; 5:00 pm Pacific).</p>
+<p><strong>Beyond the Cuff - Take Charge of Your Numbers</strong> runs live every Monday night at <strong>7:00 pm Eastern</strong> (6:00 pm Central &middot; 4:00 pm Pacific).</p>
 <div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
   <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
   <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>

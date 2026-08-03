@@ -95,7 +95,7 @@
       <div class="num">1</div>
       <h3>Set your alarm right now, while you're here</h3>
       <div class="bigtime">6:55 PM</div>
-      <p class="tz"><span data-classdate>Class night</span> · Central Time &nbsp;(7:55 pm ET · 4:55 pm PT)</p>
+      <p class="tz"><span data-classdate>Class night</span> · Eastern Time &nbsp;(6:00 pm CT · 3:00 pm PT)</p>
       <p><strong>Five minutes before class starts.</strong> Grab your phone, open the clock app, and set it for 6:55 pm that evening and name it <em>"Beyond the Cuff."</em></p>
       <p class="why">Life gets loud in the evenings. The people who set the alarm are the people who make it into the room.</p>
       <div class="countdown" aria-label="Time until class">
@@ -185,11 +185,11 @@
     requestAnimationFrame(tick);
   })();
 
-  /* ====== COUNTDOWN — next Monday 7:00 pm America/Chicago ====== */
+  /* ====== COUNTDOWN — next Monday 7:00 pm America/New_York ====== */
   var WEEKLY_HOUR = 19;
-  function chicagoOffsetMs(atUtcMs){
+  function etOffsetMs(atUtcMs){
     var d = new Date(atUtcMs);
-    var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+    var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,
       year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(d);
     function g(t){ return Number(parts.find(function(p){return p.type===t;}).value); }
     return Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second')) - atUtcMs;
@@ -198,13 +198,13 @@
     var now = Date.now();
     for (var addDays=0; addDays<8; addDays++){
       var probe = new Date(now + addDays*86400000);
-      var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+      var parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour12:false,
         year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
       var wd = parts.find(function(p){return p.type==='weekday';}).value;
       if (wd!=='Mon') continue;
       function g(t){ return Number(parts.find(function(p){return p.type===t;}).value); }
       var naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR,0,0);
-      var target = naive - chicagoOffsetMs(naive);
+      var target = naive - etOffsetMs(naive);
       if (target > now) return target;
     }
     return now + 7*86400000;
@@ -216,7 +216,7 @@
     function set(nodes,v){ nodes.forEach(function(n){ n.textContent=v; }); }
     var target = nextTarget();
     try{
-      var _cd = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric'}).format(new Date(target));
+      var _cd = new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'long',month:'long',day:'numeric'}).format(new Date(target));
       document.querySelectorAll('[data-classdate]').forEach(function(el){ el.textContent = _cd; });
     }catch(e){}
     function tick(){

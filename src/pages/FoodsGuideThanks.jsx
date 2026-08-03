@@ -24,7 +24,7 @@
 //   - NO compare-at price anywhere. The $209 is the honest sum of the eleven
 //     solo values, it has never been charged, so it is never struck through.
 //   - No seat counters, no countdown on the $17 offer. The only timer is the
-//     real Monday 7pm CT class, computed by the SAME nextMondayCT() the site
+//     real Monday 7pm ET class, computed by the SAME nextMondayET() the site
 //     banner uses.
 //   - Stack values and the $209 sum come from src/data/kitStack.js, the one
 //     source shared with the register, so the two can never drift.
@@ -35,7 +35,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { KIT_STACK, KIT_STACK_TOTAL, KIT_PRICE, KIT_FILE_COUNT } from '../data/kitStack.js';
-import { nextMondayCT } from '../components/MasterclassBanner.jsx';
+import { nextMondayET } from '../components/MasterclassBanner.jsx';
 import { track, getAbHomeVariant, trackPixels } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v1';
@@ -103,7 +103,7 @@ const labelStyle = {
   margin: '0 0 0.5rem',
 };
 
-// Countdown split. The timezone math itself is NOT duplicated: nextMondayCT()
+// Countdown split. The timezone math itself is NOT duplicated: nextMondayET()
 // is imported from MasterclassBanner so there is one implementation of "when
 // is the next class" on the whole site.
 function parts(ms) {
@@ -333,15 +333,15 @@ export default function FoodsGuideThanks() {
   const masterclassRef = useRef(null);
   const mountedAt = useRef(Date.now());
 
-  // Countdown to the real Monday 7pm CT class.
-  const [target, setTarget] = useState(() => nextMondayCT());
+  // Countdown to the real Monday 7pm ET class.
+  const [target, setTarget] = useState(() => nextMondayET());
   const [left, setLeft] = useState(() => target.getTime() - Date.now());
 
   useEffect(() => {
     const id = setInterval(() => {
       const remaining = target.getTime() - Date.now();
       if (remaining <= 0) {
-        const next = nextMondayCT();
+        const next = nextMondayET();
         setTarget(next);
         setLeft(next.getTime() - Date.now());
       } else {
@@ -355,7 +355,7 @@ export default function FoodsGuideThanks() {
   const classDate = useMemo(() => {
     try {
       return target.toLocaleDateString('en-US', {
-        timeZone: 'America/Chicago',
+        timeZone: 'America/New_York',
         weekday: 'long',
         month: 'long',
         day: 'numeric',
@@ -957,12 +957,12 @@ export default function FoodsGuideThanks() {
           <p style={{ fontSize: '0.9rem', lineHeight: 1.6, margin: '0 0 0.9rem', opacity: 0.93 }}>
             {registered ? (
               <>
-                Beyond the Cuff runs live every Monday at 7pm Central. I saved you a seat when you
+                Beyond the Cuff runs live every Monday at 7pm Eastern. I saved you a seat when you
                 asked for the guide. Your join link is in a second email from me.
               </>
             ) : (
               <>
-                Beyond the Cuff runs live every Monday at 7pm Central. It is free, it is taught by a
+                Beyond the Cuff runs live every Monday at 7pm Eastern. It is free, it is taught by a
                 nurse, and the join link goes straight to your email.
               </>
             )}
@@ -987,7 +987,7 @@ export default function FoodsGuideThanks() {
             {countCell(s, 'sec')}
           </div>
           <p style={{ textAlign: 'center', fontSize: '0.82rem', margin: '0 0 0.9rem', opacity: 0.85 }}>
-            Next class: {classDate}, 7pm Central
+            Next class: {classDate}, 7pm Eastern
           </p>
 
           {/* /masterclass is a STATIC page (public/masterclass/), excluded from
