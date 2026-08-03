@@ -106,7 +106,7 @@
         if (!TT_ID || TT_ID.indexOf('%') === 0) return; // no id set → skip
         !function (w, d, t) {
           w.TiktokAnalyticsObject = t; var ttq = w[t] = w[t] || [];
-          ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"];
+          ttq.methods = ["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"];
           ttq.setAndDefer = function (o, m) { o[m] = function () { o.push([m].concat(Array.prototype.slice.call(arguments, 0))); }; };
           for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
           ttq.instance = function (id) { var o = ttq._i[id] || []; for (var n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(o, ttq.methods[n]); return o; };
