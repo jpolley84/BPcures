@@ -38,7 +38,29 @@ export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 // Cohort fulfillment URLs — Joel populates these env vars at deploy time.
 // 2026-07-03: the old /bonus/* fallbacks had no route (they 404'd to the
 // homepage). The real files live in the buyer library at /library.
-export const MONDAY_ZOOM_URL    = process.env.VITE_MONDAY_ZOOM_URL    || SKOOL_URL;
+// 2026-08-03 — ZOOM ROOM CONSOLIDATION. Joel retired the old standing group
+// room (81541901408) after two sessions mailed two different links for the same
+// event. The Vercel env var VITE_MONDAY_ZOOM_URL still holds that dead room, so
+// this sequence was quietly mailing subscribers a link to an empty meeting.
+//
+// The env var is no longer trusted blindly: a retired room ID is rejected and
+// we fall back to the one live room. Joel should still update the Vercel var,
+// but the code no longer depends on him doing so before the next send.
+// Canon: scripts/_zoom-rooms.mjs.
+const ZOOM_LIVE = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
+const ZOOM_RETIRED_IDS = ['81541901408'];
+
+function resolveZoomUrl() {
+  const fromEnv = process.env.VITE_MONDAY_ZOOM_URL;
+  if (!fromEnv) return ZOOM_LIVE;
+  if (ZOOM_RETIRED_IDS.some((id) => fromEnv.includes(id))) {
+    console.warn('_tier-2-emails: VITE_MONDAY_ZOOM_URL holds a RETIRED Zoom room; using the live room instead.');
+    return ZOOM_LIVE;
+  }
+  return fromEnv;
+}
+
+export const MONDAY_ZOOM_URL    = resolveZoomUrl();
 export const BONUS_CORTISOL_URL = process.env.VITE_BONUS_CORTISOL_URL || `${SITE_URL}/library`;
 export const BONUS_BLOODSUGAR_URL = process.env.VITE_BONUS_BLOODSUGAR_URL || `${SITE_URL}/library`;
 export const BONUS_COOKBOOK_URL = process.env.VITE_BONUS_COOKBOOK_URL || `${SITE_URL}/library`;

@@ -24,7 +24,7 @@ Both the SITE agent and the EMAIL agent MUST follow this exactly so the two trac
 
 ## The standing group call
 - **Wednesday 7:00 PM EST.** (NOT Monday — Monday is now only an unguaranteed TikTok live; remove all "Monday 10 PM ET" call references and replace with "Wednesday 7 PM EST.")
-- Zoom link is in Vercel env `VITE_MONDAY_ZOOM_URL` (keep the var name, it already holds the Wed link: https://us06web.zoom.us/j/81541901408?pwd=8aOJeGbTcHJEsHO35be9hfOk2k5acm.1 ). Reference it via the existing env var; do not hardcode the link.
+- **2026-08-03 UPDATE:** the room formerly listed here (`81541901408`) is **RETIRED**. All BraveWorks events now run in ONE room, defined in `scripts/_zoom-rooms.mjs` as `ZOOM_MAIN`. `api/_tier-2-emails.js` rejects the retired ID and falls back to the live room even if the Vercel env var is stale. Joel should still update `VITE_MONDAY_ZOOM_URL` in Vercel, but nothing depends on it now. Never paste a Zoom URL into a new file.
 
 ## The $97 evergreen shadow seat
 - **Deliverable:** everything in the kit + **a standing seat in the Wednesday 7 PM EST live group call** (not a personalized plan — that is the $297). Anchor: "about what one month of BP meds costs."
