@@ -11,6 +11,18 @@
   ],
   "redirects": [
     {
+      "source": "/challenge",
+      "has": [{ "type": "host", "value": "bpquiz.com" }],
+      "destination": "https://changemylifechallenge.com/",
+      "permanent": false
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.changemylifechallenge.com" }],
+      "destination": "https://changemylifechallenge.com/$1",
+      "permanent": true
+    },
+    {
       "source": "/tt",
       "destination": "/?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
       "permanent": false
