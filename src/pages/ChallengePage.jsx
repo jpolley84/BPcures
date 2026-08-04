@@ -629,7 +629,13 @@ export default function ChallengePage() {
       el.classList.add('tpc-rv');
       el.style.transitionDelay = `${Math.min(n, 5) * 90}ms`;
     });
+    // FAILSAFE: if the observer has not fired a single callback within 1.5s
+    // (prerender snapshots, odd embedded webviews, anything that never
+    // composites), reveal everything. A page that hides its own content when
+    // an API misbehaves is not an acceptable failure mode on a launch day.
+    let fired = false;
     const io = new IntersectionObserver((entries) => {
+      fired = true;
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('rv-in');
@@ -638,7 +644,13 @@ export default function ChallengePage() {
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const failsafe = window.setTimeout(() => {
+      if (!fired) {
+        els.forEach((el) => el.classList.add('rv-in'));
+        io.disconnect();
+      }
+    }, 1500);
+    return () => { window.clearTimeout(failsafe); io.disconnect(); };
   }, []);
 
   // Choose a seat: record the click, arm the checkout panel, scroll to it.

@@ -5,6 +5,11 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
+      "destination": "/cmlc.html"
+    },
+    {
       "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|coaching/|masterclass/|masterclass$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
