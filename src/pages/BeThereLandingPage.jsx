@@ -753,7 +753,7 @@ export default function BeThereLandingPage() {
           </p>
           <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
           <div className="trust-bar" data-rv>
-            {/* 2026-08-04: was 600,000+, stale. Verified 628,330 by live scan
+            {/* 2026-08-04: was 550,000+, stale. Verified 628,330 by live scan
                 (TikTok 197K, FB 390K, IG 39.2K, YT 2.1K). Rounded DOWN to
                 600,000+ so the claim stays true between refreshes. Canonical
                 source is PLATFORM-STATS.md, refreshed weekly. */}
@@ -847,8 +847,14 @@ export default function BeThereLandingPage() {
           <p className="intro">
             That is a completely different appointment. Not because we changed the medicine.
             Because for the first time you are in the room as a partner with evidence instead
-            of a patient with symptoms, and whatever comes next gets decided by the two people
-            qualified to decide it. You and your doctor.
+            of a patient with symptoms. If needing less someday is on the table for you, it
+            gets earned honestly, <strong>with your doctor holding the pen</strong>. That
+            conversation happens with them, never behind their back.
+          </p>
+          <p className="intro">
+            And hear this part, because you have probably been carrying the opposite for
+            years. <strong>You are not a difficult patient. You are an uninformed one, and
+            that is fixable.</strong>
           </p>
           <p className="no-shame">
             We cannot promise what your doctor will say. Nobody honest can. We can promise you
@@ -1185,7 +1191,13 @@ export default function BeThereLandingPage() {
             number. You do.
           </p>
           <p className="intro">
-            That is the ignorance tax, and the cruelest thing about it is that you paid it in
+            Nobody ever hands you an invoice for it. You just keep paying. Another copay.
+            Another refill. Another year of the same number and the same fifteen minute
+            appointment. And <strong>the worry you carry between readings, that is part of
+            the bill too.</strong>
+          </p>
+          <p className="intro">
+            That is the ignorance tax, and the cruelest part is that you paid it in
             installments small enough to never notice, and you got no education for any of it.
             You are not richer for the last five years of guessing. You are just five years in.
           </p>

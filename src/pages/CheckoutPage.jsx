@@ -765,7 +765,14 @@ const CheckoutPage = () => {
               className="text-balance"
               style={{ color: 'var(--dark-gray)', fontSize: 'clamp(16px, 3.2vw, 19px)', lineHeight: 1.6, margin: '14px 0 0', fontWeight: 600 }}
             >
-              Fix the Triangle and your BP fixes itself — under your doctor's supervision, without pills, without herbs, for life.
+              {/* 2026-08-04: was "your BP fixes itself, without pills, without herbs, for
+                  life." Three problems in one sentence. "Fixes itself" is an outcome
+                  guarantee nobody can make, "without pills" reads as do-not-need-your-
+                  medication, and it carried an em dash. Rewritten to the canon: we address
+                  the cause, the doctor holds the pen. See docs/COPY-CANON.md move 3. */}
+              Address the Triangle and you are working on the cause, not just the number.
+              Always alongside your doctor, never instead of them, and if needing less someday
+              is on the table for you, it gets earned honestly with your doctor holding the pen.
             </p>
           </div>
         </div>
@@ -839,7 +846,11 @@ const CheckoutPage = () => {
               <Link to="/coaching" style={{ color: 'var(--purple, #6C3483)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}>
                 working with me directly
               </Link>{' '}
-              is for. Either way, stop paying for not knowing.
+              is for. Either way, stop paying for not knowing. You are not choosing between
+              spending and not spending. You have been spending the whole time. You are
+              choosing between a bill that never ends and one that does.{' '}
+              <strong style={{ color: 'var(--navy)' }}>You are not a difficult patient. You
+              are an uninformed one, and that is fixable.</strong>
             </p>
           </div>
         </div>
@@ -874,7 +885,9 @@ const CheckoutPage = () => {
             <p className="text-center" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 24px' }}>
               Not freedom from your doctor. Freedom from the weight: the counting, the checking, the
               wondering. Here is the whole path, in plain words. You walk it{' '}
-              <strong>with your doctor</strong>, one step at a time.
+              <strong>with your doctor</strong>, one step at a time. If needing less someday is
+              on the table for you, it gets earned honestly, with{' '}
+              <strong>your doctor holding the pen</strong>, never behind their back.
             </p>
 
             <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>

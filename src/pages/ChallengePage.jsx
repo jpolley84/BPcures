@@ -1880,8 +1880,25 @@ function PriceReasoning() {
     <section className="tpc-sec" style={{ paddingTop: 0 }}>
       <div className="tpc-wrap tpc-narrow">
         <div style={{ background: C.white, border: '1px solid rgba(138,96,61,.22)', borderRadius: 10, padding: '28px 24px' }}>
-          <h3 style={{ fontSize: '1.5rem', marginBottom: 14 }}>Why the seat is free.</h3>
+          {/* 2026-08-04: the ignorance tax, ported from the homepage and
+              /coaching per docs/COPY-CANON.md move 5. Definition from the
+              homepage (the invoice nobody hands you), close from /coaching
+              (a bill that never ends versus one that does). Reworded here,
+              not pasted: this page is FREE, so the tax argument lands on the
+              years already spent, not on the seat price. NO invented dollar
+              totals, ever. */}
+          <h3 style={{ fontSize: '1.5rem', marginBottom: 14 }}>
+            You have already paid enough for not knowing.
+          </h3>
           <p style={{ color: C.dim, fontSize: '.96rem' }}>
+            Nobody ever hands you an invoice for it. You just keep paying. Another copay.
+            Another refill. Another year of the same number and the same fifteen minute
+            appointment. And the worry you carry between readings, that is part of the bill
+            too. Call it what it is, the ignorance tax, and notice that you have never once
+            been given an education in return for it.
+          </p>
+          <p style={{ color: C.dim, fontSize: '.96rem' }}>
+            <strong style={{ color: C.ink }}>Which is exactly why this week costs nothing.</strong>{' '}
             This is Cohort One, and we would rather fill this first room than charge for it. The
             free seat is the whole challenge: three live nights, three replays, the workbook and
             the log. No card, nothing renews, and there is no catch waiting on Night 3.
