@@ -94,7 +94,10 @@ import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
    wrong product. Nothing about them is exposed to the browser.
    ========================================================================== */
 const CHALLENGE = {
-  NAME: 'The Women of Power Rising Challenge',
+  // 2026-08-03 (Joel, later same evening): renamed again, to the CHANGE MY
+  // LIFE CHALLENGE, with its own domain changemylifechallenge.com (this same
+  // Vercel project; see SUBDOMAIN_PAGE in App.jsx). Same hosts, same copy.
+  NAME: 'The Change My Life Challenge',
   SUBTITLE: 'Three nights live with Annie Chitate, RN and Joel Polley, RN',
   // Must match api/create-embedded-checkout.js and api/challenge-signup.js exactly,
   // or PostHog events cannot be joined to Stripe metadata or the KV records.
@@ -1085,8 +1088,8 @@ function SiteHeader({ doorsClosed, goToSeats, goToWaitlist }) {
       <div className="tpc-wrap">
         <nav className="tpc-nav">
           <div className="tpc-mark">
-            <span className="badge" aria-hidden>WP</span>
-            <span className="name">Women of Power Rising</span>
+            <span className="badge" aria-hidden>CM</span>
+            <span className="name">Change My Life Challenge</span>
           </div>
           <button
             type="button"
@@ -1110,7 +1113,7 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
       <div className="tpc-wrap">
         <div className="tpc-kick">Live on Zoom &middot; Three Nights &middot; Free Founding Cohort</div>
         <div className="tpc-pres">Everyday Nurse Annie and Joel, the BP Guy, present</div>
-        <div className="tpc-name">Women of Power <span>Rising</span></div>
+        <div className="tpc-name">Change My Life <span>Challenge</span></div>
 
         <h1 className="tpc-h1" style={{ maxWidth: '32ch' }}>
           Your blood pressure, hormones, sleep, weight, energy and mood are not separate problems.{' '}
@@ -1450,7 +1453,7 @@ function Artifact() {
               <div className="tpc-book-b">Annie + Joel, RNs</div>
               <div className="tpc-book-r" />
               <div className="tpc-book-t">The 3-Day Log</div>
-              <div className="tpc-book-s">Women of Power Rising &middot; Cohort One</div>
+              <div className="tpc-book-s">Change My Life Challenge &middot; Cohort One</div>
             </div>
           </div>
           <div>
@@ -1768,7 +1771,7 @@ function Proof({ doorsClosed, goToSeats, goToWaitlist }) {
           <span className="tpc-eyebrow" style={{ display: 'block', marginBottom: 16 }}>Let Us Be Honest</span>
           <div className="big">You will not find testimonials on this page.</div>
           <p>
-            This is <b>Cohort One.</b> The Women of Power Rising Challenge has never been run before.
+            This is <b>Cohort One.</b> The Change My Life Challenge has never been run before.
           </p>
           <p>
             We could have waited a year, run it quietly, collected the quotes, then shown you a wall
@@ -1883,7 +1886,7 @@ function Host() {
             </p>
             <div className="tpc-an-n">
               Annie Chitate, RN &middot; Joel Polley, RN
-              <span>Women of Power Rising &middot; Everyday Nurse &middot; BraveWorks RN</span>
+              <span>Change My Life Challenge &middot; Everyday Nurse &middot; BraveWorks RN</span>
             </div>
           </div>
         </div>
@@ -2239,7 +2242,7 @@ function PageFooter() {
   return (
     <footer className="tpc-footer">
       <div className="tpc-wrap">
-        <div className="fb">Women of Power Rising</div>
+        <div className="fb">changemylifechallenge.com</div>
         <div className="fs">{CHALLENGE.NAME} &middot; Cohort One</div>
         <p style={{ margin: 0 }}>One connected story. Alongside your doctor, never instead of them.</p>
         <p className="disc">

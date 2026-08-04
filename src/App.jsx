@@ -114,6 +114,11 @@ const SUBDOMAIN_PAGE = {
   // App waitlist vanity subdomain (2026-07-05). Same page as /waitlist on
   // the apex; the subdomain serves it at its root.
   'waitlist.bpquiz.com': AppWaitlistPage,
+  // changemylifechallenge.com (2026-08-03, Joel): dedicated domain for the
+  // Change My Life Challenge. Same Vercel project, so /api/* and the legal
+  // routes all work on this host; the root serves the challenge page.
+  'changemylifechallenge.com': ChallengePage,
+  'www.changemylifechallenge.com': ChallengePage,
 };
 const subdomainPage =
   typeof window !== 'undefined' ? SUBDOMAIN_PAGE[window.location.hostname] : null;

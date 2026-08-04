@@ -106,7 +106,7 @@ export default function ChallengeConfirmedPage() {
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '1.5rem 1.1rem 3rem' }}>
 
         <div style={{ fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: CLAY, fontWeight: 800, marginBottom: '0.9rem' }}>
-          Women of Power Rising
+          Change My Life Challenge
         </div>
 
         {state === 'working' && (
@@ -124,7 +124,7 @@ export default function ChallengeConfirmedPage() {
             <p style={{ fontSize: '1.02rem', color: '#3A4A48' }}>
               {state === 'already'
                 ? 'You were already registered, so nothing was charged twice and nothing was sent twice.'
-                : 'Your seat for The Women of Power Rising Challenge is confirmed.'}
+                : 'Your seat for The Change My Life Challenge is confirmed.'}
               {' '}
               {email
                 ? <>Your confirmation is on its way to <strong>{email}</strong>.</>

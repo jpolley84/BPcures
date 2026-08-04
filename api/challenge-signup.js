@@ -133,7 +133,9 @@ const CHALLENGE = {
   // 2026-08-03 (Joel, explicit): renamed to the Women of Power Rising
   // Challenge, co-hosted with Annie Chitate, RN (Everyday Nurse Annie).
   // "Connected story" positioning; mechanics unchanged.
-  name: 'The Women of Power Rising Challenge',
+  // 2026-08-03 (later same evening): renamed again to the Change My Life
+  // Challenge, now on its own domain changemylifechallenge.com.
+  name: 'The Change My Life Challenge',
   subtitle: 'Three nights live with Annie Chitate, RN and Joel Polley, RN',
   // 2026-07-28 (Joel): the call moved to SEVEN PM EASTERN. It previously ran
   // 7:00pm CT, which is 8:00pm ET. 7:00pm ET is 6:00pm CT, so the instant below
