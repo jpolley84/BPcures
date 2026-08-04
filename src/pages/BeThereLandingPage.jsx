@@ -21,6 +21,33 @@
 //   - Image slots render as branded visual panels (no "PLACEHOLDER" text on
 //     a live page); swap in real photography when Annie supplies it.
 //
+// 2026-08-04 v4 (Joel, after Omar Eltakori's masterclass): copy restructured on
+// the Matthew 11:28-30 (MSG) pattern. Six moves, in this order:
+//   1. SELF-IDENTIFY with a question, not a claim. The passage does not ask
+//      "are you a sinner," it asks whether you are burned out on the thing that
+//      was supposed to fix you. Our version: she already takes the medication.
+//   2. CONNECT before mechanism. Relational verbs only (walk with, work with).
+//   3. ENROLL IN THE PAIN BEHIND THE PAIN. Not "your number is high." That is
+//      the surface. The real wound is having done everything right and watched
+//      the dose go up anyway, and what that made her believe about herself.
+//   4. PAYOFF IN PICTURESQUE LANGUAGE, and the vacation behind the vacation:
+//      not lower numbers, not even the grandbaby, but no longer living as a
+//      patient. "Freely and lightly."
+//   5. TELL AND SHOW.
+//   6. MAKE YES OBVIOUSLY CHEAPER THAN NO by pre-answering the objection, the
+//      way the passage promises nothing heavy or ill-fitting.
+//
+// ⚠️ THE MEDICATION LINE, DO NOT CROSS IT. Joel's brief was "people who are on
+// pills and want off." That desire is real and this page now speaks to it, but
+// NOTHING here promises, implies, or hints that this program reduces or ends a
+// prescription. That is a clinical decision, it is not ours, and a woman who
+// stops a BP medication because a sales page made her feel brave can stroke.
+// What we promise is the honest and still-valuable thing: we help her become
+// the patient whose doctor CAN have that conversation with her, because she
+// arrives with three months of her own data instead of a hope. Every med
+// reference on this page must keep that shape. See the FAQ answer, which is
+// deliberately long, and the "About the Pills" section.
+//
 // UI/UX: scroll-reveal (IntersectionObserver, fail-open), pulse hero rings,
 // sticky mobile apply bar, animated FAQ accordion, reduced-motion safe.
 
@@ -89,26 +116,30 @@ function useReveal() {
 }
 
 // ---- content ---------------------------------------------------------------
+// The vacation behind the vacation. Each card names the obvious want in the
+// label, then the line underneath goes one layer past it to the thing she
+// actually misses. "Be there for the grandbaby" is the vacation. "Not be the
+// one they worry about" is the vacation behind the vacation.
 const PAYOFFS = [
   {
     label: 'So You Can Be There',
-    h: 'For the people who still need your laugh, your voice, and your seat at the table.',
-    p: 'For the wedding. The graduation. The new grandbaby. The birthday dinner. The cookout. The ordinary Tuesday no one knows will become a memory.',
+    h: 'Not as the one everybody is quietly keeping an eye on. Just as you.',
+    p: 'The wedding. The graduation. The new grandbaby. And nobody scanning your face across the room to see if you look alright.',
   },
   {
     label: 'So You Can Go',
-    h: 'Book the trip without fear of what might go wrong.',
-    p: 'Walk through the airport. Get on the cruise. Visit the children. Say yes to the weekend away, and feel like your life is still yours.',
+    h: 'Pack a bag without packing a plan for what might go wrong.',
+    p: 'Not just get on the plane. Get on it without the mental list of the nearest hospital, the pill case, the what-if you never say out loud to anyone.',
   },
   {
-    label: 'So You Can Show Up',
-    h: 'Bring your full self back to your business, your purpose, and your work.',
-    p: 'Stop hiding because you feel tired or worried. Turn the camera on. Lead the room. Make plans past the next scare.',
+    label: 'So You Can Stop Explaining',
+    h: 'No more narrating your health at every dinner table.',
+    p: 'You are tired of being the health conversation. You want to be in the conversation about something else, anything else, the way you used to be.',
   },
   {
-    label: 'So You Can Feel Like You Again',
-    h: 'Wake up with more energy, more trust in yourself, and less fear of your own body.',
-    p: 'Enjoy your food without guilt. Move without punishment. Look in the mirror and see a woman rebuilding, not a woman waiting for bad news.',
+    label: 'So You Can Have Your Name Back',
+    h: 'Be a woman again instead of a condition being managed.',
+    p: 'Eat without doing math. Stand up without bracing. Go a whole day without thinking about your blood pressure once, and only notice that night that you did not.',
   },
 ];
 
@@ -189,20 +220,21 @@ const POSSIBILITIES = [
 // on the fit call, not itemized on the page.
 
 const FOR_YES = [
-  'To wake up and feel like your body is working with you again.',
-  'To check the cuff without letting it control the rest of your day.',
-  'To take the trip, grow the business, attend the wedding, and hold the grandbaby.',
-  'To enjoy food without fear and move without punishment.',
-  'To give your children a different picture of what getting older can look like.',
-  'To become present in your life and powerful in your choices.',
-  'To look ahead and feel excited, not afraid.',
+  'To stop being the person everyone is quietly worried about.',
+  'To check the cuff without it deciding what kind of day you get to have.',
+  'To walk into your next appointment with evidence instead of a hope.',
+  'To eat a meal without doing math and move without being punished for it.',
+  'To give your children a different picture of what getting older looks like.',
+  'To go a whole day without thinking about your blood pressure once.',
+  'To look ahead and feel something other than braced.',
 ];
 
 const FOR_NO = [
+  'Anyone willing to tell you to stop your medication. We never will.',
   'One miracle pill, tea, powder, or supplement to do all the work.',
-  'A toxic shortcut that asks nothing of you and changes nothing for long.',
   'A punishment plan built on bland food and exhausting workouts.',
   'A one-week burst followed by another month of starting over.',
+  'A promise about what your numbers will do. Nobody honest can give you that.',
   'Someone else to care more about your life than you are ready to.',
 ];
 
@@ -231,8 +263,8 @@ const FAQS = [
     a: 'No. The goal is not to punish your body. It is to build movement you can repeat at your current starting point and grow from there.',
   },
   {
-    q: 'Will Joel tell me to stop my medicine?',
-    a: 'No. Only your doctor can change your medicine. Joel will never tell you to stop taking it.',
+    q: 'I want to get off my medication. Can this help me do that?',
+    a: 'Here is the honest answer, and it is not the one that sells best. Joel will never tell you to stop, lower, or skip a medication. Only the person who prescribed it can make that call, and a woman who stops a blood pressure medication on her own can have a stroke. What this program changes is the conversation. In ninety days you walk into that appointment with three months of your own readings and a written record of what you changed and what happened. Whether anything about your prescription changes is between you and your doctor, and we will not pretend to know. What we can tell you is that you will stop walking in with nothing but a hope.',
   },
   {
     q: 'What if my blood pressure is very high right now?',
@@ -697,26 +729,35 @@ export default function BeThereLandingPage() {
       <section className="hero" ref={heroRef}>
         <div className="wrap hero-grid">
           <div className="hero-stage">
-            <span className="eyebrow">For Women Over 40 Who Are Done Letting the Cuff Run Their Life</span>
-            <h1>Your Blood-Pressure Reading Is Not Your Future.</h1>
-          <p className="tagline">Reclaim your health. Reclaim your confidence. Reclaim your life. Fully.</p>
-          <p className="sub">
-            You are not looking for one more warning. Not one more pill. Not one more food to
-            fear. Not one more plan you cannot keep.
+            <span className="eyebrow">For Women Over 40 Who Are Already Taking the Medication</span>
+            <h1>Are You Tired of Being a Patient?</h1>
+          <p className="tagline">
+            You took the pills. You cut the salt. You did what they told you.
           </p>
           <p className="sub">
-            You want to know what keeps pulling your health the wrong way. And you want simple
-            changes you can keep, even on the hard days.
+            And somewhere along the way you stopped being a woman who has high blood pressure
+            and started being a blood pressure patient. It got into your calendar. Your
+            grocery cart. The way your husband looks at you when you stand up too fast.
+          </p>
+          <p className="sub">
+            Nobody warned you about that part. They handed you a prescription and a pamphlet
+            and sent you home to manage it alone, and when the number did not move the way
+            you hoped, the only explanation left on the table was you.
           </p>
           <p className="headline2">
-            Life Beyond the Numbers&trade; is a 90 day coaching program with Joel. Together you
-            find what is really behind your number: stress, food, sleep, movement, and daily
-            habits. Then you change it, one small step at a time. So you can feel strong,
-            steady, and free to live your life again.
+            It was never you. Life Beyond the Numbers&trade; is 90 days with Joel, a nurse who
+            spent twenty years in intensive care and emergency medicine watching what happens
+            when people are handed a diagnosis and no plan. Together you find what is actually
+            pulling on your number, and you change it in the life you already have. Not the
+            one you would need to quit your job to live.
           </p>
           <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
           <div className="trust-bar" data-rv>
-            <div className="trust-stat"><span className="tnum">550,000+</span><span className="tlbl">following Joel across platforms</span></div>
+            {/* 2026-08-04: was 550,000+, stale. Verified 628,330 by live scan
+                (TikTok 197K, FB 390K, IG 39.2K, YT 2.1K). Rounded DOWN to
+                600,000+ so the claim stays true between refreshes. Canonical
+                source is PLATFORM-STATS.md, refreshed weekly. */}
+            <div className="trust-stat"><span className="tnum">600,000+</span><span className="tlbl">following Joel across platforms</span></div>
             <div className="trust-dot" aria-hidden="true" />
             <div className="trust-stat"><span className="tnum">1,300+</span><span className="tlbl">women inside the community</span></div>
           </div>
@@ -767,6 +808,52 @@ export default function BeThereLandingPage() {
               me.&rdquo;
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* ===== ABOUT THE PILLS =====
+           2026-08-04: the section this page was missing. Most women arriving
+           here are already medicated and privately want fewer pills, and every
+           page that refuses to say the word loses them. This says it out loud
+           and then holds the line hard: we never touch the prescription, we
+           make her the patient her doctor can actually have the conversation
+           with. Do not soften the "we will not" sentences to make the offer
+           feel bigger. They are what makes the rest of it trustworthy. */}
+      <section className="root">
+        <div className="wrap" data-rv style={{ maxWidth: 820 }}>
+          <span className="eyebrow">Let Us Say the Quiet Part Out Loud</span>
+          <h2>You Want to Take Fewer Pills. We Are Not Going to Pretend You Do Not.</h2>
+          <p className="intro">
+            Almost every woman who finds this page is already on something. And almost every
+            one of them has wondered, usually without telling anybody, whether this is the
+            rest of her life now.
+          </p>
+          <p className="intro">
+            So here is exactly where we stand, before you spend a dollar or a minute.
+          </p>
+          <p className="intro">
+            <strong>Joel will never tell you to stop, skip, cut, or lower a medication.</strong>{' '}
+            Not once, not in month three, not if you beg him. He is a nurse, not your
+            prescriber, and a woman who stops a blood pressure medication because a website
+            made her feel brave can have a stroke. Anyone willing to hint otherwise to close
+            a sale is telling you something about themselves.
+          </p>
+          <p className="intro">
+            <strong>Here is what we actually do.</strong> Right now, when your doctor asks how
+            things are going, you have a feeling and a guess. Ninety days from now you walk in
+            with three months of your own readings, taken correctly, and a written record of
+            what you changed and what happened when you did.
+          </p>
+          <p className="intro">
+            That is a completely different appointment. Not because we changed the medicine.
+            Because for the first time you are in the room as a partner with evidence instead
+            of a patient with symptoms, and whatever comes next gets decided by the two people
+            qualified to decide it. You and your doctor.
+          </p>
+          <p className="no-shame">
+            We cannot promise what your doctor will say. Nobody honest can. We can promise you
+            will stop walking in empty-handed.
+          </p>
         </div>
       </section>
 

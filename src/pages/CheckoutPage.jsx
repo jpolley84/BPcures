@@ -810,6 +810,41 @@ const CheckoutPage = () => {
         </div>
       </AnimatedSection>
 
+      {/* The Ignorance Tax (2026-08-04, Joel): they have already paid enough
+          in the price of not knowing. Names the invisible bill they are
+          already footing, then points the kit (and, one line, coaching) as
+          where that tax stops. Sits right after the 3 lies: the reader has
+          just seen what not-knowing cost them. */}
+      <AnimatedSection className="section-spacing" style={{ backgroundColor: 'var(--light-gray)' }}>
+        <div className="container-mobile-first">
+          <div className="max-w-[600px] mx-auto text-center">
+            <p style={{ color: 'var(--clay, #B85A36)', fontSize: '13px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+              The real bill
+            </p>
+            <h2 className="font-bold text-balance" style={{ color: 'var(--navy)', fontSize: '24px', lineHeight: 1.25, margin: '0 0 14px' }}>
+              You have already paid enough for not knowing.
+            </h2>
+            <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.65, margin: '0 0 14px', textAlign: 'left' }}>
+              Nobody ever hands you an invoice for it. You just keep paying it. Another copay.
+              Another refill. Another year of the same number and the same fifteen-minute
+              appointment. The worry you carry between readings, that is part of the bill too.
+              Call it what it is: <strong style={{ color: 'var(--navy)' }}>the ignorance tax.</strong>
+            </p>
+            <p style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.65, margin: '0 0 14px', textAlign: 'left' }}>
+              This kit is where the tax stops: {PRICE}, once, to finally know what is behind your
+              number and what to do about it, ten days at a time.
+            </p>
+            <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: 1.65, margin: 0, textAlign: 'left' }}>
+              And when you are ready for a nurse's eyes on your own case, that is what{' '}
+              <Link to="/coaching" style={{ color: 'var(--purple, #6C3483)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                working with me directly
+              </Link>{' '}
+              is for. Either way, stop paying for not knowing.
+            </p>
+          </div>
+        </div>
+      </AnimatedSection>
+
       {/* AND Statement + Triangle diagram — the mechanism */}
       <AnimatedSection className="section-spacing">
         <div className="container-mobile-first">
