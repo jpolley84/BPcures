@@ -435,6 +435,17 @@ const CheckoutPage = () => {
           <h1 className="font-extrabold mb-5 text-balance" style={{ color: 'var(--navy)', fontSize: '30px', lineHeight: '1.15', letterSpacing: '-0.03em' }}>
             Amlodipine. Lopressor. HCTZ.<br />Still taking them. Still high?
           </h1>
+          {/* Messiah-method self-identify block (2026-08-04, Joel via Omar
+              Eltakori masterclass; pattern = Matthew 11:28-30 MSG). The reader
+              raises their own hand BEFORE the offer: name the pain BEHIND the
+              pain (not the pill; the life around the pill), in their words. */}
+          <p className="mb-2" style={{ color: 'var(--navy)', fontSize: '18px', lineHeight: '1.5', fontWeight: 700 }}>
+            Tired of it? Not the pill. The life around the pill.
+          </p>
+          <p className="mb-4" style={{ color: 'var(--dark-gray)', fontSize: '17px', lineHeight: '1.6' }}>
+            The refill line. The cuff on the counter judging your morning. The quiet dread on the
+            drive to every appointment. If that is you, this was built for you.
+          </p>
           <p className="mb-4" style={{ color: 'var(--dark-gray)', fontSize: '18px', lineHeight: '1.6' }}>
             A 20-year ICU nurse built a 10-day reset for people on BP meds. They call him <strong>The Blood Pressure Guy</strong>.
           </p>
@@ -443,6 +454,7 @@ const CheckoutPage = () => {
               ['Your pressure has three corners.', 'Stress. Sugar. Sodium.'],
               ['Pills work one corner.', 'The other two pull your number right back.'],
               ['This kit works all three.', 'Alongside your doctor, never instead.'],
+              ['And the real payoff is not a smaller number.', 'It is going whole days without thinking about the number at all.'],
             ].map(([lead, rest], i) => (
               <p key={i} style={{ margin: 0, color: 'var(--dark-gray)', fontSize: '16px', lineHeight: '1.5' }}>
                 <strong style={{ color: 'var(--navy)' }}>{lead}</strong> {rest}
@@ -767,7 +779,7 @@ const CheckoutPage = () => {
             The 3 lies you've been told about your blood pressure
           </h2>
           <p className="text-center mx-auto" style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: 1.6, maxWidth: '520px', margin: '0 auto 28px' }}>
-            Every one of these keeps people managing a number for thirty years instead of working the cause. Here is what twenty years at the bedside taught me instead.
+            Each one hands you something heavy to carry for life: thirty years of managing instead of one honest season of addressing. Here is what twenty years at the bedside taught me instead.
           </p>
           <div className="max-w-[640px] mx-auto flex flex-col gap-4">
             {[
@@ -825,7 +837,9 @@ const CheckoutPage = () => {
               The goal was never more pills. It's freedom.
             </h2>
             <p className="text-center" style={{ color: 'var(--dark-gray)', fontSize: '16px', lineHeight: 1.6, margin: '0 0 24px' }}>
-              Here is the whole path, in plain words. You walk it <strong>with your doctor</strong>, one step at a time.
+              Not freedom from your doctor. Freedom from the weight: the counting, the checking, the
+              wondering. Here is the whole path, in plain words. You walk it{' '}
+              <strong>with your doctor</strong>, one step at a time.
             </p>
 
             <ol style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -834,7 +848,7 @@ const CheckoutPage = () => {
                 ['2', 'We build you up, naturally.', 'While your body gets stronger, we lean on real food, simple daily habits, and natural supports. This walks with your doctor’s care, never instead of it.'],
                 ['3', 'Your doctor may lower your medicine.', 'As your numbers steady, many people work with their doctor to step their pills down. Only your doctor makes that call. Never start, stop, or change a medicine on your own.'],
                 ['4', 'The extra supports wind down.', 'Once the cause stays fixed, your body needs less help. Fewer things to take. Fewer things to think about.'],
-                ['5', 'You put the cuff away.', 'The dream: a steady, healthy number you trust, and a cuff that lives in a drawer. Some folks toss it in the trash.'],
+                ['5', 'You put the cuff away.', 'The dream: a steady, healthy number you trust, a cuff that lives in a drawer, and mornings that start with sunlight instead of a reading. Some folks toss the cuff in the trash.'],
               ].map(([n, title, body]) => (
                 <li key={n} className="flex items-start gap-3 p-4 rounded-xl bg-white/70 border border-gray-100">
                   <span className="flex-shrink-0 inline-flex items-center justify-center rounded-full font-bold" style={{ width: 30, height: 30, background: 'var(--navy)', color: '#fff', fontSize: 15 }}>{n}</span>
@@ -848,6 +862,10 @@ const CheckoutPage = () => {
 
             <p className="text-center font-bold" style={{ color: 'var(--navy)', fontSize: 18, lineHeight: 1.5, margin: '24px 0 0' }}>
               Find the cause. Heal it. Walk free, with your doctor beside you the whole way.
+            </p>
+            <p className="text-center" style={{ color: 'var(--dark-gray)', fontSize: 16, lineHeight: 1.6, margin: '12px 0 0' }}>
+              Down on the floor with the grandkids. Up the stairs without the pause you hope nobody
+              notices. That is the number behind the number, and it is the only one that matters.
             </p>
 
             <p style={{ color: 'var(--muted-gray)', fontSize: 13, lineHeight: 1.6, margin: '16px 0 0', textAlign: 'center', fontStyle: 'italic' }}>
