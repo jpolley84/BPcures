@@ -599,6 +599,48 @@ export default function ChallengePage() {
     return () => clearInterval(id);
   }, []);
 
+  // Cinematic scroll reveal (2026-08-04 visual pass). One IntersectionObserver
+  // over the page's content blocks; each gets .tpc-rv (hidden) then .rv-in
+  // (revealed) the first time it enters the viewport, staggered ~90ms per
+  // sibling. Entirely skipped under prefers-reduced-motion or when IO is
+  // unavailable, in which case nothing is ever hidden: the .tpc-rv class is
+  // only added on this path, so the no-JS/reduced-motion page renders static
+  // and fully visible. The Stripe checkout mount is deliberately not included.
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!('IntersectionObserver' in window)) return undefined;
+    const sel = [
+      '.tpc-hero img', '.tpc-scan-grid > div',
+      '.tpc-head', '.tpc-reframe .small', '.tpc-reframe .big', '.tpc-reframe .body',
+      '.tpc-ident .you', '.tpc-ident .end',
+      '.tpc-soyou p', '.tpc-soyou-punch',
+      '.tpc-day', '.tpc-book', '.tpc-rb',
+      '.tpc-tier', '.tpc-pcard', '.tpc-proof-lead',
+      '.tpc-q', '.tpc-an', '.tpc-gbox', '.tpc-fi',
+      '.tpc-final .lines', '.tpc-final .rocket', '.tpc-final .fire',
+    ].join(', ');
+    const els = Array.from(document.querySelectorAll(sel));
+    if (!els.length) return undefined;
+    const siblingCount = new Map();
+    els.forEach((el) => {
+      const n = siblingCount.get(el.parentElement) || 0;
+      siblingCount.set(el.parentElement, n + 1);
+      el.classList.add('tpc-rv');
+      el.style.transitionDelay = `${Math.min(n, 5) * 90}ms`;
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('rv-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   // Choose a seat: record the click, arm the checkout panel, scroll to it.
   const chooseTier = useCallback((tierKey, location, price) => {
     t('chal_cta_click', { location, tier: tierKey, price });
@@ -761,7 +803,19 @@ function ChallengeStyles() {
          container, which silently kills position:sticky on .tpc-header (the
          nav stopped pinning and scrolled away with the page). 'clip' contains
          any stray overflow without creating a scroll container. */
-      .tpc { font-family: ${SANS}; font-size: 17px; line-height: 1.6; overflow-x: clip; }
+      .tpc { font-family: ${SANS}; font-size: 17px; line-height: 1.6; overflow-x: clip; position: relative; }
+      /* film grain: one tiny tiled SVG noise layer over everything. Fixed so it
+         does not scroll-shimmer, 2.5% so it reads as paper, not dirt. */
+      .tpc::after {
+        content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .025;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .tpc ::selection { background: ${C.gold}; color: ${C.ink}; }
+
+      /* scroll reveal: hidden ONLY when JS adds .tpc-rv (never in static HTML),
+         so reduced-motion and no-JS render everything visible. */
+      .tpc-rv { opacity: 0; transform: translateY(24px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); will-change: opacity, transform; }
+      .tpc-rv.rv-in { opacity: 1; transform: none; }
       .tpc h1, .tpc h2, .tpc h3, .tpc h4 { font-family: ${SERIF}; font-weight: 600; line-height: 1.06; margin: 0; color: ${C.ink}; }
       .tpc p { margin: 0 0 1em; }
       .tpc-wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
@@ -778,17 +832,33 @@ function ChallengeStyles() {
       .tpc-head p { margin-top: 14px; color: ${C.dim}; }
       .tpc-ink .tpc-head p, .tpc-cocoa .tpc-head p { color: ${C.creamDim}; }
       .tpc-head .tpc-eyebrow { margin-bottom: 12px; display: block; }
+      /* the banner's diamond ornament, flanking every section eyebrow */
+      .tpc-head .tpc-eyebrow::before, .tpc-head .tpc-eyebrow::after {
+        content: "\\2726"; font-size: .6rem; color: ${C.gold}; margin: 0 10px; vertical-align: 1px;
+      }
+      /* hairline gold rule under each section title */
+      .tpc-head h2::after {
+        content: ""; display: block; width: 72px; height: 1px; margin: 18px auto 0;
+        background: linear-gradient(90deg, transparent, ${C.gold}, transparent);
+      }
 
       /* buttons */
       .tpc-btn {
         display: inline-flex; align-items: center; justify-content: center; text-align: center;
         font-family: ${SANS}; font-weight: 700; letter-spacing: .02em; font-size: .95rem;
         min-height: 54px; padding: 16px 28px; border-radius: 5px; cursor: pointer; border: none;
-        transition: background .25s ease, transform .25s ease; line-height: 1.3; width: 100%;
-        text-decoration: none;
+        transition: background .25s ease, transform .25s ease, box-shadow .25s ease; line-height: 1.3; width: 100%;
+        text-decoration: none; position: relative; overflow: hidden;
       }
-      .tpc-btn-gold { background: ${C.gold}; color: ${C.ink}; box-shadow: 0 14px 34px -16px rgba(213,168,75,.9); }
-      .tpc-btn-gold:hover { background: ${C.goldSoft}; }
+      /* light sweep across gold buttons on hover */
+      .tpc-btn-gold::after {
+        content: ""; position: absolute; top: 0; bottom: 0; left: -80%; width: 45%;
+        background: linear-gradient(105deg, transparent, rgba(255,255,255,.5), transparent);
+        transform: skewX(-18deg); transition: left .6s cubic-bezier(.22,1,.36,1); pointer-events: none;
+      }
+      .tpc-btn-gold:hover::after { left: 130%; }
+      .tpc-btn-gold { background: linear-gradient(180deg, ${C.goldSoft}, ${C.gold}); color: ${C.ink}; box-shadow: 0 14px 34px -16px rgba(213,168,75,.9); }
+      .tpc-btn-gold:hover { box-shadow: 0 18px 40px -16px rgba(213,168,75,1); transform: translateY(-1px); }
       .tpc-btn-ink { background: ${C.ink}; color: #fff; }
       .tpc-btn-ink:hover { background: #2a231c; }
       .tpc-btn-out { background: transparent; border: 1.5px solid ${C.gold}; color: ${C.ink}; }
@@ -832,8 +902,14 @@ function ChallengeStyles() {
       .tpc-hero { padding: 34px 0 52px; background: radial-gradient(110% 60% at 50% -8%, #FCF8F1, transparent 60%), ${C.ivory}; text-align: center; }
       .tpc-kick { font-size: .68rem; letter-spacing: .24em; text-transform: uppercase; font-weight: 700; color: ${C.bronze}; margin-bottom: 14px; }
       .tpc-pres { font-family: ${SERIF}; font-style: italic; font-size: 1.05rem; color: ${C.bronze}; margin-bottom: 4px; }
-      .tpc-name { font-family: ${SERIF}; font-size: clamp(2.3rem, 9vw, 4.4rem); font-weight: 700; line-height: 1; letter-spacing: .01em; margin-bottom: 18px; color: ${C.ink}; }
-      .tpc-name span { color: ${C.gold}; }
+      .tpc-name { font-family: ${SERIF}; font-size: clamp(2.3rem, 9vw, 4.4rem); font-weight: 700; line-height: 1; letter-spacing: .02em; margin-bottom: 18px; color: ${C.ink}; }
+      /* gold-foil accent word, matched to the banner's metallic lettering */
+      .tpc-name span {
+        background: linear-gradient(115deg, #8A5A22 0%, ${C.gold} 32%, #F4E3AE 50%, ${C.gold} 68%, #8A5A22 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .tpc-hero img { transition: transform .6s cubic-bezier(.22,1,.36,1), box-shadow .6s cubic-bezier(.22,1,.36,1); }
+      .tpc-hero img:hover { transform: translateY(-4px); box-shadow: 0 34px 64px -30px rgba(17,16,15,.65); }
       .tpc-h1 { font-size: clamp(1.35rem, 4.6vw, 2.1rem); line-height: 1.22; margin: 0 auto 18px; max-width: 24ch; font-weight: 600; }
       .tpc-h1 span { color: ${C.bronze}; }
       .tpc-sub { max-width: 640px; margin: 0 auto 22px; font-size: 1.02rem; color: ${C.text}; }
@@ -853,11 +929,12 @@ function ChallengeStyles() {
       /* countdown */
       .tpc-cd { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
       .tpc-cd > div { min-width: 58px; }
+      .tpc-cd > div { background: rgba(213,168,75,.08); border: 1px solid rgba(213,168,75,.28); border-radius: 8px; padding: 10px 8px 8px; }
       .tpc-cd .n { font-family: ${SERIF}; font-size: 2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
       .tpc-cd .l { font-size: .56rem; letter-spacing: .18em; text-transform: uppercase; margin-top: 5px; }
 
       /* scanner */
-      .tpc-scan { background: ${C.cocoa}; }
+      .tpc-scan { background: ${C.cocoa}; border-top: 1px solid rgba(213,168,75,.4); border-bottom: 1px solid rgba(213,168,75,.2); }
       .tpc-scan-grid { display: grid; grid-template-columns: 1fr; }
       .tpc-scan-grid > div { padding: 26px 4px; border-bottom: 1px solid rgba(213,168,75,.25); }
       .tpc-scan-grid > div:last-child { border-bottom: none; }
@@ -871,7 +948,15 @@ function ChallengeStyles() {
       .tpc-reframe .big { font-family: ${SERIF}; font-size: clamp(2rem, 7.4vw, 4rem); font-weight: 700; line-height: 1.08; color: ${C.ink}; }
       .tpc-reframe .big span { color: ${C.gold}; }
       .tpc-reframe .body { max-width: 620px; margin: 24px auto 0; color: ${C.dim}; }
-      .tpc-ident { background: radial-gradient(80% 100% at 50% 0%, rgba(213,168,75,.16), transparent 60%), ${C.ink}; padding: 60px 0; text-align: center; }
+      .tpc-ident { background: radial-gradient(80% 100% at 50% 0%, rgba(213,168,75,.16), transparent 60%), ${C.ink}; padding: 60px 0; text-align: center; position: relative; overflow: clip; }
+      /* slow-breathing gold aura behind the identity block */
+      .tpc-ident::before {
+        content: ""; position: absolute; left: 50%; top: -120px; width: 560px; height: 560px;
+        transform: translateX(-50%); border-radius: 50%; pointer-events: none;
+        background: radial-gradient(circle, rgba(213,168,75,.14), transparent 65%);
+        animation: tpc-breathe 7s ease-in-out infinite;
+      }
+      @keyframes tpc-breathe { 0%, 100% { opacity: .6; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.12); } }
       .tpc-ident .you { font-family: ${SERIF}; font-size: clamp(1.3rem, 4.6vw, 2.1rem); font-weight: 600; color: #fff; line-height: 1.5; max-width: 900px; margin: 0 auto; }
       .tpc-ident .you span { color: ${C.goldSoft}; }
       .tpc-ident .end { font-family: ${SERIF}; font-style: italic; font-size: clamp(1.2rem, 4vw, 1.8rem); color: ${C.gold}; margin-top: 22px; }
@@ -905,24 +990,29 @@ function ChallengeStyles() {
         width: min(280px, 78vw); aspect-ratio: 3/4; background: linear-gradient(150deg, #FBF6EC, ${C.cream});
         border-radius: 4px 8px 8px 4px; box-shadow: -13px 0 0 -2px #d8c9b2, 0 40px 70px -26px rgba(17,16,15,.5);
         padding: 34px 26px; display: flex; flex-direction: column; position: relative; transform: rotateY(-11deg);
+        transition: transform .7s cubic-bezier(.22,1,.36,1);
       }
+      .tpc-book:hover .tpc-book-c { transform: rotateY(-2deg) translateY(-4px); }
       .tpc-book-c::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 13px; background: linear-gradient(90deg, rgba(0,0,0,.16), transparent); }
       .tpc-book-b { font-weight: 700; letter-spacing: .18em; font-size: .55rem; text-transform: uppercase; color: ${C.bronze}; }
       .tpc-book-r { width: 36px; height: 1px; background: ${C.gold}; margin: 16px 0; }
       .tpc-book-t { font-family: ${SERIF}; font-size: 1.8rem; font-weight: 600; line-height: 1.08; color: ${C.ink}; }
       .tpc-book-s { margin-top: auto; font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: ${C.dim}; }
       .tpc-rm-boxes { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; }
-      .tpc-rb { background: ${C.white}; border: 1px solid rgba(138,96,61,.22); border-radius: 8px; padding: 20px 18px; }
+      .tpc-rb { background: ${C.white}; border: 1px solid rgba(138,96,61,.22); border-radius: 8px; padding: 20px 18px; transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s cubic-bezier(.22,1,.36,1); }
+      .tpc-rb:hover { transform: translateY(-3px); box-shadow: 0 18px 38px -24px rgba(53,35,29,.45); }
       .tpc-rb .n { font-family: ${SERIF}; font-size: 1.15rem; color: ${C.gold}; font-weight: 700; }
       .tpc-rb h4 { font-size: 1.05rem; margin: 4px 0 5px; }
       .tpc-rb p { font-size: .88rem; color: ${C.dim}; margin: 0; }
 
       /* tickets */
       .tpc-tiers { display: grid; grid-template-columns: 1fr; gap: 18px; align-items: start; max-width: 900px; margin: 0 auto; }
-      .tpc-tier { background: ${C.white}; border: 1px solid rgba(138,96,61,.24); border-radius: 10px; padding: 26px 22px; display: flex; flex-direction: column; position: relative; }
-      .tpc-tier.feat { border: 2px solid ${C.gold}; box-shadow: 0 30px 60px -34px rgba(138,96,61,.55); }
+      .tpc-tier { background: ${C.white}; border: 1px solid rgba(138,96,61,.24); border-radius: 10px; padding: 26px 22px; display: flex; flex-direction: column; position: relative; transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s cubic-bezier(.22,1,.36,1); }
+      .tpc-tier:hover { transform: translateY(-4px); box-shadow: 0 26px 54px -30px rgba(53,35,29,.4); }
+      .tpc-tier.feat { border: 2px solid ${C.gold}; box-shadow: 0 30px 60px -34px rgba(138,96,61,.55), 0 0 0 6px rgba(213,168,75,.1); }
+      .tpc-tier.feat:hover { box-shadow: 0 36px 70px -34px rgba(138,96,61,.7), 0 0 0 6px rgba(213,168,75,.16); }
       .tpc-tier.active { border: 3px solid ${C.bronze}; }
-      .tpc-ribbon { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: ${C.gold}; color: ${C.ink}; font-size: .6rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; white-space: nowrap; }
+      .tpc-ribbon { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, ${C.goldSoft}, ${C.gold}); color: ${C.ink}; font-size: .6rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; white-space: nowrap; box-shadow: 0 8px 20px -10px rgba(213,168,75,.9); }
       .tpc-tier h3 { font-size: 1.9rem; }
       .tpc-tier .who { font-size: .88rem; color: ${C.dim}; margin: 6px 0 14px; }
       /* .85rem not .78rem: this line is the compare-at disclosure and the
@@ -943,7 +1033,8 @@ function ChallengeStyles() {
 
       /* proof */
       .tpc-pgrid { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 34px; }
-      .tpc-pcard { border: 1px solid rgba(213,168,75,.3); border-radius: 10px; padding: 24px 22px; background: rgba(213,168,75,.05); }
+      .tpc-pcard { border: 1px solid rgba(213,168,75,.3); border-radius: 10px; padding: 24px 22px; background: linear-gradient(160deg, rgba(213,168,75,.09), rgba(213,168,75,.03)); transition: transform .3s cubic-bezier(.22,1,.36,1), border-color .3s ease; }
+      .tpc-pcard:hover { transform: translateY(-3px); border-color: rgba(213,168,75,.55); }
       .tpc-pcard .n { font-family: ${SERIF}; font-size: 2.6rem; font-weight: 700; color: ${C.gold}; line-height: 1; }
       .tpc-pcard h4 { font-size: 1.15rem; color: #fff; margin: 8px 0 6px; }
       .tpc-pcard p { font-size: .9rem; color: ${C.creamDim}; margin: 0; }
@@ -988,15 +1079,20 @@ function ChallengeStyles() {
         width: 100%; background: none; border: none; text-align: left; cursor: pointer;
         font-family: ${SANS}; font-size: 1rem; font-weight: 700; color: ${C.ink};
         padding: 18px 32px 18px 0; position: relative; min-height: 56px; line-height: 1.4;
+        transition: color .2s ease;
       }
-      .tpc-fq::after { content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: ${C.gold}; font-size: 1.4rem; font-weight: 400; }
-      .tpc-fi.open .tpc-fq::after { content: "\\2212"; }
-      .tpc-fa { display: none; padding: 0 0 18px; }
-      .tpc-fi.open .tpc-fa { display: block; }
-      .tpc-fa p { font-size: .95rem; line-height: 1.65; color: ${C.dim}; margin: 0; }
+      .tpc-fq:hover { color: ${C.bronze}; }
+      .tpc-fq::after { content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: ${C.gold}; font-size: 1.4rem; font-weight: 400; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+      .tpc-fi.open .tpc-fq::after { transform: translateY(-50%) rotate(135deg); }
+      /* animated accordion: grid-rows 0fr -> 1fr, so height animates without JS
+         measurement. The inner <p> carries overflow:hidden (grid child). */
+      .tpc-fa { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .4s cubic-bezier(.22,1,.36,1), opacity .3s ease, padding .4s cubic-bezier(.22,1,.36,1); padding: 0; }
+      .tpc-fi.open .tpc-fa { grid-template-rows: 1fr; opacity: 1; padding: 0 0 18px; }
+      .tpc-fa p { font-size: .95rem; line-height: 1.65; color: ${C.dim}; margin: 0; min-height: 0; overflow: hidden; }
 
       /* forms */
-      .tpc-input { width: 100%; font-size: 16px; min-height: 50px; padding: 12px 14px; border: 1px solid rgba(138,96,61,.3); border-radius: 6px; background: #fff; color: ${C.ink}; font-family: ${SANS}; }
+      .tpc-input { width: 100%; font-size: 16px; min-height: 50px; padding: 12px 14px; border: 1px solid rgba(138,96,61,.3); border-radius: 6px; background: #fff; color: ${C.ink}; font-family: ${SANS}; transition: border-color .2s ease, box-shadow .2s ease; }
+      .tpc-input:focus { border-color: ${C.gold}; box-shadow: 0 0 0 4px rgba(213,168,75,.18); outline: none; }
       .tpc-form { display: grid; gap: 10px; text-align: left; }
       .tpc-form label span { display: block; font-size: .78rem; font-weight: 700; margin-bottom: 4px; color: ${C.text}; }
 
@@ -1006,7 +1102,7 @@ function ChallengeStyles() {
       @keyframes tpc-spin { to { transform: rotate(360deg); } }
 
       /* final */
-      .tpc-final { background: ${C.ink}; color: ${C.creamText}; text-align: center; padding: 66px 0; }
+      .tpc-final { background: radial-gradient(90% 70% at 50% 100%, rgba(213,168,75,.14), transparent 60%), ${C.ink}; color: ${C.creamText}; text-align: center; padding: 66px 0; }
       .tpc-final .lines { font-family: ${SERIF}; font-size: clamp(1.25rem, 4.4vw, 1.9rem); line-height: 1.5; color: ${C.creamText}; max-width: 780px; margin: 0 auto; }
       .tpc-final .rocket { font-family: ${SERIF}; font-size: clamp(2rem, 7.4vw, 3.4rem); font-weight: 700; color: #fff; margin: 26px 0 8px; line-height: 1.1; }
       .tpc-final .fire { font-family: ${SERIF}; font-style: italic; font-size: clamp(1.15rem, 4vw, 1.6rem); color: ${C.goldSoft}; margin-bottom: 30px; }
@@ -1022,7 +1118,8 @@ function ChallengeStyles() {
 
       /* sticky */
       .tpc-sticky {
-        position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; background: ${C.ink};
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 70; background: rgba(17,16,15,.92);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         border-top: 1px solid rgba(213,168,75,.3); padding-bottom: env(safe-area-inset-bottom);
         transition: transform .35s cubic-bezier(.22,1,.36,1);
       }
@@ -1065,9 +1162,12 @@ function ChallengeStyles() {
         .tpc-scan-grid > div:nth-child(2n) { border-right: 1px solid rgba(213,168,75,.25); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .tpc-btn, .tpc-sticky { transition: none; }
+        .tpc-btn, .tpc-sticky, .tpc-tier, .tpc-rb, .tpc-pcard, .tpc-hero img, .tpc-fa, .tpc-fq::after, .tpc-input { transition: none; }
         .tpc-spin { animation-duration: 3s; }
-        .tpc-book-c { transform: none; }
+        .tpc-book-c { transform: none; transition: none; }
+        .tpc-ident::before { animation: none; }
+        .tpc-btn-gold::after { display: none; }
+        .tpc-rv { opacity: 1; transform: none; transition: none; }
       }
     `}</style>
   );
