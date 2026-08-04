@@ -572,6 +572,14 @@ export default function ChallengePage() {
   const checkoutRef = useRef(null);
   const panelRef = useRef(null);
 
+  // The SPA's index.html title is BPQuiz's; on changemylifechallenge.com (and
+  // on /challenge generally) the tab should carry the challenge's own name.
+  useEffect(() => {
+    const prev = document.title;
+    document.title = `${CHALLENGE.NAME} | Free 3-Night Live Challenge with Annie and Joel, RNs`;
+    return () => { document.title = prev; };
+  }, []);
+
   useEffect(() => {
     const startedAlready = START_AT.getTime() - Date.now() <= 0;
     t('chal_page_view', {
