@@ -78,6 +78,10 @@ import { loadStripe } from '@stripe/stripe-js';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 import { KIT_FILE_COUNT, KIT_PRICE } from '../data/kitStack';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
+// Joel's supplied hero banner (2026-08-04): Annie + Joel, gold on black,
+// "Free 3-Day Challenge / Change My Life Challenge". 851x315. Imported through
+// Vite so it ships hashed under /assets/, which the SPA rewrite excludes.
+import bannerImg from '../assets/challenge-banner.jpg';
 
 /* ==========================================================================
    CHALLENGE CONFIG - change prices and dates HERE and nowhere else.
@@ -1119,6 +1123,15 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
   return (
     <section className="tpc-hero" id="top">
       <div className="tpc-wrap">
+        <img
+          src={bannerImg}
+          alt="Free 3-Day Challenge: Change My Life Challenge. Your next chapter starts here. changemylifechallenge.com. Annie Chitate, RN and Joel Polley, RN."
+          style={{
+            display: 'block', width: '100%', maxWidth: 851, height: 'auto',
+            margin: '0 auto 26px', borderRadius: 10,
+            boxShadow: '0 24px 50px -28px rgba(17,16,15,.55)',
+          }}
+        />
         <div className="tpc-kick">Live on Zoom &middot; Three Nights &middot; Free Founding Cohort</div>
         <div className="tpc-pres">Everyday Nurse Annie and Joel, the BP Guy, present</div>
         <div className="tpc-name">Change My Life <span>Challenge</span></div>
