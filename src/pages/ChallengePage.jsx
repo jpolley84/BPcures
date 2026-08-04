@@ -433,19 +433,24 @@ const TIERS = [
 /* ==========================================================================
    THE SO-YOU-CAN LIST (the comp's two column serif list)
    ========================================================================== */
+// 2026-08-04 Messiah Marketing pass: the list now sells the vacation behind
+// the vacation. Not "off the pills" (a promise nobody should make) but what
+// off-the-pills actually stands for: mornings without dread, a body you trust,
+// a future your doctor helps you steer instead of manage.
 const SO_YOU_CAN = [
   ['So you finally see why treating ', 'every symptom separately', ' has left you confused.'],
   ['So you can read blood pressure, blood sugar, hormones, stress and sleep as ', 'connected signals', ', not separate problems.'],
   ['So you stop letting random diets, supplements and internet advice pick your starting point for you.'],
   ['So you can take a reading at home and ', 'trust it', '.'],
   ['So the cuff tightening on your arm stops feeling like a verdict.'],
+  ['So one morning soon you look at your number and feel ', 'curiosity instead of dread', '.'],
   ['So you understand why the dose went up that year you did everything right.'],
+  ['So "needing less someday" stops being a wish you keep to yourself and becomes ', 'a plan you and your doctor are working', '.'],
   ['So you walk into that appointment with ', 'a page in your hand', ', not a hope in your chest.'],
-  ['So you can ask about your own labs and understand the answer.'],
   ['So a normal grocery store is enough. ', 'No supplements to buy', '.'],
-  ['So you and your doctor are on ', 'the same side of the table', '.'],
   ['So the next twenty years are something you are steering, not watching.'],
-  ['So you get back to being ', 'the woman you have been trying to get back to', '.'],
+  ['So the people who love you stop watching you, and go back to just ', 'living with you', '.'],
+  ['So you get back to being ', 'the woman you have been trying to get back to', ', living lighter than you have in years.'],
 ];
 
 /* ==========================================================================
@@ -1248,16 +1253,22 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
         <div className="tpc-pres">Everyday Nurse Annie and Joel, the BP Guy, present</div>
         <div className="tpc-name">Change My Life <span>Challenge</span></div>
 
+        {/* 2026-08-04 Messiah Marketing pass (Omar El-Takrori, Matt 11:28-30 MSG):
+            h1 now SELF-IDENTIFIES the on-pills reader and enrolls the pain
+            behind the pain (fear of the cuff, not the pill itself). The
+            connected-story Big Domino stays as the span. */}
         <h1 className="tpc-h1" style={{ maxWidth: '32ch' }}>
-          Your blood pressure, hormones, sleep, weight, energy and mood are not separate problems.{' '}
-          <span>They are telling one connected story.</span>
+          Still taking the pill every morning, and still afraid of the cuff?{' '}
+          <span>Your numbers are telling one connected story. Nobody ever read it to you.</span>
         </h1>
 
         <p className="tpc-sub">
           Three nights, live, with two registered nurses: Annie Chitate on the hormone side of the
           story and Joel Polley, twenty years in intensive care and emergency, on the blood
-          pressure side. By Thursday you will see your numbers as connected signals, know how to
-          take a reading you can trust, and have the exact words to bring to your next appointment.
+          pressure side. By Thursday you will know what your numbers have been trying to say, take
+          a reading you can trust, and walk into your next appointment with a page in your hand,
+          so the conversation about needing less someday happens with your doctor, never behind
+          their back.
         </p>
 
         <div className="tpc-strip">
@@ -1403,14 +1414,17 @@ function Reframe() {
   return (
     <section className="tpc-sec tpc-reframe">
       <div className="tpc-wrap">
-        <div className="small">You do not need another random fix.</div>
+        <div className="small">It was never really about the pill.</div>
         <div className="big">
           Your body is not<br />betraying you.<br />It is asking you to <span>pay attention.</span>
         </div>
         <p className="body">
-          You treated the blood pressure over here, the sleep over there, the energy and the mood
-          and the weight each with their own fix, and none of it ever held, because nobody ever sat
-          down and drew you the picture of how they pull on each other.{' '}
+          The pill was supposed to be temporary. Somewhere along the way it got a refill schedule
+          and a permanent spot by the coffee maker, and the part nobody says out loud is what it
+          took with it: the trust between you and your own body. So you treated the blood pressure
+          over here, the sleep over there, the energy and the mood and the weight each with their
+          own fix, and none of it ever held, because nobody ever sat down and drew you the picture
+          of how they pull on each other.{' '}
           <strong>That is not a discipline problem. That is an information problem, and it is the
           only kind of problem we can actually help with.</strong>
         </p>
@@ -1429,13 +1443,17 @@ function Identity() {
         <span className="tpc-eyebrow" style={{ display: 'block', marginBottom: 20 }}>
           Who I Built These Three Nights For
         </span>
+        {/* Matthew 11:28-30 MSG cadence: "Are you tired? Worn out?... recover
+            your life... learn to live freely and lightly." Echoed, not quoted. */}
         <div className="you">
+          Are you tired? Worn out? <span>Burned out on being a patient?</span><br />
           You who got handed a different answer for every symptom.<br />
           You who has <span>taken the pill for nine years</span> and still cannot say what it does.<br />
           You whose dose went up the year you <span>did everything right.</span><br />
+          You who wants to <span>need less someday</span>, earned honestly, with your doctor holding the pen.<br />
           You who can feel <span>the woman you are trying to get back to</span> waiting under all of it.
         </div>
-        <div className="end">You are not a difficult patient. You are an uninformed one, and that is fixable.</div>
+        <div className="end">Come, and bring the questions you stopped asking. You are not a difficult patient. You are an uninformed one, and that is fixable.</div>
       </div>
     </div>
   );
