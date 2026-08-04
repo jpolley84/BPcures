@@ -297,7 +297,7 @@ const CheckoutPage = () => {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        RN-built. Trusted by 500K+. {PRICE}.&nbsp;
+        RN-built. Trusted by 600K+. {PRICE}.&nbsp;
         <span style={{ color: '#C7A95E' }}>30-day Feel-It-or-Free.</span>
       </div>
 
@@ -343,12 +343,12 @@ const CheckoutPage = () => {
       </div>
 
       {/* Social Proof Strip — 2026-05-25: clickable FB/TikTok/IG icons +
-          500K subscriber count. Inline SVG for TikTok (not in lucide). */}
+          600K subscriber count. Inline SVG for TikTok (not in lucide). */}
       <div className="py-5 bg-[#F8F9FA]" style={{ animation: 'softRise 0.5s cubic-bezier(0.22,1,0.36,1)' }}>
         <div className="container-mobile-first">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
             <span className="text-[13px] text-[#555] font-medium uppercase" style={{ letterSpacing: '0.08em' }}>
-              Trusted by over 500K subscribers
+              Trusted by over 600K subscribers
             </span>
             <div className="flex items-center gap-3">
               <a
@@ -961,7 +961,7 @@ const CheckoutPage = () => {
             {[
               { icon: Stethoscope, text: '20-Year ICU/ER Nurse' },
               { icon: Leaf, text: 'Naturopathic-Trained' },
-              { icon: Users, text: '500K+ across TikTok, Facebook & Instagram' },
+              { icon: Users, text: '600K+ across TikTok, Facebook & Instagram' },
             ].map((item, index) => (
               <div key={index} className="proof-badge px-5 py-3">
                 <item.icon size={20} style={{ color: '#B85A36' }} />

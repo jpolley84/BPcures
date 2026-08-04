@@ -38,7 +38,7 @@
 //
 // Corner naming corrected to the CURRENT canon: Stress, Sugar, Sodium (the
 // stale "Pipe Pressure / Stress Pressure / Sugar Pressure" labels are gone).
-// Reach updated to 500K+ across TikTok, Facebook, and Instagram (matches the
+// Reach updated to 600K+ across TikTok, Facebook, and Instagram (matches the
 // current homepage figure).
 //
 // FLAGGED, NOT ACTED ON: stripe-webhook.js currently alerts Joel only on
@@ -584,7 +584,7 @@ export default function CoachingPage() {
               If you've already cut the sodium and the number held steady anyway, that's not failure. That's information: the plan only had one side of the triangle in it. Every elevated reading is being driven by at least one of three corners: Stress, Sugar, or Sodium. For a lot of the people I coach, once the obvious lever's already been pulled, stress turns out to be the corner still working against the number, though coaching is where we confirm which corner it actually is for you. Find the loudest one, move the right input, and the numbers move with it. That is the method, in one sentence. The Eight Laws (nutrition, exercise, water, sunlight, temperance, air, rest, trust) are the inputs we work with.
             </p>
             <p className="text-base mb-7" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-              This isn't theory. It's the framework underneath every BraveWorks article, every kit, and every conversation in coaching, including the ones where the obvious levers were already pulled and the stress corner never got named until now. Over 500K people follow the work across TikTok, Facebook, and Instagram, and the story in the comments is almost always the same one: they did what every article told them to do, and the number still didn't move. The protocol is public. Coaching is where we apply it to your body.
+              This isn't theory. It's the framework underneath every BraveWorks article, every kit, and every conversation in coaching, including the ones where the obvious levers were already pulled and the stress corner never got named until now. Over 600K people follow the work across TikTok, Facebook, and Instagram, and the story in the comments is almost always the same one: they did what every article told them to do, and the number still didn't move. The protocol is public. Coaching is where we apply it to your body.
             </p>
           </motion.div>
           <motion.div {...reveal(0.18)} className="flex flex-wrap gap-2 text-xs" style={{ color: 'var(--muted)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', letterSpacing: '0.08em' }}>

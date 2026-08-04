@@ -18,7 +18,7 @@
 //
 // Standing rules honored: ZERO em dashes anywhere in this file, NEWSTART clean
 // (plant foods, kitchen herbs, caffeine free teas only), no invented proof
-// (20 yrs ICU/ER RN and 550,000+ followers are the only numbers, both
+// (20 yrs ICU/ER RN and 600,000+ followers are the only numbers, both
 // previously verified by Joel), educational verbs only.
 //
 // Consent: the form does TWO things, so it discloses both before the address

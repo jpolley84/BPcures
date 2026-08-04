@@ -753,7 +753,7 @@ export default function BeThereLandingPage() {
           </p>
           <ApplyButton label="Apply to Work With Joel" position="hero" onApply={handleApply} />
           <div className="trust-bar" data-rv>
-            {/* 2026-08-04: was 550,000+, stale. Verified 628,330 by live scan
+            {/* 2026-08-04: was 600,000+, stale. Verified 628,330 by live scan
                 (TikTok 197K, FB 390K, IG 39.2K, YT 2.1K). Rounded DOWN to
                 600,000+ so the claim stays true between refreshes. Canonical
                 source is PLATFORM-STATS.md, refreshed weekly. */}
@@ -1152,6 +1152,49 @@ export default function BeThereLandingPage() {
       </section>
 
       <GoldDivider />
+
+      {/* ===== THE IGNORANCE TAX =====
+           2026-08-04 (Joel): the closing argument, and the sixth Omar move.
+           She is not deciding between spending money and not spending money.
+           She has been paying in installments for years, in supplements,
+           guessing, and time, and getting no education for it. This reframes
+           the decision as switching from a bill that never ends to one that
+           does.
+           ⚠️ NO INVENTED DOLLAR FIGURES. We name the categories and let her
+           total it herself, which lands harder anyway and keeps us clear of
+           16 CFR 233. Never write "you have spent $4,000 on supplements."
+           We do not know that, and the 2026-07-25 audit found fabricated
+           figures on this site once already. */}
+      <section className="root">
+        <div className="wrap" data-rv style={{ maxWidth: 820 }}>
+          <span className="eyebrow">Before You Decide This Costs Too Much</span>
+          <h2>You Have Been Paying for This Already. You Just Never Got a Receipt.</h2>
+          <p className="intro">
+            Not knowing has a price. Yours has been on autopay for years.
+          </p>
+          <ul className="root-list">
+            <li>The supplements someone in a comment section swore by, still in the cabinet.</li>
+            <li>The machine, the app, the program, the tea. Each one bought in hope.</li>
+            <li>Every grocery trip spent guessing which label actually mattered.</li>
+            <li>Appointments where you nodded, went home, and looked it up alone that night.</li>
+            <li>The events you skipped and quietly told yourself did not matter that much.</li>
+            <li>Years. The ones between the first high reading and right now.</li>
+          </ul>
+          <p className="intro">
+            Add it up. We will not put a number on your life, because we do not know your
+            number. You do.
+          </p>
+          <p className="intro">
+            That is the ignorance tax, and the cruelest thing about it is that you paid it in
+            installments small enough to never notice, and you got no education for any of it.
+            You are not richer for the last five years of guessing. You are just five years in.
+          </p>
+          <p className="no-shame">
+            You are not choosing between spending and not spending. You have been spending the
+            whole time. You are choosing between a bill that never ends and one that does.
+          </p>
+        </div>
+      </section>
 
       {/* ===== APPLY ===== */}
       <section className="apply-section" id="apply">

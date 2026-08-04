@@ -182,7 +182,7 @@ export default function CoachingOptinPage() {
             </div>
           </motion.div>
           <motion.p {...reveal(0.08)} className="text-base mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.75 }}>
-            Twenty years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology never had time for. Then naturopathic practice, for the patients the pharmaceutical model kept managing but never actually reaching. I built the BP Triangle Method one elevated reading at a time. Over 500K people follow the work now across TikTok, Facebook, and Instagram.
+            Twenty years on the floor. ICU first, then emergency medicine. Hypertensive crashes, post-MI care, the conversations cardiology never had time for. Then naturopathic practice, for the patients the pharmaceutical model kept managing but never actually reaching. I built the BP Triangle Method one elevated reading at a time. Over 600K people follow the work now across TikTok, Facebook, and Instagram.
           </motion.p>
           <motion.p {...reveal(0.14)} className="text-base" style={{ color: 'var(--ink)', lineHeight: 1.75, fontStyle: 'italic', borderLeft: '3px solid var(--gold)', paddingLeft: '1rem' }}>
             "Pills manage output. Protocol fixes input. That is the whole sentence."
