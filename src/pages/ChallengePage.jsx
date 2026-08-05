@@ -462,7 +462,7 @@ const PROOF = [
   {
     n: '2',
     h: 'Nurses, live in the room',
-    p: 'Annie Chitate, RN, the Everyday Nurse, on the hormone side of the story, and Joel Polley, RN, twenty years in intensive care and emergency, on the blood pressure side. Both live, both taking questions.',
+    p: 'Annie Chitate, RN, the Everyday Nurse, on the hormone side of the story, and Joel Polley, RN, twenty years in intensive care and emergency, on the blood pressure side. Over 600,000 people follow their work across TikTok, Facebook and Instagram. Both live, both taking questions.',
   },
   {
     n: '3',
@@ -1312,8 +1312,8 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
             </button>
           )}
           <div className="tpc-cta-sub">
-            Annie Chitate, RN and Joel Polley, RN &middot; Free seat, no card needed &middot; VIP
-            adds the Bonus Day and the {usd(KIT_PRICE)} kit.
+            Annie Chitate, RN and Joel Polley, RN &middot; Trusted by 600K+ across TikTok, Facebook
+            and Instagram &middot; Free seat, no card needed.
           </div>
           <div style={{ marginTop: 6 }}>
             <button type="button" className="tpc-link" onClick={() => goToSeats('hero_secondary')}>
@@ -2170,9 +2170,10 @@ function Deadline({ doorsClosed, left }) {
               </p>
               <SignupForm
                 intent="waitlist"
+                askPhone
                 buttonLabel="Tell me about the next one"
                 successLine="You are on the list. Watch your inbox."
-                microcopy="Free. Unsubscribe anytime."
+                microcopy="Free. Unsubscribe anytime. Your number is only used to reach you about the next cohort."
                 event="chal_waitlist_submit"
                 onDark
               />
@@ -2196,14 +2197,21 @@ function Deadline({ doorsClosed, left }) {
    with Joel's real address as the fallback, never swallowed into a fake
    success state.
    ========================================================================== */
-function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, onDark }) {
+function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, onDark, askPhone }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [state, setState] = useState('idle'); // idle | sending | done | error
 
   async function submit(e) {
     e.preventDefault();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setState('error');
+      return;
+    }
+    // Phone is required only where the form asks for it (the next-cohort
+    // waitlist, 2026-08-04 Joel). 7+ digits after stripping formatting.
+    if (askPhone && phone.replace(/\D/g, '').length < 7) {
       setState('error');
       return;
     }
@@ -2219,6 +2227,7 @@ function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, 
           intent,
           email: email.trim(),
           firstName: name.trim(),
+          ...(askPhone ? { phone: phone.trim() } : {}),
           ...(tier ? { tier } : {}),
         }),
       });
@@ -2275,6 +2284,21 @@ function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, 
           placeholder="you@example.com"
         />
       </label>
+      {askPhone && (
+        <label>
+          <span style={{ color: labelColor }}>Phone number</span>
+          <input
+            className="tpc-input"
+            type="tel"
+            required
+            autoComplete="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="(555) 555-5555"
+          />
+        </label>
+      )}
       <button type="submit" className="tpc-btn tpc-btn-gold" disabled={state === 'sending'}>
         {state === 'sending' ? 'Sending...' : buttonLabel}
       </button>

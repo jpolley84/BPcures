@@ -939,6 +939,13 @@ async function handleInterest(req, res, mode) {
   const email = rawEmail.trim().toLowerCase();
   const firstName = firstNameOf(req.body?.firstName || req.body?.name || '');
   const wantedTier = ['challenge-ga', 'challenge-vip'].includes(req.body?.tier) ? req.body.tier : null;
+  // Phone (2026-08-04, Joel): the next-cohort waitlist now collects a phone
+  // number. Digits only, 7-15 after stripping formatting; anything else is
+  // stored as empty rather than rejected, so a bad phone never blocks the
+  // email capture. Kept alongside the record, never used for auto-SMS.
+  const rawPhone = String(req.body?.phone || '').replace(/[^\d+]/g, '');
+  const phoneDigits = rawPhone.replace(/\D/g, '');
+  const phone = phoneDigits.length >= 7 && phoneDigits.length <= 15 ? rawPhone : '';
 
   const kvUp = Boolean(process.env.KV_REST_API_URL);
   let already = false;
@@ -951,6 +958,7 @@ async function handleInterest(req, res, mode) {
         firstName: firstName || existing?.firstName || '',
         cohort: CHALLENGE.cohort,
         reason: mode, // 'waitlist' | 'seat-link'
+        phone: phone || existing?.phone || '',
         wantedTier: wantedTier || existing?.wantedTier || null,
         firstSeenAt: existing?.firstSeenAt || new Date().toISOString(),
         lastSeenAt: new Date().toISOString(),
