@@ -8,7 +8,9 @@ import { kv } from '@vercel/kv';
 import { Resend } from 'resend';
 
 const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
-const CALENDLY_URL = process.env.CALENDLY_BOOKING_URL || 'https://calendly.com/braveworksrn/60min';
+// 2026-08-05 — Joel shut down Calendly bookings. The fallback used to be a
+// hardcoded calendly.com link; now it points home and Joel schedules by reply.
+const CALENDLY_URL = process.env.CALENDLY_BOOKING_URL || 'https://bpquiz.com';
 
 export const config = { api: { bodyParser: { sizeLimit: '4.5mb' } } };
 
