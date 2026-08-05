@@ -49,12 +49,12 @@
     },
     {
       "source": "/igdm",
-      "destination": "/?utm_source=instagram&utm_medium=comment-dm&utm_campaign=manychat",
+      "destination": "/quiz?utm_source=instagram&utm_medium=comment-dm&utm_campaign=manychat",
       "permanent": false
     },
     {
       "source": "/fbdm",
-      "destination": "/?utm_source=facebook&utm_medium=comment-dm&utm_campaign=manychat",
+      "destination": "/quiz?utm_source=facebook&utm_medium=comment-dm&utm_campaign=manychat",
       "permanent": false
     },
     {

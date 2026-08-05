@@ -16,6 +16,7 @@ import { useEffect, useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
 import FoodsGuideLanding from './FoodsGuideLanding';
 import MasterclassBanner from '../components/MasterclassBanner';
+import ChallengeBanner, { currentChallengeNight } from '../components/ChallengeBanner';
 import { track, resolveHomeVariant, isHomeVariantCohorted } from '../utils/analytics.js';
 
 export default function HomeSplit() {
@@ -36,14 +37,23 @@ export default function HomeSplit() {
     });
   }, [variant]);
 
-  // 2026-07-22 (Joel): the free-masterclass banner rides above BOTH variants,
-  // so A and B get it identically and it stays out of the split's copy.
+  // 2026-07-22 (Joel): the banner rides above BOTH variants, so A and B get it
+  // identically and it stays out of the split's copy.
   // showBanner={false} is load-bearing: FoodsGuideLanding defaults it to true
   // for its own /101foods route, and without this prop variant B stacked two
   // identical countdown banners and lost ~79px of fold.
+  //
+  // 2026-08-04 (Joel): "homepage should only sell challenge." While the Change
+  // My Life Challenge is running, the homepage promotes THAT and nothing else
+  // above the fold. Beyond the Cuff is a competing free offer and it was the
+  // first thing DM traffic saw after tapping a button that promised a quiz.
+  // ChallengeBanner reports null once the last night ends, so the masterclass
+  // banner returns on its own and nobody has to remember to switch it back.
+  const challengeLive = currentChallengeNight() !== null;
+
   return (
     <>
-      <MasterclassBanner />
+      {challengeLive ? <ChallengeBanner /> : <MasterclassBanner />}
       {variant === 'b' ? <FoodsGuideLanding showBanner={false} /> : <CheckoutPage />}
     </>
   );

@@ -26,7 +26,9 @@ import { useEffect, useState } from 'react';
 import { track } from '../utils/analytics';
 
 // Offset (ms) of America/New_York from UTC at a given instant.
-function etOffsetMs(d) {
+// Exported so ChallengeBanner shares one implementation of "what time is it in
+// ET" rather than keeping a second copy that can drift across the DST change.
+export function etOffsetMs(d) {
   try {
     const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
     const et = new Date(d.toLocaleString('en-US', { timeZone: 'America/New_York' }));
