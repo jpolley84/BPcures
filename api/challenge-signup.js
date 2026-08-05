@@ -345,7 +345,7 @@ function zoomHtml() {
   if (!ZOOM.url) {
     return callout({
       kicker: 'Your join link',
-      body: `The Zoom room for this cohort goes out in its own email before ${esc(CHALLENGE.startLabel)}. Watch for it, and if it has not landed by Tuesday afternoon, reply to this email and I will send it to you by hand.`,
+      body: `The Zoom room for this cohort goes out in its own email before each live night. If it has not landed an hour before the call, reply to this email and I will send it to you by hand.`,
     });
   }
   const details = [
@@ -368,7 +368,7 @@ function zoomHtml() {
 
 function zoomText() {
   if (!ZOOM.url) {
-    return `Your join link: the Zoom room for this cohort goes out in its own email before ${CHALLENGE.startLabel}. If it has not landed by Tuesday afternoon, reply to this email and I will send it by hand.`;
+    return `Your join link: the Zoom room for this cohort goes out in its own email before each live night. If it has not landed an hour before the call, reply to this email and I will send it by hand.`;
   }
   const bits = [`Join on Zoom: ${ZOOM.url}`];
   if (ZOOM.meetingId) bits.push(`Meeting ID: ${ZOOM.meetingId}`);
@@ -426,7 +426,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
 
   const secondPrepHtml = free
     ? p(
-        `<strong>Two.</strong> If you want the fourth day, the VIP seat is ${esc(CHALLENGE.vipPriceLabel)}: the Bonus Day on ${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}, where we read real logs out loud and answer questions until they run out, plus the complete 10-Day BP Reset Kit, all eleven downloads, delivered the minute you upgrade. <a href="${SITE_URL}/challenge" style="color:${PALETTE.clay};font-weight:600;">Upgrade here</a>, or just come free on Tuesday. Both are honest choices.`
+        `<strong>Two.</strong> If you want the fourth day, the VIP seat is ${esc(CHALLENGE.vipPriceLabel)}: the Bonus Day on ${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}, where we read real logs out loud and answer questions until they run out, plus the complete 10-Day BP Reset Kit, all eleven downloads, delivered the minute you upgrade. <a href="${SITE_URL}/challenge" style="color:${PALETTE.clay};font-weight:600;">Upgrade here</a>, or just come free. Both are honest choices.`
       )
     : p(
         `<strong>Two.</strong> Your 10-Day BP Reset Kit comes in a separate email from me. If it has not landed within the hour, reply to this one and I will send it by hand.`
@@ -443,7 +443,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     p(
       `Every night has a replay, posted by noon CT the next day, and it is yours to keep. If Wednesday is your grandson's ball game, watch it Thursday morning. The work still stacks.`
     ),
-    h2('Two things before Tuesday'),
+    h2('Two things before your first night'),
     p(
       `<strong>One.</strong> Find your home blood pressure cuff and put it somewhere you will see it. That is the only equipment for the whole week.`
     ),
@@ -454,7 +454,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     p(
       `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.`
     ),
-    p(`We will see you Tuesday night.`),
+    p(`We will see you on the next live night, and the replays cover anything you missed.`),
     p(`Annie and Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Annie Chitate, RN &middot; Joel Polley, RN &middot; Louisville, Kentucky</span>`),
   ].join('');
 
@@ -469,11 +469,11 @@ ${nightsText()}
 
 Every night has a replay, posted by noon CT the next day, and it is yours to keep.
 
-TWO THINGS BEFORE TUESDAY
+TWO THINGS BEFORE YOUR FIRST NIGHT
 One. Find your home blood pressure cuff. That is the only equipment for the whole week.
 ${
   free
-    ? `Two. If you want the fourth day, the VIP seat is ${CHALLENGE.vipPriceLabel}: the Bonus Day on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt}, plus the complete 10-Day BP Reset Kit, all eleven downloads. Upgrade at ${SITE_URL}/challenge, or just come free on Tuesday. Both are honest choices.`
+    ? `Two. If you want the fourth day, the VIP seat is ${CHALLENGE.vipPriceLabel}: the Bonus Day on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt}, plus the complete 10-Day BP Reset Kit, all eleven downloads. Upgrade at ${SITE_URL}/challenge, or just come free. Both are honest choices.`
     : `Two. Your 10-Day BP Reset Kit comes in a separate email. If it has not landed within the hour, reply to this one and I will send it by hand.`
 }
 ${
@@ -494,7 +494,7 @@ ${
 
 You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.
 
-We will see you Tuesday night.
+We will see you on the next live night, and the replays cover anything you missed.
 
 Annie and Joel
 Annie Chitate, RN . Joel Polley, RN . Louisville, Kentucky`;

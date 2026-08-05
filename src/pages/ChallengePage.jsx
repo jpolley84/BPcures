@@ -113,6 +113,13 @@ const CHALLENGE = {
   // the timezone most of this list actually lives in. The instant below is
   // therefore resolved against America/New_York, not America/Chicago.
   START_ISO_ET: '2026-08-04T19:00:00',
+  // 2026-08-04 evening (Joel): registration STAYS OPEN through the whole
+  // challenge (he is sending TikTok/FB live viewers here mid-week; replays
+  // cover what they missed). Doors now close when Night 3 ENDS, and only then
+  // does the page flip to the next-cohort waitlist.
+  CLOSE_ISO_ET: '2026-08-06T20:00:00',
+  CLOSE_DATE_LABEL: 'Thursday, August 6',
+  CLOSE_TIME_ET: '8:00pm ET',
   START_DATE_LABEL: 'Tuesday, August 4',
   END_DATE_LABEL: 'Thursday, August 6',
   // Three consecutive nights, Tue/Wed/Thu Aug 4 to 6. The week ends Thursday,
@@ -290,6 +297,8 @@ export function zonedInstant(isoLocal, timeZone = 'America/New_York') {
 }
 
 const START_AT = zonedInstant(CHALLENGE.START_ISO_ET, 'America/New_York');
+// Doors-close instant: end of Night 3, NOT start of Night 1 (2026-08-04).
+const CLOSE_AT = zonedInstant(CHALLENGE.CLOSE_ISO_ET, 'America/New_York');
 
 function parts(ms) {
   const s = Math.max(0, Math.floor(ms / 1000));
@@ -561,7 +570,7 @@ const FAQ = [
 export default function ChallengePage() {
   useChallengeFonts();
 
-  const [left, setLeft] = useState(() => START_AT.getTime() - Date.now());
+  const [left, setLeft] = useState(() => CLOSE_AT.getTime() - Date.now());
   const doorsClosed = left <= 0;
 
   // Checkout state machine: idle -> mounting -> mounted | failed.
@@ -590,7 +599,7 @@ export default function ChallengePage() {
   }, []);
 
   useEffect(() => {
-    const startedAlready = START_AT.getTime() - Date.now() <= 0;
+    const startedAlready = CLOSE_AT.getTime() - Date.now() <= 0;
     t('chal_page_view', {
       doors_open: !startedAlready,
       seat_price: CHALLENGE.SEAT_PRICE,
@@ -600,7 +609,7 @@ export default function ChallengePage() {
   }, []);
 
   useEffect(() => {
-    const id = setInterval(() => setLeft(START_AT.getTime() - Date.now()), 1000);
+    const id = setInterval(() => setLeft(CLOSE_AT.getTime() - Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -1202,8 +1211,8 @@ function Announce({ doorsClosed }) {
       <i aria-hidden />
       <span>
         {doorsClosed
-          ? 'This cohort has started'
-          : `Doors close ${CHALLENGE.START_DATE_LABEL} at ${CHALLENGE.TIME_LABEL_ET}`}
+          ? 'This cohort has finished'
+          : `Live this week · Doors close ${CHALLENGE.CLOSE_DATE_LABEL} at ${CHALLENGE.CLOSE_TIME_ET}`}
       </span>
     </div>
   );
@@ -1282,7 +1291,7 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
         </div>
 
         <div style={{ marginBottom: 26 }}>
-          <Countdown left={left} label="Doors close when Night 1 begins" tone="light" />
+          <Countdown left={left} label="Registration closes when Night 3 ends" tone="light" />
         </div>
 
         {/* "Regular" sits inside the strike element's own line on purpose. The
@@ -1341,7 +1350,7 @@ function Countdown({ left, label, tone = 'light' }) {
   if (closed) {
     return (
       <p style={{ margin: 0, fontWeight: 700, fontSize: '.95rem', color: dark ? C.creamText : C.ink }}>
-        Night 1 is already underway. This cohort has started.
+        This cohort has finished. Registration is closed.
       </p>
     );
   }
@@ -1365,7 +1374,7 @@ function Countdown({ left, label, tone = 'light' }) {
       </p>
       <div
         className="tpc-cd"
-        aria-label={`${d} days, ${h} hours, ${m} minutes and ${s} seconds until Night 1`}
+        aria-label={`${d} days, ${h} hours, ${m} minutes and ${s} seconds until registration closes`}
       >
         {cell(d, 'Days')}{cell(h, 'Hours')}{cell(m, 'Minutes')}{cell(s, 'Seconds')}
       </div>
@@ -1693,8 +1702,8 @@ function Tickets({
         {doorsClosed && (
           <div className="tpc-checkout" style={{ textAlign: 'center' }}>
             <p style={{ margin: '0 0 14px', color: C.text }}>
-              <strong>Registration for the August cohort is closed.</strong> Night 1 is already
-              underway. Leave your name and email and we will tell you first when the next one is on
+              <strong>Registration for the August cohort is closed.</strong> The three nights have
+              wrapped. Leave your name and email and we will tell you first when the next one is on
               the calendar.
             </p>
             <button type="button" className="tpc-btn tpc-btn-ink" onClick={() => goToWaitlist('tickets_closed')}>
@@ -1704,8 +1713,10 @@ function Tickets({
         )}
 
         <p style={{ textAlign: 'center', marginTop: 30, fontSize: '.88rem', color: C.dim }}>
-          Doors close {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_ET}, because that is when
-          Night 1 begins. The free seat is founding-cohort only: regular prices of{' '}
+          The challenge is live this week, and joining mid-week works: every night has a replay
+          posted by noon the next day. Doors close {CHALLENGE.CLOSE_DATE_LABEL} at{' '}
+          {CHALLENGE.CLOSE_TIME_ET}, when Night 3 ends. The free seat is founding-cohort only:
+          regular prices of{' '}
           {usd(CHALLENGE.GA_REGULAR_PRICE)} and {usd(CHALLENGE.VIP_REGULAR_PRICE)} start with the
           next cohort.
         </p>
@@ -2139,8 +2150,8 @@ function Deadline({ doorsClosed, left }) {
         <div className="tpc-head" style={{ marginBottom: 26 }}>
           <span className="tpc-eyebrow">One Real Deadline</span>
           <h2 style={{ color: '#fff' }}>
-            Doors close {CHALLENGE.START_DATE_LABEL} at {CHALLENGE.TIME_LABEL_ET}, because that is
-            when we start.
+            Doors close {CHALLENGE.CLOSE_DATE_LABEL} at {CHALLENGE.CLOSE_TIME_ET}, when Night 3
+            ends.
           </h2>
         </div>
 
@@ -2150,14 +2161,15 @@ function Deadline({ doorsClosed, left }) {
           because a trust brand cannot run a fake clock.
         </p>
         <p style={{ color: C.creamDim }}>
-          There is exactly one real deadline, and it is this: Night 1 is live at{' '}
-          {CHALLENGE.TIME_LABEL_ET} on {CHALLENGE.START_DATE_LABEL}. You cannot join a call that has
-          already happened. When that clock hits zero, registration for this cohort closes and this
-          page stops taking new seats.
+          There is exactly one real deadline, and it is this: the challenge is live THIS WEEK, and
+          it ends when Night 3 ends, {CHALLENGE.CLOSE_DATE_LABEL} at {CHALLENGE.CLOSE_TIME_ET}.
+          Join mid-week and the replays catch you up, every night posted by noon the next day. When
+          that clock hits zero, registration for this cohort closes and this page stops taking new
+          seats.
         </p>
 
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <Countdown left={left} label="Night 1 begins in" tone="dark" />
+          <Countdown left={left} label="Registration closes in" tone="dark" />
         </div>
 
         <div id="next-cohort" style={{ scrollMarginTop: 80 }}>
@@ -2492,7 +2504,7 @@ function StickyBar({ doorsClosed, chooseTier, goToWaitlist, goToSeats, activeTie
       <div className="tpc-sticky-in">
         <span>
           {doorsClosed
-            ? 'August cohort has started'
+            ? 'August cohort has finished'
             : chosen
               ? `${chosen.name} seat · ${chosen.free ? 'FREE' : usd(chosen.price)}`
               : `${NIGHT_COUNT} Nights Live · ${CHALLENGE.DATE_RANGE_SHORT} · FREE`}
