@@ -1196,5 +1196,88 @@
 })();
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════════════
+     EXIT-INTENT: free 101 Foods & Herbs guide (2026-08-04, Joel's request).
+     Vanilla port of src/components/ExitIntentPopup.jsx because /tea is a
+     static page outside React. A visitor about to bounce without buying is
+     offered the free guide instead of the sale, which drops them into the
+     nurture sequence. Fires once per browser (its own localStorage key), on
+     mouse-leave toward the top bar or after a 24s dwell, never after a
+     purchase, and never re-fires once dismissed. utm_content=tea so the
+     funnel reports can tell this popup's captures apart from the homepage's.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+  .tea-exit-backdrop{ position:fixed; inset:0; background:rgba(59,50,40,.55); z-index:9000;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; transition:opacity .3s ease; }
+  .tea-exit-backdrop.on{ opacity:1; }
+  .tea-exit-card{ background:var(--cream); border:1px solid var(--line); border-radius:16px;
+    max-width:420px; width:100%; padding:34px 28px 26px; position:relative; text-align:center;
+    box-shadow:0 30px 60px -25px rgba(59,50,40,.5);
+    transform:translateY(14px) scale(.97); transition:transform .35s cubic-bezier(.22,1,.36,1); }
+  .tea-exit-backdrop.on .tea-exit-card{ transform:translateY(0) scale(1); }
+  .tea-exit-x{ position:absolute; top:12px; right:12px; background:none; border:none; cursor:pointer;
+    font-size:22px; line-height:1; color:var(--muted); padding:6px; }
+  .tea-exit-kick{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ruby);
+    font-weight:600; margin-bottom:10px; }
+  .tea-exit-h{ font-family:'Cormorant Garamond',serif; font-weight:600; font-size:30px; line-height:1.12;
+    color:var(--ink); margin-bottom:10px; }
+  .tea-exit-h em{ color:var(--ruby); font-style:italic; }
+  .tea-exit-p{ font-size:14.5px; color:var(--muted); line-height:1.55; max-width:34ch; margin:0 auto 16px; }
+  .tea-exit-list{ list-style:none; padding:0; margin:0 auto 18px; max-width:34ch; text-align:left;
+    display:grid; gap:8px; }
+  .tea-exit-list li{ font-size:14px; line-height:1.45; color:var(--ink); padding-left:22px; position:relative; }
+  .tea-exit-list li::before{ content:'✓'; position:absolute; left:0; color:var(--ruby); font-weight:700; }
+  .tea-exit-btn{ display:block; width:100%; background:var(--ruby); color:#fff; border:none; cursor:pointer;
+    border-radius:10px; padding:15px 20px; font-family:'Montserrat',sans-serif; font-weight:600;
+    font-size:15.5px; letter-spacing:.02em; transition:background .2s; }
+  .tea-exit-btn:hover{ background:var(--ruby-deep); }
+  .tea-exit-fine{ font-size:11.5px; color:var(--muted); margin-top:10px; line-height:1.5; }
+</style>
+<script>
+(function(){
+  try {
+    var KEY = 'teaFoodsGuideExitPopupShown';
+    var URL = '/101foods?utm_source=exit_intent&utm_medium=popup&utm_campaign=foods101&utm_content=tea';
+    if (localStorage.getItem(KEY) === 'true') return;
+    if (localStorage.getItem('purchaseCompleted') === 'true') return;
+
+    var shown = false;
+    function show(){
+      if (shown || localStorage.getItem(KEY) === 'true') return;
+      shown = true;
+      localStorage.setItem(KEY, 'true');
+      var bd = document.createElement('div');
+      bd.className = 'tea-exit-backdrop';
+      bd.innerHTML =
+        '<div class="tea-exit-card" role="dialog" aria-modal="true" aria-label="Free 101 Foods and Herbs guide">' +
+          '<button class="tea-exit-x" aria-label="Close">&times;</button>' +
+          '<div class="tea-exit-kick">Before you go</div>' +
+          '<div class="tea-exit-h">Get the free <em>101</em> Foods &amp; Herbs guide</div>' +
+          '<p class="tea-exit-p">The plant foods, kitchen herbs, and caffeine free teas a nurse would point to first for steadier blood pressure. Yours free, nothing to buy.</p>' +
+          '<ul class="tea-exit-list">' +
+            '<li>101 everyday foods, kitchen herbs, and caffeine free teas</li>' +
+            '<li>Grouped so you know exactly what goes in the cart this week</li>' +
+            '<li>From a nurse, free, in your inbox in about a minute</li>' +
+          '</ul>' +
+          '<button class="tea-exit-btn">Send me the free guide &rarr;</button>' +
+          '<p class="tea-exit-fine">Free and private. Education alongside your doctor, never instead.</p>' +
+        '</div>';
+      document.body.appendChild(bd);
+      requestAnimationFrame(function(){ bd.classList.add('on'); });
+      function close(){ bd.classList.remove('on'); setTimeout(function(){ bd.remove(); }, 300); }
+      bd.addEventListener('click', function(e){ if (e.target === bd) close(); });
+      bd.querySelector('.tea-exit-x').addEventListener('click', close);
+      bd.querySelector('.tea-exit-btn').addEventListener('click', function(){ window.location.href = URL; });
+      document.addEventListener('keydown', function esc(e){ if (e.key === 'Escape'){ close(); document.removeEventListener('keydown', esc); } });
+    }
+    document.addEventListener('mouseleave', function(e){ if (e.clientY <= 0) show(); });
+    // Dwell fallback is longer than the homepage's 14s: tea buyers read the
+    // whole page, and interrupting a reader mid-scroll costs more than it earns.
+    setTimeout(show, 24000);
+  } catch (e) { /* never break the storefront over a popup */ }
+})();
+</script>
+
 </body>
 </html>
