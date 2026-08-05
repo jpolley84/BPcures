@@ -1258,41 +1258,29 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
             boxShadow: '0 24px 50px -28px rgba(17,16,15,.55)',
           }}
         />
-        <div className="tpc-kick">Live on Zoom &middot; Three Nights &middot; Free Founding Cohort</div>
-        <div className="tpc-pres">Everyday Nurse Annie and Joel, the BP Guy, present</div>
-        <div className="tpc-name">Change My Life <span>Challenge</span></div>
+        {/* 2026-08-05 above-the-fold restructure (Joel: "terribly positioned,
+            format for readability"). The banner IS the brand lockup, so the
+            serif "Change My Life Challenge" headline and the "presents" line
+            that duplicated it are GONE. One compact info line, a one-line h1,
+            a two-sentence sub, then price + CTA as one decision block. The
+            countdown and pay-attention strip moved BELOW the button. */}
+        <div className="tpc-kick">
+          Free 3-Night Live Challenge &middot; {CHALLENGE.DATE_RANGE_LABEL} &middot;{' '}
+          {CHALLENGE.TIME_WINDOW_ET} on Zoom
+        </div>
 
-        {/* 2026-08-04 Messiah Marketing pass (Omar El-Takrori, Matt 11:28-30 MSG):
-            h1 now SELF-IDENTIFIES the on-pills reader and enrolls the pain
-            behind the pain (fear of the cuff, not the pill itself). The
-            connected-story Big Domino stays as the span. */}
-        <h1 className="tpc-h1" style={{ maxWidth: '32ch' }}>
-          Still taking the pill every morning, and still afraid of the cuff?{' '}
-          <span>Your numbers are telling one connected story. Nobody ever read it to you.</span>
+        {/* Messiah Marketing pass (Omar El-Takrori, Matt 11:28-30 MSG): the h1
+            self-identifies the on-pills reader; the connected-story Big Domino
+            leads the subhead. */}
+        <h1 className="tpc-h1" style={{ maxWidth: '26ch', fontSize: 'clamp(1.6rem, 5.4vw, 2.5rem)' }}>
+          Still taking the pill every morning, <span>and still afraid of the cuff?</span>
         </h1>
 
         <p className="tpc-sub">
-          Three nights, live, with two registered nurses: Annie Chitate on the hormone side of the
-          story and Joel Polley, twenty years in intensive care and emergency, on the blood
-          pressure side. By Thursday you will know what your numbers have been trying to say, take
-          a reading you can trust, and walk into your next appointment with a page in your hand,
-          so the conversation about needing less someday happens with your doctor, never behind
-          their back.
+          <strong style={{ color: C.ink }}>Your numbers are telling one connected story, and
+          nobody ever read it to you.</strong> Three nights live with Annie Chitate, RN and Joel
+          Polley, RN, and you walk into your next appointment with a page in your hand.
         </p>
-
-        <div className="tpc-strip">
-          Your body is <b>NOT</b> betraying you. It is asking you to <b>pay attention.</b>
-        </div>
-
-        <div className="tpc-dateline">
-          {CHALLENGE.START_DATE_LABEL} to {CHALLENGE.END_DATE_LABEL}
-          <br />
-          {CHALLENGE.TIME_WINDOW_ET} &middot; {CHALLENGE.TIME_LABEL_CT} &middot; one hour a night
-        </div>
-
-        <div style={{ marginBottom: 26 }}>
-          <Countdown left={left} label="Registration closes when Night 3 ends" tone="light" />
-        </div>
 
         {/* "Regular" sits inside the strike element's own line on purpose. The
             hero is what gets screenshotted and pasted into a Facebook comment
@@ -1302,8 +1290,8 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
           Regular <s>{usd(CHALLENGE.GA_REGULAR_PRICE)}</s>, founding cohort <b>FREE</b>
         </div>
         <div className="tpc-pricenote">
-          Free for the founding cohort; the next cohort pays {usd(CHALLENGE.GA_REGULAR_PRICE)}. VIP
-          adds the Bonus Day and the complete kit for {usd(CHALLENGE.VIP_PRICE)}.
+          No card needed. VIP adds the Bonus Day and the complete kit for{' '}
+          {usd(CHALLENGE.VIP_PRICE)}.
         </div>
 
         <div className="tpc-herobtn">
@@ -1329,6 +1317,14 @@ function Hero({ doorsClosed, goToSeats, goToWaitlist, left }) {
               Compare the two seats
             </button>
           </div>
+        </div>
+
+        <div style={{ margin: '30px 0 0' }}>
+          <Countdown left={left} label="Registration closes when Night 3 ends" tone="light" />
+        </div>
+
+        <div className="tpc-strip" style={{ marginTop: 24, marginBottom: 0 }}>
+          Your body is <b>NOT</b> betraying you. It is asking you to <b>pay attention.</b>
         </div>
       </div>
     </section>
