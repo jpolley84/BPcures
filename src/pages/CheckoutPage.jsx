@@ -120,7 +120,10 @@ const CheckoutPage = () => {
 
     // Inline checkout: Stress corner by default. PayPage lets ?corner and the
     // stored quiz result override this for buyers who already know their corner.
-    navigate('/pay?tier=corner&corner=stress');
+    // focus=1 (2026-08-06, Joel): the pay page renders ONLY the embedded
+    // Stripe checkout. The buyer just read this whole sales letter; the old
+    // re-sell on the pay page was friction, not persuasion.
+    navigate('/pay?tier=corner&corner=stress&focus=1');
   };
 
   // 2026-06-08 conversion + compliance pass: collapsed the stack to 5 honest,

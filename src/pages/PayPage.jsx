@@ -84,10 +84,18 @@ function readContext() {
   let corner = null;
   let src = '';
   let sabbathOverride = null; // 'force' | 'off' | null
+  // 2026-08-06 (Joel): ?focus=1 renders ONLY the embedded Stripe checkout
+  // (plus the secure header and the legal footer). No hero, no order summary,
+  // no What's-Inside, no FAQ. The homepage buy buttons use it: the buyer
+  // already read the whole sales letter one click ago, and re-selling on the
+  // pay page was measured friction. Quiz/trigger-funnel entries WITHOUT the
+  // param keep the full frame.
+  let focus = false;
   try {
     const params = new URLSearchParams(window.location.search);
     const t = params.get('tier');
     tier = VALID_TIERS.has(t) ? t : 'corner';
+    focus = params.get('focus') === '1';
     // ?corner= wins (the sale-first buy links pass corner=stress so a
     // quiz-skipper gets the Stress kit), else the quiz result, else null.
     const urlCorner = params.get('corner');
@@ -112,7 +120,7 @@ function readContext() {
   } catch {
     /* private mode */
   }
-  return { tier, corner, src, email, sabbathOverride };
+  return { tier, corner, src, email, sabbathOverride, focus };
 }
 
 // Mirrors SabbathGate's host scope: only the apex storefront rests.
@@ -209,7 +217,7 @@ const sectionLabel = {
 };
 
 export default function PayPage() {
-  const { tier, corner, src, email: initialEmail, sabbathOverride } = useMemo(readContext, []);
+  const { tier, corner, src, email: initialEmail, sabbathOverride, focus } = useMemo(readContext, []);
   // Derived per view, never a persisted super property: this register serves
   // several live funnels at once, and a device-global label would follow the
   // buyer into every later event. '' src keeps the historic 'annie-v2' label,
@@ -368,7 +376,9 @@ export default function PayPage() {
 
       <section style={{ maxWidth: 720, margin: '0 auto', padding: 'clamp(1.25rem, 4vw, 2.5rem) 1.25rem' }}>
         {/* ─── Hero (Annie-v2 frame for the $17 kit) ─────────────── */}
-        {isKit ? (
+        {/* focus mode (?focus=1): the ONLY things on the page are the secure
+            header, the Stripe embed, and the legal footer. */}
+        {!focus && (isKit ? (
           <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
             <span
               style={{
@@ -434,7 +444,8 @@ export default function PayPage() {
               {isTea ? 'Your Steady is almost on its way.' : `${kit.title}. ${kit.price}, one time.`}
             </h1>
           </div>
-        )}
+        ))}
+        {!focus && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--dark-gray, #555)', marginBottom: '1.1rem' }}>
           <span>Encrypted, secured by Stripe</span>
           <span>{isTea ? '60-day guarantee · Ships in 5 to 7 business days' : '30-day Feel-It-or-Free promise'}</span>
@@ -552,6 +563,7 @@ export default function PayPage() {
             </p>
           )}
         </div>
+        )}
 
         {error && (
           <div style={{ textAlign: 'center', margin: '0 auto 1rem', maxWidth: '52ch' }}>
@@ -625,7 +637,7 @@ export default function PayPage() {
 
         {/* Risk reversal, restated in full at the point of payment. Terms match
             CheckoutPage's live Feel-It-or-Free block verbatim in substance. */}
-        {!isTea && (
+        {!focus && !isTea && (
           <div
             style={{
               display: 'flex',
@@ -652,7 +664,7 @@ export default function PayPage() {
         )}
 
         {/* ─── Annie-v2 trust stack under the register (kit only) ── */}
-        {isKit && (
+        {!focus && isKit && (
           <div style={{ maxWidth: 560, margin: '2rem auto 0' }}>
             <div style={sectionLabel}>What&rsquo;s Inside</div>
             {WHATS_INSIDE.map((item, i) => (
