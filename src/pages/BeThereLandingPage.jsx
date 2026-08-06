@@ -207,6 +207,18 @@ const METHOD_STEPS = [
   { letter: 'E', title: 'Extend the Life You Love', body: 'Build your travel plan, holiday plan, and hard-week plan, so this becomes your new normal.' },
 ];
 
+// THE RESET — the ten-day working unit inside the 90 days (locked by Joel
+// 2026-08-06; canon in BRAVEWORKS_FRAMEWORK_BIBLE.md Part 1.4). BE THERE is
+// the container, RESET is the engine that runs inside it. Copy obeys this
+// page's hard rule: no promises about what the number will do.
+const RESET_CYCLE = [
+  { letter: 'R', title: 'Read', body: 'We read your body first. Your quiz result, your morning readings, your real week. Nothing changes yet.' },
+  { letter: 'E', title: 'Eliminate', body: 'We take away the one thing pulling hardest on your number. One thing. Not your whole life.' },
+  { letter: 'S', title: 'Swap', body: 'We swap in what helps. One habit and the right foods, chosen to fit the life you already have.' },
+  { letter: 'E', title: 'Equip', body: 'We equip you with the supports that fit your case. Scaffolding while you rebuild, not a crutch you keep forever.' },
+  { letter: 'T', title: 'Track', body: 'We track what changes, together. You stop guessing about your own body and start keeping a record your doctor can actually use.' },
+];
+
 const POSSIBILITIES = [
   { h: 'At Night', p: 'You settle down without the whole house feeling the fear in the room.' },
   { h: 'At the Table', p: 'You eat food you enjoy, make smarter choices, and do not feel punished.' },
@@ -555,6 +567,18 @@ export default function BeThereLandingPage() {
         .lbn .t-step h3{color:#FBF7F0;font-size:19px;margin-bottom:6px;font-family:var(--sans);font-weight:600;}
         .lbn .t-step p{color:#C9D3CE;font-size:16px;}
         .lbn .t-step p strong{color:#FFF;}
+
+        /* the RESET (the ten-day working unit inside BE THERE) */
+        .lbn .resetw{background:var(--night);padding:88px 0 96px;}
+        .lbn .resetw .eyebrow{color:var(--gold);}
+        .lbn .resetw h2{color:#FBF7F0;font-size:clamp(28px,4vw,40px);margin-bottom:16px;}
+        .lbn .resetw p.intro{color:#C9D3CE;max-width:560px;margin-bottom:10px;}
+        .lbn .resetw .reset-big{
+          font-family:var(--serif);font-style:italic;font-weight:600;color:var(--gold);
+          font-size:clamp(44px,7vw,72px);letter-spacing:0.04em;line-height:1;
+          margin:28px 0 36px;text-shadow:0 0 22px rgba(201,164,76,0.3);
+        }
+        .lbn .resetw .outro{color:#EFE9DC;font-size:17px;max-width:560px;margin-top:40px;border-left:3px solid var(--gold);padding-left:18px;line-height:1.6;}
 
         /* joel */
         .lbn .joel{padding:96px 0;}
@@ -1040,6 +1064,35 @@ export default function BeThereLandingPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ===== THE RESET (the ten-day working unit) ===== */}
+      <section className="resetw">
+        <div className="wrap">
+          <span className="eyebrow" data-rv>The Working Unit</span>
+          <h2 data-rv>Inside Those Seven Letters, the Work Runs in One Word.</h2>
+          <p className="intro" data-rv>
+            Every change we make follows the same ten-day cycle. Two days per letter. Small
+            enough to live through a real week.
+          </p>
+          <p className="reset-big" data-rv>RESET.</p>
+          <div className="timeline" data-rv data-rv-child>
+            {RESET_CYCLE.map((s, i) => (
+              <div className="t-step" key={`${s.letter}-${i}`}>
+                <div className="t-letter">{s.letter}</div>
+                <div>
+                  <h3>{s.title}</h3>
+                  <p>{s.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="outro" data-rv>
+            Ninety days holds nine of these cycles, run back to back, with Joel beside you for
+            every one. You never work on everything at once. You reset one thing, hold it, and
+            move to the next.
+          </p>
         </div>
       </section>
 

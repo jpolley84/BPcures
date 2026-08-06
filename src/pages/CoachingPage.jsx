@@ -139,6 +139,38 @@ const RETAINER_TIERS = [
 const GUARANTEE_LINE =
   'The pre-read promise: if your case needs a different kind of help, I tell you before writing a word and refund every dollar.';
 
+// THE RESET — the customer-facing name of the 5-step method (locked by Joel
+// 2026-08-06; canon in BRAVEWORKS_FRAMEWORK_BIBLE.md Part 1.4). Read,
+// Eliminate, Swap, Equip, Track. Two days per letter, ten days total. The
+// faucet/sink metaphor is the canonical one (rivers/lake retired same date).
+const RESET_STEPS = [
+  {
+    word: 'Read',
+    days: 'Days 1-2',
+    body: 'Read your body first. The quiz names your loudest faucet, and your morning readings set the baseline. Change nothing yet.',
+  },
+  {
+    word: 'Eliminate',
+    days: 'Days 3-4',
+    body: 'Close the faucet. Take away the one thing feeding it. Subtraction before addition.',
+  },
+  {
+    word: 'Swap',
+    days: 'Days 5-6',
+    body: 'Swap in what helps. One keystone habit and the right foods for your corner.',
+  },
+  {
+    word: 'Equip',
+    days: 'Days 7-8',
+    body: 'Equip your body with the herbs and minerals for your corner. Scaffolding while you rebuild, not a crutch you keep forever.',
+  },
+  {
+    word: 'Track',
+    days: 'Days 9-10',
+    body: 'Track the proof. Sleep usually moves first and the number moves last. I tell you the order in advance so you can watch it happen.',
+  },
+];
+
 // "Is this you" honest checklist (tea-style). No email required, self-scoring
 // only, never leaves the page.
 const CHECKLIST_ITEMS = [
@@ -404,7 +436,7 @@ export default function CoachingPage() {
               <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
                 {[
                   'A 60-minute kickoff Zoom. I read your home BP log, meds, supplements, and labs live and name your loudest corner.',
-                  'Your personalized 30-day protocol, written for your body, not a template.',
+                  'Your personalized 30-day protocol. Three 10-day RESETs, one corner at a time, written for your body, not a template.',
                   '4 live group coaching sessions with me over the 30 days. Bring your numbers, get answers.',
                   'A doctor-conversation script to bring to your next visit.',
                 ].map((item) => (
@@ -592,6 +624,54 @@ export default function CoachingPage() {
             <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>SUGAR</span>
             <span style={{ padding: '6px 10px', background: 'var(--cream)', border: '1px solid var(--line)', borderRadius: 6 }}>SODIUM</span>
           </motion.div>
+
+          {/* ── THE RESET: the method as one word ── */}
+          <motion.div {...reveal(0.24)} className="mt-10">
+            <div className="mb-3 text-xs font-bold uppercase" style={{ color: 'var(--sage-deep)', letterSpacing: '0.18em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+              THE RESET
+            </div>
+            <h3 className="font-serif text-xl sm:text-2xl mb-3" style={{ color: 'var(--ink)', lineHeight: 1.25 }}>
+              The whole method fits in one word.
+            </h3>
+            <p className="text-base mb-6" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
+              Three faucets fill one sink: Stress, Sugar, and Sodium. The cuff just reads the water level. We find your loudest faucet and close it. That is a RESET, and it runs in ten days. Two days per letter.
+            </p>
+            <div className="space-y-3">
+              {RESET_STEPS.map((s) => (
+                <div key={s.word} className="flex gap-4 items-start p-4 rounded-xl" style={{ background: 'var(--cream)', border: '1px solid var(--line)' }}>
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      fontFamily: "'Fraunces', 'Times New Roman', serif",
+                      fontStyle: 'italic',
+                      fontWeight: 500,
+                      fontSize: '2rem',
+                      lineHeight: 1,
+                      color: 'var(--clay)',
+                      width: 36,
+                      flexShrink: 0,
+                      textAlign: 'center',
+                      marginTop: 2,
+                    }}
+                  >
+                    {s.word[0]}
+                  </span>
+                  <div>
+                    <div className="flex items-baseline gap-2 mb-1" style={{ flexWrap: 'wrap' }}>
+                      <span className="font-semibold text-base" style={{ color: 'var(--ink)' }}>{s.word}</span>
+                      <span className="text-xs font-bold uppercase" style={{ color: 'var(--sage-deep)', letterSpacing: '0.12em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
+                        {s.days}
+                      </span>
+                    </div>
+                    <p className="text-sm" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>{s.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-base italic mt-6" style={{ color: 'var(--ink)', lineHeight: 1.75, borderLeft: '3px solid var(--gold)', paddingLeft: '1.1rem' }}>
+              The $17 kit walks you through your first RESET on your own. Coaching is me running it with you, on your numbers, with your meds and labs on the screen, one corner at a time.
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -693,7 +773,7 @@ export default function CoachingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { step: 'Free', title: 'Take the quiz', body: 'Find your loudest corner in 60 seconds.', to: '/quiz', cta: 'Take the quiz' },
-              { step: '$17', title: 'Your Corner Reset', body: 'The 10-day plan for your loudest corner.', to: '/', cta: 'See the kit' },
+              { step: '$17', title: 'Your Corner Reset', body: 'Your first 10-day RESET, built for your loudest corner.', to: '/', cta: 'See the kit' },
               { step: '$47', title: 'Complete the Triangle', body: 'All three corners, plus the Freedom Finale.', to: '/', cta: 'See the kit' },
               { step: 'You are here', title: 'Coaching with Joel', body: 'Your protocol, read and adjusted by me, live.', to: '#programs', cta: 'See the programs' },
             ].map((c, i) => (
