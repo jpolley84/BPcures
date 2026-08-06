@@ -166,21 +166,25 @@ const IS_LIST = [
   'A way to bounce back before one hard day becomes one hard month.',
 ];
 
+// 2026-08-06: aligned to Triangle canon (Stress · Sugar · Sodium) per Joel,
+// replacing the Pressure/Plate/Pattern dialect this page inherited from
+// Annie's sales page. Naming the loudest corner is part of the R (Read) step
+// of a RESET. Canon: BRAVEWORKS_FRAMEWORK_BIBLE.md.
 const TRIANGLE_CARDS = [
   {
-    h: 'Pressure',
+    h: 'Stress',
     p: 'The weight you carry. The people you care for. The worries you keep swallowing. The sleep your mind keeps interrupting.',
     so: 'So you can feel calmer in your body instead of living on alert.',
   },
   {
-    h: 'Plate',
-    p: 'The salt, sugar, drinks, sauces, and portions that add up quietly. Not because you are careless. Nobody ever showed you a way that works in real life.',
+    h: 'Sugar',
+    p: 'The sweet stuff, the drinks, the sauces, and the portions that add up quietly. Not because you are careless. Nobody ever showed you a way that works in real life.',
     so: 'So you can enjoy food and still feel proud of how you are caring for yourself.',
   },
   {
-    h: 'Pattern',
-    p: 'The way you sleep, move, check your numbers, recover, and restart when life gets busy.',
-    so: 'So healthy stops being something you visit and becomes the way you live.',
+    h: 'Sodium',
+    p: 'The salt hiding in the packages, the takeout, and the quick meals a busy week demands. Water follows salt, and pressure follows water.',
+    so: 'So your body can finally let go of what it has been holding.',
   },
 ];
 
@@ -212,7 +216,7 @@ const METHOD_STEPS = [
 // the container, RESET is the engine that runs inside it. Copy obeys this
 // page's hard rule: no promises about what the number will do.
 const RESET_CYCLE = [
-  { letter: 'R', title: 'Read', body: 'We read your body first. Your quiz result, your morning readings, your real week. Nothing changes yet.' },
+  { letter: 'R', title: 'Read', body: 'We read your body first. Which corner of the Triangle is loudest for you: Stress, Sugar, or Sodium. Your quiz result, your morning readings, your real week. Nothing changes yet.' },
   { letter: 'E', title: 'Eliminate', body: 'We take away the one thing pulling hardest on your number. One thing. Not your whole life.' },
   { letter: 'S', title: 'Swap', body: 'We swap in what helps. One habit and the right foods, chosen to fit the life you already have.' },
   { letter: 'E', title: 'Equip', body: 'We equip you with the supports that fit your case. Scaffolding while you rebuild, not a crutch you keep forever.' },
@@ -1000,6 +1004,10 @@ export default function BeThereLandingPage() {
               </div>
             ))}
           </div>
+          <p className="lede" data-rv style={{ margin: '48px auto 0' }}>
+            Naming which of these three is loudest for you is the first move we make together.
+            It is the R in RESET: we read before we change anything.
+          </p>
         </div>
       </section>
 
