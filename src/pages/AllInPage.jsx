@@ -20,7 +20,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { Lock } from 'lucide-react';
+import { Check, ShieldCheck, Lock } from 'lucide-react';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
 // Annie + Joel, the photo Joel supplied 2026-08-06 for this page.
@@ -28,6 +28,24 @@ import heroImg from '../assets/life-change-accelerator.jpg';
 
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
+
+// ─── OFFER STACK (restored 2026-08-06, Joel: "lets go back to having the
+// offer stack list"). Same items/values as the pre-accelerator page. NOTE:
+// these line items are PLACEHOLDERS Joel confirms/edits; values sum to 10,614.
+const STACK = [
+  { label: 'Your Pressure & Root-Driver Assessment, plus your Personalized 90-Day Health Pathway', value: 997 },
+  { label: 'Your Numbers Without Fear Safety Plan', value: 497 },
+  { label: 'The Numbers Decoded System, plus your Doctor Visit Advocacy Kit', value: 697 },
+  { label: 'The Food Freedom Blood-Sugar & Pressure Plan', value: 997 },
+  { label: 'The Herbal Support & Safety Vault, plus your Steady Start Box', value: 797 },
+  { label: 'The Smarter Movement Method', value: 797 },
+  { label: 'Weekly Nurse-Led Coaching with Joel', value: 1800 },
+  { label: 'The Life Beyond the Numbers Community', value: 997 },
+  { label: '4 Included Bonuses (Symptom Sorting, Restaurant & Celebration Survival, 15-Minute Busy Woman, Stay-Beyond Maintenance)', value: 1288 },
+  { label: 'Fast-Action Bonus (Private Root-Driver Clarity Session)', value: 1747 },
+];
+const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 10,614
+const usd = (n) => '$' + n.toLocaleString('en-US');
 
 const OPTIONS = [
   { key: 'full', tier: 'allin-full', pill: 'Pay in full', headline: '$1,997 today', sub: 'One payment, all in. Best value.', value: 1997 },
@@ -106,22 +124,37 @@ export default function AllInPage() {
   return (
     <div style={{ minHeight: '100vh', background: C.cream, color: C.ink }}>
       <div style={{ maxWidth: 1040, margin: '0 auto', padding: 'clamp(1.1rem, 3vw, 2rem) 1.1rem' }}>
-        {/* Headline block, reference-style: eyebrow, name, one promise line,
-            one pointer line. Nothing else before the money. */}
-        <div style={{ textAlign: 'center', marginBottom: 'clamp(1.1rem, 2.5vw, 1.8rem)' }}>
-          <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
-            90 days with two nurses in your corner
-          </span>
-          <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(1.9rem, 5vw, 3rem)', lineHeight: 1.08, margin: '0.5rem auto 0.7rem', maxWidth: '18ch', fontWeight: 700 }}>
-            The Life Change Accelerator
-          </h1>
-          <p style={{ fontSize: 'clamp(1rem, 2.4vw, 1.15rem)', lineHeight: 1.5, maxWidth: '46ch', margin: '0 auto', color: C.inkSoft }}>
-            Stop managing symptoms one at a time. Ninety days, one connected plan, with Annie
-            Chitate, RN and Joel Polley, RN walking every week of it with you.
-          </p>
-          <p style={{ fontWeight: 800, fontSize: '1.02rem', margin: '0.9rem 0 0', color: C.ink }}>
-            Secure your spot below
-          </p>
+        {/* Header (2026-08-06 v2, Joel): SMALL photo top-left of a BIG
+            headline, promise line under, pointer line last. */}
+        <div
+          style={{
+            display: 'flex', alignItems: 'center', gap: 'clamp(0.9rem, 2.5vw, 1.5rem)',
+            maxWidth: 860, margin: '0 auto clamp(1.1rem, 2.5vw, 1.8rem)', flexWrap: 'wrap',
+          }}
+        >
+          <img
+            src={heroImg}
+            alt="Annie Chitate, RN and Joel Polley, RN, standing back to back."
+            width="1122"
+            height="1402"
+            style={{
+              display: 'block', width: 'clamp(88px, 12vw, 130px)', height: 'auto',
+              borderRadius: 14, boxShadow: '0 14px 30px -18px rgba(30,43,42,.5)', flexShrink: 0,
+            }}
+          />
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
+              90 days with two nurses in your corner
+            </span>
+            <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(2rem, 5.6vw, 3.4rem)', lineHeight: 1.05, margin: '0.35rem 0 0.55rem', fontWeight: 700 }}>
+              The Life Change Accelerator
+            </h1>
+            <p style={{ fontSize: 'clamp(0.98rem, 2.2vw, 1.1rem)', lineHeight: 1.5, margin: 0, color: C.inkSoft }}>
+              Stop managing symptoms one at a time. Ninety days, one connected plan, with Annie
+              Chitate, RN and Joel Polley, RN walking every week of it with you.{' '}
+              <strong style={{ color: C.ink }}>Secure your spot below.</strong>
+            </p>
+          </div>
         </div>
 
         {/* Photo | payment card. Mobile stacks. */}
@@ -129,24 +162,46 @@ export default function AllInPage() {
           style={{
             display: 'grid',
             gap: 'clamp(1rem, 2.5vw, 1.8rem)',
-            gridTemplateColumns: 'minmax(0, 0.85fr) minmax(0, 1.15fr)',
+            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
             alignItems: 'start',
           }}
           className="allin-grid"
         >
-          {/* LEFT — the photo, plus one quiet reassurance line */}
-          <div>
-            <img
-              src={heroImg}
-              alt="Annie Chitate, RN and Joel Polley, RN, standing back to back."
-              width="1122"
-              height="1402"
-              style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 16, boxShadow: '0 24px 50px -28px rgba(30,43,42,.45)' }}
-            />
-            <p style={{ margin: '0.8rem 0 0', fontSize: '0.85rem', lineHeight: 1.55, color: C.muted, textAlign: 'center' }}>
-              Education and lifestyle support alongside your doctor, never a replacement. Your
-              doctor makes every call about your medication.
-            </p>
+          {/* LEFT — offer stack (restored) */}
+          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 'clamp(1.2rem, 2.5vw, 1.7rem)' }}>
+            <span style={{ textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.7rem', fontWeight: 700, color: C.sage }}>
+              Here is everything you get
+            </span>
+            <ul style={{ listStyle: 'none', margin: '0.9rem 0 0', padding: 0, display: 'grid', gap: '0.7rem' }}>
+              {STACK.map((item) => (
+                <li key={item.label} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                  <Check size={17} strokeWidth={2.5} style={{ color: C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
+                  <span style={{ flex: 1, fontSize: '0.95rem', lineHeight: 1.45, color: C.inkSoft }}>{item.label}</span>
+                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: C.muted, whiteSpace: 'nowrap' }}>{usd(item.value)}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div style={{ borderTop: `1px solid ${C.line}`, margin: '1.1rem 0 0', paddingTop: '0.9rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <span style={{ fontWeight: 700, fontSize: '1rem' }}>Total value</span>
+                <span style={{ fontWeight: 700, fontSize: '1.15rem', color: C.muted, textDecoration: 'line-through' }}>{usd(TOTAL_VALUE)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.5rem' }}>
+                <span style={{ fontWeight: 800, fontSize: '1.05rem', color: C.ink }}>Your price today</span>
+                <span style={{ fontWeight: 800, fontSize: '1.7rem', color: C.clay }}>$1,997</span>
+              </div>
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: C.muted }}>
+                or a deposit to hold your spot, or 6 payments across the 12 weeks.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', marginTop: '1.1rem', background: C.cream, border: `1px solid ${C.line}`, borderRadius: 10, padding: '0.75rem 0.85rem' }}>
+              <ShieldCheck size={18} strokeWidth={2} style={{ color: C.sage, flexShrink: 0, marginTop: 1 }} aria-hidden />
+              <p style={{ margin: 0, fontSize: '0.83rem', lineHeight: 1.5, color: C.inkSoft }}>
+                Annie and Joel walk all 12 weeks with you. This is education and lifestyle support alongside your doctor, never a replacement. Your doctor makes every call about your medication.
+              </p>
+            </div>
           </div>
 
           {/* RIGHT — pay options + embedded checkout */}
@@ -220,7 +275,6 @@ export default function AllInPage() {
       <style>{`
         @media (max-width: 820px) {
           .allin-grid { grid-template-columns: 1fr !important; }
-          .allin-grid img { max-width: 420px; margin: 0 auto; }
         }
       `}</style>
     </div>
