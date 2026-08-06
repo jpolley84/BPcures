@@ -54,15 +54,18 @@ const OPTIONS = [
 ];
 
 // ─── palette (matches CaseReviewPage / brand vars) ───────────────────────
+// 2026-08-06 (Joel): monochrome palette. Pure black and white with neutral
+// grays; the only "accent" is black itself. Key names kept so nothing else
+// on the page changes.
 const C = {
-  clay: 'var(--clay, #B85A36)',
-  cream: 'var(--cream, #FBF8F1)',
-  paper: 'var(--paper, #FEFCF7)',
-  sage: 'var(--sage, #4A5D4E)',
-  ink: 'var(--ink, #1E2B2A)',
-  inkSoft: 'var(--ink-soft, #2B2824)',
-  line: 'var(--line, #D8CFBD)',
-  muted: 'var(--muted, #7A7061)',
+  clay: '#111111',
+  cream: '#FFFFFF',
+  paper: '#FAFAFA',
+  sage: '#444444',
+  ink: '#000000',
+  inkSoft: '#1A1A1A',
+  line: '#E2E2E2',
+  muted: '#666666',
 };
 const SERIF = '"Fraunces", Georgia, serif';
 
@@ -75,7 +78,7 @@ export default function AllInPage() {
   useEffect(() => {
     track('allin_view', { page: 'allin' });
     const prev = document.title;
-    document.title = 'The Life Change Accelerator | 90 Days with Annie and Joel, RNs';
+    document.title = 'The Life Change Accelerator | 12 Weeks to Freedom with Annie and Joel, RNs';
     return () => { document.title = prev; };
   }, []);
 
@@ -144,13 +147,13 @@ export default function AllInPage() {
           />
           <div style={{ flex: 1, minWidth: 260 }}>
             <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
-              90 days with two nurses in your corner
+              12 weeks to freedom
             </span>
             <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(2rem, 5.6vw, 3.4rem)', lineHeight: 1.05, margin: '0.35rem 0 0.55rem', fontWeight: 700 }}>
               The Life Change Accelerator
             </h1>
             <p style={{ fontSize: 'clamp(0.98rem, 2.2vw, 1.1rem)', lineHeight: 1.5, margin: 0, color: C.inkSoft }}>
-              Stop managing symptoms one at a time. Ninety days, one connected plan, with Annie
+              Stop managing symptoms one at a time. Twelve weeks, one connected plan, with Annie
               Chitate, RN and Joel Polley, RN walking every week of it with you.{' '}
               <strong style={{ color: C.ink }}>Secure your spot below.</strong>
             </p>
