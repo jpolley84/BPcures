@@ -16,15 +16,15 @@
 // component is gone; nothing referenced it. Do not resurrect it from git
 // history: its offer, dates and copy are all retired.
 //
-// SELF-RETIRING BY DESIGN. This returns null once the last night has finished,
-// and HomeSplit falls back to MasterclassBanner automatically. Nobody has to
-// remember to take it down on Friday, and the homepage cannot be left selling
-// an event that already happened. To run it again for cohort 2, update NIGHTS
-// and nothing else.
+// SELF-RETIRING BY DESIGN. This returns null once registration has closed, and
+// HomeSplit falls back to MasterclassBanner automatically. Nobody has to
+// remember to take it down, and the homepage cannot be left selling a seat that
+// can no longer be bought. To run it again for cohort 2, update NIGHTS and
+// REGISTRATION_CLOSE and nothing else.
 //
 // The nights and the 7:00pm ET start mirror the CHALLENGE config block in
 // src/pages/ChallengePage.jsx (DATE_RANGE_LABEL "August 4 to 6", TIME_LABEL_ET
-// "7:00pm ET", CLOSE_ISO_ET 2026-08-06T20:00:00). If that config moves, this
+// "7:00pm ET", CLOSE_ISO_ET 2026-08-06T00:00:00). If that config moves, this
 // moves with it. There is no shared module because ChallengePage keeps its
 // constants inline by deliberate convention.
 //
@@ -52,9 +52,22 @@ const NIGHTS = [
 
 const HOUR_MS = 3600 * 1000;
 
-// Which night are we in, or heading for? Returns null once the last one ends,
+// Registration close, mirroring CHALLENGE.CLOSE_ISO_ET in ChallengePage.jsx.
+// 2026-08-05 (Joel): doors shut at MIDNIGHT ending Wednesday, a night before
+// the challenge itself ends. This banner exists to drive REGISTRATIONS, and its
+// only CTA is "Save my free seat", so it has to retire at the close instant
+// rather than after Night 3. Without this it would spend all of Thursday
+// counting down to a night nobody can still buy into and linking to a page
+// that answers with a waitlist form.
+//
+// Hour 0 of August 6 IS midnight ending August 5. etWallToInstant takes a
+// 1-12 month, so this reads (2026, August, 6th, 00:00) ET.
+const REGISTRATION_CLOSE = () => etWallToInstant(2026, 8, 6, 0);
+
+// Which night are we in, or heading for? Returns null once registration closes,
 // which is what retires the banner.
 export function currentChallengeNight(now = Date.now()) {
+  if (now >= REGISTRATION_CLOSE().getTime()) return null;
   for (const n of NIGHTS) {
     const start = n.start().getTime();
     if (now < start) return { label: n.label, start, live: false };

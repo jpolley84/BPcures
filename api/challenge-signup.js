@@ -143,6 +143,18 @@ const CHALLENGE = {
   // same change is mirrored in src/pages/ChallengePage.jsx (START_ISO_ET) and
   // api/create-embedded-checkout.js (CHALLENGE_START_ET).
   startIsoEt: '2026-08-04T19:00:00',
+  // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
+  // 2026-08-05 ET. Note this is NOT endLabel: Night 3 still runs on the
+  // Thursday for everyone already registered. Mirrors CHALLENGE.CLOSE_ISO_ET in
+  // src/pages/ChallengePage.jsx and CHALLENGE_CLOSE_MS in
+  // api/create-embedded-checkout.js.
+  //
+  // Stored as a resolved UTC instant, not an ET wall string: August 2026 is
+  // inside EDT (UTC-4), so midnight ending Wednesday is exactly
+  // 2026-08-06T04:00:00Z. If the date moves, re-resolve it rather than assuming
+  // the offset.
+  closeMs: Date.parse('2026-08-06T04:00:00Z'),
+  closeLabel: 'Wednesday night',
   startLabel: 'Tuesday, August 4',
   endLabel: 'Thursday, August 6',
   timeEt: '7:00pm ET',
@@ -524,7 +536,7 @@ function interestEmail({ firstName, email, mode }) {
       ? p(
           `You tried to grab a seat and checkout was not open. That one is on me, not on you. <strong>Nothing was charged.</strong>`
         )
-      : p(`Registration for the ${esc(CHALLENGE.startLabel)} cohort is closed. Night 1 is already underway.`),
+      : p(`Registration for the ${esc(CHALLENGE.startLabel)} cohort is closed. Doors shut ${esc(CHALLENGE.closeLabel)} at midnight.`),
     isSeatLink
       ? p(
           `The second the payment link is working I will send it straight to this address. If you would rather not wait, reply to this email and I will sort it out with you directly.`
@@ -544,7 +556,7 @@ function interestEmail({ firstName, email, mode }) {
 ${
   isSeatLink
     ? 'You tried to grab a seat and checkout was not open. That one is on me, not on you. Nothing was charged.\n\nThe second the payment link is working I will send it straight to this address. If you would rather not wait, reply to this email and I will sort it out with you directly.'
-    : `Registration for the ${CHALLENGE.startLabel} cohort is closed. Night 1 is already underway.\n\nYou are on the list. When I put the next three nights on the calendar you will hear from me before anyone else. No charge for being on the list, and no spam.`
+    : `Registration for the ${CHALLENGE.startLabel} cohort is closed. Doors shut ${CHALLENGE.closeLabel} at midnight.\n\nYou are on the list. When I put the next three nights on the calendar you will hear from me before anyone else. No charge for being on the list, and no spam.`
 }
 
 While you wait, the free BP quiz takes about two minutes and tells you which of the three pressures is loudest for you: ${SITE_URL}/quiz
@@ -1063,6 +1075,18 @@ export default async function handler(req, res) {
 
   try {
     if (intent === 'register') return await handleRegister(req, res);
+    // Doors (2026-08-05). A free seat can no longer be claimed after the close
+    // instant, so the request degrades into the next-cohort waitlist instead of
+    // being rejected: the person still gets captured and still gets an honest
+    // answer, they just do not get a seat or a Zoom link. 'register' is
+    // deliberately ABOVE this line. It is the paid path, and its seat was
+    // already bought and paid for; refusing it here would take someone's money
+    // and give them nothing. create-embedded-checkout.js is what stops new paid
+    // sessions being created after the close.
+    if (intent === 'free-register' && Date.now() >= CHALLENGE.closeMs) {
+      console.warn('challenge-signup: free-register after doors closed, degrading to waitlist');
+      return await handleInterest(req, res, 'waitlist');
+    }
     if (intent === 'free-register') return await handleFreeRegister(req, res);
     return await handleInterest(req, res, intent);
   } catch (err) {

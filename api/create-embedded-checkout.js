@@ -96,6 +96,16 @@ const CHALLENGE_COHORT = '2026-08-04';           // cohort id, also the Night 1 
 // (START_ISO_ET) and api/challenge-signup.js (startIsoEt).
 const CHALLENGE_START_ET = '2026-08-04T19:00:00'; // Night 1, 7:00pm ET
 const CHALLENGE_START_CT = '2026-08-04T18:00:00'; // the same instant, 6:00pm CT
+// 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
+// 2026-08-05 ET, a night before the challenge itself ends. Mirrors
+// CHALLENGE.CLOSE_ISO_ET in src/pages/ChallengePage.jsx.
+//
+// Written as an explicit UTC instant rather than an ET wall string plus offset
+// maths: August 2026 is inside EDT (UTC-4), so midnight ending Wednesday is
+// exactly 2026-08-06T04:00:00Z, and hardcoding the resolved instant removes any
+// chance of a zone bug closing the doors an hour early or an hour late. If the
+// date ever moves, re-resolve it; do not assume -4 holds.
+const CHALLENGE_CLOSE_MS = Date.parse('2026-08-06T04:00:00Z');
 const CHALLENGE_PRICE_ENV = {
   'challenge-ga': 'CHALLENGE_GA_PRICE_ID',
   'challenge-vip': 'CHALLENGE_VIP_PRICE_ID',
@@ -377,6 +387,20 @@ export default async function handler(req, res) {
   //     Complete kit in triangle-webhook AMOUNT_TO_TIER. See the P0 note in
   //     the header of api/challenge-signup.js.
   if (tier === 'challenge-ga' || tier === 'challenge-vip') {
+    // Doors. The page hides its buy buttons after the close instant, but a tab
+    // opened before the deadline keeps a live checkout button in the DOM, so
+    // the server has to be the one that actually says no. Refuse to CREATE a
+    // new session; sessions created before the close are still honoured by
+    // api/challenge-signup.js 'register', because a completed payment must
+    // never be left without a seat.
+    if (Date.now() >= CHALLENGE_CLOSE_MS) {
+      return res.status(410).json({
+        error: 'challengeRegistrationClosed',
+        code: 'CHALLENGE_REGISTRATION_CLOSED',
+        tier,
+        message: 'Registration for this cohort is closed.',
+      });
+    }
     const resolved = resolveChallengePrice(tier);
     if (!resolved.ok) {
       // Loud, specific, and never a silent charge. The page shows its
