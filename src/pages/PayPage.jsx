@@ -445,7 +445,7 @@ export default function PayPage() {
             </h1>
           </div>
         ))}
-        {!focus && (
+        {!focus && (<>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--dark-gray, #555)', marginBottom: '1.1rem' }}>
           <span>Encrypted, secured by Stripe</span>
           <span>{isTea ? '60-day guarantee · Ships in 5 to 7 business days' : '30-day Feel-It-or-Free promise'}</span>
@@ -563,7 +563,7 @@ export default function PayPage() {
             </p>
           )}
         </div>
-        )}
+        </>)}
 
         {error && (
           <div style={{ textAlign: 'center', margin: '0 auto 1rem', maxWidth: '52ch' }}>
