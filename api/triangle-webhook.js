@@ -32,6 +32,27 @@ import { modulesForTier, bundleNameForTier, bundleLabelForTier } from './_kit-ma
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { capturePurchase } from './_triangle-posthog.js';
 import { markPurchase } from './_dupe-guard.js';
+import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
+
+assertLiveRoom(ZOOM_MAIN);
+// All-In kickoff: the weekly Q&A Clarity Call, every Sunday 7pm ET, same room
+// as ZOOM_MAIN. The date label is the NEXT Sunday from send-time so a buyer
+// who joins mid-week always sees the correct upcoming date instead of a
+// hardcoded one going stale. Reads the ET weekday directly from Intl instead
+// of round-tripping through `new Date(toLocaleString(...))`, which reparses
+// the formatted string in the SERVER's local timezone and silently drifts a
+// day whenever the server isn't already US-Eastern.
+function nextSundayLabel() {
+  const now = new Date();
+  const etWeekday = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short' }).format(now);
+  const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const todayIdx = WEEKDAYS.indexOf(etWeekday);
+  const daysUntilSunday = (7 - todayIdx) % 7 || 7;
+  const target = new Date(now.getTime() + daysUntilSunday * 86400000);
+  return new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'long', day: 'numeric' }).format(target);
+}
+const ALLIN_KICKOFF_DATE_LABEL = nextSundayLabel();
+const ALLIN_KICKOFF_TIME_LABEL = '7:00pm ET';
 
 // ─── AMOUNT_TO_TIER (3-tier ladder) ───────────────────────────────────
 // cents → tier key. The ladder is cumulative good-better-best. Amount-routing
@@ -1248,26 +1269,43 @@ async function sendAllInConfirmation({ email, firstName, plan }) {
       : plan === 'plan'
       ? 'Your first payment is in and your spot is locked. The rest of your plan runs automatically every two weeks across the 12 weeks.'
       : 'You are all in, paid in full. Your spot is locked.';
+  // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome
+  // + the Sunday 7pm ET kickoff Q&A clarity call, same room every week
+  // (import from _zoom-rooms.mjs, never paste a URL — see that file's header
+  // for why). Intake-collection line kept: the call is the kickoff, not a
+  // replacement for Joel building the buyer's actual plan from their case.
   const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.65;background:#FAF6EF;">
-<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">You are in &middot; Life Beyond the Numbers</p>
-<h2 style="margin:0 0 1rem;font-weight:600;">Welcome in, ${name}.</h2>
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">You are in &middot; The Life Change Accelerator</p>
+<h2 style="margin:0 0 1rem;font-weight:600;">Congratulations, ${name}.</h2>
+<p>Prioritizing your health, on purpose, ahead of everything competing for that spot: that is not a small decision, and I do not treat it like one.</p>
 <p>${planLine}</p>
-<p>Here is what happens next. I personally build your plan around your numbers, your medications, and your history, so before we begin I need to see your case. Watch your inbox over the next day or two for your intake, and fill it out as completely as you can. The more I see, the sharper your plan.</p>
+<p style="margin:1.2rem 0;padding:0.9rem 1rem;background:#FFFFFF;border:1px solid #E4DACE;border-radius:10px;">
+<strong>We begin together this Sunday.</strong><br/>
+Q&amp;A Clarity Call &middot; Sunday, ${escAllIn(ALLIN_KICKOFF_DATE_LABEL)} at ${escAllIn(ALLIN_KICKOFF_TIME_LABEL)}<br/>
+<a href="${escAllIn(ZOOM_MAIN)}" style="color:#B93C20;font-weight:700;">Join on Zoom</a>
+</p>
+<p>Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.</p>
 <p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk the 12 weeks with you.</p>
-<p style="margin-top:1.6rem;">I am glad you decided. Let's get to work.</p>
+<p style="margin-top:1.6rem;">I am glad you decided. See you Sunday.</p>
 <p style="margin-top:1.2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
 <p style="color:#9A9A9A;font-size:0.78rem;margin:0;">Reply to this email any time. Educational content only, not medical advice.${process.env.BUSINESS_POSTAL_ADDRESS ? ` BraveWorks RN &middot; ${escAllIn(process.env.BUSINESS_POSTAL_ADDRESS)}` : ''}</p>
 </body></html>`;
-  const text = `Welcome in, ${firstName || 'there'}.
+  const text = `Congratulations, ${firstName || 'there'}.
+
+Prioritizing your health, on purpose, ahead of everything competing for that spot: that is not a small decision, and I do not treat it like one.
 
 ${planLine}
 
-Here is what happens next. I personally build your plan around your numbers, your medications, and your history, so before we begin I need to see your case. Watch your inbox over the next day or two for your intake, and fill it out as completely as you can.
+WE BEGIN TOGETHER THIS SUNDAY.
+Q&A Clarity Call: Sunday, ${ALLIN_KICKOFF_DATE_LABEL} at ${ALLIN_KICKOFF_TIME_LABEL}
+Join on Zoom: ${ZOOM_MAIN}
+
+Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.
 
 This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication.
 
-I am glad you decided. Let's get to work.
+I am glad you decided. See you Sunday.
 
 -- Joel Polley, RN
 BraveWorks RN / BPQuiz.com`;
@@ -1275,7 +1313,7 @@ BraveWorks RN / BPQuiz.com`;
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
-    subject: 'You are in — your first step is coming',
+    subject: 'Congratulations! Your journey starts Sunday (Q&A Clarity Call, 7pm ET)',
     html,
     text,
     headers: {
