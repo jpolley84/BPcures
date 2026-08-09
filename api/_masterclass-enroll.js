@@ -31,10 +31,12 @@ const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
 // Weekly Zoom (Mondays 7pm ET / 6pm CT, moved 2026-08-03), provided by Joel 2026-07-20.
-const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
-const ZOOM_MEETING_ID = '818 9344 4167';
-const ZOOM_PASSCODE = '846248';
-const ZOOM_ICS_URL = 'https://us06web.zoom.us/meeting/tZUlfuqsqj8rHNNki9GHqJ55fXCn5uxImAIf/ics?icsToken=DC3sn8fxTo0gb2QaOQAALAAAAK9PT-326cN619RyXU7_QMehYIfs6OmodrdJ1-eTKA8AlIkfZA_ac0hMlQBj7ia-cJxpYtWH335ZjhQhczAwMDAwMQ&meetingMasterEventId=QO1dTtP2SB6QlfVpLs29HQ';
+// 2026-08-09: room 81893444167 was a personal room carrying an individual's
+// full name, which showed on every recording. Retired. Canon: scripts/_zoom-rooms.mjs.
+const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+const ZOOM_MEETING_ID = '828 5171 5003';
+const ZOOM_PASSCODE = '027302';
+const ZOOM_ICS_URL = 'https://us06web.zoom.us/meeting/tZYlcuivrz4qGteAqlbK2AYwXusuC8S2hKkm/ics?meetingMasterEventId=s_n7ZdIRQQqFG74vSu1ypw';
 
 export function clean(s, max = 80) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';

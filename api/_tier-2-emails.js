@@ -47,8 +47,10 @@ export const YOUTUBE_URL   = 'https://www.youtube.com/@braveworksrn';
 // we fall back to the one live room. Joel should still update the Vercel var,
 // but the code no longer depends on him doing so before the next send.
 // Canon: scripts/_zoom-rooms.mjs.
-const ZOOM_LIVE = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
-const ZOOM_RETIRED_IDS = ['81541901408'];
+// 2026-08-09: 81893444167 joined the retired list. It was a personal room whose
+// owner's full name showed on every recording. Canon: scripts/_zoom-rooms.mjs.
+const ZOOM_LIVE = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+const ZOOM_RETIRED_IDS = ['81541901408', '81893444167'];
 
 function resolveZoomUrl() {
   const fromEnv = process.env.VITE_MONDAY_ZOOM_URL;

@@ -26,9 +26,11 @@ const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 
 // Keep in sync with api/masterclass-register.js (same weekly Zoom).
-const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/81893444167?pwd=VjZjyy8kaLQefTdja5sCxmKrY07tqz.1';
-const ZOOM_MEETING_ID = '818 9344 4167';
-const ZOOM_PASSCODE = '846248';
+// 2026-08-09: room 81893444167 was a personal room carrying an individual's
+// full name, which showed on every recording. Retired. Canon: scripts/_zoom-rooms.mjs.
+const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+const ZOOM_MEETING_ID = '828 5171 5003';
+const ZOOM_PASSCODE = '027302';
 
 const RATE_LIMIT_MS = 350;
 export const config = { maxDuration: 300 };
