@@ -344,7 +344,7 @@ Joel Polley, RN`,
   },
 
   sodium: {
-    subject: 'The science of your Sodium corner (the lake, explained)',
+    subject: 'The science of your Sodium corner (the sink, explained)',
     html: (firstName, nextCorner) => [
       p(`Hi ${firstName},`),
       p(`You are into your Sodium corner. This is the corner where the whole Triangle comes together, so the science here ties the other two corners into one picture. Let me give you the why under the daily steps.`),
@@ -352,9 +352,9 @@ Joel Polley, RN`,
       p(`The simplest version: sodium pulls water. Where sodium goes, water follows, so too much sodium sitting in your bloodstream means your body holds extra water, more volume in the pipes, more pressure on your artery walls. But sodium is not only the salt shaker. Your kidneys run on a balance between sodium and its partner, potassium, the famous sodium-potassium pump that every cell in your body uses. They work like a seesaw. When potassium is high, your kidneys flush sodium out. When potassium is low, which it is for most people on a modern diet, sodium stays put. The research is clear that the ratio of sodium to potassium matters more than sodium alone, and most people are eating too much sodium and far too little potassium. Your protocol fixes both ends of that seesaw with whole plants.`),
       h2('Vasopressin, the thirst signal that tightens your vessels'),
       p(`Here is the counterintuitive one. People assume drinking more water makes you hold more water. The opposite is true. When you are even mildly dehydrated, your body releases a hormone called vasopressin, also called ADH, antidiuretic hormone. Vasopressin tells your kidneys to hold on to water, and it directly squeezes your vessels tighter. Drink enough water and that signal turns down, your vessels relax, and your kidneys stop hoarding sodium and water. This is why the hydration step in your protocol is a keystone, not a throwaway, it is the tool that lets your body act on everything else you removed.`),
-      bigQuote('Three rivers, one lake. Stress and sugar both empty into sodium, plus the salt on your plate. That is why this corner closes the loop.'),
+      bigQuote('Three faucets, one sink. Stress and sugar both run into sodium, plus the salt on your plate. That is why this corner closes the loop.'),
       h2('The convergence: why stress and sugar both end up here'),
-      p(`Now the picture that makes the whole Triangle make sense. Remember the other two corners. Stress sends cortisol, and cortisol tells your kidneys to hold sodium. Sugar spikes insulin, and insulin tells your kidneys to hold sodium. So sodium retention is not just what you sprinkle on your food, it is the downstream meeting point where stress and sugar both empty out. Three rivers, one lake. This is why you cannot fix high blood pressure by attacking one corner and ignoring the others, and it is why walking sodium down drains the lake the other two keep filling.`),
+      p(`Now the picture that makes the whole Triangle make sense. Remember the other two corners. Stress sends cortisol, and cortisol tells your kidneys to hold sodium. Sugar spikes insulin, and insulin tells your kidneys to hold sodium. So sodium retention is not just what you sprinkle on your food, it is the downstream meeting point where stress and sugar both run out. Three faucets, one sink. The cuff reads the water level in the sink. You do not argue with the level, you find the faucet that is open widest and you close it. This is why you cannot fix high blood pressure by attacking one corner and ignoring the others, and it is why closing the sodium faucet lowers a level the other two keep filling.`),
       h2('The proof in the research'),
       p(`The way of eating this corner builds toward has been measured carefully. In a landmark randomized trial, the DASH eating pattern lowered blood pressure by about 11 mmHg systolic and 5.5 mmHg diastolic in eight weeks in people who started with high blood pressure (Appel and colleagues, New England Journal of Medicine, 1997). Across controlled trials, vegetarian eating patterns lower systolic pressure by roughly 5 mmHg on their own. I share those carefully and honestly, that is risk-factor improvement seen in studies, not a cure and not a promise about your specific reading. But it tells you the lever you are pulling, more potassium-rich plants and less processed sodium, has solid ground under it.`),
       callout({
@@ -377,7 +377,7 @@ VASOPRESSIN, THE THIRST SIGNAL THAT TIGHTENS VESSELS
 Counterintuitive: drinking enough water makes you hold LESS. When you are dehydrated, your body releases vasopressin (ADH), which tells the kidneys to hold water and squeezes your vessels tighter. Drink enough and that signal turns down, vessels relax, kidneys stop hoarding. That is why hydration is a keystone here.
 
 THE CONVERGENCE
-Stress sends cortisol (holds sodium). Sugar spikes insulin (holds sodium). So sodium retention is the downstream meeting point where stress and sugar both empty out, plus the salt on your plate. Three rivers, one lake. Walking sodium down drains the lake the other two corners keep filling, which is why this corner closes the loop.
+Stress sends cortisol (holds sodium). Sugar spikes insulin (holds sodium). So sodium retention is the downstream meeting point where stress and sugar both run out, plus the salt on your plate. Three faucets, one sink. The cuff reads the level in the sink; you close the faucet that is open widest. Closing the sodium faucet lowers a level the other two corners keep filling, which is why this corner closes the loop.
 
 THE PROOF
 In a landmark randomized trial, the DASH eating pattern lowered blood pressure by about 11 mmHg systolic and 5.5 mmHg diastolic in eight weeks in people with high blood pressure (Appel et al., NEJM, 1997). Vegetarian patterns lower systolic by roughly 5 mmHg in controlled trials. Risk-factor improvement seen in studies, not a cure or a promise, but the lever has solid ground.
@@ -425,13 +425,13 @@ function sugarCloserText(nextCorner) {
 
 function sodiumCloser(nextCorner) {
   if (nextCorner) {
-    return p(`When you finish these ten days, your next corner is <strong>${nextCorner}</strong>. Here is why you are not done: even with a perfect low-salt diet, an unmanaged ${nextCorner.toLowerCase()} load keeps refilling the lake from upstream. You have been bailing water; next you go shut off the tap that keeps telling your kidneys to hold the very sodium you just worked to release.`);
+    return p(`When you finish these ten days, your next corner is <strong>${nextCorner}</strong>. Here is why you are not done: even with a perfect low-salt diet, an unmanaged ${nextCorner.toLowerCase()} load keeps refilling the sink from upstream. You have been draining water; next you go close the faucet that keeps telling your kidneys to hold the very sodium you just worked to release.`);
   }
   return p(`This is your last corner of the loop, which means you are about to have closed every side of your Triangle. The Freedom Finale is waiting to teach you how to step back from daily policing and trust the body you rebuilt, with your doctor right beside you.`);
 }
 function sodiumCloserText(nextCorner) {
   if (nextCorner) {
-    return `NEXT: your ${nextCorner} corner. Even a perfect low-salt diet cannot hold if ${nextCorner.toLowerCase()} keeps refilling the lake from upstream. You have been bailing water; next you shut off the tap that tells your kidneys to hold the sodium you just released.`;
+    return `NEXT: your ${nextCorner} corner. Even a perfect low-salt diet cannot hold if ${nextCorner.toLowerCase()} keeps refilling the sink from upstream. You have been draining water; next you close the faucet that tells your kidneys to hold the sodium you just released.`;
   }
   return `This is your last corner, so you are about to have closed every side of your Triangle. The Freedom Finale teaches you to step back from daily policing and trust the body you rebuilt, with your doctor beside you.`;
 }
@@ -819,7 +819,7 @@ const day30 = {
     }
     return [
       p(`Hi ${firstName},`),
-      p(`Thirty days ago your blood pressure was a number you policed. You walked all three corners. You calmed the stress that was holding sodium, steadied the sugar that was holding sodium, and drained the lake itself. Take a breath and let that land. Most people never get this far.`),
+      p(`Thirty days ago your blood pressure was a number you policed. You walked all three corners. You calmed the stress that was holding sodium, steadied the sugar that was holding sodium, and closed the sodium faucet itself. Take a breath and let that land. Most people never get this far.`),
       h2('The part almost no one is ever taught'),
       p(`The Freedom Finale is the graduation piece, and its whole job is to teach you how to step back. Not step away from your doctor, never that, but step back from the white-knuckle, anxious, cuff-checking version of this. There is an old truth in the natural-health tradition that anxious self-monitoring is itself counter-therapeutic, the constant fear keeps the very stress response up that you worked to calm. Trusting the body you rebuilt is not the soft part of this. It is the physiological finish line.`),
       callout({
@@ -859,7 +859,7 @@ Joel Polley, RN`;
     }
     return `Hi ${firstName},
 
-Thirty days ago your blood pressure was a number you policed. You walked all three corners, calmed the stress holding sodium, steadied the sugar holding sodium, and drained the lake itself. Let that land. Most people never get this far.
+Thirty days ago your blood pressure was a number you policed. You walked all three corners, calmed the stress holding sodium, steadied the sugar holding sodium, and closed the sodium faucet itself. Let that land. Most people never get this far.
 
 THE PART ALMOST NO ONE IS TAUGHT
 The Freedom Finale teaches you to step back, not from your doctor, never that, but from the anxious, cuff-checking version of this. There is an old truth that anxious self-monitoring is itself counter-therapeutic; the constant fear keeps up the very stress response you worked to calm. Trusting the body you rebuilt is the physiological finish line.

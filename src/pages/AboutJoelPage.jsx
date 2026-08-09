@@ -79,7 +79,7 @@ const SCHEMA = {
       url: 'https://bpquiz.com',
       founder: { '@id': 'https://bpquiz.com/about/joel#joel' },
       description:
-        'BraveWorks RN teaches natural blood-pressure protocols through a 4-mechanism framework: vascular health, cortisol regulation, blood-sugar balance, and inflammation control.',
+        'BraveWorks RN teaches natural blood-pressure protocols through the BP Triangle: three everyday drivers of every reading, Stress, Sugar, and Sodium.',
     },
   ],
 };
@@ -90,18 +90,23 @@ const CREDS = [
   { icon: Leaf, title: 'Naturopathic-Trained', body: 'Trained in the herbal, mineral, and lifestyle protocols that the pharmaceutical model leaves out. Joining clinical rigor to root-cause medicine.' },
 ];
 
+// Corner names + order are canon: Stress, Sugar, Sodium.
+// BRAVEWORKS_FRAMEWORK_BIBLE.md sec 1.1. Aligned 2026-08-09 — this page had
+// been running the retired "Vascular / Cortisol / Blood Sugar Pressure" names
+// and a 4-mechanism (inflammation) schema claim that no other surface makes.
+// Do not reintroduce a fourth mechanism: it is three corners everywhere.
 const PILLARS = [
   {
-    name: 'Vascular Pressure',
-    body: 'Endothelial damage, nitric oxide deficiency, mineral depletion. The mechanical corner. What your vessels are physically doing.',
+    name: 'Stress Pressure',
+    body: 'Cortisol, sleep, autonomic dysregulation. It constricts your vessels, tells your kidneys to hold sodium, and spikes your glucose. The fastest-moving corner and the one most doctors won\'t mention.',
   },
   {
-    name: 'Cortisol Pressure',
-    body: 'Stress, sleep, autonomic dysregulation. The fastest-moving corner and the one most doctors won\'t mention.',
+    name: 'Sugar Pressure',
+    body: 'Insulin resistance, late eating, refined carbs. Insulin tells your kidneys to hold sodium and keeps cortisol dysregulated. Your A1c, fasting glucose, and fasting insulin all live here.',
   },
   {
-    name: 'Blood Sugar Pressure',
-    body: 'Insulin resistance, glucose-driven vessel damage, sodium retention. The metabolic corner. Your A1c, fasting glucose, and fasting insulin all live here.',
+    name: 'Sodium Pressure',
+    body: 'Sodium and potassium out of balance, dehydration, arterial stiffness. Water follows salt, so volume rises and pressure follows. This is the convergence point where the other two corners empty out.',
   },
 ];
 

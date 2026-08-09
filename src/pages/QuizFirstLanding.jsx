@@ -184,6 +184,14 @@ export default function QuizFirstLanding() {
           minutes. Your loudest one, named.
         </p>
 
+        {/* Five Doors bridge sentence — MANDATORY wherever the 5 hand off to the
+            Triangle. Verbatim from BRAVEWORKS_FRAMEWORK_BIBLE.md sec 1.3. Without it
+            readers think there are five corners; there are three. Do not reword. */}
+        <p style={{ ...subStyle, marginBottom: '1.75rem' }}>
+          Hormones and sleep are not a fourth and fifth corner. They are the two loudest doors
+          into the Stress corner. Five doors. Three corners. One Triangle.
+        </p>
+
         <button type="button" style={ctaStyle} onClick={() => startCheck('bottom')}>
           Start My Free Check <ArrowRight size={18} />
         </button>
