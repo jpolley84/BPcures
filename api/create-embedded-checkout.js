@@ -441,6 +441,16 @@ export default async function handler(req, res) {
         line_items: [{ price: resolved.priceId, quantity: 1 }],
         metadata,
         customer_creation: 'always',
+        // 2026-08-09 (Joel): collect a phone at the pay screen. The Aug 4-6
+        // cohort produced 75 paid seats and ZERO phone numbers, because the
+        // seat record is built entirely from the Stripe session and Stripe
+        // does not ask unless told to. These are the highest-intent people on
+        // the list (they paid), so they are exactly the ones worth being able
+        // to reach. Stripe renders this as a required field with a country
+        // picker and validates the shape, which is why nothing here re-checks
+        // it. Arrives as session.customer_details.phone and is persisted by
+        // api/challenge-signup.js. Not wired to any auto-SMS.
+        phone_number_collection: { enabled: true },
         return_url: `${siteUrl}/challenge-confirmed?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
         ...(email ? { customer_email: email } : {}),
       });

@@ -1780,6 +1780,7 @@ function TierCard({ tier, doorsClosed, active, onChoose, onWaitlist }) {
         <div id="free-seat" style={{ scrollMarginTop: 90 }}>
           <SignupForm
             intent="free-register"
+            phoneOptional
             buttonLabel="Save my free seat"
             successLine="You are in. Your seat is saved, and your confirmation is on its way to your inbox."
             microcopy="Free. No card, nothing renews. Unsubscribe anytime."
@@ -2226,7 +2227,17 @@ function Deadline({ doorsClosed, left }) {
    with Joel's real address as the fallback, never swallowed into a fake
    success state.
    ========================================================================== */
-function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, onDark, askPhone }) {
+// askPhone       show the phone field and REQUIRE it (next-cohort waitlist)
+// phoneOptional  show the phone field and accept an empty one (free seat)
+//
+// 2026-08-09 (Joel): the Aug 4-6 cohort produced 75 seats and zero phone
+// numbers. 69 of those came through THIS free form, so the phone field has to
+// live here or the capture does not happen. It is optional on the free seat on
+// purpose: a required field on a free registration is a conversion tax, and a
+// seat is worth more than a number. A typed number that is too short is
+// treated as "left blank" rather than as an error, so a half-finished phone
+// never costs somebody their seat.
+function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, onDark, askPhone, phoneOptional }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -2238,12 +2249,15 @@ function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, 
       setState('error');
       return;
     }
-    // Phone is required only where the form asks for it (the next-cohort
-    // waitlist, 2026-08-04 Joel). 7+ digits after stripping formatting.
-    if (askPhone && phone.replace(/\D/g, '').length < 7) {
+    // Phone is required only on the waitlist (2026-08-04 Joel). 7+ digits after
+    // stripping formatting. On the optional variant a short number is dropped,
+    // not rejected.
+    const phoneDigits = phone.replace(/\D/g, '');
+    if (askPhone && phoneDigits.length < 7) {
       setState('error');
       return;
     }
+    const phoneToSend = phoneDigits.length >= 7 ? phone.trim() : '';
     setState('sending');
     try {
       // intent is EXPLICIT. The endpoint defaults an intent-less body to
@@ -2256,7 +2270,7 @@ function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, 
           intent,
           email: email.trim(),
           firstName: name.trim(),
-          ...(askPhone ? { phone: phone.trim() } : {}),
+          ...(askPhone || phoneOptional ? { phone: phoneToSend } : {}),
           ...(tier ? { tier } : {}),
         }),
       });
@@ -2313,19 +2327,26 @@ function SignupForm({ intent, tier, buttonLabel, successLine, microcopy, event, 
           placeholder="you@example.com"
         />
       </label>
-      {askPhone && (
+      {(askPhone || phoneOptional) && (
         <label>
-          <span style={{ color: labelColor }}>Phone number</span>
+          <span style={{ color: labelColor }}>
+            Phone number{phoneOptional ? ' (optional)' : ''}
+          </span>
           <input
             className="tpc-input"
             type="tel"
-            required
+            required={Boolean(askPhone)}
             autoComplete="tel"
             inputMode="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="(555) 555-5555"
           />
+          {phoneOptional && (
+            <span style={{ display: 'block', marginTop: 4, fontSize: '.74rem', color: onDark ? C.creamDim : C.dim }}>
+              Only so we can text you the Zoom link if your email lands in spam. No marketing texts.
+            </span>
+          )}
         </label>
       )}
       <button type="submit" className="tpc-btn tpc-btn-gold" disabled={state === 'sending'}>

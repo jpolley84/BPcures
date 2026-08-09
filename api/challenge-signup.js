@@ -271,6 +271,18 @@ function esc(s) {
 
 // Strips ASCII control characters (CR and LF included, so nothing can be
 // smuggled into a mail header), then trims and caps the length.
+// Phone shape, shared by every path that accepts one from a request body
+// (free seat + waitlist). Digits and a leading + survive; 7-15 digits is the
+// E.164 range. Anything outside it returns '' rather than throwing, because on
+// every one of these forms the EMAIL is the thing that matters and a bad phone
+// must never block the capture. The paid path does not use this: Stripe
+// validates the number itself and it is read from the session.
+function normalizePhoneOrEmpty(input) {
+  const raw = String(input || '').replace(/[^\d+]/g, '');
+  const digits = raw.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15 ? raw : '';
+}
+
 function clean(s, max = 80) {
   return typeof s === 'string' ? s.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, max) : '';
 }
@@ -709,6 +721,13 @@ async function handleRegister(req, res) {
     email,
     firstName,
     fullName: clean(session.customer_details?.name || ''),
+    // 2026-08-09 (Joel): phone_number_collection is enabled on the challenge
+    // Checkout Session (api/create-embedded-checkout.js), so Stripe asks for a
+    // number at the pay screen and validates it. Read from the SESSION, never
+    // from the request body, for the same reason the email is: a stranger must
+    // not be able to attach their own number to somebody else's seat. Empty
+    // string when absent so the field always exists on the record.
+    phone: clean(session.customer_details?.phone || ''),
     tier,
     seat: isVip ? 'vip' : 'ga',
     cohort: CHALLENGE.cohort,
@@ -875,6 +894,13 @@ async function handleFreeRegister(req, res) {
     email,
     firstName,
     fullName: clean(req.body?.name || firstName),
+    // 2026-08-09 (Joel): OPTIONAL on the free seat. Same 7-15 digit shape check
+    // the waitlist uses; anything else is stored empty rather than rejected, so
+    // a mistyped number can never cost somebody a free seat. Body-sourced is
+    // fine here because there is no payment to impersonate: the only thing a
+    // bad actor could do is attach a wrong number to an address they already
+    // typed. Never used for auto-SMS.
+    phone: normalizePhoneOrEmpty(req.body?.phone),
     tier: 'challenge-ga',
     seat: 'ga',
     cohort: CHALLENGE.cohort,
@@ -955,9 +981,7 @@ async function handleInterest(req, res, mode) {
   // number. Digits only, 7-15 after stripping formatting; anything else is
   // stored as empty rather than rejected, so a bad phone never blocks the
   // email capture. Kept alongside the record, never used for auto-SMS.
-  const rawPhone = String(req.body?.phone || '').replace(/[^\d+]/g, '');
-  const phoneDigits = rawPhone.replace(/\D/g, '');
-  const phone = phoneDigits.length >= 7 && phoneDigits.length <= 15 ? rawPhone : '';
+  const phone = normalizePhoneOrEmpty(req.body?.phone);
 
   const kvUp = Boolean(process.env.KV_REST_API_URL);
   let already = false;
