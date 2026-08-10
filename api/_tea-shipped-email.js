@@ -47,14 +47,35 @@ export function firstNameOf(name) {
   return /^[A-Za-z'’-]{2,}$/.test(first) ? first : '';
 }
 
+// Brewing guidance, expanded 2026-08-10 (Joel): the single-line version left
+// buyers guessing at water volume, temperature, iced brewing and how long a
+// pouch lasts. Every figure here is either a brewing instruction or a claim the
+// product itself already makes (the 100 g pouch is sold as a one month supply).
+// Deliberately NO cups-per-pouch count: that number was never measured against
+// how the pouches are actually filled, and an invented figure in a customer
+// email is not worth the convenience.
 const BLENDS = {
   steady: {
     product: 'SVUTU Steady',
-    cup: 'One rounded teaspoon in hot water, steeped 8 to 10 minutes, once or twice a day. Hibiscus is the reason it turns deep red.',
+    brew: [
+      'One rounded teaspoon per cup, about 8 to 10 oz of just boiled water.',
+      'Steep 8 to 10 minutes with something over the cup. Longer is fine, it will not turn bitter.',
+      'Once or twice a day. Most people take one in the morning and one in the evening.',
+      'Hot or iced both work. For iced, brew it double strength and pour it over ice.',
+      'Your 100 g pouch is a one month supply at a cup a day.',
+      'Hibiscus is the reason it turns deep red.',
+    ],
   },
   satin: {
     product: 'SVUTU Satin',
-    cup: 'One rounded teaspoon in hot water, steeped 8 to 10 minutes, once or twice a day. Sage, fennel and spearmint, nothing else.',
+    brew: [
+      'One rounded teaspoon per cup, about 8 to 10 oz of just boiled water.',
+      'Steep 8 to 10 minutes with something over the cup. Longer is fine, it will not turn bitter.',
+      'Once or twice a day. Most people take one in the morning and one in the evening.',
+      'Hot or iced both work. For iced, brew it double strength and pour it over ice.',
+      'Your 100 g pouch is a one month supply at a cup a day.',
+      'Sage, fennel and spearmint, nothing else.',
+    ],
   },
 };
 
@@ -84,7 +105,12 @@ export function buildTeaShippedEmail({ firstName, blend = 'steady', items, order
        <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:${ACCENT};margin-bottom:8px;">Your order${orderRef ? ` · ${orderRef}` : ''}</div>
        <div style="font-size:15.5px;line-height:1.6;color:${INK};">${list}</div>
      </div>`,
-    p(`<b>How to drink it.</b> ${b.cup}`),
+    `<div style="font-size:16px;line-height:1.65;color:${SOFT};margin:0 0 16px;">
+       <b style="color:${INK};">How to brew it.</b>
+       <ul style="margin:8px 0 0;padding-left:20px;">
+         ${b.brew.map((l) => `<li style="margin-bottom:5px;">${l}</li>`).join('')}
+       </ul>
+     </div>`,
     p(`One honest note: this is a food, not a medicine. If you take prescriptions, keep taking them exactly as your doctor directed. The tea joins your care, it never replaces it.`),
     p(`When it lands, I would genuinely like to hear about it. Reply to this email and tell me it arrived, and then tell me how it goes once you have been drinking it a week or two. I read every reply myself.`),
     p(`Thank you for your patience with us, and for trusting us with this.`),
@@ -112,8 +138,8 @@ ${textOpening}
 YOUR ORDER${orderRef ? ` (${orderRef})` : ''}
 ${(items && items.length ? items : [{ name: b.product, qty: 1 }]).map((i) => `${i.qty} x ${i.name}`).join('\n')}
 
-HOW TO DRINK IT
-${b.cup}
+HOW TO BREW IT
+${b.brew.map((l) => `- ${l}`).join('\n')}
 
 One honest note: this is a food, not a medicine. If you take prescriptions, keep taking them exactly as your doctor directed. The tea joins your care, it never replaces it.
 
