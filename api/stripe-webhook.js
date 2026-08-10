@@ -42,6 +42,7 @@ import {
   TIER_CONFIG,
 } from './purchase-confirmation.js';
 import { capturePurchase } from './_posthog.js';
+import { tagPurchasedByEmail } from './_manychat-tag.js';
 // Cross-webhook coordination with the braveworks-bp handler on this shared
 // Stripe account: triangle owns any session whose price id is in its
 // TIER_PRICE_IDS (this webhook defers entirely), claimSession is the shared
@@ -576,6 +577,11 @@ curl -X POST https://bpquiz.com/api/test-purchase-email \\
     });
     return { action: 'skipped', reason: 'no_email' };
   }
+
+  // DM Engine Revamp 2026-08-10: tag the buyer "Purchased" in ManyChat so the
+  // 3-day auto-prune skips them and +20h nudges stand down. Best-effort,
+  // dormant until MANYCHAT_API_KEY is set; must never affect delivery.
+  try { await tagPurchasedByEmail(customerEmail); } catch { /* best effort */ }
 
   // Resolve tier_slug from the line items → product metadata.
   const tierSlug = await resolveTierSlug(stripe, session.id);

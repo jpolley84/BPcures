@@ -28,6 +28,7 @@ const QuizPage = lazy(() => import('./pages/QuizPage'));
 // renders via HomeSplit; the quiz + email gate + results live at /triggers.
 const TriggerQuizPage = lazy(() => import('./pages/TriggerQuizPage'));
 // 2026-07-26 foods101-v1: the squeeze + its tripwire thank-you page.
+const AskPage = lazy(() => import('./pages/AskPage'));
 const FoodsGuideLanding = lazy(() => import('./pages/FoodsGuideLanding'));
 const FoodsGuideThanks = lazy(() => import('./pages/FoodsGuideThanks'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
@@ -193,6 +194,7 @@ function App() {
           {/* 101 Foods funnel — the squeeze is also reachable directly (for ad
               and email traffic that should skip the A/B split entirely), and
               the thank-you page carries the $17 offer. */}
+          <Route path="/ask" element={<AskPage />} />
           <Route path="/101foods" element={<FoodsGuideLanding />} />
           <Route path="/101foods-thanks" element={<FoodsGuideThanks />} />
 
