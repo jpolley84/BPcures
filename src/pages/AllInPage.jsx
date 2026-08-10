@@ -52,8 +52,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { track } from '../utils/analytics';
 import ClosingSoonBanner from '../components/ClosingSoonBanner';
-// Annie + Joel, the photo Joel supplied 2026-08-06.
-import heroImg from '../assets/life-change-accelerator.jpg';
+// Annie + Joel in navy scrubs, supplied by Joel 2026-08-10 to replace the
+// 08-06 photo. The source PNG arrived letterboxed with 237px of black above
+// and 464px below; those bars were cropped off before import, because on a
+// white page they render as black bands that read as a broken image rather
+// than as a design. Source kept in ~/Downloads/"Untitled design.png".
+import heroImg from '../assets/annie-joel-scrubs.jpg';
 
 // ─── palette (monochrome, unchanged from the 2026-08-06 restyle) ─────────
 const C = {
@@ -221,7 +225,7 @@ export default function AllInPage() {
       {/* Sticky closing-tonight bar. Renders null once the deadline passes,
           so this page quietly returns to normal rather than showing a dead
           timer. See the component header for why it never rolls over. */}
-      <ClosingSoonBanner href="#apply" label="Apply before midnight" />
+      <ClosingSoonBanner href="#apply" label="Apply now" />
 
       {/* ── HERO ──────────────────────────────────────────────────────
           2026-08-10 rebuild (Joel): words first, picture last. The old hero

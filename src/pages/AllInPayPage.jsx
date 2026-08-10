@@ -189,7 +189,7 @@ export default function AllInPayPage() {
     <main style={{ background: C.cream, color: C.ink, fontFamily: '"Inter", system-ui, sans-serif', minHeight: '100vh' }}>
       {/* Same deadline as /allin. The CTA scrolls to the options rather than
           off to the application, because everyone here already decided. */}
-      <ClosingSoonBanner href="#choose" label="Enroll before midnight" />
+      <ClosingSoonBanner href="#choose" label="Enroll now" />
       <div style={{ maxWidth: 620, margin: '0 auto', padding: '48px 20px 72px' }}>
 
         <p style={{ fontSize: 12, letterSpacing: '0.18em', color: C.muted, margin: '0 0 14px', fontWeight: 700 }}>

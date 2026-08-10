@@ -28,10 +28,26 @@
 import { useEffect, useState } from 'react';
 import { zonedInstant } from '../utils/tz.js';
 
-// ⚠️ REAL DEADLINE. Eastern wall time. Midnight ending Monday 2026-08-10,
-// i.e. the instant Tuesday begins. Set by Joel 2026-08-10.
-export const CLOSE_ISO_ET = '2026-08-11T00:00:00';
+// ⚠️ REAL DEADLINE. Eastern wall time.
+// 2026-08-10, second setting: Joel moved it from "midnight tonight" to a
+// 48-hour window. This is midnight ending WEDNESDAY 2026-08-12, i.e. the
+// instant Thursday begins. Landing on a midnight boundary rather than an
+// exact 48:00:00 from the moment he asked, because "closes Wednesday at
+// midnight" is a thing a customer can hold in her head and "closes Wednesday
+// at 5:17pm" is not.
+export const CLOSE_ISO_ET = '2026-08-13T00:00:00';
 const CLOSE_AT = zonedInstant(CLOSE_ISO_ET, 'America/New_York');
+
+// Every word about WHEN is derived from CLOSE_AT, never typed twice. The first
+// version of this file hardcoded "CLOSING TONIGHT" and "closes at midnight
+// Eastern", which was true for a same-night deadline and became false the
+// moment the deadline moved two days out. Deriving it means moving the date is
+// a one-line change that cannot leave stale copy behind.
+const CLOSE_WEEKDAY = new Intl.DateTimeFormat('en-US', {
+  weekday: 'long', timeZone: 'America/New_York',
+  // The deadline instant IS the next day at 00:00, so name the day that just
+  // ended: "Wednesday at midnight", not "Thursday at midnight".
+}).format(new Date(CLOSE_AT.getTime() - 1000));
 
 const two = (n) => String(Math.floor(n)).padStart(2, '0');
 
@@ -45,7 +61,7 @@ function parts(msLeft) {
   };
 }
 
-export default function ClosingSoonBanner({ href = '#apply', label = 'Apply before midnight' }) {
+export default function ClosingSoonBanner({ href = '#apply', label = 'Apply now' }) {
   const [left, setLeft] = useState(() => CLOSE_AT.getTime() - Date.now());
 
   useEffect(() => {
@@ -58,8 +74,14 @@ export default function ClosingSoonBanner({ href = '#apply', label = 'Apply befo
   if (left <= 0) return null;
 
   const { days, hours, minutes, seconds } = parts(left);
+  // Under a day it really is closing tonight; above that it is not, and saying
+  // so anyway is the kind of small lie that costs the whole page its credit.
+  const closingTonight = left < 24 * 3600 * 1000;
+  const whenWords = closingTonight
+    ? 'at midnight Eastern tonight'
+    : `${CLOSE_WEEKDAY} at midnight Eastern`;
   const spoken =
-    `Enrollment closes at midnight Eastern. About ` +
+    `Enrollment closes ${whenWords}. About ` +
     (days > 0 ? `${days} day${days === 1 ? '' : 's'} and ${hours} hours` : `${hours} hours and ${minutes} minutes`) +
     ` remain.`;
 
@@ -129,7 +151,7 @@ export default function ClosingSoonBanner({ href = '#apply', label = 'Apply befo
               style={{ width: 9, height: 9, borderRadius: '50%', background: '#FFFFFF', display: 'inline-block' }}
             />
             <span className="bw-close-eyebrow" style={{ fontSize: 13.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              Closing tonight
+              {closingTonight ? 'Closing tonight' : `Closing ${CLOSE_WEEKDAY}`}
             </span>
           </span>
 
@@ -162,7 +184,7 @@ export default function ClosingSoonBanner({ href = '#apply', label = 'Apply befo
           maxWidth: 900, margin: '8px auto 0', textAlign: 'center',
           fontSize: 11.5, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.66)',
         }}>
-          Enrollment at $1,997 closes at midnight Eastern. The next opening is planned at $4,997.
+          Enrollment at $1,997 closes {whenWords}. The next opening is planned at $4,997.
         </p>
         <span style={{
           position: 'absolute', width: 1, height: 1, overflow: 'hidden',
