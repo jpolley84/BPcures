@@ -78,6 +78,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 import { KIT_FILE_COUNT, KIT_PRICE } from '../data/kitStack';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
+// NOTE: `export ... from` alone would NOT give this module a local binding, and
+// START_AT/CLOSE_AT below call zonedInstant at module scope. Import it too.
+import { zonedInstant } from '../utils/tz.js';
 // Joel's supplied hero banner (2026-08-04): Annie + Joel, gold on black,
 // "Free 3-Day Challenge / Change My Life Challenge". 851x315. Imported through
 // Vite so it ships hashed under /assets/, which the SPA rewrite excludes.
@@ -286,32 +289,13 @@ function useChallengeFonts() {
 
 /* ==========================================================================
    TIMEZONE + COUNTDOWN
-   zoneOffsetMs resolves a real IANA offset at an instant instead of hardcoding
-   -4 or -5, so the November DST change cannot slide the target by an hour.
+   2026-08-10: zoneOffsetMs/zonedInstant MOVED to src/utils/tz.js so the
+   closing-soon banner could share them instead of keeping a second copy that
+   would eventually drift. Re-exported here because this page has exported
+   zonedInstant since July and something outside the repo may link to it.
+   Behavior is byte-identical; the implementation just lives elsewhere now.
    ========================================================================== */
-function zoneOffsetMs(d, timeZone) {
-  try {
-    const utc = new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const local = new Date(d.toLocaleString('en-US', { timeZone }));
-    return local.getTime() - utc.getTime();
-  } catch {
-    return -4 * 3600 * 1000; // EDT fallback
-  }
-}
-
-// 'YYYY-MM-DDTHH:mm:ss' read as wall time in `timeZone`, returned as a real
-// instant. Two passes: the first uses the offset at the naive instant, the
-// second re-reads the offset at the corrected instant, which is what makes it
-// correct on either side of a DST boundary.
-export function zonedInstant(isoLocal, timeZone = 'America/New_York') {
-  const [datePart, timePart = '00:00:00'] = String(isoLocal).split('T');
-  const [y, mo, d] = datePart.split('-').map(Number);
-  const [h, mi, s] = timePart.split(':').map(Number);
-  const naive = Date.UTC(y, (mo || 1) - 1, d || 1, h || 0, mi || 0, s || 0);
-  let instant = naive - zoneOffsetMs(new Date(naive), timeZone);
-  instant = naive - zoneOffsetMs(new Date(instant), timeZone);
-  return new Date(instant);
-}
+export { zonedInstant };
 
 const START_AT = zonedInstant(CHALLENGE.START_ISO_ET, 'America/New_York');
 // Doors-close instant: midnight ending Wednesday, NOT start of Night 1

@@ -50,6 +50,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { track } from '../utils/analytics';
+import ClosingSoonBanner from '../components/ClosingSoonBanner';
 // Annie + Joel, the photo Joel supplied 2026-08-06.
 import heroImg from '../assets/life-change-accelerator.jpg';
 
@@ -215,6 +216,11 @@ export default function AllInPage() {
 
   return (
     <main style={{ background: C.cream, color: C.ink, fontFamily: '"Inter", system-ui, sans-serif' }}>
+
+      {/* Sticky closing-tonight bar. Renders null once the deadline passes,
+          so this page quietly returns to normal rather than showing a dead
+          timer. See the component header for why it never rolls over. */}
+      <ClosingSoonBanner href="#apply" label="Apply before midnight" />
 
       {/* ── HERO ─────────────────────────────────────────────────────── */}
       <Section tight>

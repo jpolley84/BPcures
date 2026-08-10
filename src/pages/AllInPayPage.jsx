@@ -35,6 +35,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { ShieldCheck, Lock } from 'lucide-react';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
+import ClosingSoonBanner from '../components/ClosingSoonBanner';
 
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
@@ -186,6 +187,9 @@ export default function AllInPayPage() {
 
   return (
     <main style={{ background: C.cream, color: C.ink, fontFamily: '"Inter", system-ui, sans-serif', minHeight: '100vh' }}>
+      {/* Same deadline as /allin. The CTA scrolls to the options rather than
+          off to the application, because everyone here already decided. */}
+      <ClosingSoonBanner href="#choose" label="Enroll before midnight" />
       <div style={{ maxWidth: 620, margin: '0 auto', padding: '48px 20px 72px' }}>
 
         <p style={{ fontSize: 12, letterSpacing: '0.18em', color: C.muted, margin: '0 0 14px', fontWeight: 700 }}>
@@ -204,7 +208,7 @@ export default function AllInPayPage() {
         </p>
 
         {/* ── the four options ─────────────────────────────────────── */}
-        <div role="radiogroup" aria-label="Payment option" style={{ margin: '0 0 28px' }}>
+        <div id="choose" role="radiogroup" aria-label="Payment option" style={{ margin: '0 0 28px', scrollMarginTop: 92 }}>
           {OPTIONS.map((o) => {
             const active = o.key === selected;
             return (
