@@ -94,6 +94,7 @@ const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPa
 // $1,997 "All In" 90-Day Program checkout (offer stack + embedded Stripe, 3 pay
 // options: full / deposit / bi-weekly plan). Focused checkout, no SiteLayout.
 const AllInPage = lazy(() => import('./pages/AllInPage'));
+const AllInPayPage = lazy(() => import('./pages/AllInPayPage'));
 const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
 // SVUTU Satin (hormoneteas.com) on the embedded rail — Satin-branded checkout +
 // post-purchase "double your order for a friend" one-click. hormoneteas.com
@@ -342,11 +343,14 @@ function App() {
           <Route path="/case-review" element={<SiteLayout><CaseReviewPage /></SiteLayout>} />
           <Route path="/case-review-confirmed" element={<SiteLayout><CaseReviewConfirmedPage /></SiteLayout>} />
 
-          {/* $1,997 All In 90-Day Program. /allin = focused checkout (offer
-              stack + embedded Stripe, 3 pay options), NO SiteLayout so nothing
-              leaks the click. /allin-welcome = post-purchase landing the
-              embedded checkout redirects to. */}
+          {/* $1,997 All In 90-Day Program ("The Life Change Accelerator").
+              2026-08-10: /allin is now an APPLICATION and takes no money.
+              /allin/pay is the skip-the-line checkout for people who already
+              decided (4 pay options, installments capped by the webhook).
+              /allin-welcome = post-purchase landing. None wrapped in
+              SiteLayout so nothing leaks the click. */}
           <Route path="/allin" element={<AllInPage />} />
+          <Route path="/allin/pay" element={<AllInPayPage />} />
           <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
 
           {/* SVUTU Satin embedded checkout + post-purchase double-order OTO.

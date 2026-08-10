@@ -340,14 +340,34 @@ export default async function handler(req, res) {
   // Recognized in the webhook by metadata offer:'all-in' + plan; the specific
   // price ids are a backstop. Joel is alerted on every All-In sale so he can
   // build the buyer's assessment/onboarding.
-  if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan') {
+  // 2026-08-10 (Joel): the installment ladder grew from one plan to three, all
+  // auto-deducted every 2 weeks, each priced above pay-in-full because the
+  // longer she takes the more it costs. Anchored on the ALREADY-LIVE 6 x $367:
+  //   full   $1,997 one-time
+  //   3pay   $699 x3 biweekly  = $2,097  (+5%)
+  //   plan   $367 x6 biweekly  = $2,202  (+10%)  <- unchanged, existing price
+  //   9pay   $267 x9 biweekly  = $2,403  (+20%)
+  // The cap lives in the WEBHOOK (processAllIn writes cancel_at), not here, so
+  // if you add a plan you MUST add its cancel window there too or it bills
+  // forever. See ALLIN_PLAN_CANCEL_SECONDS in api/triangle-webhook.js.
+  if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan'
+      || tier === 'allin-3pay' || tier === 'allin-9pay') {
     const ALLIN_PRICES = {
       'allin-full': process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',    // $1,997 one-time
       'allin-deposit': process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S', // $197 one-time
+      'allin-3pay': process.env.ALLIN_3PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZBD5jS4HK',    // $699 / 2wk recurring
       'allin-plan': process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',    // $367 / 2wk recurring
+      'allin-9pay': process.env.ALLIN_9PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZplplxLU5',    // $267 / 2wk recurring
     };
-    const plan = tier === 'allin-full' ? 'full' : tier === 'allin-deposit' ? 'deposit' : 'plan';
-    const isSub = tier === 'allin-plan';
+    const PLAN_BY_TIER = {
+      'allin-full': 'full',
+      'allin-deposit': 'deposit',
+      'allin-3pay': '3pay',
+      'allin-plan': 'plan',
+      'allin-9pay': '9pay',
+    };
+    const plan = PLAN_BY_TIER[tier];
+    const isSub = tier === 'allin-plan' || tier === 'allin-3pay' || tier === 'allin-9pay';
     const metadata = {
       funnel: 'braveworks-bp',
       brand: 'braveworks-bp',

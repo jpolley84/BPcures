@@ -1223,19 +1223,52 @@ Next step: pull their quiz + corners, review the case, and email them their exac
 const ALLIN_FULL_PRICE_ID = process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7';
 const ALLIN_DEPOSIT_PRICE_ID = process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S';
 const ALLIN_PLAN_PRICE_ID = process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS';
-// Cap = 6 bi-weekly charges (day 0, ~14, ~28, ~42, ~56, ~70). cancel_at at
-// now + 78 days ends the subscription after the 6th charge and before a 7th
-// (which would bill ~day 84) can post.
-const ALLIN_PLAN_CANCEL_SECONDS = 78 * 24 * 60 * 60;
+// 2026-08-10: two more installment prices, same bi-weekly cadence.
+const ALLIN_3PAY_PRICE_ID = process.env.ALLIN_3PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZBD5jS4HK';
+const ALLIN_9PAY_PRICE_ID = process.env.ALLIN_9PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZplplxLU5';
+
+// Which All-In plans ride a Stripe subscription and therefore MUST be capped.
+const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay']);
+
+// Cap windows, in seconds. Each sits between the last wanted charge and the
+// first unwanted one. Cap = 6 bi-weekly charges for 'plan' (day 0, ~14, ~28,
+// ~42, ~56, ~70); cancel_at at now + 78 days ends it after the 6th and before
+// a 7th (~day 84) can post. Same reasoning for the other two.
+const ALLIN_CANCEL_SECONDS = {
+  '3pay': 36 * 24 * 60 * 60,  // 3 charges: day 0, 14, 28. 4th would be day 42.
+  'plan': 78 * 24 * 60 * 60,  // 6 charges: day 0 ... 70. 7th would be day 84.
+  '9pay': 119 * 24 * 60 * 60, // 9 charges: day 0 ... 112. 10th would be day 126.
+};
+// Kept for anything still importing the old name.
+const ALLIN_PLAN_CANCEL_SECONDS = ALLIN_CANCEL_SECONDS.plan;
 
 // Resolve which All-In plan a session is (or null). Cheap metadata path first,
 // then a Stripe line-item price-id backstop.
 async function resolveAllInPlan(session) {
   const md = session.metadata || {};
   if (md.offer === 'all-in') {
+    // 2026-08-10 BUG FIX. This used to be:
+    //     if (md.plan === 'deposit') return 'deposit';
+    //     if (md.plan === 'plan')    return 'plan';
+    //     return 'full';
+    // The trailing `return 'full'` swallowed every plan it did not know about.
+    // When 3pay and 9pay were added that would have resolved a real
+    // subscription as a one-time 'full' payment, so ALLIN_SUB_PLANS would not
+    // match, cancel_at would never be written, and the customer would be
+    // charged $699 or $267 every two weeks FOREVER. Recognize each plan
+    // explicitly and only fall back to 'full' when there is no plan at all.
     if (md.plan === 'deposit') return 'deposit';
     if (md.plan === 'plan') return 'plan';
-    return 'full';
+    if (md.plan === '3pay') return '3pay';
+    if (md.plan === '9pay') return '9pay';
+    if (md.plan === 'full' || !md.plan) return 'full';
+    // A plan we do not recognize: never guess it is a one-time payment. If it
+    // is a subscription, guessing 'full' is the forever-billing bug above.
+    console.error(
+      `stripe-webhook: all-in session ${session.id} has unknown plan '${md.plan}'. ` +
+      'Refusing to resolve it. Add the plan to resolveAllInPlan and ALLIN_CANCEL_SECONDS.'
+    );
+    return null;
   }
   // Backstop: inspect line items for an All-In price id.
   try {
@@ -1245,6 +1278,8 @@ async function resolveAllInPlan(session) {
       const pid = li.price?.id;
       if (pid === ALLIN_DEPOSIT_PRICE_ID) return 'deposit';
       if (pid === ALLIN_PLAN_PRICE_ID) return 'plan';
+      if (pid === ALLIN_3PAY_PRICE_ID) return '3pay';
+      if (pid === ALLIN_9PAY_PRICE_ID) return '9pay';
       if (pid === ALLIN_FULL_PRICE_ID) return 'full';
     }
   } catch (err) {
@@ -1263,12 +1298,18 @@ async function sendAllInConfirmation({ email, firstName, plan }) {
   const name = firstName ? escAllIn(firstName) : 'there';
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
-  const planLine =
-    plan === 'deposit'
-      ? 'Your $197 deposit is in and your spot is locked. I will reach out about the remaining balance and your start date.'
-      : plan === 'plan'
-      ? 'Your first payment is in and your spot is locked. The rest of your plan runs automatically every two weeks across the 12 weeks.'
-      : 'You are all in, paid in full. Your spot is locked.';
+  // 2026-08-10: three installment plans now. The old ternary fell through to
+  // "paid in full" for anything it did not recognize, so a 3pay or 9pay buyer
+  // would have been told she was paid in full while her card kept getting
+  // charged every two weeks. Each plan states its own real cadence.
+  const ALLIN_BUYER_PLAN_LINES = {
+    deposit: 'Your $197 deposit is in and your spot is locked. I will reach out about the remaining balance and your start date.',
+    '3pay': 'Your first payment is in and your spot is locked. Two more payments of $699 run automatically every two weeks, three in total.',
+    plan: 'Your first payment is in and your spot is locked. Five more payments of $367 run automatically every two weeks, six in total.',
+    '9pay': 'Your first payment is in and your spot is locked. Eight more payments of $267 run automatically every two weeks, nine in total.',
+    full: 'You are all in, paid in full. Your spot is locked.',
+  };
+  const planLine = ALLIN_BUYER_PLAN_LINES[plan] || ALLIN_BUYER_PLAN_LINES.full;
   // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome
   // + the Sunday 7pm ET kickoff Q&A clarity call, same room every week
   // (import from _zoom-rooms.mjs, never paste a URL — see that file's header
@@ -1327,12 +1368,14 @@ BraveWorks RN / BPQuiz.com`;
 async function alertJoelAllIn({ sessionId, email, name, plan }) {
   if (!process.env.RESEND_API_KEY) return;
   const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
-  const planLine =
-    plan === 'deposit'
-      ? 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start.'
-      : plan === 'plan'
-      ? '6 x $367 bi-weekly plan ($2,202 over 12 weeks; subscription auto-capped after the 6th charge).'
-      : 'Paid in full ($1,997).';
+  const ALLIN_JOEL_PLAN_LINES = {
+    deposit: 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start.',
+    '3pay': '3 x $699 bi-weekly ($2,097 over 6 weeks; subscription auto-capped after the 3rd charge).',
+    plan: '6 x $367 bi-weekly ($2,202 over 12 weeks; subscription auto-capped after the 6th charge).',
+    '9pay': '9 x $267 bi-weekly ($2,403 over 18 weeks; subscription auto-capped after the 9th charge).',
+    full: 'Paid in full ($1,997).',
+  };
+  const planLine = ALLIN_JOEL_PLAN_LINES[plan] || `UNKNOWN PLAN '${plan}' — check Stripe before assuming anything.`;
   try {
     await getResend().emails.send({
       from: 'BraveWorks Ops <joel@bpquiz.com>',
@@ -1394,11 +1437,24 @@ async function processAllIn(session, plan = 'full') {
     console.warn('stripe-webhook: all-in KV record failed (non-fatal)', err.message);
   }
 
-  // ── Plan: cap the subscription at 6 bi-weekly charges ──
+  // ── Installment plans: cap the subscription at N bi-weekly charges ──
   // GUARDED so only an All-In subscription is ever touched: re-read the
   // subscription and require the all-in marker (on it or the session) before
   // writing cancel_at.
-  if (plan === 'plan' && session.subscription) {
+  //
+  // 2026-08-10: three installment plans now, not one. THIS BLOCK IS THE ONLY
+  // THING STOPPING THEM BILLING FOREVER. Stripe has no "charge N times then
+  // stop" for a plain recurring price, so the cap is cancel_at written here on
+  // the first webhook. A plan added to create-embedded-checkout.js WITHOUT an
+  // entry in ALLIN_CANCEL_SECONDS below would bill the customer every two
+  // weeks until she notices, which is why the fallthrough logs loudly instead
+  // of silently doing nothing.
+  //
+  // Each window sits between the last wanted charge and the first unwanted one:
+  //   3pay  charges day 0, 14, 28 (last)  next would be 42  -> cancel day 36
+  //   plan  charges day 0 ... 70 (last)   next would be 84  -> cancel day 78
+  //   9pay  charges day 0 ... 112 (last)  next would be 126 -> cancel day 119
+  if (ALLIN_SUB_PLANS.has(plan) && session.subscription) {
     try {
       const stripe = getStripe();
       const subId =
@@ -1407,10 +1463,17 @@ async function processAllIn(session, plan = 'full') {
       const smd = sub.metadata || {};
       const sessionMd = session.metadata || {};
       const isAllInSub = smd.offer === 'all-in' || sessionMd.offer === 'all-in';
+      const windowSeconds = ALLIN_CANCEL_SECONDS[plan];
       if (!isAllInSub) {
         console.warn('stripe-webhook: all-in plan session resolved but subscription lacks the marker, NOT capping', subId);
+      } else if (!windowSeconds) {
+        console.error(
+          `stripe-webhook: all-in plan '${plan}' has NO cancel window configured. ` +
+          `Subscription ${subId} will bill forever until it is capped by hand. ` +
+          'Add it to ALLIN_CANCEL_SECONDS.'
+        );
       } else if (!sub.cancel_at) {
-        const cancelAt = Math.floor(Date.now() / 1000) + ALLIN_PLAN_CANCEL_SECONDS;
+        const cancelAt = Math.floor(Date.now() / 1000) + windowSeconds;
         await stripe.subscriptions.update(subId, { cancel_at: cancelAt });
       }
     } catch (err) {

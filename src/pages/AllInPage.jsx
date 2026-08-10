@@ -428,6 +428,20 @@ export default function AllInPage() {
         </Section>
       </div>
 
+      {/*
+        Skip-the-line door. Deliberately quiet and deliberately LAST: the offer
+        is application-first by design, so this must not compete with the form
+        above it. It exists because a woman who already decided should not be
+        made to fill in an application to hand over money, and because Joel
+        needs a link to paste into a reply once he has said yes.
+      */}
+      <Section tight>
+        <p style={{ fontSize: 15, lineHeight: 1.7, color: C.muted, textAlign: 'center', margin: 0 }}>
+          Already know this is for you and would rather not wait?{' '}
+          <a href="/allin/pay" style={{ color: C.ink, fontWeight: 700 }}>Enroll now and choose how you want to pay.</a>
+        </p>
+      </Section>
+
       <footer style={{ background: C.cream, padding: '32px 20px 56px', borderTop: `1px solid ${C.line}` }}>
         <p style={{ maxWidth: 720, margin: '0 auto', fontSize: 12.5, lineHeight: 1.7, color: C.muted, textAlign: 'center' }}>
           Everything here is education-based nursing consultation, not medical advice, and it works alongside your
