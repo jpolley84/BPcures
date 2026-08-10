@@ -95,6 +95,7 @@ const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPa
 // options: full / deposit / bi-weekly plan). Focused checkout, no SiteLayout.
 const AllInPage = lazy(() => import('./pages/AllInPage'));
 const AllInPayPage = lazy(() => import('./pages/AllInPayPage'));
+const AllInThankYouPage = lazy(() => import('./pages/AllInThankYouPage'));
 const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
 // SVUTU Satin (hormoneteas.com) on the embedded rail — Satin-branded checkout +
 // post-purchase "double your order for a friend" one-click. hormoneteas.com
@@ -351,6 +352,7 @@ function App() {
               SiteLayout so nothing leaks the click. */}
           <Route path="/allin" element={<AllInPage />} />
           <Route path="/allin/pay" element={<AllInPayPage />} />
+          <Route path="/allin/thank-you" element={<AllInThankYouPage />} />
           <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
 
           {/* SVUTU Satin embedded checkout + post-purchase double-order OTO.

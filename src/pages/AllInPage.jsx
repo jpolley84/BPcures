@@ -49,6 +49,7 @@
 // replacement: no claim here says the program lowers anything.
 
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { track } from '../utils/analytics';
 import ClosingSoonBanner from '../components/ClosingSoonBanner';
 // Annie + Joel, the photo Joel supplied 2026-08-06.
@@ -178,9 +179,9 @@ function Beats({ lines, style }) {
   );
 }
 
-function Cta({ onClick, label = 'SEE IF WE ARE A GOOD FIT', sub }) {
+function Cta({ onClick, label = 'SEE IF WE ARE A GOOD FIT', sub, tight }) {
   return (
-    <div style={{ textAlign: 'center', margin: '32px 0 0' }}>
+    <div style={{ textAlign: 'center', margin: tight ? '20px 0 0' : '32px 0 0' }}>
       <button
         type="button"
         onClick={onClick}
@@ -222,36 +223,89 @@ export default function AllInPage() {
           timer. See the component header for why it never rolls over. */}
       <ClosingSoonBanner href="#apply" label="Apply before midnight" />
 
-      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      {/* ── HERO ──────────────────────────────────────────────────────
+          2026-08-10 rebuild (Joel): words first, picture last. The old hero
+          led with the photo and a quoted question; this one leads with the
+          reader. Requirements he set: call out the woman over 40 by name,
+          sentence form not staccato beats, bigger and bolder, braver, the
+          apply button ABOVE THE FOLD with a skip-the-line link under it, and
+          the $4,997 struck through.
+
+          ⚠️ ON THE STRUCK $4,997. It is labelled "Next enrollment" and NOT
+          "regular price", "was", or "value", and that wording is load-bearing.
+          $4,997 has never been charged for this program. Presenting a price
+          nobody has paid as a former price is a fictitious-former-price claim,
+          which is the exact pattern already flagged on Annie's /rising page.
+          Struck + "next enrollment" says the true thing Joel wanted said: you
+          are not paying that. Do not relabel it. */}
       <Section tight>
-        <p style={{ fontSize: 12, letterSpacing: '0.18em', color: C.muted, margin: '0 0 16px', fontWeight: 700 }}>
-          FOR THE WOMAN WHO HAS BEEN ASKING...
+        <p style={{ fontSize: 12.5, letterSpacing: '0.2em', color: C.muted, margin: '0 0 14px', fontWeight: 700 }}>
+          FOR WOMEN OVER 40
         </p>
-        <h1 style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 38, lineHeight: 1.12, margin: '0 0 28px', letterSpacing: '-0.02em' }}>
-          &ldquo;Annie, how can I actually work with you?&rdquo;
+
+        {/* ABOVE THE FOLD, and it is measured, not hoped: hook, one promise,
+            the price, the button. Everything that explains the program sits
+            BELOW the button. First build put the CTA at 1153px on a 720px
+            laptop, which is not above the fold on any screen a real person
+            owns. If you add a line up here, re-measure. */}
+        <h1 style={{
+          fontFamily: SERIF, fontWeight: 700, fontSize: 'clamp(31px, 5.4vw, 48px)',
+          lineHeight: 1.05, margin: '0 0 16px', letterSpacing: '-0.03em',
+        }}>
+          You are not behind. You have just never had anyone look at the whole picture with you.
         </h1>
-        <img
-          src={heroImg}
-          alt="Annie and Joel, registered nurses"
-          style={{ width: '100%', borderRadius: 8, display: 'block', margin: '0 0 28px' }}
-        />
-        <Beats lines={[
-          'Maybe you have watched the videos.',
-          'Downloaded the guides.',
-          'Bought the supplements.',
-          'Tried eating differently.',
-          'Started walking.',
-          'Promised yourself you would finally get serious.',
-          'And yet you are still sitting there thinking...',
-        ]} />
-        <H size={30} style={{ margin: '28px 0 24px' }}>
-          &ldquo;I know a lot. I just do not know what I should be doing for ME.&rdquo;
-        </H>
-        <P>If that is you, keep reading.</P>
-        <P>For the first time in almost a year, I am opening a small number of coaching places.</P>
-        <P>And this is the final opportunity to enter this coaching experience at:</P>
-        <p style={{ fontFamily: SERIF, fontSize: 46, fontWeight: 700, margin: '0 0 8px' }}>{PRICE}</p>
-        <Cta onClick={toForm} />
+
+        <p style={{ fontSize: 'clamp(17px, 2.1vw, 21px)', lineHeight: 1.5, color: C.ink, margin: '0 0 18px', fontWeight: 700 }}>
+          Twelve weeks of live weekly coaching with Annie and Joel, two registered nurses, plus guest
+          speakers. For the woman over 40 who is done doing this by herself.
+        </p>
+
+        {/* Struck future price, then what she actually pays. Compact so the
+            button clears the fold. The long version is below. */}
+        <div style={{
+          display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap',
+          borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`,
+          padding: '12px 0', margin: '0 0 18px',
+        }}>
+          <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 8 }}>
+            <span style={{ fontSize: 12, letterSpacing: '0.1em', color: C.muted, fontWeight: 700 }}>NEXT ENROLLMENT</span>
+            <s style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: C.muted }}>{NEXT_PRICE}</s>
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 8 }}>
+            <span style={{ fontSize: 12, letterSpacing: '0.1em', color: C.ink, fontWeight: 700 }}>YOU, TODAY</span>
+            <span style={{ fontFamily: SERIF, fontSize: 'clamp(38px, 7vw, 50px)', fontWeight: 700, lineHeight: 1 }}>{PRICE}</span>
+          </span>
+        </div>
+
+        <Cta onClick={toForm} tight />
+
+        <p style={{ textAlign: 'center', margin: '10px 0 0', fontSize: 15, lineHeight: 1.5 }}>
+          <a href="/allin/pay" style={{ color: C.ink, fontWeight: 700 }}>
+            Yes, I want to skip the line and enroll now
+          </a>
+        </p>
+
+        {/* ── below the button ─────────────────────────────────────── */}
+        <div style={{ marginTop: 40 }}>
+          <p style={{ fontSize: 'clamp(17px, 2.1vw, 20px)', lineHeight: 1.6, color: C.inkSoft, margin: '0 0 20px' }}>
+            You have watched the videos, bought the supplements and started over on more Mondays than you
+            can count. Somewhere along the way getting healthy turned into seven different projects you
+            are managing by yourself, and nobody is looking at all of them together.
+          </p>
+          <p style={{ fontSize: 'clamp(17px, 2.1vw, 20px)', lineHeight: 1.6, color: C.ink, margin: '0 0 20px', fontWeight: 700 }}>
+            You do not need another folder of information. You need someone to tell you what to work on
+            first, and then walk it with you.
+          </p>
+          <p style={{ fontSize: 'clamp(16px, 2vw, 18.5px)', lineHeight: 1.65, color: C.inkSoft, margin: '0 0 20px' }}>
+            That is what this is. Every week you are in a live room with Annie and Joel, bringing your
+            questions, your numbers and your real life. Guest speakers join us for the things worth
+            hearing from someone else. For the first time in almost a year, we are opening a small
+            number of places.
+          </p>
+          <p style={{ fontSize: 15.5, lineHeight: 1.65, color: C.muted, margin: 0 }}>
+            You are not paying {NEXT_PRICE}. That is the price planned for the next time these doors open.
+          </p>
+        </div>
       </Section>
 
       {/* ── IT IS NOT JUST ONE THING ─────────────────────────────────── */}
@@ -413,6 +467,26 @@ export default function AllInPage() {
         <P>I am telling you that plainly because some of you have been waiting for me to coach again. I do not want you finding out afterward that this door was open today.</P>
       </Section>
 
+      {/* ── MEET THEM ─────────────────────────────────────────────────
+          The photo, moved here from the hero on 2026-08-10 (Joel: "move our
+          picture down towards the bottom of the page"). It lands better here
+          than at the top: by this point she has read what the program is and
+          what it costs, so the faces answer "who am I actually doing this
+          with" at the moment that question matters, right before the page
+          starts qualifying her. */}
+      <Section bg={C.paper}>
+        <img
+          src={heroImg}
+          alt="Annie and Joel, registered nurses"
+          style={{ width: '100%', borderRadius: 8, display: 'block', margin: '0 0 22px' }}
+        />
+        <H size={26} align="center" style={{ margin: '0 0 12px' }}>Annie and Joel, RNs</H>
+        <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: 0, textAlign: 'center' }}>
+          Two registered nurses who coach this together, every week, live. Plus the guest speakers we
+          bring in when someone else is the right person to hear it from.
+        </p>
+      </Section>
+
       {/* ── NOT FOR EVERYBODY ────────────────────────────────────────── */}
       <Section>
         <H>I do not want everybody to join.</H>
@@ -479,6 +553,7 @@ export default function AllInPage() {
    woman who thinks she applied.
    ========================================================================== */
 function ApplyForm() {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -533,8 +608,13 @@ function ApplyForm() {
         track('allin_apply_submit', { ok: false, status: res.status });
         return;
       }
-      setState('done');
       track('allin_apply_submit', { ok: true, fitTier: data.fitTier || null });
+      // 2026-08-10 (Joel): a dedicated thank-you page, not an inline block, so
+      // she gets a full screen with the two doors on it (ask a question, or
+      // skip the wait and check out). setState('done') is left below as the
+      // fallback render in case navigation is ever blocked.
+      setState('done');
+      navigate('/allin/thank-you');
     } catch {
       setState('error');
       setErrMsg('That did not go through. Please check your connection and try again.');
