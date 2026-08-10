@@ -122,6 +122,14 @@ export default async function handler(req, res) {
   const isBeThere = req.body.source === 'bethere-apply';
   if (isBeThere) return handleBeThere(req, res);
 
+  // 2026-08-10 (Joel): fourth payload shape — the /allin Quick Fit Application
+  // (AllInPage.jsx), source: 'allin-apply'. /allin STOPPED being an instant
+  // checkout on this date and became application-gated at $1,997, so this is
+  // now the only way in through that page. Fully additive; the three Stripe
+  // allin-* tiers in create-embedded-checkout.js are untouched so existing
+  // payment links and the active $367 bi-weekly subscriber keep working.
+  if (req.body.source === 'allin-apply') return handleAllIn(req, res);
+
   // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
   // closed; this endpoint is now serving Cohort 2 applications (the
   // 90-day group program opening May 24, 2026). Window stays open
@@ -811,6 +819,243 @@ async function handleBeThere(req, res) {
     if (ackResult.error) console.error('coaching-apply(bethere): applicant ack rejected by Resend', JSON.stringify(ackResult.error));
   } catch (err) {
     console.error('coaching-apply(bethere): applicant ack failed', err.message);
+  }
+
+  return res.status(200).json({ ok: true, submittedAt, fitTier });
+}
+
+// ---------------------------------------------------------------------------
+// 2026-08-10: /allin Quick Fit Application (source: 'allin-apply').
+//
+// WHAT CHANGED AND WHY IT MATTERS: /allin used to take money on the page (three
+// embedded Stripe tiers). Joel replaced it with an application, so nobody can
+// buy from /allin any more. That is deliberate, but it means THIS handler is
+// the only path from that page to a sale. If it 500s, the offer is dark, which
+// is why the notify-Joel-first ordering below is kept exactly as the other
+// paths have it.
+//
+// The page states a $200 reservation deposit against the $1,997 total. No money
+// is touched here and no Stripe price is created; the $200 is collected AFTER
+// acceptance, by Joel, out of band. NOTE the legacy allin-deposit Stripe price
+// is $197, not $200. Do not point anyone at it from this flow without making a
+// new price first, or the buyer is charged three dollars less than the page said.
+//
+// Fit scoring:
+//   COLD  readiness = "I mostly need more information."
+//         The page says plainly this is coaching and not an information
+//         library. Someone who wants information is not a bad person, they are
+//         a bad fit, and saying so beats selling a $1,997 answer to a question
+//         they did not ask.
+//   HOT   investment = "Pay in full"
+//   WARM  everyone else
+const ALLIN_READINESS_INFO = 'I mostly need more information.';
+const ALLIN_PAY_FULL = 'Pay in full';
+const ALLIN_NEEDS_DETAIL = 'I need to understand the program better first';
+
+function scoreAllIn(b) {
+  if (b.readiness === ALLIN_READINESS_INFO) return 'COLD';
+  if (b.investment === ALLIN_PAY_FULL) return 'HOT';
+  return 'WARM';
+}
+
+async function handleAllIn(req, res) {
+  const b = req.body;
+  const safe = (v) => (typeof v === 'string' ? v.trim() : '');
+  const safeList = (v) => (Array.isArray(v) ? v.map(safe).filter(Boolean) : []);
+
+  if (!safe(b.name)) return res.status(400).json({ error: 'Name is required' });
+  if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
+  if (!safeList(b.focus).length) return res.status(400).json({ error: 'Please tell us what you would most like help with.' });
+  if (safe(b.happening).length < 10) return res.status(400).json({ error: 'The "what has been happening" answer is required. We read it first.' });
+  if (safe(b.ninetyDays).length < 10) return res.status(400).json({ error: 'The "next 90 days" answer is required.' });
+  if (safe(b.whyNow).length < 5) return res.status(400).json({ error: 'The "why does this matter now" answer is required.' });
+  if (!safe(b.readiness)) return res.status(400).json({ error: 'Please pick the option that sounds most like you.' });
+  if (!safe(b.investment)) return res.status(400).json({ error: 'Please tell us how you would prefer to handle the investment.' });
+
+  const trimmedEmail = b.email.trim().toLowerCase();
+  const submittedAt = new Date().toISOString();
+  const fitTier = scoreAllIn(b);
+  const flags = [];
+  if (b.investment === ALLIN_NEEDS_DETAIL) flags.push('wants more detail before money');
+  if (b.readiness === ALLIN_READINESS_INFO) flags.push('wants information, not coaching');
+  // Same 7-15 digit phone shape the challenge paths use. Optional field: a bad
+  // number is stored empty rather than rejected, so it can never cost a lead.
+  const rawPhone = safe(b.phone).replace(/[^\d+]/g, '');
+  const phoneDigits = rawPhone.replace(/\D/g, '');
+  const phone = phoneDigits.length >= 7 && phoneDigits.length <= 15 ? rawPhone : '';
+
+  const application = {
+    source: 'allin-apply',
+    tier: 'allin',
+    program: 'The Life Change Accelerator (12-week, $1,997)',
+    name: safe(b.name),
+    email: trimmedEmail,
+    phone,
+    focus: safeList(b.focus),
+    happening: safe(b.happening),
+    ninetyDays: safe(b.ninetyDays),
+    whyNow: safe(b.whyNow),
+    readiness: safe(b.readiness),
+    investment: safe(b.investment),
+    anythingElse: safe(b.anythingElse),
+    flags,
+    fitTier,
+    submittedAt,
+    status: 'pending-review',
+  };
+
+  // 1. Notify Joel FIRST — mandatory. Same P0-3 ordering as every other path:
+  // if we cannot tell Joel, tell the applicant to retry rather than swallow a
+  // lead nobody will ever see.
+  try {
+    const tierColor = fitTier === 'HOT' ? '#3F5A3C' : fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
+    const row = (label, value) =>
+      '<tr><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#9C9485;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;width:200px;vertical-align:top;">' +
+      escapeHtml(label) +
+      '</td><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#2C2A26;font-size:13px;line-height:1.55;white-space:pre-wrap;">' +
+      (escapeHtml(value) || '<em style="color:#9C9485;">(blank)</em>') +
+      '</td></tr>';
+    const wordsBlock = (label, text) =>
+      '<div style="margin:0 0 14px;"><div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;margin:0 0 4px;">' +
+      escapeHtml(label) +
+      '</div><div style="background:#FFFFFF;border:1px solid #E6DECE;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2C2A26;white-space:pre-wrap;">' +
+      escapeHtml(text) +
+      '</div></div>';
+
+    const subject =
+      '[ALL IN $1,997] ' + application.name + ' [' + fitTier + ']' +
+      (flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : '');
+
+    const html =
+      '<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">' +
+      '<div style="background:' + tierColor + ';color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">' +
+      '<div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Life Change Accelerator application &middot; fit ' + fitTier +
+      (flags.length ? ' &middot; ' + escapeHtml(flags.join('; ')) : '') + '</div>' +
+      '<div style="font-size:22px;font-weight:700;margin-top:6px;">' + escapeHtml(application.name) + '</div>' +
+      '<div style="font-size:13px;opacity:0.85;">' + escapeHtml(application.email) + ' &middot; ' + (escapeHtml(application.phone) || 'no phone') + '</div>' +
+      '</div>' +
+      '<div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">' +
+      '<h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>' +
+      wordsBlock('What has been happening', application.happening) +
+      wordsBlock('If the next 90 days went really well', application.ninetyDays) +
+      wordsBlock('Why this matters now', application.whyNow) +
+      '<h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit</h3>' +
+      '<table style="width:100%;border-collapse:collapse;">' +
+      row('Wants help with', application.focus.join(', ')) +
+      row('Sounds most like her', application.readiness) +
+      row('Investment preference', application.investment) +
+      '</table>' +
+      (application.anythingElse
+        ? '<h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">For Annie</h3>' +
+          '<table style="width:100%;border-collapse:collapse;">' + row('Anything else', application.anythingElse) + '</table>'
+        : '') +
+      '<p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Reply directly to ' + escapeHtml(application.email) +
+      '. No payment was taken and no place is reserved. ' +
+      (fitTier === 'COLD'
+        ? 'She said she mostly wants more information, so the ack does NOT say we are moving forward.'
+        : 'The ack invites her to name times for a fit conversation.') +
+      '</p></div></body></html>';
+
+    const sendResult = await getResend().emails.send({
+      from: FROM,
+      to: NOTIFY_EMAIL,
+      replyTo: trimmedEmail,
+      subject,
+      html,
+    });
+    if (sendResult.error) throw new Error('Resend rejected notify send: ' + JSON.stringify(sendResult.error));
+  } catch (err) {
+    console.error('coaching-apply(allin): notify email failed — returning 500 so applicant retries', err.message);
+    return res.status(500).json({
+      ok: false,
+      error: 'We could not deliver your application right now. Please try again in a moment, or email braveworksrn@gmail.com directly.',
+    });
+  }
+
+  // 2. KV store + drip tag, same coaching-app:* pattern and 90-day TTL.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      await kv.set('coaching-app:' + Date.now() + ':' + trimmedEmail, application, { ex: 90 * 86400 });
+    } catch (err) {
+      console.error('coaching-apply(allin): KV store failed (non-fatal)', err.message);
+    }
+    try {
+      const dripKey = 'drip:' + trimmedEmail;
+      const existing = await kv.get(dripKey);
+      const applicantTags = ['coaching-applicant', 'fit-' + fitTier.toLowerCase(), 'tier-allin'];
+      if (existing) {
+        await kv.set(dripKey, {
+          ...existing,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          tags: Array.from(new Set([...(existing.tags || []), ...applicantTags])),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email: trimmedEmail,
+          firstName: application.name.split(' ')[0] || '',
+          cohort: 'coaching-applied',
+          enrolledAt: submittedAt,
+          lastSentDay: 0,
+          optedIn: true,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          source: 'allin-apply',
+          tags: applicantTags,
+        });
+      }
+    } catch (err) {
+      console.warn('coaching-apply(allin): drip enrollment failed (non-fatal)', err.message);
+    }
+  }
+
+  // 3. Delayed auto-ack (the same 3-hour, 8am-9pm Central guard Be There uses:
+  // an instant "we have read your application" is a visible lie). NO price and
+  // NO payment link in here. The page promised she will not be charged and will
+  // get next steps before any payment decision, so the ack must not quietly
+  // turn into a bill.
+  try {
+    const firstName = application.name.split(' ')[0] || 'there';
+    const isCold = fitTier === 'COLD';
+    const ackSubject = isCold
+      ? 'Your application is in, ' + firstName
+      : 'Your application, ' + firstName + ' (let us find a time)';
+
+    const movingForwardBody =
+      '<p style="margin:0 0 16px;">Your application for <strong>The Life Change Accelerator</strong> just landed with us. Thank you for writing it out honestly.</p>' +
+      '<p style="margin:0 0 16px;">We read these personally. Based on what you shared, <strong>we would like to talk if you are still interested.</strong></p>' +
+      '<p style="margin:0 0 16px;">Nothing has been charged and no place has been reserved yet. The next step is just a conversation.</p>' +
+      '<p style="margin:0 0 8px;">Reply to this email and tell us two things:</p>' +
+      '<ol style="margin:0 0 16px;padding-left:20px;">' +
+      '<li style="margin:0 0 6px;">Phone or Zoom.</li>' +
+      '<li style="margin:0 0 6px;">Two or three times over the next week that suit you, and your time zone.</li>' +
+      '</ol>' +
+      '<p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Everything we build together works alongside your doctor, never instead of them.</p>';
+
+    const coldBody =
+      '<p style="margin:0 0 16px;">Your application for <strong>The Life Change Accelerator</strong> just landed with us. Thank you for writing it out honestly.</p>' +
+      '<p style="margin:0 0 16px;">You said you are mostly looking for more information right now. This program is coaching, not an information library, so we would rather tell you plainly that it is probably not the right step today than take your money for something that is not the fit.</p>' +
+      '<p style="margin:0 0 16px;">The free emails and the community are open to you and there is real help in both. If what you are looking for changes, write back and we will take another look.</p>' +
+      '<p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever you do next, do it alongside your doctor, never instead of them.</p>';
+
+    const ackResult = await getResend().emails.send({
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
+      to: trimmedEmail,
+      replyTo: 'braveworksrn@gmail.com',
+      subject: ackSubject,
+      scheduledAt: applicantAckSendAt(),
+      html:
+        '<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">' +
+        '<p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ' + escapeHtml(firstName) + ',</p>' +
+        (isCold ? coldBody : movingForwardBody) +
+        '<p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Annie and Joel</p>' +
+        '<p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RNs, BraveWorks</p>' +
+        '<p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>' +
+        '</body></html>',
+    });
+    if (ackResult.error) console.error('coaching-apply(allin): applicant ack rejected by Resend', JSON.stringify(ackResult.error));
+  } catch (err) {
+    console.error('coaching-apply(allin): applicant ack failed', err.message);
   }
 
   return res.status(200).json({ ok: true, submittedAt, fitTier });

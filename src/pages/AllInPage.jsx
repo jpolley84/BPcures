@@ -1,67 +1,56 @@
-// AllInPage (route: /allin) — "The Life Change Accelerator" checkout.
+// AllInPage (route: /allin) — "The Life Change Accelerator" APPLICATION.
 //
-// 2026-08-06 (Joel): restyled after the go.tvdhq.com streamlined checkout he
-// supplied: NO offer stack, no value table, no crossed-out totals. One
-// headline, one promise line, the photo of Annie and Joel, and the payment
-// card. Renamed from "Life Beyond the Numbers / All In" to THE LIFE CHANGE
-// ACCELERATOR. Pricing is UNCHANGED (same three Stripe tiers below), so
-// api/create-embedded-checkout.js and triangle-webhook processAllIn need no
-// changes and history in PostHog/Stripe stays joined.
+// ── 2026-08-10: THIS PAGE STOPPED TAKING MONEY ───────────────────────────
+// Joel supplied new copy that turns /allin from an instant checkout into an
+// application. Read that sentence twice before editing: until today this page
+// mounted three embedded Stripe Checkout Sessions (allin-full $1,997,
+// allin-plan 6 x $367, allin-deposit $197) and a visitor could buy in one
+// click. She cannot any more. Every CTA now scrolls to a form that takes NO
+// payment, and the page says so in four separate places because the copy
+// promises it in four separate places.
 //
-// Three pay options (segmented control) each swap the embedded Checkout
-// Session tier and REMOUNT the inline Stripe form:
-//   full     one-time $1,997        (tier 'allin-full')
-//   deposit  one-time $197 deposit  (tier 'allin-deposit')  balance later
-//   plan     6 x $367 every 2 weeks (tier 'allin-plan')      $2,202 / 12 weeks
+// What that means operationally:
+//   - The only path from this page to revenue is /api/coaching-apply with
+//     source 'allin-apply'. If that endpoint breaks, this offer is dark.
+//   - The three allin-* Stripe tiers in api/create-embedded-checkout.js are
+//     DELIBERATELY LEFT INTACT. Existing payment links still work, and the
+//     active 6 x $367 subscriber keeps billing. Do not delete them because
+//     this page no longer calls them.
+//   - The page states a $200 reservation deposit. The legacy allin-deposit
+//     Stripe price is $197. They are not the same number. Collect the $200
+//     out of band, or make a new price, but never quietly send someone to the
+//     $197 link and call it the $200 the page promised.
 //
-// Not wrapped in SiteLayout (focused checkout, no nav to leak clicks).
+// ── WHY THERE IS NO TESTIMONIAL SECTION ──────────────────────────────────
+// Joel's copy has a "REAL WOMEN. REAL RESULTS." block with three quotes
+// marked [REAL TESTIMONIAL]. Those are placeholders, not real quotes, and
+// this section is intentionally NOT rendered rather than shipped with
+// invented proof. The workspace rule is absolute: if a person is not in
+// testimonials/CONSENT-LOG.md, they do not get published.
+//
+// Checked the log on 2026-08-10. Of the ten consented entries, exactly two are
+// cleared to sit beside a price at all (Long Monie, unattributed; Tiffany
+// Morris, first name only). Neither is a coaching client and neither describes
+// a result, so putting them under a "REAL RESULTS" heading next to $1,997
+// would be a claim the consent does not cover. Susan Crowley is explicitly
+// barred in writing from appearing near a price. So the honest options were
+// invent quotes, misuse consented ones, or ship without the block. Shipped
+// without. Add it back when real accelerator clients have consented.
+//
+// ── OTHER RULES THIS FILE KEEPS ──────────────────────────────────────────
+// Not wrapped in SiteLayout (focused page, no nav to leak clicks).
 // ZERO em dashes in visible copy. Education alongside the doctor, never a
-// replacement.
+// replacement: no claim here says the program lowers anything.
 
 import { useEffect, useRef, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Check, ShieldCheck, Lock } from 'lucide-react';
-import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
-// Annie + Joel, the photo Joel supplied 2026-08-06 for this page.
+import { track } from '../utils/analytics';
+// Annie + Joel, the photo Joel supplied 2026-08-06.
 import heroImg from '../assets/life-change-accelerator.jpg';
 
-const pk = STRIPE_PUBLISHABLE_KEY();
-const stripePromise = pk ? loadStripe(pk) : null;
-
-// ─── OFFER STACK (restored 2026-08-06, Joel: "lets go back to having the
-// offer stack list"). Same items/values as the pre-accelerator page. NOTE:
-// these line items are PLACEHOLDERS Joel confirms/edits; values sum to 10,614.
-const STACK = [
-  { label: 'Your Pressure & Root-Driver Assessment, plus your Personalized 90-Day Health Pathway', value: 997 },
-  { label: 'Your Numbers Without Fear Safety Plan', value: 497 },
-  { label: 'The Numbers Decoded System, plus your Doctor Visit Advocacy Kit', value: 697 },
-  { label: 'The Food Freedom Blood-Sugar & Pressure Plan', value: 997 },
-  { label: 'The Herbal Support & Safety Vault, plus your Steady Start Box', value: 797 },
-  { label: 'The Smarter Movement Method', value: 797 },
-  { label: 'Weekly Nurse-Led Coaching with Joel', value: 1800 },
-  { label: 'The Life Beyond the Numbers Community', value: 997 },
-  { label: '4 Included Bonuses (Symptom Sorting, Restaurant & Celebration Survival, 15-Minute Busy Woman, Stay-Beyond Maintenance)', value: 1288 },
-  { label: 'Fast-Action Bonus (Private Root-Driver Clarity Session)', value: 1747 },
-];
-const TOTAL_VALUE = STACK.reduce((s, i) => s + i.value, 0); // 10,614
-const usd = (n) => '$' + n.toLocaleString('en-US');
-
-const OPTIONS = [
-  { key: 'full', tier: 'allin-full', pill: 'Pay in full', headline: '$1,997 today', sub: 'One payment, all in. Best value.', value: 1997 },
-  { key: 'plan', tier: 'allin-plan', pill: 'Payment plan', headline: '6 x $367', sub: 'Every 2 weeks across the 12 weeks. $2,202 total.', value: 367 },
-  { key: 'deposit', tier: 'allin-deposit', pill: 'Deposit only', headline: '$197 to hold my spot', sub: 'Lock your place now. Balance arranged with Joel.', value: 197 },
-];
-
-// ─── palette (matches CaseReviewPage / brand vars) ───────────────────────
-// 2026-08-06 (Joel): monochrome palette. Pure black and white with neutral
-// grays; the only "accent" is black itself. Key names kept so nothing else
-// on the page changes.
+// ─── palette (monochrome, unchanged from the 2026-08-06 restyle) ─────────
 const C = {
-  clay: '#111111',
   cream: '#FFFFFF',
   paper: '#FAFAFA',
-  sage: '#444444',
   ink: '#000000',
   inkSoft: '#1A1A1A',
   line: '#E2E2E2',
@@ -69,217 +58,577 @@ const C = {
 };
 const SERIF = '"Fraunces", Georgia, serif';
 
+const PRICE = '$1,997';
+const DEPOSIT = '$200';
+const NEXT_PRICE = '$4,997';
+
+// ─── the 12-week path ────────────────────────────────────────────────────
+const PHASES = [
+  {
+    n: '01',
+    name: 'MAP',
+    weeks: 'Weeks 0 to 2',
+    lead: 'Step back.',
+    body: 'Look at your numbers, symptoms, routines, priorities and real life.',
+    question: 'What deserves my attention first?',
+    close: 'You leave this phase with direction instead of another giant to-do list.',
+  },
+  {
+    n: '02',
+    name: 'RESET',
+    weeks: 'Weeks 2 to 5',
+    lead: 'Now we begin.',
+    body: 'Small, realistic shifts around the foundations influencing how you feel and function.',
+    close: 'Not a punishment plan. Not trying to become a different woman overnight. We begin building the conditions for change.',
+  },
+  {
+    n: '03',
+    name: 'REBUILD',
+    weeks: 'Weeks 5 to 8',
+    lead: 'Food. Movement. Stress. Home routines.',
+    body: 'The things that have to work when you leave the coaching call and go back to your actual life.',
+    close: 'This is where knowing starts becoming doing.',
+  },
+  {
+    n: '04',
+    name: 'LIVE IT',
+    weeks: 'Weeks 9 to 12',
+    lead: 'Because your life is not lived inside a coaching program.',
+    body: 'It is lived at work. With family. At restaurants. On vacation. During holidays. And during weeks when everything goes sideways.',
+    close: 'This is where we work on making what you have built something you can actually live.',
+  },
+];
+
+const SUPPORT = [
+  { title: 'LIVE COACHING WITH ANNIE + JOEL', body: 'Ask questions. Get direction. Work through what is getting in the way.' },
+  { title: 'PROGRESS + COURSE CORRECTION', body: 'Because sometimes the first plan needs adjusting. That is normal.' },
+  { title: 'ACCOUNTABILITY + COMMUNITY', body: 'A place to keep showing up instead of quietly disappearing when life happens.' },
+  { title: 'NURSE-LED HEALTH EDUCATION', body: 'So you can better understand your numbers, symptoms, patterns and the questions worth taking back to your healthcare team.' },
+];
+
+const BUILT_IN = [
+  { title: 'KNOW YOUR LABS CONFIDENCE KIT', body: 'So the H’s, L’s and health numbers stop feeling like a foreign language.' },
+  { title: 'GLOW FAST-TRACK', body: 'Focused support around some of the hair, skin and confidence concerns that make you say: "I just want to feel like myself again."' },
+  { title: 'BRING YOUR PERSON PASS', body: 'Because sometimes making changes gets easier when the person living beside you understands what you are doing.' },
+  { title: 'PRIVATE MIDPOINT CALIBRATION', body: 'A deeper check-in during the process to look at what is working, what is not and where to adjust.' },
+  { title: '7-DAY COMEBACK RESET', body: 'Because missing a week should not turn into missing a year. We built a way back in.' },
+];
+
+// ─── form options. These strings are the contract with the API scorer in
+// api/coaching-apply.js (scoreAllIn). Change one here, change it there. ───
+const FOCUS_OPTIONS = [
+  'Blood pressure', 'Blood sugar', 'Hormonal changes', 'Belly / weight changes',
+  'Sleep / energy', 'Hair / skin', 'Stress', 'Several of these',
+];
+const READINESS_OPTIONS = [
+  'I mostly need more information.',
+  'I know a lot, but I need help implementing it.',
+  'I have been trying things, but I need help knowing what to change or adjust.',
+  'I am ready for personalized support and accountability.',
+];
+const INVESTMENT_OPTIONS = [
+  'Pay in full',
+  'Payment plan',
+  'Explore available financing',
+  'I need to understand the program better first',
+];
+
+// ─── small presentational helpers ────────────────────────────────────────
+function Section({ children, bg = C.cream, id, tight }) {
+  return (
+    <section id={id} style={{ background: bg, padding: tight ? '48px 20px' : '72px 20px', scrollMarginTop: 24 }}>
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>{children}</div>
+    </section>
+  );
+}
+
+function H({ children, size = 32, align = 'left', style }) {
+  return (
+    <h2 style={{
+      fontFamily: SERIF, fontWeight: 700, fontSize: size, lineHeight: 1.15,
+      color: C.ink, margin: '0 0 20px', textAlign: align, letterSpacing: '-0.01em', ...style,
+    }}>{children}</h2>
+  );
+}
+
+function P({ children, style }) {
+  return <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 16px', ...style }}>{children}</p>;
+}
+
+// The staccato one-line-per-thought rhythm the copy is written in.
+function Beats({ lines, style }) {
+  return (
+    <div style={{ margin: '0 0 20px', ...style }}>
+      {lines.map((l, i) => (
+        <p key={i} style={{ fontSize: 17, lineHeight: 1.6, color: C.inkSoft, margin: '0 0 10px' }}>{l}</p>
+      ))}
+    </div>
+  );
+}
+
+function Cta({ onClick, label = 'SEE IF WE ARE A GOOD FIT', sub }) {
+  return (
+    <div style={{ textAlign: 'center', margin: '32px 0 0' }}>
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          display: 'inline-block', background: C.ink, color: C.cream, border: 'none',
+          padding: '18px 34px', fontSize: 15, fontWeight: 700, letterSpacing: '0.08em',
+          borderRadius: 4, cursor: 'pointer', width: '100%', maxWidth: 420,
+        }}
+      >
+        {label}
+      </button>
+      <p style={{ fontSize: 11.5, letterSpacing: '0.06em', color: C.muted, margin: '12px 0 0', lineHeight: 1.6 }}>
+        {sub || 'NO PAYMENT TO APPLY · APPLYING DOES NOT GUARANTEE OR RESERVE A COACHING PLACE'}
+      </p>
+    </div>
+  );
+}
+
 export default function AllInPage() {
-  const [selected, setSelected] = useState('full');
-  const [error, setError] = useState('');
-  const containerRef = useRef(null);
-  const option = OPTIONS.find((o) => o.key === selected) || OPTIONS[0];
+  const formRef = useRef(null);
 
   useEffect(() => {
-    track('allin_view', { page: 'allin' });
+    track('allin_view', { page: 'allin', mode: 'application' });
     const prev = document.title;
-    document.title = 'The Life Change Accelerator | 12 Weeks to Freedom with Annie and Joel, RNs';
+    document.title = 'The Life Change Accelerator | Coaching with Annie and Joel, RNs';
     return () => { document.title = prev; };
   }, []);
 
-  // Mount / remount the embedded checkout whenever the pay option changes.
-  useEffect(() => {
-    let checkout;
-    let cancelled = false;
-    setError('');
-
-    async function init() {
-      if (!stripePromise) {
-        setError('Checkout is briefly unavailable. Please refresh the page.');
-        return;
-      }
-      try {
-        let email = '';
-        try { email = localStorage.getItem('bwbp_lead_email') || ''; } catch { /* private mode */ }
-        const stripe = await stripePromise;
-        checkout = await stripe.initEmbeddedCheckout({
-          fetchClientSecret: async () => {
-            const res = await fetch('/api/create-embedded-checkout', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ tier: option.tier, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
-            });
-            if (!res.ok) throw new Error('start_failed');
-            const data = await res.json();
-            if (!data.clientSecret) throw new Error('no_secret');
-            return data.clientSecret;
-          },
-        });
-        if (cancelled) { checkout.destroy(); return; }
-        checkout.mount(containerRef.current);
-        track('allin_checkout_mounted', { plan: option.key, value: option.value });
-      } catch {
-        setError('Something went wrong starting checkout. Please pick an option again or refresh.');
-      }
-    }
-    init();
-    return () => {
-      cancelled = true;
-      try { if (checkout) checkout.destroy(); } catch { /* already gone */ }
-    };
-  }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
+  const toForm = () => {
+    track('allin_cta_click', { page: 'allin' });
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div style={{ minHeight: '100vh', background: C.cream, color: C.ink }}>
-      <div style={{ maxWidth: 1040, margin: '0 auto', padding: 'clamp(1.1rem, 3vw, 2rem) 1.1rem' }}>
-        {/* Header (2026-08-06 v2, Joel): SMALL photo top-left of a BIG
-            headline, promise line under, pointer line last. */}
-        <div
-          style={{
-            display: 'flex', alignItems: 'center', gap: 'clamp(0.9rem, 2.5vw, 1.5rem)',
-            maxWidth: 860, margin: '0 auto clamp(1.1rem, 2.5vw, 1.8rem)', flexWrap: 'wrap',
-          }}
-        >
-          <img
-            src={heroImg}
-            alt="Annie Chitate, RN and Joel Polley, RN, standing back to back."
-            width="1122"
-            height="1402"
-            style={{
-              display: 'block', width: 'clamp(88px, 12vw, 130px)', height: 'auto',
-              borderRadius: 14, boxShadow: '0 14px 30px -18px rgba(30,43,42,.5)', flexShrink: 0,
-            }}
-          />
-          <div style={{ flex: 1, minWidth: 260 }}>
-            <span style={{ textTransform: 'uppercase', letterSpacing: '0.16em', fontSize: '0.72rem', fontWeight: 700, color: C.clay }}>
-              12 weeks to freedom
-            </span>
-            <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(2rem, 5.6vw, 3.4rem)', lineHeight: 1.05, margin: '0.35rem 0 0.55rem', fontWeight: 700 }}>
-              The Life Change Accelerator
-            </h1>
-            <p style={{ fontSize: 'clamp(0.98rem, 2.2vw, 1.1rem)', lineHeight: 1.5, margin: 0, color: C.inkSoft }}>
-              Stop managing symptoms one at a time. Twelve weeks, one connected plan, with Annie
-              Chitate, RN and Joel Polley, RN walking every week of it with you.{' '}
-              <strong style={{ color: C.ink }}>Secure your spot below.</strong>
-            </p>
-          </div>
-        </div>
+    <main style={{ background: C.cream, color: C.ink, fontFamily: '"Inter", system-ui, sans-serif' }}>
 
-        {/* Photo | payment card. Mobile stacks. */}
-        <div
-          style={{
-            display: 'grid',
-            gap: 'clamp(1rem, 2.5vw, 1.8rem)',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
-            alignItems: 'start',
-          }}
-          className="allin-grid"
-        >
-          {/* LEFT — offer stack (restored) */}
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 'clamp(1.2rem, 2.5vw, 1.7rem)' }}>
-            <span style={{ textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.7rem', fontWeight: 700, color: C.sage }}>
-              Here is everything you get
-            </span>
-            <ul style={{ listStyle: 'none', margin: '0.9rem 0 0', padding: 0, display: 'grid', gap: '0.7rem' }}>
-              {STACK.map((item) => (
-                <li key={item.label} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <Check size={17} strokeWidth={2.5} style={{ color: C.clay, flexShrink: 0, marginTop: 3 }} aria-hidden />
-                  <span style={{ flex: 1, fontSize: '0.95rem', lineHeight: 1.45, color: C.inkSoft }}>{item.label}</span>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', color: C.muted, whiteSpace: 'nowrap' }}>{usd(item.value)}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div style={{ borderTop: `1px solid ${C.line}`, margin: '1.1rem 0 0', paddingTop: '0.9rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                <span style={{ fontWeight: 700, fontSize: '1rem' }}>Total value</span>
-                <span style={{ fontWeight: 700, fontSize: '1.15rem', color: C.muted, textDecoration: 'line-through' }}>{usd(TOTAL_VALUE)}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '0.5rem' }}>
-                <span style={{ fontWeight: 800, fontSize: '1.05rem', color: C.ink }}>Your price today</span>
-                <span style={{ fontWeight: 800, fontSize: '1.7rem', color: C.clay }}>$1,997</span>
-              </div>
-              <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: C.muted }}>
-                or a deposit to hold your spot, or 6 payments across the 12 weeks.
-              </p>
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', marginTop: '1.1rem', background: C.cream, border: `1px solid ${C.line}`, borderRadius: 10, padding: '0.75rem 0.85rem' }}>
-              <ShieldCheck size={18} strokeWidth={2} style={{ color: C.sage, flexShrink: 0, marginTop: 1 }} aria-hidden />
-              <p style={{ margin: 0, fontSize: '0.83rem', lineHeight: 1.5, color: C.inkSoft }}>
-                Annie and Joel walk all 12 weeks with you. This is education and lifestyle support alongside your doctor, never a replacement. Your doctor makes every call about your medication.
-              </p>
-            </div>
-          </div>
-
-          {/* RIGHT — pay options + embedded checkout */}
-          <div style={{ background: C.paper, border: `1px solid ${C.line}`, borderRadius: 16, padding: 'clamp(1.2rem, 2.5vw, 1.7rem)' }}>
-            <span style={{ textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.7rem', fontWeight: 700, color: C.sage }}>
-              Choose how you want to pay
-            </span>
-
-            {/* Segmented options */}
-            <div style={{ display: 'grid', gap: '0.6rem', margin: '0.9rem 0 1.1rem' }}>
-              {OPTIONS.map((o) => {
-                const active = o.key === selected;
-                return (
-                  <button
-                    key={o.key}
-                    type="button"
-                    onClick={() => { setSelected(o.key); track('allin_option_selected', { plan: o.key }); }}
-                    style={{
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      background: active ? C.cream : 'transparent',
-                      border: active ? `2px solid ${C.clay}` : `2px solid ${C.line}`,
-                      borderRadius: 12,
-                      padding: '0.8rem 0.95rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      transition: 'border-color 0.15s, background 0.15s',
-                    }}
-                  >
-                    <span
-                      aria-hidden
-                      style={{
-                        width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
-                        border: active ? `5px solid ${C.clay}` : `2px solid ${C.muted}`,
-                        background: '#fff',
-                      }}
-                    />
-                    <span style={{ flex: 1 }}>
-                      <span style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: C.muted }}>{o.pill}</span>
-                      <span style={{ display: 'block', fontWeight: 800, fontSize: '1.05rem', color: C.ink }}>{o.headline}</span>
-                      <span style={{ display: 'block', fontSize: '0.82rem', color: C.muted, marginTop: 1 }}>{o.sub}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {error && (
-              <p role="alert" style={{ color: C.clay, fontSize: '0.9rem', margin: '0 0 0.75rem' }}>{error}</p>
-            )}
-
-            {/* Embedded Stripe checkout (remounts on option change) */}
-            <div ref={containerRef} key={selected} style={{ minHeight: 360 }} />
-
-            <p style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center', margin: '0.9rem 0 0', fontSize: '0.78rem', color: C.muted }}>
-              <Lock size={13} strokeWidth={2} aria-hidden /> 100 percent secure checkout by Stripe. Your card is encrypted.
-            </p>
-          </div>
-        </div>
-
-        {/* Compliance spine */}
-        <p style={{ maxWidth: 720, margin: '1.4rem auto 0', textAlign: 'center', fontSize: '0.78rem', lineHeight: 1.6, color: C.muted }}>
-          This program is education and lifestyle support, not medical advice, diagnosis, or
-          treatment, and not a substitute for your physician. Annie Chitate and Joel Polley are
-          Registered Nurses, not prescribing doctors.
+      {/* ── HERO ─────────────────────────────────────────────────────── */}
+      <Section tight>
+        <p style={{ fontSize: 12, letterSpacing: '0.18em', color: C.muted, margin: '0 0 16px', fontWeight: 700 }}>
+          FOR THE WOMAN WHO HAS BEEN ASKING...
         </p>
+        <h1 style={{ fontFamily: SERIF, fontWeight: 700, fontSize: 38, lineHeight: 1.12, margin: '0 0 28px', letterSpacing: '-0.02em' }}>
+          &ldquo;Annie, how can I actually work with you?&rdquo;
+        </h1>
+        <img
+          src={heroImg}
+          alt="Annie and Joel, registered nurses"
+          style={{ width: '100%', borderRadius: 8, display: 'block', margin: '0 0 28px' }}
+        />
+        <Beats lines={[
+          'Maybe you have watched the videos.',
+          'Downloaded the guides.',
+          'Bought the supplements.',
+          'Tried eating differently.',
+          'Started walking.',
+          'Promised yourself you would finally get serious.',
+          'And yet you are still sitting there thinking...',
+        ]} />
+        <H size={30} style={{ margin: '28px 0 24px' }}>
+          &ldquo;I know a lot. I just do not know what I should be doing for ME.&rdquo;
+        </H>
+        <P>If that is you, keep reading.</P>
+        <P>For the first time in almost a year, I am opening a small number of coaching places.</P>
+        <P>And this is the final opportunity to enter this coaching experience at:</P>
+        <p style={{ fontFamily: SERIF, fontSize: 46, fontWeight: 700, margin: '0 0 8px' }}>{PRICE}</p>
+        <Cta onClick={toForm} />
+      </Section>
+
+      {/* ── IT IS NOT JUST ONE THING ─────────────────────────────────── */}
+      <Section bg={C.paper}>
+        <H>Maybe it is not just one thing any more.</H>
+        <Beats lines={[
+          'The blood pressure started changing.',
+          'Then the blood sugar.',
+          'Or the belly.',
+          'The sleep.',
+          'The energy.',
+          'The hormones.',
+          'The hair.',
+          'The stress.',
+        ]} />
+        <P>And somewhere along the way, trying to get healthy started feeling like seven different projects.</P>
+        <P style={{ fontWeight: 600 }}>So you keep asking:</P>
+        <Beats lines={[
+          'What do I fix first?',
+          'What actually matters?',
+          'What am I missing?',
+          'And what do I do when what I have been trying is not working?',
+        ]} />
+        <H size={26} style={{ margin: '32px 0 16px' }}>You do not need another folder of information.</H>
+        <P>You want someone to help you figure out:</P>
+        <Beats lines={[
+          'What deserves my attention first?',
+          'What can I realistically change?',
+          'What am I missing?',
+          'And how do I make all of this work in my real life?',
+        ]} />
+        <P style={{ fontSize: 20, fontWeight: 600 }}>You need a map. And then you need help walking it.</P>
+      </Section>
+
+      {/* ── THIS IS COACHING ─────────────────────────────────────────── */}
+      <Section>
+        <H>This is coaching.</H>
+        <Beats lines={[
+          'Not another information library.',
+          'Not another giant list of things you should be doing.',
+          'Not another program you buy, watch for two weeks and quietly stop opening.',
+        ]} />
+        <P>This is guided support.</P>
+        <P>A place to bring your questions. Your numbers. Your symptoms. Your patterns. Your real life.</P>
+        <P>And get help turning what you know into something you can actually do.</P>
+      </Section>
+
+      {/* ── IMAGINE ──────────────────────────────────────────────────── */}
+      <Section bg={C.paper}>
+        <H>Imagine not having to figure out the next step by yourself.</H>
+        <P>Imagine looking at the changes happening in your body and having a clearer idea of what deserves attention first.</P>
+        <P>Imagine knowing what you are working on this week instead of trying to fix everything Monday morning.</P>
+        <P>Imagine having someone to ask:</P>
+        <Beats lines={[
+          '"This is not working like I expected. What do I adjust?"',
+          '"Life got crazy. How do I get back on track?"',
+          '"Am I focusing on the right thing?"',
+        ]} />
+        <P>That is the kind of support this was built to provide.</P>
+      </Section>
+
+      {/* ── THE 12-WEEK PATH ─────────────────────────────────────────── */}
+      <Section>
+        <H>Your 12-week life change path</H>
+        <P>We do not start by throwing everything at you. We move in order.</P>
+        {PHASES.map((p) => (
+          <div key={p.n} style={{ borderTop: `1px solid ${C.line}`, padding: '28px 0 4px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 6 }}>
+              <span style={{ fontFamily: SERIF, fontSize: 28, fontWeight: 700, color: C.muted }}>{p.n}</span>
+              <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: '0.06em' }}>{p.name}</span>
+            </div>
+            <p style={{ fontSize: 12.5, letterSpacing: '0.12em', color: C.muted, margin: '0 0 14px', fontWeight: 700 }}>
+              {p.weeks.toUpperCase()}
+            </p>
+            <P style={{ fontWeight: 600 }}>{p.lead}</P>
+            <P>{p.body}</P>
+            {p.question && (
+              <p style={{ fontFamily: SERIF, fontSize: 22, fontWeight: 700, margin: '0 0 16px', lineHeight: 1.3 }}>
+                {p.question}
+              </p>
+            )}
+            <P style={{ color: C.muted }}>{p.close}</P>
+          </div>
+        ))}
+      </Section>
+
+      {/* ── SUPPORT ──────────────────────────────────────────────────── */}
+      <Section bg={C.paper}>
+        <H>And you are not doing it alone.</H>
+        <P>Throughout your 12-week intensive, you will have access to:</P>
+        {SUPPORT.map((s) => (
+          <div key={s.title} style={{ margin: '0 0 22px' }}>
+            <p style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', margin: '0 0 6px' }}>{s.title}</p>
+            <p style={{ fontSize: 16.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>{s.body}</p>
+          </div>
+        ))}
+      </Section>
+
+      {/* ── CONTINUATION + ECOSYSTEM ─────────────────────────────────── */}
+      <Section>
+        <H size={26}>&ldquo;But what if I need more than 12 weeks?&rdquo;</H>
+        <P>We thought about that too.</P>
+        <P>Your intensive transformation is 12 weeks. But we do not expect your life to suddenly become perfect on Week 13.</P>
+        <P>So your experience also includes:</P>
+        <H size={26} style={{ margin: '24px 0 12px' }}>3 months of continuation support</H>
+        <P>Additional guided support after your initial 12 weeks to help you keep implementing what you have built.</P>
+        <P>Because sometimes the hardest part is not starting. It is continuing.</P>
+
+        <H size={26} style={{ margin: '44px 0 16px' }}>&ldquo;And what if life hits me again later?&rdquo;</H>
+        <P>That is why you do not simply lose everything when the intensive ends. You will also have:</P>
+        <H size={26} style={{ margin: '24px 0 12px' }}>Up to 12 months of ecosystem access</H>
+        <P>A place to return to your curriculum, recordings, resource library and support tools. Including future Change My Life Challenge experiences and available digital support resources.</P>
+        <P>So instead of saying &ldquo;I fell off, I guess I am starting from zero again,&rdquo; you know where to return.</P>
+      </Section>
+
+      {/* ── BUILT IN ─────────────────────────────────────────────────── */}
+      <Section bg={C.paper}>
+        <H>We also built in the things that tend to stop women.</H>
+        <P>Not random bonuses. The things that can make it harder to keep going.</P>
+        {BUILT_IN.map((s) => (
+          <div key={s.title} style={{ margin: '0 0 22px' }}>
+            <p style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', margin: '0 0 6px' }}>{s.title}</p>
+            <p style={{ fontSize: 16.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>{s.body}</p>
+          </div>
+        ))}
+      </Section>
+
+      {/* ── MORE THAN A NUMBER ───────────────────────────────────────── */}
+      <Section>
+        <H>This is about more than getting a better number.</H>
+        <P>It is about what your health gives you access to.</P>
+        <Beats lines={[
+          'The trip.', 'The grandbaby.', 'The graduation.', 'The wedding.',
+          'The business.', 'Dinner out.', 'Dancing again.',
+        ]} />
+        <P>Feeling present in the room instead of wondering how soon you can go home.</P>
+        <P>Having enough left at the end of the day to enjoy the people you have been working so hard for.</P>
+        <P style={{ fontWeight: 600 }}>You do not have to become somebody else.</P>
+        <P>You need support becoming more available for the life that is already yours.</P>
+      </Section>
+
+      {/*
+        REAL WOMEN. REAL RESULTS. section intentionally NOT rendered here.
+        See the header of this file. Three [REAL TESTIMONIAL] placeholders are
+        not proof, and no consented testimonial in testimonials/CONSENT-LOG.md
+        is cleared to appear as a coaching result beside this price.
+      */}
+
+      {/* ── PRICE ────────────────────────────────────────────────────── */}
+      <Section bg={C.paper}>
+        <H>The final {PRICE} enrollment</H>
+        <P>The investment for this coaching experience is:</P>
+        <p style={{ fontFamily: SERIF, fontSize: 44, fontWeight: 700, margin: '0 0 20px' }}>{PRICE} total</p>
+        <P>If you are accepted and decide to join, you may reserve your place with:</P>
+        <p style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 700, margin: '0 0 16px' }}>{DEPOSIT}</p>
+        <P>That {DEPOSIT} is applied toward your {PRICE} total. Payment options may also be available.</P>
+        <P>When we open this level of coaching again, the planned enrollment price is:</P>
+        <p style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 700, margin: '0 0 16px' }}>{NEXT_PRICE}</p>
+        <P>I am telling you that plainly because some of you have been waiting for me to coach again. I do not want you finding out afterward that this door was open today.</P>
+      </Section>
+
+      {/* ── NOT FOR EVERYBODY ────────────────────────────────────────── */}
+      <Section>
+        <H>I do not want everybody to join.</H>
+        <P>This is personal coaching. I want to make sure:</P>
+        <Beats lines={[
+          'We can actually help you.',
+          'You are looking for support, not just more information.',
+          'You are ready to participate.',
+          'You are willing to be coached.',
+        ]} />
+        <P>And that this makes sense for where you are right now.</P>
+        <P>If that is you, the next step is simple. Tell us a little about what is going on. We will see if we are a good fit.</P>
+      </Section>
+
+      {/* ── THE FORM ─────────────────────────────────────────────────── */}
+      <div ref={formRef}>
+        <Section bg={C.paper} id="apply">
+          <div style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '24px 20px', margin: '0 0 32px' }}>
+            <p style={{ fontSize: 15, fontWeight: 700, margin: '0 0 10px', lineHeight: 1.5 }}>
+              No payment is required to apply. Submitting this form does not guarantee acceptance or reserve a place in the program.
+            </p>
+            <p style={{ fontSize: 15, fontWeight: 700, margin: '0 0 14px' }}>You will not be charged by submitting this form.</p>
+            <p style={{ fontSize: 15.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
+              This application is simply the first step to determine whether the coaching experience is a good fit for you.
+              If you are accepted, you will receive your next steps before making any payment decision.
+            </p>
+          </div>
+          <H>Quick fit application</H>
+          <ApplyForm />
+        </Section>
       </div>
 
-      {/* Mobile: stack the two columns */}
-      <style>{`
-        @media (max-width: 820px) {
-          .allin-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-    </div>
+      <footer style={{ background: C.cream, padding: '32px 20px 56px', borderTop: `1px solid ${C.line}` }}>
+        <p style={{ maxWidth: 720, margin: '0 auto', fontSize: 12.5, lineHeight: 1.7, color: C.muted, textAlign: 'center' }}>
+          Everything here is education-based nursing consultation, not medical advice, and it works alongside your
+          doctor rather than instead of them. Your prescriber stays in charge of your medications.
+        </p>
+      </footer>
+    </main>
+  );
+}
+
+/* ==========================================================================
+   QUICK FIT APPLICATION
+   POSTs to /api/coaching-apply with source 'allin-apply'. The endpoint owns
+   the rate limiter, validation, KV write, Joel's notify email and the delayed
+   applicant ack. A non-ok response is surfaced honestly with a real address to
+   fall back on, never swallowed into a fake success state: this form is now
+   the ONLY way into a $1,997 program, so a silent failure is a lost sale AND a
+   woman who thinks she applied.
+   ========================================================================== */
+function ApplyForm() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [focus, setFocus] = useState([]);
+  const [happening, setHappening] = useState('');
+  const [ninetyDays, setNinetyDays] = useState('');
+  const [whyNow, setWhyNow] = useState('');
+  const [readiness, setReadiness] = useState('');
+  const [investment, setInvestment] = useState('');
+  const [anythingElse, setAnythingElse] = useState('');
+  const [state, setState] = useState('idle'); // idle | sending | done | error
+  const [errMsg, setErrMsg] = useState('');
+
+  const toggleFocus = (opt) =>
+    setFocus((cur) => (cur.includes(opt) ? cur.filter((x) => x !== opt) : [...cur, opt]));
+
+  async function submit(e) {
+    e.preventDefault();
+    setErrMsg('');
+    if (!name.trim()) return setErrMsg('Please tell us your name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setErrMsg('Please check your email address.');
+    if (!focus.length) return setErrMsg('Please pick at least one thing you would like help with.');
+    if (happening.trim().length < 10) return setErrMsg('Please tell us a little about what has been happening.');
+    if (ninetyDays.trim().length < 10) return setErrMsg('Please tell us what you would want to be different in 90 days.');
+    if (!whyNow.trim()) return setErrMsg('Please tell us why changing this matters to you now.');
+    if (!readiness) return setErrMsg('Please pick the option that sounds most like you.');
+    if (!investment) return setErrMsg('Please tell us how you would prefer to handle the investment.');
+
+    setState('sending');
+    try {
+      const res = await fetch('/api/coaching-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source: 'allin-apply',
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          focus,
+          happening: happening.trim(),
+          ninetyDays: ninetyDays.trim(),
+          whyNow: whyNow.trim(),
+          readiness,
+          investment,
+          anythingElse: anythingElse.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setState('error');
+        setErrMsg(data.error || 'That did not go through. Please try again in a moment.');
+        track('allin_apply_submit', { ok: false, status: res.status });
+        return;
+      }
+      setState('done');
+      track('allin_apply_submit', { ok: true, fitTier: data.fitTier || null });
+    } catch {
+      setState('error');
+      setErrMsg('That did not go through. Please check your connection and try again.');
+      track('allin_apply_submit', { ok: false, status: 0 });
+    }
+  }
+
+  const inputStyle = {
+    width: '100%', padding: '13px 14px', fontSize: 16, border: `1px solid ${C.line}`,
+    borderRadius: 5, background: C.cream, color: C.ink, fontFamily: 'inherit', boxSizing: 'border-box',
+  };
+  const labelStyle = { display: 'block', fontSize: 15.5, fontWeight: 700, margin: '0 0 10px', lineHeight: 1.5 };
+  const groupStyle = { margin: '0 0 28px' };
+  const choiceStyle = {
+    display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px 12px',
+    border: `1px solid ${C.line}`, borderRadius: 5, marginBottom: 8, cursor: 'pointer',
+    fontSize: 15.5, lineHeight: 1.5, background: C.cream,
+  };
+
+  if (state === 'done') {
+    return (
+      <div role="status" style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '28px 22px' }}>
+        <p style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, margin: '0 0 14px' }}>Your application is in.</p>
+        <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 12px' }}>
+          Nothing was charged and no place has been reserved. We read these personally, so give us a little time.
+        </p>
+        <p style={{ fontSize: 16.5, lineHeight: 1.7, color: C.inkSoft, margin: 0 }}>
+          You will hear back by email with your next steps. If anything changes in the meantime, write to{' '}
+          <a href="mailto:braveworksrn@gmail.com" style={{ color: C.ink, fontWeight: 700 }}>braveworksrn@gmail.com</a>.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={submit} noValidate>
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-name">Your name</label>
+        <input id="ai-name" style={inputStyle} type="text" autoComplete="name" value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-email">Email address</label>
+        <input id="ai-email" style={inputStyle} type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-phone">Phone number (optional)</label>
+        <input id="ai-phone" style={inputStyle} type="tel" autoComplete="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(555) 555-5555" />
+        <p style={{ fontSize: 13, color: C.muted, margin: '6px 0 0' }}>Only used to reach you about your application. No marketing texts.</p>
+      </div>
+
+      <div style={groupStyle}>
+        <span style={labelStyle}>What would you most like help with right now?</span>
+        {FOCUS_OPTIONS.map((opt) => (
+          <label key={opt} style={choiceStyle}>
+            <input type="checkbox" checked={focus.includes(opt)} onChange={() => toggleFocus(opt)} style={{ marginTop: 3 }} />
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-happening">What has been happening?</label>
+        <textarea id="ai-happening" style={{ ...inputStyle, minHeight: 110, resize: 'vertical' }} value={happening} onChange={(e) => setHappening(e.target.value)} />
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-ninety">If the next 90 days went really well, what would you most want to be different?</label>
+        <textarea id="ai-ninety" style={{ ...inputStyle, minHeight: 110, resize: 'vertical' }} value={ninetyDays} onChange={(e) => setNinetyDays(e.target.value)} />
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-why">Why does changing this matter to you now?</label>
+        <textarea id="ai-why" style={{ ...inputStyle, minHeight: 90, resize: 'vertical' }} value={whyNow} onChange={(e) => setWhyNow(e.target.value)} />
+      </div>
+
+      <div style={groupStyle}>
+        <span style={labelStyle}>Which sounds most like you?</span>
+        {READINESS_OPTIONS.map((opt) => (
+          <label key={opt} style={choiceStyle}>
+            <input type="radio" name="ai-readiness" checked={readiness === opt} onChange={() => setReadiness(opt)} style={{ marginTop: 3 }} />
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
+
+      <div style={groupStyle}>
+        <span style={labelStyle}>If we are a fit, how would you prefer to handle the {PRICE} investment?</span>
+        {INVESTMENT_OPTIONS.map((opt) => (
+          <label key={opt} style={choiceStyle}>
+            <input type="radio" name="ai-investment" checked={investment === opt} onChange={() => setInvestment(opt)} style={{ marginTop: 3 }} />
+            <span>{opt}</span>
+          </label>
+        ))}
+      </div>
+
+      <div style={groupStyle}>
+        <label style={labelStyle} htmlFor="ai-else">Anything you would like Annie to know? (optional)</label>
+        <textarea id="ai-else" style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={anythingElse} onChange={(e) => setAnythingElse(e.target.value)} />
+      </div>
+
+      <button
+        type="submit"
+        disabled={state === 'sending'}
+        style={{
+          width: '100%', background: C.ink, color: C.cream, border: 'none', padding: '18px 24px',
+          fontSize: 15, fontWeight: 700, letterSpacing: '0.08em', borderRadius: 4,
+          cursor: state === 'sending' ? 'default' : 'pointer', opacity: state === 'sending' ? 0.6 : 1,
+        }}
+      >
+        {state === 'sending' ? 'SENDING...' : 'SEE IF WE ARE A GOOD FIT'}
+      </button>
+
+      <p style={{ fontSize: 12.5, letterSpacing: '0.05em', color: C.muted, margin: '14px 0 0', textAlign: 'center', lineHeight: 1.7 }}>
+        NO PAYMENT TODAY.<br />
+        APPLYING DOES NOT GUARANTEE ACCEPTANCE OR RESERVE A PLACE.
+      </p>
+
+      {errMsg && (
+        <p role="alert" style={{ margin: '16px 0 0', fontSize: 15, color: C.ink, fontWeight: 600, lineHeight: 1.6 }}>
+          {errMsg}{' '}
+          <a href="mailto:braveworksrn@gmail.com" style={{ color: C.ink }}>braveworksrn@gmail.com</a>
+        </p>
+      )}
+    </form>
   );
 }
