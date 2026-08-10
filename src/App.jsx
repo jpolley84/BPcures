@@ -42,6 +42,7 @@ const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
 const OtoCompletePage = lazy(() => import('./pages/OtoCompletePage'));
 const SprintAssessmentPage = lazy(() => import('./pages/SprintAssessmentPage'));
+const AcceleratorAssessmentPage = lazy(() => import('./pages/AcceleratorAssessmentPage'));
 const PriscillaIntakePage = lazy(() => import('./pages/PriscillaIntakePage'));
 const UpsellBpCureBookPage = lazy(() => import('./pages/UpsellBpCureBookPage'));
 const DownloadsPage = lazy(() => import('./pages/DownloadsPage'));
@@ -306,6 +307,10 @@ function App() {
           <Route path="/oto" element={<OtoCompletePage />} />
           {/* Deep assessment for $297/$97 Sprint buyers (fulfillment, no nav). */}
           <Route path="/sprint-assessment" element={<SprintAssessmentPage />} />
+          {/* Deep intake for the Life Change Accelerator founding cohort
+              (2026-08-10). Joel + Annie's assessments merged; feeds the
+              personalized welcome packet and the 90-day program build. */}
+          <Route path="/accelerator-assessment" element={<AcceleratorAssessmentPage />} />
           <Route path="/priscilla-assessment" element={<PriscillaIntakePage />} />
           <Route path="/welcome" element={<SiteLayout><WelcomePage /></SiteLayout>} />
 
