@@ -1,6 +1,10 @@
 // AllInPage (route: /allin) — "The Life Change Accelerator" APPLICATION.
 //
 // ── 2026-08-10: THIS PAGE STOPPED TAKING MONEY ───────────────────────────
+// (Deposit note, same day: Joel's copy said $200, the live Stripe deposit
+// price is $197, and he chose "make it the 197". The page and Stripe now
+// agree, so the deposit is a real purchasable option on /allin/pay rather
+// than something collected by hand.)
 // Joel supplied new copy that turns /allin from an instant checkout into an
 // application. Read that sentence twice before editing: until today this page
 // mounted three embedded Stripe Checkout Sessions (allin-full $1,997,
@@ -16,10 +20,12 @@
 //     DELIBERATELY LEFT INTACT. Existing payment links still work, and the
 //     active 6 x $367 subscriber keeps billing. Do not delete them because
 //     this page no longer calls them.
-//   - The page states a $200 reservation deposit. The legacy allin-deposit
-//     Stripe price is $197. They are not the same number. Collect the $200
-//     out of band, or make a new price, but never quietly send someone to the
-//     $197 link and call it the $200 the page promised.
+//   - The reservation deposit is $197 and matches the live allin-deposit
+//     Stripe price exactly, so it is purchasable on /allin/pay. It was $200
+//     in the supplied copy for a few hours on 2026-08-10; Joel resolved the
+//     mismatch downward ("make it the 197") rather than minting a new price.
+//     If that number ever changes, change BOTH the DEPOSIT constant below and
+//     the Stripe price, or the page promises one figure and charges another.
 //
 // ── WHY THERE IS NO TESTIMONIAL SECTION ──────────────────────────────────
 // Joel's copy has a "REAL WOMEN. REAL RESULTS." block with three quotes
@@ -59,7 +65,12 @@ const C = {
 const SERIF = '"Fraunces", Georgia, serif';
 
 const PRICE = '$1,997';
-const DEPOSIT = '$200';
+// 2026-08-10 (Joel): "make it the 197". His copy said $200; the live Stripe
+// deposit price is $197 and he chose to match the page to Stripe rather than
+// mint a new price. So this number and price_1TvOUL...ZG8iyG9S are now the
+// same thing, and the "$200 collected out of band" caveat in the file header
+// is retired. Change one, change the other.
+const DEPOSIT = '$197';
 const NEXT_PRICE = '$4,997';
 
 // ─── the 12-week path ────────────────────────────────────────────────────

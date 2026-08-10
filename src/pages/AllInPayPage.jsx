@@ -90,6 +90,20 @@ const OPTIONS = [
     total: 'Total $2,403',
     note: 'The smallest payment. First today, then eight more, about 18 weeks.',
   },
+  // 2026-08-10 (Joel: "make it the 197"). The deposit is NOT an installment
+  // plan and must never read like one: it is a one-time hold with $1,800 still
+  // owed, arranged with Joel. isDeposit drives its own warning block so nobody
+  // can mistake $197 for the price of the program.
+  {
+    key: 'deposit',
+    tier: 'allin-deposit',
+    pill: 'Deposit to hold my place',
+    headline: '$197',
+    cadence: 'One payment today. This is not the full price.',
+    total: '$1,800 balance still to arrange',
+    note: 'Locks your place now. Joel contacts you to arrange the remaining $1,800 before the program starts.',
+    isDeposit: true,
+  },
 ];
 
 export default function AllInPayPage() {
@@ -184,7 +198,9 @@ export default function AllInPayPage() {
           Every option enrolls you in the same 12-week program with the same support.
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>
-          The only difference is the total. Paying in full costs the least, and the longer the plan runs the more it comes to. Both numbers are on every card below.
+          Paying in full costs the least, and the longer a plan runs the more it comes to. The per-payment amount
+          and the total are both on every card below. The last option is a deposit that holds your place rather
+          than paying for the program, and it says so.
         </p>
 
         {/* ── the four options ─────────────────────────────────────── */}
@@ -225,8 +241,21 @@ export default function AllInPayPage() {
           })}
         </div>
 
-        {/* Plain-language terms. Auto-billing must never be a surprise. */}
-        {option.key !== 'full' && (
+        {/* Plain-language terms. Auto-billing must never be a surprise, and a
+            deposit must never be mistaken for the price. Two separate blocks
+            on purpose: the deposit has no "N x $X" to parse and saying "how
+            this plan bills" over a one-time hold would be a lie. */}
+        {option.isDeposit && (
+          <div style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
+            <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
+              <strong>Read this before you pay:</strong> $197 today reserves your place. It is not the price of the
+              program. The program is $1,997 in total, so $1,800 remains and Joel will contact you to arrange it
+              before the 12 weeks begin. If you would rather settle the whole thing now, choose one of the options
+              above instead. Questions, write to braveworksrn@gmail.com.
+            </p>
+          </div>
+        )}
+        {!option.isDeposit && option.key !== 'full' && (
           <div style={{ border: `1px solid ${C.line}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
               <strong>How this plan bills:</strong> your card is charged {option.headline.split(' x ')[1]} today
