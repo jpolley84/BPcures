@@ -371,6 +371,13 @@ export default function ChallengePage() {
         .cmlc-testi-card{background:var(--white);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 10px 26px -18px rgba(0,0,0,.3);}
         .cmlc-testi-card img{width:100%;height:auto;display:block;}
 
+        .b-placeholder{border:2px dashed var(--rosegold);border-radius:16px;background:repeating-linear-gradient(135deg, rgba(192,138,122,0.07), rgba(192,138,122,0.07) 12px, rgba(192,138,122,0.13) 12px, rgba(192,138,122,0.13) 24px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:50px 26px;min-height:200px;}
+        .b-placeholder.full-bleed{min-height:340px;}
+        .b-placeholder.compact{min-height:120px;padding:30px 24px;}
+        .b-placeholder.small{min-height:120px;padding:26px 22px;border-radius:14px;}
+        .b-placeholder .b-ph-label{font-family:'Manrope',sans-serif;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--forest-dark);margin-bottom:8px;}
+        .b-placeholder .b-ph-note{font-size:13.5px;color:var(--ink-soft);max-width:420px;margin:0;}
+
         .cmlc-voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
         .cmlc-voice-card{background:var(--cream-2);border-radius:var(--radius);padding:24px 26px;border:1px solid var(--line);border-left:4px solid var(--rosegold);}
         .cmlc-voice-card p{font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--forest-dark);margin:0 0 8px;}
@@ -518,6 +525,81 @@ export default function ChallengePage() {
           {/* Joel 2026-08-11: this exact line, replacing the comp's "Trusted by
               50,000+ women" trailer. */}
           <p className="cmlc-trust">Combined 36 years of nursing experience &nbsp;&middot;&nbsp; 20+ years of health coaching</p>
+        </div>
+      </section>
+
+      {/* ============ RESTOREHER LIVE EVENT BRIDGE (added 2026-08-11, Joel) ============ */}
+      <section className="cmlc-sec" style={{ background: 'var(--cream-2)' }}>
+        <div className="cmlc-wrap">
+          <span className="cmlc-eyebrow rg" style={{ justifyContent: 'center', display: 'flex' }}>
+            We&rsquo;ve seen what happens when women finally get in the room
+          </span>
+          <h2 style={{ textAlign: 'center', margin: '14px auto 24px', maxWidth: '22ch' }}>
+            Something changes when you stop trying to figure all of this out by yourself.
+          </h2>
+          <p style={{ maxWidth: 640, margin: '0 auto 1em', textAlign: 'center' }}>
+            Recently, we gathered women together in person for a live women&rsquo;s wellness experience with Barbara O&rsquo;Neill and other educators.
+          </p>
+          <p style={{ maxWidth: 640, margin: '0 auto 1em', textAlign: 'center' }}>Women came with questions.</p>
+          <p style={{ maxWidth: 640, margin: '0 auto 1.4em', textAlign: 'center' }}>
+            About their bodies. Their hormones. Their numbers. Their energy. Their sleep. The changes they could feel happening, and what they were supposed to do about them.
+          </p>
+
+          <div className="b-placeholder full-bleed" style={{ margin: '0 auto 40px', maxWidth: 860 }}>
+            <div className="b-ph-label">[ LARGE EVENT ROOM PHOTO ]</div>
+          </div>
+
+          <p style={{ maxWidth: 600, margin: '0 auto 1em', textAlign: 'center' }}>And yes, what was taught mattered.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 1.4em', textAlign: 'center' }}>But something else happened in that room that stayed with us.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 0.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>Women had a place to listen.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 0.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>To ask questions.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 0.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>To connect things they had been looking at separately.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 30px', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>And to finally spend focused time thinking about their own health.</p>
+
+          <div className="cmlc-testi-grid" style={{ gridTemplateColumns: 'repeat(3,1fr)', marginBottom: 40 }}>
+            <div className="b-placeholder small"><div className="b-ph-label">[ ANNIE + BARBARA ]</div></div>
+            <div className="b-placeholder small"><div className="b-ph-label">[ EVENT / BARBARA TEACHING / AUDIENCE ]</div></div>
+            <div className="b-placeholder small"><div className="b-ph-label">[ JOEL + BARBARA ]</div></div>
+          </div>
+
+          <h3 style={{ textAlign: 'center', fontStyle: 'italic', fontFamily: "'Fraunces',serif", fontSize: 'clamp(22px,3.4vw,30px)', margin: '0 auto 20px', maxWidth: '20ch' }}>
+            And we thought: more women need access to this.
+          </h3>
+          <p style={{ maxWidth: 600, margin: '0 auto 1em', textAlign: 'center' }}>Not necessarily another conference.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 1.4em', textAlign: 'center' }}>Not another notebook full of information.</p>
+          <p style={{ maxWidth: 600, margin: '0 auto 30px', textAlign: 'center', fontWeight: 700 }}>A place to actually DO something with what they&rsquo;re learning.</p>
+
+          <div className="cmlc-voice-grid" style={{ marginBottom: 30 }}>
+            <div className="b-placeholder small">
+              <div className="b-ph-label">[ EVENT TESTIMONIAL GAP &mdash; CLARITY ]</div>
+              <p className="b-ph-note">Insert a real attendee statement describing something she understood, saw differently, or finally connected because of the event.</p>
+            </div>
+            <div className="b-placeholder small">
+              <div className="b-ph-label">[ EVENT TESTIMONIAL GAP &mdash; EXPERIENCE ]</div>
+              <p className="b-ph-note">Insert a real attendee statement describing what being in the room, participating, or learning with the group meant to her.</p>
+            </div>
+          </div>
+
+          <div className="b-placeholder compact" style={{ maxWidth: 600, margin: '0 auto 40px' }}>
+            <div className="b-ph-label">Optional: Barbara O&rsquo;Neill on our live event</div>
+            <p className="b-ph-note">[ ACTUAL BARBARA EVENT QUOTE OR SHORT CLIP ] &mdash; use only her actual words about the live event. Do not connect the statement to the Change My Life Challenge unless she explicitly did so.</p>
+          </div>
+
+          <h2 style={{ textAlign: 'center', margin: '20px auto 24px', maxWidth: '20ch' }}>Now we&rsquo;re bringing that experience closer to home.</h2>
+          <p style={{ maxWidth: 560, margin: '0 auto 0.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>Seven focused days.</p>
+          <p style={{ maxWidth: 560, margin: '0 auto 0.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>Smaller steps.</p>
+          <p style={{ maxWidth: 560, margin: '0 auto 1.4em', textAlign: 'center', fontFamily: "'Fraunces',serif", fontStyle: 'italic', color: 'var(--forest-dark)', fontSize: 19 }}>
+            More participation.
+          </p>
+          <p style={{ maxWidth: 620, margin: '0 auto 1.4em', textAlign: 'center' }}>
+            More opportunity to pay attention to <strong>your</strong> patterns, <strong>your</strong> habits, <strong>your</strong> numbers, <strong>your</strong> symptoms and <strong>your</strong> life.
+          </p>
+          <p style={{ maxWidth: 600, margin: '0 auto', textAlign: 'center' }}>
+            Because the goal isn&rsquo;t for you to leave with another notebook full of things you know.
+          </p>
+          <p style={{ maxWidth: 600, margin: '10px auto 0', textAlign: 'center', fontWeight: 800, color: 'var(--coral)' }}>
+            The goal is for you to finally start doing something with what you know.
+          </p>
         </div>
       </section>
 
