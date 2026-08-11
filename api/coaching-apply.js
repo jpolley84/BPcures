@@ -4,7 +4,7 @@
 // Application-only flow (Brunson high-ticket rule). No payment collected
 // here. Submissions:
 //   1. Stored in KV under coaching-app:<timestamp>:<email> with 90-day TTL
-//   2. Emailed to Joel for manual review at LAUNCHER_NOTIFY_EMAIL
+//   2. Emailed to Joel for manual review at BW_NOTIFY_EMAIL
 //   3. Auto-acknowledged to the applicant
 //
 // 2026-05-12 — initial cohort price $4,997 / 5 slots.
@@ -40,7 +40,17 @@ function getResend() {
 // which is why "we've had no applications" — they were arriving in
 // a parallel inbox. Override with LAUNCHER_NOTIFY_EMAIL in Vercel env
 // if a different routing is needed for any specific environment.
-const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+// 2026-08-11: was process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com'.
+// LAUNCHER_NOTIFY_EMAIL is set in Vercel production (added 2026-04-29 for the
+// Practice Launcher project) and was silently overriding the fallback, so every
+// application notification went to a Launcher-era address instead of Joel. The
+// sends succeeded, which is why nothing ever errored: applications simply
+// arrived somewhere nobody reads. Damien Papillion applied HOT on 2026-08-06
+// and sat five days because of it.
+//
+// This route belongs to BraveWorks, not to Launcher, so it no longer reads a
+// LAUNCHER_* variable at all. Overriding is still possible via BW_NOTIFY_EMAIL.
+const NOTIFY_EMAIL = process.env.BW_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 // 2026-07-17: was 'coaching@bpquiz.com' — that address had ZERO successful
 // sends ever in Resend's log (bpquiz.com domain shows status
 // 'partially_failed' in Resend's /domains API, SPF/DKIM/DMARC not fully

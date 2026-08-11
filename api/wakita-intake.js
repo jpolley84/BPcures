@@ -15,7 +15,11 @@ import { generateWakitaPDF } from './_wakita-pdf.js';
 // 2026-05-14: changed default from brave.works.marketing@gmail.com to
 // braveworksrn@gmail.com (Joel's primary operational inbox). See the
 // matching note in coaching-apply.js for the reasoning.
-const NOTIFY_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+// 2026-08-11: was LAUNCHER_NOTIFY_EMAIL, which is set in Vercel production for
+// the Practice Launcher project and was silently overriding this fallback, so
+// these notifications went to a Launcher-era address instead of Joel. This
+// route belongs to BraveWorks, so it no longer reads a LAUNCHER_* variable.
+const NOTIFY_EMAIL = process.env.BW_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM = 'BraveWorks Intake <intake@bpquiz.com>';
 
 let _resend = null;
