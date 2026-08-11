@@ -14,9 +14,19 @@ import { track } from '../utils/analytics.js';
 
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
 
-const CALENDLY_URL =
-  import.meta.env.VITE_CALENDLY_ONBOARDING_URL ||
-  'https://calendly.com/braveworksrn/60min';
+// 2026-08-11: the Calendly fallback was REMOVED from this page.
+//
+// /sprint-assessment is a public route with no purchase gate, so hardcoding the
+// booking URL here published Joel's calendar to anyone who found the page. A
+// non-buyer booked an hour with Joel and Annie that way.
+//
+// Joel's rule: only a Sprint buyer gets the booking link, and it reaches them by
+// email after api/sprint-assessment.js verifies the purchase against Stripe.
+// If VITE_CALENDLY_ONBOARDING_URL is deliberately set, this page will use it;
+// otherwise the thank-you screen promises the link by email instead of showing
+// a button. Do not restore a hardcoded default here.
+const CALENDLY_URL = import.meta.env.VITE_CALENDLY_ONBOARDING_URL || '';
+const HAS_CALENDLY = /calendly\.com/i.test(CALENDLY_URL);
 
 const QUESTIONS = [
   { key: 'readings', label: 'Your recent blood pressure readings', hint: 'The last few numbers you remember, and when you took them. Rough is fine.', rows: 3 },
@@ -218,22 +228,24 @@ export default function SprintAssessmentPage() {
             <h1 style={{ ...serif, fontSize: '1.8rem', margin: '0 0 0.6rem' }}>Your case is on Joel&rsquo;s desk.</h1>
             <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', maxWidth: '46ch', margin: '0 auto 1.8rem' }}>
               I have everything I need to start building your 30 days. The last step is
-              yours: pick the time for our 1:1 onboarding call. That call is where your
-              plan becomes real.
+              our 1:1 onboarding call, and your booking link is on its way to your inbox
+              right now. That call is where your plan becomes real.
             </p>
-            <a
-              href={CALENDLY_URL}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => track('sprint_assessment_book_call')}
-              style={{
-                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.55rem',
-                padding: '1rem 1.6rem', background: 'var(--clay, #B85A36)', color: '#fff',
-                borderRadius: 10, fontSize: '1.05rem', fontWeight: 800, textDecoration: 'none',
-              }}
-            >
-              <CalendarCheck size={19} aria-hidden /> Book My Onboarding Call
-            </a>
+            {HAS_CALENDLY && (
+              <a
+                href={CALENDLY_URL}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => track('sprint_assessment_book_call')}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.55rem',
+                  padding: '1rem 1.6rem', background: 'var(--clay, #B85A36)', color: '#fff',
+                  borderRadius: 10, fontSize: '1.05rem', fontWeight: 800, textDecoration: 'none',
+                }}
+              >
+                <CalendarCheck size={19} aria-hidden /> Book My Onboarding Call
+              </a>
+            )}
             <p style={{ fontSize: '0.85rem', color: 'var(--muted, #7A7061)', margin: '1.1rem 0 0' }}>
               A confirmation is in your inbox too. If a time does not fit, reply to it and
               we will find one.

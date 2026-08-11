@@ -16,7 +16,13 @@ import { ArrowRight, CheckCircle2, Lock, Upload, X, CalendarCheck } from 'lucide
 import { track } from '../utils/analytics.js';
 
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
-const CALENDLY_URL = import.meta.env.VITE_CALENDLY_ONBOARDING_URL || 'https://calendly.com/braveworksrn/60min';
+// 2026-08-11: hardcoded Calendly fallback REMOVED. Per Joel, only a Sprint
+// buyer receives a booking link, and it goes by email after the purchase is
+// verified. This is a client intake page, not a buyer surface, so it must not
+// publish the calendar. Set VITE_CALENDLY_ONBOARDING_URL if a link is wanted
+// here; otherwise the button is hidden. Do not restore a hardcoded default.
+const CALENDLY_URL = import.meta.env.VITE_CALENDLY_ONBOARDING_URL || '';
+const HAS_CALENDLY = /calendly\.com/i.test(CALENDLY_URL);
 
 // Each field: { id, label, hint?, type: 'text'|'textarea'|'radio'|'checkbox', options?, rows? }
 const SECTIONS = [
@@ -294,13 +300,15 @@ export default function PriscillaIntakePage() {
             <CheckCircle2 size={44} aria-hidden style={{ color: 'var(--sage-deep, #2E3A30)', marginBottom: '0.8rem' }} />
             <h1 style={{ ...serif, fontSize: '1.8rem', margin: '0 0 0.6rem' }}>This is the foundation. Thank you.</h1>
             <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', maxWidth: '46ch', margin: '0 auto 1.8rem' }}>
-              Everything you just gave me is on my desk. The last step is yours: pick the time
-              for our 90-Day onboarding call, and we build your plan from here.
+              Everything you just gave me is on my desk. I will be in touch by email to set
+              up our 90-Day onboarding call, and we build your plan from here.
             </p>
-            <a href={CALENDLY_URL} target="_blank" rel="noreferrer" onClick={() => track('priscilla_intake_book_call')}
-              style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.55rem', padding: '1rem 1.6rem', background: 'var(--clay, #B85A36)', color: '#fff', borderRadius: 10, fontSize: '1.05rem', fontWeight: 800, textDecoration: 'none' }}>
-              <CalendarCheck size={19} aria-hidden /> Book My Onboarding Call
-            </a>
+            {HAS_CALENDLY && (
+              <a href={CALENDLY_URL} target="_blank" rel="noreferrer" onClick={() => track('priscilla_intake_book_call')}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.55rem', padding: '1rem 1.6rem', background: 'var(--clay, #B85A36)', color: '#fff', borderRadius: 10, fontSize: '1.05rem', fontWeight: 800, textDecoration: 'none' }}>
+                <CalendarCheck size={19} aria-hidden /> Book My Onboarding Call
+              </a>
+            )}
           </div>
         ) : (
           <form onSubmit={submit}>
