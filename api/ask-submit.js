@@ -16,6 +16,7 @@
 import { kv } from '@vercel/kv';
 import { Resend } from 'resend';
 import { looksLikeValidEmail } from './_email-validation.js';
+import { normalizePhone } from './_phone.js';
 
 let _resend = null;
 function getResend() {
@@ -30,6 +31,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { name, email, question, doctor_said, cid, company } = req.body || {};
+  // 2026-08-10 (Joel): phone is required on every form now. Normalized via
+  // api/_phone.js so the rule is identical on every endpoint. Stored empty
+  // rather than rejected if malformed: the EMAIL is what we cannot lose.
+  const phone = normalizePhone(req.body?.phone);
 
   // Honeypot: bots fill every field. Pretend success, store nothing.
   if (company) return res.status(200).json({ success: true });
@@ -51,6 +56,7 @@ export default async function handler(req, res) {
     at: nowIso,
     name: fname,
     email: emailLower,
+    phone,
     question: q,
     doctorSaid: typeof doctor_said === 'string' ? doctor_said.trim().slice(0, 2000) : '',
     manychatContactId: typeof cid === 'string' ? cid.slice(0, 32) : '',

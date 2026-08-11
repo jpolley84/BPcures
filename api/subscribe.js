@@ -11,6 +11,7 @@
 // lead arc's Day 0 is the right first touch.
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
+import { normalizePhone } from './_phone.js';
 
 // Simple per-IP rate limit, same posture as lead-magnet.js (10/hr).
 const RATE_LIMIT = 10;
@@ -22,6 +23,10 @@ export default async function handler(req, res) {
   }
 
   const { email } = req.body || {};
+  // 2026-08-10 (Joel): phone is required on every form now. Normalized via
+  // api/_phone.js so the rule is identical on every endpoint. Stored empty
+  // rather than rejected if malformed: the EMAIL is what we cannot lose.
+  const phone = normalizePhone(req.body?.phone);
   if (!looksLikeValidEmail(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
@@ -55,6 +60,7 @@ export default async function handler(req, res) {
       const reEnterLead = !existing.state || existing.state === 'newsletter';
       await kv.set(dripKey, {
         ...existing,
+        phone: phone || existing.phone || '',
         tags: Array.from(new Set([...(existing.tags || []), 'footer-newsletter'])),
         ...(reEnterLead ? { state: 'lead', stateEnteredAt: nowIso } : {}),
       });
@@ -62,6 +68,7 @@ export default async function handler(req, res) {
       await kv.set(dripKey, {
         email: emailLower,
         firstName: '',
+        phone,
         cohort: 'newsletter',
         enrolledAt: nowIso,
         firstSeen: nowIso,

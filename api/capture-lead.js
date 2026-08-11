@@ -33,6 +33,7 @@
 
 import { kv } from '@vercel/kv';
 import { bumpMetric } from './_ops-metrics.js';
+import { normalizePhone } from './_phone.js';
 
 const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium']);
 
@@ -67,6 +68,10 @@ export default async function handler(req, res) {
   }
 
   const { firstName, email, corner, readiness, scores, tags, source } = req.body;
+  // 2026-08-10 (Joel): phone is required on every form now. Normalized via
+  // api/_phone.js so the rule is identical on every endpoint. Stored empty
+  // rather than rejected if malformed: the EMAIL is what we cannot lose.
+  const phone = normalizePhone(req.body?.phone);
   if (!looksLikeEmail(email)) {
     return res.status(400).json({ error: 'Invalid email' });
   }
@@ -93,6 +98,7 @@ export default async function handler(req, res) {
       await kv.set(dripKey, {
         ...existing,
         firstName: existing.firstName || normFirst,
+        phone: phone || existing.phone || '',
         corner: existing.corner || normCorner,
         readiness: existing.readiness || normReadiness,
         scores: existing.scores || normScores,
@@ -111,6 +117,7 @@ export default async function handler(req, res) {
     await kv.set(dripKey, {
       email: normEmail,
       firstName: normFirst,
+      phone,
       corner: normCorner,
       readiness: normReadiness,
       scores: normScores,
