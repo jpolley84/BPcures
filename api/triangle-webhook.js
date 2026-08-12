@@ -1437,6 +1437,62 @@ async function processAllIn(session, plan = 'full') {
     console.warn('stripe-webhook: all-in KV record failed (non-fatal)', err.message);
   }
 
+  // ── Promote the drip state machine to 'buyer' ───────────────────────────
+  // 2026-08-11 BUG FIX. processAllIn wrote bwbp:allin:<email> and stopped. It
+  // never touched bwbp:drip:<email>, which is what the email sequences read.
+  // So somebody could pay $1,997 and stay `state: 'lead'` forever, still
+  // receiving the lead nurture arc that exists to sell them the thing they
+  // already bought.
+  //
+  // This was live and it hit real people. Priscilla Harlins paid in full on
+  // Jul 20 and was still state:'lead' three weeks later. Luvenia Truss put
+  // down a deposit Aug 9 and was still 'lead'. The only All-In members
+  // correctly marked 'buyer' got there by ALSO buying a $17 kit, because the
+  // kit path does transition state. Nothing about All-In did.
+  //
+  // Enrich, never clobber: keep an existing buyer's tier/timers, and never
+  // demote. A deposit-only member is a buyer too, so every plan promotes.
+  try {
+    const dripKey = `bwbp:drip:${emailKey}`;
+    const existing = await kv.get(dripKey);
+    const nowIso = new Date().toISOString();
+    const allinFields = {
+      isPaidCustomer: true,
+      isAllIn: true,
+      allInPlan: plan,
+      allInPurchasedAt: nowIso,
+    };
+    if (existing) {
+      const alreadyBuyer = existing.state === 'buyer';
+      await kv.set(dripKey, {
+        ...existing,
+        ...allinFields,
+        firstName: existing.firstName || firstName || '',
+        purchasedAt: existing.purchasedAt || nowIso,
+        tags: Array.from(new Set([...(existing.tags || []), 'all-in', `all-in-${plan}`])),
+        // Only move the state clock if they were not already a buyer, so an
+        // existing buyer's sequence position is not reset by this purchase.
+        ...(alreadyBuyer ? {} : { state: 'buyer', stateEnteredAt: nowIso }),
+      });
+    } else {
+      await kv.set(dripKey, {
+        email: emailKey,
+        firstName: firstName || '',
+        ...allinFields,
+        purchasedAt: nowIso,
+        enrolledAt: nowIso,
+        state: 'buyer',
+        stateEnteredAt: nowIso,
+        lastSentDay: 0,
+        optedIn: true,
+        source: 'all-in',
+        tags: ['all-in', `all-in-${plan}`],
+      });
+    }
+  } catch (err) {
+    console.error('stripe-webhook: all-in drip promotion FAILED — this buyer may still be in the lead arc', emailKey, err.message);
+  }
+
   // ── Installment plans: cap the subscription at N bi-weekly charges ──
   // GUARDED so only an All-In subscription is ever touched: re-read the
   // subscription and require the all-in marker (on it or the session) before
