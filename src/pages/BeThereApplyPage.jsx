@@ -70,13 +70,32 @@ const GOAL_OPTIONS = [
   'I am not sure yet, I just know something has to change',
 ];
 
-// STEP 4 — significant other. Identifies the decision unit so the "let me ask
-// my spouse" stall can be handled on the call, not after it.
-const PARTNER_OPTIONS = [
-  'Yes, and they support me doing this',
-  'Yes, but they are not fully on board yet',
-  'Yes, and we decide things like this together',
-  'No, it is just me',
+// 2026-08-12 research pass: three new predictive questions (severity, start
+// timeline, decision authority) replace occupation + bare partner status.
+// Budget and timeline predict buying; severity = urgency in this niche; the
+// decision question surfaces the spousal veto before the call instead of
+// after it. Exact strings synced with scoreBeThere in api/coaching-apply.js.
+const SEVERITY_OPTIONS = [
+  'It recently hit 160 or higher, or I had a real scare',
+  'It runs 140 to 159 most days',
+  'It is borderline, or creeping up year after year',
+  'It is managed on medication, and I want a different path forward',
+  'I am not sure. I avoid checking it',
+];
+
+const TIMELINE_START_NOW = 'This week';
+const TIMELINE_TWO_WEEKS = 'Within two weeks';
+const TIMELINE_OPTIONS = [
+  TIMELINE_START_NOW,
+  TIMELINE_TWO_WEEKS,
+  'In the next month or two',
+  'Just exploring for now',
+];
+
+const DECISION_OPTIONS = [
+  'No, this is my call',
+  'My spouse or partner, and they support me working on my health',
+  'My spouse or partner, and I have not talked to them about it yet',
 ];
 
 // Doctor-alignment gate. Kept from the old form: it is a liability screen for
@@ -85,7 +104,9 @@ const OFF_MEDS = 'I was hoping to come off my medications without my doctor';
 const ALIGN_OPTIONS = ['Yes, that is exactly what I want', OFF_MEDS, 'I am not sure'];
 
 // STEP 5 — discovery + the money question.
-const FOUND_OPTIONS = ['TikTok', 'Instagram', 'Facebook', 'YouTube', 'A friend', 'Other'];
+// 2026-08-12: 'The masterclass' added — Joel now routes masterclass attendees
+// here and needs the attribution. Kept first so warm traffic sees it fast.
+const FOUND_OPTIONS = ['The masterclass', 'TikTok', 'Instagram', 'Facebook', 'YouTube', 'A friend', 'Other'];
 
 // The money question, her way: cash-flow buckets, NO price shown. The third
 // option is the sole affordability disqualifier and scores COLD; the first
@@ -173,6 +194,9 @@ function Field({ label, helper, optional, error, children }) {
 export default function BeThereApplyPage() {
   const [searchParams] = useSearchParams();
   const tier = useMemo(() => searchParams.get('tier') || 'be-there', [searchParams]);
+  // 2026-08-12: warm-traffic source tag (?src=masterclass from /coaching or a
+  // direct masterclass link). Recorded on the application for attribution.
+  const src = useMemo(() => (searchParams.get('src') || '').slice(0, 40), [searchParams]);
 
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
@@ -189,7 +213,7 @@ export default function BeThereApplyPage() {
     // Step 3 — what you want
     whyJoel: '', goal: '',
     // Step 4 — your life
-    occupation: '', partnerStatus: '', winning: '', medsAlignment: '',
+    bpNow: '', startTimeline: '', decisionAuthority: '', winning: '', medsAlignment: '',
     // Step 5 — last things
     foundJoel: '', socialHandle: '', cashFlow: '',
   });
@@ -225,8 +249,9 @@ export default function BeThereApplyPage() {
       if (!form.goal) e.goal = 'Pick one.';
     }
     if (s === 3) {
-      if (!form.occupation.trim()) e.occupation = 'A word or two is plenty.';
-      if (!form.partnerStatus) e.partnerStatus = 'Pick one.';
+      if (!form.bpNow) e.bpNow = 'Pick the closest one.';
+      if (!form.startTimeline) e.startTimeline = 'Pick one.';
+      if (!form.decisionAuthority) e.decisionAuthority = 'Pick one.';
       if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
       if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
       if (!form.foundJoel) e.foundJoel = 'Pick one.';
@@ -251,6 +276,27 @@ export default function BeThereApplyPage() {
       bailOnGate();
       return;
     }
+    // 2026-08-12: partial capture. By the end of step 2 we hold name, email,
+    // and phone; a step-3 abandon used to lose all of it. Fire-and-forget so
+    // Joel can follow up abandons (KV only, no emails sent server-side).
+    if (step === 2) {
+      try {
+        fetch('/api/coaching-apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'bethere-partial',
+            src,
+            firstName: form.firstName.trim(),
+            lastName: form.lastName.trim(),
+            email: form.email.trim(),
+            phone: form.phone.trim(),
+            whyJoel: form.whyJoel,
+            goal: form.goal,
+          }),
+        }).catch(() => {});
+      } catch { /* never block the wizard */ }
+    }
     const next = step + 1;
     setStep(next);
     track('bethere_apply_step', { step: next });
@@ -260,10 +306,13 @@ export default function BeThereApplyPage() {
   // Local mirror of the server scoring; fallback only if the response has no
   // fitTier. Kept in sync with scoreBeThere in api/coaching-apply.js.
   function localFit() {
+    // 2026-08-12: mirrors scoreBeThere — COLD only on the gate "No" (Joel's
+    // 07-22 rule stands); HOT now requires cash flow AND a near-term start.
     if (form.serious === GATE_NO) return 'COLD';
-    if (form.cashFlow === CASH_NO) return 'COLD';
-    if (form.medsAlignment === OFF_MEDS) return 'COLD';
-    if (form.cashFlow === CASH_YES) return 'HOT';
+    if (
+      form.cashFlow === CASH_YES &&
+      (form.startTimeline === TIMELINE_START_NOW || form.startTimeline === TIMELINE_TWO_WEEKS)
+    ) return 'HOT';
     return 'WARM';
   }
 
@@ -280,6 +329,7 @@ export default function BeThereApplyPage() {
         body: JSON.stringify({
           source: 'bethere-apply',
           tier,
+          src,
           name: `${form.firstName.trim()} ${form.lastName.trim()}`.trim(),
           firstName: form.firstName.trim(),
           lastName: form.lastName.trim(),
@@ -288,8 +338,9 @@ export default function BeThereApplyPage() {
           serious: form.serious,
           whyJoel: form.whyJoel,
           goal: form.goal,
-          occupation: form.occupation.trim(),
-          partnerStatus: form.partnerStatus,
+          bpNow: form.bpNow,
+          startTimeline: form.startTimeline,
+          decisionAuthority: form.decisionAuthority,
           winning: form.winning.trim(),
           medsAlignment: form.medsAlignment,
           foundJoel: form.foundJoel,
@@ -361,12 +412,13 @@ export default function BeThereApplyPage() {
                   application and if i feel they are a good fit i'll send them an
                   email with the next steps." */}
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
-                Joel reads every word himself. <strong>Watch your email in the next few hours</strong>
-                {' '}for a personal note from him with your next step.
+                <strong>Check your email in the next few minutes.</strong> Your first note from Joel
+                is already on its way with your next step.
               </p>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
                 When it lands, <strong>just reply to it.</strong> That reply is how you and Joel find
-                a time to talk, so keep an eye out and answer when you can.
+                a time to talk. One small thing you can do tonight: take your blood pressure before
+                bed, and again tomorrow morning before coffee. Bring both numbers to the call.
               </p>
               <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto' }}>
                 Add joel@bpquiz.com to your contacts so it does not slip into spam. That is the only
@@ -476,13 +528,16 @@ export default function BeThereApplyPage() {
         {/* STEP 3 — your life + the money question (merged) */}
         {step === 3 && (
           <>
-            <Field label="What is your current work, and how long have you done it?" error={errors.occupation}>
-              <input className="bt-input" type="text" value={form.occupation} onChange={(e) => set('occupation', e.target.value)} placeholder="e.g. Retired teacher, 8 years" />
+            <Field label="Where is your blood pressure right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
+              <OptionList name="BP now" options={SEVERITY_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
             </Field>
-            <Field label="Do you have a significant other?" error={errors.partnerStatus}>
-              <OptionList name="Partner status" options={PARTNER_OPTIONS} value={form.partnerStatus} onChange={(v) => set('partnerStatus', v)} />
+            <Field label="If this is a fit, when would you want to start?" error={errors.startTimeline}>
+              <OptionList name="Start timeline" options={TIMELINE_OPTIONS} value={form.startTimeline} onChange={(v) => set('startTimeline', v)} />
             </Field>
-            <Field label="If the next 90 days went perfectly, what would winning look like for you?" helper="This is the most important answer on the whole application. Paint the real picture. Joel reads it first." error={errors.winning}>
+            <Field label="Is there anyone else who would need to be part of this decision?" error={errors.decisionAuthority}>
+              <OptionList name="Decision authority" options={DECISION_OPTIONS} value={form.decisionAuthority} onChange={(v) => set('decisionAuthority', v)} />
+            </Field>
+            <Field label="If the next 12 weeks went perfectly, what would winning look like for you?" helper="This is the most important answer on the whole application. Paint the real picture. Joel reads it first." error={errors.winning}>
               <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem', padding: '1rem 1.1rem', background: '#FFFFFF', border: '1px solid var(--sage-soft, #C5CDBF)', borderRadius: 12 }}>

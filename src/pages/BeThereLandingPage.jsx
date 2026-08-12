@@ -52,7 +52,7 @@
 // sticky mobile apply bar, animated FAQ accordion, reduced-motion safe.
 
 import { useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { track } from '../utils/analytics';
 
 // ---- scroll-reveal ---------------------------------------------------------
@@ -199,6 +199,20 @@ const TESTIMONIALS = [
     name: 'BraveWorks reader',
     note: 'Shared with permission · results not typical',
   },
+  // 2026-08-12 (Joel): two public social comments Joel supplied by screenshot.
+  // Public statements, quoted as posted, first name only. Ledger entries in
+  // docs/testimonials.md. Two more (Gary, Orlando) are HELD pending a consent
+  // reply because they arrived by private DM — do not add without it.
+  {
+    quote: 'From my 20s to now being 67, on 3 blood pressure meds, you have been the only person that has ever made any impact in my BP journey. Raw garlic has been a life changer. Now I am adding hibiscus.',
+    name: 'Drago, 67',
+    note: 'Public comment, quoted as posted · results not typical',
+  },
+  {
+    quote: 'You have no earthly idea how much I appreciate you. I am feeling so much better. 62 years old and was feeling pretty bad. I have to honestly say I love you.',
+    name: 'Margie, 62',
+    note: 'Public comment, quoted as posted · results not typical',
+  },
 ];
 
 const METHOD_STEPS = [
@@ -280,7 +294,7 @@ const FAQS = [
   },
   {
     q: 'I want to get off my medication. Can this help me do that?',
-    a: 'Here is the honest answer, and it is not the one that sells best. Joel will never tell you to stop, lower, or skip a medication. Only the person who prescribed it can make that call, and a woman who stops a blood pressure medication on her own can have a stroke. What this program changes is the conversation. In ninety days you walk into that appointment with three months of your own readings and a written record of what you changed and what happened. Whether anything about your prescription changes is between you and your doctor, and we will not pretend to know. What we can tell you is that you will stop walking in with nothing but a hope.',
+    a: 'Here is the honest answer, and it is not the one that sells best. Joel will never tell you to stop, lower, or skip a medication. Only the person who prescribed it can make that call, and a woman who stops a blood pressure medication on her own can have a stroke. What this program changes is the conversation. In twelve weeks you walk into that appointment with three months of your own readings and a written record of what you changed and what happened. Whether anything about your prescription changes is between you and your doctor, and we will not pretend to know. What we can tell you is that you will stop walking in with nothing but a hope.',
   },
   {
     q: 'What if my blood pressure is very high right now?',
@@ -308,7 +322,7 @@ function ApplyButton({ label, position, dark, onApply }) {
         {label}
       </button>
       <span className={`lbn-btnsub${dark ? ' on-dark' : ''}`}>
-        Takes 8 to 10 minutes · No payment required to apply
+        Takes about 3 minutes · No payment required to apply
       </span>
     </div>
   );
@@ -339,6 +353,12 @@ function GoldDivider() {
 // ---- page ------------------------------------------------------------------
 export default function BeThereLandingPage() {
   const navigate = useNavigate();
+  // 2026-08-12: warm-traffic source tag. Masterclass attendees arrive at
+  // /coaching?src=masterclass; the tag rides through to /apply and into the
+  // application record so Joel can attribute masterclass conversions.
+  const [searchParams] = useSearchParams();
+  const src = (searchParams.get('src') || '').slice(0, 40);
+  const fromMasterclass = src === 'masterclass';
   const [openFaq, setOpenFaq] = useState(-1);
   const [showBar, setShowBar] = useState(false);
   const heroRef = useRef(null);
@@ -346,7 +366,7 @@ export default function BeThereLandingPage() {
   useReveal();
 
   useEffect(() => {
-    track('bethere_landing_viewed', { version: 'lbn-v3-annie' });
+    track('bethere_landing_viewed', { version: 'lbn-v3-annie', src: src || 'none' });
   }, []);
 
   // Sticky mobile apply bar: appears once the hero scrolls out of view.
@@ -360,8 +380,8 @@ export default function BeThereLandingPage() {
   }, []);
 
   function handleApply(position) {
-    track('bethere_apply_clicked', { position, version: 'lbn-v3-annie' });
-    navigate('/apply');
+    track('bethere_apply_clicked', { position, version: 'lbn-v3-annie', src: src || 'none' });
+    navigate(src ? `/apply?src=${encodeURIComponent(src)}` : '/apply');
   }
 
   return (
@@ -753,6 +773,26 @@ export default function BeThereLandingPage() {
         <span>· Life Beyond the Numbers</span>
       </div>
 
+      {/* ===== MASTERCLASS FAST LANE (warm traffic only) =====
+          She just spent an hour with Joel; do not restart the sale from zero.
+          One line of recognition + an immediate path to the application. The
+          full page stays underneath for anyone who wants to keep reading. */}
+      {fromMasterclass && (
+        <div style={{ background: 'var(--night, #1F3634)', textAlign: 'center', padding: '18px 20px' }}>
+          <p style={{ color: '#EFE9DC', fontSize: 16, margin: 0, lineHeight: 1.5 }}>
+            You just watched the masterclass, so you already know how Joel works.{' '}
+            <button
+              type="button"
+              onClick={() => handleApply('masterclass_fastlane')}
+              style={{ background: 'none', border: 'none', color: '#C9A44C', fontWeight: 700, fontSize: 16, cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: 3, padding: 0, fontFamily: 'inherit' }}
+            >
+              Skip ahead and apply now
+            </button>
+            {' '}(about 3 minutes), or keep reading.
+          </p>
+        </div>
+      )}
+
       {/* ===== HERO ===== */}
       <section className="hero" ref={heroRef}>
         <div className="wrap hero-grid">
@@ -773,7 +813,7 @@ export default function BeThereLandingPage() {
             you hoped, the only explanation left on the table was you.
           </p>
           <p className="headline2">
-            It was never you. Life Beyond the Numbers&trade; is 90 days with Joel, a nurse who
+            It was never you. Life Beyond the Numbers&trade; is 12 weeks of live coaching with Joel, a nurse who
             spent twenty years in intensive care and emergency medicine watching what happens
             when people are handed a diagnosis and no plan. Together you find what is actually
             pulling on your number, and you change it in the life you already have. Not the
@@ -868,7 +908,7 @@ export default function BeThereLandingPage() {
           </p>
           <p className="intro">
             <strong>Here is what we actually do.</strong> Right now, when your doctor asks how
-            things are going, you have a feeling and a guess. Ninety days from now you walk in
+            things are going, you have a feeling and a guess. Twelve weeks from now you walk in
             with three months of your own readings, taken correctly, and a written record of
             what you changed and what happened when you did.
           </p>
@@ -1097,7 +1137,7 @@ export default function BeThereLandingPage() {
             ))}
           </div>
           <p className="outro" data-rv>
-            Ninety days holds nine of these cycles, run back to back, with Joel beside you for
+            Twelve weeks of live coaching holds eight of these cycles, run back to back, with Joel beside you for
             every one. You never work on everything at once. You reset one thing, hold it, and
             move to the next.
           </p>
@@ -1112,7 +1152,7 @@ export default function BeThereLandingPage() {
         <section className="wins">
           <div className="wrap">
             <span className="eyebrow" data-rv>In Their Words</span>
-            <h2 data-rv>Women Who Stopped Letting the Number Run the Room.</h2>
+            <h2 data-rv>People Who Stopped Letting the Number Run the Room.</h2>
             <div className="wins-grid" data-rv data-rv-child>
               {TESTIMONIALS.map((t, i) => (
                 <figure className="win-card" key={i}>
@@ -1353,7 +1393,7 @@ export default function BeThereLandingPage() {
             <p>
               <b>P.S.</b> You do not need to have this figured out before you apply. You just need
               to be done bracing yourself every time the cuff tightens. If that feels familiar, it
-              is time to stop guessing. The application takes about ten minutes. What it protects
+              is time to stop guessing. The application takes about three minutes. What it protects
               is worth so much more.
             </p>
           </div>

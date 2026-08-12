@@ -51,6 +51,9 @@ function getResend() {
 // This route belongs to BraveWorks, not to Launcher, so it no longer reads a
 // LAUNCHER_* variable at all. Overriding is still possible via BW_NOTIFY_EMAIL.
 const NOTIFY_EMAIL = process.env.BW_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
+// 2026-08-12: Joel also gets a text on every completed Be There application
+// (same Resend → Verizon email-to-SMS gateway the Calendly webhook uses).
+const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
 // 2026-07-17: was 'coaching@bpquiz.com' — that address had ZERO successful
 // sends ever in Resend's log (bpquiz.com domain shows status
 // 'partially_failed' in Resend's /domains API, SPF/DKIM/DMARC not fully
@@ -131,6 +134,11 @@ export default async function handler(req, res) {
   // legacy 'apply-page' and /cohort2 payloads are untouched.
   const isBeThere = req.body.source === 'bethere-apply';
   if (isBeThere) return handleBeThere(req, res);
+
+  // 2026-08-12: fifth payload shape — the /apply partial capture, fired
+  // client-side after step 2 (name/email/phone in hand). KV only, no emails:
+  // it exists so a step-3 abandon still leaves Joel a contact to follow up.
+  if (req.body.source === 'bethere-partial') return handleBeTherePartial(req, res);
 
   // 2026-08-10 (Joel): fourth payload shape — the /allin Quick Fit Application
   // (AllInPage.jsx), source: 'allin-apply'. /allin STOPPED being an instant
@@ -565,6 +573,14 @@ const BETHERE_CASH_YES = 'Yes, I have the cash flow to invest in my health right
 const BETHERE_CASH_NO = 'No, I am month to month and cannot invest right now';
 const BETHERE_NOT_WILLING = 'I am not willing to invest at this time'; // legacy
 
+// 2026-08-12: timeline strings, exact-sync with TIMELINE_OPTIONS in
+// BeThereApplyPage.jsx. HOT now requires cash flow AND a near-term start;
+// cash-yes + "just exploring" is WARM, not HOT.
+const BETHERE_START_NOW = 'This week';
+const BETHERE_START_TWO_WEEKS = 'Within two weeks';
+const BETHERE_SPOUSE_NOT_ASKED = 'My spouse or partner, and I have not talked to them about it yet';
+const BETHERE_EXPLORING = 'Just exploring for now';
+
 function scoreBeThere(b) {
   // 2026-07-22 (Joel): "I dont want the want off my medications without my
   // doctor to screen anything out. also can't invest is also not a screen out.
@@ -581,7 +597,13 @@ function scoreBeThere(b) {
   // "I would like to move forward" note would be tone deaf, so she still gets
   // the honest version instead.
   if (b.serious === BETHERE_GATE_NO) return 'COLD';
-  if (b.cashFlow === BETHERE_CASH_YES) return 'HOT';
+  if (b.cashFlow === BETHERE_CASH_YES) {
+    // New clients send startTimeline; require a near-term start for HOT.
+    // Old cached clients (no startTimeline) keep the previous cash-only HOT.
+    if (b.startTimeline === undefined) return 'HOT';
+    if (b.startTimeline === BETHERE_START_NOW || b.startTimeline === BETHERE_START_TWO_WEEKS) return 'HOT';
+    return 'WARM';
+  }
   // Legacy old-client fallbacks (only reached when the new fields are absent).
   if (
     b.cashFlow === undefined && b.serious === undefined &&
@@ -590,6 +612,36 @@ function scoreBeThere(b) {
     (b.trackingWillingness === 'Yes' || b.trackingWillingness === 'Mostly')
   ) return 'HOT';
   return 'WARM';
+}
+
+// 2026-08-12: /apply partial capture (source: 'bethere-partial'). Fired
+// client-side when step 2 completes, so a step-3 abandon still leaves a
+// name + email + phone behind. KV ONLY — no notify, no ack, no drip enroll
+// (a finished application overwrites the picture minutes later; abandons are
+// surfaced by the coaching-application scan, key prefix coaching-partial:*).
+async function handleBeTherePartial(req, res) {
+  const b = req.body;
+  const safe = (v) => (typeof v === 'string' ? v.trim() : '');
+  if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
+  const trimmedEmail = b.email.trim().toLowerCase();
+  if (process.env.KV_REST_API_URL) {
+    try {
+      await kv.set(`coaching-partial:${Date.now()}:${trimmedEmail}`, {
+        source: 'bethere-partial',
+        src: safe(b.src),
+        firstName: safe(b.firstName),
+        lastName: safe(b.lastName),
+        email: trimmedEmail,
+        phone: safe(b.phone),
+        whyJoel: safe(b.whyJoel),
+        goal: safe(b.goal),
+        capturedAt: new Date().toISOString(),
+      }, { ex: 30 * 86400 });
+    } catch (err) {
+      console.warn('coaching-apply(partial): KV store failed (non-fatal)', err.message);
+    }
+  }
+  return res.status(200).json({ ok: true });
 }
 
 async function handleBeThere(req, res) {
@@ -628,6 +680,8 @@ async function handleBeThere(req, res) {
   if (b.cashFlow === BETHERE_CASH_NO || b.investTier === BETHERE_NOT_WILLING) flags.push('tight cash flow');
   if (b.serious === BETHERE_GATE_NO) flags.push('gate: not serious');
   if (b.partnerStatus === 'Yes, but they are not fully on board yet') flags.push('partner not on board');
+  if (b.decisionAuthority === BETHERE_SPOUSE_NOT_ASKED) flags.push('spouse not consulted yet');
+  if (b.startTimeline === BETHERE_EXPLORING) flags.push('just exploring');
   if (b.groupsFeel === 'Groups are not for me') flags.push('minor: groups not for her');
 
   const application = {
@@ -641,6 +695,13 @@ async function handleBeThere(req, res) {
     serious: safe(b.serious),
     whyJoel: safe(b.whyJoel),
     goal: safe(b.goal),
+    // 2026-08-12 predictive fields (severity, timeline, decision authority)
+    // + warm-traffic source tag. Occupation retired from the form; still
+    // recorded below if an old cached client sends it.
+    src: safe(b.src),
+    bpNow: safe(b.bpNow),
+    startTimeline: safe(b.startTimeline),
+    decisionAuthority: safe(b.decisionAuthority),
     occupation: safe(b.occupation),
     partnerStatus: safe(b.partnerStatus),
     winning: safe(b.winning),
@@ -673,7 +734,7 @@ async function handleBeThere(req, res) {
     const wordsBlock = (label, text) =>
       `<div style="margin:0 0 14px;"><div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;margin:0 0 4px;">${escapeHtml(label)}</div><div style="background:#FFFFFF;border:1px solid #E6DECE;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2C2A26;white-space:pre-wrap;">${escapeHtml(text)}</div></div>`;
 
-    const subject = `[BE THERE] ${application.name} [${fitTier}]${flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : ''}`;
+    const subject = `[BE THERE]${application.src === 'masterclass' ? ' [MASTERCLASS]' : ''} ${application.name} [${fitTier}]${flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : ''}`;
     const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
       <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
         <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Be There application · fit ${fitTier}${flags.length ? ' · ' + escapeHtml(flags.join('; ')) : ''}</div>
@@ -688,16 +749,21 @@ async function handleBeThere(req, res) {
           ${row('Serious (opt-in gate)', application.serious)}
           ${row('Why Joel specifically', application.whyJoel)}
           ${row('What she wants', application.goal)}
+          ${row('BP right now', application.bpNow)}
+          ${row('Wants to start', application.startTimeline)}
+          ${row('Decision authority', application.decisionAuthority)}
           ${row('Alongside-doctor framing', application.medsAlignment)}
         </table>
-        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Her life</h3>
+        ${(application.occupation || application.partnerStatus) ? `
+        <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Her life (old form)</h3>
         <table style="width:100%;border-collapse:collapse;">
-          ${row('Work', application.occupation)}
-          ${row('Significant other', application.partnerStatus)}
-        </table>
+          ${application.occupation ? row('Work', application.occupation) : ''}
+          ${application.partnerStatus ? row('Significant other', application.partnerStatus) : ''}
+        </table>` : ''}
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Investment + source</h3>
         <table style="width:100%;border-collapse:collapse;">
           ${row('Cash flow (no price shown)', application.cashFlow)}
+          ${row('Source tag', application.src || 'none')}
           ${row('Found Joel via', application.foundJoel)}
           ${row('Social handle (vet before call)', application.socialHandle)}
         </table>
@@ -730,6 +796,20 @@ async function handleBeThere(req, res) {
       ok: false,
       error: 'We could not deliver your application right now. Please try again in a moment, or email braveworksrn@gmail.com directly.',
     });
+  }
+
+  // 1b. Text Joel too — every application, so nothing sits unseen in the
+  // inbox. Non-fatal: a failed SMS never fails the application.
+  try {
+    const smsResult = await getResend().emails.send({
+      from: FROM,
+      to: JOEL_SMS,
+      subject: 'BE THERE app',
+      text: `${fitTier}${application.src === 'masterclass' ? ' MC' : ''}: ${application.name} · ${application.phone || 'no phone'} · starts ${application.startTimeline || '?'} · check email`,
+    });
+    if (smsResult.error) console.error('coaching-apply(bethere): Joel SMS rejected', JSON.stringify(smsResult.error));
+  } catch (err) {
+    console.error('coaching-apply(bethere): Joel SMS failed (non-fatal)', err.message);
   }
 
   // 2. KV store (existing coaching-app:* pattern, 90-day TTL) + drip tag.
@@ -791,33 +871,37 @@ async function handleBeThere(req, res) {
     const isCold = fitTier === 'COLD';
     const ackSubject = isCold
       ? `Your Be There application is in, ${firstName}`
-      : `Your application, ${firstName} (let us find a time)`;
+      : `Got your application, ${firstName} — one question before we talk`;
 
+    // 2026-08-12 REWRITE: the ack is INSTANT again. Speed-to-lead research
+    // (5-minute contact ≈ 21x qualification vs 30 minutes) beats the 3-hour
+    // "look human" delay, and this body no longer claims Joel already read
+    // the application, so instant delivery is honest. It opens the reply
+    // thread (Joel's 07-22 no-booking-page rule stands), plants the "your
+    // moment" question, and assigns the BP homework that lifts show rates.
     const movingForwardBody = `
-      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
-      <p style="margin:0 0 16px;">I read every word personally. I have gone through your application, and <strong>I would like to move forward if you are still interested.</strong></p>
-      <p style="margin:0 0 16px;">The next step is a conversation, just the two of us. Would you rather do a <strong>phone call or a Zoom</strong>? Either is fine with me.</p>
-      <p style="margin:0 0 8px;">Just reply to this email and tell me two things:</p>
+      <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me. I read every one personally, and I will be looking at yours today.</p>
+      <p style="margin:0 0 8px;">While I do, reply to this email and tell me three things:</p>
       <ol style="margin:0 0 16px;padding-left:20px;">
-        <li style="margin:0 0 6px;">Phone or Zoom.</li>
+        <li style="margin:0 0 6px;"><strong>Phone or Zoom</strong>, whichever you prefer for a short conversation.</li>
         <li style="margin:0 0 6px;">Two or three times over the next week that suit you, and your time zone.</li>
+        <li style="margin:0 0 6px;">And the one I care about most: <strong>what was the moment that made you decide to deal with this now, not someday?</strong> There is always a moment. A reading that scared you. Something a doctor said. Someone you do not want to leave behind. Twenty years in the ICU taught me the people who can name their moment are the ones who follow through.</li>
       </ol>
       <p style="margin:0 0 16px;">I will work around your schedule and send the confirmation back. No booking page to wrestle with.</p>
+      <p style="margin:0 0 16px;">One small piece of homework before we talk: take your blood pressure tonight before bed, and again tomorrow morning before coffee. Bring both numbers to the call.</p>
       <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever we build together works alongside your doctor, never instead of them.</p>`;
 
     const coldBody = `
       <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
-      <p style="margin:0 0 16px;">I read every word personally. Based on what you shared, I do not think the 90 day program is the right step for you right now, and I would rather tell you that plainly than take your money for something that is not the fit.</p>
+      <p style="margin:0 0 16px;">I read every word personally. Based on what you shared, I do not think the 12 week program is the right step for you right now, and I would rather tell you that plainly than take your money for something that is not the fit.</p>
       <p style="margin:0 0 16px;">That is not the end of it. The free community and the daily emails are open to you, and there is real help in both. If your situation changes, write back and tell me. I will take another look.</p>
       <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever you do next, do it alongside your doctor, never instead of them.</p>`;
 
-    const scheduledAt = applicantAckSendAt();
     const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
       replyTo: 'braveworksrn@gmail.com',
       subject: ackSubject,
-      scheduledAt,
       html: `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">
       <p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ${escapeHtml(firstName)},</p>
       ${isCold ? coldBody : movingForwardBody}
