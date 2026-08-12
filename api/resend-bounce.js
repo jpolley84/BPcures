@@ -25,7 +25,7 @@ import crypto from 'node:crypto';
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || '';
 const AUDIENCE_ID = process.env.RESEND_LAUNCHER_AUDIENCE_ID || 'ad46af78-a3b5-467f-8006-f56eeee26841';
-const ALERT_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
+const ALERT_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 
 const SUPPRESS_EVENTS = new Set(['email.bounced', 'email.complained']);
 

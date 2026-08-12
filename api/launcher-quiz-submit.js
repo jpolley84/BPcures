@@ -12,7 +12,7 @@ const RESEND_LAUNCHER_AUDIENCE_ID =
   'ad46af78-a3b5-467f-8006-f56eeee26841';
 
 const NOTIFY_EMAIL =
-  process.env.LAUNCHER_NOTIFY_EMAIL || 'brave.works.marketing@gmail.com';
+  process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 
 let _resend = null;
 function getResend() {

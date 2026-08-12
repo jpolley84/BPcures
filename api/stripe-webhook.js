@@ -87,10 +87,10 @@ const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 // routing is needed.
 const REPLY_TO_CUSTOMER = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
-// Stripe-events audit inbox: keep on brave.works.marketing+stripe-events
-// alias so the dashboard's grep-by-prefix continues to work. Only the
-// human-facing notifies move.
-const STRIPE_EVENTS_INBOX = 'brave.works.marketing+stripe-events@gmail.com';
+// 2026-08-11: collapsed onto braveworksrn@gmail.com — Joel wants one inbox,
+// not a separate audit alias. The dashboard's grep-by-prefix on
+// brave.works.marketing+stripe-events is dead; repoint it if it's still used.
+const STRIPE_EVENTS_INBOX = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 
 // Maps the Stripe product metadata.tier_slug → display name + price string
 // Slugs are written into product metadata when the payment links are created.

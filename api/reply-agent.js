@@ -14,7 +14,7 @@
 //   CRON_AUTH_TOKEN     (already configured)
 // Optional:
 //   GMAIL_INBOX_ADDRESS         — defaults to braveworksrn@gmail.com
-//   REPLY_AGENT_DIGEST_TO       — defaults to brave.works.marketing@gmail.com
+//   REPLY_AGENT_DIGEST_TO       — defaults to braveworksrn@gmail.com
 //   REPLY_AGENT_FROM_NAME       — defaults to 'Joel Polley, RN'
 //
 // Idempotency: each processed Gmail message gets the label
@@ -36,7 +36,7 @@ import { isAuthorizedCron } from './_cron-auth.js';
 export const config = { maxDuration: 300 };
 
 const INBOX = process.env.GMAIL_INBOX_ADDRESS || 'braveworksrn@gmail.com';
-const DIGEST_TO = process.env.REPLY_AGENT_DIGEST_TO || 'brave.works.marketing@gmail.com';
+const DIGEST_TO = process.env.REPLY_AGENT_DIGEST_TO || 'braveworksrn@gmail.com';
 const FROM_NAME = process.env.REPLY_AGENT_FROM_NAME || 'Joel Polley, RN';
 const PROCESSED_LABEL = 'BraveWorks/Replied';
 
