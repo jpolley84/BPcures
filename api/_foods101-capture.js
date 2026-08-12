@@ -122,8 +122,8 @@ export function renderFoodsEmail({ firstName, unsubUrl, alreadyBooked = false })
   const safeName = escapeHtml(firstName) || 'there';
 
   const mondayHtml = alreadyBooked
-    ? p('One more thing. You are already on the list for Monday night. <strong>Beyond the Cuff</strong> runs live every Monday at 7pm Central, and your join link is in the seat email I sent you the first time you signed up. Search my name if you cannot find it.')
-    : p('One more thing. A second email from me is on its way right now with your seat for Monday night. <strong>Beyond the Cuff</strong> runs live every Monday at 7pm Central, and that email is the one carrying the join link. If it is not in your inbox in a few minutes, check Promotions.');
+    ? p('One more thing. You are already on the list for Monday night. <strong>Life Beyond the Numbers</strong> runs live every Monday at 7pm Eastern, and your join link is in the seat email I sent you the first time you signed up. Search my name if you cannot find it.')
+    : p('One more thing. A second email from me is on its way right now with your seat for Monday night. <strong>Life Beyond the Numbers</strong> runs live every Monday at 7pm Eastern, and that email is the one carrying the join link. If it is not in your inbox in a few minutes, check Promotions.');
 
   const bodyHtml = [
     p(`Hey ${safeName},`),
@@ -155,8 +155,8 @@ I spent twenty years in ICU and emergency medicine watching careful people take 
 That is what this list is for.
 
 ${alreadyBooked
-  ? 'One more thing. You are already on the list for Monday night. Beyond the Cuff runs live every Monday at 7pm Central, and your join link is in the seat email I sent you the first time you signed up.'
-  : 'One more thing. A second email from me is on its way right now with your seat for Monday night. Beyond the Cuff runs live every Monday at 7pm Central, and that email is the one carrying the join link. If it is not in your inbox in a few minutes, check Promotions.'}
+  ? 'One more thing. You are already on the list for Monday night. Life Beyond the Numbers runs live every Monday at 7pm Eastern, and your join link is in the seat email I sent you the first time you signed up.'
+  : 'One more thing. A second email from me is on its way right now with your seat for Monday night. Life Beyond the Numbers runs live every Monday at 7pm Eastern, and that email is the one carrying the join link. If it is not in your inbox in a few minutes, check Promotions.'}
 
 One trigger at a time.
 Joel Polley, RN

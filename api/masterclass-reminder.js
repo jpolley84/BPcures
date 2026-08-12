@@ -1,4 +1,4 @@
-// api/masterclass-reminder.js — "Beyond the Cuff" pre-class reminders.
+// api/masterclass-reminder.js — "Life Beyond the Numbers" pre-class reminders.
 //
 // 2026-07-20 (Joel): the confirmation email existed but nothing reminded
 // registrants before the live class. This fires the 60-minute and 10-minute
@@ -49,14 +49,14 @@ function reminderEmail({ firstName, stage }) {
   const sixty = stage === 60;
   const kicker = sixty ? 'We go live in one hour' : 'We are starting in 10 minutes';
   const lead = sixty
-    ? `In one hour I go live for <strong>Beyond the Cuff</strong>, and I want you in the room. Tonight I am walking through the 3 hidden daily triggers quietly driving your numbers up. No new pills, no giving up your foods, just the three things and how to take charge of them.`
+    ? `In one hour I go live for <strong>Life Beyond the Numbers</strong>, and I want you in the room. Tonight I am walking through the 3 hidden daily triggers quietly driving your numbers up. No new pills, no giving up your foods, just the three things and how to take charge of them.`
     : `We start in about ten minutes. Grab your spot now so you are settled before I begin. The first few minutes are where the whole thing gets framed, so getting in early matters.`;
   const btnLabel = sixty ? 'Save Your Spot / Join Zoom &rarr;' : 'Join the Masterclass Now &rarr;';
   const postal = process.env.BUSINESS_POSTAL_ADDRESS
     ? `<p style="color:#9A9A9A;font-size:0.78rem;margin-top:0.4rem;">BraveWorks RN &middot; ${escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS)}</p>` : '';
   return `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
-<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">${sixty ? '🔴 Beyond the Cuff &middot; One Hour Out' : '🔴 Beyond the Cuff &middot; Starting Now'}</p>
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">${sixty ? '🔴 Life Beyond the Numbers &middot; One Hour Out' : '🔴 Life Beyond the Numbers &middot; Starting Now'}</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">${escapeHtml(kicker)}, ${name}.</h2>
 <p>${lead}</p>
 <div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;text-align:center;">
@@ -104,7 +104,7 @@ export default async function handler(req, res) {
         from: FROM_ADDRESS,
         to: email,
         reply_to: REPLY_TO,
-        subject: stage === 60 ? 'We go live in one hour — Beyond the Cuff 🔴' : 'Starting now — join the masterclass 🔴',
+        subject: stage === 60 ? 'We go live in one hour: Life Beyond the Numbers 🔴' : 'Starting now: join the masterclass 🔴',
         html: reminderEmail({ firstName, stage }),
       });
       sent++;

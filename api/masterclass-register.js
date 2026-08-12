@@ -1,4 +1,4 @@
-// api/masterclass-register.js — "Beyond the Cuff" weekly masterclass registration.
+// api/masterclass-register.js — "Life Beyond the Numbers" weekly masterclass registration.
 //
 // 2026-07-26 (foods101-v1): this file is now a THIN HTTP WRAPPER. All of the
 // registration behavior moved VERBATIM into api/_masterclass-enroll.js so the

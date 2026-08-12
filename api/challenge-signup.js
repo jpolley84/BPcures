@@ -184,7 +184,7 @@ const CHALLENGE = {
 };
 
 // Zoom details for THIS cohort. Env only. There is deliberately no fallback to
-// the weekly "Beyond the Cuff" room in _masterclass-enroll.js: that is a
+// the weekly "Life Beyond the Numbers" room in _masterclass-enroll.js: that is a
 // different, free class. Night 1 is a Tuesday, so it no longer collides with
 // that Monday class, but they are still separate rooms and separate audiences.
 const ZOOM = {
