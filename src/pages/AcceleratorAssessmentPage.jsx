@@ -39,6 +39,13 @@ export default function AcceleratorAssessmentPage() {
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
   const [doneId, setDoneId] = useState('');
+  // 2026-08-12: the error copy always said "fill in the highlighted field,"
+  // but nothing ever highlighted anything — Deborah Conerly got stuck on the
+  // final screen's consent_ack (a single-choice radio phrased as a plain
+  // acknowledgment paragraph, easy to read past without realizing it is
+  // clickable) with no way to find it. attemptedIds tracks which fields have
+  // been flagged invalid at least once, so Field can actually mark them.
+  const [attemptedIds, setAttemptedIds] = useState(() => new Set());
 
   // Resume where they left off.
   useEffect(() => {
@@ -203,7 +210,14 @@ export default function AcceleratorAssessmentPage() {
         )}
 
         {section.fields.map((f) => (
-          <Field key={f.id || f.text} f={f} answers={answers} set={set} toggle={toggle} />
+          <Field
+            key={f.id || f.text}
+            f={f}
+            answers={answers}
+            set={set}
+            toggle={toggle}
+            invalid={attemptedIds.has(f.id) && f.required && !String(answers[f.id] ?? '').trim()}
+          />
         ))}
 
         {error && (
@@ -231,7 +245,18 @@ export default function AcceleratorAssessmentPage() {
             disabled={status === 'sending'}
             onClick={() => {
               if (missing.length) {
-                setError('Please fill in the highlighted field before moving on.');
+                setAttemptedIds((prev) => {
+                  const next = new Set(prev);
+                  missing.forEach((f) => next.add(f.id));
+                  return next;
+                });
+                setError(
+                  missing.length === 1
+                    ? `Please answer "${missing[0].label}" before moving on — it is marked in red below.`
+                    : `Please answer the ${missing.length} questions marked in red below before moving on.`
+                );
+                const el = document.getElementById(`field-${missing[0].id}`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
               }
               setError('');
@@ -266,10 +291,10 @@ function Shell({ children }) {
   );
 }
 
-function Label({ children, required }) {
+function Label({ children, required, invalid }) {
   return (
     <label style={{
-      display: 'block', fontSize: 15, fontWeight: 600, color: INK,
+      display: 'block', fontSize: 15, fontWeight: 600, color: invalid ? '#C0392B' : INK,
       marginBottom: 8, lineHeight: 1.5,
     }}>
       {children}{required && <span style={{ color: CLAY }}> *</span>}
@@ -283,7 +308,7 @@ const inputStyle = {
   fontFamily: 'inherit',
 };
 
-function Field({ f, answers, set, toggle }) {
+function Field({ f, answers, set, toggle, invalid }) {
   if (f.kind === 'note') {
     return (
       <p style={{
@@ -295,10 +320,30 @@ function Field({ f, answers, set, toggle }) {
   }
 
   const v = answers[f.id];
+  // A required single-option radio (e.g. the closing consent acknowledgment)
+  // reads as a plain paragraph of text, not a clickable control, unless it is
+  // explicitly labeled as something to tap — this is what actually stranded
+  // Deborah Conerly on 2026-08-12: everything else was filled in, this one
+  // line was never tapped, and nothing on screen said so.
+  const isSoleConsentRadio = f.kind === 'radio' && f.required && f.choices?.length === 1;
 
   return (
-    <div style={{ marginBottom: 22 }}>
-      <Label required={f.required}>{f.label}</Label>
+    <div
+      id={`field-${f.id}`}
+      style={{
+        marginBottom: 22, padding: invalid ? '14px' : 0,
+        borderRadius: invalid ? 10 : 0,
+        border: invalid ? '1.5px solid #C0392B' : 'none',
+        background: invalid ? '#FBEDE9' : 'transparent',
+        transition: 'background .2s, border-color .2s',
+      }}
+    >
+      <Label required={f.required} invalid={invalid}>{f.label}</Label>
+      {isSoleConsentRadio && (
+        <p style={{ color: MUTED, fontSize: 12.5, margin: '-4px 0 10px', fontStyle: 'italic' }}>
+          Tap below to confirm.
+        </p>
+      )}
 
       {f.kind === 'text' && (
         <input
@@ -306,7 +351,7 @@ function Field({ f, answers, set, toggle }) {
           value={v || ''}
           placeholder={f.placeholder || ''}
           onChange={(e) => set(f.id, e.target.value)}
-          style={inputStyle}
+          style={{ ...inputStyle, borderColor: invalid ? '#C0392B' : BORDER }}
         />
       )}
 
@@ -316,7 +361,7 @@ function Field({ f, answers, set, toggle }) {
           value={v || ''}
           placeholder={f.placeholder || ''}
           onChange={(e) => set(f.id, e.target.value)}
-          style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.6 }}
+          style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.6, borderColor: invalid ? '#C0392B' : BORDER }}
         />
       )}
 
@@ -332,7 +377,7 @@ function Field({ f, answers, set, toggle }) {
                 style={{
                   textAlign: 'left', padding: '13px 16px', fontSize: 15, lineHeight: 1.5,
                   borderRadius: 9, cursor: 'pointer', fontFamily: 'inherit',
-                  border: `1.5px solid ${on ? SAGE : BORDER}`,
+                  border: `1.5px solid ${on ? SAGE : invalid ? '#C0392B' : BORDER}`,
                   background: on ? '#EFF3EC' : '#fff',
                   color: on ? SAGE : INK, fontWeight: on ? 600 : 400,
                 }}
@@ -356,7 +401,7 @@ function Field({ f, answers, set, toggle }) {
                 style={{
                   textAlign: 'left', padding: '13px 16px', fontSize: 15, lineHeight: 1.5,
                   borderRadius: 9, cursor: 'pointer', fontFamily: 'inherit',
-                  border: `1.5px solid ${on ? SAGE : BORDER}`,
+                  border: `1.5px solid ${on ? SAGE : invalid ? '#C0392B' : BORDER}`,
                   background: on ? '#EFF3EC' : '#fff',
                   color: on ? SAGE : INK, fontWeight: on ? 600 : 400,
                 }}
