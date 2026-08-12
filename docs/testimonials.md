@@ -23,11 +23,24 @@ preference — never full name, email, or any detail they did not agree to. See 
 - **Use as:** "Margie, 62". **Required tag:** *Results not typical.*
 - **Live at:** /coaching (BeThereLandingPage TESTIMONIALS).
 
-## 2026-08-12 — HELD pending consent (do NOT publish yet)
+## 2026-08-12 — Gary (garygould59, TikTok DM, doctor-led taper)
 
-- **Gary (garygould59, TikTok DM):** cardiologist stopped Plavix and tapered Metoprolol, doctor-led — the strongest compliant quote we could run, but it arrived by PRIVATE DM. Needs a consent reply before publishing. Suggested ask (Joel sends in the DM thread): "Gary, your message meant a lot. May I share your words on my coaching page, first name only? I would quote exactly what you wrote, including that your cardiologist made the call."
-- **Orlando James (Mr.J, TikTok DM):** passed DOT physical, BP normal, truck driver. Same status: private DM, needs the same one-line consent ask before use.
-- **AG…8 (TikTok comment):** NEVER USABLE — "stopped [BP meds] cold turkey on March 1st" is a stopped-without-doctor story. Publishing it would contradict the medication line on /coaching and endorse a dangerous act. Do not publish in any form.
+- **Quote (lightly smoothed):** "I approached my cardiologist, and based on what I relayed to her, she stopped me on Plavix and tapered me off of Metoprolol. I owe the majority of this to you. As I tapered off, I started using the natural ingredients you describe in your videos."
+- **Source:** PRIVATE TikTok DM; screenshot supplied by Joel 2026-08-12.
+- **Permission:** PUBLISHED AT JOEL'S EXPLICIT DIRECTION 2026-08-12 (no consent reply on file — recommend a retroactive "mind if I share this, first name only?" in the DM thread; quote includes his private medication history).
+- **Compliance:** usable ONLY with the doctor-led framing intact. Never trim "cardiologist made the call" out.
+- **Use as:** "Gary". **Required tag:** *Results not typical.* **Live at:** /coaching.
+
+## 2026-08-12 — Orlando (Mr.J, TikTok DM, DOT physical)
+
+- **Quote (lightly smoothed):** "Because of you my blood pressure is down tremendously. Following the things you say, I was able to pass my DOT physical and my blood pressure was normal. As a truck driver, thank you. You have made a big difference."
+- **Source:** PRIVATE TikTok DM (he introduced himself by full name and offered thanks); screenshot supplied by Joel 2026-08-12.
+- **Permission:** PUBLISHED AT JOEL'S EXPLICIT DIRECTION 2026-08-12 (no consent reply on file — same retroactive ask recommended). First name only.
+- **Use as:** "Orlando, truck driver". **Required tag:** *Results not typical.* **Live at:** /coaching.
+
+## 2026-08-12 — REJECTED, never usable
+
+- **AG…8 (TikTok comment):** "stopped [BP meds] cold turkey on March 1st" is a stopped-without-doctor story. Joel confirmed removal 2026-08-12. Publishing it would contradict the medication line on /coaching and endorse a dangerous act. Do not publish in any form.
 
 ## 2026-07-06 — "My BP is back to normal, 124/80"
 

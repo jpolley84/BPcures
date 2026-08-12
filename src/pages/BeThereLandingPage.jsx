@@ -213,6 +213,21 @@ const TESTIMONIALS = [
     name: 'Margie, 62',
     note: 'Public comment, quoted as posted · results not typical',
   },
+  // 2026-08-12: Joel directed publication of the two DM quotes (first name
+  // only). Gary's stays ONLY because the framing is doctor-led — his
+  // cardiologist made every medication decision, which is exactly the
+  // "doctor holding the pen" path this page promises. Never trim that
+  // context out of the quote or the note.
+  {
+    quote: 'I approached my cardiologist, and based on what I relayed to her, she stopped me on Plavix and tapered me off of Metoprolol. I owe the majority of this to you. As I tapered off, I started using the natural ingredients you describe in your videos.',
+    name: 'Gary',
+    note: 'His doctor made every medication decision · results not typical',
+  },
+  {
+    quote: 'Because of you my blood pressure is down tremendously. Following the things you say, I was able to pass my DOT physical and my blood pressure was normal. As a truck driver, thank you. You have made a big difference.',
+    name: 'Orlando, truck driver',
+    note: 'Shared with thanks · results not typical',
+  },
 ];
 
 const METHOD_STEPS = [
