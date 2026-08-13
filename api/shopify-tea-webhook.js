@@ -18,10 +18,15 @@
 // Env: SHOPIFY_WEBHOOK_SECRET (the signing secret Shopify shows on that page).
 //
 // DELIBERATELY NOT DONE HERE:
-//   - No buyer confirmation email. Shopify already sends its own order
-//     confirmation; ours would be a second, conflicting receipt. The shipped
-//     notice still fires normally later, because that is driven by the ledger
-//     row this endpoint creates (mark-fulfilled → sendTeaShipped).
+//   - No buyer RECEIPT. Shopify already sends its own order confirmation; ours
+//     would be a second, conflicting invoice. The shipped notice still fires
+//     normally later, because that is driven by the ledger row this endpoint
+//     creates (mark-fulfilled → sendTeaShipped).
+//   - UPDATE 2026-08-13 (Joel): we DO now send a brewing/onboarding email via
+//     _tea-welcome-email.js. It is explicitly not a receipt (no totals, no line
+//     items, and it says so in the first line) — it carries the steeping method,
+//     the 30-day promise and the not-a-medicine line, none of which fit in
+//     Shopify's template. Kill switch: TEA_WELCOME_EMAIL=0.
 //   - No Resend "Tea Buyers" audience tag and no PostHog purchase capture.
 //     Those are marketing side effects on the Stripe path; flip
 //     SHOPIFY_BRIDGE_TAG_AUDIENCE=1 to opt the audience tag in.
@@ -33,6 +38,7 @@
 import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { chicagoDateKey } from './triangle-webhook.js';
+import { sendTeaWelcome, firstNameOf } from './_tea-welcome-email.js';
 
 // Shopify posts the raw JSON body and signs those exact bytes. Vercel's body
 // parser would re-serialize and break the HMAC, so read the stream ourselves.
@@ -179,7 +185,32 @@ async function handleOrderPaid(order) {
   }
 
   await kv.set(dedupeKey, { recordedAt: new Date().toISOString() }, { ex: 60 * 60 * 24 * 30 }).catch(() => {});
-  return { recorded: true, id: dedupeId, blend: record.blend, amountCents: record.amountCents, email: record.email };
+
+  // Brewing/onboarding email. NOT a receipt: Shopify already sent one, and a
+  // second invoice would just confuse her. This carries the steeping method,
+  // the 30-day promise and the not-a-medicine line, which Shopify's template
+  // cannot. Guarded by its own NX key so a Shopify retry cannot double-send,
+  // and set BEFORE the send so a crash mid-send fails closed (a missed email
+  // beats a duplicate one). Entirely non-fatal: the ledger row above is what
+  // fulfillment depends on, and it is already committed.
+  let welcomed = false;
+  if (record.blend === 'steady' && record.email && process.env.TEA_WELCOME_EMAIL !== '0') {
+    try {
+      const claimed = await kv.set(`tea:welcome:${dedupeId}`, new Date().toISOString(), {
+        nx: true,
+        ex: 60 * 60 * 24 * 30,
+      });
+      if (claimed) {
+        const out = await sendTeaWelcome({ email: record.email, firstName: firstNameOf(record.name) });
+        welcomed = out.sent;
+        if (!out.sent) console.warn(`shopify-tea-webhook: welcome email not sent (${out.reason})`);
+      }
+    } catch (err) {
+      console.warn('shopify-tea-webhook: welcome email step failed (non-fatal)', err.message);
+    }
+  }
+
+  return { recorded: true, id: dedupeId, blend: record.blend, amountCents: record.amountCents, email: record.email, welcomed };
 }
 
 // A cancelled or fully-refunded order must leave the open worklist so nobody
