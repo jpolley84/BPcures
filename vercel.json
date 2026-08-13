@@ -17,13 +17,13 @@
       "permanent": false
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!payment$|api/|assets/|favicon).*)",
       "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
       "destination": "https://bpquiz.com/masterclass",
       "permanent": false
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!payment$|api/|assets/|favicon).*)",
       "has": [{ "type": "host", "value": "www.changemylifechallenge.com" }],
       "destination": "https://bpquiz.com/masterclass",
       "permanent": false

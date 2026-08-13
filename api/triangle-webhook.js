@@ -1226,7 +1226,7 @@ const ALLIN_PLAN_PRICE_ID = process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZ
 // 2026-08-10: two more installment prices, same bi-weekly cadence.
 const ALLIN_3PAY_PRICE_ID = process.env.ALLIN_3PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZBD5jS4HK';
 const ALLIN_9PAY_PRICE_ID = process.env.ALLIN_9PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZplplxLU5';
-// 2026-08-13: balance tiers for deposit-payers (bpquiz.com/payment).
+// 2026-08-13: balance tiers for deposit-payers (changemylifechallenge.com/payment).
 // $1,800 one-time · 3 x $633 · 6 x $333, same bi-weekly cadence.
 const ALLIN_BALANCE_FULL_PRICE_ID = process.env.ALLIN_BALANCE_FULL_PRICE_ID || 'price_1U44qEHseZnO3rRZAihXieRN';
 const ALLIN_BALANCE_3PAY_PRICE_ID = process.env.ALLIN_BALANCE_3PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZnM63I1b7';
@@ -1316,7 +1316,7 @@ async function sendAllInConfirmation({ email, firstName, plan }) {
   // would have been told she was paid in full while her card kept getting
   // charged every two weeks. Each plan states its own real cadence.
   const ALLIN_BUYER_PLAN_LINES = {
-    deposit: 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at bpquiz.com/payment, where every option credits your deposit. I will reach out about your start date.',
+    deposit: 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at changemylifechallenge.com/payment, where every option credits your deposit. I will reach out about your start date.',
     '3pay': 'Your first payment is in and your spot is locked. Two more payments of $699 run automatically every two weeks, three in total.',
     plan: 'Your first payment is in and your spot is locked. Five more payments of $367 run automatically every two weeks, six in total.',
     '9pay': 'Your first payment is in and your spot is locked. Eight more payments of $267 run automatically every two weeks, nine in total.',
@@ -1385,7 +1385,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan }) {
   if (!process.env.RESEND_API_KEY) return;
   const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
   const ALLIN_JOEL_PLAN_LINES = {
-    deposit: 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start. Send her bpquiz.com/payment (deposit-credited options: $1,800 full / 3 x $633 / 6 x $333).',
+    deposit: 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start. Send her changemylifechallenge.com/payment (deposit-credited options: $1,800 full / 3 x $633 / 6 x $333).',
     '3pay': '3 x $699 bi-weekly ($2,097 over 6 weeks; subscription auto-capped after the 3rd charge).',
     plan: '6 x $367 bi-weekly ($2,202 over 12 weeks; subscription auto-capped after the 6th charge).',
     '9pay': '9 x $267 bi-weekly ($2,403 over 18 weeks; subscription auto-capped after the 9th charge).',

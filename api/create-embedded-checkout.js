@@ -354,7 +354,7 @@ export default async function handler(req, res) {
   // if you add a plan you MUST add its cancel window there too or it bills
   // forever. See ALLIN_PLAN_CANCEL_SECONDS in api/triangle-webhook.js.
   // 2026-08-13: three balance tiers for people who already paid the $197
-  // deposit (bpquiz.com/payment). Prices created on the same All In product
+  // deposit (changemylifechallenge.com/payment). Prices created on the same All In product
   // (prod_UVhHMXKaeKRrvT): $1,800 one-time, 3 x $633 ($1,899, keeps the
   // financing premium), 6 x $333 ($1,998). Subscriptions are capped by the
   // webhook exactly like the other allin plans.

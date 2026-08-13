@@ -19,6 +19,13 @@ export default function middleware(request) {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
   if (host === 'changemylifechallenge.com' || host === 'www.changemylifechallenge.com') {
+    // 2026-08-13 (Joel): changemylifechallenge.com/payment is the balance
+    // checkout for All In deposit-payers (PaymentPage.jsx). Let it, its API
+    // calls, and the SPA assets through; everything else still redirects.
+    const p = url.pathname;
+    if (p === '/payment' || p.startsWith('/api/') || p.startsWith('/assets/') || p === '/favicon.svg' || p === '/favicon.ico') {
+      return undefined;
+    }
     return Response.redirect('https://bpquiz.com/masterclass', 307);
   }
   return undefined;

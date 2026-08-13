@@ -11,7 +11,7 @@
 //   balance-3pay   3 x $633 every 2 weeks = $1,899     tier 'allin-balance-3pay'
 //   balance-6pay   6 x $333 every 2 weeks = $1,998     tier 'allin-balance-6pay'
 //
-// Joel pastes bpquiz.com/payment into his reply to a deposit-payer; it is not
+// Joel pastes changemylifechallenge.com/payment into his reply to a deposit-payer; it is not
 // linked from public pages and is noindexed. The subscriptions are capped by
 // the webhook writing cancel_at, exactly like the /allin/pay plans.
 //

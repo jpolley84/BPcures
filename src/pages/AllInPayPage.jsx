@@ -102,7 +102,7 @@ const OPTIONS = [
     headline: '$197',
     cadence: 'One payment today. This is not the full price.',
     total: '$1,800 balance still to arrange',
-    note: 'Locks your place now. You settle the remaining $1,800 at bpquiz.com/payment, where every option credits your deposit.',
+    note: 'Locks your place now. You settle the remaining $1,800 at changemylifechallenge.com/payment, where every option credits your deposit.',
     isDeposit: true,
   },
 ];
@@ -253,7 +253,7 @@ export default function AllInPayPage() {
           <div style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
               <strong>Read this before you pay:</strong> $197 today reserves your place. It is not the price of the
-              program. The program is $1,997 in total, so $1,800 remains. You settle it at bpquiz.com/payment,
+              program. The program is $1,997 in total, so $1,800 remains. You settle it at changemylifechallenge.com/payment,
               where every option credits your deposit, before the 12 weeks begin. If you would rather settle the
               whole thing now, choose one of the options above instead. Questions, write to braveworksrn@gmail.com.
             </p>

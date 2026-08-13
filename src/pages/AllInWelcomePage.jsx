@@ -11,7 +11,7 @@ import { CheckCircle2, Mail, Stethoscope } from 'lucide-react';
 import { track } from '../utils/analytics';
 
 function planLine(plan) {
-  if (plan === 'deposit') return 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at bpquiz.com/payment, where every option credits your deposit. Joel will reach out about your start date.';
+  if (plan === 'deposit') return 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at changemylifechallenge.com/payment, where every option credits your deposit. Joel will reach out about your start date.';
   if (plan === 'plan') return 'Your first payment is in and your spot is locked. The rest runs automatically every two weeks across the 12 weeks.';
   if (plan === 'balance-full') return 'Your balance is settled in full. With your earlier deposit, you are all paid up and your spot is locked.';
   if (plan === 'balance-3pay' || plan === 'balance-6pay') return 'Your first balance payment is in. The rest runs automatically every two weeks and stops on its own after the final payment.';
