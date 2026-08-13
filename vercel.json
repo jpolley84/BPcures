@@ -45,7 +45,12 @@
     },
     {
       "source": "/tea",
-      "destination": "/tea/?utm_source=manychat&utm_medium=comment-dm&utm_campaign=tea",
+      "destination": "https://hormoneteas.com/products/steady?utm_source=bpquiz&utm_medium=redirect&utm_campaign=tea",
+      "permanent": false
+    },
+    {
+      "source": "/tea/(.*)",
+      "destination": "https://hormoneteas.com/products/steady?utm_source=bpquiz&utm_medium=redirect&utm_campaign=tea",
       "permanent": false
     },
     {
