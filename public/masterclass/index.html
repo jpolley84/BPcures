@@ -98,14 +98,17 @@
     border-top:1px solid var(--hairline-night);font-size:14px;font-weight:500;color:var(--mist);}
   .cred img{width:40px;height:40px;border-radius:50%;object-fit:cover;
     filter:grayscale(1) contrast(1.05) brightness(.95);flex:0 0 auto;}
+  /* The emergence portrait: full-length shot, duotone, edges dissolved into the
+     night by scrims. The scrim is front-loaded to the far left so the darkening
+     lands on the empty wall beside Joel, never on his face. */
   .portrait{position:absolute;top:0;right:0;bottom:0;width:52%;z-index:0;}
-  .portrait img{width:100%;height:100%;object-fit:cover;object-position:center top;
-    filter:grayscale(1) contrast(1.02) brightness(.72);}
+  .portrait img{width:100%;height:100%;object-fit:cover;object-position:52% 18%;
+    filter:grayscale(1) contrast(1.18) brightness(.74);}
   .portrait::after{content:"";position:absolute;inset:0;background:
-    linear-gradient(100deg, var(--night) 0%, var(--night) 12%, rgba(8,31,32,.9) 28%,
-      rgba(8,31,32,.5) 48%, rgba(8,31,32,.12) 70%, transparent 88%),
-    linear-gradient(to top, var(--night) 0%, rgba(8,31,32,.4) 22%, transparent 55%),
-    linear-gradient(to bottom, rgba(8,31,32,.55) 0%, transparent 22%);}
+    linear-gradient(100deg, var(--night) 0%, var(--night) 6%, rgba(8,31,32,.82) 16%,
+      rgba(8,31,32,.42) 30%, rgba(8,31,32,.12) 46%, transparent 62%),
+    linear-gradient(to top, var(--night) 0%, rgba(8,31,32,.35) 18%, transparent 48%),
+    linear-gradient(to bottom, rgba(8,31,32,.5) 0%, transparent 20%);}
   .portrait-mobile{display:none;}
 
   /* ============ CTA system: coral has one job ============ */
@@ -312,9 +315,10 @@
     .hero{padding:56px 0 130px;}
     .hero-grid{grid-template-columns:1fr;}
     .portrait{display:none;}
-    .portrait-mobile{display:block;width:140px;margin:6px 0 24px;}
-    .portrait-mobile img{width:140px;height:170px;object-fit:cover;object-position:center top;
-      border-radius:70px 70px 12px 12px;filter:grayscale(1) contrast(1.05) brightness(.92);}
+    .portrait-mobile{display:block;width:156px;margin:8px 0 26px;}
+    .portrait-mobile img{width:156px;height:190px;object-fit:cover;object-position:center top;
+      border-radius:78px 78px 12px 12px;filter:grayscale(1) contrast(1.1) brightness(.95);
+      box-shadow:0 18px 40px -20px rgba(0,0,0,.7);}
   }
   @media(max-width:900px){
     .host .grid{grid-template-columns:1fr;gap:36px;}
@@ -374,8 +378,8 @@
 <header class="hero">
   <div class="portrait" aria-hidden="true">
     <picture>
-      <source srcset="/joel-scrubs.webp" type="image/webp" />
-      <img src="/joel-scrubs.jpg" alt="" loading="eager" />
+      <source srcset="/joel-scrubs-full.webp" type="image/webp" />
+      <img src="/joel-scrubs-full.jpg" alt="" loading="eager" />
     </picture>
   </div>
   <div class="hero-wrap">
@@ -389,8 +393,8 @@
         <p class="sub stagger">For twenty years in the ICU and the ER, I watched good people make the same mistake with their blood pressure. It feels responsible. It even looks obedient. And it quietly costs people their best years. Monday night I name it, live and free, along with the three hidden drivers actually pushing your numbers. Nothing is sold on the call.</p>
         <div class="portrait-mobile stagger" aria-hidden="true">
           <picture>
-            <source srcset="/joel-scrubs.webp" type="image/webp" />
-            <img src="/joel-scrubs.jpg" alt="" loading="eager" />
+            <source srcset="/joel-scrubs-portrait.webp" type="image/webp" />
+            <img src="/joel-scrubs-portrait.jpg" alt="" loading="eager" />
           </picture>
         </div>
         <div class="stagger">
