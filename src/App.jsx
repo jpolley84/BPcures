@@ -95,6 +95,10 @@ const CaseReviewConfirmedPage = lazy(() => import('./pages/CaseReviewConfirmedPa
 // options: full / deposit / bi-weekly plan). Focused checkout, no SiteLayout.
 const AllInPage = lazy(() => import('./pages/AllInPage'));
 const AllInPayPage = lazy(() => import('./pages/AllInPayPage'));
+// 2026-08-13: /payment — balance checkout for people who already paid the
+// $197 All In deposit. Options credit the deposit ($1,800 base). Joel pastes
+// this link to deposit-payers; noindexed, not publicly linked.
+const PaymentPage = lazy(() => import('./pages/PaymentPage'));
 const AllInThankYouPage = lazy(() => import('./pages/AllInThankYouPage'));
 const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
 // SVUTU Satin (hormoneteas.com) on the embedded rail — Satin-branded checkout +
@@ -352,6 +356,7 @@ function App() {
               SiteLayout so nothing leaks the click. */}
           <Route path="/allin" element={<AllInPage />} />
           <Route path="/allin/pay" element={<AllInPayPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
           <Route path="/allin/thank-you" element={<AllInThankYouPage />} />
           <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
 

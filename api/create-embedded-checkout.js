@@ -132,6 +132,9 @@ function knownOtherPriceIds() {
       process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',
       process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S',
       process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',
+      process.env.ALLIN_BALANCE_FULL_PRICE_ID || 'price_1U44qEHseZnO3rRZAihXieRN',
+      process.env.ALLIN_BALANCE_3PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZnM63I1b7',
+      process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm',
     ].filter(Boolean)
   );
 }
@@ -350,14 +353,23 @@ export default async function handler(req, res) {
   // The cap lives in the WEBHOOK (processAllIn writes cancel_at), not here, so
   // if you add a plan you MUST add its cancel window there too or it bills
   // forever. See ALLIN_PLAN_CANCEL_SECONDS in api/triangle-webhook.js.
+  // 2026-08-13: three balance tiers for people who already paid the $197
+  // deposit (bpquiz.com/payment). Prices created on the same All In product
+  // (prod_UVhHMXKaeKRrvT): $1,800 one-time, 3 x $633 ($1,899, keeps the
+  // financing premium), 6 x $333 ($1,998). Subscriptions are capped by the
+  // webhook exactly like the other allin plans.
   if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan'
-      || tier === 'allin-3pay' || tier === 'allin-9pay') {
+      || tier === 'allin-3pay' || tier === 'allin-9pay'
+      || tier === 'allin-balance-full' || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay') {
     const ALLIN_PRICES = {
       'allin-full': process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',    // $1,997 one-time
       'allin-deposit': process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S', // $197 one-time
       'allin-3pay': process.env.ALLIN_3PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZBD5jS4HK',    // $699 / 2wk recurring
       'allin-plan': process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',    // $367 / 2wk recurring
       'allin-9pay': process.env.ALLIN_9PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZplplxLU5',    // $267 / 2wk recurring
+      'allin-balance-full': process.env.ALLIN_BALANCE_FULL_PRICE_ID || 'price_1U44qEHseZnO3rRZAihXieRN', // $1,800 one-time
+      'allin-balance-3pay': process.env.ALLIN_BALANCE_3PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZnM63I1b7', // $633 / 2wk recurring
+      'allin-balance-6pay': process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm', // $333 / 2wk recurring
     };
     const PLAN_BY_TIER = {
       'allin-full': 'full',
@@ -365,9 +377,13 @@ export default async function handler(req, res) {
       'allin-3pay': '3pay',
       'allin-plan': 'plan',
       'allin-9pay': '9pay',
+      'allin-balance-full': 'balance-full',
+      'allin-balance-3pay': 'balance-3pay',
+      'allin-balance-6pay': 'balance-6pay',
     };
     const plan = PLAN_BY_TIER[tier];
-    const isSub = tier === 'allin-plan' || tier === 'allin-3pay' || tier === 'allin-9pay';
+    const isSub = tier === 'allin-plan' || tier === 'allin-3pay' || tier === 'allin-9pay'
+      || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay';
     const metadata = {
       funnel: 'braveworks-bp',
       brand: 'braveworks-bp',
