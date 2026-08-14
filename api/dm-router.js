@@ -37,11 +37,20 @@ export const LANES = [
 ];
 
 // ── layer 1: red flags — always win, never sell in the same breath ────────
-const RED_FLAG = /chest pain|can'?t breathe|trouble breathing|short(ness)? of breath|stroke|numb(ness)?( on)?( one)? side|face droop|slurred|passing out|fainted|suicid|kill myself|18\d\s*\/\s*1\d\d|2\d\d\s*\/\s*1\d\d|er right now|emergency room|ambulance/i;
+export const RED_FLAG = /chest pain|can'?t breathe|trouble breathing|short(ness)? of breath|stroke|numb(ness)?( on)?( one)? side|face droop|slurred|passing out|fainted|suicid|kill myself|18\d\s*\/\s*1\d\d|2\d\d\s*\/\s*1\d\d|er right now|emergency room|ambulance/i;
 
 // clinical markers that veto a keyword-buyer shortcut ("tea for my heart
 // failure?" must go clinical, not buyer_tea)
-const CLINICAL_MARKER = /\bmy (bp|blood pressure|doctor|meds?|medication|prescri|kidney|heart|a1c|sugar was|numbers)\b|lisinopril|amlodipine|metoprolol|losartan|plavix|statin|insulin|dialysis|diagnos|symptom|swelling|dizzy|palpitation|side effect|dose|mg\b/i;
+//
+// 2026-08-14 FIX: every condition term used to sit behind the possessive
+// "my (...)" group, so a named diagnosis without "my" slipped straight past.
+// "I want the tea, I have stage 4 kidney disease and heart failure" matched
+// the tea keyword, failed this test, and was sold tea — deterministically,
+// with no LLM call. Verified by execution against real 08-14 inbound
+// (Lotarsha Carter, verbatim: "I have high blood pressure all the time now it
+// damage my kidneys im stages 4 kidneys disease Chf also well"). Named
+// conditions are now matched bare, outside the possessive group.
+export const CLINICAL_MARKER = /\bmy (bp|blood pressure|doctor|meds?|medication|prescri|kidney|heart|a1c|sugar was|numbers)\b|kidney disease|kidneys? (disease|failure)|renal|\bckd\b|\bchf\b|heart failure|congestive|dialysis|transplant|stage ?\d|high blood pressure|hypertension|lisinopril|amlodipine|metoprolol|losartan|plavix|statin|insulin|diagnos|symptom|swelling|dizzy|palpitation|side effect|dose|mg\b/i;
 
 const KEYWORDS = [
   [/\bunsubscribe\b|\bstop messaging\b|don'?t (message|text|contact) me|remove me/i, 'optout'],
@@ -52,7 +61,7 @@ const KEYWORDS = [
   [/\bskool\b|\b(join|the) group\b|community|weekly reset/i, 'skool'],
 ];
 
-function keywordLane(text) {
+export function keywordLane(text) {
   for (const [re, lane] of KEYWORDS) {
     if (re.test(text)) {
       // buyer shortcuts yield to clinical context; ops/optout never do
@@ -165,7 +174,11 @@ export default async function handler(req, res) {
       const out = await llmLane(t);
       lane = LANES.includes(out) ? out : 'other';
     } catch {
-      lane = 'other';
+      // 2026-08-14 FIX: this used to fail OPEN into 'other', whose ManyChat
+      // branch carries product buttons — so an API timeout while someone was
+      // describing a clot answered them with a tea button. The file's own
+      // doctrine is "any doubt biases clinical"; an outage is doubt.
+      lane = 'clinical';
       via = 'llm-error';
     }
   }
