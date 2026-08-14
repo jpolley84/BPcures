@@ -325,7 +325,7 @@ export default function ApplyPage() {
           </motion.h1>
           {isFrontRow && (
             <motion.p {...rise(0.2)} className="text-base mb-2" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch' }}>
-              You just watched the training. This is that one next step: a short application, then I read it personally and tell you if there's a seat for you. Cap is 40 women per cohort.
+              You just watched the training. This is that one next step: a short application, then it gets read and you hear back whether there's a seat for you. Cap is 40 women per cohort.
             </motion.p>
           )}
           <motion.div
@@ -342,7 +342,7 @@ export default function ApplyPage() {
             }}
           />
           <motion.p {...rise(0.28)} className="text-lg mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.65, maxWidth: '58ch' }}>
-            I read every application personally, usually within 48 hours. If I can help, I will tell you exactly how. If I cannot, I will tell you that too, and point you somewhere honest.
+            Every application gets read, usually within 48 hours. If I can help, I will tell you exactly how. If I cannot, I will tell you that too, and point you somewhere honest.
           </motion.p>
           <motion.p {...rise(0.38)} style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: '1.1rem', color: 'var(--ink)' }}>
             Joel Polley, RN
@@ -374,7 +374,7 @@ export default function ApplyPage() {
                 You are on my desk.
               </h2>
               <p className="text-base" style={{ color: 'var(--ink-soft)', lineHeight: 1.7, maxWidth: '48ch', margin: '0 auto 2rem' }}>
-                I read every application personally. You will hear from me within 48 hours, usually sooner. Watch your inbox, and your spam folder, for joel@bpquiz.com.
+                Every application gets read. You will hear back within 48 hours, usually sooner. Watch your inbox, and your spam folder, for joel@bpquiz.com.
               </p>
             </motion.div>
 

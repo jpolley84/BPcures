@@ -67,7 +67,7 @@ export default function Cohort2Page() {
             Your application is in.
           </h1>
           <p style={{ color: 'var(--ink-soft)', fontSize: '1.05rem', lineHeight: 1.65, margin: '0 0 1.25rem' }}>
-            I'll personally read every word over the next 48 hours. If we're a fit, you'll hear from me by email with a link to book a 30-minute conversation.
+            Every word gets read over the next 48 hours. If we're a fit, you'll hear from me by email with a link to book a 30-minute conversation.
           </p>
           <p style={{ color: 'var(--ink-soft)', fontSize: '1rem', lineHeight: 1.65, margin: '0 0 1.5rem' }}>
             If now isn't the moment, I'll tell you that too, and point you toward what is.
@@ -264,7 +264,7 @@ export default function Cohort2Page() {
             Apply for Cohort 2
           </h2>
           <p className="text-base sm:text-lg mb-7 text-center" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-            Six honest questions. I read every word. If we're a fit, you'll hear from me within 48 hours with a link to book a 30-minute conversation.
+            Six honest questions. Every word gets read. If we're a fit, you'll hear from me within 48 hours with a link to book a 30-minute conversation.
           </p>
 
           <form onSubmit={submit} className="space-y-5 p-6 sm:p-8 rounded-xl" style={{ background: 'var(--paper-light)', border: '1px solid var(--border)' }}>

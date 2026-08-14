@@ -849,7 +849,7 @@ export default function CoachingPage() {
                     How to inquire
                   </div>
                   <p className="text-sm mb-3" style={{ color: 'var(--ink-soft)', lineHeight: 1.6 }}>
-                    A short application. I read every one.
+                    A short application. Every one gets read.
                   </p>
                   <Link
                     to={`/apply?tier=${tier.slug}`}
@@ -930,7 +930,7 @@ export default function CoachingPage() {
                 <Mail size={20} color="var(--sage-deep)" strokeWidth={1.5} style={{ flexShrink: 0, marginTop: 2 }} />
                 <div>
                   <div className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>One inbox</div>
-                  <div className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.5 }}>{EMAIL} · I read every email myself.</div>
+                  <div className="text-xs" style={{ color: 'var(--muted)', lineHeight: 1.5 }}>{EMAIL} · Every email gets answered.</div>
                 </div>
               </div>
             </div>

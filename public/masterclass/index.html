@@ -825,5 +825,34 @@
   !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
   posthog.init('phc_tyPhu6kt2jmfzhBPBjttdp3crfxNY4JdsZBoKa7SRgzS',{api_host:'https://us.i.posthog.com'});
 </script>
+<script>
+  /* ManyChat arrival beacon (2026-08-14 rebuild). This page is static HTML, so
+     the SPA's boot hook never runs here; this is a hand mirror of
+     src/utils/manychat.js initManychatLanding(). Keep the two in step.
+     The MASTERCLASS delivery DM links to bpquiz.com/masterclass?...&mcp={{cuid}};
+     without this the 20h nudge would chase people who are already looking at
+     the seat page. Fire-and-forget, never blocks anything.
+
+     ORDERING MATTERS and it now matches the module: the "already sent" marker
+     is written only AFTER the server confirms. Writing it before the fetch (as
+     this block used to) marks a beacon dropped by a flaky network as done, so
+     it is never retried, and she gets the 20h nudge telling her the link never
+     opened. Confirm first, then mark. The server dedupes for 30 days, so a
+     retry on her next page load costs nothing. */
+  (function(){
+    try{
+      var cid=(new URLSearchParams(window.location.search).get('mcp')||'').trim();
+      if(!/^[A-Za-z0-9_-]{5,64}$/.test(cid)) return;
+      /* Mirror of the module's store(cid): remembers her for a later quiz
+         completion in the same tab session. */
+      try{ sessionStorage.setItem('bwbp_mcp',cid); }catch(e){}
+      try{ if(sessionStorage.getItem('bwbp_mcp_landed')===cid) return; }catch(e){}
+      fetch('/api/mc-tag',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({cid:cid,event:'landed'}),keepalive:true})
+        .then(function(r){ if(r&&r.ok){ try{ sessionStorage.setItem('bwbp_mcp_landed',cid); }catch(e){} } })
+        .catch(function(){});
+    }catch(e){}
+  })();
+</script>
 </body>
 </html>

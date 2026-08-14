@@ -6,6 +6,7 @@ import {
   ArrowRight, ArrowUpRight, Star, Quote, AlertCircle, Download,
 } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
+import { tagQuizTaken } from '../utils/manychat.js';
 
 // 2026-07-16 homepage A/B test (see pages/HomeSplit.jsx): variant 'b'
 // visitors were promised a free downloadable guide on the QuizFirstLanding.
@@ -791,6 +792,11 @@ function QuizModule({ products }) {
         headers: { 'Content-Type': 'application/json' },
         body: payload,
       });
+    // ManyChat rebuild 2026-08-14: she finished the quiz. If she arrived from
+    // a DM link (?mcp=<contact id>), tag her "took-quiz" so the morning triage
+    // can skip rung 4 and open at rung 5. No-ops for everyone else, never
+    // throws, never blocks the results screen below.
+    tagQuizTaken();
     try {
       let res = await post().catch(() => null);
       if (!res || !res.ok) {

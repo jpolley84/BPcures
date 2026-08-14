@@ -316,7 +316,7 @@ export default function PriscillaIntakePage() {
             <p style={{ fontSize: '0.98rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.6rem' }}>
               This is the most important thing you will do in our first week. It takes about 15
               minutes. The more honest and complete you are, the better your plan gets, because
-              I build every one of your 90 days from what you tell me here. I read every word myself.
+              I build every one of your 90 days from what you tell me here. Every word gets read.
             </p>
 
             <div style={{ marginBottom: '1rem' }}>
@@ -377,7 +377,7 @@ export default function PriscillaIntakePage() {
               <h2 style={{ ...serif, fontSize: '1.2rem', color: 'var(--sage-deep, #2E3A30)', margin: '0 0 0.35rem' }}>Upload your labs and reports</h2>
               <p style={{ fontSize: '0.88rem', color: 'var(--muted, #7A7061)', lineHeight: 1.5, margin: '0 0 0.9rem' }}>
                 Take a photo of a lab sheet, an after-visit summary, your med list, or your sleep study,
-                or attach a PDF. Photos and PDFs, up to {MAX_FILES} files. I read them myself.
+                or attach a PDF. Photos and PDFs, up to {MAX_FILES} files. They all get read.
               </p>
               <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.9rem 1rem', border: '1.5px dashed var(--line, #C9BFA8)', borderRadius: 10, background: '#fff', cursor: 'pointer', fontWeight: 700, color: 'var(--sage-deep, #2E3A30)' }}>
                 <Upload size={18} aria-hidden /> Choose photos or PDFs

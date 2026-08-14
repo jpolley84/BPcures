@@ -64,7 +64,7 @@ export default function AskPage() {
         <h1 className="mt-2 text-3xl sm:text-4xl leading-tight">Ask me properly.</h1>
         <p className="mt-4 leading-relaxed text-[#4a463f]">
           I can&apos;t answer personal medical questions in a DM — you deserve better than a guess
-          from half the picture. Put it here instead. I read every one myself and answer by email,
+          from half the picture. Put it here instead. Every one gets read, and I answer by email,
           usually within <strong>48 hours</strong>.
         </p>
 

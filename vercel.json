@@ -5,6 +5,10 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/go/:product",
+      "destination": "/api/go?product=:product"
+    },
+    {
       "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|coaching/|masterclass/|masterclass$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
