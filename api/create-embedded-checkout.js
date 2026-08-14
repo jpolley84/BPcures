@@ -454,6 +454,48 @@ export default async function handler(req, res) {
   //     sale. Amount routing cannot: 4700 and 9700 are already mapped to the
   //     Complete kit in triangle-webhook AMOUNT_TO_TIER. See the P0 note in
   //     the header of api/challenge-signup.js.
+  // ── Change My Life Challenge, $97 single seat (2026-08-14) ───────────
+  // The Aug 17-23 cohort. ONE seat, no GA/VIP split, and unlike the retired
+  // challenge-ga/vip tiers this price REALLY EXISTS (created 2026-08-14), so
+  // there is no "doors not open" failure mode to render.
+  //
+  // Sold inline rather than through the Stripe payment link that also exists
+  // for it: payment links inherit the ACCOUNT's payment-method configuration
+  // and there is no way to override it per link, so the link shows the Link
+  // email wall. This branch inherits PM_CONFIG_CARD_NO_LINK like every other
+  // session in this file, which is the whole reason the buy button points
+  // here. Keep the price id in sync with CHALLENGE.PRICE in ChallengePage.jsx.
+  if (tier === 'cmlc-97') {
+    const metadata = {
+      funnel: 'braveworks-bp',
+      offer: 'challenge',
+      seat: 'ga',
+      cohort: '2026-08-17',
+      ...phMeta,
+      ...abMeta,
+    };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
+        mode: 'payment',
+        line_items: [{ price: process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk', quantity: 1 }],
+        metadata,
+        customer_creation: 'always',
+        // Same reason as the retired challenge tiers: the seat record is built
+        // from the Stripe session, so if we do not ask, we get 75 paid seats
+        // and zero phone numbers.
+        phone_number_collection: { enabled: true },
+        return_url: `${siteUrl}/challenge-confirmed?session_id={CHECKOUT_SESSION_ID}&tier=challenge-ga`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout cmlc error:', err.message);
+      return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
   if (tier === 'challenge-ga' || tier === 'challenge-vip') {
     // Doors. The page hides its buy buttons after the close instant, but a tab
     // opened before the deadline keeps a live checkout button in the DOM, so

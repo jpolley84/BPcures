@@ -24,9 +24,14 @@
 //
 // ZERO em dashes in visible copy.
 
-import { useEffect } from 'react';
-import { track } from '../utils/analytics';
+import { useEffect, useRef, useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
+import { track, getDistinctId } from '../utils/analytics';
 import bannerImg from '../assets/challenge-banner.jpg';
+
+const pk = STRIPE_PUBLISHABLE_KEY();
+const stripePromise = pk ? loadStripe(pk) : null;
 
 /* ==========================================================================
    CONFIG - change dates, price, and the buy link HERE and nowhere else.
@@ -39,8 +44,14 @@ const CHALLENGE = {
   DAY_COUNT: 7,
   PRICE: 97,
   REGULAR_PRICE: 197,
-  // Live Stripe payment link, created 2026-08-14 against the $97 price.
-  BUY_URL: 'https://buy.stripe.com/aFa5kDbwfeia0IXefLfnO1R',
+  // Checkout tier in api/create-embedded-checkout.js. Mounted INLINE rather
+  // than sending buyers to the Stripe payment link that also exists for this
+  // price (https://buy.stripe.com/aFa5kDbwfeia0IXefLfnO1R). The link works,
+  // but payment links inherit the account payment-method configuration and
+  // cannot override it, so that route shows the "Pay with Link" email wall
+  // before the card fields. This rail is card-first. Use the payment link
+  // only where a raw URL is required (a DM, a bio link).
+  TIER: 'cmlc-97',
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
 
@@ -60,6 +71,10 @@ const DAYS = [
 ];
 
 export default function ChallengePage() {
+  const [payOpen, setPayOpen] = useState(false);
+  const [error, setError] = useState('');
+  const containerRef = useRef(null);
+
   useEffect(() => {
     track('chal_checkout_view', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
     const prev = document.title;
@@ -67,8 +82,53 @@ export default function ChallengePage() {
     return () => { document.title = prev; };
   }, []);
 
+  // Mount the embedded checkout the first time she asks for it, then scroll it
+  // into view. Nothing loads Stripe until she says yes, so the page stays fast.
+  useEffect(() => {
+    if (!payOpen) return undefined;
+    let checkout;
+    let cancelled = false;
+
+    (async () => {
+      if (!stripePromise) {
+        setError(`Checkout is not configured. Please email ${CHALLENGE.SUPPORT_EMAIL}.`);
+        return;
+      }
+      try {
+        const res = await fetch('/api/create-embedded-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier: CHALLENGE.TIER, distinctId: getDistinctId() }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
+        if (cancelled) return;
+        const stripe = await stripePromise;
+        if (cancelled) return;
+        checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
+        if (cancelled) { checkout.destroy(); return; }
+        if (containerRef.current) {
+          containerRef.current.innerHTML = '';
+          checkout.mount(containerRef.current);
+          containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Could not start checkout. Please try again.');
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      try { checkout?.destroy(); } catch { /* already gone */ }
+    };
+  }, [payOpen]);
+
   const buy = (location) => {
     track('chal_buy_click', { page: 'challenge', cohort: CHALLENGE.COHORT_ID, location });
+    setPayOpen(true);
+    if (payOpen && containerRef.current) {
+      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -148,7 +208,21 @@ export default function ChallengePage() {
           transition:transform .2s ease, background .2s ease;
         }
         .cmlc .btn:hover{background:#e0bc63; transform:translateY(-2px);}
+        .cmlc .btn{border:none; cursor:pointer; text-align:center;}
         .cmlc .btn-sub{font-size:13px; color:#e7c9a8; margin-top:12px; line-height:1.5;}
+
+        .cmlc .paywrap{
+          background:var(--paper); border:1px solid var(--line); border-radius:16px;
+          padding:20px 18px; margin:0 0 26px; scroll-margin-top:16px;
+        }
+        .cmlc .payhead{
+          font-size:14px; font-weight:700; color:var(--ink);
+          text-align:center; margin-bottom:14px;
+        }
+        .cmlc .payerr{
+          font-size:14px; font-weight:600; color:var(--wine);
+          text-align:center; line-height:1.5;
+        }
 
         .cmlc .assure{
           display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
@@ -175,10 +249,10 @@ export default function ChallengePage() {
           padding:11px 14px calc(11px + env(safe-area-inset-bottom));
           box-shadow:0 -6px 24px rgba(0,0,0,.25);
         }
-        .cmlc .sticky a{
-          display:block; max-width:440px; margin:0 auto;
-          background:var(--gold); color:#3a2708; text-decoration:none;
-          font-weight:800; font-size:16px; text-align:center;
+        .cmlc .sticky button{
+          display:block; width:100%; max-width:440px; margin:0 auto;
+          background:var(--gold); color:#3a2708; border:none; cursor:pointer;
+          font-family:var(--sans); font-weight:800; font-size:16px; text-align:center;
           padding:14px 18px; border-radius:100px;
         }
         .cmlc .tail{height:86px;}
@@ -227,17 +301,25 @@ export default function ChallengePage() {
           <span className="eyebrow" style={{ color: '#e7c9a8' }}>Your seat</span>
           <div className="price"><sup>$</sup>{CHALLENGE.PRICE}</div>
           <div className="was">One payment. Regular price <s>{usd(CHALLENGE.REGULAR_PRICE)}</s></div>
-          <a
-            className="btn"
-            href={CHALLENGE.BUY_URL}
-            onClick={() => buy('main')}
-          >
+          <button type="button" className="btn" onClick={() => buy('main')}>
             CHANGE MY LIFE NOW
-          </a>
+          </button>
           <div className="btn-sub">
             Secure Stripe checkout &middot; All seven days included &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
           </div>
         </div>
+
+        {/* Embedded checkout mounts here on the first click. */}
+        {payOpen && (
+          <div className="paywrap">
+            {error ? (
+              <p className="payerr" role="alert">{error}</p>
+            ) : (
+              <p className="payhead">Enter your details below to lock your seat.</p>
+            )}
+            <div ref={containerRef} style={{ minHeight: error ? 0 : 420 }} />
+          </div>
+        )}
 
         <div className="assure">
           <div>Live daily with two RNs</div>
@@ -259,9 +341,9 @@ export default function ChallengePage() {
 
       <div className="tail" />
       <div className="sticky">
-        <a href={CHALLENGE.BUY_URL} onClick={() => buy('sticky')}>
+        <button type="button" onClick={() => buy('sticky')}>
           CHANGE MY LIFE NOW &middot; {usd(CHALLENGE.PRICE)}
-        </a>
+        </button>
       </div>
     </div>
   );
