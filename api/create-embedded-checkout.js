@@ -31,6 +31,29 @@ const DUPE_GUARD_EXEMPT_TIERS = new Set([
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// ─── CARD-ONLY CHECKOUT (2026-08-14, Joel) ────────────────────────────
+// Every session below pins payment_method_types to card. Without it, Checkout
+// falls back to "automatic payment methods" from the Dashboard, where Link is
+// ON for all three payment-method configurations. That is what produced the
+// buyer's actual experience: an email-first Link prompt, then a "pay another
+// way" escape hatch, then finally the card fields. Three screens to do the one
+// thing she came to do.
+//
+// Pinning the type here is session-scoped and reversible in code: it does NOT
+// touch the Stripe account, so payment links, invoices, and Annie's storefronts
+// keep whatever their own settings say. Apple Pay and Google Pay still appear
+// (they are card wallets, not separate types), so one-tap mobile paying is
+// preserved.
+//
+// ⚠️ The trade-off, stated plainly: this also removes Klarna, Affirm, Cash App
+// Pay, and Amazon Pay from THESE checkouts. That is irrelevant at $17 and worth
+// a second thought on the $1,997 tiers, where "pay over time" can carry a sale.
+// To bring financing back on the high-ticket pages only, use CARD_PLUS_FINANCE
+// on the all-in branch instead of CARD_ONLY.
+const CARD_ONLY = ['card'];
+// eslint-disable-next-line no-unused-vars -- kept ready for the high-ticket call
+const CARD_PLUS_FINANCE = ['card', 'affirm', 'klarna'];
+
 // 2026-07-01 (Joel): $17 is the PERMANENT price, "leave it at what it is forever."
 // The old launch-sale deadline flip to $27 is removed; we always charge the $17 price.
 
@@ -249,6 +272,7 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
+        payment_method_types: CARD_ONLY,
         mode: isThreePay ? 'subscription' : 'payment',
         line_items: [
           { price: isThreePay ? CASE_REVIEW_3PAY_PRICE : CASE_REVIEW_PRICE_ID, quantity: 1 },
@@ -291,6 +315,7 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
+        payment_method_types: CARD_ONLY,
         mode: 'payment',
         line_items: [{ price: SATIN_PRICES[tier], quantity: 1 }],
         metadata,
@@ -316,6 +341,7 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
+        payment_method_types: CARD_ONLY,
         mode: 'payment',
         line_items: [{ price: TEA_PRICES[tier], quantity: 1 }],
         metadata,
@@ -395,6 +421,7 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
+        payment_method_types: CARD_ONLY,
         mode: isSub ? 'subscription' : 'payment',
         line_items: [{ price: ALLIN_PRICES[tier], quantity: 1 }],
         metadata,
@@ -473,6 +500,7 @@ export default async function handler(req, res) {
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
+        payment_method_types: CARD_ONLY,
         mode: 'payment',
         line_items: [{ price: resolved.priceId, quantity: 1 }],
         metadata,
@@ -512,6 +540,7 @@ export default async function handler(req, res) {
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
+      payment_method_types: CARD_ONLY,
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       // The webhook guard keys on metadata.funnel; corner drives kit delivery.

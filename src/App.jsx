@@ -35,6 +35,11 @@ const ChallengePage = lazy(() => import('./pages/ChallengePage'));
 // The challenge checkout's return_url. Without this route a paying buyer lands
 // on the SPA catch-all and sees nothing at the exact moment they have just paid.
 const ChallengeConfirmedPage = lazy(() => import('./pages/ChallengeConfirmedPage'));
+// 2026-08-13: the $67 Challenge OTO sold off a paid Shopify tea order. The
+// confirmed page is what CALLS api/tea-oto-confirm.js, so without this route a
+// $67 buyer is charged and never registered. See api/_challenge-oto.js.
+const TeaOtoPage = lazy(() => import('./pages/TeaOtoPage'));
+const TeaOtoConfirmedPage = lazy(() => import('./pages/TeaOtoConfirmedPage'));
 const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
 const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
@@ -267,6 +272,14 @@ function App() {
               page was deleted the first time. */}
           <Route path="/challenge" element={<ChallengePage />} />
           <Route path="/challenge-confirmed" element={<ChallengeConfirmedPage />} />
+
+          {/* $67 Challenge OTO on paid tea orders (2026-08-13). /tea-oto is
+              reached only from the signed link in the tea welcome email;
+              /tea-oto-confirmed is Stripe's return_url AND the thing that
+              registers the seat. Do not delete either without removing the
+              OTO block from api/_tea-welcome-email.js first. */}
+          <Route path="/tea-oto" element={<TeaOtoPage />} />
+          <Route path="/tea-oto-confirmed" element={<TeaOtoConfirmedPage />} />
 
           {/* Practice Launcher — three-stage funnel (standalone, no SiteLayout) */}
           <Route path="/launcher" element={<LauncherPage />} />

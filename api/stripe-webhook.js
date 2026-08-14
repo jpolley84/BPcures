@@ -539,7 +539,14 @@ async function processCheckoutCompleted(event) {
   // alert (and a future 4800/12000 mapping would mis-deliver a BP kit). Satin ships
   // manually off the Stripe dashboard — never this webhook. Guard on venture:'svutu'
   // so all current + future SVUTU blends skip cleanly.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson']);
+  // 2026-08-13: 'challenge-oto' is the $67 Change My Life Challenge one-time
+  // offer sold off a paid Shopify tea order (api/tea-oto-checkout.js). 6700 is
+  // NOT in AMOUNT_TO_TIER, so without this entry it would fall through the tier
+  // lookup and either drop silently or, worse, get fuzzy-matched to a kit the
+  // buyer never ordered. Delivery for it is owned end to end by
+  // api/tea-oto-confirm.js, so the correct behavior here is an explicit,
+  // logged skip.
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson', 'challenge-oto']);
   const md = session.metadata || {};
   const isRestoreHer =
     md.brand === 'restoreher' ||
