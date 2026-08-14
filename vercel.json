@@ -12,21 +12,25 @@
   "redirects": [
     {
       "source": "/challenge",
-      "has": [{ "type": "host", "value": "bpquiz.com" }],
-      "destination": "/masterclass",
+      "has": [
+        {
+          "type": "host",
+          "value": "bpquiz.com"
+        }
+      ],
+      "destination": "https://changemylifechallenge.com/",
       "permanent": false
     },
     {
-      "source": "/((?!payment$|api/|assets/|favicon).*)",
-      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
-      "destination": "https://bpquiz.com/masterclass",
-      "permanent": false
-    },
-    {
-      "source": "/((?!payment$|api/|assets/|favicon).*)",
-      "has": [{ "type": "host", "value": "www.changemylifechallenge.com" }],
-      "destination": "https://bpquiz.com/masterclass",
-      "permanent": false
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.changemylifechallenge.com"
+        }
+      ],
+      "destination": "https://changemylifechallenge.com/$1",
+      "permanent": true
     },
     {
       "source": "/tt",

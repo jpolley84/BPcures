@@ -1,32 +1,23 @@
-// Edge Middleware (Vercel) — changemylifechallenge.com root.
+// Edge Middleware (Vercel) — changemylifechallenge.com root shell swap.
 //
-// 2026-08-12 (Joel): challenge is off for now. changemylifechallenge.com and
-// bpquiz.com/challenge both redirect to bpquiz.com/masterclass.
+// dist/index.html carries BPQuiz's <title>/og:* tags, and crawlers do not run
+// JS, so shares of changemylifechallenge.com showed the BP quiz card. A
+// vercel.json rewrite of "/" cannot fix this because the filesystem match for
+// index.html wins before rewrites are evaluated. Middleware runs BEFORE the
+// filesystem, so the challenge domain's root is rewritten to /cmlc.html, the
+// crawler-correct copy of the shell emitted by scripts/cmlc-meta.mjs at build
+// time. Same JS bundle, same page; only the static <head> differs.
 //
-// The old cmlc.html crawler-shell swap (dist/index.html carried BPQuiz's
-// <title>/og:* tags, so shares of this domain showed the BP quiz card) is
-// moot while the domain is just a redirect — nothing renders here to have
-// wrong meta tags. Middleware runs BEFORE vercel.json routing/filesystem, so
-// it's still the right place to force this: a vercel.json redirect alone
-// would arrive too late, after this domain's own routing already resolved.
-//
-// To bring the challenge back: revert this file to rewrite '/' → '/cmlc.html'
-// (see git history) and revert the matching vercel.json redirects.
+// Every other host and every other path falls through untouched.
 
-export const config = { matcher: '/:path*' };
+export const config = { matcher: '/' };
 
 export default function middleware(request) {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
   if (host === 'changemylifechallenge.com' || host === 'www.changemylifechallenge.com') {
-    // 2026-08-13 (Joel): changemylifechallenge.com/payment is the balance
-    // checkout for All In deposit-payers (PaymentPage.jsx). Let it, its API
-    // calls, and the SPA assets through; everything else still redirects.
-    const p = url.pathname;
-    if (p === '/payment' || p.startsWith('/api/') || p.startsWith('/assets/') || p === '/favicon.svg' || p === '/favicon.ico') {
-      return undefined;
-    }
-    return Response.redirect('https://bpquiz.com/masterclass', 307);
+    const dest = new URL('/cmlc.html', url);
+    return new Response(null, { headers: { 'x-middleware-rewrite': dest.toString() } });
   }
   return undefined;
 }
