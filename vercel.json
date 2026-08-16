@@ -52,16 +52,6 @@
       "permanent": false
     },
     {
-      "source": "/tea",
-      "destination": "https://hormoneteas.com/products/steady?utm_source=bpquiz&utm_medium=redirect&utm_campaign=tea",
-      "permanent": false
-    },
-    {
-      "source": "/tea/(.*)",
-      "destination": "https://hormoneteas.com/products/steady?utm_source=bpquiz&utm_medium=redirect&utm_campaign=tea",
-      "permanent": false
-    },
-    {
       "source": "/tt-c",
       "destination": "/coaching?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
       "permanent": false

@@ -50,6 +50,29 @@ const TEA_TIERS = {
     description: 'SVUTU Steady, 90-Day Supply',
     blend: 'steady',
   },
+  // ── The /tea-thanks post-purchase ladder (2026-08-16, Joel) ──────────
+  // Both rungs ship FREE, which is automatic here: an off_session
+  // PaymentIntent charges exactly `amount` and never adds a shipping line.
+  // That is the offer's whole hinge, since the single bag they just bought
+  // carried $5.97 shipping.
+  //
+  // qty matters. recordTeaSale feeds the nightly shipping digest Joel packs
+  // from, so the upgrade MUST say 2 pouches or he ships one bag against a
+  // $72 charge.
+  'tea-upgrade-90': {
+    priceId: null, // charged as an amount, not a Price; no upgrade Price exists
+    amount: 7200,  // $120 (90-day) minus the $48 already paid for bag one
+    description: 'SVUTU Steady, upgrade to 90-Day Supply (2 additional pouches)',
+    blend: 'steady',
+    qty: 2,
+  },
+  'tea-friend-48': {
+    priceId: 'price_1TqGiaHseZnO3rRZhSCeTi1H',
+    amount: 4800,
+    description: 'SVUTU Steady, 1-Month Supply (gift pouch, ships free)',
+    blend: 'steady',
+    qty: 1,
+  },
   // 2026-07-21: SVUTU Satin (hormoneteas.com) on the embedded rail — the
   // "double your order for a friend" post-purchase one-click.
   'tea-satin-48': {
@@ -253,7 +276,7 @@ export default async function handler(req, res) {
       dedupeId: paymentIntent.id,
       email: customerEmail,
       name,
-      items: [{ name: tierConfig.description, qty: 1 }],
+      items: [{ name: tierConfig.description, qty: tierConfig.qty || 1 }],
       amountCents: tierConfig.amount,
       isSubscription: false,
       address: { line1, line2, city, state, postal_code, country },

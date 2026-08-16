@@ -22,10 +22,46 @@ const TIER_LABEL = {
   'tea-120': '90-Day Supply',
 };
 
-// "Double your order for a friend or family" one-click: charge the SAME tier
-// the buyer just bought (so it truly doubles their order), to the same card,
-// shipped to the same address so they can hand it to someone they love.
-const DOUBLE_PRICE = { 'tea-48': 48, 'tea-120': 120 };
+// 2026-08-16 (Joel) — the one-bag buyer now walks a TWO RUNG ladder:
+//
+//   rung 1  upgrade to the 90-day supply, $72 (the $120 tier minus the $48
+//           already paid), and it ships free
+//   rung 2  shown only if she declines rung 1: one more bag for someone she
+//           loves, $48, also shipping free
+//
+// Both rungs ship free on purpose. She just paid $5.97 to ship a single bag,
+// so "no shipping on this one" is a real number she can check, not a slogan.
+// A buyer who already took the 90-day supply skips the ladder and gets the
+// original double-your-order offer, since there is nothing left to upgrade.
+const LADDER = {
+  upgrade: {
+    tier: 'tea-upgrade-90',
+    price: 72,
+    eyebrow: 'One-time upgrade, one click',
+    heading: 'Make it the full 90 days.',
+    body: 'Steady works on the pattern, not the day, and three months is where women stop watching for change and start expecting it. Add the two remaining pouches for $72, and this time shipping is on us. Charged to the card you just used, shipped to the address you just entered.',
+    cta: 'Yes, upgrade me to 90 days for $72',
+    done: 'Done. You are on the full 90-day supply. Two more pouches ship with your order, no extra shipping, and a second confirmation email is on its way.',
+  },
+  friend: {
+    tier: 'tea-friend-48',
+    price: 48,
+    eyebrow: 'Last offer, one click',
+    heading: 'Send one to someone you love.',
+    body: 'You know someone whose numbers you worry about. Add a second pouch for $48 and we will ship it free to your door, so you can put it in her hands yourself. Same card, same address, nothing to re-type.',
+    cta: 'Yes, add a bag for a friend, $48',
+    done: 'Done. A second pouch ships free to the same address, so you can hand it to her yourself. A second confirmation email is on its way.',
+  },
+  double: {
+    tier: 'tea-120',
+    price: 120,
+    eyebrow: 'One-time offer, one click',
+    heading: 'Send one to someone you love.',
+    body: 'You know someone whose numbers you worry about. Double your order and we will send a second 90-Day Supply to your door, shipping free, so you can hand it to your mother, your sister, your friend. Charged to the card you just used, shipped to the address you just entered.',
+    cta: 'Yes, double my order for $120',
+    done: 'Done. Your order is doubled and the second supply ships free to the same address. A second confirmation email is on its way.',
+  },
+};
 
 export default function TeaThanksPage() {
   const [params] = useSearchParams();
@@ -36,6 +72,12 @@ export default function TeaThanksPage() {
   const [charging, setCharging] = useState(false);
   const [added, setAdded] = useState(false);
   const [upsellGone, setUpsellGone] = useState(false);
+  // Which rung is on screen. A one-bag buyer starts on 'upgrade' and falls to
+  // 'friend' when she declines; a 90-day buyer has nothing to upgrade, so she
+  // gets the double-your-order offer and there is no second rung.
+  const boughtSingle = tier !== 'tea-120';
+  const [rung, setRung] = useState(boughtSingle ? 'upgrade' : 'double');
+  const offer = LADDER[rung];
 
   // noindex for the post-purchase page (same pattern as WelcomePage).
   useEffect(() => {
@@ -66,32 +108,39 @@ export default function TeaThanksPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
-  // Double their order: charge the SAME tier they just bought.
-  const doubleTier = tier === 'tea-120' ? 'tea-120' : 'tea-48';
-  const doublePrice = DOUBLE_PRICE[doubleTier];
-
-  async function addPouch() {
+  async function acceptOffer() {
     if (charging) return;
     setCharging(true);
-    track('tea_gift_double_clicked', { from_tier: tier, double_tier: doubleTier });
+    track('tea_upsell_clicked', { from_tier: tier, rung, upsell_tier: offer.tier });
     try {
       const res = await fetch('/api/tea-one-click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, tier: doubleTier, reuse_session_shipping: true }),
+        body: JSON.stringify({ session_id: sessionId, tier: offer.tier, reuse_session_shipping: true }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setAdded(true);
-        track('tea_gift_double_success', { from_tier: tier, double_tier: doubleTier });
+        track('tea_upsell_success', { from_tier: tier, rung, upsell_tier: offer.tier });
       } else {
+        // A failed charge retires the whole ladder. Dropping her to the next
+        // rung after a decline is persuasion; doing it after a card failure is
+        // just asking a broken card to pay twice.
         setUpsellGone(true);
+        track('tea_upsell_failed', { from_tier: tier, rung, reason: data.error || 'unknown' });
       }
     } catch {
       setUpsellGone(true);
     } finally {
       setCharging(false);
     }
+  }
+
+  // Decline: step down to the friend bag, or end the ladder if that WAS it.
+  function declineOffer() {
+    track('tea_upsell_declined', { from_tier: tier, rung });
+    if (rung === 'upgrade') setRung('friend');
+    else setUpsellGone(true);
   }
 
   return (
@@ -116,7 +165,7 @@ export default function TeaThanksPage() {
               <div style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>
                 <CheckCircle2 size={20} color="var(--sage-deep, #2E3A30)" style={{ flexShrink: 0, marginTop: 2 }} />
                 <p style={{ margin: 0, color: 'var(--ink-soft, #2B2824)', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                  Done. Your order is doubled. A second pouch ships to the same address so you can put it right in their hands. Same card, no re-typing. A second confirmation email is on its way.
+                  {offer.done}
                 </p>
               </div>
             ) : (
@@ -124,18 +173,18 @@ export default function TeaThanksPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   <Leaf size={16} color="var(--clay, #B85A36)" />
                   <span style={{ fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--clay, #B85A36)', fontWeight: 700 }}>
-                    One-time offer, one click
+                    {offer.eyebrow}
                   </span>
                 </div>
                 <p style={{ margin: '0 0 0.5rem', fontWeight: 700, fontSize: '1.05rem', color: 'var(--ink, #121110)' }}>
-                  Send one to someone you love.
+                  {offer.heading}
                 </p>
                 <p style={{ margin: '0 0 1rem', color: 'var(--ink-soft, #2B2824)', lineHeight: 1.6, fontSize: '0.95rem' }}>
-                  You know someone whose numbers you worry about. Double your order and we will send a second {TIER_LABEL[doubleTier] || 'supply'} to your door, so you can hand it to your mother, your sister, your friend. Charged to the card you just used, shipped to the address you just entered. Nothing to re-type.
+                  {offer.body}
                 </p>
                 <button
                   type="button"
-                  onClick={addPouch}
+                  onClick={acceptOffer}
                   disabled={charging}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
@@ -144,15 +193,15 @@ export default function TeaThanksPage() {
                     fontSize: '0.98rem', cursor: charging ? 'default' : 'pointer', opacity: charging ? 0.7 : 1,
                   }}
                 >
-                  {charging ? (<><Loader2 size={16} /> Adding...</>) : (<>Yes, double my order for ${doublePrice} <ArrowRight size={15} /></>)}
+                  {charging ? (<><Loader2 size={16} /> Adding...</>) : (<>{offer.cta} <ArrowRight size={15} /></>)}
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setUpsellGone(true); track('tea_gift_double_declined', { from_tier: tier }); }}
+                  onClick={declineOffer}
                   disabled={charging}
                   style={{ display: 'block', margin: '0.7rem 0 0', padding: 0, background: 'none', border: 'none', color: 'var(--muted, #7A7061)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '2px' }}
                 >
-                  No thanks, just my order is fine.
+                  {rung === 'upgrade' ? 'No thanks, one month is right for me.' : 'No thanks, just my order is fine.'}
                 </button>
               </>
             )}

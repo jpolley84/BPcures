@@ -343,6 +343,15 @@ export default async function handler(req, res) {
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
     };
     const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta };
+    // 2026-08-16 (Joel): the single bag now carries $5.97 shipping; the 90-day
+    // supply ships free. That gap is the whole engine of the /tea-thanks
+    // ladder: upgrading to 90 days both adds tea AND removes the shipping
+    // line, so "free shipping" is a real, checkable saving rather than a
+    // slogan. Written as inline shipping_rate_data (no dashboard rate object
+    // to drift out of sync) and shown as a line item at checkout.
+    // NOTE: Satin (tea-satin-*) is deliberately untouched. It is Annie's
+    // storefront and nobody asked to reprice it.
+    const shippingCents = tier === 'tea-48' ? 597 : 0;
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
@@ -351,6 +360,17 @@ export default async function handler(req, res) {
         line_items: [{ price: TEA_PRICES[tier], quantity: 1 }],
         metadata,
         shipping_address_collection: { allowed_countries: ['US'] },
+        shipping_options: [{
+          shipping_rate_data: {
+            type: 'fixed_amount',
+            fixed_amount: { amount: shippingCents, currency: 'usd' },
+            display_name: shippingCents === 0 ? 'Free shipping' : 'Standard shipping',
+            delivery_estimate: {
+              minimum: { unit: 'business_day', value: 5 },
+              maximum: { unit: 'business_day', value: 7 },
+            },
+          },
+        }],
         customer_creation: 'always',
         payment_intent_data: { setup_future_usage: 'off_session' },
         return_url: `${siteUrl}/tea-thanks?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
