@@ -39,6 +39,7 @@ import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { chicagoDateKey } from './triangle-webhook.js';
 import { sendTeaWelcome, firstNameOf } from './_tea-welcome-email.js';
+import { capturePurchase } from './_posthog.js';
 
 // Shopify posts the raw JSON body and signs those exact bytes. Vercel's body
 // parser would re-serialize and break the HMAC, so read the stream ourselves.
@@ -210,7 +211,37 @@ async function handleOrderPaid(order) {
     }
   }
 
-  return { recorded: true, id: dedupeId, blend: record.blend, amountCents: record.amountCents, email: record.email, welcomed };
+  // Canonical revenue event. Added 2026-08-16: hormoneteas.com is Shopify-only
+  // now (bpquiz.com/tea 302s there), so without this every tea sale placed on
+  // the storefront was invisible to PostHog and tea revenue read as $0 while
+  // the Stripe path kept reporting. Same `purchase` event the Stripe webhook
+  // fires, so one funnel covers both checkouts.
+  //
+  // No deviceDistinctId: Shopify's checkout never carries the browser's
+  // PostHog id, so this attaches by lowercased email — which still resolves to
+  // the same person for anyone who submitted the quiz email gate.
+  //
+  // markSession is deliberately OFF: the ph:purchase:<id> namespace is keyed on
+  // STRIPE session ids and swept by the reconciliation cron, which knows
+  // nothing about `shopify-<order>`. The kv dedupe above (tea:sale:<id>, hit
+  // before any of this runs) is what stops a Shopify retry double-counting.
+  let phCaptured = false;
+  if (record.email) {
+    try {
+      phCaptured = await capturePurchase({
+        email: record.email,
+        amountCents: record.amountCents,
+        tier: null,
+        product: record.blend === 'steady' ? 'SVUTU Steady (Shopify)' : `SVUTU ${record.blend} (Shopify)`,
+        source: 'shopify',
+        sessionId: record.sessionId,
+      });
+    } catch (err) {
+      console.warn('shopify-tea-webhook: posthog purchase capture failed (non-fatal)', err.message);
+    }
+  }
+
+  return { recorded: true, id: dedupeId, blend: record.blend, amountCents: record.amountCents, email: record.email, welcomed, phCaptured };
 }
 
 // A cancelled or fully-refunded order must leave the open worklist so nobody
