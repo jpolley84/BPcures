@@ -116,14 +116,21 @@ const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness'
 // product's id and charge a buyer $17 for a $97 seat. So: read the env var,
 // and if it is absent or malformed, fail LOUD with a distinct error code the
 // page renders as its honest "checkout is not open yet" state.
-const CHALLENGE_COHORT = '2026-08-04';           // cohort id, also the Night 1 date
+// 2026-08-17: cohort id aligned to the LIVE cohort (Aug 17-23). The canonical
+// cohort id lives in three places and MUST match or a paid buyer is charged
+// and never seated (api/challenge-signup.js rejects a session whose
+// metadata.cohort differs from its own CHALLENGE.cohort):
+//   - this constant + the 'cmlc-97' branch below
+//   - api/challenge-signup.js CHALLENGE.cohort
+//   - src/pages/ChallengePage.jsx CHALLENGE.COHORT_ID
+const CHALLENGE_COHORT = '2026-08-17';           // cohort id, also the Day 1 date
 // 2026-07-28 (Joel): the call moved to 7:00pm EASTERN (was 7:00pm CT, which is
 // 8:00pm ET). Both wall clocks below describe the SAME instant, and both are
 // stamped into Stripe metadata so a later reader does not have to guess which
 // zone an ambiguous string meant. Mirrored in src/pages/ChallengePage.jsx
 // (START_ISO_ET) and api/challenge-signup.js (startIsoEt).
-const CHALLENGE_START_ET = '2026-08-04T19:00:00'; // Night 1, 7:00pm ET
-const CHALLENGE_START_CT = '2026-08-04T18:00:00'; // the same instant, 6:00pm CT
+const CHALLENGE_START_ET = '2026-08-17T19:00:00'; // Day 1, 7:00pm ET
+const CHALLENGE_START_CT = '2026-08-17T18:00:00'; // the same instant, 6:00pm CT
 // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
 // 2026-08-05 ET, a night before the challenge itself ends. Mirrors
 // CHALLENGE.CLOSE_ISO_ET in src/pages/ChallengePage.jsx.
@@ -133,6 +140,11 @@ const CHALLENGE_START_CT = '2026-08-04T18:00:00'; // the same instant, 6:00pm CT
 // exactly 2026-08-06T04:00:00Z, and hardcoding the resolved instant removes any
 // chance of a zone bug closing the doors an hour early or an hour late. If the
 // date ever moves, re-resolve it; do not assume -4 holds.
+// 2026-08-17: deliberately LEFT IN THE PAST. This close instant only gates the
+// RETIRED challenge-ga ($17/$47-era) and challenge-vip tiers; keeping it
+// expired keeps those tiers permanently closed so nobody can buy the new
+// cohort at the old prices through a stale tab. The live seat is 'cmlc-97'
+// below, which has no close gate.
 const CHALLENGE_CLOSE_MS = Date.parse('2026-08-06T04:00:00Z');
 const CHALLENGE_PRICE_ENV = {
   'challenge-ga': 'CHALLENGE_GA_PRICE_ID',
