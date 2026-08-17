@@ -6,7 +6,9 @@
 // checkout page"). The long sales page is retired. What remains is the short
 // path: what the seven days are, and one button that takes the money.
 //
-//   Day 1 through Day 7, each with the full description and shift line.
+//   Day 1 through Day 7, each a title, a two-line description, and the
+//   next-day teaser. The "The shift: from X to Y" lines were removed
+//   2026-08-17 (Joel) to keep the cards tight.
 //   A live-event proof bridge with real RestoreHER 2026 photos.
 //   "SAVE MY FREE SEAT" -> a name/email/phone registration form.
 //
@@ -182,7 +184,6 @@ const DAYS = [
       'The belly. The chin hair. The crashes. The mood. The sleep. The numbers.',
       'We slow all of it down and look at what your body has been trying to tell you.',
     ],
-    shift: 'The shift: from "Something is wrong with me" to "My body has been giving me clues."',
     next: 'Tomorrow: we start connecting those clues.',
   },
   {
@@ -192,7 +193,6 @@ const DAYS = [
       'Ten separate problems, or one pattern wearing ten disguises?',
       'Today all that noise narrows down to your Big 3.',
     ],
-    shift: 'The shift: from "I have ten different problems" to "I can finally see my Big 3."',
     next: 'Tomorrow: we test one of the biggest inputs, food.',
   },
   {
@@ -202,7 +202,6 @@ const DAYS = [
       'Not a diet. Not a list of foods you are allowed to eat.',
       'One simple experiment, and you finally notice what your body does with it.',
     ],
-    shift: 'The shift: from "Tell me what diet to follow" to "I am learning how my body responds."',
     next: 'Tomorrow: we go after something deeper than a diet, getting YOU back.',
   },
   {
@@ -212,7 +211,6 @@ const DAYS = [
       'Not for somebody else. For you. Rested, confident, at home in your own body again.',
       'Sometimes it starts with giving yourself permission to sleep.',
     ],
-    shift: 'The shift: from "I do not feel like myself anymore" to "I am starting to recognize her again."',
     next: 'Tonight matters, because tomorrow we are going to move differently.',
   },
   {
@@ -222,7 +220,6 @@ const DAYS = [
       'No punishment. Nothing to prove. You are not 25 and you do not need to be.',
       'Movement that works with your body, and a way to turn the volume down.',
     ],
-    shift: 'The shift: from "I need to exercise harder" to "I know how to move and reset in a way I can actually repeat."',
     next: 'Tomorrow: we take the fear out of the numbers.',
   },
   {
@@ -232,7 +229,6 @@ const DAYS = [
       'The cuff tightens. The number lands. Your stomach drops. Not this time.',
       'You get context instead of panic, and better questions for your doctor.',
     ],
-    shift: 'The shift: less fear, better questions, more clarity.',
     next: 'Tomorrow: we put the entire week together.',
   },
   {
@@ -242,7 +238,6 @@ const DAYS = [
       'Look back at Day 1. What kept showing up? What helped? What surprised you?',
       'All of it goes into one page you keep: your Personal Life Change Map.',
     ],
-    shift: 'The goal was never seven perfect days. It was finally knowing where to go from here.',
     next: 'You do not leave with more information. You leave with your next move.',
   },
 ];
@@ -363,8 +358,6 @@ export default function ChallengePage() {
         .cmlc .day h3{font-size:20px; color:var(--ink); margin-bottom:7px;}
         .cmlc .day p{font-size:15px; color:var(--ink-soft); line-height:1.55; margin-bottom:9px;}
         .cmlc .day p:last-child{margin-bottom:0;}
-        .cmlc .day .dayshift{font-family:var(--serif); font-style:italic; font-size:15.5px;
-          color:var(--wine-deep); margin-top:11px;}
         .cmlc .day .daynext{font-size:13.5px; font-weight:700; color:var(--wine); margin-top:7px;}
 
         .cmlc .buybox{
@@ -591,7 +584,6 @@ export default function ChallengePage() {
               <div>
                 <h3>{d.title}</h3>
                 {d.body.map((para) => <p key={para.slice(0, 24)}>{para}</p>)}
-                <p className="dayshift">{d.shift}</p>
                 <p className="daynext">{d.next}</p>
               </div>
             </div>
