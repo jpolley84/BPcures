@@ -6,35 +6,54 @@
 // checkout page"). The long sales page is retired. What remains is the short
 // path: what the seven days are, and one button that takes the money.
 //
-//   Day 1 through Day 7, each as a title + one-line subtitle.
-//   "CHANGE MY LIFE NOW" -> the live Stripe payment link.
+//   Day 1 through Day 7, each with the full description and shift line.
+//   A live-event proof bridge with real RestoreHER 2026 photos.
+//   "SAVE MY FREE SEAT" -> a name/email/phone registration form.
 //
-// The $97 seat is now REAL and sellable: product + price
-// (price_1U4NSeHseZnO3rRZfxzUCAjk, $97 one-time) + payment link created
-// 2026-08-14. The link is card-only and redirects to /challenge-confirmed
-// with the session id, which is what registers the seat. The old honest
-// "waitlist fallback" is gone because the thing it was waiting on now exists.
+// 2026-08-17 (Joel, explicit): THE SEAT IS FREE AND STRIPE IS REMOVED.
+// The $97 price and its embedded checkout are gone from this page. $97 now
+// appears once, struck through beside a FREE badge, as the honest regular
+// price of the challenge. Nothing on this page can take money.
 //
-// If the price ever changes, change it in Stripe AND in CHALLENGE.PRICE here.
-// A page that says $97 next to a link that charges something else is the one
-// unforgivable bug on this file.
+// The Stripe product and price still exist in the Stripe account
+// (price_1U4NSeHseZnO3rRZfxzUCAjk, $97 one-time) and are simply unused here.
+// If the challenge ever goes paid again: restore the checkout FIRST, verify a
+// real charge end to end, and only then put a live price back on the page.
+// The old warning on this file still holds and is why the rails were pulled
+// together rather than one at a time: a page that shows one number beside a
+// button that charges another is the one unforgivable bug here.
 //
 // Cohort dates live in CHALLENGE below and are mirrored in
 // ChallengeConfirmedPage.jsx and api/challenge-signup.js.
 //
 // ZERO em dashes in visible copy.
 
-import { useEffect, useRef, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track, getDistinctId } from '../utils/analytics';
+import { useEffect, useState } from 'react';
+import { track } from '../utils/analytics';
 import bannerImg from '../assets/challenge-banner.jpg';
-
-const pk = STRIPE_PUBLISHABLE_KEY();
-const stripePromise = pk ? loadStripe(pk) : null;
+import eventStage from '../assets/challenge-event/event-stage.jpg';
+import eventBarbaraAnnie from '../assets/challenge-event/event-barbara-annie.jpg';
+import eventRoom from '../assets/challenge-event/event-room.jpg';
+import eventSpeakers from '../assets/challenge-event/event-vip.jpg';
 
 /* ==========================================================================
-   CONFIG - change dates, price, and the buy link HERE and nowhere else.
+   CONFIG - change dates and price HERE and nowhere else.
+
+   2026-08-17: THE SEAT IS NOW FREE (Joel, explicit). Stripe is GONE from this
+   page: no loadStripe, no embedded checkout, no payment link, no tier. The
+   seat is captured by a name + email + phone form that posts to
+   /api/challenge-signup with intent 'free-register'.
+
+   Removing the charge rail entirely is deliberate and is what makes the
+   struck-through price safe. The old header warning on this file was that a
+   page saying one number beside a button charging another is the one
+   unforgivable bug here. There is now no button that charges anything, so
+   that class of bug cannot occur. If the challenge ever goes paid again,
+   restore the checkout FIRST and only then put a price back on the page.
+
+   PRICE stays at 97 because it is still the honest regular price of this
+   challenge and it is what is struck through. It is a display value only,
+   nothing reads it to charge.
    ========================================================================== */
 const CHALLENGE = {
   NAME: 'The Change My Life Challenge',
@@ -43,15 +62,6 @@ const CHALLENGE = {
   TIME_LABEL: '6:00pm Central / 7:00pm Eastern',
   DAY_COUNT: 7,
   PRICE: 97,
-  REGULAR_PRICE: 197,
-  // Checkout tier in api/create-embedded-checkout.js. Mounted INLINE rather
-  // than sending buyers to the Stripe payment link that also exists for this
-  // price (https://buy.stripe.com/aFa5kDbwfeia0IXefLfnO1R). The link works,
-  // but payment links inherit the account payment-method configuration and
-  // cannot override it, so that route shows the "Pay with Link" email wall
-  // before the card fields. This rail is card-first. Use the payment link
-  // only where a raw URL is required (a DM, a bio link).
-  TIER: 'cmlc-97',
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
 
@@ -165,19 +175,88 @@ const TESTIMONIAL = {
    file's existing convention and keep the single-quoted strings clean.
    ========================================================================== */
 const DAYS = [
-  { n: 1, title: 'What Happened to My Body?', sub: 'From "Something is wrong with me" to "My body has been giving me clues."' },
-  { n: 2, title: 'Connect the Dots', sub: 'From ten separate problems to the three patterns worth your attention first.' },
-  { n: 3, title: 'Stop Guessing With Food', sub: 'Not another diet. From "tell me what to follow" to "I know how my body responds."' },
-  { n: 4, title: 'Bring Sexy Back', sub: 'From "I do not feel like myself anymore" to "I am starting to recognize her again."' },
-  { n: 5, title: 'Move Different', sub: 'No punishment, no proving anything. Movement and reset you can actually repeat.' },
-  { n: 6, title: 'Know Your Numbers Without Fear', sub: 'Less fear, better questions, more clarity. Context instead of panic.' },
-  { n: 7, title: 'Take Back Your Future', sub: 'Build your Personal Life Change Map. Your patterns, your priorities, your next move.' },
+  {
+    n: 1,
+    title: 'What Happened to My Body?',
+    body: [
+      'The belly that suddenly feels different. The chin hair. The energy crashes. The mood shifts. The sleep. The numbers. The changes you keep wondering if you are supposed to just accept because you are over 40.',
+      'We start by slowing the whole thing down and looking at what your body has actually been telling you, while reconnecting you to the woman you are trying to get back to.',
+    ],
+    shift: 'The shift: from "Something is wrong with me" to "My body has been giving me clues."',
+    next: 'Tomorrow: we start connecting those clues.',
+  },
+  {
+    n: 2,
+    title: 'Connect the Dots',
+    body: [
+      'What if the sleep, cravings, stress, energy, belly, moods, hormones and numbers are not ten completely separate conversations?',
+      'Today we start putting the clues on one page. You will look for what tends to happen together, what keeps repeating, and narrow all that noise down to the three patterns worth your attention first.',
+    ],
+    shift: 'The shift: from "I have ten different problems" to "I can finally see my Big 3."',
+    next: 'Tomorrow: we test one of the biggest inputs, food.',
+  },
+  {
+    n: 3,
+    title: 'Stop Guessing With Food',
+    body: [
+      'Not another diet. Not a list of foods you are "allowed" to eat.',
+      'Today you run a simple experiment with food and pay attention to what happens next: your hunger, energy, cravings, fullness and the way your body feels. The point is not perfection. It is finally learning to notice what seems to help you feel steadier.',
+    ],
+    shift: 'The shift: from "Tell me what diet to follow" to "I am learning how my body responds."',
+    next: 'Tomorrow: we go after something deeper than a diet, getting YOU back.',
+  },
+  {
+    n: 4,
+    title: 'Bring Sexy Back',
+    body: [
+      'Not for somebody else. For you.',
+      'The woman who wants to feel attractive, rested, feminine, confident, alive and at home in her own body again. We connect the way you feel in the mirror with the way you restore at night, because sometimes bringing sexy back starts with finally giving your body permission to rest.',
+    ],
+    shift: 'The shift: from "I do not feel like myself anymore" to "I am starting to recognize her again."',
+    next: 'Tonight matters, because tomorrow we are going to move differently.',
+  },
+  {
+    n: 5,
+    title: 'Move Different',
+    body: [
+      'No punishment. No trying to prove you can still move like you are 25.',
+      'Today is about learning what it feels like to work with your body: simple movement, getting outside when you can, and learning how to turn the volume down when life has your body running at full speed.',
+    ],
+    shift: 'The shift: from "I need to exercise harder" to "I know how to move and reset in a way I can actually repeat."',
+    next: 'Tomorrow: we take the fear out of the numbers.',
+  },
+  {
+    n: 6,
+    title: 'Know Your Numbers Without Fear',
+    body: [
+      'The cuff tightens. The number appears. A lab result pops up. Your stomach drops.',
+      'Not this time. You will learn to look at the health information you already have with more context, understand what you do and do not know, and start forming better questions for your healthcare team instead of letting one number become your identity.',
+    ],
+    shift: 'The shift: less fear, better questions, more clarity.',
+    next: 'Tomorrow: we put the entire week together.',
+  },
+  {
+    n: 7,
+    title: 'Take Back Your Future',
+    body: [
+      'Now we look back at Day 1. What did you notice? What kept showing up? What helped? What surprised you? What are the three patterns that deserve your attention first?',
+      'Then we put the pieces together, your health, your habits, your numbers, your patterns, your priorities and the life you still want to live, into your Personal Life Change Map.',
+    ],
+    shift: 'The goal was never seven perfect days. It was finally knowing where to go from here.',
+    next: 'You do not leave with more information. You leave with your next move.',
+  },
 ];
 
 export default function ChallengePage() {
-  const [payOpen, setPayOpen] = useState(false);
+  // Free-seat registration. All three fields are REQUIRED (Joel, explicit
+  // 2026-08-17: "name email phone number mandatory"). Phone is validated on
+  // digit count rather than shape so a woman typing (502) 555-1234 or
+  // 502.555.1234 or 5025551234 all pass.
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [state, setState] = useState('idle'); // idle | sending | done
   const [error, setError] = useState('');
-  const containerRef = useRef(null);
 
   useEffect(() => {
     track('chal_checkout_view', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
@@ -186,53 +265,47 @@ export default function ChallengePage() {
     return () => { document.title = prev; };
   }, []);
 
-  // Mount the embedded checkout the first time she asks for it, then scroll it
-  // into view. Nothing loads Stripe until she says yes, so the page stays fast.
-  useEffect(() => {
-    if (!payOpen) return undefined;
-    let checkout;
-    let cancelled = false;
+  async function register(e) {
+    e.preventDefault();
+    const cleanName = name.trim();
+    const cleanEmail = email.trim();
+    const digits = phone.replace(/\D/g, '');
 
-    (async () => {
-      if (!stripePromise) {
-        setError(`Checkout is not configured. Please email ${CHALLENGE.SUPPORT_EMAIL}.`);
-        return;
-      }
-      try {
-        const res = await fetch('/api/create-embedded-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tier: CHALLENGE.TIER, distinctId: getDistinctId() }),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
-        if (cancelled) return;
-        const stripe = await stripePromise;
-        if (cancelled) return;
-        checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
-        if (cancelled) { checkout.destroy(); return; }
-        if (containerRef.current) {
-          containerRef.current.innerHTML = '';
-          checkout.mount(containerRef.current);
-          containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      } catch (err) {
-        if (!cancelled) setError(err.message || 'Could not start checkout. Please try again.');
-      }
-    })();
+    if (cleanName.length < 1) { setError('Please tell us your name.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { setError('Please check your email address.'); return; }
+    if (digits.length < 10) { setError('Please enter a full phone number, including area code.'); return; }
 
-    return () => {
-      cancelled = true;
-      try { checkout?.destroy(); } catch { /* already gone */ }
-    };
-  }, [payOpen]);
+    setError('');
+    setState('sending');
+    track('chal_free_register_submit', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
 
-  const buy = (location) => {
-    track('chal_buy_click', { page: 'challenge', cohort: CHALLENGE.COHORT_ID, location });
-    setPayOpen(true);
-    if (payOpen && containerRef.current) {
-      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    try {
+      const res = await fetch('/api/challenge-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          intent: 'free-register',
+          firstName: cleanName,
+          email: cleanEmail,
+          phone: phone.trim(),
+          tier: 'challenge-ga',
+        }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      setState('done');
+      track('chal_free_register_ok', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
+    } catch {
+      // Never fake a success. If the save did not land she needs to know, and
+      // she needs a human address that actually works.
+      setState('idle');
+      setError(`That did not go through. Please try again, or email ${CHALLENGE.SUPPORT_EMAIL} and we will add you by hand.`);
+      track('chal_free_register_fail', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
     }
+  }
+
+  const goToForm = (location) => {
+    track('chal_buy_click', { page: 'challenge', cohort: CHALLENGE.COHORT_ID, location });
+    document.getElementById('buy')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -287,8 +360,12 @@ export default function ChallengePage() {
           font-family:var(--serif); font-size:13px; font-weight:700; letter-spacing:.08em;
           text-transform:uppercase; color:var(--gold-deep); padding-top:4px;
         }
-        .cmlc .day h3{font-size:20px; color:var(--ink); margin-bottom:5px;}
-        .cmlc .day p{font-size:15px; color:var(--ink-soft); line-height:1.55;}
+        .cmlc .day h3{font-size:20px; color:var(--ink); margin-bottom:7px;}
+        .cmlc .day p{font-size:15px; color:var(--ink-soft); line-height:1.55; margin-bottom:9px;}
+        .cmlc .day p:last-child{margin-bottom:0;}
+        .cmlc .day .dayshift{font-family:var(--serif); font-style:italic; font-size:15.5px;
+          color:var(--wine-deep); margin-top:11px;}
+        .cmlc .day .daynext{font-size:13.5px; font-weight:700; color:var(--wine); margin-top:7px;}
 
         .cmlc .buybox{
           background:var(--wine); color:#fff7ec; border-radius:18px;
@@ -366,6 +443,8 @@ export default function ChallengePage() {
           .cmlc .assure{grid-template-columns:1fr;}
           .cmlc .proof-row{grid-template-columns:1fr;}
           .cmlc .leads{grid-template-columns:1fr;}
+          .cmlc .ev .strip{grid-template-columns:1fr;}
+          .cmlc .ev .strip img{aspect-ratio:4/3;}
         }
 
         /* --- 2026-08-16: blocks added to follow the Omar funnel review.
@@ -380,6 +459,49 @@ export default function ChallengePage() {
           font-style:italic;font-size:18px;color:var(--wine-deep);line-height:1.5;}
         .cmlc .quote cite{display:block;font-style:normal;font-family:var(--sans);
           font-size:12.5px;color:var(--ink-soft);margin-top:8px;}
+        /* --- 2026-08-17: live-event proof bridge. Real RestoreHER 2026 photos,
+           placed after the two-nurse credibility block and before the ask. --- */
+        .cmlc .ev{background:var(--paper);border-top:1px solid var(--line);padding:44px 0 48px;}
+        .cmlc .ev .eyebrow{color:var(--wine);display:block;text-align:center;margin-bottom:10px;}
+        .cmlc .ev h2{font-family:var(--serif);font-size:clamp(25px,4.2vw,35px);color:var(--wine);
+          text-align:center;margin:0 auto 20px;max-width:20ch;line-height:1.15;}
+        .cmlc .ev p{font-size:16px;color:var(--ink-soft);line-height:1.6;margin:0 0 13px;}
+        .cmlc .ev .beat{font-family:var(--serif);font-style:italic;font-size:17.5px;
+          color:var(--wine-deep);margin:0 0 6px;}
+        .cmlc .ev figure{margin:24px 0;}
+        .cmlc .ev img{width:100%;height:auto;display:block;border-radius:12px;
+          box-shadow:0 16px 40px -22px rgba(0,0,0,.5);}
+        .cmlc .ev .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
+        .cmlc .ev .strip img{aspect-ratio:3/4;object-fit:cover;}
+        .cmlc .ev .sub{font-family:var(--serif);font-style:italic;font-size:clamp(20px,3.2vw,26px);
+          color:var(--wine);text-align:center;margin:30px auto 16px;max-width:22ch;line-height:1.2;}
+        .cmlc .ev .punch{font-weight:700;color:var(--ink);}
+        .cmlc .ev .bridge{margin-top:34px;padding-top:28px;border-top:1px solid var(--line);}
+        .cmlc .ev .close{font-weight:800;color:var(--wine);font-size:17.5px;}
+
+        /* --- 2026-08-17: FREE seat. Struck price + badge, and the register form
+           that replaced the Stripe checkout entirely. --- */
+        .cmlc .freeline{display:flex;align-items:center;justify-content:center;gap:16px;
+          flex-wrap:wrap;margin-bottom:6px;}
+        .cmlc .freeline .old{font-family:var(--serif);font-size:clamp(34px,7vw,52px);
+          color:#e7c9a8;opacity:.75;text-decoration:line-through;text-decoration-thickness:3px;}
+        .cmlc .freeline .free{font-family:var(--serif);font-weight:700;
+          font-size:clamp(40px,9vw,68px);color:#1d1b18;background:var(--gold,#e8c979);
+          padding:4px 26px;border-radius:10px;letter-spacing:.02em;line-height:1.1;
+          transform:rotate(-3deg);box-shadow:0 10px 26px -12px rgba(0,0,0,.6);}
+        .cmlc .regform{display:grid;gap:11px;max-width:420px;margin:18px auto 0;text-align:left;}
+        .cmlc .regform label{font-size:12.5px;font-weight:700;letter-spacing:.06em;
+          text-transform:uppercase;color:#e7c9a8;display:block;margin-bottom:5px;}
+        .cmlc .regform input{width:100%;padding:13px 15px;font-size:16px;border-radius:9px;
+          border:1px solid rgba(231,201,168,.35);background:rgba(255,255,255,.06);
+          color:#fff;font-family:var(--sans);}
+        .cmlc .regform input::placeholder{color:rgba(231,201,168,.5);}
+        .cmlc .regform input:focus{outline:none;border-color:var(--gold,#e8c979);}
+        .cmlc .regdone{max-width:460px;margin:16px auto 0;padding:18px 20px;border-radius:12px;
+          background:rgba(232,201,121,.14);border:1px solid rgba(232,201,121,.5);
+          color:#f4e6cf;font-size:15.5px;line-height:1.6;}
+        .cmlc .regerr{max-width:420px;margin:12px auto 0;color:#ffd9d0;font-size:14px;line-height:1.5;}
+
         .cmlc .forwho{padding:44px 0;}
         .cmlc .forwho h2{font-family:var(--serif);font-size:clamp(26px,4.4vw,36px);color:var(--wine);margin:0 0 6px;}
         .cmlc .forwho .lede{color:var(--ink-soft);margin:0 0 18px;}
@@ -468,7 +590,9 @@ export default function ChallengePage() {
               <div className="daynum">Day {d.n}</div>
               <div>
                 <h3>{d.title}</h3>
-                <p>{d.sub}</p>
+                {d.body.map((para) => <p key={para.slice(0, 24)}>{para}</p>)}
+                <p className="dayshift">{d.shift}</p>
+                <p className="daynext">{d.next}</p>
               </div>
             </div>
           ))}
@@ -482,7 +606,7 @@ export default function ChallengePage() {
       <section className="forwho">
         <div className="wrap">
           <h2>Who This Is For</h2>
-          <p className="lede">Read this honestly. If it is not you, keep your ninety seven dollars.</p>
+          <p className="lede">Read this honestly. If it is not you, keep your seat for someone it is.</p>
           <ul>
             <li><b>&#10003;</b><span>You are a woman over 40 and your blood pressure, blood sugar or hormones have all started talking at once.</span></li>
             <li><b>&#10003;</b><span>You are already on medication, you are taking it, and your numbers still are not where you want them.</span></li>
@@ -521,31 +645,127 @@ export default function ChallengePage() {
         </div>
       </section>
 
-      {/* ============ CHECKOUT ============ */}
+      {/* ============ LIVE EVENT PROOF BRIDGE (added 2026-08-17) ============
+          Photos are the REAL RestoreHER Hormones 2026 event, reused from
+          restoreherhormones-site. Nothing staged, nothing stock.
+
+          COMPLIANCE, do not loosen: this says only that a live women's
+          wellness event happened with Barbara O'Neill and other educators,
+          and that women participated. It does NOT say or imply she created,
+          teaches, sponsors, endorses or recommends this challenge. There is
+          no Barbara quote here because we do not have one about the event on
+          record. Do not add one from memory.
+
+          No CTA inside this section on purpose. The ask is the next block. */}
+      <section className="ev">
+        <div className="wrap">
+          <span className="eyebrow">We&rsquo;ve seen what happens when women get in the room</span>
+          <h2>Something changes when you stop trying to figure all of this out by yourself.</h2>
+
+          <p>
+            Recently, we gathered women together in person for a live women&rsquo;s wellness
+            experience with Barbara O&rsquo;Neill and other educators.
+          </p>
+          <p>Women came with questions.</p>
+          <p>
+            About their bodies. Their hormones. Their numbers. Their energy. Their sleep. The
+            changes they could feel happening, and what they were supposed to do about them.
+          </p>
+
+          <figure>
+            <img src={eventStage} alt="A full room of women at the RestoreHER Hormones live event, listening to a teaching session" loading="lazy" />
+          </figure>
+
+          <p>And yes, what was taught mattered.</p>
+          <p>But something else happened in that room that stayed with us.</p>
+          <p className="beat">Women had a place to listen.</p>
+          <p className="beat">To ask questions.</p>
+          <p className="beat">To connect things they had been looking at separately.</p>
+          <p className="beat">And to finally spend focused time thinking about their own health.</p>
+
+          <div className="strip">
+            <img src={eventBarbaraAnnie} alt="Barbara O'Neill and Annie Chitate, RN together at the live event" loading="lazy" />
+            <img src={eventRoom} alt="Women gathered around the table listening at the live event" loading="lazy" />
+            <img src={eventSpeakers} alt="Barbara O'Neill, Annie Chitate, RN and other speakers at the live event" loading="lazy" />
+          </div>
+
+          <p className="sub">And we thought: more women need access to this.</p>
+          <p>Not necessarily another conference.</p>
+          <p>Not another notebook full of information.</p>
+          <p className="punch">A place to actually DO something with what they are learning.</p>
+
+          <div className="bridge">
+            <p className="beat">Seven focused days.</p>
+            <p className="beat">Smaller steps.</p>
+            <p className="beat">More participation.</p>
+            <p>
+              More opportunity to pay attention to <strong>your</strong> patterns,{' '}
+              <strong>your</strong> habits, <strong>your</strong> numbers, <strong>your</strong>{' '}
+              symptoms and <strong>your</strong> life.
+            </p>
+            <p>Because the goal is not for you to leave with another notebook full of things you know.</p>
+            <p className="close">The goal is for you to finally start doing something with what you know.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ THE ASK - FREE SEAT REGISTRATION ============
+          2026-08-17: Stripe removed entirely (Joel). No charge rail exists on
+          this page anymore, which is what makes the struck 97 safe to show.
+          Name, email and phone are all required. */}
       <section className="wrap" id="buy">
         <div className="buybox">
           <span className="eyebrow" style={{ color: '#e7c9a8' }}>Your seat</span>
-          <div className="price"><sup>$</sup>{CHALLENGE.PRICE}</div>
-          <div className="was">One payment. Regular price <s>{usd(CHALLENGE.REGULAR_PRICE)}</s></div>
-          <button type="button" className="btn" onClick={() => buy('main')}>
-            CHANGE MY LIFE NOW
-          </button>
+          <div className="freeline">
+            <span className="old">{usd(CHALLENGE.PRICE)}</span>
+            <span className="free">FREE</span>
+          </div>
+          <div className="was">All seven days. No card, no catch.</div>
+
+          {state === 'done' ? (
+            <div className="regdone" role="status">
+              <strong>You are in.</strong> Watch your email for the Zoom link before we start on{' '}
+              {CHALLENGE.DATE_RANGE_LABEL.split(' to ')[0]}. If it is not there, check spam, then
+              write to {CHALLENGE.SUPPORT_EMAIL}.
+            </div>
+          ) : (
+            <form className="regform" onSubmit={register} noValidate>
+              <div>
+                <label htmlFor="cmlc-name">Name</label>
+                <input
+                  id="cmlc-name" type="text" required autoComplete="given-name"
+                  placeholder="Your name" value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="cmlc-email">Email</label>
+                <input
+                  id="cmlc-email" type="email" required autoComplete="email" inputMode="email"
+                  placeholder="you@email.com" value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="cmlc-phone">Phone</label>
+                <input
+                  id="cmlc-phone" type="tel" required autoComplete="tel" inputMode="tel"
+                  placeholder="(555) 555-5555" value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+              <button type="submit" className="btn" disabled={state === 'sending'}>
+                {state === 'sending' ? 'SAVING YOUR SEAT...' : 'SAVE MY FREE SEAT'}
+              </button>
+            </form>
+          )}
+
+          {error && <p className="regerr" role="alert">{error}</p>}
+
           <div className="btn-sub">
-            Secure Stripe checkout &middot; All seven days included &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
+            All seven days included &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
           </div>
         </div>
-
-        {/* Embedded checkout mounts here on the first click. */}
-        {payOpen && (
-          <div className="paywrap">
-            {error ? (
-              <p className="payerr" role="alert">{error}</p>
-            ) : (
-              <p className="payhead">Enter your details below to lock your seat.</p>
-            )}
-            <div ref={containerRef} style={{ minHeight: error ? 0 : 420 }} />
-          </div>
-        )}
 
         <div className="assure">
           <div>Live daily with two RNs</div>
@@ -567,8 +787,8 @@ export default function ChallengePage() {
 
       <div className="tail" />
       <div className="sticky">
-        <button type="button" onClick={() => buy('sticky')}>
-          CHANGE MY LIFE NOW &middot; {usd(CHALLENGE.PRICE)}
+        <button type="button" onClick={() => goToForm('sticky')}>
+          SAVE MY FREE SEAT
         </button>
       </div>
     </div>
