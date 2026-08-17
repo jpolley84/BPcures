@@ -131,14 +131,15 @@ export const TIER_CONFIG = {
     includesCoaching: false,
     includesChallenge: true,
     includesWeeklyResetHero: true,
-    // 2026-05-10 funnel-fix: was pointing to deactivated plink
-    // 9B63cv8k3b5Y63h8VrfnO0z (Complete Book Bundle $27 — pulled from Stripe in
-    // last week's streamline pass). Repointed to the canonical $47 BP Reset
-    // Kit (cNieVdeIrca2fDR1sZfnO0k) — same category, the natural ladder rung.
-    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
-    upgradeLabel: 'Want the complete clinical kit? (standard add-on)',
-    upgradeDesc: 'Optional. The complete clinical kit is $47, its standard one-time price (the discounted one-click version is only offered on the checkout page right after purchase). It includes Joel\'s full 8-PDF stack: hypertension guide, supplement protocol, meal plan, BP tracker, doctor-conversation templates, quick-start, and cheat sheet. Totally optional. What you already downloaded stands on its own.',
-    upgradeCta: 'Add the complete kit ($47) →',
+    // 2026-08-17 SWAP (Joel): the $47 Reset Kit upsell is CUT from the $17
+    // buyer's delivery email. Next step is now the live Triangle Masterclass
+    // (free for now, $97 shown struck — never "was $97"). The old $47 Payment
+    // Link (cNieVdeIrca2fDR1sZfnO0k) stays live in Stripe; only this email
+    // changed.
+    upgradeUrl: 'https://bpquiz.com/masterclass',
+    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
+    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
+    upgradeCta: 'Save my free masterclass seat →',
   },
   '1-cortisol': {
     product: 'The Cortisol Healing Blueprint, Starter Kit',
@@ -147,13 +148,14 @@ export const TIER_CONFIG = {
     includesCoaching: false,
     includesChallenge: true,
     includesWeeklyResetHero: true,
-    // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
-    // the canonical $47 Cortisol Reset Kit (3cIbJ1asbca2fDR2x3fnO0m) — same
-    // category, the natural ladder rung.
-    upgradeUrl: 'https://buy.stripe.com/3cIbJ1asbca2fDR2x3fnO0m',
-    upgradeLabel: 'Want the complete Cortisol Reset Kit? (one-time add-on)',
-    upgradeDesc: 'Optional. If you want the complete kit, you can add it once for $47. It includes Joel\'s full cortisol protocol PDFs: adrenal-recovery guide, herb-and-supplement stack, sleep-and-stress reset, and daily tracker. Totally optional. What you already downloaded stands on its own.',
-    upgradeCta: 'Add the Cortisol Reset Kit ($47) →',
+    // 2026-08-17 SWAP (Joel): $47 Cortisol Reset Kit upsell CUT from the $17
+    // buyer's delivery email; next step is the live Triangle Masterclass
+    // (free for now, $97 struck). Old $47 link (3cIbJ1asbca2fDR2x3fnO0m)
+    // stays live in Stripe.
+    upgradeUrl: 'https://bpquiz.com/masterclass',
+    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
+    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
+    upgradeCta: 'Save my free masterclass seat →',
   },
   '1-blood-sugar': {
     product: 'Blood Sugar Cures, Starter Kit',
@@ -162,12 +164,14 @@ export const TIER_CONFIG = {
     includesCoaching: false,
     includesChallenge: true,
     includesWeeklyResetHero: true,
-    // 2026-05-10 funnel-fix: was pointing to deactivated plink. Repointed to
-    // the canonical $47 Blood Sugar Reset Kit (3cI28rdEn8XQfDRdbHfnO0o).
-    upgradeUrl: 'https://buy.stripe.com/3cI28rdEn8XQfDRdbHfnO0o',
-    upgradeLabel: 'Want the complete Blood Sugar Reset Kit? (one-time add-on)',
-    upgradeDesc: 'Optional. If you want the complete kit, you can add it once for $47. It includes Joel\'s full glucose-control protocol PDFs: insulin-resistance guide, herb-and-supplement stack, meal-timing plan, and glucose tracker. Totally optional. What you already downloaded stands on its own.',
-    upgradeCta: 'Add the Blood Sugar Reset Kit ($47) →',
+    // 2026-08-17 SWAP (Joel): $47 Blood Sugar Reset Kit upsell CUT from the
+    // $17 buyer's delivery email; next step is the live Triangle Masterclass
+    // (free for now, $97 struck). Old $47 link (3cI28rdEn8XQfDRdbHfnO0o)
+    // stays live in Stripe.
+    upgradeUrl: 'https://bpquiz.com/masterclass',
+    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
+    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
+    upgradeCta: 'Save my free masterclass seat →',
   },
   // DEPRECATED 2026-05-09 streamline pass: the $12 Pressure Triangle Stack
   // bump was retired (panel: pre-checkout decision-points hurt conversion).
