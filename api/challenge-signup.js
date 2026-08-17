@@ -1,4 +1,7 @@
-// api/challenge-signup.js — The Women of Power Rising Challenge, cohort 2026-08-17 (Aug 17-23, $97 single seat, tier cmlc-97).
+// api/challenge-signup.js — The Change My Life Challenge, cohort 2026-08-24 (Aug 24-30).
+// 2026-08-17: the seat is FREE. Stripe was removed from ChallengePage.jsx, so the
+// live path into this file is intent 'free-register' (name + email + phone). The
+// paid cmlc-97 branches below are dormant, not deleted, in case it goes paid again.
 //
 // Three live nights with Joel Polley, RN. Tuesday 2026-08-04 through Thursday
 // 2026-08-06, 7:00pm to 8:00pm ET (6:00pm CT), about 60 minutes a night.
@@ -134,7 +137,7 @@ const CHALLENGE = {
   // COHORT_ID. The previous mismatch ('2026-08-04' here vs '2026-08-17' on the
   // checkout metadata) made handleRegister reject every paid cmlc-97 session:
   // charged and never seated. If the cohort ever moves again, move ALL THREE.
-  cohort: '2026-08-17',
+  cohort: '2026-08-24',
   // 2026-08-03 (Joel, explicit): renamed to the Women of Power Rising
   // Challenge, co-hosted with Annie Chitate, RN (Everyday Nurse Annie).
   // "Connected story" positioning; mechanics unchanged.
@@ -147,7 +150,7 @@ const CHALLENGE = {
   // is now expressed in EASTERN wall time and every label moved with it. The
   // same change is mirrored in src/pages/ChallengePage.jsx (START_ISO_ET) and
   // api/create-embedded-checkout.js (CHALLENGE_START_ET).
-  startIsoEt: '2026-08-17T19:00:00',
+  startIsoEt: '2026-08-24T19:00:00',
   // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
   // 2026-08-05 ET. Note this is NOT endLabel: Night 3 still runs on the
   // Thursday for everyone already registered. Mirrors CHALLENGE.CLOSE_ISO_ET in
@@ -158,24 +161,25 @@ const CHALLENGE = {
   // inside EDT (UTC-4), so midnight ending Wednesday is exactly
   // 2026-08-06T04:00:00Z. If the date moves, re-resolve it rather than assuming
   // the offset.
-  // Doors for the FREE path close at midnight ET ending Sunday, August 23
+  // Doors for the FREE path close at midnight ET ending Sunday, August 30
   // (end of the cohort; late joiners still get 48-hour replays). EDT is UTC-4,
-  // so that instant is 2026-08-24T04:00:00Z. The PAID path never reads this.
-  closeMs: Date.parse('2026-08-24T04:00:00Z'),
+  // so that instant is 2026-08-31T04:00:00Z. Re-resolved for the 08-24 move
+  // rather than assuming the old offset still applied.
+  closeMs: Date.parse('2026-08-31T04:00:00Z'),
   closeLabel: 'Sunday night',
-  startLabel: 'Monday, August 17',
-  endLabel: 'Sunday, August 23',
+  startLabel: 'Monday, August 24',
+  endLabel: 'Sunday, August 30',
   timeEt: '7:00pm ET',
   timeCt: '6:00pm CT',
   timeWindowEt: '7:00pm to 8:00pm ET',
   nightLength: 'about 60 minutes',
-  logDueLabel: 'Tuesday, August 25',
-  refundByLabel: 'August 25',
+  logDueLabel: 'Tuesday, September 1',
+  refundByLabel: 'September 1',
   // 2026-07-27 (Joel): founding-cohort seat is $17 (the kit price). $97 is the
   // NEXT cohort. Must match ChallengePage SEAT_PRICE and what Stripe charges.
   // 2026-08-17: the live seat is the $97 cmlc-97 tier (single seat, no GA/VIP
   // split). The VIP labels below are legacy and unreachable from the page.
-  seatPriceLabel: '$97',
+  seatPriceLabel: 'Free',
   // 2026-07-28 (Joel): VIP is $47 and is now a seat sold on /challenge, not a
   // post-purchase upsell. It adds a FOURTH session on Sunday morning.
   // This key was referenced twice in the guarantee copy below but never
@@ -186,15 +190,17 @@ const CHALLENGE = {
   vipTimeCt: '10:00am CT',
   vipLength: 'about 90 minutes',
   pageUrl: 'https://changemylifechallenge.com/',
-  // Day titles mirror the live page (public/challenge-b/index.html).
+  // Day titles mirror DAYS in src/pages/ChallengePage.jsx. These were still
+  // the pre-2026-08-17 sequence, so confirmation emails were listing days
+  // that no longer matched the page. Corrected with the date move.
   nights: [
-    { n: 1, date: 'Monday, August 17', title: 'Bring Sexy Back' },
-    { n: 2, date: 'Tuesday, August 18', title: 'Read the Signals' },
-    { n: 3, date: 'Wednesday, August 19', title: 'Find Your Triggers' },
-    { n: 4, date: 'Thursday, August 20', title: 'Move Different' },
-    { n: 5, date: 'Friday, August 21', title: 'Win the Night' },
-    { n: 6, date: 'Saturday, August 22', title: 'Turn Down the Pressure' },
-    { n: 7, date: 'Sunday, August 23', title: 'Health Is Money. Take Back Your Future.' },
+    { n: 1, date: 'Monday, August 24', title: 'What Happened to My Body?' },
+    { n: 2, date: 'Tuesday, August 25', title: 'Connect the Dots' },
+    { n: 3, date: 'Wednesday, August 26', title: 'Stop Guessing With Food' },
+    { n: 4, date: 'Thursday, August 27', title: 'Bring Sexy Back' },
+    { n: 5, date: 'Friday, August 28', title: 'Move Different' },
+    { n: 6, date: 'Saturday, August 29', title: 'Know Your Numbers Without Fear' },
+    { n: 7, date: 'Sunday, August 30', title: 'Take Back Your Future' },
   ],
 };
 

@@ -59,8 +59,11 @@ import eventSpeakers from '../assets/challenge-event/event-vip.jpg';
    ========================================================================== */
 const CHALLENGE = {
   NAME: 'The Change My Life Challenge',
-  COHORT_ID: '2026-08-17',
-  DATE_RANGE_LABEL: 'August 17 to 23, 2026',
+  // 2026-08-17: cohort moved to the following Monday. Mirrored in
+  // api/challenge-signup.js (cohort, startIsoEt, closeMs, labels, nights).
+  // Move ALL of them together or registrations land in the wrong bucket.
+  COHORT_ID: '2026-08-24',
+  DATE_RANGE_LABEL: 'August 24 to 30, 2026',
   TIME_LABEL: '6:00pm Central / 7:00pm Eastern',
   DAY_COUNT: 7,
   PRICE: 97,
@@ -482,6 +485,8 @@ export default function ChallengePage() {
           font-size:clamp(40px,9vw,68px);color:#1d1b18;background:var(--gold,#e8c979);
           padding:4px 26px;border-radius:10px;letter-spacing:.02em;line-height:1.1;
           transform:rotate(-3deg);box-shadow:0 10px 26px -12px rgba(0,0,0,.6);}
+        .cmlc .lastfree{margin:10px auto 0;max-width:420px;font-size:14.5px;font-weight:800;
+          letter-spacing:.02em;color:var(--gold);line-height:1.45;}
         .cmlc .regform{display:grid;gap:11px;max-width:420px;margin:18px auto 0;text-align:left;}
         .cmlc .regform label{font-size:12.5px;font-weight:700;letter-spacing:.06em;
           text-transform:uppercase;color:#e7c9a8;display:block;margin-bottom:5px;}
@@ -713,6 +718,11 @@ export default function ChallengePage() {
             <span className="free">FREE</span>
           </div>
           <div className="was">All seven days. No card, no catch.</div>
+          {/* 2026-08-17 (Joel): a forward-looking claim, and it binds. It is
+              only true if the next cohort actually charges. If another free
+              challenge is ever run, THIS LINE COMES DOWN FIRST, same rule as
+              the struck price above it. */}
+          <div className="lastfree">This is the last Change My Life Challenge we will run free.</div>
 
           {state === 'done' ? (
             <div className="regdone" role="status">
