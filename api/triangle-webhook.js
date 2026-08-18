@@ -1233,7 +1233,7 @@ const ALLIN_BALANCE_3PAY_PRICE_ID = process.env.ALLIN_BALANCE_3PAY_PRICE_ID || '
 const ALLIN_BALANCE_6PAY_PRICE_ID = process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm';
 
 // Which All-In plans ride a Stripe subscription and therefore MUST be capped.
-const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay']);
+const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-5pay-360']);
 
 // Cap windows, in seconds. Each sits between the last wanted charge and the
 // first unwanted one. Cap = 6 bi-weekly charges for 'plan' (day 0, ~14, ~28,
@@ -1245,6 +1245,11 @@ const ALLIN_CANCEL_SECONDS = {
   '9pay': 119 * 24 * 60 * 60, // 9 charges: day 0 ... 112. 10th would be day 126.
   'balance-3pay': 36 * 24 * 60 * 60,  // 3 charges, same window as 3pay.
   'balance-6pay': 78 * 24 * 60 * 60,  // 6 charges, same window as plan.
+  // MONTHLY (not bi-weekly): negotiated for Brenda L Powell 2026-08-18, who
+  // asked for $400/mo on her $1,800 balance; 5 x $360 monthly lands exactly on
+  // $1,800 under her ceiling. Charges at ~day 0, 30, 61, 91, 122; a 6th would
+  // post ~day 152, so 135 days sits safely between the 5th and 6th.
+  'balance-5pay-360': 135 * 24 * 60 * 60,
 };
 // Kept for anything still importing the old name.
 const ALLIN_PLAN_CANCEL_SECONDS = ALLIN_CANCEL_SECONDS.plan;
@@ -1271,6 +1276,7 @@ async function resolveAllInPlan(session) {
     if (md.plan === 'balance-full') return 'balance-full';
     if (md.plan === 'balance-3pay') return 'balance-3pay';
     if (md.plan === 'balance-6pay') return 'balance-6pay';
+    if (md.plan === 'balance-5pay-360') return 'balance-5pay-360';
     if (md.plan === 'full' || !md.plan) return 'full';
     // A plan we do not recognize: never guess it is a one-time payment. If it
     // is a subscription, guessing 'full' is the forever-billing bug above.
@@ -1323,6 +1329,7 @@ async function sendAllInConfirmation({ email, firstName, plan }) {
     'balance-full': 'Your balance is settled in full. With your earlier deposit, you are all paid up and your spot is locked.',
     'balance-3pay': 'Your first balance payment is in. Two more payments of $633 run automatically every two weeks, three in total, on top of the deposit you already paid.',
     'balance-6pay': 'Your first balance payment is in. Five more payments of $333 run automatically every two weeks, six in total, on top of the deposit you already paid.',
+    'balance-5pay-360': 'Your first balance payment is in. Four more payments of $360 run automatically each month, five in total, on top of the deposit you already paid. After the fifth payment you are done.',
     full: 'You are all in, paid in full. Your spot is locked.',
   };
   const planLine = ALLIN_BUYER_PLAN_LINES[plan] || ALLIN_BUYER_PLAN_LINES.full;
@@ -1392,6 +1399,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan }) {
     'balance-full': 'BALANCE paid in full ($1,800 after the $197 deposit). Fully settled.',
     'balance-3pay': 'BALANCE 3 x $633 bi-weekly ($1,899 after the $197 deposit; auto-capped after the 3rd charge).',
     'balance-6pay': 'BALANCE 6 x $333 bi-weekly ($1,998 after the $197 deposit; auto-capped after the 6th charge).',
+    'balance-5pay-360': 'BALANCE 5 x $360 MONTHLY ($1,800 exactly after the $197 deposit; auto-capped after the 5th charge). Negotiated plan (Brenda L Powell, 2026-08-18).',
     full: 'Paid in full ($1,997).',
   };
   const planLine = ALLIN_JOEL_PLAN_LINES[plan] || `UNKNOWN PLAN '${plan}' — check Stripe before assuming anything.`;
