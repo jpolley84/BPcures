@@ -285,6 +285,30 @@
   .price-card .today{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);}
   .price-card .amount{font-family:'Fraunces',serif;font-weight:800;font-size:64px;color:var(--coral);margin:8px 0 4px;}
   .price-card .amount sup{font-size:24px;top:-0.5em;}
+  /* ---------------------------------------------------------------
+     2026-08-17: PHOTO SLOTS FOR ANNIE.
+     Each slot is numbered. Send a file named to match the slot number and it
+     drops straight in. To fill one, replace the whole <div class="photoslot">
+     with:  <img class="pagephoto" src="/challenge-b/img/photo-1.jpg" alt="...">
+     Styled to read as "coming soon", not as a broken page, because this is
+     live and taking registrations while it is being filled.
+     --------------------------------------------------------------- */
+  .photoslot{max-width:760px;margin:34px auto;border:2px dashed var(--rosegold);border-radius:18px;
+    background:linear-gradient(160deg,rgba(192,138,122,.10),rgba(233,199,184,.16));
+    padding:44px 26px;text-align:center;}
+  .photoslot .ps-num{display:inline-block;font-family:'Manrope',sans-serif;font-weight:800;font-size:11.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--rosegold-dark);
+    padding:6px 14px;border-radius:999px;margin-bottom:14px;}
+  .photoslot .ps-what{font-family:'Fraunces',serif;font-size:22px;color:var(--ink);margin-bottom:8px;line-height:1.25;}
+  .photoslot .ps-note{font-size:14.5px;color:var(--ink-soft);max-width:460px;margin:0 auto;line-height:1.55;}
+  .photoslot.tall{padding:78px 26px;}
+  .pagephoto{max-width:760px;width:100%;margin:34px auto;display:block;border-radius:18px;
+    box-shadow:0 20px 46px -24px rgba(0,0,0,.45);}
+  .photostrip{max-width:760px;margin:34px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .photostrip .photoslot{margin:0;padding:30px 12px;}
+  .photostrip .ps-what{font-size:16px;}
+  @media(max-width:760px){ .photostrip{grid-template-columns:1fr;} }
+
   /* 2026-08-17: FREE seat. Paywall removed, signup form in its place. */
   .freeline{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:6px 0 4px;}
   .freeline .oldprice{font-family:'Fraunces',serif;font-size:44px;color:var(--ink-soft);opacity:.65;
@@ -421,7 +445,12 @@
   </div>
 </section>
 
-<!-- ============ B-TEST NEW: VISUAL RESET #1 ============ -->
+<!-- ============ VISUAL RESET #1 ============ -->
+<div class="photoslot tall">
+  <div class="ps-num">Photo 1</div>
+  <div class="ps-what">Annie and Joel together</div>
+  <p class="ps-note">Warm, real, the two of you in one frame. This is the first time she sees who is talking to her, right after the hardest part of the copy. Not a studio headshot, not corporate.</p>
+</div>
 
 
 <!-- ============ ACT II — REFRAME + MECHANISM ============ -->
@@ -507,6 +536,29 @@
   </div>
 </section>
 
+<!-- ============ LIVE EVENT PHOTOS ============
+     Proof that the room is real. Three across on desktop, stacked on mobile.
+     NOTE: do not caption these in a way that suggests Barbara O'Neill
+     endorses or teaches this challenge. She spoke at the live event. That
+     is all these photos may claim. -->
+<div class="photostrip">
+<div class="photoslot">
+  <div class="ps-num">Photo 2</div>
+  <div class="ps-what">The room, full</div>
+  <p class="ps-note">A wide shot of the RestoreHER live event with the room full of women.</p>
+</div>
+<div class="photoslot">
+  <div class="ps-num">Photo 3</div>
+  <div class="ps-what">Annie and Barbara</div>
+  <p class="ps-note">The two of them together at the live event.</p>
+</div>
+<div class="photoslot">
+  <div class="ps-num">Photo 4</div>
+  <div class="ps-what">Teaching or the audience</div>
+  <p class="ps-note">Barbara teaching, or the audience listening. Whichever is the better frame.</p>
+</div>
+</div>
+
 <!-- B TEST: moved from original section "WHAT THEY SAY ABOUT ANNIE & JOEL" (was near the bottom of the page, just before the offer). Reformatted from a 2x2 quote wall to two strong single slots directly after the earned CTA above, so the reader who was just told to trust Annie + Joel immediately sees another woman confirm that trust. -->
 <section class="creds-proof">
   <div class="wrap">
@@ -567,69 +619,70 @@
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>1</span></div>
         <div>
-          <h3>Bring Sexy Back</h3>
-          <p>Not a number on a scale. You. The woman who laughed more, went places, had energy, felt confident, wanted things. We start with what you want back, because knowing WHY you're changing makes everything that follows different.</p>
-          <p class="shift">The shift: from "I need to lose weight" to "I know what I'm taking my health back for."</p>
+          <h3>What Happened to My Body?</h3>
+          <p>The belly. The chin hair. The crashes. The mood. The sleep. The numbers. We slow all of it down and look at what your body has been trying to tell you.</p>
         </div>
       </div>
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>2</span></div>
         <div>
-          <h3>Read the Signals</h3>
-          <p>The cuff tightens. The number appears. Your stomach drops. Not this week. You'll learn to look at your numbers as information instead of identity, and start seeing what they're telling you about the life happening around them.</p>
-          <p class="shift">The shift: less fear, better questions, more clarity.</p>
+          <h3>Connect the Dots</h3>
+          <p>Ten separate problems, or one pattern wearing ten disguises? Today all that noise narrows down to your Big 3.</p>
         </div>
       </div>
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>3</span></div>
         <div>
-          <h3>Find Your Triggers</h3>
-          <p>Why the crash? Why the cravings? Why does your body feel fine one day and completely different the next? This is where you start connecting the dots and identifying your three biggest patterns worth watching.</p>
-          <p class="shift">The shift: from ten random problems to one clearer picture.</p>
+          <h3>Stop Guessing With Food</h3>
+          <p>Not a diet. Not a list of foods you are allowed to eat. One simple experiment, and you finally notice what your body does with it.</p>
         </div>
       </div>
     </div>
 
-    <!-- B TEST NEW: curriculum interruption 1 of 3 -->
-    
+    <!-- curriculum interruption 1 of 3 -->
+<div class="photoslot">
+  <div class="ps-num">Photo 5</div>
+  <div class="ps-what">A woman doing the work at home</div>
+  <p class="ps-note">Real woman 40+, notebook or phone, ordinary kitchen or living room. The point is 'I can see myself doing this', so not styled, not a model.</p>
+</div>
 
     <div class="day-list" style="margin-top:18px;">
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>4</span></div>
         <div>
-          <h3>Move Different</h3>
-          <p>No punishment. No trying to become your 25-year-old self again. No proving anything to anybody. You'll feel what it's like to use movement as something that works with your body, not against it.</p>
-          <p class="shift">The shift: from "I need to exercise" to "I can actually do this."</p>
+          <h3>Bring Sexy Back</h3>
+          <p>Not for somebody else. For you. Rested, confident, at home in your own body again. Sometimes it starts with giving yourself permission to sleep.</p>
         </div>
       </div>
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>5</span></div>
         <div>
-          <h3>Win the Night</h3>
-          <p>What if tomorrow starts tonight? You'll start changing the way you enter sleep. Less chaos, more intention, a nighttime rhythm you can actually repeat after the challenge ends. Then you wake up and pay attention.</p>
-          <p class="shift">The shift: from hoping for a better night to knowing how to create one.</p>
+          <h3>Move Different</h3>
+          <p>No punishment. Nothing to prove. You are not 25 and you do not need to be. Movement that works with your body, and a way to turn the volume down.</p>
         </div>
       </div>
     </div>
 
-    <!-- B TEST NEW: curriculum interruption 2 of 3 -->
-    
+    <!-- curriculum interruption 2 of 3 -->
+<div class="photoslot">
+  <div class="ps-num">Photo 6</div>
+  <div class="ps-what">Moving, outdoors</div>
+  <p class="ps-note">A woman 40+ walking outside. Accessible and repeatable, not a gym and not a fitness model.</p>
+</div>
 
     <div class="day-list" style="margin-top:18px;">
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>6</span></div>
         <div>
-          <h3>Turn Down the Pressure</h3>
-          <p>Sometimes the pressure isn't only in the cuff. It's the phone, the family, the schedule, the thoughts that won't shut off. Today, you give your body five intentional minutes to come down.</p>
-          <p class="shift">The shift: from living at full volume to knowing how to turn it down.</p>
+          <h3>Know Your Numbers Without Fear</h3>
+          <p>The cuff tightens. The number lands. Your stomach drops. Not this time. You get context instead of panic, and better questions for your doctor.</p>
         </div>
       </div>
       <div class="day-card">
         <div class="day-badge"><span>Day</span><span>7</span></div>
         <div>
-          <h3>Health Is Money. Take Back Your Future.</h3>
-          <p>Now we look back at Monday. What did you notice? What surprised you? What keeps showing up? Then we put the pieces together: your health, your numbers, your patterns, your priorities, the life you still want to live.</p>
-          <p class="shift">The goal was never seven good days. It was finally knowing where to go from here.</p>
+          <h3>Take Back Your Future</h3>
+          <p>Look back at Day 1. What kept showing up? What helped? What surprised you? All of it goes into one page you keep: your Personal Life Change Map.</p>
         </div>
       </div>
     </div>
@@ -642,8 +695,12 @@
       <div class="map-value">Included every seat</div>
     </div>
 
-    <!-- B TEST NEW: curriculum interruption 3 of 3 - tangible-object break -->
-    
+    <!-- curriculum interruption 3 of 3, the tangible takeaway -->
+<div class="photoslot">
+  <div class="ps-num">Photo 7</div>
+  <div class="ps-what">The Personal Life Change Map</div>
+  <p class="ps-note">A photo or mockup of the actual map or workbook. She needs to picture holding something at the end of the seven days.</p>
+</div>
   </div>
 </section>
 
@@ -717,7 +774,12 @@
   </div>
 </section>
 
-<!-- ============ B-TEST NEW: VISUAL RESET #2 ============ -->
+<!-- ============ VISUAL RESET #2 ============ -->
+<div class="photoslot tall">
+  <div class="ps-num">Photo 8</div>
+  <div class="ps-what">The life she wants back</div>
+  <p class="ps-note">Aspirational but believable. Laughing with family, a grandchild, going somewhere, being outside. NOT a smoothie, a scale, or a measuring tape. This shows what the health is FOR.</p>
+</div>
 
 
 <!-- SECTION 14: IMAGINE IT WITH ME (unchanged copy and pacing, short paragraphs preserved deliberately) -->
