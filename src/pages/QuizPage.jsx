@@ -181,6 +181,18 @@ const PT_STACK_PRICE_ID = 'price_1TTAnoHseZnO3rRZxizG8sr0';   // Triangle Stack 
 // Harry Dry + Kennedy specifics, 4th grade reading level, no negatives.
 // Each option uses a mirror line that lets the buyer recognize herself
 // (Hardy identity > goals). Scoring math unchanged.
+// Reads the ?p= pre-answer handed over by the hormoneteas exit-intent modal.
+// Whitelisted against the real option values, so nothing arbitrary can be
+// injected into scoring. 'pipes' is Sodium's legacy internal value.
+function readPrefill() {
+  try {
+    const p = new URLSearchParams(window.location.search).get('p');
+    return ['stress', 'sugar', 'pipes', 'all'].includes(p) ? p : null;
+  } catch {
+    return null;
+  }
+}
+
 const QUESTIONS = [
   {
     id: 'pressure',
@@ -639,8 +651,16 @@ function HeroCopy() {
 
 function QuizModule({ products }) {
   const [phase, setPhase] = useState('quiz'); // quiz | email | results
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  // 2026-08-19: the hormoneteas.com exit-intent modal now asks THIS quiz's
+  // first question inline and deep links here with ?p=<value>. Consume it so
+  // she is never asked the same question twice. Anything absent or unknown
+  // falls straight through to the normal start, so a junk param can only ever
+  // mean "behave exactly as before".
+  const [step, setStep] = useState(() => (readPrefill() ? 1 : 0));
+  const [answers, setAnswers] = useState(() => {
+    const p = readPrefill();
+    return p ? { pressure: p } : {};
+  });
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   // 2026-06-21 CRO: micro-feedback state. Shows a brief confirmation
@@ -682,6 +702,14 @@ function QuizModule({ products }) {
     'Almost there. One more.',
     'Done. Calculating your Triangle.',
   ];
+
+  // A prefilled visitor arrives with answers already populated, so choose()
+  // would never fire quiz_started and every exit-intent start would go
+  // uncounted. Fire it once on mount for that path only.
+  useEffect(() => {
+    if (readPrefill()) track('quiz_started', { prefilled: true, source: 'hormoneteas_exit_intent' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function choose(value) {
     const next = { ...answers, [q.id]: value };
