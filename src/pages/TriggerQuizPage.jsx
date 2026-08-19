@@ -233,13 +233,32 @@ function MiniHeader() {
   );
 }
 
+// Reads the ?p= pre-answer handed over by the hormoneteas.com exit-intent
+// modal, which asks THIS quiz's first question inline before sending her here.
+// Whitelisted against QUESTIONS[0]'s real option keys so nothing arbitrary can
+// be pushed into scoring; anything else means "start normally".
+// Q1 is multi-select, so the pick is PRE-SELECTED on question one rather than
+// auto-advancing. She can add more or tap Next, which is what the question
+// actually asks for.
+function readPrefill() {
+  try {
+    const p = new URLSearchParams(window.location.search).get('p');
+    return ['stress', 'sugar', 'sodium', 'sleep', 'stillness'].includes(p) ? p : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function TriggerQuizPage() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState('quiz'); // quiz | gate | offer | declined
   const [current, setCurrent] = useState(0);
   // Multi-select: answers[i] = array of selected option keys for question i.
   const [answers, setAnswers] = useState([]);
-  const [selected, setSelected] = useState([]); // current question's picks
+  const [selected, setSelected] = useState(() => {
+    const p = readPrefill();
+    return p ? [p] : [];
+  }); // current question's picks, seeded from ?p= when present
   const [winner, setWinner] = useState(null);
   const [beliefs, setBeliefs] = useState([]); // belief-question picks
   const [spend, setSpend] = useState([]); // spend-question picks
@@ -253,7 +272,12 @@ export default function TriggerQuizPage() {
   const startedRef = useRef(false);
 
   useEffect(() => {
-    track('quiz_started_view', { quiz: 'triggers', funnel_version: 'annie-v2' });
+    const p = readPrefill();
+    track('quiz_started_view', {
+      quiz: 'triggers',
+      funnel_version: 'annie-v2',
+      ...(p ? { prefilled: p, source: 'hormoneteas_exit_intent' } : {}),
+    });
   }, []);
 
   useEffect(() => {
