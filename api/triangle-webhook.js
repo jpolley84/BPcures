@@ -417,7 +417,12 @@ async function resolveCaseReviewPlan(session) {
   const md = session.metadata || {};
   const isBraveworks = md.funnel === 'braveworks-bp' || md.brand === 'braveworks-bp';
   if ((md.kind === 'case-review' || md.offer === 'case-review') && isBraveworks) {
-    return md.plan === '3pay' ? '3pay' : 'full';
+    // Preserve 'flash97' rather than folding it into 'full': downstream the
+    // plan is what tells Joel's alert this was the $97 flash and not the $297
+    // list price. Everything else still behaves as a full one-time purchase.
+    if (md.plan === '3pay') return '3pay';
+    if (md.plan === 'flash97') return 'flash97';
+    return 'full';
   }
   // 2) Authoritative path: inspect the line items' price + product ids. The
   // 3-pay price id is checked FIRST because both plans can live on the same
@@ -1192,19 +1197,34 @@ async function sendCaseReviewConfirmation({ email, firstName }) {
 // Alert Joel that a $297 case review came in so he fulfills it manually. Reuses
 // the same Joel-notify mechanism as alertUnmappedAmount (Resend email to
 // JOEL_NOTIFY_EMAIL, [ACTION] subject). Best-effort, never throws.
-async function alertJoelCaseReview({ sessionId, email, name, plan = 'full' }) {
+// 2026-08-22 FIX: this alert used to hardcode "$297" in the subject, the first
+// line, and the paid-in-full line. The case review also sells at $97 through
+// the flash offer (metadata plan:'flash97', see api/_sprint-flash-emails.js),
+// and resolveCaseReviewPlan collapses every non-3pay plan to 'full' — so a $97
+// flash buyer generated an alert claiming $297 paid in full. Zebedee Qawi
+// Abdullah's 2026-08-21 purchase was reported that way: a $200 overstatement on
+// a manually fulfilled product, which is exactly the kind of error that leads
+// to delivering the wrong scope or misreporting revenue. The amount now comes
+// from the Stripe session and is never assumed.
+async function alertJoelCaseReview({ sessionId, email, name, plan = 'full', amountCents = null }) {
   if (!process.env.RESEND_API_KEY) return;
   const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
+  const paid = Number.isFinite(amountCents) && amountCents > 0
+    ? `$${(amountCents / 100).toLocaleString('en-US')}`
+    : null;
+  const priceLabel = paid || 'amount unconfirmed, check Stripe';
   const planLine = plan === '3pay'
     ? '3-pay plan (3 monthly payments; the subscription is capped to end after the 3rd charge)'
-    : 'paid in full ($297)';
+    : paid
+      ? `paid in full (${paid})${plan === 'flash97' ? ' via the $97 flash offer' : ''}`
+      : 'paid in full (amount unconfirmed, check the Stripe session)';
   try {
     await getResend().emails.send({
       from: 'BraveWorks Ops <joel@bpquiz.com>',
       to,
       replyTo: REPLY_TO,
-      subject: `[ACTION] New $297 case review to fulfill (${email || 'unknown'})`,
-      text: `A buyer purchased "Joel's Eyes On Your Case" ($297). This is fulfilled MANUALLY by Joel.
+      subject: `[ACTION] New case review to fulfill, ${priceLabel} (${email || 'unknown'})`,
+      text: `A buyer purchased "Joel's Eyes On Your Case" (${priceLabel}). This is fulfilled MANUALLY by Joel.
 
 Buyer:      ${name || '(no name)'} <${email || 'unknown'}>
 Payment:    ${planLine}
@@ -1599,7 +1619,7 @@ async function processCaseReview(session, plan = 'full') {
   if (!customerEmail) {
     console.error('stripe-webhook: case-review session has no customer email', session.id);
     // Still alert Joel so the paid review is never silently dropped.
-    await alertJoelCaseReview({ sessionId: session.id, email: null, name: customerName, plan });
+    await alertJoelCaseReview({ sessionId: session.id, email: null, name: customerName, plan, amountCents: session.amount_total });
     return { action: 'case_review', delivered: false, reason: 'no_email', plan };
   }
 
@@ -1729,7 +1749,7 @@ async function processCaseReview(session, plan = 'full') {
   // Always alert Joel so he fulfills, even if the buyer email failed — but
   // only ONCE per session (Stripe retries would otherwise re-alert for days).
   if (!crProgress.joelAlertedAt) {
-    await alertJoelCaseReview({ sessionId: session.id, email: customerEmail, name: customerName, plan });
+    await alertJoelCaseReview({ sessionId: session.id, email: customerEmail, name: customerName, plan, amountCents: session.amount_total });
     crProgress.joelAlertedAt = new Date().toISOString();
     try {
       await kv.set(crDoneKey, crProgress, CR_DONE_TTL);
