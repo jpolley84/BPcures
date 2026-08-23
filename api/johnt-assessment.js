@@ -9,7 +9,7 @@
 // Returns { ok, assessmentId } so the thank-you screen can offer a
 // download link at /api/johnt-assessment-pdf?id=<assessmentId>.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { SECTION_MAP, formatAnswer } from './_johnt-schema.js';
 import { generateJohnTPDF } from './_johnt-pdf.js';

@@ -11,7 +11,7 @@
 // worst-case abuse is a fake assessment email to Joel. Basic length caps +
 // a same-email 10/day rate limit keep it boring.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 
 const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const CALENDLY_URL = process.env.CALENDLY_BOOKING_URL || 'https://calendly.com/braveworksrn/60min';

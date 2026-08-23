@@ -22,7 +22,7 @@
 //   - Hard exclusion via "reply not now" handled by existing unsub footer
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { BUYER_UPSELL_DAYS, upsellSentFlag } from './_buyer-upsell-emails.js';
 import { signUnsubToken } from './unsubscribe.js';
 import { isAuthorizedCron } from './_cron-auth.js';
@@ -32,6 +32,7 @@ const JOEL_NOTIFY = process.env.JOEL_NOTIFY || 'braveworksrn@gmail.com';
 async function alertJoel(resend, subject, text) {
   try {
     await resend.emails.send({
+      campaign: 'ops-alert',
       from: 'BraveWorks Ops <noreply@bpquiz.com>',
       to: JOEL_NOTIFY,
       subject,
@@ -137,6 +138,7 @@ export default async function handler(req, res) {
         console.log(`[DRY] buyer-upsell-cron: would send Day ${daysSince} to ${sub.email} — "${upsell.subject}"`);
       } else {
         await resend.emails.send({
+          campaign: `drip-buyer-upsell-d${daysSince}`,
           from: 'Joel Polley, RN <joel@bpquiz.com>',
           to: sub.email,
           replyTo: 'braveworksrn@gmail.com',

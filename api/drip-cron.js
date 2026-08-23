@@ -25,7 +25,7 @@
 // silently 401'ing because Vercel's auth mechanism changed.)
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import crypto from 'node:crypto';
 import { renderEmail, DAYS } from './_drip-emails.js';
 import { isAuthorizedCron } from './_cron-auth.js';

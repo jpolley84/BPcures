@@ -15,7 +15,7 @@
 //
 // Schedule: vercel.json "45 15 * * *" (10:45 AM CT), after the buyer cron.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 import { FROM, REPLY_TO, SITE_URL } from './_triangle-email.js';
@@ -89,6 +89,7 @@ export default async function handler(req, res) {
         console.log(`[DRY] sprint-flash: would send Day ${sendDay} to ${sub.email} "${subject}"`);
       } else {
         await resend.emails.send({
+          campaign: `drip-sprint-flash-d${sendDay}`,
           from: FROM,
           to: sub.email,
           replyTo: REPLY_TO,

@@ -32,7 +32,7 @@
 // (15:30 UTC) and sprint-flash (15:45 UTC) so Joel's alerts arrive together
 // rather than scattered through the day.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 import { FROM, REPLY_TO, SITE_URL, buildEmail, p, h2, ctaButton } from './_triangle-email.js';

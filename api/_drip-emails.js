@@ -2116,7 +2116,7 @@ export function renderEmail(day, ctx) {
     text: appLaunchHeroText() + d.textBody(ctx),
     headers,
     tags: [
-      { name: 'campaign', value: 'bpquiz-7day-onboarding' },
+      { name: 'campaign', value: `drip-onboarding-d${day}` },
       { name: 'day', value: String(day) },
     ],
   };

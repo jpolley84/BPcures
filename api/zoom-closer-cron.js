@@ -44,7 +44,7 @@
 //   ZOOM_URL              — full Zoom join URL (with passcode token)
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
 export const config = { maxDuration: 60 };

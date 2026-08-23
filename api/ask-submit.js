@@ -14,7 +14,7 @@
 // Public endpoint (it backs a public form): validates email, honeypot field
 // ("company") silently accepts + drops bots, hard caps field lengths.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { looksLikeValidEmail } from './_email-validation.js';
 import { normalizePhone } from './_phone.js';
 

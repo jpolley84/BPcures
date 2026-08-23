@@ -22,7 +22,7 @@
 // (subject '[BPQuiz] Purchase-capture gap: N backfilled').
 
 import Stripe from 'stripe';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 import { capturePurchase } from './_triangle-posthog.js';
 import { REPLY_TO } from './_triangle-email.js';

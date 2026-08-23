@@ -7,7 +7,7 @@
 // Returns { ok, intakeId } so the success page can offer a download link
 // at /api/wakita-intake-pdf?id=<intakeId>.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { SECTION_MAP, formatAnswer } from './_wakita-schema.js';
 import { generateWakitaPDF } from './_wakita-pdf.js';

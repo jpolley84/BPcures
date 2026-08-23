@@ -17,7 +17,7 @@
 
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { otoStatus, OTO_PRICE, OTO_AMOUNT_CENTS } from './_challenge-oto.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 
@@ -179,6 +179,7 @@ export default async function handler(req, res) {
     const { html, text } = buildEmail({ firstName, startLabel, timeLabel, zoom: ZOOM(), unsubUrl });
     const out = await new Resend(process.env.RESEND_API_KEY).emails.send({
       from: FROM, to: email, reply_to: REPLY_TO,
+      campaign: 'challenge-oto-confirmed',
       subject: `You are in. The Change My Life Challenge starts ${startLabel}.`,
       html, text,
     });

@@ -25,7 +25,7 @@
 // transitions here.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 
@@ -249,6 +249,7 @@ export async function runStateCron({
           console.log(`[DRY] ${label}: would ${isResend ? 'RESEND' : 'send'} Day ${sendDay} to ${sub.email} — "${subject}"`);
         } else {
           await resend.emails.send({
+            campaign: `drip-${label}-d${sendDay}`,
             from, to: sub.email, replyTo,
             subject,
             html: htmlBody, text: textBody,

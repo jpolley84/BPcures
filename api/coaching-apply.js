@@ -20,7 +20,7 @@
 //     go in Joel's notify subject + body; tier stored in the KV record;
 //     applicant ack names the tier with the 48-hour promise.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 

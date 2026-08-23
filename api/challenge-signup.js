@@ -110,7 +110,7 @@
 // on the day it ships, which is the one thing the degrade path must not do.
 
 import Stripe from 'stripe';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
@@ -816,6 +816,7 @@ async function handleRegister(req, res) {
       from: FROM,
       to: email,
       replyTo: REPLY_TO,
+      campaign: 'challenge-seat-saved-paid',
       subject: `Your seat is saved: seven days, starting ${CHALLENGE.startLabel}`,
       html,
       text,
@@ -965,6 +966,7 @@ async function handleFreeRegister(req, res) {
       from: FROM,
       to: email,
       replyTo: REPLY_TO,
+      campaign: 'challenge-seat-saved-free',
       subject: `Your free seat is saved: seven days, starting ${CHALLENGE.startLabel}`,
       html,
       text,

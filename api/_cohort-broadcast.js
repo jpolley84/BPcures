@@ -8,7 +8,7 @@
 // but rate-limited tighter (70ms = ~14 req/s) so the entire 3,472-person
 // broadcast completes inside Vercel's 300s function timeout.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import crypto from 'node:crypto';
 
@@ -148,6 +148,7 @@ export async function runBroadcast({ subject, renderText, renderHtml }) {
     try {
       const u = unsubUrl(r.email);
       const result = await resend.emails.send({
+        campaign: `cohort-broadcast-${subject}`,
         from: FROM, to: r.email, replyTo: REPLY, subject,
         text: renderText(r.firstName),
         html: renderHtml(r.firstName, u),

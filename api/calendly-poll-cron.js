@@ -16,7 +16,7 @@
 // Auth: CRON_SECRET (Vercel cron auto-injects). Schedule in vercel.json.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
 const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';

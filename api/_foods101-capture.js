@@ -38,7 +38,7 @@
 // plant foods, kitchen herbs, caffeine free teas. The one-click unsubscribe +
 // CAN-SPAM postal line come from _triangle-email.js's shared footer.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { signUnsubToken } from './unsubscribe.js';
 import { p, ctaButton, buildEmail, PALETTE } from './_triangle-email.js';

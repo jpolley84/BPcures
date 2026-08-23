@@ -17,7 +17,7 @@
 //        -H "Authorization: Bearer $CRON_SECRET" -H "x-confirm: SEND-REPLAY-BLAST"
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 

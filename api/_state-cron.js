@@ -26,7 +26,7 @@
 // capture). This separation keeps the cron idempotent and testable.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './unsubscribe.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
@@ -44,6 +44,7 @@ function daysBetween(isoA, now = Date.now()) {
 async function alertJoel(resend, subject, text) {
   try {
     await resend.emails.send({
+      campaign: 'ops-alert',
       from: 'BraveWorks Ops <noreply@bpquiz.com>',
       to: JOEL_NOTIFY,
       subject,
@@ -202,6 +203,7 @@ export async function runStateCron({
         console.log(`[DRY] ${label}: would send Day ${sendDay} to ${sub.email} — "${email.subject}"${sendDay !== daysSince ? ` (catch-up, actual day ${daysSince})` : ''}`);
       } else {
         await resend.emails.send({
+          campaign: `drip-${state}-d${sendDay}`,
           from,
           to: sub.email,
           replyTo,

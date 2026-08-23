@@ -28,7 +28,7 @@
 //                                     source, utm? }
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { looksLikeValidEmail } from './_email-validation.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';

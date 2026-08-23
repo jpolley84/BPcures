@@ -18,7 +18,7 @@
 // ($1,700 = $1,997 - $297 credit) is in VITE_STRIPE_SPRINT_WITH_DIAGNOSTIC_CREDIT_LINK env.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { DIAGNOSTIC_DRIP_DAYS, diagnosticSentFlag } from './_diagnostic-drip-emails.js';
 import { signUnsubToken } from './unsubscribe.js';
 import { isAuthorizedCron } from './_cron-auth.js';
@@ -39,6 +39,7 @@ function daysBetween(isoA, now = Date.now()) {
 async function alertJoel(resend, subject, text) {
   try {
     await resend.emails.send({
+      campaign: 'ops-alert',
       from: 'BraveWorks Ops <noreply@bpquiz.com>',
       to: JOEL_NOTIFY, subject, text,
     });
@@ -118,6 +119,7 @@ export default async function handler(req, res) {
         console.log(`[DRY] diagnostic-drip-cron: would send Day ${daysSince} to ${sub.email} — "${email.subject}"`);
       } else {
         await resend.emails.send({
+          campaign: `drip-diagnostic-d${daysSince}`,
           from: 'Joel Polley, RN <joel@bpquiz.com>',
           to: sub.email,
           replyTo: 'braveworksrn@gmail.com',

@@ -15,7 +15,7 @@
 // retry cannot double-send. Failure is always non-fatal: a missed welcome email
 // must never cost us the ledger row that fulfillment depends on.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { otoStatus, otoUrl, OTO_PRICE, OTO_ANCHOR, OTO_WINDOW_HOURS } from './_challenge-oto.js';
 
@@ -153,6 +153,7 @@ export async function sendTeaWelcome({ email, firstName }) {
       from: FROM,
       to,
       reply_to: REPLY_TO,
+      campaign: 'tea-welcome',
       subject: 'How to make your first cup of STEADY',
       html,
       text,

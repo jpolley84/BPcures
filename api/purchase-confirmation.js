@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { looksLikeValidEmail as sharedLooksLikeValidEmail } from './_email-validation.js';
 
 // 2026-05-13: dropped `Stripe` + `kv` imports — they were only used by the
@@ -874,6 +874,7 @@ export async function sendPurchaseConfirmation({ email, name, tier, apologyMode 
     ? `Sorry, here's your kit (plus the full Pressure Triangle Stack as my apology)`
     : config.subject;
   await getResend().emails.send({
+    campaign: apologyMode ? `kit-delivery-${tier}-apology` : `kit-delivery-${tier}`,
     from: FROM_ADDRESS,
     to: email.trim(),
     replyTo: REPLY_TO,

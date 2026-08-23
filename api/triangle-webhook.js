@@ -23,7 +23,7 @@
 
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import {
   FROM, REPLY_TO, SITE_URL, SKOOL_TRIAL_URL, PALETTE,
   p, h2, callout, ctaButton, downloadRow, complianceFooterHtml, complianceFooterText, emailShell, buildEmail,
@@ -362,6 +362,7 @@ export async function sendBuyerDelivery({ email, firstName, tier, corner, scores
   const { subject, html, text } = buildBuyerDeliveryEmail({ firstName, tier, corner, scores, unsubUrl });
 
   await getResend().emails.send({
+    campaign: `bp-buyer-delivery-${tier}`,
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
@@ -578,6 +579,7 @@ async function sendCall97Confirmation({ email, firstName }) {
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
+    campaign: 'call-confirmed',
     subject: 'Your 1:1 call with Joel is confirmed, pick your time',
     html,
     text,
@@ -1090,6 +1092,7 @@ async function sendTeaConfirmation({ email, firstName, items, amountCents, addre
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
+    campaign: 'tea-steady-order-confirmed',
     subject: 'Your SVUTU Steady order is confirmed',
     html,
     text,
@@ -1164,6 +1167,7 @@ async function sendSatinConfirmation({ email, firstName, items, amountCents, add
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
+    campaign: 'tea-satin-order-confirmed',
     subject: 'Your SVUTU Satin order is confirmed',
     html,
     text,
@@ -1184,6 +1188,7 @@ async function sendCaseReviewConfirmation({ email, firstName }) {
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
+    campaign: 'case-review-welcome',
     subject: 'Joel has your case (your first step is inside)',
     html,
     text,
@@ -1397,6 +1402,7 @@ BraveWorks RN / BPQuiz.com`;
     from: FROM,
     to: String(email).trim(),
     replyTo: REPLY_TO,
+    campaign: 'allin-welcome',
     subject: 'Congratulations! Your journey starts Sunday (Q&A Clarity Call, 7pm ET)',
     html,
     text,

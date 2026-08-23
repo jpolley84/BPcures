@@ -25,7 +25,7 @@
 //     write itself failed). Callers decide whether that is fatal to them.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
@@ -224,6 +224,7 @@ export async function registerMasterclass({
         from: FROM_ADDRESS,
         to: normEmail,
         reply_to: REPLY_TO,
+        campaign: 'masterclass-seat-saved',
         subject: 'Your seat is saved for Life Beyond the Numbers (Monday night)',
         html: confirmationEmail({ firstName, provenance }),
       });

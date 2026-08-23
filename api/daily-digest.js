@@ -14,7 +14,7 @@
 // Auth: CRON_SECRET (Vercel cron auto-injects, or curl -H "Authorization: Bearer $CRON_SECRET").
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
 const TO = 'braveworksrn@gmail.com';

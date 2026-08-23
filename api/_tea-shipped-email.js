@@ -16,7 +16,7 @@
 // product name and cup instructions. ZERO em-dashes in visible copy, per the
 // email system rule. No clinical claims: tea is a food, never a treatment.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
@@ -165,6 +165,7 @@ export async function sendTeaShipped({ email, firstName, blend = 'steady', items
     const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${signUnsubToken({ email: to })}`;
     const { html, text } = buildTeaShippedEmail({ firstName, blend, items, orderRef, unsubUrl, catchUp });
     const result = await getResend().emails.send({
+      campaign: 'tea-shipped',
       from: FROM,
       to,
       replyTo: REPLY_TO,

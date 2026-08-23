@@ -14,7 +14,7 @@
 // drip-cron import. Removed for now — KV indexing can be reintroduced
 // later if/when application volume warrants a dashboard view.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 

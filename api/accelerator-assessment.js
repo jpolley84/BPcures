@@ -12,7 +12,7 @@
 // Returns { ok, assessmentId } so the thank-you screen can offer a download at
 // /api/accelerator-assessment-pdf?id=<assessmentId>.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { SECTION_MAP, HEADLINE_FIELDS, formatAnswer } from './_accelerator-schema.js';
 import { generateAcceleratorPDF } from './_accelerator-pdf.js';

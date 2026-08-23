@@ -43,7 +43,7 @@
 // separable piece — this endpoint only does live join/leave confirmation.
 
 import crypto from 'node:crypto';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 
 const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
 const FROM = 'BraveWorks <noreply@bpquiz.com>';

@@ -20,7 +20,7 @@
 // Idempotency: each processed Gmail message gets the label
 // "BraveWorks/Replied" so subsequent cron fires skip it.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import {
   getGmailClient,

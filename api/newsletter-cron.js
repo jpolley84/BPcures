@@ -30,7 +30,7 @@
 // Dry run: set NEWSLETTER_CRON_DRY_RUN=1 (logs would-sends, writes nothing).
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import {
   NEWSLETTER_ISSUES,
   complianceHtmlFooter,
@@ -54,6 +54,7 @@ const DEFAULT_BATCH_LIMIT = 500;
 async function alertJoel(resend, subject, text) {
   try {
     await resend.emails.send({
+      campaign: 'ops-alert',
       from: 'BraveWorks Ops <noreply@bpquiz.com>',
       to: JOEL_NOTIFY, subject, text,
     });
@@ -196,6 +197,7 @@ export default async function handler(req, res) {
         console.log(`[DRY] newsletter-cron: would send issue ${issueNumber} to ${sub.email} — "${issue.subject}"`);
       } else {
         await resend.emails.send({
+          campaign: `newsletter-c${cycle}-i${issueNumber}`,
           from: FROM,
           to: sub.email,
           replyTo: REPLY_TO,

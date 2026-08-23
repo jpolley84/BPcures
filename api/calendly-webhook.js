@@ -17,7 +17,7 @@
 //
 // Register the webhook with: node scripts/register-calendly-webhook.mjs
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 
 // Verizon gateway. Override with JOEL_SMS in Vercel env if the number or
 // carrier ever changes (e.g. "7175859505@tmomail.net" for T-Mobile, or a

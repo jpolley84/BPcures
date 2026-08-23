@@ -15,7 +15,7 @@
 // `secret` must equal process.env.REFERRAL_SECRET (the scanner passes it) so a
 // random web caller cannot mass-enroll strangers.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { FROM, REPLY_TO, SITE_URL, p, ctaButton, buildEmail } from './_triangle-email.js';
 

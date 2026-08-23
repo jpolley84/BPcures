@@ -32,7 +32,7 @@
 // email on the Stripe Checkout page before bailing, customer_details.email is
 // present in the event payload — that's our recovery hook.
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
 
@@ -916,6 +916,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
   // 1. Welcome email to the buyer
   try {
     await resend.emails.send({
+      campaign: `launcher-welcome-${tierSlug}`,
       from: FROM_CUSTOMER,
       to: customerEmail.trim(),
       replyTo: REPLY_TO_CUSTOMER,
@@ -1426,6 +1427,7 @@ Joel Polley, RN
 BraveWorks
 `;
     await getResend().emails.send({
+      campaign: `cart-recovery-${offer.subject}`,
       from: FROM_CUSTOMER,
       to: email,
       replyTo: REPLY_TO_CUSTOMER,

@@ -19,7 +19,7 @@
 //
 // Auth: isAuthorizedCron (Vercel CRON_SECRET / x-vercel-cron / CRON_AUTH_TOKEN).
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
@@ -101,6 +101,7 @@ export default async function handler(req, res) {
     if (dry) { sent++; console.log(`[DRY] reminder stage=${stage} -> ${email}`); continue; }
     try {
       await resend.emails.send({
+        campaign: `masterclass-reminder-${stage}`,
         from: FROM_ADDRESS,
         to: email,
         reply_to: REPLY_TO,

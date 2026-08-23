@@ -20,7 +20,7 @@
 //
 // Schedule: vercel.json "0 16 * * *" (11 AM CT), offset from the other crons.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 import { FROM, REPLY_TO, SITE_URL } from './_triangle-email.js';
@@ -79,6 +79,7 @@ export default async function handler(req, res) {
         console.log(`[DRY] evergreen: would send #${idx} to ${sub.email} "${subject}"`);
       } else {
         await resend.emails.send({
+          campaign: `evergreen-${idx}`,
           from: FROM,
           to: sub.email,
           replyTo: REPLY_TO,

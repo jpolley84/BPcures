@@ -30,7 +30,7 @@
 //     renewal shipments come from the Stripe subscriptions dashboard.
 
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_triangle-cron-auth.js';
 import { FROM, REPLY_TO } from './_triangle-email.js';
 import { chicagoDateKey } from './triangle-webhook.js';
@@ -191,6 +191,7 @@ export default async function handler(req, res) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
+    campaign: 'ops-tea-daily',
     from: FROM,
     to: RECIPIENTS,
     replyTo: REPLY_TO,

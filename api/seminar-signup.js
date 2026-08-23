@@ -11,7 +11,7 @@
 // UTM params captured on signup → saved to KV for source attribution
 // (TikTok bio vs FB post vs IG profile, etc.)
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 

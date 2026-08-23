@@ -9,6 +9,18 @@
 //   - email.bounced       → mark contact unsubscribed in the Practice Launcher Prospects audience
 //   - email.complained    → mark unsubscribed AND email Joel an alert (complaints damage sender reputation fast)
 //   - email.delivered     → telemetry only (logged, no action)
+//   - email.opened / email.clicked (2026-08-23) → per-campaign KV counters
+//     (no suppression). Dashboard: Webhooks → endpoint → add events
+//     email.opened, email.clicked, email.sent if they are not subscribed.
+//
+// Per-campaign stats (2026-08-23). Every event whose payload carries a
+// `campaign` tag (api/_resend.js injects one on every send) bumps:
+//   email:stats:<campaign>:delivered|opened|clicked|bounced|complained  INCR
+//   email:stats:<campaign>:opened_by / clicked_by                       SADD (unique)
+//   email:stats:campaigns                                               SADD index
+// Untagged events land under campaign "untagged". Read with
+// scripts/email-stats.mjs. KV writes are best-effort; the response to
+// Resend is 200 either way.
 //
 // Failure mode is graceful: any individual API failure logs and returns 200 so Resend stops retrying.
 // Worst case: a bounced contact stays in the audience and gets one more cold send before the next bounce.
@@ -28,6 +40,65 @@ const AUDIENCE_ID = process.env.RESEND_LAUNCHER_AUDIENCE_ID || 'ad46af78-a3b5-46
 const ALERT_EMAIL = process.env.LAUNCHER_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 
 const SUPPRESS_EVENTS = new Set(['email.bounced', 'email.complained']);
+
+// event type → stats counter name
+const STAT_EVENTS = {
+  'email.sent': 'sent_events',
+  'email.delivered': 'delivered',
+  'email.opened': 'opened',
+  'email.clicked': 'clicked',
+  'email.bounced': 'bounced',
+  'email.complained': 'complained',
+  'email.delivery_delayed': 'delayed',
+};
+const UNIQUE_SETS = { 'email.opened': 'opened_by', 'email.clicked': 'clicked_by' };
+const STATS_PREFIX = 'email:stats:';
+
+function slug(v) {
+  return String(v ?? '').replace(/[^A-Za-z0-9_-]+/g, '-').replace(/-{2,}/g, '-').replace(/^-+|-+$/g, '').slice(0, 120) || 'untagged';
+}
+
+// Resend sends tags either as [{name,value}] or as {name: value}.
+function campaignFromPayload(data) {
+  const tags = data?.tags;
+  if (Array.isArray(tags)) {
+    const t = tags.find((x) => x && (x.name === 'campaign'));
+    if (t && t.value) return slug(t.value);
+  } else if (tags && typeof tags === 'object' && tags.campaign) {
+    return slug(tags.campaign);
+  }
+  return 'untagged';
+}
+
+async function recordStat({ type, data, email }) {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  const counter = STAT_EVENTS[type];
+  if (!url || !token || !counter) return null;
+  const campaign = campaignFromPayload(data);
+  const cmds = [
+    ['INCR', `${STATS_PREFIX}${campaign}:${counter}`],
+    ['SADD', 'email:stats:campaigns', campaign],
+    ['SET', `${STATS_PREFIX}${campaign}:last_${counter}_at`, new Date().toISOString()],
+  ];
+  const setName = UNIQUE_SETS[type];
+  if (setName && email) cmds.push(['SADD', `${STATS_PREFIX}${campaign}:${setName}`, String(email).toLowerCase()]);
+  if (type === 'email.clicked' && data?.click?.link) {
+    cmds.push(['HINCRBY', `${STATS_PREFIX}${campaign}:links`, String(data.click.link).slice(0, 300), 1]);
+  }
+  try {
+    const r = await fetch(`${url}/pipeline`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(cmds),
+    });
+    if (!r.ok) console.warn(`[resend-bounce] stats kv ${r.status}`);
+    return campaign;
+  } catch (err) {
+    console.warn(`[resend-bounce] stats kv error: ${err.message}`);
+    return campaign;
+  }
+}
 
 // Disable Vercel's automatic body parsing so we can read the raw body for
 // signature verification. The Svix signature is computed over the exact bytes
@@ -147,16 +218,19 @@ export default async function handler(req, res) {
     data?.bounce?.email ||
     data?.complaint?.email;
 
+  // Per-campaign counters for every known event (opens/clicks included).
+  const campaign = await recordStat({ type, data, email });
+
   if (!email) {
-    console.log(`[resend-bounce] ${type} (no email field)`);
-    return res.status(200).json({ ok: true, note: 'no email in event' });
+    console.log(`[resend-bounce] ${type} (no email field) campaign=${campaign}`);
+    return res.status(200).json({ ok: true, note: 'no email in event', campaign });
   }
 
-  console.log(`[resend-bounce] ${type} ${email}`);
+  console.log(`[resend-bounce] ${type} ${email} campaign=${campaign}`);
 
   if (!SUPPRESS_EVENTS.has(type)) {
-    // Telemetry only — no action
-    return res.status(200).json({ ok: true });
+    // Telemetry only — counted above, no suppression
+    return res.status(200).json({ ok: true, campaign });
   }
 
   // Suppress in the audience

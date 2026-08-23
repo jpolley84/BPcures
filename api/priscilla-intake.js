@@ -5,7 +5,7 @@
 // Calendly link. Uploaded documents ride in as base64 in the JSON body, so the
 // body cap is raised and attachments are validated hard.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 
 const JOEL_NOTIFY = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 // 2026-08-05 — Joel shut down Calendly bookings. The fallback used to be a

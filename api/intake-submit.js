@@ -10,7 +10,7 @@
 //   4. Emails Joel a notification
 //   5. Returns 200 with a thank-you redirect
 
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import {
   checkToken,
   storeSet,

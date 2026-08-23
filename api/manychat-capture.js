@@ -18,7 +18,7 @@
 // Enrolls as a 'lead' (source manychat-dm) and sends the instant Day-1 lead
 // magnet, exactly like a quiz capture; the daily lead-cron then runs the arc.
 import { kv } from '@vercel/kv';
-import { Resend } from 'resend';
+import { Resend } from './_resend.js';
 import { looksLikeValidEmail } from './_email-validation.js';
 
 const SITE_URL = process.env.SITE_URL || 'https://bpquiz.com';
