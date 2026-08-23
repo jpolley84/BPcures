@@ -137,6 +137,10 @@
     {
       "path": "/api/reconcile-purchases",
       "schedule": "30 8 * * *"
+    },
+    {
+      "path": "/api/case-review-nudge-cron",
+      "schedule": "15 16 * * *"
     }
   ]
 }
