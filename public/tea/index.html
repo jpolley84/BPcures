@@ -1203,12 +1203,43 @@
           '<h1 style="font-family:\'Cormorant Garamond\',serif;font-size:32px;font-weight:600;margin:0 0 12px;">Closed for the Sabbath</h1>' +
           '<p style="font-size:15px;line-height:1.65;color:var(--brown,#5A4A3A);margin:0 0 16px;">We rest from sundown Friday to sundown Saturday. The kettle is off and the shop is paused until the Sabbath ends.</p>' +
           '<div style="display:inline-block;background:#fff;border:1px solid var(--line,#E2D6C2);border-radius:999px;padding:9px 18px;font-size:14px;color:var(--brown,#5A4A3A);">Reopening <strong style="color:var(--ink,#2C2A26);">' + reopenLabel(st.satSunset) + '</strong></div>' +
+          '<div id="sgCountdown" style="font-family:'Cormorant Garamond',serif;font-size:34px;letter-spacing:.04em;margin:14px 0 0;color:var(--ink,#2C2A26);">--:--:--</div>' +
+          '<form id="sgRemind" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:380px;margin:16px auto 0;">' +
+          '<input name="email" type="email" required placeholder="Your email" aria-label="Your email" style="flex:1 1 190px;min-width:0;padding:11px 14px;border-radius:999px;border:1px solid var(--line,#E2D6C2);background:#fff;color:var(--ink,#2C2A26);font-size:14px;"/>' +
+          '<button type="submit" style="flex:0 0 auto;padding:11px 18px;border-radius:999px;border:0;background:var(--ink,#2C2A26);color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;">EMAIL ME WHEN IT ENDS</button>' +
+          '</form>' +
+          '<p id="sgMsg" role="status" aria-live="polite" style="min-height:16px;font-size:12.5px;color:var(--muted,#9A8C77);margin:8px 0 0;"></p>' +
           '<p style="font-size:13px;color:var(--muted,#9A8C77);margin:16px 0 0;">Come back at sundown Saturday. Steady will be right here, and the 60-day guarantee will be too.</p>' +
           '<div style="height:1px;background:var(--line,#E2D6C2);margin:22px auto;width:120px;"></div>' +
           '<p style="font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:16px;color:var(--brown,#5A4A3A);margin:0;">&ldquo;Remember the Sabbath day, to keep it holy.&rdquo;<span style="font-style:normal;font-size:12px;color:var(--muted,#9A8C77);"> Exodus 20:8</span></p>' +
           '</div>';
         document.body.appendChild(gateEl);
         document.body.style.overflow = 'hidden';
+        // 2026-08-21: countdown to Saturday sundown + one-tap email reminder.
+        (function(){
+          var opensMs = st.satSunset ? st.satSunset.getTime() : Date.now() + 25*3600e3;
+          var cd = gateEl.querySelector('#sgCountdown');
+          function pad(n){ return n < 10 ? '0'+n : ''+n; }
+          function tick(){
+            var left = opensMs - Date.now();
+            if (left <= 0){ cd.textContent = '00:00:00'; return; }
+            cd.textContent = pad(Math.floor(left/3600e3))+':'+pad(Math.floor((left%3600e3)/60e3))+':'+pad(Math.floor((left%60e3)/1e3));
+          }
+          tick(); var tt = setInterval(function(){ if(!document.getElementById('sabbathgate')){ clearInterval(tt); return; } tick(); }, 1000);
+          gateEl.querySelector('#sgRemind').addEventListener('submit', function(e){
+            e.preventDefault();
+            var f = e.target, msg = gateEl.querySelector('#sgMsg');
+            var btn = f.querySelector('button');
+            btn.disabled = true; btn.textContent = 'ONE MOMENT';
+            fetch('https://bpquiz.com/api/sabbath-reminder', { method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ email: f.email.value.trim(), source: 'tea', endsAtMs: opensMs }) })
+              .then(function(r){ return r.ok; }).catch(function(){ return false; })
+              .then(function(ok){
+                if (ok){ f.style.display='none'; msg.textContent = 'Done. One email, right when the doors open. Rest well.'; }
+                else { btn.disabled=false; btn.textContent='EMAIL ME WHEN IT ENDS'; msg.textContent='That did not go through. Please try again.'; }
+              });
+          });
+        })();
       } else if (!show && gateEl){
         gateEl.remove();
         gateEl = null;
@@ -1305,5 +1336,6 @@
 })();
 </script>
 
+<script src="/pixels.js"></script>
 </body>
 </html>

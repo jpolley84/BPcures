@@ -757,6 +757,7 @@
       if(res.ok && data.ok){
         // sendBeacon survives the navigation; without it the capture is often lost.
         if(window.posthog){ try{ posthog.capture('masterclass_register',{already:!!data.already, ...getUtm()},{transport:'sendBeacon'}); }catch(e){} }
+        try{ window.bwPixelLead && window.bwPixelLead({ content_name: 'masterclass' }); }catch(e){}
         window.location.href = '/masterclass/registered/';
       }else{
         err.textContent = (data && data.error) || 'Something went wrong. Please try again.';
@@ -854,5 +855,6 @@
     }catch(e){}
   })();
 </script>
+<script src="/pixels.js"></script>
 </body>
 </html>

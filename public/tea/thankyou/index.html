@@ -53,6 +53,7 @@
   @keyframes sp{ to{ transform:rotate(360deg);}}
   @media(max-width:520px){ h1{ font-size:31px;} .wrap{ padding:28px 0 44px;} }
 </style>
+<script src="/pixels.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -98,6 +99,9 @@
   // event + the upsell-shown step (same PostHog distinct_id as the /tea view).
   function ph(ev, props){ try{ posthog.capture(ev, props || {}); }catch(e){} }
   if (canOneClick) { ph('tea_purchase', { session_id: sessionId }); ph('tea_upsell_shown'); }
+  // Meta Purchase (2026-08-24): no clean value on this page (Stripe session id
+  // only), so fire without value. No-ops until the pixel ID is set in /pixels.js.
+  if (canOneClick) { try{ window.bwPixelPurchase && window.bwPixelPurchase(); }catch(e){} }
 
   function showOk(html){ msg.className = 'msg ok'; msg.innerHTML = html; }
   function showFallback(html){

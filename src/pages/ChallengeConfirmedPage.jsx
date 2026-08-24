@@ -24,7 +24,7 @@
 // ZERO em dashes in visible copy.
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { track } from '../utils/analytics.js';
+import { track, trackPixels } from '../utils/analytics.js';
 
 const CLAY = 'var(--clay, #B85A36)';
 const INK = 'var(--ink, #1E2B2A)';
@@ -86,6 +86,11 @@ export default function ChallengeConfirmedPage() {
           if (data.email) setEmail(String(data.email));
           setState(data.already ? 'already' : 'confirmed');
           track('chal_registered', { tier: tier || data.tier || 'unknown', already: Boolean(data.already) });
+          // Ad-pixel conversion (2026-08-24): first-time paid registration only
+          // ('already' repeats would double-count). eventId = Stripe session id,
+          // same dedupe key pattern as SuccessPage. No clean value here — the
+          // tier price lives server-side — so value is omitted.
+          if (!data.already) trackPixels('purchase', { contentName: 'challenge', eventId: sessionId });
         } else {
           setState('failed');
           track('chal_register_failed', { tier: tier || 'unknown', status: res.status });
