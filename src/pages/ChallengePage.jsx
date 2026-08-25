@@ -258,6 +258,12 @@ export default function ChallengePage() {
 
   useEffect(() => {
     track('chal_checkout_view', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
+    // 2026-08-24: measurement gap fix. The static challenge-b page fires
+    // chal_page_view via pixels.js; this SPA route fired nothing comparable,
+    // so the two surfaces could not be compared in one funnel. Same event
+    // name, page prop distinguishes the surface. chal_checkout_view above is
+    // kept untouched so existing queries keep working.
+    track('chal_page_view', { page: 'spa-challenge', cohort: CHALLENGE.COHORT_ID });
     const prev = document.title;
     document.title = `${CHALLENGE.NAME} | 7 Days Live with Annie and Joel, RNs`;
     return () => { document.title = prev; };
@@ -292,6 +298,10 @@ export default function ChallengePage() {
       if (!res.ok) throw new Error('save failed');
       setState('done');
       track('chal_free_register_ok', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
+      // 2026-08-24: chal_signup is the cross-surface signup event (the static
+      // challenge-b page fires the same name from pixels.js). Fired IN
+      // ADDITION to chal_free_register_ok, never instead of it.
+      track('chal_signup', { tier: 'free', page: 'spa-challenge', cohort: CHALLENGE.COHORT_ID });
     } catch {
       // Never fake a success. If the save did not land she needs to know, and
       // she needs a human address that actually works.

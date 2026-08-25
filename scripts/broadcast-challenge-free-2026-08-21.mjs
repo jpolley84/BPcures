@@ -39,7 +39,17 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 //    [LABEL](url) = CTA button, {{greet}} = "FirstName," or "Hey,".
 const U = CHALLENGE_URL;
 // The live challenge room (6 PM Central = 7 PM Eastern). Canon: import, never paste.
-const ROOM = assertLiveRoom(ZOOM_MAIN);
+// assertLiveRoom still runs so a dead room id fails the build of the email.
+const ROOM_DIRECT = assertLiveRoom(ZOOM_MAIN);
+void ROOM_DIRECT;
+// 2026-08-24: Zoom CTAs route through the tracked redirect so show-up clicks
+// land in PostHog as chal_zoom_click (server-side, ad-block-proof). The
+// redirect 302s to CHALLENGE_ZOOM_URL in Vercel prod.
+// ⚠️ BEFORE the next send: verify CHALLENGE_ZOOM_URL in Vercel equals
+// ZOOM_MAIN's URL, or clickers land in a different room than the meeting id
+// printed under the button. ROOM_LINE (id + passcode) stays in the email so a
+// manual join always works.
+const ROOM = `${SITE_URL}/api/go-zoom?c=2026-08-24`;
 const ROOM_LINE = 'Meeting ID: 828 5171 5003 · Passcode: 027302';
 
 const E1 = `{{greet}}
@@ -687,7 +697,10 @@ if (TO) {
 }
 
 // ── Audit trail ───────────────────────────────────────────────────────────
-const fs = await import('node:fs');
+// Appends; never overwrites a prior run. A rerun of the same email is normal
+// (the KV dedupe makes it safe), and its low `sent` count must not be mistaken
+// for the original send having failed. See scripts/_broadcast-audit.mjs.
+const { appendRun } = await import('./_broadcast-audit.mjs');
 const record = {
   ts: new Date().toISOString(), venture: 'BraveWorks RN', campaign: CAMPAIGN, email: Number(WHICH),
   subject: CFG.subject, from: FROM,
@@ -695,8 +708,9 @@ const record = {
   excludedCoaching: [...excluded].sort(),
   counts: { eligible: audience.length, sent, skippedAlreadySent: skipped, failed }, failures,
 };
-const out = '../memory/broadcasts';
-fs.mkdirSync(out, { recursive: true });
-fs.writeFileSync(`${out}/challenge-free-2026-08-24-e${WHICH}.json`, JSON.stringify(record, null, 2));
+const audit = appendRun(`../memory/broadcasts/challenge-free-2026-08-24-e${WHICH}.json`, record);
+if (audit.runCount > 1) {
+  console.log(`\nNOTE: run #${audit.runCount} of email ${WHICH}. Across all runs: ${audit.totals.sent} sent, ${audit.totals.skippedAlreadySent} deduped.`);
+}
 console.log(`\nDone. email=${WHICH} sent=${sent} skipped(already)=${skipped} failed=${failed}`);
 console.log(`Log: memory/broadcasts/challenge-free-2026-08-24-e${WHICH}.json`);

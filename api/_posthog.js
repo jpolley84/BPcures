@@ -52,6 +52,34 @@ const PURCHASE_MARKER_TTL_SECONDS = 60 * 60 * 24 * 45;
 // would mask / be masked by the session's own purchase event.
 //
 // Returns true when the event was captured, false when skipped or failed.
+// Generic server-side capture for non-revenue funnel events (e.g.
+// chal_signup_server, chal_zoom_click). Same client, same non-fatal contract
+// as capturePurchase: an analytics failure must never break the request that
+// triggered it. distinct_id convention matches the rest of the server side:
+// lowercased email when one exists, otherwise whatever anonymous id the
+// caller passes. No KV marker — these events are cheap and callers that need
+// idempotency already have it at the business level (e.g. free-register
+// dedupes by email before the capture is reached).
+// Returns true when captured, false when skipped or failed.
+export async function captureEvent({ distinctId, event, properties = {} }) {
+  let client;
+  try {
+    client = getClient();
+  } catch (err) {
+    console.error('posthog captureEvent: client init failed (non-fatal):', err.message);
+    return false;
+  }
+  if (!client || !distinctId || !event) return false;
+  try {
+    client.capture({ distinctId: String(distinctId).trim(), event, properties });
+    await client.flush(); // serverless: deliver before the function freezes
+    return true;
+  } catch (err) {
+    console.error(`posthog captureEvent FAILED (${event}):`, err.message);
+    return false;
+  }
+}
+
 export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null, abHomeVariant = null }) {
   let client;
   try {

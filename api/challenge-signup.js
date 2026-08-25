@@ -113,6 +113,7 @@ import Stripe from 'stripe';
 import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
+import { captureEvent } from './_posthog.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import {
   FROM,
@@ -214,6 +215,17 @@ const ZOOM = {
   passcode: (process.env.CHALLENGE_ZOOM_PASSCODE || '').trim(),
   icsUrl: (process.env.CHALLENGE_ZOOM_ICS_URL || '').trim(),
 };
+
+// 2026-08-24: show-up tracking. The welcome email's Zoom CTA goes through
+// api/go-zoom.js, which captures chal_zoom_click server-side and 302s to
+// CHALLENGE_ZOOM_URL. The e param lets the click resolve to the registrant's
+// PostHog person (distinct_id = lowercased email, same as everywhere server
+// side). Meeting ID and passcode still render in plain text below the button,
+// so a reader who prefers to open Zoom manually loses nothing.
+function zoomTrackedUrl(email) {
+  const base = `${SITE_URL}/api/go-zoom?c=${encodeURIComponent(CHALLENGE.cohort)}`;
+  return email ? `${base}&e=${encodeURIComponent(String(email).trim().toLowerCase())}` : base;
+}
 
 const JOEL_EMAIL = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
@@ -386,7 +398,7 @@ function nightsText() {
 // CHALLENGE_ZOOM_URL is a placeholder until Joel creates the cohort's room. An
 // email that prints a dead button is worse than one that says plainly that the
 // link is coming, so the unset case renders a promise instead of a link.
-function zoomHtml() {
+function zoomHtml(email) {
   if (!ZOOM.url) {
     return callout({
       kicker: 'Your join link',
@@ -404,18 +416,18 @@ function zoomHtml() {
     : '';
   return `<div style="background:${PALETTE.paperWarm};border-radius:12px;padding:20px 22px;margin:0 0 24px;">
     <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:10px;">Your join link, save this email</div>
-    ${ctaButton('Join the challenge on Zoom', esc(ZOOM.url))}
+    ${ctaButton('Join the challenge on Zoom', esc(zoomTrackedUrl(email)))}
     ${details ? `<p style="font-size:14px;line-height:1.6;color:${PALETTE.inkSoft};margin:0;">${details}</p>` : ''}
     ${ics}
     <p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:10px 0 0;">The same link works all seven days.</p>
   </div>`;
 }
 
-function zoomText() {
+function zoomText(email) {
   if (!ZOOM.url) {
     return `Your join link: the Zoom room for this cohort goes out in its own email before each live session. If it has not landed an hour before the call, reply to this email and I will send it by hand.`;
   }
-  const bits = [`Join on Zoom: ${ZOOM.url}`];
+  const bits = [`Join on Zoom: ${zoomTrackedUrl(email)}`];
   if (ZOOM.meetingId) bits.push(`Meeting ID: ${ZOOM.meetingId}`);
   if (ZOOM.passcode) bits.push(`Passcode: ${ZOOM.passcode}`);
   if (ZOOM.icsUrl) bits.push(`Add to calendar: ${ZOOM.icsUrl}`);
@@ -482,7 +494,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     p(
       `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Seven days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. You can watch from your own chair with the camera off.`
     ),
-    zoomHtml(),
+    zoomHtml(email),
     h2('The seven days'),
     nightsHtml(),
     p(
@@ -507,7 +519,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
 
 Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Seven days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. You can watch from your own chair with the camera off.
 
-${zoomText()}
+${zoomText(email)}
 
 THE SEVEN DAYS
 ${nightsText()}
@@ -958,6 +970,19 @@ async function handleFreeRegister(req, res) {
       promoteToBuyer: false,
     });
   }
+
+  // 2026-08-24: server-side signup backstop. The night of Aug 23, KV recorded
+  // ~30 signups while only 1 client-side signup event reached PostHog (ad
+  // blockers eat posthog-js). This event fires from the server so it cannot be
+  // blocked. DIFFERENT name from the client's chal_signup on purpose, so
+  // nothing double-counts in existing queries. Reached only on a NEW
+  // registration (the confirmationSentAt dedupe above already returned for
+  // repeats), so one human = one event. Non-fatal by contract.
+  await captureEvent({
+    distinctId: email,
+    event: 'chal_signup_server',
+    properties: { cohort: CHALLENGE.cohort, tier: 'free', source: 'challenge-free-registration' },
+  });
 
   const { html, text } = registrationEmail({ firstName, isVip: false, email, free: true });
   const unsubUrl = unsubUrlFor(email);
