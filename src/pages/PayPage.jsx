@@ -31,7 +31,7 @@ import { Link } from 'react-router-dom';
 import { Lock, ShieldCheck } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
-import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics.js';
+import { track, getDistinctId, getAbHomeVariant, getFirstTouchUtm } from '../utils/analytics.js';
 import { sabbathStatus } from '../utils/sabbath';
 import { KIT_STACK, KIT_STACK_TOTAL } from '../data/kitStack.js';
 
@@ -288,7 +288,7 @@ export default function PayPage() {
               // onto the Stripe session metadata (and from there onto the
               // server-side purchase event). Extra body keys are ignored by
               // older server builds, so this is safe either way.
-              body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant() }),
+              body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant(), utm: getFirstTouchUtm() }),
             });
             // 409 already_purchased: the duplicate-purchase guard
             // (api/_dupe-guard.js) saw a completed paid order for this email

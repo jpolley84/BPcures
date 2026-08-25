@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
+import { getFirstTouchUtm } from '../utils/analytics.js';
 
 // 2026-05-10 funnel-fix: was reading import.meta.env.VITE_STRIPE_BOOK_PRICE_ID
 // — that env var was never set in Vercel, so /api/checkout was being POSTed
@@ -26,6 +27,7 @@ export default function UpsellPage() {
           priceId: STRIPE_BOOK_PRICE_ID,
           successUrl: `${window.location.origin}/success`,
           cancelUrl: window.location.href,
+          utm: getFirstTouchUtm(),
         }),
       });
       const data = await res.json();

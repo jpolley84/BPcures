@@ -22,6 +22,10 @@ export function initAnalytics() {
     });
     enabled = true;
 
+    // Record the first-touch utm_* for this device before anything navigates
+    // away. Runs on every page load; only the first hit that carries UTMs wins.
+    captureFirstTouchUtm();
+
     // 2026-07-26: 'funnel_version' was briefly registered as a PERSISTENT
     // super property. posthog.register() writes for the cookie lifetime
     // (~365 days), so one visit to a foods101 page permanently relabelled
@@ -46,6 +50,70 @@ export function initAnalytics() {
 export function track(event, props) {
   try { if (enabled) posthog.capture(event, props); } catch { /* noop */ }
 }
+
+/* ── first-touch UTM attribution ──────────────────────────────────────────
+ * 2026-08-25: the ManyChat DM engine drives ~61% of quiz starts, but the
+ * server-side `purchase` event carried NO utm_* at all (it is emitted from
+ * api/stripe-webhook.js, which never sees the browser). Every sale therefore
+ * bucketed as "untagged" and revenue-per-DM-flow was unknowable.
+ *
+ * The DM link lands on / or /quiz carrying ?utm_source=...; by the time the
+ * buyer reaches /pay the query string is long gone, so the values must be
+ * persisted at first touch and threaded through Stripe session metadata.
+ *
+ * FIRST touch, not last: the question this answers is "did the DM engine
+ * produce this buyer", and a later click from a drip email must not steal
+ * the credit. Once written, the record is never overwritten until it expires.
+ */
+const UTM_KEY = 'bpq_ft_utm';
+const UTM_TTL_MS = 90 * 24 * 60 * 60 * 1000;  // 90 days
+const UTM_FIELDS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+// Stripe metadata values cap at 500 chars; keep each field far below that and
+// strip control characters so nothing downstream has to sanitize again.
+function cleanUtm(v) {
+  return String(v).replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, 120);
+}
+
+// Reads utm_* off the current URL and stores them if this device has no
+// unexpired record yet. Safe to call on every page load. Never throws.
+export function captureFirstTouchUtm() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    const params = new URLSearchParams(window.location.search);
+    const found = {};
+    for (const f of UTM_FIELDS) {
+      const v = params.get(f);
+      if (v) found[f] = cleanUtm(v);
+    }
+    if (!Object.keys(found).length) return;   // nothing to record on this hit
+
+    const existing = getFirstTouchUtm();
+    if (Object.keys(existing).length) return; // first touch already won
+
+    found.utm_landing = cleanUtm(window.location.pathname);
+    window.localStorage.setItem(UTM_KEY, JSON.stringify({ t: Date.now(), v: found }));
+  } catch { /* analytics never blocks UX */ }
+}
+
+// The stored first-touch UTM object, or {} when absent/expired/unreadable.
+// Threaded into checkout POST bodies -> Stripe session metadata -> the
+// server-side purchase event (api/_posthog.js capturePurchase).
+export function getFirstTouchUtm() {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return {};
+    const raw = window.localStorage.getItem(UTM_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.v) return {};
+    if (!parsed.t || Date.now() - parsed.t > UTM_TTL_MS) {
+      window.localStorage.removeItem(UTM_KEY);
+      return {};
+    }
+    return parsed.v;
+  } catch { return {}; }
+}
+
 
 // Current browser distinct id, threaded through Stripe checkout metadata so
 // server-side purchase events land on the same PostHog person as the clicks.

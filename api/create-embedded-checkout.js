@@ -231,6 +231,27 @@ export default async function handler(req, res) {
       : '';
   const abMeta = abVariant ? { ab_home_variant: abVariant } : {};
 
+  // First-touch UTM attribution (2026-08-25). The `purchase` event is emitted
+  // server-side by api/stripe-webhook.js, which never sees the browser — so
+  // before this, EVERY sale landed in PostHog with no utm_* at all and all 216
+  // purchases in a 30-day window bucketed as "untagged". That made
+  // revenue-per-DM-flow unknowable even though DM links drive ~61% of quiz
+  // starts. The client reads its stored first-touch UTMs
+  // (src/utils/analytics.js getFirstTouchUtm) and posts them here; they ride
+  // Stripe session metadata to the webhook and onto the purchase event.
+  //
+  // Allow-listed keys only, sanitized, 120 chars each — Stripe caps metadata at
+  // 50 keys / 500 chars per value and rejects the whole session if exceeded.
+  const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_landing'];
+  const utmMeta = {};
+  if (req.body.utm && typeof req.body.utm === 'object' && !Array.isArray(req.body.utm)) {
+    for (const k of UTM_KEYS) {
+      const v = req.body.utm[k];
+      if (typeof v !== 'string' || !v.trim()) continue;
+      utmMeta[k] = v.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, 120);
+    }
+  }
+
   // ── Duplicate-purchase guard (2026-07-27) ──
   // EXEMPTION (added same day, after an upsell-safety audit): physical
   // consumables are legitimately bought twice in a row. bpquiz.com/tea's buy
@@ -285,6 +306,7 @@ export default async function handler(req, res) {
       plan: isThreePay ? '3pay' : 'full',
       ...phMeta,
       ...abMeta,
+      ...utmMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -328,7 +350,7 @@ export default async function handler(req, res) {
       'tea-satin-48': process.env.SATIN_48_PRICE_ID || 'price_1TqGRCHseZnO3rRZBsF7Mvyu',   // 1-Month $48
       'tea-satin-120': process.env.SATIN_120_PRICE_ID || 'price_1TqGR9HseZnO3rRZJ9ynNFKx', // 90-Day $120
     };
-    const metadata = { blend: 'satin', venture: 'svutu', offer: tier, ...phMeta, ...abMeta };
+    const metadata = { blend: 'satin', venture: 'svutu', offer: tier, ...phMeta, ...abMeta, ...utmMeta };
     try {
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
@@ -354,7 +376,7 @@ export default async function handler(req, res) {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
     };
-    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta };
+    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta, ...utmMeta };
     // 2026-08-16 (Joel): the single bag now carries $5.97 shipping; the 90-day
     // supply ships free. That gap is the whole engine of the /tea-thanks
     // ladder: upgrading to 90 days both adds tea AND removes the shipping
@@ -454,6 +476,7 @@ export default async function handler(req, res) {
       plan,
       ...phMeta,
       ...abMeta,
+      ...utmMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -505,6 +528,7 @@ export default async function handler(req, res) {
       cohort: '2026-08-17',
       ...phMeta,
       ...abMeta,
+      ...utmMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -575,6 +599,7 @@ export default async function handler(req, res) {
       cohort_start_ct: CHALLENGE_START_CT,
       ...phMeta,
       ...abMeta,
+      ...utmMeta,
     };
     try {
       const session = await stripe.checkout.sessions.create({
@@ -623,7 +648,7 @@ export default async function handler(req, res) {
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       // The webhook guard keys on metadata.funnel; corner drives kit delivery.
-      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}), ...phMeta, ...abMeta },
+      metadata: { funnel: 'braveworks-bp', brand: 'braveworks-bp', tier, ...(corner ? { corner } : {}), ...phMeta, ...abMeta, ...utmMeta },
       // 2026-07-08: always create a Customer (the webhook + upgrade ladder use
       // it). 2026-07-13 panel fix: setup_future_usage REMOVED from the kit
       // branch. It made Stripe render save-card/future-charge consent language

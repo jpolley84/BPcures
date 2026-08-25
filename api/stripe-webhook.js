@@ -397,11 +397,30 @@ async function readRawBody(req) {
   });
 }
 
+// ─── UTM attribution off the Checkout Session ──────────────────
+// 2026-08-25: `purchase` is emitted from this file, which never sees the
+// browser, so before now it carried no utm_* and every sale bucketed as
+// "untagged" in PostHog. api/create-embedded-checkout.js stamps the buyer's
+// first-touch UTMs into session metadata; this reads them back so the purchase
+// event (and the KV buyer record) can finally say which DM flow produced the
+// sale. Returns {} when the session predates the change or carried no UTMs.
+const UTM_META_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_landing'];
+function utmFromSession(session) {
+  const md = session?.metadata;
+  if (!md || typeof md !== 'object') return {};
+  const out = {};
+  for (const k of UTM_META_KEYS) {
+    const v = md[k];
+    if (typeof v === 'string' && v.trim()) out[k] = v.trim().slice(0, 120);
+  }
+  return out;
+}
+
 // ─── Buyer tagging in KV ──────────────────────────────────────────────
 // 2026-05-14: Beehiiv retired. Buyer segmentation lives in the same KV
 // drip:* record now. Adds Purchased + tier-{n}-buyer tags + purchase
 // metadata so future broadcasts can suppress existing buyers.
-async function tagBuyerOnList({ email, tier, amountCents }) {
+async function tagBuyerOnList({ email, tier, amountCents, utm = null }) {
   if (!process.env.KV_REST_API_URL) {
     console.warn('tagBuyerOnList: KV not configured, skipping');
     return;
@@ -411,10 +430,20 @@ async function tagBuyerOnList({ email, tier, amountCents }) {
   try {
     const existing = await kv.get(dripKey);
     const newTags = ['Purchased', `tier-${tierName}-buyer`];
+    // 2026-08-25: stamp the buyer's first-touch traffic source onto the KV
+    // record too, not just the PostHog event. This is what makes
+    // "which cohort actually produces buyers" answerable straight from a list
+    // scan — the audit that found the 1,320-record manychat-dm cohort had zero
+    // buyers had to infer source from the signup path because purchases
+    // carried none.
+    const utmMeta = utm && typeof utm === 'object' && Object.keys(utm).length
+      ? { purchaseUtm: utm }
+      : {};
     const purchaseMeta = {
       lastPurchaseAmount: amountCents ? amountCents / 100 : null,
       lastPurchaseTier: tierName,
       lastPurchaseAt: new Date().toISOString(),
+      ...utmMeta,
     };
     if (existing) {
       await kv.set(dripKey, {
@@ -765,6 +794,7 @@ curl -X POST https://bpquiz.com/api/test-purchase-email \\
         email: customerEmail,
         tier: kitTier,
         amountCents,
+        utm: utmFromSession(session),
       });
       mcTagged = true;
     } catch (err) {
@@ -884,6 +914,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
       markSession: true,
       deviceDistinctId: session.metadata?.ph_distinct_id || null,
       abHomeVariant: session.metadata?.ab_home_variant || null,
+      utm: utmFromSession(session),
     });
 
     return {
@@ -981,6 +1012,7 @@ Without the tag, this buyer will keep receiving entry-offer broadcasts and won't
     sessionId: session.id,
     markSession: true,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    utm: utmFromSession(session),
   });
 
   return {

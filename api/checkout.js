@@ -64,6 +64,25 @@ export default async function handler(req, res) {
       sessionParams.metadata = { homepage_variant: homepageVariant };
     }
 
+    // 2026-08-25: first-touch UTM attribution, same contract as
+    // api/create-embedded-checkout.js. The webhook reads these back
+    // (utmFromSession) and stamps them on the server-side `purchase` event,
+    // which otherwise carries no traffic source at all. Allow-listed and
+    // truncated because Stripe rejects a session whose metadata exceeds
+    // 50 keys / 500 chars per value.
+    const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_landing'];
+    if (req.body.utm && typeof req.body.utm === 'object' && !Array.isArray(req.body.utm)) {
+      const utmMeta = {};
+      for (const k of UTM_KEYS) {
+        const v = req.body.utm[k];
+        if (typeof v !== 'string' || !v.trim()) continue;
+        utmMeta[k] = v.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, 120);
+      }
+      if (Object.keys(utmMeta).length) {
+        sessionParams.metadata = { ...(sessionParams.metadata || {}), ...utmMeta };
+      }
+    }
+
     if (saveCard) {
       sessionParams.customer_creation = 'always';
       sessionParams.payment_intent_data = { setup_future_usage: 'off_session' };

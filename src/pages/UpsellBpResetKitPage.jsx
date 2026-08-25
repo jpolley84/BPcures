@@ -19,7 +19,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, ArrowRight } from 'lucide-react';
 import DownloadsSection from '../components/DownloadsSection';
-import { track } from '../utils/analytics.js';
+import { track, getFirstTouchUtm } from '../utils/analytics.js';
 
 // 2026-05-18: env-var pattern with hardcoded fallback. The hardcoded ID is
 // the $30 OTO BP Reset Kit upsell price; it stays as the safety net so a
@@ -110,6 +110,7 @@ export default function UpsellBpResetKitPage() {
           priceId: UPSELL_PRICE_ID,
           successUrl: `${window.location.origin}${FALLBACK_DOWNLOADS}?upsell=accepted`,
           cancelUrl: window.location.href,
+          utm: getFirstTouchUtm(),
         }),
       });
       const data = await res.json();

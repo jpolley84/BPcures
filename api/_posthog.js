@@ -80,7 +80,7 @@ export async function captureEvent({ distinctId, event, properties = {} }) {
   }
 }
 
-export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null, abHomeVariant = null }) {
+export async function capturePurchase({ email, amountCents, tier, product, source, sessionId, markSession = false, deviceDistinctId = null, abHomeVariant = null, utm = null }) {
   let client;
   try {
     client = getClient();
@@ -135,6 +135,13 @@ export async function capturePurchase({ email, amountCents, tier, product, sourc
         // the browser's super property — without this, purchase revenue
         // could never be split by variant, only pre-checkout funnel steps.
         ...(abHomeVariant ? { ab_home_variant: abHomeVariant } : {}),
+        // 2026-08-25: first-touch utm_* threaded from the Checkout Session
+        // metadata (api/create-embedded-checkout.js -> api/stripe-webhook.js
+        // utmFromSession). Without these the purchase event has no traffic
+        // source at all, which is why 100% of 30d revenue read as "untagged"
+        // while DM links were driving ~61% of quiz starts. Also written to the
+        // person so a buyer's origin survives on the profile.
+        ...(utm && typeof utm === 'object' ? utm : {}),
         ...(deviceId ? { buyer_email: emailId } : {}),
         $set: {
           is_paid_customer: true,
