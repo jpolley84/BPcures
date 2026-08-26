@@ -73,7 +73,10 @@ export async function pullRecipients() {
 
 export function valueStackHtml() {
   const items = [
-    ['Weekly group Zoom with Joel — 12 sessions (Mondays 8 PM ET, small cohort)', '$5,964'],
+    // 2026-08-26 (Joel): was "Mondays 8 PM ET". The Accelerator intake has always
+    // asked about a 7pm Eastern weekly call, so the value stack and the intake
+    // contradicted each other in front of prospects. Canonical time is 7 PM ET.
+    ['Weekly group Zoom with Joel — 12 sessions (Mondays 7 PM ET, small cohort)', '$5,964'],
     ['Biweekly hormone coaching with Annie — 6 sessions', '$1,782'],
     ['Full lab review at start + finish (live, 60 min each)', '$697'],
     ['Daily schedule audit', '$497'],

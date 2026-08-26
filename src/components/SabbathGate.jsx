@@ -44,7 +44,11 @@ const EXEMPT_PREFIXES = [
 ];
 
 function isStoreHost(hostname) {
-  return hostname === 'bpquiz.com' || hostname === 'www.bpquiz.com';
+  // 2026-08-21 (Joel): changemylifechallenge.com added — its SPA routes
+  // (/payment, /challenge-confirmed) take money too. The static root page on
+  // that host carries its own gate (public/sabbath-gate.js).
+  return hostname === 'bpquiz.com' || hostname === 'www.bpquiz.com'
+    || hostname === 'changemylifechallenge.com' || hostname === 'www.changemylifechallenge.com';
 }
 
 function isGatedPath(pathname) {
@@ -54,12 +58,15 @@ function isGatedPath(pathname) {
 export default function SabbathGate() {
   const { pathname, search } = useLocation();
   const [now, setNow] = useState(() => new Date());
+  const [remindState, setRemindState] = useState('idle'); // idle|busy|sent|error
+  const [remindEmail, setRemindEmail] = useState('');
 
   // Re-evaluate every minute (so the gate lifts itself at Saturday sundown
   // without a reload) and whenever the tab regains focus.
   useEffect(() => {
     const tick = () => setNow(new Date());
-    const id = setInterval(tick, 60 * 1000);
+    // 1s tick: the gate now shows a live countdown to Saturday sundown.
+    const id = setInterval(tick, 1000);
     document.addEventListener('visibilitychange', tick);
     return () => {
       clearInterval(id);
@@ -90,6 +97,26 @@ export default function SabbathGate() {
   if (!show) return null;
 
   const reopen = reopenLabel(status.satSunset);
+  const opensMs = status.satSunset ? status.satSunset.getTime() : Date.now() + 25 * 3600e3;
+  const left = Math.max(0, opensMs - now.getTime());
+  const pad = (n) => String(n).padStart(2, '0');
+  const countdown = `${pad(Math.floor(left / 3600e3))}:${pad(Math.floor((left % 3600e3) / 60e3))}:${pad(Math.floor((left % 60e3) / 1e3))}`;
+
+  const submitReminder = async (e) => {
+    e.preventDefault();
+    if (remindState === 'busy' || remindState === 'sent') return;
+    setRemindState('busy');
+    try {
+      const r = await fetch('/api/sabbath-reminder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: remindEmail.trim(), source: 'bpquiz', endsAtMs: opensMs }),
+      });
+      setRemindState(r.ok ? 'sent' : 'error');
+    } catch {
+      setRemindState('error');
+    }
+  };
 
   return (
     <div role="dialog" aria-label="Closed for the Sabbath" style={S.overlay}>
@@ -112,18 +139,42 @@ export default function SabbathGate() {
         <h1 style={S.h1}>Closed for the Sabbath</h1>
 
         <p style={S.body}>
-          We rest from sundown Friday to sundown Saturday. The quiz and all
-          blood&nbsp;pressure offers are paused until the Sabbath ends.
+          From sundown Friday to sundown Saturday, our family observes the
+          Sabbath. It is not a glitch and nothing is wrong — we close
+          everything we sell for one day each week, rest, and put our
+          attention on God and on each other.
         </p>
 
         <div style={S.pill}>
           Reopening <strong style={{ color: 'var(--ink, #121110)' }}>{reopen}</strong>
         </div>
 
-        <p style={S.sub}>
-          Check back at sundown Saturday — your quiz and offers will be right
-          here waiting.
-        </p>
+        <div style={{ fontFamily: 'Georgia, serif', fontSize: 36, letterSpacing: '.04em', margin: '12px 0 2px' }}>
+          {countdown}
+        </div>
+        <p style={S.sub}>until the doors open again</p>
+
+        {remindState === 'sent' ? (
+          <p style={{ ...S.sub, color: 'var(--gold, #C8A252)', fontWeight: 700 }}>
+            Done. One email, right when the doors open. Rest well.
+          </p>
+        ) : (
+          <form onSubmit={submitReminder} style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', maxWidth: 380, margin: '14px auto 0' }}>
+            <input
+              type="email" required placeholder="Your email" aria-label="Your email"
+              value={remindEmail} onChange={(e) => setRemindEmail(e.target.value)}
+              style={{ flex: '1 1 190px', minWidth: 0, padding: '11px 14px', borderRadius: 999, border: '1px solid var(--line, #E2D6C2)', background: '#fff', font: 'inherit', fontSize: 14 }}
+            />
+            <button type="submit" disabled={remindState === 'busy'} style={{ flex: '0 0 auto', padding: '11px 18px', borderRadius: 999, border: 0, background: 'var(--ink, #121110)', color: '#fff', fontWeight: 700, fontSize: 12.5, cursor: 'pointer' }}>
+              {remindState === 'busy' ? 'ONE MOMENT' : 'EMAIL ME WHEN IT ENDS'}
+            </button>
+            {remindState === 'error' ? (
+              <p role="alert" style={{ ...S.sub, color: '#8a1f2f', width: '100%', margin: '4px 0 0' }}>
+                That did not go through. Please try again.
+              </p>
+            ) : null}
+          </form>
+        )}
 
         <div style={S.rule} />
 

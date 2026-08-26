@@ -137,7 +137,7 @@ export default function TeaOtoConfirmedPage() {
         )}
 
         <p style={{ margin: 0 }}>
-          <a href="/masterclass" style={{ color: MUTED, fontSize: '0.95rem' }}>
+          <a href="/" style={{ color: MUTED, fontSize: '0.95rem' }}>
             Back to BraveWorks RN
           </a>
         </p>

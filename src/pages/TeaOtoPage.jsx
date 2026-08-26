@@ -14,7 +14,12 @@
 //   * no invented testimonials, no invented numbers, no medical promises
 //
 // Every state renders something calm and useful. A dead or expired link sends
-// the reader to the FREE masterclass rather than a wall.
+// the reader to the quiz rather than a wall.
+//
+// 2026-08-26 (Joel): the dead-link and decline paths used to point at the FREE
+// masterclass. The masterclass was pulled from ALL advertising on 2026-08-26 --
+// it still runs for people already registered, it is just never linked or sold.
+// Both paths now go to the quiz, which is the evergreen entry point.
 
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Check, Lock, Clock } from 'lucide-react';
@@ -139,11 +144,11 @@ export default function TeaOtoPage() {
             page just had a deadline on it.
           </p>
           <p style={{ margin: '0 0 1.5rem', fontSize: '1.05rem' }}>
-            The free class is always open, and it is the same teaching the Challenge
-            is built on. Start there.
+            The quiz is always open, and it is the same teaching the Challenge is
+            built on. Start there.
           </p>
           <a
-            href="/masterclass"
+            href="/quiz"
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
               background: WINE, color: '#fff', textDecoration: 'none',
@@ -265,8 +270,8 @@ export default function TeaOtoPage() {
         </p>
 
         <p style={{ margin: 0, textAlign: 'center' }}>
-          <a href="/masterclass" style={{ color: MUTED, fontSize: '0.95rem' }}>
-            No thanks, just show me the free class
+          <a href="/quiz" style={{ color: MUTED, fontSize: '0.95rem' }}>
+            No thanks, just show me where to start
           </a>
         </p>
       </div>

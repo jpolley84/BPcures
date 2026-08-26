@@ -513,16 +513,11 @@
         <span><span class="i">✓</span> Hand-crafted by our family, ships in 5–7 business days</span>
       </div>
 
-      <!-- Masterclass upsell (2026-08-17). Struck $97 is the FUTURE price
-           ("free for now"), never "was $97" — the class has not sold at $97,
-           so a former-price claim would be fictitious pricing. -->
-      <div class="mclass">
-        <div class="kick">Free live masterclass</div>
-        <h3>The tea is one corner. See all three — live.</h3>
-        <p>Join <b>Joel &amp; Annie</b>, the two registered nurses behind Steady, for the live masterclass on the full picture behind the cup: how <b>stress, sugar and sodium</b> each move your blood pressure, and what to do about all three. Education alongside your doctor's care, never instead of it.</p>
-        <div class="mprice"><span class="strike">$97</span><span class="free">FREE</span><span class="fnote">free for now, while seats last</span></div>
-        <a class="mbtn" id="mclassbtn" href="/masterclass">Save my free seat →</a>
-      </div>
+      <!-- 2026-08-26 (Joel): a free-live-masterclass upsell block sat here.
+           The masterclass was pulled from ALL advertising on 2026-08-26 — the
+           class still runs for people already registered, it is simply never
+           sold or linked. Block removed rather than repointed: this is the tea
+           PDP, and the page already asks for the one thing it should ask for. -->
     </div>
   </div>
 
@@ -1093,9 +1088,7 @@
     document.querySelectorAll('a[href*="/quiz"]').forEach(function(a){
       a.addEventListener('click', function(){ cap('tea_quiz_clicked'); });
     });
-    // Masterclass upsell click (block added 2026-08-17)
-    var mc = document.getElementById('mclassbtn');
-    if(mc) mc.addEventListener('click', function(){ cap('tea_masterclass_clicked'); });
+    // 2026-08-26: masterclass upsell block removed; its click hook went with it.
   })();
 </script>
 

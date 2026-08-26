@@ -15,7 +15,12 @@
 import { useEffect, useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
 import FoodsGuideLanding from './FoodsGuideLanding';
-import MasterclassBanner from '../components/MasterclassBanner';
+// 2026-08-26 (Joel): masterclass pulled from ALL advertising. The banner no
+// longer renders anywhere — when the challenge is not running, the top strip is
+// simply absent rather than falling back to a masterclass promo. The class
+// itself still runs for people already registered; it is just not sold here.
+// MasterclassBanner.jsx stays on disk because ChallengeBanner and
+// FoodsGuideThanks import its date helpers (etOffsetMs / nextMondayET).
 import ChallengeBanner, { currentChallengeNight } from '../components/ChallengeBanner';
 import { track, resolveHomeVariant, isHomeVariantCohorted } from '../utils/analytics.js';
 
@@ -47,13 +52,13 @@ export default function HomeSplit() {
   // My Life Challenge is running, the homepage promotes THAT and nothing else
   // above the fold. Beyond the Cuff is a competing free offer and it was the
   // first thing DM traffic saw after tapping a button that promised a quiz.
-  // ChallengeBanner reports null once the last night ends, so the masterclass
-  // banner returns on its own and nobody has to remember to switch it back.
+  // ChallengeBanner reports null once the last night ends. There is no longer a
+  // fallback banner behind it — the strip just disappears (see note above).
   const challengeLive = currentChallengeNight() !== null;
 
   return (
     <>
-      {challengeLive ? <ChallengeBanner /> : <MasterclassBanner />}
+      {challengeLive && <ChallengeBanner />}
       {variant === 'b' ? <FoodsGuideLanding showBanner={false} /> : <CheckoutPage />}
     </>
   );

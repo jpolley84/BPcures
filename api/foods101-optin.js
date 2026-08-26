@@ -145,7 +145,9 @@ async function handleOptin(req, res) {
     tags: body.tags,
     utm: body.utm,
     source: body.source,
-    autoMasterclass: body.autoMasterclass !== false, // default ON (Joel's rule)
+    // 2026-08-26 (Joel): default flipped ON -> OFF. Masterclass pulled from all
+    // advertising; no new auto-enrollments.
+    autoMasterclass: body.autoMasterclass === true,
   });
 
   // Both rails died: nothing stored, nothing sent. That is a real failure and

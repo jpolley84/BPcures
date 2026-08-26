@@ -205,7 +205,11 @@ export async function captureFoods101({
   tags,
   utm,
   source,
-  autoMasterclass = true,
+  // 2026-08-26 (Joel): default flipped true -> false. The masterclass is pulled
+  // from ALL advertising, and silently enrolling every new lead into a class we
+  // no longer sell is still promoting it. Existing registrants keep their seat
+  // and their reminders; nobody new is added. Callers can still pass true.
+  autoMasterclass = false,
 } = {}) {
   const emailLower = String(email).trim().toLowerCase();
   const firstName = firstNameOf(name);

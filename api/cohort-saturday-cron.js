@@ -24,7 +24,7 @@ The founding cohort closes tomorrow night at 11:59 PM Eastern. Five slots. One f
 
 Here's everything you get for $1,997 (or 3 × $697):
 
-• 12 weekly 1:1 sessions with me (Mondays 8 PM ET)
+• 12 weekly 1:1 sessions with me (Mondays 7 PM ET)
 • 6 biweekly hormone sessions with Annie Chitate, RN
 • Full supplement + diet audit (live, 60 min) — most members save $200-400/mo
 • Daily schedule audit

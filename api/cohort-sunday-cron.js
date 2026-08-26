@@ -21,7 +21,7 @@ I want to leave you with three things.
 
 ONE — what's in the room when you say yes:
 
-• 12 weekly 1:1 sessions with me, starting Monday at 8 PM ET
+• 12 weekly 1:1 sessions with me, starting Monday at 7 PM ET
 • 6 biweekly hormone sessions with Annie Chitate, RN
 • Full supplement + diet audit (most members save $200-400/mo)
 • Daily schedule audit

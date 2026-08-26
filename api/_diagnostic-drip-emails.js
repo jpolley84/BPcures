@@ -198,7 +198,7 @@ export const diagnosticDripDay7 = {
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
       <li><strong>Twelve weeks. Small-group cohort with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
-      <li><strong>Weekly group Zoom call.</strong> Monday nights 8 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too.</li>
+      <li><strong>Weekly group Zoom call.</strong> Monday nights 7 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too.</li>
       <li><strong>WhatsApp office hours, group thread.</strong> Sun–Thu, 9 AM–5 PM ET. Drop a question, send a photo, ask "should I take this today." I answer same-day in front of the cohort — so everyone benefits from each question.</li>
       <li><strong>Full lab review at the start and again at the finish.</strong> So we know exactly what's moving underneath the numbers.</li>
       <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the 90 days.</li>

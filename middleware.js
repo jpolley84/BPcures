@@ -121,8 +121,9 @@ export default function middleware(request) {
     // before the filesystem, visitor keeps the changemylifechallenge.com URL,
     // and the static file carries its own crawler-correct <head>. Every other
     // path on this host still falls through to the SPA (/payment,
-    // /challenge-confirmed, /challenge). NOTE: this domain has never had a
-    // Sabbath gate, deliberately — do not add one here.
+    // /challenge-confirmed, /challenge). NOTE (2026-08-21, Joel): this domain
+    // NOW CARRIES a Sabbath gate (public/sabbath-gate.js, loaded by the
+    // static page itself), reversing the earlier keep-it-off decision.
     const dest = new URL('/challenge-b/index.html', url);
     return new Response(null, { headers: { 'x-middleware-rewrite': dest.toString() } });
   }

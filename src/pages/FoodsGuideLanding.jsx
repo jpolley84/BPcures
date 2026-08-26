@@ -27,7 +27,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import MasterclassBanner from '../components/MasterclassBanner';
+// 2026-08-26 (Joel): masterclass pulled from all advertising. The banner import
+// is gone; `showBanner` is kept in the prop signature so HomeSplit's call site
+// does not have to change, but it no longer renders anything.
 import { track, identify } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v2';
@@ -222,7 +224,9 @@ export default function FoodsGuideLanding({ showBanner = true }) {
       name: cleanName,
       magnet: 'foods101',
       source: 'foods101-squeeze',
-      autoMasterclass: true,
+      // 2026-08-26 (Joel): was true. Masterclass pulled from all advertising;
+      // no new auto-enrollments. Existing registrants are untouched.
+      autoMasterclass: false,
       tags: buildTags(),
       utm: readUtm(),
     });
@@ -282,7 +286,6 @@ export default function FoodsGuideLanding({ showBanner = true }) {
         .bpq-textlink { color: var(--clay, #B85A36); font-weight: 700; text-decoration: underline; }
       `}</style>
 
-      {showBanner && <MasterclassBanner />}
 
       <div style={shell}>
         {/* Wordmark only. No nav on a squeeze. */}

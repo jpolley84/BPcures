@@ -490,7 +490,11 @@ export default function FoodsGuideThanks() {
           name: ctx.firstName || '',
           magnet: 'foods101',
           source: 'foods101-thanks-retry',
-          autoMasterclass: true,
+          // 2026-08-26 (Joel): was autoMasterclass: true. The masterclass is
+          // pulled from all advertising, and silently enrolling every new lead
+          // into a class we no longer sell is still promoting it. Existing
+          // registrants keep their seat and their reminders; nobody new is added.
+          autoMasterclass: false,
           tags: ['foods101', 'no-quiz'],
         }),
       });
@@ -939,7 +943,14 @@ export default function FoodsGuideThanks() {
           </p>
         </div>
 
-        {/* ===== 9. The masterclass. Free either way. ===== */}
+        {/* ===== 9. The tea. =====
+            2026-08-26 (Joel): this slot used to pitch the free Monday
+            "Beyond the Cuff" masterclass with a live countdown. The masterclass
+            was pulled from ALL advertising on 2026-08-26 — the class still runs
+            for people already registered, it is simply not sold anywhere. The
+            slot now carries the tea, which is the standing offer for this
+            audience. The countdown, the classDate label, and the
+            foods101_masterclass_cta_clicked event went with it. ===== */}
         <div
           ref={masterclassRef}
           style={{
@@ -950,56 +961,23 @@ export default function FoodsGuideThanks() {
             padding: '1.2rem 1.1rem',
           }}
         >
-          <p style={{ ...labelStyle, color: 'var(--sage-soft, #C5CDBF)' }}>Also included, free</p>
+          <p style={{ ...labelStyle, color: 'var(--sage-soft, #C5CDBF)' }}>One more thing</p>
           <h3 style={{ ...serif, fontSize: '1.3rem', lineHeight: 1.22, margin: '0 0 0.5rem' }}>
-            {registered ? 'You are already booked for Monday night.' : 'Save your free seat for Monday night.'}
+            The tea I drink every night.
           </h3>
           <p style={{ fontSize: '0.9rem', lineHeight: 1.6, margin: '0 0 0.9rem', opacity: 0.93 }}>
-            {registered ? (
-              <>
-                Beyond the Cuff runs live every Monday at 7pm Eastern. I saved you a seat when you
-                asked for the guide. Your join link is in a second email from me.
-              </>
-            ) : (
-              <>
-                Beyond the Cuff runs live every Monday at 7pm Eastern. It is free, it is taught by a
-                nurse, and the join link goes straight to your email.
-              </>
-            )}
+            The guide tells you what to eat. This is what I reach for at the end of the day, when the
+            pressure of it is still sitting in my chest and I want something in my hands that is not
+            a snack. Caffeine free, no animal products, and it is the one thing readers write back
+            about most.
           </p>
 
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.9rem',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '0.7rem 0.5rem',
-              background: 'rgba(251, 248, 241, 0.1)',
-              borderRadius: 10,
-              marginBottom: '0.85rem',
-            }}
-            aria-label={`Time until the next class on ${classDate}`}
-          >
-            {countCell(d, 'days')}
-            {countCell(h, 'hrs')}
-            {countCell(m, 'min')}
-            {countCell(s, 'sec')}
-          </div>
-          <p style={{ textAlign: 'center', fontSize: '0.82rem', margin: '0 0 0.9rem', opacity: 0.85 }}>
-            Next class: {classDate}, 7pm Eastern
-          </p>
-
-          {/* /masterclass is a STATIC page (public/masterclass/), excluded from
-              the SPA rewrite in vercel.json. Plain anchor, never a Link. */}
           <a
-            href="/masterclass"
+            href="/tea"
             onClick={() =>
-              track('foods101_masterclass_cta_clicked', {
+              track('foods101_tea_cta_clicked', {
                 ...baseProps(),
                 placement: 'thanks_block',
-                auto_registered: registered,
-                days_out: d,
               })
             }
             style={{
@@ -1018,7 +996,7 @@ export default function FoodsGuideThanks() {
               padding: '0.8rem 1.1rem',
             }}
           >
-            {registered ? 'See the class details' : 'Save my free seat'} <ArrowRight size={17} aria-hidden />
+            See the tea <ArrowRight size={17} aria-hidden />
           </a>
         </div>
 

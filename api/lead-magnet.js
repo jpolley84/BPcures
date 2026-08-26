@@ -576,7 +576,9 @@ export default async function handler(req, res) {
       tags: req.body.tags,
       utm: req.body.utm,
       source: req.body.source,
-      autoMasterclass: req.body.autoMasterclass !== false,
+      // 2026-08-26 (Joel): default flipped ON -> OFF. Masterclass pulled from
+      // all advertising; no new auto-enrollments.
+      autoMasterclass: req.body.autoMasterclass === true,
     });
     const thanks = '/101foods-thanks';
     const thanksFailed = `${thanks}?capture=failed`;

@@ -132,14 +132,15 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     includesWeeklyResetHero: true,
     // 2026-08-17 SWAP (Joel): the $47 Reset Kit upsell is CUT from the $17
-    // buyer's delivery email. Next step is now the live Triangle Masterclass
-    // (free for now, $97 shown struck — never "was $97"). The old $47 Payment
-    // Link (cNieVdeIrca2fDR1sZfnO0k) stays live in Stripe; only this email
-    // changed.
-    upgradeUrl: 'https://bpquiz.com/masterclass',
-    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
-    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
-    upgradeCta: 'Save my free masterclass seat →',
+    // buyer's delivery email. The old $47 Payment Link (cNieVdeIrca2fDR1sZfnO0k)
+    // stays live in Stripe; only this email changed.
+    // 2026-08-26 (Joel): the masterclass replaced that upsell on 08-17 and has now
+    // itself been pulled from ALL advertising. Next step is the tea. The class
+    // still runs for people already registered; it is simply never sold.
+    upgradeUrl: 'https://bpquiz.com/tea',
+    upgradeLabel: 'Your next step: SVUTU Steady, the tea we drink',
+    upgradeDesc: 'You have the kit. This is the part that happens every night. SVUTU Steady is the tea Joel and Annie actually reach for when the day is over and the pressure of it is still sitting in their chest. Caffeine free, no animal products, nothing artificial. It is the one thing readers write back about most. Education only, alongside your doctor.',
+    upgradeCta: 'See the tea →',
   },
   '1-cortisol': {
     product: 'The Cortisol Healing Blueprint, Starter Kit',
@@ -149,13 +150,14 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     includesWeeklyResetHero: true,
     // 2026-08-17 SWAP (Joel): $47 Cortisol Reset Kit upsell CUT from the $17
-    // buyer's delivery email; next step is the live Triangle Masterclass
-    // (free for now, $97 struck). Old $47 link (3cIbJ1asbca2fDR2x3fnO0m)
-    // stays live in Stripe.
-    upgradeUrl: 'https://bpquiz.com/masterclass',
-    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
-    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
-    upgradeCta: 'Save my free masterclass seat →',
+    // buyer's delivery email. Old $47 link (3cIbJ1asbca2fDR2x3fnO0m) stays live
+    // in Stripe.
+    // 2026-08-26 (Joel): masterclass pulled from ALL advertising; next step is
+    // the tea.
+    upgradeUrl: 'https://bpquiz.com/tea',
+    upgradeLabel: 'Your next step: SVUTU Steady, the tea we drink',
+    upgradeDesc: 'You have the kit. This is the part that happens every night. SVUTU Steady is the tea Joel and Annie actually reach for when the day is over and the pressure of it is still sitting in their chest. Caffeine free, no animal products, nothing artificial. It is the one thing readers write back about most. Education only, alongside your doctor.',
+    upgradeCta: 'See the tea →',
   },
   '1-blood-sugar': {
     product: 'Blood Sugar Cures, Starter Kit',
@@ -165,13 +167,14 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     includesWeeklyResetHero: true,
     // 2026-08-17 SWAP (Joel): $47 Blood Sugar Reset Kit upsell CUT from the
-    // $17 buyer's delivery email; next step is the live Triangle Masterclass
+    // $17 buyer's delivery email. 2026-08-26: next step is the tea; masterclass
+    // pulled from ALL advertising
     // (free for now, $97 struck). Old $47 link (3cI28rdEn8XQfDRdbHfnO0o)
     // stays live in Stripe.
-    upgradeUrl: 'https://bpquiz.com/masterclass',
-    upgradeLabel: 'Your next step: the live Triangle Masterclass (<s>$97</s> FREE)',
-    upgradeDesc: 'You have the kit. Now get the full Triangle help live. Joel and Annie, both registered nurses, teach the whole BP Triangle in one live class: Stress, Sugar, and Sodium, with time for your own questions. It is <s>$97</s> FREE, free for now, so save your seat while it is. Education only, alongside your doctor.',
-    upgradeCta: 'Save my free masterclass seat →',
+    upgradeUrl: 'https://bpquiz.com/tea',
+    upgradeLabel: 'Your next step: SVUTU Steady, the tea we drink',
+    upgradeDesc: 'You have the kit. This is the part that happens every night. SVUTU Steady is the tea Joel and Annie actually reach for when the day is over and the pressure of it is still sitting in their chest. Caffeine free, no animal products, nothing artificial. It is the one thing readers write back about most. Education only, alongside your doctor.',
+    upgradeCta: 'See the tea →',
   },
   // DEPRECATED 2026-05-09 streamline pass: the $12 Pressure Triangle Stack
   // bump was retired (panel: pre-checkout decision-points hurt conversion).

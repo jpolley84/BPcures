@@ -56,13 +56,16 @@ function buildAdds(corner) {
   ];
 }
 
-// What the live masterclass covers. Same three corners the kit teaches, but
-// taught live so the buyer can ask their own questions.
-const MASTERCLASS_COVERS = [
-  'Stress, and how it quietly raises your number',
-  'Sugar, and what your meals do to your pressure',
-  'Sodium, and the salt traps hiding in normal food',
-  'Live answers to your own questions, from two RNs',
+// 2026-08-26 (Joel): this downsell used to be the free live Triangle
+// Masterclass. The masterclass was pulled from ALL advertising on 2026-08-26 —
+// the class still runs for people already registered, it is simply never sold
+// or linked anywhere. The downsell is now the tea, which is the standing offer
+// for this audience and, unlike a free class, actually converts to revenue.
+const DOWNSELL_COVERS = [
+  'Caffeine free, so it will not spike the number you are trying to lower',
+  'No animal products, nothing artificial, nothing hiding',
+  'The one thing readers write back about most',
+  'Blended by two RNs for the end of a stressful day',
 ];
 
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
@@ -201,16 +204,20 @@ export default function OtoCompletePage() {
     window.scrollTo(0, 0);
   }
 
-  function acceptMasterclass(placement) {
+  // 2026-08-26: was acceptMasterclass -> /masterclass. Now the tea. The tracked
+  // `offer` value changed from 'masterclass' to 'tea', so any dashboard filtered
+  // on offer='masterclass' will show this downsell going flat from this date —
+  // that is the rename, not a collapse in take rate.
+  function acceptDownsell(placement) {
     // Same event name as the kit accept; offer + placement props separate
-    // downsell take rate from post-accept take rate. /masterclass is a
-    // static page outside the SPA router, so plain navigation.
-    track('oto_accept_clicked', { funnel_version: 'annie-v2', offer: 'masterclass', placement, ...(corner ? { corner } : {}) });
-    window.location.href = '/masterclass';
+    // downsell take rate from post-accept take rate. /tea is a static page
+    // outside the SPA router, so plain navigation.
+    track('oto_accept_clicked', { funnel_version: 'annie-v2', offer: 'tea', placement, ...(corner ? { corner } : {}) });
+    window.location.href = '/tea';
   }
 
-  function declineMasterclass(placement, tier) {
-    track('oto_declined', { funnel_version: 'annie-v2', offer: 'masterclass', placement, ...(corner ? { corner } : {}) });
+  function declineDownsell(placement, tier) {
+    track('oto_declined', { funnel_version: 'annie-v2', offer: 'tea', placement, ...(corner ? { corner } : {}) });
     navigate(welcomeUrl(tier));
   }
 
@@ -218,18 +225,18 @@ export default function OtoCompletePage() {
   const adds = buildAdds(corner);
   const kitLabel = TRIGGER_NAMES[corner] ? triggerName.replace('The ', '') : '';
 
-  // Masterclass card, shared by the downsell and post-accept states. The
-  // post-accept version is the smaller "your seat is free" block.
-  function masterclassCard(placement) {
+  // Tea card, shared by the downsell and post-accept states. The post-accept
+  // version is the smaller block. (Was the masterclass card until 2026-08-26.)
+  function downsellCard(placement) {
     const small = placement === 'post-accept';
     return (
       <div style={CARD}>
         <div style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--sage-deep, #2E3A30)', marginBottom: '0.7rem' }}>
-          {small ? 'Your seat is free. Save it now' : 'What the live class covers'}
+          {small ? 'One more thing worth your time' : 'What is in the tea'}
         </div>
         {!small && (
           <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-            {MASTERCLASS_COVERS.map((item) => (
+            {DOWNSELL_COVERS.map((item) => (
               <li key={item} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', padding: '0.4rem 0', fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)' }}>
                 <Check size={17} aria-hidden style={{ flexShrink: 0, marginTop: 3, color: 'var(--sage-deep, #2E3A30)' }} />
                 <span>{item}</span>
@@ -239,18 +246,11 @@ export default function OtoCompletePage() {
         )}
         {small && (
           <p style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
-            One more thing, and this one is free. The live Triangle Masterclass
-            with Joel and Annie, both registered nurses, walks your whole
-            Triangle: Stress, Sugar, and Sodium, with live answers to your own
-            questions.
+            One more thing. The tea Joel and Annie actually drink at the end of a
+            stressful day. Caffeine free, no animal products, and the one thing
+            readers write back about most.
           </p>
         )}
-        <PriceRows
-          struckLabel="The live Triangle Masterclass"
-          struck="$97"
-          todayLabel="Free for now"
-          today="FREE"
-        />
       </div>
     );
   }
@@ -335,28 +335,27 @@ export default function OtoCompletePage() {
               No problem · One free thing before your downloads
             </p>
             <h1 style={{ ...serif, fontSize: 'clamp(1.6rem, 5.5vw, 2.3rem)', lineHeight: 1.16, textAlign: 'center', margin: '0 0 0.8rem' }}>
-              You have the kit. Now get the{' '}
-              <em style={{ fontStyle: 'italic', color: 'var(--clay, #B85A36)' }}>full Triangle help</em>, live.
+              You have the kit. Now the part that{' '}
+              <em style={{ fontStyle: 'italic', color: 'var(--clay, #B85A36)' }}>happens every night</em>.
             </h1>
             <p style={{ fontSize: '1rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', textAlign: 'center', maxWidth: '52ch', margin: '0 auto 1.4rem' }}>
-              The live Triangle Masterclass with Joel and Annie, both registered
-              nurses, walks the whole BP Triangle with you, Stress, Sugar, and
-              Sodium, and you can ask your own questions in the room. It is free
-              for now, so save your seat while it is.
+              The kit tells you what to do. This is what Joel and Annie reach for
+              when the day is over and the pressure of it is still sitting in
+              their chest. Caffeine free, no animal products, and the one thing
+              readers write back about most.
             </p>
 
-            {masterclassCard('downsell')}
+            {downsellCard('downsell')}
 
-            <button type="button" onClick={() => acceptMasterclass('downsell')} style={CTA_BTN}>
-              Yes, Save My Free Masterclass Seat <ArrowRight size={18} />
+            <button type="button" onClick={() => acceptDownsell('downsell')} style={CTA_BTN}>
+              Show Me The Tea <ArrowRight size={18} />
             </button>
             <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--dark-gray, #555)', margin: '0.55rem 0 1.2rem' }}>
-              No charge. Live class taught by Joel and Annie, RNs. Education only,
-              alongside your doctor.
+              Blended by Joel and Annie, RNs. Education only, alongside your doctor.
             </p>
 
             <p style={{ textAlign: 'center', margin: 0 }}>
-              <button type="button" onClick={() => declineMasterclass('downsell', 'corner')} style={GHOST_LINK}>
+              <button type="button" onClick={() => declineDownsell('downsell', 'corner')} style={GHOST_LINK}>
                 Continue to my downloads
               </button>
             </p>
@@ -376,17 +375,17 @@ export default function OtoCompletePage() {
               corners and the Freedom Finale are waiting on your downloads page.
             </p>
 
-            {masterclassCard('post-accept')}
+            {downsellCard('post-accept')}
 
-            <button type="button" onClick={() => acceptMasterclass('post-accept')} style={CTA_BTN}>
-              Save My Free Masterclass Seat <ArrowRight size={18} />
+            <button type="button" onClick={() => acceptDownsell('post-accept')} style={CTA_BTN}>
+              Show Me The Tea <ArrowRight size={18} />
             </button>
             <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--dark-gray, #555)', margin: '0.55rem 0 1.2rem' }}>
-              No charge. Education only, alongside your doctor.
+              Education only, alongside your doctor.
             </p>
 
             <p style={{ textAlign: 'center', margin: 0 }}>
-              <button type="button" onClick={() => declineMasterclass('post-accept', 'complete')} style={GHOST_LINK}>
+              <button type="button" onClick={() => declineDownsell('post-accept', 'complete')} style={GHOST_LINK}>
                 Continue to my downloads
               </button>
             </p>
