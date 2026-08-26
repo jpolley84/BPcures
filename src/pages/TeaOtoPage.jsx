@@ -155,7 +155,7 @@ export default function TeaOtoPage() {
               padding: '1rem 1.6rem', borderRadius: 999, fontWeight: 700,
             }}
           >
-            Save my free seat <ArrowRight size={18} />
+            Take the quiz <ArrowRight size={18} />
           </a>
         </div>
       </main>
