@@ -8,6 +8,21 @@
 // There", and it is run by JOEL AND ANNIE, not Joel alone. All visible copy
 // says both names.
 //
+// 2026-08-27 (Joel, same day): "the application brings in people with blood
+// pressure, hormones, diabetes, obesity etc so question 1 needs to go ... also
+// everything is about blood pressure. need that changed."
+//
+// The opt-in gate is GONE. It asked her to confirm she was here to get her
+// blood pressure down, which locked out three quarters of the people this form
+// actually receives. Removing it takes the wizard from three steps to two.
+//
+// Consequence, on purpose: the gate was the ONLY path to a COLD score, so
+// nobody scores COLD from the new form any more. That matches Joel's standing
+// 2026-07-22 rule ("just push everyone through to a call if they applied").
+// The COLD thank-you branch is KEPT as a defensive render: the API owns
+// tiering, cached clients may still post `serious` for a while, and an
+// unreachable branch is cheaper than a blank screen if tiering changes again.
+//
 // ⚠️ The INTERNAL identifiers are deliberately NOT renamed: source
 // 'bethere-apply' / 'bethere-partial', tier 'be-there', the bethere_apply_*
 // analytics events and the file name itself. Those are wire-format and
@@ -77,25 +92,29 @@ const SERIF = "'Fraunces', 'Times New Roman', serif";
 
 // ---- Option sets (visible copy: no dashes, no prices) ----
 
-// STEP 1 — the gate. The "No" option is the whole point: making someone
-// declare intent out loud lifts completion and show-rate, and shames the
-// merely curious into self-selecting out. "No" scores COLD (see scoreBeThere
-// in api/coaching-apply.js, kept in exact-string sync with GATE_NO here).
-const GATE_YES = 'Yes. I am ready to do the work to get my numbers down.';
-const GATE_NO = 'No. I will pass for now.';
-const GATE_OPTIONS = [GATE_YES, GATE_NO];
-
 // 2026-08-12 research pass: three new predictive questions (severity, start
 // timeline, decision authority) replace occupation + bare partner status.
 // Budget and timeline predict buying; severity = urgency in this niche; the
 // decision question surfaces the spousal veto before the call instead of
 // after it. Exact strings synced with scoreBeThere in api/coaching-apply.js.
-const SEVERITY_OPTIONS = [
-  'It recently hit 160 or higher, or I had a real scare',
-  'It runs 140 to 159 most days',
-  'It is borderline, or creeping up year after year',
-  'It is managed on medication, and I want a different path forward',
-  'I am not sure. I avoid checking it',
+// 2026-08-27: was a blood-pressure severity ladder (160+, 140 to 159, ...).
+// The Accelerator takes blood pressure, hormones, blood sugar and weight, and a
+// woman applying for hormone help had no honest answer to a BP-number question.
+// This asks what is actually going on instead.
+//
+// ⚠️ Still posts as the `bpNow` field. The name is a wire contract with
+// api/coaching-apply.js and the notify email; the QUESTION changed, not the
+// field. Do not rename it without changing the API in the same commit.
+//
+// "More than one" is deliberately an option and is the highest-value answer on
+// the form: stacked conditions are exactly who this program is for.
+const CONDITION_OPTIONS = [
+  'Blood pressure that will not come down',
+  'Hormones: the mood, the sleep, the chin hair, the changes',
+  'Blood sugar, prediabetes or diabetes',
+  'Weight that will not move no matter what I try',
+  'More than one of these, and they all showed up together',
+  'Something is wrong and I do not know what it is yet',
 ];
 
 const TIMELINE_START_NOW = 'This week';
@@ -138,7 +157,6 @@ const CASHFLOW_OPTIONS = [CASH_YES, CASH_MAYBE, CASH_NO];
 // No fields removed, so scoring (serious / medsAlignment / cashFlow) and the
 // API contract are untouched.
 const STEP_TITLES = [
-  'One honest question',
   'About you',
   'Last few',
 ];
@@ -221,13 +239,10 @@ export default function BeThereApplyPage() {
   const topRef = useRef(null);
 
   const [form, setForm] = useState({
-    // Step 1 — gate
-    serious: '',
-    // Step 2 — you
+    // Step 1 — you, what is going on, and her own case for herself
     firstName: '', lastName: '', email: '', phone: '',
-    // Step 2 — where she is + her own case for herself
     bpNow: '', winning: '',
-    // Step 3 — the four one-tap qualifiers
+    // Step 2 — the four one-tap qualifiers
     startTimeline: '', medsAlignment: '', decisionAuthority: '', cashFlow: '',
   });
 
@@ -245,20 +260,9 @@ export default function BeThereApplyPage() {
     setErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
   };
 
-  // If they tap "No" on the gate, there is no reason to march them through the
-  // rest. Record it and drop straight to the (gentle) cold thank-you.
-  function bailOnGate() {
-    track('bethere_apply_submitted', { fit: 'COLD', gate: 'no' });
-    setResult({ fitTier: 'COLD' });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
   function validateStep(s) {
     const e = {};
     if (s === 1) {
-      if (!form.serious) e.serious = 'Pick one. An honest answer helps us both.';
-    }
-    if (s === 2) {
       if (!form.firstName.trim()) e.firstName = 'Your first name helps Joel and Annie greet you.';
       if (!form.lastName.trim()) e.lastName = 'Last name too, please.';
       if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel and Annie can write back.';
@@ -266,7 +270,7 @@ export default function BeThereApplyPage() {
       if (!form.bpNow) e.bpNow = 'Pick the closest one.';
       if (form.winning.trim().length < 10) e.winning = 'This is the one Joel and Annie read first. A sentence or two is plenty.';
     }
-    if (s === 3) {
+    if (s === 2) {
       if (!form.startTimeline) e.startTimeline = 'Pick one.';
       if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
       if (!form.decisionAuthority) e.decisionAuthority = 'Pick one.';
@@ -286,15 +290,12 @@ export default function BeThereApplyPage() {
     const e = validateStep(step);
     setErrors(e);
     if (Object.keys(e).length > 0) return;
-    // The gate: a "No" ends it here, kindly.
-    if (step === 1 && form.serious === GATE_NO) {
-      bailOnGate();
-      return;
-    }
-    // 2026-08-12: partial capture. By the end of step 2 we hold name, email,
-    // and phone; a step-3 abandon used to lose all of it. Fire-and-forget so
-    // Joel can follow up abandons (KV only, no emails sent server-side).
-    if (step === 2) {
+    // 2026-08-12: partial capture. By the end of the first step we hold name,
+    // email and phone; an abandon on the last step used to lose all of it.
+    // Fire-and-forget so Joel can follow up abandons (KV only, no emails
+    // server-side). 2026-08-27: moved from step 2 to step 1 when the gate was
+    // removed and the wizard went from three steps to two.
+    if (step === 1) {
       try {
         fetch('/api/coaching-apply', {
           method: 'POST',
@@ -320,9 +321,8 @@ export default function BeThereApplyPage() {
   // Local mirror of the server scoring; fallback only if the response has no
   // fitTier. Kept in sync with scoreBeThere in api/coaching-apply.js.
   function localFit() {
-    // 2026-08-12: mirrors scoreBeThere — COLD only on the gate "No" (Joel's
-    // 07-22 rule stands); HOT now requires cash flow AND a near-term start.
-    if (form.serious === GATE_NO) return 'COLD';
+    // Mirrors scoreBeThere. 2026-08-27: the gate is gone, so COLD is no longer
+    // reachable from this form; HOT requires cash flow AND a near-term start.
     if (
       form.cashFlow === CASH_YES &&
       (form.startTimeline === TIMELINE_START_NOW || form.startTimeline === TIMELINE_TWO_WEEKS)
@@ -349,7 +349,6 @@ export default function BeThereApplyPage() {
           lastName: form.lastName.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
-          serious: form.serious,
           bpNow: form.bpNow,
           startTimeline: form.startTimeline,
           decisionAuthority: form.decisionAuthority,
@@ -431,8 +430,8 @@ export default function BeThereApplyPage() {
               </p>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
                 When it lands, <strong>just reply to it.</strong> That reply is how we find a time to
-                talk. One small thing you can do tonight: take your blood pressure before bed, and
-                again tomorrow morning before breakfast. Bring both numbers to the call.
+                talk. One small thing you can do tonight: write down the three symptoms that bother
+                you most, and when each one is at its worst. Bring that to the call.
               </p>
               <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto' }}>
                 Add joel@bpquiz.com to your contacts so it does not slip into spam. That is the only
@@ -502,21 +501,8 @@ export default function BeThereApplyPage() {
           {STEP_TITLES[step - 1]}
         </h1>
 
-        {/* STEP 1 — the gate */}
+        {/* STEP 1 — about you, what is going on, and her own case */}
         {step === 1 && (
-          <>
-            <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              To be clear, you are here because you are serious about getting your blood pressure
-              down naturally, without adding more pills. Is that right?
-            </p>
-            <Field label="" error={errors.serious}>
-              <OptionList name="Serious gate" options={GATE_OPTIONS} value={form.serious} onChange={(v) => set('serious', v)} />
-            </Field>
-          </>
-        )}
-
-        {/* STEP 2 — about you + what you want (merged) */}
-        {step === 2 && (
           <>
             <Field label="First name" error={errors.firstName}>
               <input className="bt-input" type="text" autoComplete="given-name" value={form.firstName} onChange={(e) => set('firstName', e.target.value)} placeholder="First name" />
@@ -530,8 +516,8 @@ export default function BeThereApplyPage() {
             <Field label="Phone" helper="For a text if your application moves forward." error={errors.phone}>
               <input className="bt-input" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="555 555 5555" />
             </Field>
-            <Field label="Where is your blood pressure right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
-              <OptionList name="BP now" options={SEVERITY_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
+            <Field label="What is going on with your health right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
+              <OptionList name="What is going on" options={CONDITION_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
             </Field>
             <Field label="Why do you think you would be a good fit for this?" helper="This is the one Joel and Annie read first. Make your case: where you are, what you have already tried, and what you want to be different." error={errors.winning}>
               <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Tell Joel and Annie why you." />
@@ -539,8 +525,8 @@ export default function BeThereApplyPage() {
           </>
         )}
 
-        {/* STEP 3 — your life + the money question (merged) */}
-        {step === 3 && (
+        {/* STEP 2 — the four one-tap qualifiers */}
+        {step === 2 && (
           <>
             <Field label="If this is a fit, when would you want to start?" error={errors.startTimeline}>
               <OptionList name="Start timeline" options={TIMELINE_OPTIONS} value={form.startTimeline} onChange={(v) => set('startTimeline', v)} />
@@ -556,9 +542,9 @@ export default function BeThereApplyPage() {
               <OptionList name="Decision authority" options={DECISION_OPTIONS} value={form.decisionAuthority} onChange={(v) => set('decisionAuthority', v)} />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              If Joel and Annie could show you a real way to get your numbers down and keep them
-              there, making them the last coaches you ever need for this, would you be willing and
-              able to invest in getting the help to do it?
+              If Joel and Annie could show you a real way to turn this around and keep it that way,
+              making them the last coaches you ever need for this, would you be willing and able to
+              invest in getting the help to do it?
             </p>
             <Field label="" error={errors.cashFlow}>
               <OptionList name="Cash flow" options={CASHFLOW_OPTIONS} value={form.cashFlow} onChange={(v) => set('cashFlow', v)} />

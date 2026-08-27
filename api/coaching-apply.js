@@ -659,13 +659,18 @@ async function handleBeThere(req, res) {
 
   if (!safe(b.name)) return res.status(400).json({ error: 'Name is required' });
   if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
-  // The lean form's required set. `serious` present => new client; old clients
-  // (no `serious`) fall back to the previous required set for a clean cutover.
-  const isNewForm = b.serious !== undefined;
+  // The lean form's required set.
+  //
+  // 2026-08-27: the opt-in gate was removed from the form, so `serious` is NO
+  // LONGER a reliable new-vs-old signal - without this change a current
+  // submission would fall through to the legacy branch and 400 on `story`,
+  // which the form has not sent for over a month. Detect on cashFlow instead
+  // (new form only; the old form used investTier), and keep accepting `serious`
+  // from clients still running cached JS.
+  const isNewForm = b.serious !== undefined || b.cashFlow !== undefined;
   if (isNewForm) {
-    if (!safe(b.serious)) return res.status(400).json({ error: 'The opt-in question is required.' });
     if (safe(b.winning).length < 10) {
-      return res.status(400).json({ error: 'The "what would winning look like" answer is required. Joel reads it first.' });
+      return res.status(400).json({ error: 'The "why you would be a good fit" answer is required. Joel and Annie read it first.' });
     }
     if (!safe(b.medsAlignment)) return res.status(400).json({ error: 'The alongside-your-doctor question is required.' });
     // cashFlow is only required when they passed the gate; a "No" answer bails
@@ -696,7 +701,7 @@ async function handleBeThere(req, res) {
   const application = {
     source: 'bethere-apply',
     tier: 'be-there',
-    program: 'Be There (90-day cohort)',
+    program: 'The Life Change Accelerator',
     name: safe(b.name),
     email: trimmedEmail,
     phone: safe(b.phone),
@@ -755,10 +760,10 @@ async function handleBeThere(req, res) {
         ${wordsBlock('Why she thinks she is a good fit (her words)', application.winning)}
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit</h3>
         <table style="width:100%;border-collapse:collapse;">
-          ${row('Serious (opt-in gate)', application.serious)}
+          ${application.serious ? row('Serious (retired opt-in gate)', application.serious) : ''}
           ${application.whyJoel ? row('Why Joel specifically (retired field)', application.whyJoel) : ''}
           ${application.goal ? row('What she wants (retired field)', application.goal) : ''}
-          ${row('BP right now', application.bpNow)}
+          ${row('What is going on', application.bpNow)}
           ${row('Wants to start', application.startTimeline)}
           ${row('Decision authority', application.decisionAuthority)}
           ${row('Alongside-doctor framing', application.medsAlignment)}
