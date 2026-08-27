@@ -236,6 +236,24 @@ const FB_GROUP_URL = (process.env.CHALLENGE_FB_GROUP_URL || 'https://www.faceboo
 const JOEL_EMAIL = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 
+// ─── NEXT COHORT (what the waitlist is a waitlist FOR) ───────────────
+// 2026-08-27 (Joel): changemylifechallenge.com stopped enrolling and started
+// capturing a waitlist for SEPTEMBER, which is three days and PAID. The
+// confirmation email reads from here, so when the dates and the price are set,
+// fill them in HERE and the email updates itself.
+//
+// Deliberately separate from CHALLENGE above: CHALLENGE still describes the
+// Aug 24-30 cohort whose records are live, and its cohort id must not move
+// while those records are in flight.
+const NEXT_COHORT = {
+  label: 'September',
+  dayCount: 'three days',
+  // Set these when they exist. While datesLabel is null the email promises
+  // dates are coming rather than inventing any.
+  datesLabel: null,
+  priceLabel: null,
+};
+
 const K = {
   reg: (email) => `challenge:${CHALLENGE.cohort}:reg:${email}`,
   members: `challenge:${CHALLENGE.cohort}:members`,
@@ -604,7 +622,7 @@ function interestEmail({ firstName, email, mode }) {
   const isSeatLink = mode === 'seat-link';
   const provenance = isSeatLink
     ? `you asked me to send you the seat link for ${CHALLENGE.name}`
-    : `you asked to hear about the next ${CHALLENGE.name}`;
+    : `you joined the waitlist for the ${NEXT_COHORT.label} ${CHALLENGE.name}`;
 
   const bodyHtml = [
     p(`Hey ${name},`),
@@ -612,13 +630,21 @@ function interestEmail({ firstName, email, mode }) {
       ? p(
           `You tried to grab a seat and checkout was not open. That one is on me, not on you. <strong>Nothing was charged.</strong>`
         )
-      : p(`Registration for the ${esc(CHALLENGE.startLabel)} cohort is closed. Doors shut ${esc(CHALLENGE.closeLabel)} at midnight.`),
+      : p(`<strong>You are on the list.</strong> You are signed up for the ${esc(NEXT_COHORT.label)} cohort of ${esc(CHALLENGE.name)}, which is the next one.`),
     isSeatLink
       ? p(
           `The second the payment link is working I will send it straight to this address. If you would rather not wait, reply to this email and I will sort it out with you directly.`
         )
       : p(
-          `You are on the list. When I put the next challenge on the calendar you will hear from me before anyone else. No charge for being on the list, and no spam.`
+          `It runs ${esc(NEXT_COHORT.dayCount)}, live, with Annie and me. ${
+            NEXT_COHORT.datesLabel
+              ? `Dates: ${esc(NEXT_COHORT.datesLabel)}.`
+              : `The dates are not public yet.`
+          } ${
+            NEXT_COHORT.priceLabel
+              ? `A seat is ${esc(NEXT_COHORT.priceLabel)}.`
+              : `It is a paid cohort and the price is not set yet.`
+          } Nothing has been charged and no seat is booked, because seats are not on sale yet. When they are, you hear it from me before anyone else. No spam.`
         ),
     callout({
       kicker: 'While you wait',
@@ -632,7 +658,11 @@ function interestEmail({ firstName, email, mode }) {
 ${
   isSeatLink
     ? 'You tried to grab a seat and checkout was not open. That one is on me, not on you. Nothing was charged.\n\nThe second the payment link is working I will send it straight to this address. If you would rather not wait, reply to this email and I will sort it out with you directly.'
-    : `Registration for the ${CHALLENGE.startLabel} cohort is closed. Doors shut ${CHALLENGE.closeLabel} at midnight.\n\nYou are on the list. When I put the next challenge on the calendar you will hear from me before anyone else. No charge for being on the list, and no spam.`
+    : `YOU ARE ON THE LIST. You are signed up for the ${NEXT_COHORT.label} cohort of ${CHALLENGE.name}, which is the next one.\n\nIt runs ${NEXT_COHORT.dayCount}, live, with Annie and me. ${
+        NEXT_COHORT.datesLabel ? `Dates: ${NEXT_COHORT.datesLabel}.` : 'The dates are not public yet.'
+      } ${
+        NEXT_COHORT.priceLabel ? `A seat is ${NEXT_COHORT.priceLabel}.` : 'It is a paid cohort and the price is not set yet.'
+      } Nothing has been charged and no seat is booked, because seats are not on sale yet. When they are, you hear it from me before anyone else. No spam.`
 }
 
 While you wait, the free BP quiz takes about two minutes and tells you which of the three pressures is loudest for you: ${SITE_URL}/quiz
@@ -644,7 +674,7 @@ Joel Polley, RN . BraveWorks RN`;
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {
       preheader: isSeatLink
         ? 'Nothing was charged. I will send you the seat link as soon as it is working.'
-        : 'You are on the list for the next challenge.',
+        : `You are on the list for the ${NEXT_COHORT.label} cohort. Nothing charged.`,
     }),
     text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,
@@ -1106,7 +1136,7 @@ async function handleInterest(req, res, mode) {
       subject:
         mode === 'seat-link'
           ? 'Nothing was charged. I will send you the seat link.'
-          : `You are on the list for the next ${CHALLENGE.name}`,
+          : `You are on the list for the ${NEXT_COHORT.label} cohort`,
       html,
       text,
       ...(unsubUrl
