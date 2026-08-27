@@ -2,25 +2,31 @@
 // THE CHANGE MY LIFE CHALLENGE, co-hosted by Annie Chitate, RN (Everyday
 // Nurse Annie) and Joel Polley, RN (the BP Guy).
 //
-// 2026-08-14 REBUILD (Joel, explicit, "overhaul the page to just be a
-// checkout page"). The long sales page is retired. What remains is the short
-// path: what the seven days are, and one button that takes the money.
+// 2026-08-27 (Joel): SEPTEMBER WAITLIST. The Aug 24-30 cohort is closed and
+// the next cohort is THREE days and PAID, so this page no longer enrols anyone
+// into anything. It captures a waitlist.
 //
-//   Day 1 through Day 7, each a title, a two-line description, and the
-//   next-day teaser. The "The shift: from X to Y" lines were removed
-//   2026-08-17 (Joel) to keep the cards tight.
+// ⚠️ READ THIS BEFORE EDITING: this file is NOT what visitors see at
+// changemylifechallenge.com. That domain is rewritten in middleware.js to the
+// STATIC file public/challenge-b/index.html, and bpquiz.com/challenge is
+// redirected away in vercel.json. This page is the SPA fallback and is kept in
+// sync so the two surfaces never contradict each other. Editing this file alone
+// changes nothing for real visitors -- that mistake has been made twice. Change
+// the static file too, or instead.
+//
+//   Day 1 through Day 3, each a title, a two-line description, and the
+//   next-day teaser. Compressed from seven on 2026-08-27.
 //   A live-event proof bridge with real RestoreHER 2026 photos.
-//   "SAVE MY FREE SEAT" -> a name/email/phone registration form.
+//   "JOIN THE SEPTEMBER WAITLIST" -> a name/email/phone capture.
 //
-// 2026-08-17 (Joel, explicit): THE SEAT IS FREE AND STRIPE IS REMOVED.
-// The $97 price and its embedded checkout are gone from this page. $97 now
-// appears once, struck through beside a FREE badge, as the honest regular
-// price of the challenge. Nothing on this page can take money.
+// NO PRICE APPEARS ON THIS PAGE. September is paid but the number is not set,
+// and the struck-$97-beside-FREE block is gone with the free cohort. Nothing
+// here can take money, and nothing here quotes a number.
 //
 // The Stripe product and price still exist in the Stripe account
 // (price_1U4NSeHseZnO3rRZfxzUCAjk, $97 one-time) and are simply unused here.
-// If the challenge ever goes paid again: restore the checkout FIRST, verify a
-// real charge end to end, and only then put a live price back on the page.
+// September IS paid, so when the price is set: restore the checkout FIRST,
+// verify a real charge end to end, and only then put a live price on the page.
 // The old warning on this file still holds and is why the rails were pulled
 // together rather than one at a time: a page that shows one number beside a
 // button that charges another is the one unforgivable bug here.
@@ -41,21 +47,23 @@ import eventSpeakers from '../assets/challenge-event/event-vip.jpg';
 /* ==========================================================================
    CONFIG - change dates and price HERE and nowhere else.
 
-   2026-08-17: THE SEAT IS NOW FREE (Joel, explicit). Stripe is GONE from this
-   page: no loadStripe, no embedded checkout, no payment link, no tier. The
-   seat is captured by a name + email + phone form that posts to
-   /api/challenge-signup with intent 'free-register'.
+   2026-08-27: WAITLIST CAPTURE. Stripe is still GONE from this page: no
+   loadStripe, no embedded checkout, no payment link. Name + email + phone post
+   to /api/challenge-signup with intent 'waitlist', which writes an interest
+   record, dedupes by EMAIL, and sends "you are on the list for the next one"
+   with no Zoom link and no charge.
 
-   Removing the charge rail entirely is deliberate and is what makes the
-   struck-through price safe. The old header warning on this file was that a
-   page saying one number beside a button charging another is the one
-   unforgivable bug here. There is now no button that charges anything, so
-   that class of bug cannot occur. If the challenge ever goes paid again,
-   restore the checkout FIRST and only then put a price back on the page.
+   PRICE was removed entirely. The old warning on this file was that a page
+   showing one number beside a button charging another is the one unforgivable
+   bug here. There is no button that charges anything AND no number quoted, so
+   that class of bug cannot occur. When September's price is set, restore the
+   checkout FIRST and only then put a number back on the page.
 
-   PRICE stays at 97 because it is still the honest regular price of this
-   challenge and it is what is struck through. It is a display value only,
-   nothing reads it to charge.
+   COHORT_ID deliberately still reads 2026-08-24. Do NOT advance it while that
+   cohort's records are live: the id is mirrored in api/challenge-signup.js and
+   ChallengeConfirmedPage.jsx, and moving one without the others drops
+   registrations into the wrong bucket. Waitlist entries land in the separate
+   :interest key, so September signups stay cleanly retrievable regardless.
    ========================================================================== */
 const CHALLENGE = {
   NAME: 'The Change My Life Challenge',
@@ -63,14 +71,11 @@ const CHALLENGE = {
   // api/challenge-signup.js (cohort, startIsoEt, closeMs, labels, nights).
   // Move ALL of them together or registrations land in the wrong bucket.
   COHORT_ID: '2026-08-24',
-  DATE_RANGE_LABEL: 'August 24 to 30, 2026',
-  TIME_LABEL: '6:00pm Central / 7:00pm Eastern',
-  DAY_COUNT: 7,
-  PRICE: 97,
+  DATE_RANGE_LABEL: 'September 2026',
+  TIME_LABEL: 'Dates announced to the waitlist first',
+  DAY_COUNT: 3,
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
-
-const usd = (n) => '$' + Number(n).toLocaleString('en-US');
 
 /* ==========================================================================
    PROOF QUOTE - deliberately EMPTY until a consented one exists.
@@ -162,7 +167,12 @@ const TESTIMONIAL = {
 */
 
 /* ==========================================================================
-   THE SEVEN DAYS - title + subtitle.
+   THE THREE DAYS - title + subtitle.
+   2026-08-27: compressed from seven to three for the September cohort. The
+   three kept are the arc that survives compression: diagnose, the mechanism,
+   and the plan you leave with. Food, sleep, movement and the numbers teaching
+   fold into those three rather than each getting a day.
+   HISTORY of the seven-day sequence this replaced:
    UPDATED 2026-08-16 to the finalized buyer-aligned sequence (same sequence
    now live on the B-test page). Changes from the 08-11 copy this replaced:
      - Day 1 is now "What Happened to My Body?" (the recognition beat) rather
@@ -194,59 +204,23 @@ const DAYS = [
     title: 'Connect the Dots',
     body: [
       'Ten separate problems, or one pattern wearing ten disguises?',
-      'Today all that noise narrows down to your Big 3.',
+      'Today all that noise narrows down to your Big 3, and you find out what your body actually responds to.',
     ],
-    next: 'Tomorrow: we test one of the biggest inputs, food.',
+    next: 'Tomorrow: we put the whole thing together.',
   },
   {
     n: 3,
-    title: 'Stop Guessing With Food',
-    body: [
-      'Not a diet. Not a list of foods you are allowed to eat.',
-      'One simple experiment, and you finally notice what your body does with it.',
-    ],
-    next: 'Tomorrow: we go after something deeper than a diet, getting YOU back.',
-  },
-  {
-    n: 4,
-    title: 'Bring Sexy Back',
-    body: [
-      'Not for somebody else. For you. Rested, confident, at home in your own body again.',
-      'Sometimes it starts with giving yourself permission to sleep.',
-    ],
-    next: 'Tonight matters, because tomorrow we are going to move differently.',
-  },
-  {
-    n: 5,
-    title: 'Move Different',
-    body: [
-      'No punishment. Nothing to prove. You are not 25 and you do not need to be.',
-      'Movement that works with your body, and a way to turn the volume down.',
-    ],
-    next: 'Tomorrow: we take the fear out of the numbers.',
-  },
-  {
-    n: 6,
-    title: 'Know Your Numbers Without Fear',
-    body: [
-      'The cuff tightens. The number lands. Your stomach drops. Not this time.',
-      'You get context instead of panic, and better questions for your doctor.',
-    ],
-    next: 'Tomorrow: we put the entire week together.',
-  },
-  {
-    n: 7,
     title: 'Take Back Your Future',
     body: [
       'Look back at Day 1. What kept showing up? What helped? What surprised you?',
-      'All of it goes into one page you keep: your Personal Life Change Map.',
+      'All of it goes onto one page you keep: your Personal Life Change Map.',
     ],
     next: 'You do not leave with more information. You leave with your next move.',
   },
 ];
 
 export default function ChallengePage() {
-  // Free-seat registration. All three fields are REQUIRED (Joel, explicit
+  // Waitlist capture. All three fields are REQUIRED (Joel, explicit
   // 2026-08-17: "name email phone number mandatory"). Phone is validated on
   // digit count rather than shape so a woman typing (502) 555-1234 or
   // 502.555.1234 or 5025551234 all pass.
@@ -265,7 +239,7 @@ export default function ChallengePage() {
     // kept untouched so existing queries keep working.
     track('chal_page_view', { page: 'spa-challenge', cohort: CHALLENGE.COHORT_ID });
     const prev = document.title;
-    document.title = `${CHALLENGE.NAME} | 7 Days Live with Annie and Joel, RNs`;
+    document.title = `${CHALLENGE.NAME} | September Waitlist, 3 Days Live with Annie and Joel, RNs`;
     return () => { document.title = prev; };
   }, []);
 
@@ -281,14 +255,14 @@ export default function ChallengePage() {
 
     setError('');
     setState('sending');
-    track('chal_free_register_submit', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
+    track('chal_waitlist_submit', { page: 'challenge', cohort: 'september-2026' });
 
     try {
       const res = await fetch('/api/challenge-signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          intent: 'free-register',
+          intent: 'waitlist',
           firstName: cleanName,
           email: cleanEmail,
           phone: phone.trim(),
@@ -297,17 +271,20 @@ export default function ChallengePage() {
       });
       if (!res.ok) throw new Error('save failed');
       setState('done');
-      track('chal_free_register_ok', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
-      // 2026-08-24: chal_signup is the cross-surface signup event (the static
-      // challenge-b page fires the same name from pixels.js). Fired IN
-      // ADDITION to chal_free_register_ok, never instead of it.
-      track('chal_signup', { tier: 'free', page: 'spa-challenge', cohort: CHALLENGE.COHORT_ID });
+      track('chal_waitlist_ok', { page: 'challenge', cohort: 'september-2026' });
+      // 2026-08-27: chal_waitlist is the cross-surface waitlist event (the
+      // static challenge-b page fires the same name). Fired IN ADDITION to
+      // chal_waitlist_ok, never instead of it. Note the old chal_signup /
+      // chal_free_register_* events stop here: this surface no longer enrols
+      // anyone, so a signup dashboard going flat from this date is the rename,
+      // not a conversion collapse.
+      track('chal_waitlist', { page: 'spa-challenge', cohort: 'september-2026' });
     } catch {
       // Never fake a success. If the save did not land she needs to know, and
       // she needs a human address that actually works.
       setState('idle');
       setError(`That did not go through. Please try again, or email ${CHALLENGE.SUPPORT_EMAIL} and we will add you by hand.`);
-      track('chal_free_register_fail', { page: 'challenge', cohort: CHALLENGE.COHORT_ID });
+      track('chal_waitlist_fail', { page: 'challenge', cohort: 'september-2026' });
     }
   }
 
@@ -530,14 +507,14 @@ export default function ChallengePage() {
           Outcome first, name second. The old hero led with the program name,
           which tells a scroller the TOPIC and not what she gets. The headline
           below is deliberately about CLARITY, not a millimetre drop: two RNs
-          cannot promise a blood pressure number in seven days, and a licensed
+          cannot promise a blood pressure number in three days, and a licensed
           nurse promising one is the kind of claim that ends careers. The
           hormone line is the wedge, because it is the thing no other BP page
           in this niche can honestly say. */}
       <section className="hero">
         <div className="wrap">
           <span className="eyebrow">{CHALLENGE.NAME} &middot; Live with Annie and Joel, RNs</span>
-          <h1>Seven Nights to Find Out What Is Actually Driving Your Numbers</h1>
+          <h1>Three Nights to Find Out What Is Actually Driving Your Numbers</h1>
           <p className="tagline">
             For women over 40 whose blood pressure, blood sugar and hormones are all pulling on
             the same rope. You leave with your own pattern on one page, and a plan you can hand
@@ -546,7 +523,7 @@ export default function ChallengePage() {
           <div className="when">
             <span>{CHALLENGE.DATE_RANGE_LABEL}</span>
             <span>{CHALLENGE.TIME_LABEL}</span>
-            <span>Live daily, replays for 48 hours</span>
+            <span>Waitlist open, seats not yet on sale</span>
           </div>
           <img className="banner" src={bannerImg} alt={CHALLENGE.NAME} loading="eager" />
         </div>
@@ -575,7 +552,7 @@ export default function ChallengePage() {
               <div className="l">Blood pressure and hormones taught together, by the two people who live it</div>
             </div>
             <div>
-              <div className="n">7 nights</div>
+              <div className="n">3 nights</div>
               <div className="l">Live and unscripted, not a recorded course you watch alone</div>
             </div>
           </div>
@@ -588,7 +565,7 @@ export default function ChallengePage() {
         </div>
       </section>
 
-      {/* ============ THE SEVEN DAYS ============ */}
+      {/* ============ THE THREE DAYS ============ */}
       <section className="days">
         <div className="wrap">
           <h2>What Happens Each Day</h2>
@@ -619,7 +596,7 @@ export default function ChallengePage() {
             <li><b>&#10003;</b><span>You are already on medication, you are taking it, and your numbers still are not where you want them.</span></li>
             <li><b>&#10003;</b><span>You are doing things you were told to do and you cannot tell which of them is actually working.</span></li>
             <li><b>&#10003;</b><span>You want to work with your doctor, not around them, and you want to walk in prepared.</span></li>
-            <li><b>&#10003;</b><span>You can give one hour a night for seven nights, or watch the replay within 48 hours.</span></li>
+            <li><b>&#10003;</b><span>You can give one hour a night for three nights, or watch the replay within 48 hours.</span></li>
           </ul>
           <div className="notfor">
             <strong>This is not for you if</strong> you want someone to tell you to stop your medication,
@@ -702,7 +679,7 @@ export default function ChallengePage() {
           <p className="punch">A place to actually DO something with what they are learning.</p>
 
           <div className="bridge">
-            <p className="beat">Seven focused days.</p>
+            <p className="beat">Three focused days.</p>
             <p className="beat">Smaller steps.</p>
             <p className="beat">More participation.</p>
             <p>
@@ -716,28 +693,23 @@ export default function ChallengePage() {
         </div>
       </section>
 
-      {/* ============ THE ASK - FREE SEAT REGISTRATION ============
-          2026-08-17: Stripe removed entirely (Joel). No charge rail exists on
-          this page anymore, which is what makes the struck 97 safe to show.
-          Name, email and phone are all required. */}
+      {/* ============ THE ASK - SEPTEMBER WAITLIST ============
+          2026-08-27: no price, no charge rail, no free claim. September is a
+          paid cohort whose price is not set, so this asks only to be on the
+          list. Name, email and phone are all required. */}
       <section className="wrap" id="buy">
         <div className="buybox">
-          <span className="eyebrow" style={{ color: '#e7c9a8' }}>Your seat</span>
+          <span className="eyebrow" style={{ color: '#e7c9a8' }}>The next cohort</span>
           <div className="freeline">
-            <span className="old">{usd(CHALLENGE.PRICE)}</span>
-            <span className="free">FREE</span>
+            <span className="free">September</span>
           </div>
-          <div className="was">All seven days. No card, no catch.</div>
-          {/* 2026-08-17 (Joel): a forward-looking claim, and it binds. It is
-              only true if the next cohort actually charges. If another free
-              challenge is ever run, THIS LINE COMES DOWN FIRST, same rule as
-              the struck price above it. */}
-          <div className="lastfree">This is the last Change My Life Challenge we will run free.</div>
+          <div className="was">Three days, live. The September cohort is paid; joining the list is not.</div>
+          <div className="lastfree">Get the dates and the price before seats open to anyone else.</div>
 
           {state === 'done' ? (
             <div className="regdone" role="status">
-              <strong>You are in.</strong> Watch your email for the Zoom link before we start on{' '}
-              {CHALLENGE.DATE_RANGE_LABEL.split(' to ')[0]}. If it is not there, check spam, then
+              <strong>You are on the list.</strong> We will email you the September dates and the
+              price before we open seats to anyone else. If nothing arrives, check spam, then
               write to {CHALLENGE.SUPPORT_EMAIL}.
             </div>
           ) : (
@@ -767,7 +739,7 @@ export default function ChallengePage() {
                 />
               </div>
               <button type="submit" className="btn" disabled={state === 'sending'}>
-                {state === 'sending' ? 'SAVING YOUR SEAT...' : 'SAVE MY FREE SEAT'}
+                {state === 'sending' ? 'ADDING YOU TO THE LIST...' : 'JOIN THE SEPTEMBER WAITLIST'}
               </button>
             </form>
           )}
@@ -775,12 +747,12 @@ export default function ChallengePage() {
           {error && <p className="regerr" role="alert">{error}</p>}
 
           <div className="btn-sub">
-            All seven days included &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
+            No card to join the list &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
           </div>
         </div>
 
         <div className="assure">
-          <div>Live daily with two RNs</div>
+          <div>Live with two RNs</div>
           <div>Replays for 48 hours</div>
           <div>Works alongside your doctor</div>
         </div>
@@ -800,7 +772,7 @@ export default function ChallengePage() {
       <div className="tail" />
       <div className="sticky">
         <button type="button" onClick={() => goToForm('sticky')}>
-          SAVE MY FREE SEAT
+          JOIN THE SEPTEMBER WAITLIST
         </button>
       </div>
     </div>
