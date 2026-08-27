@@ -19,9 +19,10 @@
 //   A live-event proof bridge with real RestoreHER 2026 photos.
 //   "JOIN THE SEPTEMBER WAITLIST" -> a name/email/phone capture.
 //
-// NO PRICE APPEARS ON THIS PAGE. September is paid but the number is not set,
-// and the struck-$97-beside-FREE block is gone with the free cohort. Nothing
-// here can take money, and nothing here quotes a number.
+// NO MENTION OF MONEY APPEARS ON THIS PAGE, IN EITHER DIRECTION (Joel,
+// 2026-08-27, explicit): not a price, not "paid", not "free", not "no card".
+// The struck-$97-beside-FREE block went with the free cohort. Do not put a
+// number, or the absence of one, back on this page.
 //
 // The Stripe product and price still exist in the Stripe account
 // (price_1U4NSeHseZnO3rRZfxzUCAjk, $97 one-time) and are simply unused here.
@@ -47,7 +48,8 @@ import eventSpeakers from '../assets/challenge-event/event-vip.jpg';
 /* ==========================================================================
    CONFIG - change dates and price HERE and nowhere else.
 
-   2026-08-27: WAITLIST CAPTURE. Stripe is still GONE from this page: no
+   2026-08-27: WAITLIST CAPTURE, and NO money language of any kind in the
+   visible copy. Stripe is still GONE from this page: no
    loadStripe, no embedded checkout, no payment link. Name + email + phone post
    to /api/challenge-signup with intent 'waitlist', which writes an interest
    record, dedupes by EMAIL, and sends "you are on the list for the next one"
@@ -523,7 +525,7 @@ export default function ChallengePage() {
           <div className="when">
             <span>{CHALLENGE.DATE_RANGE_LABEL}</span>
             <span>{CHALLENGE.TIME_LABEL}</span>
-            <span>Waitlist open, seats not yet on sale</span>
+            <span>Waitlist open, seats not yet released</span>
           </div>
           <img className="banner" src={bannerImg} alt={CHALLENGE.NAME} loading="eager" />
         </div>
@@ -703,14 +705,14 @@ export default function ChallengePage() {
           <div className="freeline">
             <span className="free">September</span>
           </div>
-          <div className="was">Three days, live. The September cohort is paid; joining the list is not.</div>
-          <div className="lastfree">Get the dates and the price before seats open to anyone else.</div>
+          <div className="was">Three days, live, with Annie and Joel in September.</div>
+          <div className="lastfree">Get the dates before seats open to anyone else.</div>
 
           {state === 'done' ? (
             <div className="regdone" role="status">
-              <strong>You are on the list.</strong> We will email you the September dates and the
-              price before we open seats to anyone else. If nothing arrives, check spam, then
-              write to {CHALLENGE.SUPPORT_EMAIL}.
+              <strong>You are on the list.</strong> We will email you the September dates before we
+              open seats to anyone else. If nothing arrives, check spam, then write to{' '}
+              {CHALLENGE.SUPPORT_EMAIL}.
             </div>
           ) : (
             <form className="regform" onSubmit={register} noValidate>
@@ -747,7 +749,7 @@ export default function ChallengePage() {
           {error && <p className="regerr" role="alert">{error}</p>}
 
           <div className="btn-sub">
-            No card to join the list &middot; Questions, write to {CHALLENGE.SUPPORT_EMAIL}
+            Questions, write to {CHALLENGE.SUPPORT_EMAIL}
           </div>
         </div>
 

@@ -248,10 +248,14 @@ const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 const NEXT_COHORT = {
   label: 'September',
   dayCount: 'three days',
-  // Set these when they exist. While datesLabel is null the email promises
-  // dates are coming rather than inventing any.
+  // Set when it exists. While datesLabel is null the email says dates are
+  // coming rather than inventing any.
+  //
+  // NO PRICE FIELD, deliberately (Joel, 2026-08-27): the waitlist page mentions
+  // money in NEITHER direction, and the confirmation email must not reintroduce
+  // what the page removed. Do not add a priceLabel here without checking that
+  // decision first.
   datesLabel: null,
-  priceLabel: null,
 };
 
 const K = {
@@ -640,11 +644,7 @@ function interestEmail({ firstName, email, mode }) {
             NEXT_COHORT.datesLabel
               ? `Dates: ${esc(NEXT_COHORT.datesLabel)}.`
               : `The dates are not public yet.`
-          } ${
-            NEXT_COHORT.priceLabel
-              ? `A seat is ${esc(NEXT_COHORT.priceLabel)}.`
-              : `It is a paid cohort and the price is not set yet.`
-          } Nothing has been charged and no seat is booked, because seats are not on sale yet. When they are, you hear it from me before anyone else. No spam.`
+          } No seat is booked yet. When they open, you hear it from me before anyone else. No spam.`
         ),
     callout({
       kicker: 'While you wait',
@@ -660,9 +660,7 @@ ${
     ? 'You tried to grab a seat and checkout was not open. That one is on me, not on you. Nothing was charged.\n\nThe second the payment link is working I will send it straight to this address. If you would rather not wait, reply to this email and I will sort it out with you directly.'
     : `YOU ARE ON THE LIST. You are signed up for the ${NEXT_COHORT.label} cohort of ${CHALLENGE.name}, which is the next one.\n\nIt runs ${NEXT_COHORT.dayCount}, live, with Annie and me. ${
         NEXT_COHORT.datesLabel ? `Dates: ${NEXT_COHORT.datesLabel}.` : 'The dates are not public yet.'
-      } ${
-        NEXT_COHORT.priceLabel ? `A seat is ${NEXT_COHORT.priceLabel}.` : 'It is a paid cohort and the price is not set yet.'
-      } Nothing has been charged and no seat is booked, because seats are not on sale yet. When they are, you hear it from me before anyone else. No spam.`
+      } No seat is booked yet. When they open, you hear it from me before anyone else. No spam.`
 }
 
 While you wait, the free BP quiz takes about two minutes and tells you which of the three pressures is loudest for you: ${SITE_URL}/quiz
@@ -674,7 +672,7 @@ Joel Polley, RN . BraveWorks RN`;
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {
       preheader: isSeatLink
         ? 'Nothing was charged. I will send you the seat link as soon as it is working.'
-        : `You are on the list for the ${NEXT_COHORT.label} cohort. Nothing charged.`,
+        : `You are on the list for the ${NEXT_COHORT.label} cohort.`,
     }),
     text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,
