@@ -14,11 +14,29 @@
 //      abandons the form over a dollar figure; price is handled live on the
 //      call, where Joel closes.
 //
-// We kept exactly two things her lean form does not have, because they are a
-// nurse's non-negotiables, not conversion fat:
-//   - one free-text "what would winning look like" (Joel reads it first), and
-//   - the doctor-alignment gate ("alongside your doctor, never instead"),
-//     which is both a liability screen and a real disqualifier.
+// 2026-08-27 TRIM (Joel): "i need the application presell themselves ... some
+// sort of money question about investment capability, is anyone else involved
+// in your investment decision, i still want it only about 5-7 questions, mostly
+// one click."
+//
+// Cut from ELEVEN questions to SEVEN, six of them one tap:
+//   1. the gate (one click)          5. doctor-alignment (one click)
+//   2. BP right now (one click)      6. investment decision-maker (one click)
+//   3. why you are a good fit (TEXT) 7. investment capability (one click)
+//   4. when you would start (one click)
+//
+// Removed: "why Joel specifically", "what do you want" (both overlapped the
+// new good-fit answer), "how did you find Joel" (the ?src= tag and UTMs already
+// carry attribution), and the optional social handle.
+//
+// The free-text question is now "why do you think you would be a good fit",
+// which makes her argue her own case instead of describing an outcome. It still
+// posts as the `winning` field ON PURPOSE: api/coaching-apply.js hard-requires
+// `winning` and 400s without it, so renaming the field would break every
+// submission. The label changed, the wire format did not.
+//
+// The doctor-alignment gate stays. It is a liability screen for an RN and a
+// real disqualifier, not conversion fat.
 //
 // The previous 8-step clinical intake (readings, meds count, sleep, sodium
 // corner, etc.) is retired from the form. That depth belongs on the fit call,
@@ -52,24 +70,6 @@ const GATE_YES = 'Yes. I am ready to do the work to get my numbers down.';
 const GATE_NO = 'No. I will pass for now.';
 const GATE_OPTIONS = [GATE_YES, GATE_NO];
 
-// STEP 3 — "why him specifically" makes them argue Joel's value to themselves.
-const WHY_JOEL_OPTIONS = [
-  'He is a real ICU and ER nurse, not just a coach',
-  'He treats the root cause, not just the number',
-  'He works alongside my doctor, not against him',
-  'I trust his approach after following his videos',
-  'I am out of other options and need this to work',
-  'All of the above',
-];
-
-const GOAL_OPTIONS = [
-  'Get my blood pressure down naturally',
-  'Lower or come off medications, with my doctor',
-  'Understand what is actually driving my numbers',
-  'Feel in control of my health again',
-  'I am not sure yet, I just know something has to change',
-];
-
 // 2026-08-12 research pass: three new predictive questions (severity, start
 // timeline, decision authority) replace occupation + bare partner status.
 // Budget and timeline predict buying; severity = urgency in this niche; the
@@ -92,9 +92,14 @@ const TIMELINE_OPTIONS = [
   'Just exploring for now',
 ];
 
+// 2026-08-27 (Joel): reframed from "part of this decision" to the INVESTMENT
+// decision, which is the stall this question exists to surface before the call.
+// ⚠️ The third string is EXACT-SYNCED with BETHERE_SPOUSE_NOT_ASKED in
+// api/coaching-apply.js, where it raises the "spouse not consulted yet" flag on
+// Joel's notify email. Do not reword it without changing the API constant too.
 const DECISION_OPTIONS = [
-  'No, this is my call',
-  'My spouse or partner, and they support me working on my health',
+  'No, this one is mine to make',
+  'My spouse or partner, and they are already on board with me investing in this',
   'My spouse or partner, and I have not talked to them about it yet',
 ];
 
@@ -102,11 +107,6 @@ const DECISION_OPTIONS = [
 // an RN and a genuine disqualifier. The middle option scores COLD.
 const OFF_MEDS = 'I was hoping to come off my medications without my doctor';
 const ALIGN_OPTIONS = ['Yes, that is exactly what I want', OFF_MEDS, 'I am not sure'];
-
-// STEP 5 — discovery + the money question.
-// 2026-08-12: 'The masterclass' added — Joel now routes masterclass attendees
-// here and needs the attribution. Kept first so warm traffic sees it fast.
-const FOUND_OPTIONS = ['The masterclass', 'TikTok', 'Instagram', 'Facebook', 'YouTube', 'A friend', 'Other'];
 
 // The money question, her way: cash-flow buckets, NO price shown. The third
 // option is the sole affordability disqualifier and scores COLD; the first
@@ -125,7 +125,7 @@ const CASHFLOW_OPTIONS = [CASH_YES, CASH_MAYBE, CASH_NO];
 const STEP_TITLES = [
   'One honest question',
   'About you',
-  'Your life right now',
+  'Last few',
 ];
 const TOTAL_STEPS = STEP_TITLES.length;
 
@@ -210,12 +210,10 @@ export default function BeThereApplyPage() {
     serious: '',
     // Step 2 — you
     firstName: '', lastName: '', email: '', phone: '',
-    // Step 3 — what you want
-    whyJoel: '', goal: '',
-    // Step 4 — your life
-    bpNow: '', startTimeline: '', decisionAuthority: '', winning: '', medsAlignment: '',
-    // Step 5 — last things
-    foundJoel: '', socialHandle: '', cashFlow: '',
+    // Step 2 — where she is + her own case for herself
+    bpNow: '', winning: '',
+    // Step 3 — the four one-tap qualifiers
+    startTimeline: '', medsAlignment: '', decisionAuthority: '', cashFlow: '',
   });
 
   useEffect(() => {
@@ -245,16 +243,13 @@ export default function BeThereApplyPage() {
       if (!form.lastName.trim()) e.lastName = 'Last name too, please.';
       if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel can write back.';
       if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'A real phone number, in case your application moves forward.';
-      if (!form.whyJoel) e.whyJoel = 'Pick the closest one.';
-      if (!form.goal) e.goal = 'Pick one.';
+      if (!form.bpNow) e.bpNow = 'Pick the closest one.';
+      if (form.winning.trim().length < 10) e.winning = 'This is the one Joel reads first. A sentence or two is plenty.';
     }
     if (s === 3) {
-      if (!form.bpNow) e.bpNow = 'Pick the closest one.';
       if (!form.startTimeline) e.startTimeline = 'Pick one.';
-      if (!form.decisionAuthority) e.decisionAuthority = 'Pick one.';
-      if (form.winning.trim().length < 10) e.winning = 'This is the most important answer. A sentence or two is plenty.';
       if (!form.medsAlignment) e.medsAlignment = 'Pick one.';
-      if (!form.foundJoel) e.foundJoel = 'Pick one.';
+      if (!form.decisionAuthority) e.decisionAuthority = 'Pick one.';
       if (!form.cashFlow) e.cashFlow = 'Pick the honest one. It only decides the next step, not your worth.';
     }
     return e;
@@ -291,8 +286,7 @@ export default function BeThereApplyPage() {
             lastName: form.lastName.trim(),
             email: form.email.trim(),
             phone: form.phone.trim(),
-            whyJoel: form.whyJoel,
-            goal: form.goal,
+            bpNow: form.bpNow,
           }),
         }).catch(() => {});
       } catch { /* never block the wizard */ }
@@ -336,15 +330,14 @@ export default function BeThereApplyPage() {
           email: form.email.trim(),
           phone: form.phone.trim(),
           serious: form.serious,
-          whyJoel: form.whyJoel,
-          goal: form.goal,
           bpNow: form.bpNow,
           startTimeline: form.startTimeline,
           decisionAuthority: form.decisionAuthority,
+          // Posts as `winning` on purpose: the API hard-requires this field.
+          // The QUESTION is now "why would you be a good fit", not "what does
+          // winning look like". See the header note.
           winning: form.winning.trim(),
           medsAlignment: form.medsAlignment,
-          foundJoel: form.foundJoel,
-          socialHandle: form.socialHandle.trim(),
           cashFlow: form.cashFlow,
         }),
       });
@@ -516,11 +509,11 @@ export default function BeThereApplyPage() {
             <Field label="Phone" helper="For a text if your application moves forward." error={errors.phone}>
               <input className="bt-input" type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} placeholder="555 555 5555" />
             </Field>
-            <Field label="What makes you want to work with Joel specifically?" error={errors.whyJoel}>
-              <OptionList name="Why Joel" options={WHY_JOEL_OPTIONS} value={form.whyJoel} onChange={(v) => set('whyJoel', v)} />
+            <Field label="Where is your blood pressure right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
+              <OptionList name="BP now" options={SEVERITY_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
             </Field>
-            <Field label="Which of these best describes what you want?" error={errors.goal}>
-              <OptionList name="Goal" options={GOAL_OPTIONS} value={form.goal} onChange={(v) => set('goal', v)} />
+            <Field label="Why do you think you would be a good fit for this?" helper="This is the one Joel reads first. Make your case: where you are, what you have already tried, and what you want to be different." error={errors.winning}>
+              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Tell Joel why you." />
             </Field>
           </>
         )}
@@ -528,17 +521,8 @@ export default function BeThereApplyPage() {
         {/* STEP 3 — your life + the money question (merged) */}
         {step === 3 && (
           <>
-            <Field label="Where is your blood pressure right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
-              <OptionList name="BP now" options={SEVERITY_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
-            </Field>
             <Field label="If this is a fit, when would you want to start?" error={errors.startTimeline}>
               <OptionList name="Start timeline" options={TIMELINE_OPTIONS} value={form.startTimeline} onChange={(v) => set('startTimeline', v)} />
-            </Field>
-            <Field label="Is there anyone else who would need to be part of this decision?" error={errors.decisionAuthority}>
-              <OptionList name="Decision authority" options={DECISION_OPTIONS} value={form.decisionAuthority} onChange={(v) => set('decisionAuthority', v)} />
-            </Field>
-            <Field label="If the next 12 weeks went perfectly, what would winning look like for you?" helper="This is the most important answer on the whole application. Paint the real picture. Joel reads it first." error={errors.winning}>
-              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Paint the picture for Joel." />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem', padding: '1rem 1.1rem', background: '#FFFFFF', border: '1px solid var(--sage-soft, #C5CDBF)', borderRadius: 12 }}>
               Joel coaches alongside your doctor, never instead of them. Nobody here will ever tell
@@ -547,11 +531,8 @@ export default function BeThereApplyPage() {
             <Field label="Does that sit right with you?" error={errors.medsAlignment}>
               <OptionList name="Meds alignment" options={ALIGN_OPTIONS} value={form.medsAlignment} onChange={(v) => set('medsAlignment', v)} />
             </Field>
-            <Field label="How did you find Joel?" error={errors.foundJoel}>
-              <OptionList name="How found Joel" options={FOUND_OPTIONS} value={form.foundJoel} onChange={(v) => set('foundJoel', v)} />
-            </Field>
-            <Field label="Your Instagram handle or Facebook name" optional helper="So Joel can put a face to your story before you talk.">
-              <input className="bt-input" type="text" value={form.socialHandle} onChange={(e) => set('socialHandle', e.target.value)} placeholder="@yourhandle" />
+            <Field label="Is anyone else part of the decision to invest in this?" error={errors.decisionAuthority}>
+              <OptionList name="Decision authority" options={DECISION_OPTIONS} value={form.decisionAuthority} onChange={(v) => set('decisionAuthority', v)} />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
               If Joel could show you a real way to get your numbers down and keep them there, making

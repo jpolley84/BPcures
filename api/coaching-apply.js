@@ -752,12 +752,12 @@ async function handleBeThere(req, res) {
       </div>
       <div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>
-        ${wordsBlock('What winning looks like (90 days)', application.winning)}
+        ${wordsBlock('Why she thinks she is a good fit (her words)', application.winning)}
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit</h3>
         <table style="width:100%;border-collapse:collapse;">
           ${row('Serious (opt-in gate)', application.serious)}
-          ${row('Why Joel specifically', application.whyJoel)}
-          ${row('What she wants', application.goal)}
+          ${application.whyJoel ? row('Why Joel specifically (retired field)', application.whyJoel) : ''}
+          ${application.goal ? row('What she wants (retired field)', application.goal) : ''}
           ${row('BP right now', application.bpNow)}
           ${row('Wants to start', application.startTimeline)}
           ${row('Decision authority', application.decisionAuthority)}
@@ -773,8 +773,8 @@ async function handleBeThere(req, res) {
         <table style="width:100%;border-collapse:collapse;">
           ${row('Cash flow (no price shown)', application.cashFlow)}
           ${row('Source tag', application.src || 'none')}
-          ${row('Found Joel via', application.foundJoel)}
-          ${row('Social handle (vet before call)', application.socialHandle)}
+          ${application.foundJoel ? row('Found Joel via (retired field)', application.foundJoel) : ''}
+          ${application.socialHandle ? row('Social handle (retired field)', application.socialHandle) : ''}
         </table>
         ${(application.story || application.pictureValue || application.investTier) ? `
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#9C9485;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Legacy fields (old form)</h3>
