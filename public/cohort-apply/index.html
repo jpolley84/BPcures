@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply | The Life Change Accelerator</title>
+<meta name="description" content="The exclusive application for the next 12-week Life Change Accelerator cohort with Joel and Annie, RNs. For Change My Life Challenge attendees.">
+<meta name="robots" content="noindex">
+<!--
+  /next — the challenge-cohort application (2026-08-26).
+  Announced OUT LOUD on the Thursday challenge Zoom. Warm traffic only.
+  Same visual family as public/challenge-b. Posts to /api/coaching-apply
+  with source: 'cohort-apply'. No prices on this page on purpose: sift on
+  commitment here, sort on Joel/Annie's call.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,800&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F9E8E1; --cream-2:#F2D9CE; --white:#FFFFFF;
+    --ink:#221F1C; --ink-soft:#5A5049;
+    --coral:#7D2A3B; --coral-dark:#5E1F2C;
+    --forest:#33503C; --rosegold:#C08A7A; --rosegold-dark:#9C6A5B;
+    --gold:#D4AF37; --line:rgba(34,31,28,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Manrope',sans-serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px;}
+  header{background:var(--white);text-align:center;padding:48px 0 36px;position:relative;}
+  header::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,88%);height:1px;background:linear-gradient(90deg,transparent,var(--rosegold),transparent);}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--forest);margin-bottom:16px;}
+  h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1.12;margin:0 0 18px;letter-spacing:-.01em;}
+  h1 span{color:var(--coral);}
+  .divider{width:56px;height:4px;background:var(--gold);border-radius:2px;margin:0 auto 20px;}
+  .intro{color:var(--ink-soft);font-size:17px;max-width:540px;margin:0 auto;}
+  .intro strong{color:var(--ink);}
+  .scarcity{font-style:italic;font-size:15px;color:var(--ink-soft);margin:14px auto 0;max-width:520px;}
+  main{padding:36px 0 72px;}
+  form{background:var(--white);border:1px solid var(--line);border-top:4px solid var(--rosegold);border-radius:22px;padding:28px 22px 30px;box-shadow:0 24px 50px -22px rgba(36,58,43,0.2);}
+  label{display:block;font-weight:700;font-size:15px;margin:22px 0 7px;}
+  label:first-of-type{margin-top:0;}
+  label .hint{display:block;font-weight:400;font-size:13.5px;color:var(--ink-soft);margin-top:2px;}
+  input,textarea,select{width:100%;font-family:'Manrope',sans-serif;font-size:16px;color:var(--ink);background:#FFFDFB;border:1.5px solid var(--line);border-radius:12px;padding:14px 14px;outline:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--rosegold-dark);}
+  textarea{min-height:110px;resize:vertical;}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A5049' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;}
+  .invest-note{margin:26px 0 16px;padding:14px 16px;background:var(--cream-2);border-radius:12px;font-size:14.5px;color:var(--ink);line-height:1.55;}
+  button{display:block;width:100%;background:var(--coral);color:#fff;font-family:'Manrope',sans-serif;font-weight:800;font-size:18px;border:none;border-radius:12px;padding:19px 20px;cursor:pointer;box-shadow:0 10px 24px -8px rgba(125,42,59,0.4);transition:background .15s ease,transform .15s ease;}
+  button:hover{background:var(--coral-dark);transform:translateY(-1px);}
+  button:disabled{opacity:.6;cursor:default;transform:none;}
+  .btn-sub{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:10px;}
+  .error{display:none;margin-top:14px;padding:12px 14px;background:#FBEAEA;border:1px solid #E3B4B4;border-radius:10px;color:#7D2A3B;font-size:14.5px;}
+  .thanks{display:none;background:var(--white);border:1px solid var(--line);border-top:4px solid var(--forest);border-radius:22px;padding:34px 24px;text-align:center;box-shadow:0 24px 50px -22px rgba(36,58,43,0.2);}
+  .thanks h2{font-family:'Fraunces',serif;font-weight:800;font-size:28px;margin:0 0 12px;}
+  .thanks p{color:var(--ink-soft);margin:0 0 12px;}
+  footer{text-align:center;font-size:12.5px;color:var(--ink-soft);padding:0 20px 40px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">For Change My Life Challenge attendees</div>
+    <h1>You found your cannot-fail future this week. <span>This is the door.</span></h1>
+    <div class="divider"></div>
+    <p class="intro">
+      <strong>The Life Change Accelerator</strong> is our flagship 12-week program:
+      live weekly coaching with Joel and Annie, both registered nurses, your own
+      personalized 90-day plan, and the full Triangle and hormone work you tasted
+      this week — done with you, not just explained to you. It is for women who
+      are done collecting information and ready to be walked through the change.
+    </p>
+    <p class="scarcity">We take a small group because every member gets 1:1 attention. Applications are reviewed personally.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <form id="apply-form" novalidate>
+      <label for="firstName">First name</label>
+      <input id="firstName" name="firstName" type="text" autocomplete="given-name" required>
+
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
+
+      <label for="phone">Phone
+        <span class="hint">If you are selected, Joel or Annie will call you personally.</span>
+      </label>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required>
+
+      <label for="cannotFail">What would you do if you knew you could not fail?
+        <span class="hint">You wrote this answer in your heart on Day 3. Put it here in your own words.</span>
+      </label>
+      <textarea id="cannotFail" name="cannotFail" required></textarea>
+
+      <label for="obstacle">What is the number one thing standing between you and that?</label>
+      <textarea id="obstacle" name="obstacle" required></textarea>
+
+      <label for="commitment">How ready are you to actually do this for 12 weeks?</label>
+      <select id="commitment" name="commitment" required>
+        <option value="" selected disabled>Choose 1 to 10</option>
+        <option value="10">10 — Nothing is stopping me</option>
+        <option value="9">9</option>
+        <option value="8">8</option>
+        <option value="7">7</option>
+        <option value="6">6</option>
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1 — Just curious for now</option>
+      </select>
+
+      <label for="whyYou">Why should Joel and Annie choose YOU for one of these spots?</label>
+      <textarea id="whyYou" name="whyYou" required></textarea>
+
+      <p class="invest-note">This is our flagship 12-week program. It is a real investment in yourself — if selected, Joel or Annie will talk numbers with you personally on a short call.</p>
+
+      <button type="submit" id="submit-btn">Submit my application</button>
+      <p class="btn-sub">Nothing is charged. Applying starts a conversation, not a payment.</p>
+      <div class="error" id="form-error"></div>
+    </form>
+
+    <div class="thanks" id="thanks">
+      <h2>Your application is in.</h2>
+      <p>Joel and Annie review every application personally. You will hear from us within 48 hours, usually sooner.</p>
+      <p>Check your email — a confirmation is on its way to you now.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Everything we do is education-based nursing consultation, not medical advice.<br>
+  Your prescriber stays in charge of your medications.
+</footer>
+
+<script src="/pixels.js"></script>
+<script>
+(function () {
+  'use strict';
+  function ph(event, props) {
+    try { if (window.posthog && window.posthog.capture) window.posthog.capture(event, props || {}); } catch (e) {}
+  }
+  ph('cohort_apply_view');
+
+  var form = document.getElementById('apply-form');
+  var btn = document.getElementById('submit-btn');
+  var errBox = document.getElementById('form-error');
+
+  function fail(msg) {
+    errBox.textContent = msg;
+    errBox.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit my application';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errBox.style.display = 'none';
+
+    var v = function (id) { return (document.getElementById(id).value || '').trim(); };
+    var payload = {
+      source: 'cohort-apply',
+      firstName: v('firstName'),
+      email: v('email'),
+      phone: v('phone'),
+      cannotFail: v('cannotFail'),
+      obstacle: v('obstacle'),
+      commitment: v('commitment'),
+      whyYou: v('whyYou')
+    };
+
+    if (!payload.firstName) return fail('Please tell us your first name.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) return fail('Please enter a valid email address.');
+    var digits = payload.phone.replace(/\D/g, '');
+    if (digits.length < 7 || digits.length > 15) return fail('Please enter a valid phone number. If you are selected, Joel or Annie will call you personally.');
+    if (payload.cannotFail.length < 10) return fail('The "could not fail" answer is the heart of this application. Give it a real sentence or two.');
+    if (!payload.obstacle) return fail('Please tell us the number one thing standing in your way.');
+    if (!payload.commitment) return fail('Please choose your 1 to 10 readiness rating.');
+    if (!payload.whyYou) return fail('Please tell Joel and Annie why they should choose you.');
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    fetch('/api/coaching-apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (data) {
+        if (!r.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+        try { if (window.posthog && window.posthog.identify) window.posthog.identify(payload.email.toLowerCase()); } catch (e) {}
+        ph('cohort_apply_submit', { commitment: payload.commitment });
+        form.style.display = 'none';
+        document.getElementById('thanks').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }).catch(function (err) {
+      fail(err.message || 'Something went wrong. Please try again, or email braveworksrn@gmail.com.');
+    });
+  });
+})();
+</script>
+</body>
+</html>

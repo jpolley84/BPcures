@@ -9,7 +9,15 @@
       "destination": "/api/go?product=:product"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|coaching/|masterclass/|masterclass$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
+      "source": "/next",
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/next/",
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
   ],

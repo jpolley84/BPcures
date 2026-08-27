@@ -23,6 +23,8 @@
 import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
+import { normalizePhone } from './_phone.js';
+import { captureEvent } from './_posthog.js';
 
 let _resend = null;
 function getResend() {
@@ -147,6 +149,13 @@ export default async function handler(req, res) {
   // allin-* tiers in create-embedded-checkout.js are untouched so existing
   // payment links and the active $367 bi-weekly subscriber keep working.
   if (req.body.source === 'allin-apply') return handleAllIn(req, res);
+
+  // 2026-08-26: sixth payload shape — the challenge-cohort application at
+  // /next (public/cohort-apply/index.html), source: 'cohort-apply'. Offered
+  // out loud to warm challenge attendees on the Thursday Zoom. Short form,
+  // sift-sort-screen: commitment self-rating + "why choose you" do the
+  // sifting, the price conversation happens on Joel/Annie's call.
+  if (req.body.source === 'cohort-apply') return handleCohort(req, res);
 
   // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
   // closed; this endpoint is now serving Cohort 2 applications (the
@@ -1150,6 +1159,202 @@ async function handleAllIn(req, res) {
     if (ackResult.error) console.error('coaching-apply(allin): applicant ack rejected by Resend', JSON.stringify(ackResult.error));
   } catch (err) {
     console.error('coaching-apply(allin): applicant ack failed', err.message);
+  }
+
+  return res.status(200).json({ ok: true, submittedAt, fitTier });
+}
+
+// ---------------------------------------------------------------------------
+// 2026-08-26: challenge-cohort application (source: 'cohort-apply'), served
+// from /next (public/cohort-apply/index.html). The EXCLUSIVE application for
+// the next 12-week Life Change Accelerator cohort ($1,997 / $197 deposit —
+// numbers are NEVER shown on the page or in these emails; Joel or Annie
+// talks numbers personally on the call, which is how the last cohort closed).
+//
+// Fields (7): firstName · email · phone (REQUIRED, site-standard _phone.js
+// shape) · cannotFail (Day 3 anchor: "what would you do if you knew you could
+// not fail") · obstacle ("the number one thing standing between you and
+// that") · commitment (1-10 self-rating) · whyYou (Russell's screen: "why
+// should Joel and Annie choose YOU").
+//
+// Fit scoring (exact rules):
+//   HOT   commitment >= 8 AND whyYou non-empty
+//   COLD  commitment <= 4
+//   WARM  everyone else
+// whyYou is required by validation, so in practice HOT = commitment >= 8;
+// the non-empty check stays anyway so a stale/direct-POST client can never
+// be scored HOT on a blank screen answer.
+function scoreCohort(commitmentNum, whyYou) {
+  if (commitmentNum >= 8 && whyYou.length > 0) return 'HOT';
+  if (commitmentNum <= 4) return 'COLD';
+  return 'WARM';
+}
+
+async function handleCohort(req, res) {
+  const b = req.body;
+  const safe = (v) => (typeof v === 'string' ? v.trim() : '');
+
+  if (!safe(b.firstName)) return res.status(400).json({ error: 'First name is required' });
+  if (!looksLikeValidEmail(b.email)) return res.status(400).json({ error: 'Valid email is required' });
+  const phone = normalizePhone(b.phone);
+  if (!phone) return res.status(400).json({ error: 'A phone number is required. Joel or Annie will call you personally if you are selected.' });
+  if (safe(b.cannotFail).length < 10) {
+    return res.status(400).json({ error: 'The "could not fail" answer is required. Joel and Annie read it first.' });
+  }
+  if (!safe(b.obstacle)) return res.status(400).json({ error: 'The "number one thing standing between you" answer is required.' });
+  const commitmentNum = parseInt(String(b.commitment || '').replace(/\D/g, ''), 10);
+  if (!Number.isFinite(commitmentNum) || commitmentNum < 1 || commitmentNum > 10) {
+    return res.status(400).json({ error: 'The 1-10 readiness rating is required.' });
+  }
+  if (!safe(b.whyYou)) return res.status(400).json({ error: 'The "why should we choose you" answer is required. It is how spots are decided.' });
+
+  const trimmedEmail = b.email.trim().toLowerCase();
+  const submittedAt = new Date().toISOString();
+  const fitTier = scoreCohort(commitmentNum, safe(b.whyYou));
+
+  const application = {
+    source: 'cohort-apply',
+    tier: 'cohort',
+    program: 'The Life Change Accelerator (12-week cohort, challenge invite)',
+    name: safe(b.firstName),
+    email: trimmedEmail,
+    phone,
+    cannotFail: safe(b.cannotFail),
+    obstacle: safe(b.obstacle),
+    commitment: commitmentNum,
+    whyYou: safe(b.whyYou),
+    fitTier,
+    submittedAt,
+    status: 'pending-review',
+  };
+
+  // 1. Notify Joel FIRST — mandatory, same P0-3 ordering + 500-retry contract
+  // as every other path in this file.
+  try {
+    const tierColor = fitTier === 'HOT' ? '#3F5A3C' : fitTier === 'WARM' ? '#A88A4A' : '#9C9485';
+    const row = (label, value) =>
+      '<tr><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#9C9485;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;width:200px;vertical-align:top;">' +
+      escapeHtml(label) +
+      '</td><td style="padding:8px 12px;border-bottom:1px solid #EFE9DA;color:#2C2A26;font-size:13px;line-height:1.55;white-space:pre-wrap;">' +
+      (escapeHtml(value) || '<em style="color:#9C9485;">(blank)</em>') +
+      '</td></tr>';
+    const wordsBlock = (label, text) =>
+      '<div style="margin:0 0 14px;"><div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;margin:0 0 4px;">' +
+      escapeHtml(label) +
+      '</div><div style="background:#FFFFFF;border:1px solid #E6DECE;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2C2A26;white-space:pre-wrap;">' +
+      escapeHtml(text) +
+      '</div></div>';
+
+    const subject = '[APPLICATION] Life Change Accelerator (challenge cohort) - ' + application.name + ' [' + fitTier + ' ' + commitmentNum + '/10]';
+    const html =
+      '<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">' +
+      '<div style="background:' + tierColor + ';color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">' +
+      '<div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Cohort application (/next) &middot; fit ' + fitTier + ' &middot; readiness ' + commitmentNum + '/10</div>' +
+      '<div style="font-size:22px;font-weight:700;margin-top:6px;">' + escapeHtml(application.name) + '</div>' +
+      '<div style="font-size:13px;opacity:0.85;">' + escapeHtml(application.email) + ' &middot; ' + escapeHtml(application.phone) + '</div>' +
+      '</div>' +
+      '<div style="background:#FFFDF7;border:1px solid #E6DECE;border-top:none;border-radius:0 0 10px 10px;padding:16px 20px;">' +
+      '<h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#B85A36;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:0 0 10px;">Her words</h3>' +
+      wordsBlock('If she knew she could not fail (Day 3 anchor)', application.cannotFail) +
+      wordsBlock('The number one thing in the way', application.obstacle) +
+      wordsBlock('Why choose her for a spot', application.whyYou) +
+      '<h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Fit</h3>' +
+      '<table style="width:100%;border-collapse:collapse;">' +
+      row('Readiness self-rating', commitmentNum + ' / 10') +
+      row('Fit tier', fitTier) +
+      '</table>' +
+      '<p style="margin:24px 0 0;font-size:12px;color:#9C9485;">Warm challenge attendee (announced on the Thursday Zoom). No price was shown on the page. Reply directly to ' + escapeHtml(application.email) + ' or call ' + escapeHtml(application.phone) + '. Auto-ack with the 48-hour promise already sent.</p>' +
+      '</div></body></html>';
+
+    const sendResult = await getResend().emails.send({
+      from: FROM,
+      to: NOTIFY_EMAIL,
+      replyTo: trimmedEmail,
+      subject,
+      html,
+    });
+    if (sendResult.error) throw new Error('Resend rejected notify send: ' + JSON.stringify(sendResult.error));
+  } catch (err) {
+    console.error('coaching-apply(cohort): notify email failed — returning 500 so applicant retries', err.message);
+    return res.status(500).json({
+      ok: false,
+      error: 'We could not deliver your application right now. Please try again in a moment, or email braveworksrn@gmail.com directly.',
+    });
+  }
+
+  // 2. KV record (cohort-app:* prefix, same 90-day TTL pattern) + drip tag.
+  if (process.env.KV_REST_API_URL) {
+    try {
+      await kv.set('cohort-app:' + Date.now() + ':' + trimmedEmail, application, { ex: 90 * 86400 });
+    } catch (err) {
+      console.error('coaching-apply(cohort): KV store failed (non-fatal)', err.message);
+    }
+    try {
+      const dripKey = 'drip:' + trimmedEmail;
+      const existing = await kv.get(dripKey);
+      const applicantTags = ['coaching-applicant', 'fit-' + fitTier.toLowerCase(), 'tier-cohort'];
+      if (existing) {
+        await kv.set(dripKey, {
+          ...existing,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          tags: Array.from(new Set([...(existing.tags || []), ...applicantTags])),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email: trimmedEmail,
+          firstName: application.name.split(' ')[0] || '',
+          cohort: 'coaching-applied',
+          enrolledAt: submittedAt,
+          lastSentDay: 0,
+          optedIn: true,
+          isCoachingApplicant: true,
+          coachingFitTier: fitTier,
+          source: 'cohort-apply',
+          tags: applicantTags,
+        });
+      }
+    } catch (err) {
+      console.warn('coaching-apply(cohort): drip enrollment failed (non-fatal)', err.message);
+    }
+  }
+
+  // 3. Server-side analytics — non-fatal by contract.
+  try {
+    await captureEvent({
+      distinctId: trimmedEmail,
+      event: 'cohort_apply_server',
+      properties: { fit_tier: fitTier, commitment: commitmentNum, source: 'cohort-apply' },
+    });
+  } catch (err) {
+    console.warn('coaching-apply(cohort): posthog capture failed (non-fatal)', err.message);
+  }
+
+  // 4. Instant auto-ack. Honest: does not claim the application was read yet.
+  // 48-hour promise, no price, alongside-doctor footer. No booking link
+  // (Joel's 07-22 rule) — the call is set up by reply or by phone.
+  try {
+    const firstName = application.name.split(' ')[0] || 'there';
+    const ackResult = await getResend().emails.send({
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
+      to: trimmedEmail,
+      replyTo: 'braveworksrn@gmail.com',
+      subject: 'We got your application, ' + firstName,
+      html:
+        '<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">' +
+        '<p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ' + escapeHtml(firstName) + ',</p>' +
+        '<p style="margin:0 0 16px;">Your application for <strong>the Life Change Accelerator</strong> just landed with us. Thank you for writing it out honestly — especially the answer about what you would do if you knew you could not fail. That answer is where the whole 12 weeks starts.</p>' +
+        '<p style="margin:0 0 16px;">Joel and Annie review every application personally. You will hear from us within 48 hours, usually sooner. If it looks like a fit, one of us will reach out by phone or email to talk through the details together.</p>' +
+        '<p style="margin:0 0 16px;">Nothing has been charged and no spot is reserved yet. The next step is just a conversation.</p>' +
+        '<p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Everything we build together works alongside your doctor, never instead of them.</p>' +
+        '<p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel and Annie</p>' +
+        '<p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RNs, BraveWorks</p>' +
+        '<p style="margin:0;font-size:12px;color:#9C9485;border-top:1px solid #E6DECE;padding-top:12px;">Everything we do is education-based nursing consultation, not medical advice. Your prescriber stays in charge of your medications.</p>' +
+        '</body></html>',
+    });
+    if (ackResult.error) console.error('coaching-apply(cohort): applicant ack rejected by Resend', JSON.stringify(ackResult.error));
+  } catch (err) {
+    console.error('coaching-apply(cohort): applicant ack failed', err.message);
   }
 
   return res.status(200).json({ ok: true, submittedAt, fitTier });
