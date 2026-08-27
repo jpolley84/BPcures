@@ -743,10 +743,10 @@ async function handleBeThere(req, res) {
     const wordsBlock = (label, text) =>
       `<div style="margin:0 0 14px;"><div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;margin:0 0 4px;">${escapeHtml(label)}</div><div style="background:#FFFFFF;border:1px solid #E6DECE;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2C2A26;white-space:pre-wrap;">${escapeHtml(text)}</div></div>`;
 
-    const subject = `[BE THERE]${application.src === 'masterclass' ? ' [MASTERCLASS]' : ''} ${application.name} [${fitTier}]${flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : ''}`;
+    const subject = `[ACCELERATOR]${application.src === 'masterclass' ? ' [MASTERCLASS]' : ''} ${application.name} [${fitTier}]${flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : ''}`;
     const html = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#2C2A26;background:#FBF8F1;">
       <div style="background:${tierColor};color:#FBF8F1;padding:14px 20px;border-radius:10px 10px 0 0;">
-        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Be There application · fit ${fitTier}${flags.length ? ' · ' + escapeHtml(flags.join('; ')) : ''}</div>
+        <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:700;">Life Change Accelerator application · fit ${fitTier}${flags.length ? ' · ' + escapeHtml(flags.join('; ')) : ''}</div>
         <div style="font-size:22px;font-weight:700;margin-top:6px;">${escapeHtml(application.name)}</div>
         <div style="font-size:13px;opacity:0.85;">${escapeHtml(application.email)} · ${escapeHtml(application.phone) || 'no phone'}</div>
       </div>

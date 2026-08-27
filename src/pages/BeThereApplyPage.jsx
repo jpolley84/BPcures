@@ -1,4 +1,19 @@
-// /apply — the Be There cohort prequalification application.
+// /apply — the LIFE CHANGE ACCELERATOR prequalification application.
+//
+// Reached at changemylifechallenge.com/apply (the SPA serves every path on that
+// host except "/", which middleware.js rewrites to the static challenge page)
+// and at bpquiz.com/apply.
+//
+// 2026-08-27 (Joel): the program is the "Life Change Accelerator", not "Be
+// There", and it is run by JOEL AND ANNIE, not Joel alone. All visible copy
+// says both names.
+//
+// ⚠️ The INTERNAL identifiers are deliberately NOT renamed: source
+// 'bethere-apply' / 'bethere-partial', tier 'be-there', the bethere_apply_*
+// analytics events and the file name itself. Those are wire-format and
+// analytics contracts - api/coaching-apply.js branches on the source string,
+// KV keys are built from it, and renaming the events would sever every
+// historical funnel report. Rename the label, not the wire.
 //
 // 2026-07-20 REBUILD: modeled on the LifestyleU "getfit" application Joel sent.
 // Her form pre-qualifies with six sharp moves, and we now use all of them:
@@ -218,6 +233,11 @@ export default function BeThereApplyPage() {
 
   useEffect(() => {
     track('bethere_apply_started');
+    // 2026-08-27: the SPA shell ships BPQuiz's title, which is the wrong brand
+    // on changemylifechallenge.com/apply. Set it per-route and restore on exit.
+    const prev = document.title;
+    document.title = 'The Life Change Accelerator | Application';
+    return () => { document.title = prev; };
   }, []);
 
   const set = (field, value) => {
@@ -239,12 +259,12 @@ export default function BeThereApplyPage() {
       if (!form.serious) e.serious = 'Pick one. An honest answer helps us both.';
     }
     if (s === 2) {
-      if (!form.firstName.trim()) e.firstName = 'Your first name helps Joel greet you.';
+      if (!form.firstName.trim()) e.firstName = 'Your first name helps Joel and Annie greet you.';
       if (!form.lastName.trim()) e.lastName = 'Last name too, please.';
-      if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel can write back.';
+      if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email so Joel and Annie can write back.';
       if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'A real phone number, in case your application moves forward.';
       if (!form.bpNow) e.bpNow = 'Pick the closest one.';
-      if (form.winning.trim().length < 10) e.winning = 'This is the one Joel reads first. A sentence or two is plenty.';
+      if (form.winning.trim().length < 10) e.winning = 'This is the one Joel and Annie read first. A sentence or two is plenty.';
     }
     if (s === 3) {
       if (!form.startTimeline) e.startTimeline = 'Pick one.';
@@ -372,9 +392,10 @@ export default function BeThereApplyPage() {
                 Thank you for being honest.
               </h1>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 2rem' }}>
-                Be There is not the right next step for you today, and that is completely okay.
-                The best place to start is the free community and the free quiz. Joel is active in
-                both, and everything you learn there still moves your numbers.
+                The Life Change Accelerator is not the right next step for you today, and that is
+                completely okay. The best place to start is the free community and the free quiz.
+                Joel and Annie are active in both, and everything you learn there still moves your
+                numbers.
               </p>
               <div style={{ display: 'grid', gap: '0.75rem', maxWidth: 380, margin: '0 auto' }}>
                 <a
@@ -406,12 +427,12 @@ export default function BeThereApplyPage() {
                   email with the next steps." */}
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
                 <strong>Check your email in the next few minutes.</strong> Your first note from Joel
-                is already on its way with your next step.
+                and Annie is already on its way with your next step.
               </p>
               <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '50ch', margin: '0 auto 1.5rem' }}>
-                When it lands, <strong>just reply to it.</strong> That reply is how you and Joel find
-                a time to talk. One small thing you can do tonight: take your blood pressure before
-                bed, and again tomorrow morning before coffee. Bring both numbers to the call.
+                When it lands, <strong>just reply to it.</strong> That reply is how we find a time to
+                talk. One small thing you can do tonight: take your blood pressure before bed, and
+                again tomorrow morning before breakfast. Bring both numbers to the call.
               </p>
               <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '46ch', margin: '0 auto' }}>
                 Add joel@bpquiz.com to your contacts so it does not slip into spam. That is the only
@@ -512,8 +533,8 @@ export default function BeThereApplyPage() {
             <Field label="Where is your blood pressure right now?" helper="The closest one is fine. There is no wrong answer here." error={errors.bpNow}>
               <OptionList name="BP now" options={SEVERITY_OPTIONS} value={form.bpNow} onChange={(v) => set('bpNow', v)} />
             </Field>
-            <Field label="Why do you think you would be a good fit for this?" helper="This is the one Joel reads first. Make your case: where you are, what you have already tried, and what you want to be different." error={errors.winning}>
-              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Tell Joel why you." />
+            <Field label="Why do you think you would be a good fit for this?" helper="This is the one Joel and Annie read first. Make your case: where you are, what you have already tried, and what you want to be different." error={errors.winning}>
+              <textarea className="bt-input" rows={4} style={{ resize: 'vertical', minHeight: 100 }} value={form.winning} onChange={(e) => set('winning', e.target.value)} placeholder="Tell Joel and Annie why you." />
             </Field>
           </>
         )}
@@ -525,8 +546,8 @@ export default function BeThereApplyPage() {
               <OptionList name="Start timeline" options={TIMELINE_OPTIONS} value={form.startTimeline} onChange={(v) => set('startTimeline', v)} />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem', padding: '1rem 1.1rem', background: '#FFFFFF', border: '1px solid var(--sage-soft, #C5CDBF)', borderRadius: 12 }}>
-              Joel coaches alongside your doctor, never instead of them. Nobody here will ever tell
-              you to change a medication. Only your doctor does that.
+              Joel and Annie coach alongside your doctor, never instead of them. Nobody here will
+              ever tell you to change a medication. Only your doctor does that.
             </p>
             <Field label="Does that sit right with you?" error={errors.medsAlignment}>
               <OptionList name="Meds alignment" options={ALIGN_OPTIONS} value={form.medsAlignment} onChange={(v) => set('medsAlignment', v)} />
@@ -535,9 +556,9 @@ export default function BeThereApplyPage() {
               <OptionList name="Decision authority" options={DECISION_OPTIONS} value={form.decisionAuthority} onChange={(v) => set('decisionAuthority', v)} />
             </Field>
             <p style={{ color: 'var(--ink-soft, #2B2824)', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>
-              If Joel could show you a real way to get your numbers down and keep them there, making
-              him the last coach you ever need for this, would you be willing and able to invest in
-              getting the help to do it?
+              If Joel and Annie could show you a real way to get your numbers down and keep them
+              there, making them the last coaches you ever need for this, would you be willing and
+              able to invest in getting the help to do it?
             </p>
             <Field label="" error={errors.cashFlow}>
               <OptionList name="Cash flow" options={CASHFLOW_OPTIONS} value={form.cashFlow} onChange={(v) => set('cashFlow', v)} />
@@ -558,7 +579,7 @@ export default function BeThereApplyPage() {
             <button type="button" className="bt-next" onClick={goNext}>Continue</button>
           ) : (
             <button type="button" className="bt-next" onClick={handleSubmit} disabled={submitting}>
-              {submitting ? 'Sending your application...' : 'Send my application to Joel'}
+              {submitting ? 'Sending your application...' : 'Send my application to Joel and Annie'}
             </button>
           )}
           {step > 1 && (
@@ -569,8 +590,8 @@ export default function BeThereApplyPage() {
         </div>
 
         <p style={{ color: 'var(--muted, #7A7061)', fontSize: '0.8rem', lineHeight: 1.6, maxWidth: '58ch', margin: '2.5rem auto 0', textAlign: 'center' }}>
-          Nothing is bought here. Joel reviews first, then you talk. This is education and lifestyle
-          support, not medical advice, diagnosis, or treatment. See our{' '}
+          Nothing is bought here. Joel and Annie review first, then you talk. This is education and
+          lifestyle support, not medical advice, diagnosis, or treatment. See our{' '}
           <Link to="/terms" style={{ color: 'var(--muted, #7A7061)' }}>Terms</Link> and{' '}
           <Link to="/privacy" style={{ color: 'var(--muted, #7A7061)' }}>Privacy Policy</Link>.
         </p>
