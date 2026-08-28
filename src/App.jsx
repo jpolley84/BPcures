@@ -18,6 +18,11 @@ import CheckoutPage from './pages/CheckoutPage'; // eager — landing page
 // CheckoutPage (variant 'a', unchanged) and QuizFirstLanding (variant 'b',
 // quiz-first). Eager import — it wraps the landing. See pages/HomeSplit.jsx.
 import HomeSplit from './pages/HomeSplit';
+// 2026-08-27 (Joel, "ship it"): '/' is now the QUIZ. See QuizFirstHome.jsx for
+// the PostHog numbers behind the call and the agreed kill criterion.
+// HomeSplit stays imported and routable at /home-split so reverting is a
+// one-line change to the '/' route below, not an archaeology exercise.
+import QuizFirstHome from './pages/QuizFirstHome';
 
 // All other routes are lazy-loaded. Users who land on `/` (99% of traffic)
 // only download the landing chunk; the rest stream on-demand when their
@@ -200,8 +205,16 @@ function App() {
               "lets get rid of page B as it stands." TriggerLanding.jsx is left
               on disk but is no longer rendered by any route: /triggers and
               /quiz still serve TriggerQuizPage, so the quiz itself is intact. */}
-          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <HomeSplit />} />
-          <Route path="/offer" element={<Navigate to="/" replace />} />
+          {/* 2026-08-27: quiz-first homepage. The old 50/50 A/B it replaced was
+              already dead (arm B took zero traffic from 2026-08-03), so nothing
+              in flight was interrupted. REVERT = swap QuizFirstHome for
+              HomeSplit here. */}
+          <Route path="/" element={subdomainPage ? React.createElement(subdomainPage) : <QuizFirstHome />} />
+          {/* The $17 sales letter keeps a real address. It used to BE '/', so
+              /offer bounced there; now it has to point at the page itself or
+              every existing link to the letter would land on the quiz. */}
+          <Route path="/offer" element={<CheckoutPage />} />
+          <Route path="/home-split" element={<HomeSplit />} />
 
           {/* 101 Foods funnel — the squeeze is also reachable directly (for ad
               and email traffic that should skip the A/B split entirely), and

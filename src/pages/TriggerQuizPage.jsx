@@ -57,90 +57,40 @@ export const TRIGGERS = {
 };
 
 // ---- Questions ------------------------------------------------------------
+// 2026-08-27 (Joel): TAP TO ADVANCE on the five `trigger` questions, ported
+// from the Economic Masonry assessment. Tapping an answer selects it and moves
+// to the next question after a beat. No Next button, no second decision.
+//
+// ⚠️ THE TRADE-OFF, stated plainly. The trigger questions were multi-select
+// (Joel, 2026-07-16) and tap-to-advance makes them single-select. PostHog, last
+// 45 days, 24,465 answered questions:
+//     1 option picked  80.3%
+//     2 options        11.8%
+//     3+ options        7.9%
+// So four in five people already answered as if it were single-select, but ONE
+// IN FIVE ANSWERS loses a pick. Scoring still works (it tallies picks and
+// breaks ties on the earliest one), but separation between triggers is thinner,
+// so ties resolve to the Q1 answer more often than they used to.
+// TO REVERT: set TAP_TO_ADVANCE to false. Everything returns to multi-select
+// with the Next button, no other change needed.
+//
+// The `belief` and `spend` questions stay multi-select with a Next button --
+// they are not diagnostic and genuinely take more than one answer.
+//
 // 2026-07-16 (Joel): ALL questions are multiple-selection now. kind:
 //   'trigger' — options map to the 5 triggers and drive scoring
 //   'belief'  — where they think BP comes from; drives the results debunk
 //   'spend'   — last year's medical spending; drives the savings frame
-const QUESTIONS = [
-  {
-    kind: 'trigger',
-    title: 'When your day gets stressful, what does your body actually do?',
-    options: [
-      { key: 'stress', text: 'My chest tightens and my heart pounds for a while after.' },
-      { key: 'sugar', text: 'I crave something sweet almost immediately.' },
-      { key: 'sodium', text: 'I reach for something salty and crunchy without thinking.' },
-      { key: 'sleep', text: 'I get wired, and it messes with me falling asleep that night.' },
-      { key: 'stillness', text: 'I just sit and scroll. I do not move at all.' },
-    ],
-  },
-  {
-    kind: 'trigger',
-    title: 'How do you feel an hour or two after a big meal of pasta, bread, or dessert?',
-    options: [
-      { key: 'stress', text: 'My body feels fine, but my mind races more than usual.' },
-      { key: 'sugar', text: 'Slow and foggy. Sometimes shaky or dizzy.' },
-      { key: 'sodium', text: 'Puffy. My rings or shoes feel tighter than that morning.' },
-      { key: 'sleep', text: 'I crash hard and want a nap right away.' },
-      { key: 'stillness', text: 'I do not really notice. I am usually sitting anyway.' },
-    ],
-  },
-  {
-    kind: 'trigger',
-    title: 'How often does your food come from a box, can, restaurant, or drive-thru?',
-    options: [
-      { key: 'stress', text: 'More when I am stressed. It is just the fastest option.' },
-      { key: 'sugar', text: 'Often, and it usually comes with something sweet too.' },
-      { key: 'sodium', text: 'Most days. Easy wins over cooking.' },
-      { key: 'sleep', text: 'Late at night, when I should be winding down instead.' },
-      { key: 'stillness', text: 'Often, and I eat it sitting at a desk or on the couch.' },
-      { key: 'none', text: "I cook almost everything myself, so this doesn't really apply." },
-    ],
-  },
-  {
-    kind: 'trigger',
-    title: 'What does a normal night of sleep really look like for you?',
-    options: [
-      { key: 'stress', text: 'My mind will not shut off. I replay the whole day.' },
-      { key: 'sugar', text: 'I wake up around 2 or 3 a.m., sometimes hungry.' },
-      { key: 'sodium', text: 'I get up to use the bathroom more than once a night.' },
-      { key: 'sleep', text: 'I am tired all day, no matter how many hours I got.' },
-      { key: 'stillness', text: 'I sleep fine, but I wake up stiff and heavy anyway.' },
-    ],
-  },
-  {
-    kind: 'trigger',
-    title: 'Add up desk, car, and couch. How much of your day do you spend sitting?',
-    options: [
-      { key: 'stress', text: 'A lot, and I feel tension build the longer I sit.' },
-      { key: 'sugar', text: 'A lot, and I snack more the longer I sit at my desk.' },
-      { key: 'sodium', text: 'A lot. My legs or ankles feel swollen by evening.' },
-      { key: 'sleep', text: 'A lot, but I still do not feel rested at the end of it.' },
-      { key: 'stillness', text: 'Most of it. Some days 8 hours or more, easily.' },
-    ],
-  },
-  {
-    kind: 'belief',
-    title: 'Where do you think high blood pressure really comes from? Pick all you have heard.',
-    options: [
-      { key: 'genetic', text: 'It is genetic. It runs in my family, so nothing helps.' },
-      { key: 'heart', text: 'It means something is wrong with my heart.' },
-      { key: 'permanent', text: 'Once you have it, you have it for life.' },
-      { key: 'tablesalt', text: 'It comes from table salt. Put down the shaker and you are fine.' },
-      { key: 'none', text: 'None of the above.' },
-    ],
-  },
-  {
-    kind: 'spend',
-    title: 'What did health care cost you this past year? Count visits, meds, copays, and tests.',
-    options: [
-      { key: 'spend-under-500', text: 'Under $500' },
-      { key: 'spend-500-2000', text: '$500 to $2,000' },
-      { key: 'spend-2000-5000', text: '$2,000 to $5,000' },
-      { key: 'spend-over-5000', text: 'More than $5,000' },
-      { key: 'spend-unsure', text: 'Honestly, I have lost track.' },
-    ],
-  },
-];
+// Questions live in src/data/triggerQuestions.js so the homepage can import
+// them without pulling in this entire page. Re-exported for existing callers.
+import { QUESTIONS } from '../data/triggerQuestions';
+// Re-exported for anything still importing it from this page.
+// NOTE: the plain `import` above is REQUIRED. Writing only
+//   export { QUESTIONS } from '../data/triggerQuestions';
+// re-exports the name without creating a local binding, so every
+// QUESTIONS[current] in this file throws at runtime -- and the build still
+// passes clean, so nothing warns you.
+export { QUESTIONS };
 
 // 2026-07-17: LIES and SPEND_LABELS (results-page debunk copy + spend-range
 // display strings) were removed with the on-page result content they served
@@ -240,6 +190,10 @@ function MiniHeader() {
 // Q1 is multi-select, so the pick is PRE-SELECTED on question one rather than
 // auto-advancing. She can add more or tap Next, which is what the question
 // actually asks for.
+// Single switch for the whole behaviour (see the header note).
+const TAP_TO_ADVANCE = true;
+const isTapQuestion = (q) => TAP_TO_ADVANCE && q && q.kind === 'trigger';
+
 function readPrefill() {
   try {
     const p = new URLSearchParams(window.location.search).get('p');
@@ -252,13 +206,20 @@ function readPrefill() {
 export default function TriggerQuizPage() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState('quiz'); // quiz | gate | offer | declined
-  const [current, setCurrent] = useState(0);
+  // Pending tap-to-advance timer, so unmount/rapid taps cannot fire it twice.
+  const advanceRef = useRef(null);
+  // 2026-08-27: with tap-to-advance, a ?p= prefill is a REAL answer to Q1 (she
+  // tapped it on the homepage), so it is recorded and the quiz opens on Q2.
+  // Before tap-to-advance it only pre-selected, because Q1 was multi-select and
+  // auto-advancing would have stolen her remaining picks.
+  const prefill = useRef(readPrefill()).current;
+  const prefillConsumed = TAP_TO_ADVANCE && Boolean(prefill);
+  const [current, setCurrent] = useState(prefillConsumed ? 1 : 0);
   // Multi-select: answers[i] = array of selected option keys for question i.
-  const [answers, setAnswers] = useState([]);
-  const [selected, setSelected] = useState(() => {
-    const p = readPrefill();
-    return p ? [p] : [];
-  }); // current question's picks, seeded from ?p= when present
+  const [answers, setAnswers] = useState(prefillConsumed ? [[prefill]] : []);
+  const [selected, setSelected] = useState(() =>
+    (prefillConsumed ? [] : prefill ? [prefill] : []),
+  ); // current question's picks, seeded from ?p= when present
   const [winner, setWinner] = useState(null);
   const [beliefs, setBeliefs] = useState([]); // belief-question picks
   const [spend, setSpend] = useState([]); // spend-question picks
@@ -276,8 +237,19 @@ export default function TriggerQuizPage() {
     track('quiz_started_view', {
       quiz: 'triggers',
       funnel_version: 'annie-v2',
-      ...(p ? { prefilled: p, source: 'hormoneteas_exit_intent' } : {}),
+      ...(p ? { prefilled: p } : {}),
     });
+    // Arriving with a consumed prefill means she already answered Q1 (on the
+    // homepage hero, or the tea exit-intent). The quiz HAS started, so fire
+    // quiz_started here or the funnel would show a completion with no start.
+    if (prefillConsumed && !startedRef.current) {
+      startedRef.current = true;
+      track('quiz_started', { quiz: 'triggers', funnel_version: 'annie-v2', entry: 'prefill' });
+      track('quiz_question_answered', {
+        quiz: 'triggers', step: 1, answer: prefill, funnel_version: 'annie-v2', entry: 'prefill',
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -289,24 +261,39 @@ export default function TriggerQuizPage() {
       startedRef.current = true;
       track('quiz_started', { quiz: 'triggers', funnel_version: 'annie-v2' });
     }
+    // Tap-to-advance: the tap IS the answer. Show the selected state for a beat
+    // so the choice registers visually, then move on. 180ms is long enough to
+    // see and short enough that a decisive tapper never feels held up.
+    if (isTapQuestion(QUESTIONS[current])) {
+      setSelected([key]);
+      if (advanceRef.current) clearTimeout(advanceRef.current);
+      advanceRef.current = setTimeout(() => advanceWith([key]), 180);
+      return;
+    }
     setSelected((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
     );
   }
 
   function next() {
-    if (!selected.length) return;
+    advanceWith(selected);
+  }
+
+  // Extracted from next() so tap-to-advance can pass its pick directly rather
+  // than racing React's state update.
+  function advanceWith(picks) {
+    if (!picks || !picks.length) return;
     const q = QUESTIONS[current];
-    const nextAnswers = [...answers, selected];
+    const nextAnswers = [...answers, picks];
     setAnswers(nextAnswers);
     track('quiz_question_answered', {
       quiz: 'triggers',
       step: current + 1,
-      answer: selected.join(','),
+      answer: picks.join(','),
       funnel_version: 'annie-v2',
     });
-    if (q.kind === 'belief') setBeliefs(selected);
-    if (q.kind === 'spend') setSpend(selected);
+    if (q.kind === 'belief') setBeliefs(picks);
+    if (q.kind === 'spend') setSpend(picks);
     setSelected([]);
     if (current + 1 < QUESTIONS.length) {
       setCurrent(current + 1);
@@ -476,7 +463,9 @@ export default function TriggerQuizPage() {
                 margin: '0 0 1.3rem',
               }}
             >
-              Be honest, not perfect. Pick ALL that fit you, then tap Next.
+              {isTapQuestion(QUESTIONS[current])
+                ? 'Be honest, not perfect. Tap the closest one.'
+                : 'Be honest, not perfect. Pick ALL that fit you, then tap Next.'}
             </p>
             <h2 style={{ ...serif, fontSize: 'clamp(1.25rem, 4.5vw, 1.5rem)', lineHeight: 1.35, margin: '0 0 1.3rem' }}>
               {QUESTIONS[current].title}
@@ -488,7 +477,7 @@ export default function TriggerQuizPage() {
                   <button
                     key={opt.key}
                     type="button"
-                    role="checkbox"
+                    role={isTapQuestion(QUESTIONS[current]) ? 'radio' : 'checkbox'}
                     aria-checked={on}
                     onClick={() => toggle(opt.key)}
                     style={{
@@ -536,19 +525,22 @@ export default function TriggerQuizPage() {
                 );
               })}
             </div>
-            <button
-              type="button"
-              onClick={next}
-              disabled={!selected.length}
-              style={{
-                ...primaryBtn,
-                marginTop: '1.1rem',
-                opacity: selected.length ? 1 : 0.5,
-                cursor: selected.length ? 'pointer' : 'not-allowed',
-              }}
-            >
-              {current + 1 < QUESTIONS.length ? 'Next' : 'See My Results'} <ArrowRight size={18} />
-            </button>
+            {/* Tap-to-advance questions have no Next: the tap is the answer. */}
+            {!isTapQuestion(QUESTIONS[current]) && (
+              <button
+                type="button"
+                onClick={next}
+                disabled={!selected.length}
+                style={{
+                  ...primaryBtn,
+                  marginTop: '1.1rem',
+                  opacity: selected.length ? 1 : 0.5,
+                  cursor: selected.length ? 'pointer' : 'not-allowed',
+                }}
+              >
+                {current + 1 < QUESTIONS.length ? 'Next' : 'See My Results'} <ArrowRight size={18} />
+              </button>
+            )}
           </div>
         )}
 
