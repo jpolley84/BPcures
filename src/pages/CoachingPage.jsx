@@ -593,7 +593,7 @@ export default function CoachingPage() {
             ))}
           </motion.ul>
           <motion.p {...reveal(0.15)} className="text-base italic" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
-            If you're not there yet, the <Link to="/" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 Corner Reset kit</Link> is the right starting place.
+            If you're not there yet, the <Link to="/offer" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 Corner Reset kit</Link> is the right starting place.
           </motion.p>
         </div>
       </section>
