@@ -159,9 +159,21 @@ let abHomeResolved = false;
 let abHomeVariant = 'a';
 let abHomeCohorted = false;
 
+// 2026-08-28: this used to match '/', which was correct while '/' rendered
+// HomeSplit. '/' is the quiz-first homepage now, and leaving this pointed at
+// '/' meant EVERY quiz-first visitor was still being randomly assigned an
+// ab_home_variant and stamped with it on every subsequent event -- including
+// purchases. Caught it when two buyers who had seen the QUIZ came back tagged
+// variant 'a', i.e. silently folded into the sales-letter baseline that the
+// quiz-first decision is being measured against.
+//
+// HomeSplit still lives at /home-split, so the machinery is intact and the
+// route check simply follows it. Assignment stops for everyone else, which is
+// what makes the before/after comparison readable.
 function isHomeSplitRoute() {
   try {
-    return window.location.pathname === '/' && !AB_HOME_SKIP_HOSTS.has(window.location.hostname);
+    return window.location.pathname === '/home-split'
+      && !AB_HOME_SKIP_HOSTS.has(window.location.hostname);
   } catch {
     return false;
   }
