@@ -17,6 +17,21 @@
       "destination": "/cohort-apply/index.html"
     },
     {
+      "source": "/apply",
+      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/apply/",
+      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/apply",
+      "has": [{ "type": "host", "value": "www.changemylifechallenge.com" }],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
       "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
