@@ -316,11 +316,30 @@ export function entryModuleFor(corner) {
 // The canonical tiers are corner / top2 / complete. Older drip records and the
 // old AMOUNT_TO_TIER could carry 'entry' (== corner) or 'triangle' (== complete
 // minus nothing, i.e. all three + Finale). Map them so delivery never breaks.
+// 2026-08-29 (Joel): THE $17 NOW DELIVERS THE ENTIRE KIT.
+//
+// It used to buy ONE corner -- the buyer's loudest trigger -- and the rest sat
+// behind a $27 upgrade. Joel collapsed that: "for 17 we are now giving them the
+// entire kit ... not only the sodium thats landing in their email but its the
+// whole kit complete bp reset."
+//
+// This is the single place that had to change. Every downstream resolver reads
+// through normalizeTier(), so mapping the entry tiers to 'complete' means
+// modulesForTier(), bonusesForTier() and bundleNameForTier() all hand a $17
+// buyer the full bundle-complete.zip (all three corner sets + the Freedom
+// Finale + every bonus) instead of bundle-corner-<their>.zip.
+//
+// The raw tier string is NOT rewritten anywhere else: Stripe metadata, the
+// purchase event and the KV record still say 'corner', so revenue reporting and
+// the 60-day history stay comparable. Only ENTITLEMENT changed.
+//
+// TO REVERT: return 'corner' for the entry tiers again. bundle-corner-*.zip are
+// all still built and present, so the old behaviour comes straight back.
 export function normalizeTier(tier) {
-  if (tier === 'entry') return 'corner';
+  if (tier === 'entry' || tier === 'corner') return 'complete';
   if (tier === 'triangle') return 'complete';
-  if (tier === 'corner' || tier === 'top2' || tier === 'complete') return tier;
-  return 'corner'; // safest default: deliver at least the one corner set
+  if (tier === 'top2' || tier === 'complete') return tier;
+  return 'complete'; // the entry price now buys everything
 }
 
 // Resolve the buyer's TWO loudest corners from their stored quiz `scores`

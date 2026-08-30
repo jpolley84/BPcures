@@ -481,7 +481,7 @@ const CheckoutPage = () => {
             </picture>
           </div>
           <p style={{ color: 'var(--muted-gray)', fontSize: '15px', lineHeight: '1.5' }}>
-            Your Corner Reset &middot; 10 days &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
+            The Complete BP Reset &middot; all three corners &middot; <strong style={{ color: 'var(--dark-gray)' }}>{PRICE}, one time</strong> &middot; 30-day Feel-It-or-Free guarantee
           </p>
           {/* Above-the-fold CTA: one-tap kit buy for TikTok traffic (mobile + desktop),
               plus a quiz off-ramp for anyone who wants to see their corner first. */}
@@ -1017,7 +1017,7 @@ const CheckoutPage = () => {
                 instant download in plain language. Compliant: no outcome or
                 timing claims. 2026-07-03: compare-at framing removed here too. */}
             <p className="mt-8 max-w-[480px] mx-auto text-left" style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', lineHeight: '1.7' }}>
-              <strong style={{ color: 'var(--white)' }}>P.S.</strong> Your Corner Reset is your loudest corner worked first, Stress by default, as a set of three: the day by day protocol, the herb formulary with safe amounts and cautions, and a one page sheet to bring to your doctor. It is {PRICE}, one time. Pills and copays run hundreds a year; this is one copay, once. Download it the second you buy. Run the full 10 days. If you do not feel it was worth it, reply REFUND and your money comes back. Keep the guides either way. That is the 30-day Feel-It-or-Free promise.
+              <strong style={{ color: 'var(--white)' }}>P.S.</strong> You get the whole reset, not one piece of it: all three corners, stress, sugar and sodium, each with its own day by day protocol, its herb formulary with safe amounts and cautions, and a one page sheet to bring to your doctor. Plus the Freedom Finale that ties the three together. It is {PRICE}, one time, for all of it. Pills and copays run hundreds a year; this is one copay, once. Download it the second you buy. Run the full 10 days. If you do not feel it was worth it, reply REFUND and your money comes back. Keep the guides either way. That is the 30-day Feel-It-or-Free promise.
             </p>
           </AnimatedSection>
         </div>
@@ -1040,7 +1040,7 @@ const CheckoutPage = () => {
         <div className="flex items-center justify-between px-4 max-w-[640px] mx-auto" style={{ height: '64px' }}>
             <div>
               <p className="font-bold truncate max-w-[140px]" style={{ color: 'var(--white)', fontSize: '15px' }}>
-                Corner Reset
+                Complete BP Reset
               </p>
               <p className="text-[12px] font-semibold" style={{ color: 'var(--gold)' }}>{PRICE}</p>
             </div>

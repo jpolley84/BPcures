@@ -828,7 +828,7 @@ function QuizModule({ products }) {
     [products]
   );
   const kitPrice = cornerKit?.price ?? '$17';
-  const kitName = cornerKit?.name ?? 'Your Corner Reset';
+  const kitName = cornerKit?.name ?? 'The Complete BP Reset';
   const urgency = urgencyWindow(riskScore);
   const pressureCopy = PRESSURE_COPY[pressure] ?? PRESSURE_COPY.pipes;
 

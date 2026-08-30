@@ -43,7 +43,29 @@ export default function UpsellBpResetKitPage() {
   const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
 
-  useEffect(() => { track('upsell_viewed', { upsell: 'bp-reset-kit-oto' }); }, []);
+  // 2026-08-29 (Joel): RETIRED. This page sold the BP Reset Kit for $30 on top
+  // of the $17 starter. The $17 tier now DELIVERS the complete kit, so anyone
+  // landing here would be charged $30 for files they already own.
+  //
+  // It is very nearly dead already (PostHog: 2 pageviews in the 60 days to
+  // 2026-08-29, both in mid-July), but it is still a live route fed by a Stripe
+  // Payment Link after_completion redirect, and that config cannot be read from
+  // here. So it gets a guard rather than a deletion: anyone who does arrive is
+  // sent to their downloads instead of a charge screen.
+  //
+  // TO RESTORE: flip LEGACY_UPSELL_LIVE, and only after un-doing the entitlement
+  // change in api/_kit-manifest.js -- otherwise there is nothing to sell.
+  const LEGACY_UPSELL_LIVE = false;
+
+  useEffect(() => {
+    if (!LEGACY_UPSELL_LIVE) {
+      track('upsell_retired_redirect', { upsell: 'bp-reset-kit-oto' });
+      navigate(`/welcome?tier=corner${sessionId ? `&session_id=${encodeURIComponent(sessionId)}` : ''}`, { replace: true });
+      return;
+    }
+    track('upsell_viewed', { upsell: 'bp-reset-kit-oto' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 2026-05-20: probe for saved card so we can do one-click if available.
   // If session arrived via a Stripe Payment Link (no saveCard:true on the

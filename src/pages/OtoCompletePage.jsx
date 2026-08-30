@@ -140,10 +140,26 @@ export default function OtoCompletePage() {
   const { sessionId, corner } = useMemo(readParams, []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  // 'offer'    = the primary $27 Complete Kit one-click
-  // 'downsell' = declined the $27, shown the free masterclass invite
-  // 'accepted' = $27 charge succeeded, confirmation + masterclass invite
-  const [view, setView] = useState('offer');
+  // 2026-08-29 (Joel): THE $27 COMPLETE UPGRADE IS RETIRED. The $17 kit now
+  // delivers the complete kit, so this page was about to charge $27 for files
+  // the buyer already owns the moment they paid. That is not an upsell, it is
+  // billing someone twice for the same thing.
+  //
+  // The page opens straight on the tea instead. Joel approved the tea for this
+  // exact slot on 2026-08-26 as the decline path; with the upgrade gone it
+  // becomes the offer. accept() is now unreachable from the UI, and the
+  // 'offer'/'accepted' branches are kept ONLY so a buyer mid-flow on cached JS
+  // does not hit a blank screen.
+  //
+  // WHAT THIS COSTS, measured before switching (60 days): the $27 upgrade took
+  // 38 of 225 corner buyers (16.9%) for $1,046, about +27% on front-end
+  // revenue. The tea's average order is $59.91, so the slot can earn more --
+  // but that is unproven in THIS position and needs watching.
+  //
+  // TO RESTORE the $27 upgrade you would first have to un-do the entitlement
+  // change in api/_kit-manifest.js, or it has nothing to sell.
+  const COMPLETE_UPGRADE_LIVE = false;
+  const [view, setView] = useState(COMPLETE_UPGRADE_LIVE ? 'offer' : 'downsell');
 
   const welcomeUrl = (tier) =>
     `/welcome?tier=${tier}${corner ? `&corner=${encodeURIComponent(corner)}` : ''}${sessionId ? `&session_id=${encodeURIComponent(sessionId)}` : ''}`;
@@ -155,11 +171,18 @@ export default function OtoCompletePage() {
       navigate(welcomeUrl('corner'), { replace: true });
       return;
     }
-    track('oto_viewed', { funnel_version: 'annie-v2', offer: 'kit-27', ...(corner ? { corner } : {}) });
+    track('oto_viewed', {
+      funnel_version: 'annie-v2',
+      offer: COMPLETE_UPGRADE_LIVE ? 'kit-27' : 'tea',
+      ...(corner ? { corner } : {}),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function accept() {
+    // Hard guard, not just a hidden button: the $17 tier already delivers
+    // everything this charged for.
+    if (!COMPLETE_UPGRADE_LIVE) return;
     if (busy) return;
     setBusy(true);
     setError('');

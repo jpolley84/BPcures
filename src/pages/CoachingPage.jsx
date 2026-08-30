@@ -593,7 +593,7 @@ export default function CoachingPage() {
             ))}
           </motion.ul>
           <motion.p {...reveal(0.15)} className="text-base italic" style={{ color: 'var(--muted)', lineHeight: 1.6 }}>
-            If you're not there yet, the <Link to="/offer" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 Corner Reset kit</Link> is the right starting place.
+            If you're not there yet, the <Link to="/offer" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>$17 Complete BP Reset kit</Link> is the right starting place.
           </motion.p>
         </div>
       </section>
@@ -773,8 +773,11 @@ export default function CoachingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { step: 'Free', title: 'Take the quiz', body: 'Find your loudest corner in 60 seconds.', to: '/quiz', cta: 'Take the quiz' },
-              { step: '$17', title: 'Your Corner Reset', body: 'Your first 10-day RESET, built for your loudest corner.', to: '/', cta: 'See the kit' },
-              { step: '$47', title: 'Complete the Triangle', body: 'All three corners, plus the Freedom Finale.', to: '/', cta: 'See the kit' },
+              // 2026-08-29 (Joel): $17 now buys the COMPLETE kit, so the old
+              // "$47 complete the Triangle" rung no longer exists as a separate
+              // purchase and has been folded into the one below it. Both used to
+              // link to '/', which is the quiz now, so they point at /offer.
+              { step: '$17', title: 'The Complete BP Reset', body: 'All three corners and the Freedom Finale, yours in one go.', to: '/offer', cta: 'See the kit' },
               { step: 'You are here', title: 'Coaching with Joel', body: 'Your protocol, read and adjusted by me, live.', to: '#programs', cta: 'See the programs' },
             ].map((c, i) => (
               <motion.div key={c.title} {...reveal(i * 0.06)} className="coach-card" style={{ background: 'var(--cream)', border: c.step === 'You are here' ? '2px solid var(--sage-deep)' : '1px solid var(--line)', borderRadius: 12, padding: '1.5rem', textAlign: 'center' }}>

@@ -726,21 +726,43 @@ export default function TriggerQuizPage() {
                 <source srcSet="/images/kit-vault-hero.webp" type="image/webp" />
                 <img
                   src="/images/kit-vault-hero.jpg"
-                  alt="The 10-Day BP Reset Kit: protocols, herb guides, recipes, and tools for the three pressures behind your numbers."
+                  alt="The Complete BP Reset Kit: all three corner protocols, herb guides, recipes, and doctor sheets for the three pressures behind your numbers."
                   width="1672"
                   height="941"
                   loading="lazy"
                   style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 10, marginBottom: '0.9rem' }}
                 />
               </picture>
-              <h3 style={{ ...serif, fontSize: '1.3rem', margin: '0 0 0.6rem', color: 'var(--ink, #121110)' }}>
-                The BP Reset Kit for {t.name.replace('The ', 'the ')}
+              {/* 2026-08-29 (Joel): this used to read "The BP Reset Kit for the
+                  Sodium Trap", which named the product after whichever corner she
+                  scored highest and made $17 sound like a slice. It is not a slice
+                  any more: the $17 tier delivers the COMPLETE kit (see the
+                  entitlement note in api/_kit-manifest.js). Her trigger is the
+                  diagnosis; the kit is the whole thing.
+                  Copy leads with the outcome, not the file list -- "sell the
+                  vacation, not the flight". The deliverables moved below the
+                  promise, where they belong as proof rather than as the pitch. */}
+              <h3 style={{ ...serif, fontSize: '1.35rem', margin: '0 0 0.55rem', color: 'var(--ink, #121110)' }}>
+                The Complete BP Reset. All of it.
               </h3>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: '0 0 0.9rem' }}>
+                Picture the next appointment. The cuff goes on, and for the first
+                time in years you are not bracing. You already know roughly what it
+                is going to say, because you have been watching it come down at
+                home. That is what this is for.
+              </p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: '0 0 0.9rem' }}>
+                Your loudest trigger is {t.name.replace('The ', 'the ')}, so start
+                there. But you get <strong>every part of the kit</strong>, because
+                stress, sugar and sodium feed each other, and fixing one while the
+                other two run loose is why nothing has held so far.
+              </p>
               <ul style={{ listStyle: 'none', margin: '0 0 1.1rem', padding: 0 }}>
                 {[
-                  'Your exact 10-day, day-by-day plan',
-                  'The Herb Formulary: dose, why it helps, the cautions',
-                  'A one-page Bring This To Your Doctor sheet',
+                  'All three corners: stress, sugar and sodium, each with its own 10-day plan',
+                  'The Herb Formulary for all of them: dose, why it helps, the cautions',
+                  'The Freedom Finale, the phase that ties the three together',
+                  'Bring This To Your Doctor sheets, so you walk in prepared',
                 ].map((item) => (
                   <li
                     key={item}
@@ -759,10 +781,11 @@ export default function TriggerQuizPage() {
                 ))}
               </ul>
               <button type="button" style={primaryBtn} onClick={() => buyKit('top')}>
-                Get the Kit, $17 <ArrowRight size={18} />
+                Get the Complete Kit, $17 <ArrowRight size={18} />
               </button>
               <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0.65rem 0 0' }}>
-                One time $17. Yours right away. No subscription.
+                One time $17 for the whole thing. Yours right away. No subscription,
+                nothing else to buy.
               </p>
             </div>
 
@@ -787,7 +810,7 @@ export default function TriggerQuizPage() {
                 padding: '0.4rem',
               }}
             >
-              No thanks, I don&rsquo;t want the plan that could turn this around
+              No thanks, I don&rsquo;t want the whole plan that could turn this around
             </button>
 
             <p style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--muted, #7A7061)', margin: '1.2rem 0 0' }}>
@@ -885,7 +908,7 @@ export default function TriggerQuizPage() {
             style={{ ...primaryBtn, maxWidth: 620, margin: '0 auto' }}
             onClick={() => buyKit('sticky')}
           >
-            Get the BP Reset Kit, $17 <ArrowRight size={18} />
+            Get the Complete Kit, $17 <ArrowRight size={18} />
           </button>
         </div>
       )}
