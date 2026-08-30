@@ -446,15 +446,38 @@ export default async function handler(req, res) {
   if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan'
       || tier === 'allin-3pay' || tier === 'allin-9pay'
       || tier === 'allin-balance-full' || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay') {
+    // ─── 2026-08-30 (Joel): the program is $7,500 ────────────────────
+    // Pay in full is one link. Every INSTALLMENT path now goes through a $500
+    // deposit first, and the deposit is CREDITED, so the balance is $7,000.
+    //
+    // ⚠️ THE DEFAULTS BELOW ARE THE OLD $1,997 PRICE IDS. They are left as the
+    // fallback ON PURPOSE, so a missing env var fails loudly as "wrong price"
+    // rather than silently as "no price". NOTHING IS LIVE AT $7,500 UNTIL THE
+    // ENV VARS ARE SET IN VERCEL. The Stripe prices have to be created by Joel;
+    // this file never creates them.
+    //
+    // Required env vars and what each must be:
+    //   ALLIN_FULL_PRICE_ID          $7,500 one-time
+    //   ALLIN_DEPOSIT_PRICE_ID       $500   one-time
+    //   ALLIN_BALANCE_FULL_PRICE_ID  $7,000 one-time
+    //   ALLIN_BALANCE_3PAY_PRICE_ID  $2,450 every 2 weeks  (3 payments, $7,350)
+    //   ALLIN_BALANCE_6PAY_PRICE_ID  $1,295 every 2 weeks  (6 payments, $7,770)
+    //   ALLIN_BALANCE_9PAY_PRICE_ID  $935   every 2 weeks  (9 payments, $8,415)
+    //
+    // The direct allin-3pay / allin-plan / allin-9pay subscriptions are NOT
+    // removed: legacy links and in-flight buyers still resolve. They are simply
+    // no longer offered on /allin/pay, which routes installments through the
+    // deposit instead.
     const ALLIN_PRICES = {
-      'allin-full': process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',    // $1,997 one-time
-      'allin-deposit': process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S', // $197 one-time
+      'allin-full': process.env.ALLIN_FULL_PRICE_ID || 'price_1TWftLHseZnO3rRZHCZwE2z7',    // $7,500 one-time (env) / legacy $1,997 fallback
+      'allin-deposit': process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S', // $500 one-time (env) / legacy $197 fallback
       'allin-3pay': process.env.ALLIN_3PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZBD5jS4HK',    // $699 / 2wk recurring
       'allin-plan': process.env.ALLIN_PLAN_PRICE_ID || 'price_1TvOULHseZnO3rRZiQYF8LFS',    // $367 / 2wk recurring
       'allin-9pay': process.env.ALLIN_9PAY_PRICE_ID || 'price_1U2zjXHseZnO3rRZplplxLU5',    // $267 / 2wk recurring
       'allin-balance-full': process.env.ALLIN_BALANCE_FULL_PRICE_ID || 'price_1U44qEHseZnO3rRZAihXieRN', // $1,800 one-time
       'allin-balance-3pay': process.env.ALLIN_BALANCE_3PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZnM63I1b7', // $633 / 2wk recurring
-      'allin-balance-6pay': process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm', // $333 / 2wk recurring
+      'allin-balance-6pay': process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm', // $1,295 / 2wk (env) / legacy $333 fallback
+      'allin-balance-9pay': process.env.ALLIN_BALANCE_9PAY_PRICE_ID || '', // $935 / 2wk, 9 payments. NO legacy fallback: this tier is new.
     };
     const PLAN_BY_TIER = {
       'allin-full': 'full',
@@ -465,15 +488,27 @@ export default async function handler(req, res) {
       'allin-balance-full': 'balance-full',
       'allin-balance-3pay': 'balance-3pay',
       'allin-balance-6pay': 'balance-6pay',
+      'allin-balance-9pay': 'balance-9pay',
     };
     const plan = PLAN_BY_TIER[tier];
     const isSub = tier === 'allin-plan' || tier === 'allin-3pay' || tier === 'allin-9pay'
-      || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay';
+      || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay'
+      || tier === 'allin-balance-9pay';
+
+    // A tier with no configured price must never reach Stripe: it would throw a
+    // raw API error at a woman mid-checkout. Fail here with something readable.
+    if (!ALLIN_PRICES[tier]) {
+      console.error('create-embedded-checkout: no price configured for tier', tier);
+      return res.status(503).json({ error: 'That payment option is not available yet. Please pick another, or email braveworksrn@gmail.com.' });
+    }
     const metadata = {
       funnel: 'braveworks-bp',
       brand: 'braveworks-bp',
       offer: 'all-in',
       plan,
+      ...(tier === 'allin-deposit' && req.body?.balancePlan
+        ? { balance_plan: String(req.body.balancePlan).slice(0, 20) }
+        : {}),
       ...phMeta,
       ...abMeta,
       ...utmMeta,
@@ -486,7 +521,14 @@ export default async function handler(req, res) {
         line_items: [{ price: ALLIN_PRICES[tier], quantity: 1 }],
         metadata,
         ...(isSub ? { subscription_data: { metadata } } : {}),
-        return_url: `${siteUrl}/allin-welcome?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
+        // 2026-08-30: a DEPOSIT is not the end of the purchase, it is the
+        // start of one. It returns to /payment with the plan she picked on
+        // /allin/pay pre-selected, so the balance is arranged in the same
+        // sitting instead of becoming something to chase later.
+        return_url:
+          tier === 'allin-deposit'
+            ? `${siteUrl}/payment?plan=${encodeURIComponent(req.body?.balancePlan || '')}&session_id={CHECKOUT_SESSION_ID}`
+            : `${siteUrl}/allin-welcome?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
         ...(email ? { customer_email: email } : {}),
       });
       return res.status(200).json({ clientSecret: session.client_secret });

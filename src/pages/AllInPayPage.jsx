@@ -53,57 +53,69 @@ const SERIF = '"Fraunces", Georgia, serif';
 // Every number here must match the live Stripe price it names. The totals are
 // written out rather than computed at render time so a wrong number is visible
 // in the diff instead of appearing only on screen.
+// ─── 2026-08-30 (Joel): $7,500, and every plan starts with a $500 deposit ──
+// "7500 pay in full at the top with stripe link. then the payment options like
+// we had them but when they click its a 500 deposite link then signs them up
+// for the remaining payments."
+//
+// So there are now exactly TWO things that take money on this page:
+//   1. pay in full, $7,500, one link
+//   2. a $500 deposit, which carries the plan she picked into /payment
+//
+// The plan cards are NOT subscriptions any more. Tapping one selects the plan
+// and charges $500; /payment then opens with that plan pre-selected and the
+// $7,000 balance on it. The deposit is CREDITED, so pay-in-full stays the
+// cheapest route and no card is charged twice for the same money.
+//
+// Totals rise with the length of the plan, deliberately, and every card shows
+// the per-payment amount AND the total before she picks. Never show a plan
+// without its total: financing that hides its cost is how a $7,500 program
+// turns into a complaint.
+//
+// ⚠️ NOTHING HERE IS LIVE UNTIL THE STRIPE PRICES EXIST and their ids are set
+// as env vars in Vercel. See the required list in api/create-embedded-checkout.js.
+const DEPOSIT_LABEL = '$500';
+
 const OPTIONS = [
   {
     key: 'full',
     tier: 'allin-full',
     pill: 'Pay in full',
-    headline: '$1,997',
+    headline: '$7,500',
     cadence: 'One payment today.',
-    total: 'Total $1,997',
+    total: 'Total $7,500',
     note: 'The lowest total. Nothing recurring, nothing to remember.',
     best: true,
   },
   {
     key: '3pay',
-    tier: 'allin-3pay',
+    tier: 'allin-deposit',
+    balancePlan: '3pay',
     pill: '3 payments',
-    headline: '3 x $699',
-    cadence: 'Every 2 weeks, 3 payments in total.',
-    total: 'Total $2,097',
-    note: 'First payment today, then two more. Finishes in about 6 weeks.',
+    headline: '3 x $2,450',
+    cadence: 'A $500 deposit today, then 3 payments every 2 weeks.',
+    total: 'Total $7,850 with your deposit',
+    note: 'The $500 comes off the price. Your deposit and the plan are set up in one sitting, so nothing is left to arrange later.',
   },
   {
-    key: 'plan',
-    tier: 'allin-plan',
+    key: '6pay',
+    tier: 'allin-deposit',
+    balancePlan: '6pay',
     pill: '6 payments',
-    headline: '6 x $367',
-    cadence: 'Every 2 weeks, 6 payments in total.',
-    total: 'Total $2,202',
-    note: 'First payment today, then five more. Runs alongside the 12 weeks.',
+    headline: '6 x $1,295',
+    cadence: 'A $500 deposit today, then 6 payments every 2 weeks.',
+    total: 'Total $8,270 with your deposit',
+    note: 'The $500 comes off the price. Runs alongside the 12 weeks.',
   },
   {
     key: '9pay',
-    tier: 'allin-9pay',
-    pill: '9 payments',
-    headline: '9 x $267',
-    cadence: 'Every 2 weeks, 9 payments in total.',
-    total: 'Total $2,403',
-    note: 'The smallest payment. First today, then eight more, about 18 weeks.',
-  },
-  // 2026-08-10 (Joel: "make it the 197"). The deposit is NOT an installment
-  // plan and must never read like one: it is a one-time hold with $1,800 still
-  // owed, arranged with Joel. isDeposit drives its own warning block so nobody
-  // can mistake $197 for the price of the program.
-  {
-    key: 'deposit',
     tier: 'allin-deposit',
-    pill: 'Deposit to hold my place',
-    headline: '$197',
-    cadence: 'One payment today. This is not the full price.',
-    total: '$1,800 balance still to arrange',
-    note: 'Locks your place now. You settle the remaining $1,800 at changemylifechallenge.com/payment, where every option credits your deposit.',
-    isDeposit: true,
+    balancePlan: '9pay',
+    pill: '9 payments',
+    headline: '9 x $935',
+    cadence: 'A $500 deposit today, then 9 payments every 2 weeks.',
+    total: 'Total $8,915 with your deposit',
+    note: 'The smallest payment, and the highest total. About 18 weeks after the deposit.',
   },
 ];
 
@@ -159,6 +171,11 @@ export default function AllInPayPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tier: option.tier,
+            // Every plan card charges the SAME $500 deposit; balancePlan is what
+            // tells /payment which plan to open with. Without it the deposit
+            // lands and the balance becomes something to chase by hand, which
+            // is exactly how the last round left money uncollected.
+            ...(option.balancePlan ? { balancePlan: option.balancePlan } : {}),
             distinctId: getDistinctId(),
             abHomeVariant: getAbHomeVariant(),
           }),
@@ -249,23 +266,32 @@ export default function AllInPayPage() {
             deposit must never be mistaken for the price. Two separate blocks
             on purpose: the deposit has no "N x $X" to parse and saying "how
             this plan bills" over a one-time hold would be a lie. */}
-        {option.isDeposit && (
+        {/* 2026-08-30: every plan now charges a $500 DEPOSIT today, not the
+            first installment. The old copy here said "your card is charged
+            {per-payment} today", which under this flow is simply untrue and is
+            the kind of thing that becomes a chargeback. What she is agreeing to
+            is stated in the order it happens: $500 now, the rest on a schedule
+            she sets up in the next screen. */}
+        {option.balancePlan && (
           <div style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
-              <strong>Read this before you pay:</strong> $197 today reserves your place. It is not the price of the
-              program. The program is $1,997 in total, so $1,800 remains. You settle it at changemylifechallenge.com/payment,
-              where every option credits your deposit, before the 12 weeks begin. If you would rather settle the
-              whole thing now, choose one of the options above instead. Questions, write to braveworksrn@gmail.com.
+              <strong>Read this before you pay:</strong> your card is charged{' '}
+              <strong>{DEPOSIT_LABEL} today</strong>, not {option.headline.split(' x ')[1]}. That {DEPOSIT_LABEL}{' '}
+              comes off the price and holds your place. On the very next screen you set up the
+              remaining {option.headline.split(' x ')[0]} payments of {option.headline.split(' x ')[1]},
+              billed automatically every 2 weeks, for {option.total.replace('Total ', '').replace(' with your deposit', ' in total including the deposit')}.
+              The plan stops on its own after the final payment and nothing renews. If you would rather
+              settle the whole thing today for less, choose Pay in full above. Questions, write to
+              braveworksrn@gmail.com.
             </p>
           </div>
         )}
-        {!option.isDeposit && option.key !== 'full' && (
+        {option.key === 'full' && (
           <div style={{ border: `1px solid ${C.line}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
-              <strong>How this plan bills:</strong> your card is charged {option.headline.split(' x ')[1]} today
-              and then automatically every 2 weeks until all {option.headline.split(' x ')[0]} payments are made,
-              for a total of {option.total.replace('Total ', '')}. It stops on its own after the final payment.
-              Nothing renews afterward. Questions about your plan, write to braveworksrn@gmail.com.
+              <strong>How this bills:</strong> one payment of $7,500 today. Nothing recurring, nothing to
+              remember, nothing renews. This is the lowest total of any option on this page.
+              Questions, write to braveworksrn@gmail.com.
             </p>
           </div>
         )}

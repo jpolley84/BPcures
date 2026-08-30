@@ -1258,7 +1258,7 @@ const ALLIN_BALANCE_3PAY_PRICE_ID = process.env.ALLIN_BALANCE_3PAY_PRICE_ID || '
 const ALLIN_BALANCE_6PAY_PRICE_ID = process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm';
 
 // Which All-In plans ride a Stripe subscription and therefore MUST be capped.
-const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-5pay-360', 'balance-4pay-450']);
+const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-9pay', 'balance-5pay-360', 'balance-4pay-450']);
 
 // Cap windows, in seconds. Each sits between the last wanted charge and the
 // first unwanted one. Cap = 6 bi-weekly charges for 'plan' (day 0, ~14, ~28,
@@ -1270,6 +1270,10 @@ const ALLIN_CANCEL_SECONDS = {
   '9pay': 119 * 24 * 60 * 60, // 9 charges: day 0 ... 112. 10th would be day 126.
   'balance-3pay': 36 * 24 * 60 * 60,  // 3 charges, same window as 3pay.
   'balance-6pay': 78 * 24 * 60 * 60,  // 6 charges, same window as plan.
+  // 2026-08-30: added with the $7,500 restructure. 9 bi-weekly charges land on
+  // day 0, 14, 28, 42, 56, 70, 84, 98, 112; a 10th would post ~day 126, so 119
+  // days sits between the 9th and the 10th. Same window as the main '9pay'.
+  'balance-9pay': 119 * 24 * 60 * 60,
   // MONTHLY (not bi-weekly): negotiated for Brenda L Powell 2026-08-18, who
   // asked for $400/mo on her $1,800 balance; 5 x $360 monthly lands exactly on
   // $1,800 under her ceiling. Charges at ~day 0, 30, 61, 91, 122; a 6th would
@@ -1306,6 +1310,7 @@ async function resolveAllInPlan(session) {
     if (md.plan === 'balance-full') return 'balance-full';
     if (md.plan === 'balance-3pay') return 'balance-3pay';
     if (md.plan === 'balance-6pay') return 'balance-6pay';
+    if (md.plan === 'balance-9pay') return 'balance-9pay';
     if (md.plan === 'balance-5pay-360') return 'balance-5pay-360';
     if (md.plan === 'balance-4pay-450') return 'balance-4pay-450';
     if (md.plan === 'full' || !md.plan) return 'full';

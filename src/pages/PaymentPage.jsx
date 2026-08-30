@@ -1,18 +1,24 @@
 // PaymentPage (route: /payment) — balance checkout for people who ALREADY
-// paid the $197 reservation deposit on The Life Change Accelerator.
+// paid the reservation deposit on The Life Change Accelerator.
 //
 // 2026-08-13 (Joel: "make a new page for deposited people with the plans
-// minus the deposit, keep the financing premium"). Every option here credits
-// the $197 deposit against the $1,997 program price, so the base owed is
-// $1,800. The installment options carry the same financing premium the main
-// /allin/pay plans do:
+// minus the deposit, keep the financing premium").
 //
-//   balance-full   $1,800 one-time                     tier 'allin-balance-full'
-//   balance-3pay   3 x $633 every 2 weeks = $1,899     tier 'allin-balance-3pay'
-//   balance-6pay   6 x $333 every 2 weeks = $1,998     tier 'allin-balance-6pay'
+// 2026-08-30: the program is $7,500 and the deposit is $500, CREDITED, so the
+// base owed here is $7,000. The installment options carry the same financing
+// premium the main /allin/pay plans do:
 //
-// Joel pastes changemylifechallenge.com/payment into his reply to a deposit-payer; it is not
-// linked from public pages and is noindexed. The subscriptions are capped by
+//   balance-full   $7,000 one-time                       tier 'allin-balance-full'
+//   balance-3pay   3 x $2,450 every 2 weeks = $7,350     tier 'allin-balance-3pay'
+//   balance-6pay   6 x $1,295 every 2 weeks = $7,770     tier 'allin-balance-6pay'
+//   balance-9pay   9 x $935 every 2 weeks   = $8,415     tier 'allin-balance-9pay'
+//
+// This page is NO LONGER only something Joel pastes by hand. Every installment
+// path on /allin/pay now charges a $500 deposit and returns here with
+// ?plan=3pay|6pay|9pay, so the plan she already chose is pre-selected and the
+// balance is arranged in the same sitting. That is deliberate: a deposit that
+// leaves the balance to be chased later is how the last round ended with money
+// uncollected. It stays noindexed and unlinked from public pages. The subscriptions are capped by
 // the webhook writing cancel_at, exactly like the /allin/pay plans.
 //
 // ⚠️ Adding or changing an option touches THREE files or someone gets billed
@@ -42,14 +48,26 @@ const SERIF = '"Fraunces", Georgia, serif';
 
 // Every number here must match the live Stripe price it names. Totals are
 // written out, not computed, so a wrong number shows up in the diff.
+// ─── 2026-08-30 (Joel): $7,500 program, $500 deposit, $7,000 balance ──────
+// The deposit is CREDITED, so pay-in-full on /allin/pay ($7,500) stays the
+// cheapest route and settling the balance in one payment here is the cheapest
+// route from this page.
+//
+// She arrives with ?plan=3pay|6pay|9pay, carried through the deposit checkout
+// from whichever card she tapped on /allin/pay, so the plan she already chose
+// is pre-selected. Landing on a page that made her choose twice is how a
+// deposit turns into an uncollected balance.
+//
+// ⚠️ Requires the balance price ids in Vercel env. See
+// api/create-embedded-checkout.js for the full list.
 const OPTIONS = [
   {
     key: 'balance-full',
     tier: 'allin-balance-full',
     pill: 'Settle the balance in full',
-    headline: '$1,800',
+    headline: '$7,000',
     cadence: 'One payment today.',
-    total: 'Total $1,800 · with your deposit, $1,997 all settled',
+    total: 'Total $7,000 · with your deposit, $7,500 all settled',
     note: 'The lowest total. Nothing recurring, nothing to remember. You are fully paid.',
     best: true,
   },
@@ -57,24 +75,44 @@ const OPTIONS = [
     key: 'balance-3pay',
     tier: 'allin-balance-3pay',
     pill: '3 payments',
-    headline: '3 x $633',
+    headline: '3 x $2,450',
     cadence: 'Every 2 weeks, 3 payments in total.',
-    total: 'Total $1,899 on top of your deposit',
+    total: 'Total $7,350 on top of your deposit · $7,850 all in',
     note: 'First payment today, then two more. Finishes in about 6 weeks.',
   },
   {
     key: 'balance-6pay',
     tier: 'allin-balance-6pay',
     pill: '6 payments',
-    headline: '6 x $333',
+    headline: '6 x $1,295',
     cadence: 'Every 2 weeks, 6 payments in total.',
-    total: 'Total $1,998 on top of your deposit',
-    note: 'The smallest payment. First today, then five more, running alongside the 12 weeks.',
+    total: 'Total $7,770 on top of your deposit · $8,270 all in',
+    note: 'First payment today, then five more, running alongside the 12 weeks.',
+  },
+  {
+    key: 'balance-9pay',
+    tier: 'allin-balance-9pay',
+    pill: '9 payments',
+    headline: '9 x $935',
+    cadence: 'Every 2 weeks, 9 payments in total.',
+    total: 'Total $8,415 on top of your deposit · $8,915 all in',
+    note: 'The smallest payment and the highest total. First today, then eight more, about 18 weeks.',
   },
 ];
 
+// ?plan=3pay -> 'balance-3pay'. Anything unrecognised falls back to settling in
+// full, which is the option that costs her least.
+function planFromQuery() {
+  try {
+    const p = new URLSearchParams(window.location.search).get('plan');
+    return ['3pay', '6pay', '9pay'].includes(p) ? `balance-${p}` : 'balance-full';
+  } catch {
+    return 'balance-full';
+  }
+}
+
 export default function PaymentPage() {
-  const [selected, setSelected] = useState('balance-full');
+  const [selected, setSelected] = useState(planFromQuery);
   const [error, setError] = useState('');
   const containerRef = useRef(null);
   const option = OPTIONS.find((o) => o.key === selected) || OPTIONS[0];
@@ -156,7 +194,7 @@ export default function PaymentPage() {
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 8px' }}>
           Your $197 deposit already holds your place, and every option below credits it against the
-          $1,997 program price. The remaining balance is $1,800.
+          $7,500 program price. The remaining balance is $7,000.
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>
           Settling it in one payment costs the least, and the longer a plan runs the more it comes to.
