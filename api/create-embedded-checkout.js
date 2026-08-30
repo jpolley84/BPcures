@@ -445,7 +445,8 @@ export default async function handler(req, res) {
   // webhook exactly like the other allin plans.
   if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan'
       || tier === 'allin-3pay' || tier === 'allin-9pay'
-      || tier === 'allin-balance-full' || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay') {
+      || tier === 'allin-balance-full' || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay'
+      || tier === 'allin-balance-9pay') {
     // ─── 2026-08-30 (Joel): the program is $7,500 ────────────────────
     // Pay in full is one link. Every INSTALLMENT path now goes through a $500
     // deposit first, and the deposit is CREDITED, so the balance is $7,000.
