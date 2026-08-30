@@ -50,7 +50,7 @@ export const RED_FLAG = /chest pain|can'?t breathe|trouble breathing|short(ness)
 // (Lotarsha Carter, verbatim: "I have high blood pressure all the time now it
 // damage my kidneys im stages 4 kidneys disease Chf also well"). Named
 // conditions are now matched bare, outside the possessive group.
-export const CLINICAL_MARKER = /\bmy (bp|blood pressure|doctor|meds?|medication|prescri|kidney|heart|a1c|sugar was|numbers)\b|kidney disease|kidneys? (disease|failure)|renal|\bckd\b|\bchf\b|heart failure|congestive|dialysis|transplant|stage ?\d|high blood pressure|hypertension|lisinopril|amlodipine|metoprolol|losartan|plavix|statin|insulin|diagnos|symptom|swelling|dizzy|palpitation|side effect|dose|mg\b/i;
+export const CLINICAL_MARKER = /\bmy (bp|blood pressure|doctor|meds?|medication|prescri|kidneys?|heart|a1c|sugar was|numbers)\b|kidney disease|kidneys? (disease|failure)|renal|\bckd\b|\bchf\b|heart failure|congestive|dialysis|transplant|stage ?\d|high blood pressure|hypertension|lisinopril|amlodipine|metoprolol|losartan|plavix|statin|insulin|diagnos|symptom|swelling|dizzy|palpitation|side effect|dose|mg\b/i;
 
 const KEYWORDS = [
   [/\bunsubscribe\b|\bstop messaging\b|don'?t (message|text|contact) me|remove me/i, 'optout'],
@@ -60,6 +60,21 @@ const KEYWORDS = [
   [/\b(quiz|link please|send( me)? the link|the link|get started|sign me up)\b/i, 'buyer_quiz'],
   [/\bskool\b|\b(join|the) group\b|community|weekly reset/i, 'skool'],
 ];
+
+// 2026-08-30 FIX (Susan Seaferd, verbatim: "Checked out your tea. My bp
+// creeps up but just as fast drops down 30 points"): "My bp" tripped
+// CLINICAL_MARKER and correctly vetoed the buyer_tea shortcut — but the
+// veto's signal was then discarded and the LLM's 'other' stood, so she got
+// the self-route menu instead of the clinical lane. When the deterministic
+// layer has already seen clinical context, an LLM verdict that would SELL to
+// her (or shrug) may not overrule it. Reporting lanes (proof/ops/navigation/
+// optout/spam/intl/compliment) still stand — a testimonial that mentions
+// "my numbers" is proof, not a deflect. Applies on the LLM path only; the
+// keyword layer's own lanes (ops/optout) already outrank clinical by design.
+const SELLING_OR_UNCLEAR = ['buyer_tea', 'buyer_quiz', 'buyer_mag', 'skool', 'hotlead', 'other'];
+export function markerOverridesLane(lane, text) {
+  return SELLING_OR_UNCLEAR.includes(lane) && CLINICAL_MARKER.test(text);
+}
 
 export function keywordLane(text) {
   for (const [re, lane] of KEYWORDS) {
@@ -180,6 +195,10 @@ export default async function handler(req, res) {
       // doctrine is "any doubt biases clinical"; an outage is doubt.
       lane = 'clinical';
       via = 'llm-error';
+    }
+    if (markerOverridesLane(lane, t)) {
+      lane = 'clinical';
+      via = via + '+marker-override';
     }
   }
 

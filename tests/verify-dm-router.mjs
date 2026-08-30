@@ -10,7 +10,7 @@
 //
 // Exit code 0 = all pass. Non-zero = a regression; do NOT deploy.
 
-import { RED_FLAG, CLINICAL_MARKER, keywordLane } from '../api/dm-router.js';
+import { RED_FLAG, CLINICAL_MARKER, keywordLane, markerOverridesLane } from '../api/dm-router.js';
 
 // Mirrors the handler's layer-1 decision, minus KV and the LLM call.
 function layer1(text) {
@@ -114,5 +114,33 @@ if (leaks.length) {
 } else {
   console.log(`\nProduct-link leak check: 0 of ${DIAGNOSIS_PROBES.length} diagnosis probes reached a buyer lane.`);
 }
+
+// ── 2026-08-30: the LLM-path marker override (Susan Seaferd) ─────────────
+// When layer 1 saw clinical context but produced no lane, the LLM's verdict
+// may not sell to her or shrug; reporting lanes still stand.
+const SUSAN = 'Checked out your tea. My bp creeps up but just as fast drops down 30 points';
+const OVERRIDE_CASES = [
+  { lane: 'other', text: SUSAN, expect: true, note: 'Susan verbatim — LLM said other, must flip clinical' },
+  { lane: 'buyer_tea', text: SUSAN, expect: true },
+  { lane: 'hotlead', text: 'I want a plan, my kidneys are failing', expect: true },
+  { lane: 'proof', text: 'my numbers dropped 20 points thank you!', expect: false, note: 'testimonial stays proof' },
+  { lane: 'compliment', text: 'love your videos, helped my blood pressure', expect: false },
+  { lane: 'ops', text: 'where is my tea for my hypertension', expect: false, note: 'ops never yields' },
+  { lane: 'other', text: 'hello there', expect: false, note: 'no marker, no override' },
+  { lane: 'buyer_tea', text: 'Tea please', expect: false, note: 'clean buyer untouched' },
+];
+let oFailed = 0;
+for (const c of OVERRIDE_CASES) {
+  const got = markerOverridesLane(c.lane, c.text);
+  if (got === c.expect) {
+    console.log(`  PASS  override(${c.lane}, ${JSON.stringify(c.text).slice(0, 48)})  ->  ${got}`);
+  } else {
+    oFailed++;
+    console.log(`  FAIL  override(${c.lane}, ${JSON.stringify(c.text).slice(0, 48)})  expected ${c.expect}, got ${got}${c.note ? `  [${c.note}]` : ''}`);
+  }
+}
+console.log(`
+Marker-override: ${OVERRIDE_CASES.length - oFailed} of ${OVERRIDE_CASES.length} passed.`);
+failed += oFailed;
 
 process.exit(failed ? 1 : 0);
