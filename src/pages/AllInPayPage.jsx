@@ -88,34 +88,34 @@ const OPTIONS = [
     best: true,
   },
   {
-    key: '3pay',
-    tier: 'allin-deposit',
-    balancePlan: '3pay',
-    pill: '3 payments',
-    headline: '3 x $2,450',
-    cadence: 'A $500 deposit today, then 3 payments every 2 weeks.',
-    total: 'Total $7,850 with your deposit',
-    note: 'The $500 comes off the price. Your deposit and the plan are set up in one sitting, so nothing is left to arrange later.',
-  },
-  {
     key: '6pay',
     tier: 'allin-deposit',
     balancePlan: '6pay',
-    pill: '6 payments',
+    pill: '6 months',
     headline: '6 x $1,295',
-    cadence: 'A $500 deposit today, then 6 payments every 2 weeks.',
+    cadence: 'A $500 deposit today, then 6 monthly payments.',
     total: 'Total $8,270 with your deposit',
-    note: 'The $500 comes off the price. Runs alongside the 12 weeks.',
+    note: 'The $500 comes off the price. Six months, finishing just after the program does.',
   },
   {
     key: '9pay',
     tier: 'allin-deposit',
     balancePlan: '9pay',
-    pill: '9 payments',
+    pill: '9 months',
     headline: '9 x $935',
-    cadence: 'A $500 deposit today, then 9 payments every 2 weeks.',
+    cadence: 'A $500 deposit today, then 9 monthly payments.',
     total: 'Total $8,915 with your deposit',
-    note: 'The smallest payment, and the highest total. About 18 weeks after the deposit.',
+    note: 'The $500 comes off the price. Nine months, a smaller amount each time.',
+  },
+  {
+    key: '12pay',
+    tier: 'allin-deposit',
+    balancePlan: '12pay',
+    pill: '12 months',
+    headline: '12 x $750',
+    cadence: 'A $500 deposit today, then 12 monthly payments.',
+    total: 'Total $9,500 with your deposit',
+    note: 'The smallest monthly amount and the highest total. Spreads across a full year.',
   },
 ];
 
@@ -278,8 +278,8 @@ export default function AllInPayPage() {
               <strong>Read this before you pay:</strong> your card is charged{' '}
               <strong>{DEPOSIT_LABEL} today</strong>, not {option.headline.split(' x ')[1]}. That {DEPOSIT_LABEL}{' '}
               comes off the price and holds your place. On the very next screen you set up the
-              remaining {option.headline.split(' x ')[0]} payments of {option.headline.split(' x ')[1]},
-              billed automatically every 2 weeks, for {option.total.replace('Total ', '').replace(' with your deposit', ' in total including the deposit')}.
+              remaining {option.headline.split(' x ')[0]} monthly payments of {option.headline.split(' x ')[1]},
+              billed automatically once a month, for {option.total.replace('Total ', '').replace(' with your deposit', ' in total including the deposit')}.
               The plan stops on its own after the final payment and nothing renews. If you would rather
               settle the whole thing today for less, choose Pay in full above. Questions, write to
               braveworksrn@gmail.com.

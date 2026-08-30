@@ -9,13 +9,15 @@
 // premium the main /allin/pay plans do:
 //
 //   balance-full   $7,000 one-time                       tier 'allin-balance-full'
-//   balance-3pay   3 x $2,450 every 2 weeks = $7,350     tier 'allin-balance-3pay'
-//   balance-6pay   6 x $1,295 every 2 weeks = $7,770     tier 'allin-balance-6pay'
-//   balance-9pay   9 x $935 every 2 weeks   = $8,415     tier 'allin-balance-9pay'
+//   balance-6pay    6 x $1,295 monthly = $7,770    tier 'allin-balance-6pay'
+//   balance-9pay    9 x $935 monthly   = $8,415    tier 'allin-balance-9pay'
+//   balance-12pay  12 x $750 monthly   = $9,000    tier 'allin-balance-12pay'
+// 2026-08-30: every plan is MONTHLY now, not bi-weekly, and the old 3-pay
+// slot became the 12-month option.
 //
 // This page is NO LONGER only something Joel pastes by hand. Every installment
 // path on /allin/pay now charges a $500 deposit and returns here with
-// ?plan=3pay|6pay|9pay, so the plan she already chose is pre-selected and the
+// ?plan=6pay|9pay|12pay, so the plan she already chose is pre-selected and the
 // balance is arranged in the same sitting. That is deliberate: a deposit that
 // leaves the balance to be chased later is how the last round ended with money
 // uncollected. It stays noindexed and unlinked from public pages. The subscriptions are capped by
@@ -72,40 +74,40 @@ const OPTIONS = [
     best: true,
   },
   {
-    key: 'balance-3pay',
-    tier: 'allin-balance-3pay',
-    pill: '3 payments',
-    headline: '3 x $2,450',
-    cadence: 'Every 2 weeks, 3 payments in total.',
-    total: 'Total $7,350 on top of your deposit · $7,850 all in',
-    note: 'First payment today, then two more. Finishes in about 6 weeks.',
-  },
-  {
     key: 'balance-6pay',
     tier: 'allin-balance-6pay',
-    pill: '6 payments',
+    pill: '6 months',
     headline: '6 x $1,295',
-    cadence: 'Every 2 weeks, 6 payments in total.',
+    cadence: 'Once a month, 6 payments in total.',
     total: 'Total $7,770 on top of your deposit · $8,270 all in',
-    note: 'First payment today, then five more, running alongside the 12 weeks.',
+    note: 'First payment today, then five more, one a month.',
   },
   {
     key: 'balance-9pay',
     tier: 'allin-balance-9pay',
-    pill: '9 payments',
+    pill: '9 months',
     headline: '9 x $935',
-    cadence: 'Every 2 weeks, 9 payments in total.',
+    cadence: 'Once a month, 9 payments in total.',
     total: 'Total $8,415 on top of your deposit · $8,915 all in',
-    note: 'The smallest payment and the highest total. First today, then eight more, about 18 weeks.',
+    note: 'First payment today, then eight more, one a month.',
+  },
+  {
+    key: 'balance-12pay',
+    tier: 'allin-balance-12pay',
+    pill: '12 months',
+    headline: '12 x $750',
+    cadence: 'Once a month, 12 payments in total.',
+    total: 'Total $9,000 on top of your deposit · $9,500 all in',
+    note: 'The smallest monthly amount and the highest total. Spreads across a full year.',
   },
 ];
 
-// ?plan=3pay -> 'balance-3pay'. Anything unrecognised falls back to settling in
+// ?plan=6pay -> 'balance-6pay'. Anything unrecognised falls back to settling in
 // full, which is the option that costs her least.
 function planFromQuery() {
   try {
     const p = new URLSearchParams(window.location.search).get('plan');
-    return ['3pay', '6pay', '9pay'].includes(p) ? `balance-${p}` : 'balance-full';
+    return ['6pay', '9pay', '12pay'].includes(p) ? `balance-${p}` : 'balance-full';
   } catch {
     return 'balance-full';
   }
@@ -244,7 +246,7 @@ export default function PaymentPage() {
           <div style={{ border: `1px solid ${C.line}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
               <strong>How this plan bills:</strong> your card is charged {option.headline.split(' x ')[1]} today
-              and then automatically every 2 weeks until all {option.headline.split(' x ')[0]} payments are made.
+              and then automatically once a month until all {option.headline.split(' x ')[0]} monthly payments are made.
               It stops on its own after the final payment. Nothing renews afterward. Your $197 deposit is separate
               and already paid. Questions, write to braveworksrn@gmail.com.
             </p>

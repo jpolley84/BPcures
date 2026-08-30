@@ -1258,7 +1258,7 @@ const ALLIN_BALANCE_3PAY_PRICE_ID = process.env.ALLIN_BALANCE_3PAY_PRICE_ID || '
 const ALLIN_BALANCE_6PAY_PRICE_ID = process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm';
 
 // Which All-In plans ride a Stripe subscription and therefore MUST be capped.
-const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-9pay', 'balance-5pay-360', 'balance-4pay-450']);
+const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-9pay', 'balance-12pay', 'balance-5pay-360', 'balance-4pay-450']);
 
 // Cap windows, in seconds. Each sits between the last wanted charge and the
 // first unwanted one. Cap = 6 bi-weekly charges for 'plan' (day 0, ~14, ~28,
@@ -1268,12 +1268,20 @@ const ALLIN_CANCEL_SECONDS = {
   '3pay': 36 * 24 * 60 * 60,  // 3 charges: day 0, 14, 28. 4th would be day 42.
   'plan': 78 * 24 * 60 * 60,  // 6 charges: day 0 ... 70. 7th would be day 84.
   '9pay': 119 * 24 * 60 * 60, // 9 charges: day 0 ... 112. 10th would be day 126.
-  'balance-3pay': 36 * 24 * 60 * 60,  // 3 charges, same window as 3pay.
-  'balance-6pay': 78 * 24 * 60 * 60,  // 6 charges, same window as plan.
-  // 2026-08-30: added with the $7,500 restructure. 9 bi-weekly charges land on
-  // day 0, 14, 28, 42, 56, 70, 84, 98, 112; a 10th would post ~day 126, so 119
-  // days sits between the 9th and the 10th. Same window as the main '9pay'.
-  'balance-9pay': 119 * 24 * 60 * 60,
+  // ⚠️ 2026-08-30 (Joel): the balance plans are MONTHLY now, not bi-weekly, so
+  // these windows were RECOMPUTED. Leaving the bi-weekly numbers would have
+  // been silently destructive in the opposite direction to the usual bug: a
+  // 78-day cap on a monthly 6-pay cancels after the 3rd charge, so the customer
+  // is cut off and roughly half the balance is never collected. A cap that is
+  // too SHORT loses money as surely as one that is missing bills forever.
+  //
+  // Monthly charges land at roughly day 0, 30, 61, 91, 122, 152, 183, 213, 244,
+  // 274, 305, 335. Each window sits between the last wanted charge and the
+  // first unwanted one.
+  'balance-3pay': 36 * 24 * 60 * 60,   // LEGACY bi-weekly, kept for in-flight subs.
+  'balance-6pay': 167 * 24 * 60 * 60,  // 6 monthly: last ~day 152, 7th ~day 183.
+  'balance-9pay': 259 * 24 * 60 * 60,  // 9 monthly: last ~day 244, 10th ~day 274.
+  'balance-12pay': 350 * 24 * 60 * 60, // 12 monthly: last ~day 335, 13th ~day 365.
   // MONTHLY (not bi-weekly): negotiated for Brenda L Powell 2026-08-18, who
   // asked for $400/mo on her $1,800 balance; 5 x $360 monthly lands exactly on
   // $1,800 under her ceiling. Charges at ~day 0, 30, 61, 91, 122; a 6th would
@@ -1311,6 +1319,7 @@ async function resolveAllInPlan(session) {
     if (md.plan === 'balance-3pay') return 'balance-3pay';
     if (md.plan === 'balance-6pay') return 'balance-6pay';
     if (md.plan === 'balance-9pay') return 'balance-9pay';
+    if (md.plan === 'balance-12pay') return 'balance-12pay';
     if (md.plan === 'balance-5pay-360') return 'balance-5pay-360';
     if (md.plan === 'balance-4pay-450') return 'balance-4pay-450';
     if (md.plan === 'full' || !md.plan) return 'full';

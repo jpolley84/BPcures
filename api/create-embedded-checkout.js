@@ -446,7 +446,7 @@ export default async function handler(req, res) {
   if (tier === 'allin-full' || tier === 'allin-deposit' || tier === 'allin-plan'
       || tier === 'allin-3pay' || tier === 'allin-9pay'
       || tier === 'allin-balance-full' || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay'
-      || tier === 'allin-balance-9pay') {
+      || tier === 'allin-balance-9pay' || tier === 'allin-balance-12pay') {
     // ─── 2026-08-30 (Joel): the program is $7,500 ────────────────────
     // Pay in full is one link. Every INSTALLMENT path now goes through a $500
     // deposit first, and the deposit is CREDITED, so the balance is $7,000.
@@ -478,7 +478,8 @@ export default async function handler(req, res) {
       'allin-balance-full': process.env.ALLIN_BALANCE_FULL_PRICE_ID || 'price_1U44qEHseZnO3rRZAihXieRN', // $1,800 one-time
       'allin-balance-3pay': process.env.ALLIN_BALANCE_3PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZnM63I1b7', // $633 / 2wk recurring
       'allin-balance-6pay': process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm', // $1,295 / 2wk (env) / legacy $333 fallback
-      'allin-balance-9pay': process.env.ALLIN_BALANCE_9PAY_PRICE_ID || '', // $935 / 2wk, 9 payments. NO legacy fallback: this tier is new.
+      'allin-balance-9pay': process.env.ALLIN_BALANCE_9PAY_PRICE_ID || '',  // $935 MONTHLY x 9.  No fallback: new tier.
+      'allin-balance-12pay': process.env.ALLIN_BALANCE_12PAY_PRICE_ID || '', // $750 MONTHLY x 12. No fallback: new tier.
     };
     const PLAN_BY_TIER = {
       'allin-full': 'full',
@@ -490,11 +491,12 @@ export default async function handler(req, res) {
       'allin-balance-3pay': 'balance-3pay',
       'allin-balance-6pay': 'balance-6pay',
       'allin-balance-9pay': 'balance-9pay',
+      'allin-balance-12pay': 'balance-12pay',
     };
     const plan = PLAN_BY_TIER[tier];
     const isSub = tier === 'allin-plan' || tier === 'allin-3pay' || tier === 'allin-9pay'
       || tier === 'allin-balance-3pay' || tier === 'allin-balance-6pay'
-      || tier === 'allin-balance-9pay';
+      || tier === 'allin-balance-9pay' || tier === 'allin-balance-12pay';
 
     // A tier with no configured price must never reach Stripe: it would throw a
     // raw API error at a woman mid-checkout. Fail here with something readable.
