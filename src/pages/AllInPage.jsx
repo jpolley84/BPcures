@@ -86,6 +86,13 @@ const ctTime = (d) => new Intl.DateTimeFormat('en-US', {
 const CLOSE_LABEL = `${ctDate(CLOSE_AT)} at ${ctTime(CLOSE_AT)} CT`;
 const FAST_LABEL = `${ctDate(FAST_ACTION_AT)} at ${ctTime(FAST_ACTION_AT)} CT`;
 
+// The long label wraps to two lines on a 375px phone and the red bar grows to
+// 105px, which is an eighth of the screen spent on a date. Same instant, same
+// derivation, fewer characters. Shown only under 560px.
+const CLOSE_LABEL_SHORT = `${new Intl.DateTimeFormat('en-US', {
+  weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Chicago',
+}).format(CLOSE_AT)} · ${ctTime(CLOSE_AT)} CT`;
+
 // ─── the offer stack, from the LIVE, NOT JUST EXIST deck ─────────────────
 const PHASES = [
   {
@@ -353,6 +360,26 @@ const CSS = `
   .lca .guarantee-band h2 { font-size:20px; }
   .lca .guarantee-band p { font-size:14px; }
 }
+.lca .narrow-only { display:none; }
+
+@media (max-width:560px) {
+  /* One copy of a sentence is shown, never both. Rendering both and letting
+     CSS choose avoids a resize listener and the flash of the wrong string. */
+  .lca .wide-only { display:none; }
+  .lca .narrow-only { display:inline; }
+  .lca p.narrow-only { display:block; }
+
+  /* 8px is below what a 55-year-old reader can comfortably resolve, and these
+     four labels sit under the only numbers on the page that are ticking. */
+  .lca .time-label { font-size:9px; }
+
+  /* The sticky Secure My Spot bar covers roughly the bottom 88px, so the real
+     mobile fold is ~724px, not 812. Everything above the guarantee band is on
+     a budget to keep the band inside that. */
+  .lca .program-strip { gap:7px; margin-bottom:14px; }
+  .lca .program-pill { padding:6px 9px; font-size:12px; }
+}
+
 @media (prefers-reduced-motion:reduce) { .lca * { transition:none !important; } }
 `;
 
@@ -455,9 +482,12 @@ export default function AllInPage() {
       <div className={`closebar${closed ? ' is-closed' : ''}`}>
         <div className="closebar-inner">
           <div className="close-copy">
-            {closed
-              ? 'Enrollment for this cohort is closed'
-              : `Enrollment closes ${CLOSE_LABEL}`}
+            {closed ? 'Enrollment for this cohort is closed' : (
+              <>
+                <span className="wide-only">{`Enrollment closes ${CLOSE_LABEL}`}</span>
+                <span className="narrow-only">{`Closes ${CLOSE_LABEL_SHORT}`}</span>
+              </>
+            )}
           </div>
           {!closed && (
             <>
@@ -483,8 +513,14 @@ export default function AllInPage() {
         <div className="subhead">
           <strong>90 days of nurse-led transformation, plus one full year of community and support.</strong>
           <br />
-          Secure your place today with a <strong>{DEPOSIT} deposit</strong>. Your deposit is credited toward
-          the full {PRICE} investment, with payment terms available up to 12 months.
+          <span className="wide-only">
+            Secure your place today with a <strong>{DEPOSIT} deposit</strong>. Your deposit is credited
+            toward the full {PRICE} investment, with payment terms available up to 12 months.
+          </span>
+          <span className="narrow-only">
+            Secure your place with a <strong>{DEPOSIT} deposit</strong>, credited toward the full
+            {' '}{PRICE}. Payment terms up to 12 months.
+          </span>
         </div>
 
         <div className="program-strip">
@@ -507,10 +543,14 @@ export default function AllInPage() {
           </div>
           <div>
             <h2 id="guarantee-band-h">The 30-Day Feel It Guarantee</h2>
-            <p>
+            <p className="wide-only">
               Give it 30 honest days. Show up, complete your Personal Health Review, and follow the first
               steps you agree on with your team. If you still cannot point to a real shift by the end of
               that window, tell us and we refund the program payments you made to us.
+            </p>
+            <p className="narrow-only">
+              Give it 30 honest days. If you show up, do the agreed first steps and still cannot point to
+              a real shift, tell us and we refund the program payments you made to us.
             </p>
             <a className="more" href="#guarantee">Read the full guarantee terms</a>
           </div>
