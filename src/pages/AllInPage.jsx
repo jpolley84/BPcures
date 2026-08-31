@@ -508,7 +508,14 @@ export default function AllInPage() {
                 hand over money to two people she has mostly met through a
                 phone screen. */}
             <div className="coaches">
-              <img src={heroImg} alt="Annie and Joel, registered nurses" loading="lazy" />
+              {/* NOT lazy. It shipped lazy for one deploy and simply never
+                  loaded on production: the element sat at complete=false with
+                  natural size 0x0 while the same URL decoded fine on demand,
+                  so the card rendered as text beside an empty hole. This is a
+                  78px trust element near the top of a page asking for $500,
+                  which is the last thing that should be deferred. Explicit
+                  width/height so it reserves its box either way. */}
+              <img src={heroImg} alt="Annie and Joel, registered nurses" width="78" height="78" />
               <div>
                 <p className="who">Annie and Joel, RNs</p>
                 <p className="what">
