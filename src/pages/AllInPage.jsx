@@ -203,15 +203,23 @@ const CSS = `
 .lca h1 { font-size:clamp(38px,5.4vw,68px); line-height:1; letter-spacing:-.05em;
   margin:0 0 17px; max-width:820px; }
 .lca .subhead { max-width:800px; color:#3f3b34; font-size:clamp(17px,2vw,20px); margin-bottom:24px; }
-.lca .program-strip { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:26px; }
+.lca .program-strip { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 0; }
 .lca .program-pill { padding:8px 11px; border:1px solid var(--line); background:rgba(255,255,255,.62);
   border-radius:999px; font-size:13px; font-weight:750; }
 .lca .program-pill strong { font-weight:900; }
 
 /* ── the above-the-fold guarantee band (Joel, 2026-08-30) ── */
+.lca .save-spot { display:block; text-decoration:none; text-align:center; background:var(--ink);
+  color:#fff; border-radius:12px; padding:16px 22px; margin:0 0 18px; font-size:19px;
+  font-weight:900; letter-spacing:-.02em; box-shadow:var(--shadow);
+  transition:transform .12s ease, background .12s ease; }
+.lca .save-spot:hover { transform:translateY(-1px); background:#242424; }
+.lca .save-spot-sub { display:block; margin-top:4px; font-size:12.5px; font-weight:750;
+  letter-spacing:0; color:#cfc9bd; }
+
 .lca .guarantee-band { display:grid; grid-template-columns:auto minmax(0,1fr); gap:18px;
   align-items:start; background:var(--ink); color:#fff; border-radius:var(--radius);
-  padding:20px 22px; margin-bottom:34px; }
+  padding:20px 22px; margin-bottom:0; }
 .lca .guarantee-seal { width:74px; height:74px; border-radius:50%; display:grid; place-content:center;
   text-align:center; border:2px solid var(--gold); color:var(--gold); line-height:1.05; }
 .lca .guarantee-seal .n { display:block; font-size:25px; font-weight:950; letter-spacing:-.04em; }
@@ -221,7 +229,7 @@ const CSS = `
 .lca .guarantee-band .more { display:inline-block; margin-top:9px; font-size:13px; font-weight:850;
   color:var(--gold); }
 
-.lca .checkout-grid { display:grid; grid-template-columns:minmax(0,1.18fr) minmax(360px,.82fr);
+.lca .checkout-grid { margin-top:34px; display:grid; grid-template-columns:minmax(0,1.18fr) minmax(360px,.82fr);
   gap:42px; align-items:start; }
 .lca .offer-side { min-width:0; }
 
@@ -316,6 +324,8 @@ const CSS = `
 .lca summary::-webkit-details-marker { display:none; }
 .lca details p { margin:-3px 0 17px; font-size:14px; color:#5e574d; }
 
+.lca .scroll-prompt { display:none; }
+
 .lca .apply-out { margin-top:26px; font-size:13.5px; color:var(--muted); text-align:center; }
 .lca .apply-out a { font-weight:850; color:var(--ink); }
 
@@ -330,6 +340,21 @@ const CSS = `
   .lca .page { padding-top:34px; }
   .lca .checkout-grid { grid-template-columns:1fr; gap:28px; }
   .lca .payment-card { position:static; }
+
+  /* Joel, 2026-08-30: the checkout goes UP. Stacked, the payment card used
+     to land after every phase, bonus, value block and FAQ, about 5,000px
+     down. Reordering rather than moving it in the markup keeps the desktop
+     two-column layout exactly as designed, and keeps the DOM order sane for
+     a screen reader (offer, then checkout, then the prompt). */
+  .lca .payment-card { order:1; }
+  .lca .scroll-prompt { order:2; }
+  .lca .offer-side { order:3; }
+
+  .lca .scroll-prompt { display:flex; align-items:center; justify-content:center; gap:10px;
+    text-decoration:none; border:1px dashed #c6bda9; border-radius:999px; padding:13px 18px;
+    margin:-6px 0 -4px; color:#5f584b; background:rgba(255,255,255,.5); }
+  .lca .scroll-prompt-t { font-size:13.5px; font-weight:850; letter-spacing:.01em; }
+  .lca .scroll-prompt-a { font-size:16px; font-weight:900; color:var(--ink); }
   .lca .mobile-cta { display:block; position:sticky; bottom:0; z-index:30;
     background:rgba(251,248,240,.96); border-top:1px solid var(--line);
     padding:10px 14px max(10px,env(safe-area-inset-bottom)); backdrop-filter:blur(10px); }
@@ -351,10 +376,10 @@ const CSS = `
      two-column layout here rather than stacking, because stacking the seal
      above the text costs more height than the seal is worth. */
   .lca .subhead { margin-bottom:16px; font-size:16.5px; }
-  .lca .program-strip { gap:8px; margin-bottom:16px; }
+  .lca .program-strip { gap:8px; margin:16px 0 0; }
   .lca .program-pill { padding:7px 10px; font-size:12.5px; }
   .lca .brand-line { margin-bottom:12px; }
-  .lca .guarantee-band { padding:16px; gap:14px; margin-bottom:26px; }
+  .lca .guarantee-band { padding:16px; gap:14px; margin-bottom:0; }
   .lca .guarantee-seal { width:58px; height:58px; }
   .lca .guarantee-seal .n { font-size:20px; }
   .lca .guarantee-band h2 { font-size:20px; }
@@ -368,6 +393,12 @@ const CSS = `
    asked to feature, and "Apply first" is the only path left for someone who
    is not ready to pay today. Keyed on pointer:coarse as well as width, since
    a tablet is a touch device at 800px. */
+@media (min-width:881px) {
+  /* Desktop shows the payment card in the right column, so the jump is a
+     short hop rather than a rescue. Sized to the copy instead of the page. */
+  .lca .save-spot { display:inline-block; margin-bottom:22px; padding:15px 30px; }
+}
+
 @media (max-width:880px), (pointer:coarse) {
   .lca .guarantee-band .more { display:inline-block; padding:12px 2px; margin-top:2px; }
   .lca .apply-out a { display:inline-block; padding:13px 6px; }
@@ -389,8 +420,9 @@ const CSS = `
   /* The sticky Secure My Spot bar covers roughly the bottom 88px, so the real
      mobile fold is ~724px, not 812. Everything above the guarantee band is on
      a budget to keep the band inside that. */
-  .lca .program-strip { gap:7px; margin-bottom:14px; }
+  .lca .program-strip { gap:7px; margin:16px 0 0; }
   .lca .program-pill { padding:6px 9px; font-size:12px; }
+  .lca .save-spot { padding:15px 18px; font-size:18px; margin-bottom:14px; }
 }
 
 @media (prefers-reduced-motion:reduce) { .lca * { transition:none !important; } }
@@ -536,11 +568,27 @@ export default function AllInPage() {
           </span>
         </div>
 
-        <div className="program-strip">
-          <div className="program-pill"><strong>{SPOTS} spots</strong> in this cohort</div>
-          <div className="program-pill"><strong>{DEPOSIT}</strong> secures your place</div>
-          <div className="program-pill">Protected by our <strong>30-Day Feel It Guarantee</strong></div>
-        </div>
+        {/* ── SAVE MY SPOT (Joel, 2026-08-30) ─────────────────────────
+            Skips the whole offer column and lands on the checkout. This is
+            not a nicety on phones: the grid stacks, so the payment card sits
+            below every phase, bonus, value and FAQ block, roughly 5,000px
+            down. Someone who already decided should not have to read the
+            pitch again to pay.
+
+            It sits ABOVE the guarantee band, and the pills moved BELOW it,
+            because on a 375px phone the band only clears the fold if nothing
+            else is inserted before it. Order here is load-bearing; re-measure
+            if you move anything. */}
+        {!closed && (
+          <a
+            className="save-spot"
+            href="#checkout"
+            onClick={() => track('allin_save_spot_click', { placement: 'hero' })}
+          >
+            Save My Spot
+            <span className="save-spot-sub">{DEPOSIT} today · takes you straight to checkout</span>
+          </a>
+        )}
 
         {/* ── ABOVE THE FOLD GUARANTEE (Joel, 2026-08-30) ──────────────
             He asked for this specifically. It sits between the hero and the
@@ -569,6 +617,16 @@ export default function AllInPage() {
           </div>
         </section>
 
+        {/* Moved below the guarantee band on 2026-08-30. The third pill used
+            to read "Protected by our 30-Day Feel It Guarantee" and is gone:
+            with the band sitting directly above it, that pill restated the
+            same promise two inches away, which is the opposite of succinct. */}
+        <div className="program-strip">
+          <div className="program-pill"><strong>{SPOTS} spots</strong> in this cohort</div>
+          <div className="program-pill"><strong>{DEPOSIT}</strong> secures your place</div>
+          <div className="program-pill">Deposit credited toward your <strong>{PRICE}</strong></div>
+        </div>
+
         <div className="checkout-grid">
           <section className="offer-side" aria-label="Offer summary">
             {/* Annie and Joel, as asked. High on the page: she is about to
@@ -592,7 +650,7 @@ export default function AllInPage() {
               </div>
             </div>
 
-            <div className="offer-summary">
+            <div className="offer-summary" id="whats-inside" style={{ scrollMarginTop: 14 }}>
               <h2>Do less. In the right order.</h2>
               <p>
                 A clear plan, real support, and someone paying attention, built around the exact
@@ -674,7 +732,7 @@ export default function AllInPage() {
             </div>
           </section>
 
-          <aside className="payment-card" id="checkout" aria-label="Checkout">
+          <aside className="payment-card" id="checkout" aria-label="Checkout" style={{ scrollMarginTop: 14 }}>
             <div className="payment-head">
               {!closed && (
                 <div className="spots"><span className="spots-dot" /> {SPOTS} spots available</div>
@@ -751,6 +809,17 @@ export default function AllInPage() {
               </div>
             )}
           </aside>
+
+          {/* ── KEEP SCROLLING (Joel, 2026-08-30) ───────────────────────
+              Only exists on phones. On desktop the offer column sits beside
+              the payment card and is already in view, so a prompt telling
+              you to scroll would be pointing at something you can see.
+              On mobile the card is now ABOVE the offer, so without this the
+              page reads as though it ends at the checkout. */}
+          <a className="scroll-prompt" href="#whats-inside">
+            <span className="scroll-prompt-t">Keep scrolling to see what is inside</span>
+            <span className="scroll-prompt-a" aria-hidden="true">↓</span>
+          </a>
         </div>
       </main>
 
