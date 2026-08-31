@@ -362,6 +362,19 @@ const CSS = `
 }
 .lca .narrow-only { display:none; }
 
+/* Touch targets. Measured on the live page at 375px: these links rendered
+   16 to 20px tall, well under the ~44px a thumb can hit reliably. Two of them
+   matter a lot: "Read the full guarantee terms" is the link off the band Joel
+   asked to feature, and "Apply first" is the only path left for someone who
+   is not ready to pay today. Keyed on pointer:coarse as well as width, since
+   a tablet is a touch device at 800px. */
+@media (max-width:880px), (pointer:coarse) {
+  .lca .guarantee-band .more { display:inline-block; padding:12px 2px; margin-top:2px; }
+  .lca .apply-out a { display:inline-block; padding:13px 6px; }
+  .lca .footer-links a { display:inline-block; padding:11px 0; }
+  .lca .mini-guarantee a { display:inline-block; padding:6px 2px; }
+}
+
 @media (max-width:560px) {
   /* One copy of a sentence is shown, never both. Rendering both and letting
      CSS choose avoids a resize listener and the flash of the wrong string. */
