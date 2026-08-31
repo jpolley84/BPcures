@@ -587,7 +587,7 @@ export default function AllInPage() {
             onClick={() => track('allin_save_spot_click', { placement: 'hero' })}
           >
             Save My Spot
-            <span className="save-spot-sub">{DEPOSIT} today · takes you straight to checkout</span>
+            <span className="save-spot-sub">ONLY {DEPOSIT} today. Enrollment closes soon.</span>
           </a>
         )}
 
