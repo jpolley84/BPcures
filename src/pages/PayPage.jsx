@@ -35,6 +35,18 @@ import { track, getDistinctId, getAbHomeVariant, getFirstTouchUtm } from '../uti
 import { sabbathStatus } from '../utils/sabbath';
 import { KIT_STACK, KIT_STACK_TOTAL } from '../data/kitStack.js';
 
+
+// Which /tea split arm middleware.js bucketed this visitor into.
+// Read-only on purpose: checkout must never create an assignment.
+function readTeaArm() {
+  try {
+    const m = document.cookie.match(/(?:^|;\s*)tea_arm=(legacy|shopify)/);
+    return m ? m[1] : null;
+  } catch {
+    return null;
+  }
+}
+
 // One Stripe instance at module load (Stripe's recommended pattern). Null when
 // the publishable key is not set, so the page degrades to a clear message.
 const pk = STRIPE_PUBLISHABLE_KEY();
@@ -288,7 +300,7 @@ export default function PayPage() {
               // onto the Stripe session metadata (and from there onto the
               // server-side purchase event). Extra body keys are ignored by
               // older server builds, so this is safe either way.
-              body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant(), utm: getFirstTouchUtm() }),
+              body: JSON.stringify({ tier, corner, src, email, ph_did: getDistinctId(), ab_variant: getAbHomeVariant(), tea_arm: readTeaArm(), utm: getFirstTouchUtm() }),
             });
             // 409 already_purchased: the duplicate-purchase guard
             // (api/_dupe-guard.js) saw a completed paid order for this email

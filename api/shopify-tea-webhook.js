@@ -146,7 +146,23 @@ export function buildLedgerRecord(order) {
     // reconciling a row against the store admin.
     shopifyOrderId: String(order.id),
     shopifyOrderNumber: order.name || '',
+    // 2026-08-31: did this order come from the bpquiz.com/tea split, or did the
+    // buyer arrive at hormoneteas.com some other way (TikTok bio, direct, the
+    // Shopify shop link)? middleware.js stamps `arm=shopify` + utm_source=bpquiz
+    // on the redirect it sends, and Shopify records that as landing_site. Without
+    // this every Shopify sale looked like a split result, which overstated the
+    // Shopify arm's traffic and understated its conversion.
+    teaArm: teaArmOf(order),
   };
+}
+
+// 'shopify' when the buyer was routed here by the /tea split, 'shopify-direct'
+// when they reached the store another way. null when there is nothing to read.
+export function teaArmOf(order) {
+  const landing = `${order.landing_site || ''} ${order.referring_site || ''}`;
+  if (!landing.trim()) return null;
+  if (/[?&]arm=shopify/.test(landing) || /utm_source=bpquiz/.test(landing)) return 'shopify';
+  return 'shopify-direct';
 }
 
 async function handleOrderPaid(order) {

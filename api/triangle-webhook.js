@@ -669,7 +669,7 @@ async function isTeaSession(session) {
 // globally unique for the sale (a Checkout Session id from the webhook, or a
 // PaymentIntent id from the one-click charge, which never gets a
 // checkout.session.completed event of its own).
-export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source, blend = 'steady', deviceDistinctId = null }) {
+export async function recordTeaSale({ dedupeId, email, name, items, amountCents, isSubscription, address, source, blend = 'steady', deviceDistinctId = null, teaArm = null }) {
   const customerEmail = email || '';
   const emailKey = String(customerEmail).trim().toLowerCase();
   const isSatin = blend === 'satin';
@@ -687,6 +687,7 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
     at: new Date().toISOString(),
     sessionId: dedupeId,
     blend, // 'steady' | 'satin' — the nightly digest marks each order by blend
+    teaArm, // '/tea' split arm behind the sale, or null if it never went through /tea
     email: customerEmail,
     name: name || '',
     items: items || [],
@@ -815,6 +816,7 @@ async function processTeaPurchase(session, blend = 'steady') {
     source: 'checkout_session',
     blend,
     deviceDistinctId: session.metadata?.ph_distinct_id || null,
+    teaArm: session.metadata?.tea_arm || null,
   });
 }
 

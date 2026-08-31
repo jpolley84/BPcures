@@ -231,6 +231,18 @@ export default async function handler(req, res) {
       : '';
   const abMeta = abVariant ? { ab_home_variant: abVariant } : {};
 
+  // 2026-08-31: which /tea split arm produced this sale. middleware.js buckets
+  // visitors into a `tea_arm` cookie ('legacy'|'shopify'); the client forwards
+  // it here. Without this the ledger cannot tell a split-driven legacy sale
+  // from an email/DM sale that never passed through /tea at all, which is what
+  // made the first arm comparison unusable.
+  const teaArmRaw = req.body.tea_arm;
+  const teaArm =
+    typeof teaArmRaw === 'string' && (teaArmRaw === 'legacy' || teaArmRaw === 'shopify')
+      ? teaArmRaw
+      : '';
+  const teaArmMeta = teaArm ? { tea_arm: teaArm } : {};
+
   // First-touch UTM attribution (2026-08-25). The `purchase` event is emitted
   // server-side by api/stripe-webhook.js, which never sees the browser — so
   // before this, EVERY sale landed in PostHog with no utm_* at all and all 216
@@ -376,7 +388,7 @@ export default async function handler(req, res) {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
     };
-    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta, ...utmMeta };
+    const metadata = { funnel: 'svutu-tea', offer: tier, ...phMeta, ...abMeta, ...utmMeta, ...teaArmMeta };
     // 2026-08-16 (Joel): the single bag now carries $5.97 shipping; the 90-day
     // supply ships free. That gap is the whole engine of the /tea-thanks
     // ladder: upgrading to 90 days both adds tea AND removes the shipping
