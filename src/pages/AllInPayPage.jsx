@@ -95,7 +95,7 @@ const OPTIONS = [
     headline: '6 x $1,295',
     cadence: 'A $500 deposit today, then 6 monthly payments.',
     total: 'Total $8,270 with your deposit',
-    note: 'The $500 comes off the price. Six months, finishing just after the program does.',
+    note: 'The $500 comes off the price. Six months, paid off well before your year is done.',
   },
   {
     key: '9pay',
@@ -216,7 +216,7 @@ export default function AllInPayPage() {
           Choose how you want to pay.
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 8px' }}>
-          Every option enrolls you in the same 12-week program with the same support.
+          Every option enrolls you in the same full year of coaching with the same support.
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>
           Paying in full costs the least, and the longer a plan runs the more it comes to. The per-payment amount

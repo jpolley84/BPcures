@@ -1,10 +1,19 @@
 // AllInPage (route: /allin) — "The Life Change Accelerator" APPLICATION.
 //
+// ── 2026-08-30: THE PRICE AND THE OFFER CHANGED ──────────────────────────
+// The offer is now the LIVE, NOT JUST EXIST stack Joel supplied as a deck:
+// $7,500 for a full year, reservable with a $500 deposit, with the balance
+// payable in full or over 6, 9 or 12 MONTHLY payments. Everything numeric on
+// this page comes from that deck. The old figures ($1,997 price, $197
+// deposit, $4,997 "next enrollment") are dead; where they still appear below
+// it is in historical notes, not in anything a visitor reads.
+//
+// The page still takes NO payment itself. What changed on 2026-08-30 is that
+// the deposit is now stated loudly above the fold and LINKS to /allin/pay,
+// because Joel asked for "ONLY $500 down to reserve your spot today" as the
+// eye-catching element. A visitor can either reserve there or apply here.
+//
 // ── 2026-08-10: THIS PAGE STOPPED TAKING MONEY ───────────────────────────
-// (Deposit note, same day: Joel's copy said $200, the live Stripe deposit
-// price is $197, and he chose "make it the 197". The page and Stripe now
-// agree, so the deposit is a real purchasable option on /allin/pay rather
-// than something collected by hand.)
 // Joel supplied new copy that turns /allin from an instant checkout into an
 // application. Read that sentence twice before editing: until today this page
 // mounted three embedded Stripe Checkout Sessions (allin-full $1,997,
@@ -20,12 +29,10 @@
 //     DELIBERATELY LEFT INTACT. Existing payment links still work, and the
 //     active 6 x $367 subscriber keeps billing. Do not delete them because
 //     this page no longer calls them.
-//   - The reservation deposit is $197 and matches the live allin-deposit
-//     Stripe price exactly, so it is purchasable on /allin/pay. It was $200
-//     in the supplied copy for a few hours on 2026-08-10; Joel resolved the
-//     mismatch downward ("make it the 197") rather than minting a new price.
-//     If that number ever changes, change BOTH the DEPOSIT constant below and
-//     the Stripe price, or the page promises one figure and charges another.
+//   - The reservation deposit was $197 here until 2026-08-30 and is now
+//     $500, matching the live allin-deposit Stripe price. If that number ever
+//     changes, change BOTH the DEPOSIT constant below and the Stripe price,
+//     or the page promises one figure and charges another.
 //
 // ── WHY THERE IS NO TESTIMONIAL SECTION ──────────────────────────────────
 // Joel's copy has a "REAL WOMEN. REAL RESULTS." block with three quotes
@@ -37,7 +44,7 @@
 // Checked the log on 2026-08-10. Of the ten consented entries, exactly two are
 // cleared to sit beside a price at all (Long Monie, unattributed; Tiffany
 // Morris, first name only). Neither is a coaching client and neither describes
-// a result, so putting them under a "REAL RESULTS" heading next to $1,997
+// a result, so putting them under a "REAL RESULTS" heading next to the price
 // would be a claim the consent does not cover. Susan Crowley is explicitly
 // barred in writing from appearing near a price. So the honest options were
 // invent quotes, misuse consented ones, or ship without the block. Shipped
@@ -70,16 +77,103 @@ const C = {
 };
 const SERIF = '"Fraunces", Georgia, serif';
 
-const PRICE = '$1,997';
-// 2026-08-10 (Joel): "make it the 197". His copy said $200; the live Stripe
-// deposit price is $197 and he chose to match the page to Stripe rather than
-// mint a new price. So this number and price_1TvOUL...ZG8iyG9S are now the
-// same thing, and the "$200 collected out of band" caveat in the file header
-// is retired. Change one, change the other.
-const DEPOSIT = '$197';
-const NEXT_PRICE = '$4,997';
+// ─── 2026-08-30: the LIVE, NOT JUST EXIST deck ───────────────────────
+// Every figure below is lifted from Joel's own offer deck rather than
+// invented here. TOTAL_VALUE is the deck's stacked value ($6,000 + $8,000 +
+// $5,000 + $2,500), NOT a former price the program ever sold at, and it is
+// labelled "total value" on the page for exactly that reason. The old
+// "NEXT ENROLLMENT $4,997" struck line is gone: with the price at $7,500 it
+// implied the next cohort would be CHEAPER, which was nonsense.
+const PRICE = '$7,500';
+// The deposit. This number and the live allin-deposit Stripe price are the
+// same thing: change one, change the other, or the page promises a figure
+// Stripe does not charge. ($197 until 2026-08-30, $500 since.)
+const DEPOSIT = '$500';
+const TOTAL_VALUE = '$21,500';
 
-// ─── the 12-week path ────────────────────────────────────────────────────
+// ─── the 90-day intensive, phase by phase. The week labels are the
+// intensive's own weeks; the surrounding year is described further down. ──
+// ─── WHAT YOU GET, straight from the deck ───────────────────────────
+const WHAT_YOU_GET = [
+  'Personal Health Review',
+  'Your 90-Day Health Plan',
+  'Personal Case Manager',
+  'Weekly Coaching + Live Q&A',
+  'Expert Sessions',
+  'Monthly Progress Reviews',
+  'Community + Accountability for one year',
+];
+
+// The three phases with the deck's stated values, then the bonuses. These add
+// to TOTAL_VALUE above; if you change one, change that.
+const VALUE_STACK = [
+  {
+    phase: 'PHASE 1',
+    name: 'Understand what is going on',
+    lead: 'Stop guessing. Know what deserves your attention first.',
+    value: '$6,000',
+    items: [
+      'Personal Health Review',
+      'Your Top 3 Health Priorities',
+      'Know Your Numbers: BP, A1C, blood sugar and labs',
+      'Doctor Conversation Guide',
+      'Personal Case Manager Kickoff',
+    ],
+  },
+  {
+    phase: 'PHASE 2',
+    name: 'Make it work in real life',
+    lead: 'Eat better. Move better. Stay consistent.',
+    value: '$8,000',
+    items: [
+      'Personalized Food Plan',
+      'Meal and Recipe App built around foods you like',
+      'Personal Movement Plan',
+      'Green, Yellow and Red Day Plan',
+      'Herbs and Supplements Guidance',
+      'Weekly Coaching + Accountability',
+      'Monthly Progress Review',
+    ],
+  },
+  {
+    phase: 'PHASE 3',
+    name: 'Get more of your life back',
+    lead: 'Feel stronger. Feel like yourself. Go live.',
+    value: '$5,000',
+    items: [
+      'Hair, Skin and Confidence Program',
+      'Bring Sexy Back Sessions',
+      'Expert Q&A Sessions',
+      'Your Next Chapter Planning',
+      '12-Month Community and Support',
+    ],
+  },
+  {
+    phase: 'FAST-ACTION BONUSES',
+    name: 'For women who start now',
+    lead: 'These are not more courses. They help you start better.',
+    value: '$2,500',
+    items: [
+      'Your Next 5 Years Session: what are you getting healthy for?',
+      'Life Change Starter Box: something real arrives at your house',
+      'Bring Your +1: your spouse, partner or adult daughter can start too',
+      'Make Your Own Hair and Skin Products',
+    ],
+  },
+];
+
+// Page 7 of the deck. The reason any of this matters.
+const SO_YOU_CAN = [
+  'Be there for your family',
+  'Keep moving',
+  'Feel like yourself again',
+  'Bring sexy back',
+  'Take the trip',
+  'Finish the book',
+  'Run the business',
+  'Complete your purpose',
+];
+
 const PHASES = [
   {
     n: '01',
@@ -240,8 +334,12 @@ export default function AllInPage() {
           $4,997 has never been charged for this program. Presenting a price
           nobody has paid as a former price is a fictitious-former-price claim,
           which is the exact pattern already flagged on Annie's /rising page.
-          Struck + "next enrollment" says the true thing Joel wanted said: you
-          are not paying that. Do not relabel it. */}
+
+          2026-08-30: the struck "NEXT ENROLLMENT $4,997" is GONE. With the
+          price now $7,500 it claimed the next cohort would be CHEAPER than
+          today's, which is both false and a reason to wait. What replaced it
+          is the deck's own stacked value ($21,500), which is labelled "total
+          value" and is not presented as a price anyone ever paid. */}
       <Section tight>
         <p style={{ fontSize: 12.5, letterSpacing: '0.2em', color: C.muted, margin: '0 0 14px', fontWeight: 700 }}>
           FOR WOMEN OVER 40
@@ -256,38 +354,56 @@ export default function AllInPage() {
           fontFamily: SERIF, fontWeight: 700, fontSize: 'clamp(31px, 5.4vw, 48px)',
           lineHeight: 1.05, margin: '0 0 16px', letterSpacing: '-0.03em',
         }}>
-          You are not behind. You have just never had anyone look at the whole picture with you.
+          A full year of coaching. Not another 90 days, and not on your own.
         </h1>
 
         <p style={{ fontSize: 'clamp(17px, 2.1vw, 21px)', lineHeight: 1.5, color: C.ink, margin: '0 0 18px', fontWeight: 700 }}>
-          Twelve weeks of live weekly coaching with Annie and Joel, two registered nurses, plus guest
-          speakers. For the woman over 40 who is done doing this by herself.
+          Live, not just exist. A year of nurse-led coaching with Annie and Joel, RNs, for the woman
+          over 40 who is done doing this by herself.
         </p>
 
-        {/* Struck future price, then what she actually pays. Compact so the
-            button clears the fold. The long version is below. */}
-        <div style={{
-          display: 'flex', alignItems: 'baseline', gap: 16, flexWrap: 'wrap',
-          borderTop: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`,
-          padding: '12px 0', margin: '0 0 18px',
-        }}>
-          <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontSize: 12, letterSpacing: '0.1em', color: C.muted, fontWeight: 700 }}>NEXT ENROLLMENT</span>
-            <s style={{ fontFamily: SERIF, fontSize: 26, fontWeight: 700, color: C.muted }}>{NEXT_PRICE}</s>
+        {/* The deposit, big, above the fold. Joel, 2026-08-30. It is a LINK
+            to /allin/pay, not decoration: a woman who reads "$500 down" and
+            then finds only an application form has been told a thing the page
+            will not let her do. The full price sits directly under it in the
+            same block, because "$500 down" without "$7,500 total" one line
+            later is the kind of half-truth that comes back as a refund. */}
+        <a
+          href="/allin/pay"
+          style={{
+            display: 'block', textDecoration: 'none', background: C.ink, color: C.cream,
+            borderRadius: 8, padding: 'clamp(20px, 4vw, 28px) 20px', margin: '0 0 18px',
+            textAlign: 'center',
+          }}
+        >
+          <span style={{
+            display: 'block', fontFamily: SERIF, fontWeight: 700, lineHeight: 1.02,
+            fontSize: 'clamp(30px, 6.4vw, 46px)', letterSpacing: '-0.02em',
+          }}>
+            ONLY {DEPOSIT} DOWN
           </span>
-          <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 8 }}>
-            <span style={{ fontSize: 12, letterSpacing: '0.1em', color: C.ink, fontWeight: 700 }}>YOU, TODAY</span>
-            <span style={{ fontFamily: SERIF, fontSize: 'clamp(38px, 7vw, 50px)', fontWeight: 700, lineHeight: 1 }}>{PRICE}</span>
+          <span style={{
+            display: 'block', fontFamily: SERIF, fontWeight: 700, lineHeight: 1.1,
+            fontSize: 'clamp(19px, 3.6vw, 26px)', margin: '6px 0 0',
+          }}>
+            to reserve your spot today
           </span>
-        </div>
+          <span style={{
+            display: 'block', fontSize: 13, letterSpacing: '0.04em', margin: '14px 0 0',
+            opacity: 0.82, lineHeight: 1.6,
+          }}>
+            {PRICE} total · {TOTAL_VALUE} in value · monthly plans up to 12 months
+          </span>
+          <span style={{
+            display: 'inline-block', marginTop: 16, border: `1px solid ${C.cream}`,
+            borderRadius: 4, padding: '11px 26px', fontSize: 13, fontWeight: 700,
+            letterSpacing: '0.09em',
+          }}>
+            RESERVE MY SPOT
+          </span>
+        </a>
 
-        <Cta onClick={toForm} tight />
-
-        <p style={{ textAlign: 'center', margin: '10px 0 0', fontSize: 15, lineHeight: 1.5 }}>
-          <a href="/allin/pay" style={{ color: C.ink, fontWeight: 700 }}>
-            Yes, I want to skip the line and enroll now
-          </a>
-        </p>
+        <Cta onClick={toForm} tight label="OR APPLY FIRST AND TALK TO US" />
 
         {/* ── below the button ─────────────────────────────────────── */}
         <div style={{ marginTop: 40 }}>
@@ -303,12 +419,23 @@ export default function AllInPage() {
           <p style={{ fontSize: 'clamp(16px, 2vw, 18.5px)', lineHeight: 1.65, color: C.inkSoft, margin: '0 0 20px' }}>
             That is what this is. Every week you are in a live room with Annie and Joel, bringing your
             questions, your numbers and your real life. Guest speakers join us for the things worth
-            hearing from someone else. For the first time in almost a year, we are opening a small
-            number of places.
+            hearing from someone else. Ninety days of hands-on transformation, then the room, the
+            coaching and the accountability stay open to you for a full year. For the first time in
+            almost a year, we are opening a small number of places.
           </p>
-          <p style={{ fontSize: 15.5, lineHeight: 1.65, color: C.muted, margin: 0 }}>
-            You are not paying {NEXT_PRICE}. That is the price planned for the next time these doors open.
+          <p style={{ fontSize: 15.5, lineHeight: 1.65, color: C.inkSoft, margin: '0 0 14px', fontWeight: 700 }}>
+            Live, not just exist. So you can:
           </p>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+            gap: '8px 22px', margin: 0,
+          }}>
+            {SO_YOU_CAN.map((line) => (
+              <p key={line} style={{ fontSize: 16, lineHeight: 1.6, color: C.inkSoft, margin: 0 }}>
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -371,10 +498,18 @@ export default function AllInPage() {
         <P>That is the kind of support this was built to provide.</P>
       </Section>
 
-      {/* ── THE 12-WEEK PATH ─────────────────────────────────────────── */}
+      {/* ── THE PATH ─────────────────────────────────────────────────
+          2026-08-30: reworded from "Your 12-week life change path". The hero
+          now promises a year, and a page that promises a year up top and
+          sells twelve weeks in the middle contradicts itself in front of a
+          $7,500 decision. The 90 days did not shrink and the week labels on
+          each phase are unchanged: what changed is that the 90 days is now
+          described as the first stretch OF the year rather than the whole
+          thing. See the note beside the CONTINUATION section below. */}
       <Section>
-        <H>Your 12-week life change path</H>
+        <H>Your first 90 days, and then the rest of your year</H>
         <P>We do not start by throwing everything at you. We move in order.</P>
+        <P style={{ fontWeight: 600 }}>The first 90 days are the intensive. Here is how they run.</P>
         {PHASES.map((p) => (
           <div key={p.n} style={{ borderTop: `1px solid ${C.line}`, padding: '28px 0 4px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 6 }}>
@@ -399,7 +534,7 @@ export default function AllInPage() {
       {/* ── SUPPORT ──────────────────────────────────────────────────── */}
       <Section bg={C.paper}>
         <H>And you are not doing it alone.</H>
-        <P>Throughout your 12-week intensive, you will have access to:</P>
+        <P>Through your 90-day intensive, and then for the rest of your year, you will have access to:</P>
         {SUPPORT.map((s) => (
           <div key={s.title} style={{ margin: '0 0 22px' }}>
             <p style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0.06em', margin: '0 0 6px' }}>{s.title}</p>
@@ -408,20 +543,29 @@ export default function AllInPage() {
         ))}
       </Section>
 
-      {/* ── CONTINUATION + ECOSYSTEM ─────────────────────────────────── */}
+      {/* ── THE REST OF THE YEAR ─────────────────────────────────────
+          ⚠️ READ BEFORE CHANGING. This section is where the page's duration
+          claim is actually cashed. The deck says "90 days of nurse-led
+          transformation + one full year in the community", and Joel asked for
+          the headline to say a year of coaching. Those are only both true if
+          the coaching does not stop at day 90, so this section states exactly
+          what continues and for how long: guided coaching months 4 to 6, then
+          live monthly sessions and the community through month 12.
+          If the real delivery is community-only after day 90, this section
+          and the H1 are the two places to correct, together. Do not soften
+          one and leave the other. */}
       <Section>
-        <H size={26}>&ldquo;But what if I need more than 12 weeks?&rdquo;</H>
-        <P>We thought about that too.</P>
-        <P>Your intensive transformation is 12 weeks. But we do not expect your life to suddenly become perfect on Week 13.</P>
-        <P>So your experience also includes:</P>
-        <H size={26} style={{ margin: '24px 0 12px' }}>3 months of continuation support</H>
-        <P>Additional guided support after your initial 12 weeks to help you keep implementing what you have built.</P>
+        <H size={26}>What happens after the first 90 days?</H>
+        <P>You are not handed a certificate and shown the door.</P>
+        <P>The intensive is 90 days. Your year is 12 months. We do not expect your life to suddenly become perfect on Week 13, so the support does not stop there.</P>
+        <H size={26} style={{ margin: '24px 0 12px' }}>Months 4 to 6: continuation coaching</H>
+        <P>Guided coaching after your intensive, to help you keep implementing what you built instead of quietly drifting back.</P>
         <P>Because sometimes the hardest part is not starting. It is continuing.</P>
 
         <H size={26} style={{ margin: '44px 0 16px' }}>&ldquo;And what if life hits me again later?&rdquo;</H>
-        <P>That is why you do not simply lose everything when the intensive ends. You will also have:</P>
-        <H size={26} style={{ margin: '24px 0 12px' }}>Up to 12 months of ecosystem access</H>
-        <P>A place to return to your curriculum, recordings, resource library and support tools. Including future Change My Life Challenge experiences and available digital support resources.</P>
+        <P>Then you still have somewhere to go. For the rest of your 12 months you keep:</P>
+        <H size={26} style={{ margin: '24px 0 12px' }}>Live monthly sessions and the community, through month 12</H>
+        <P>A monthly rhythm of masterclass, live Q&amp;A and a coaching call, plus the community, your curriculum, recordings, resource library and support tools. Including future Change My Life Challenge experiences and available digital support resources.</P>
         <P>So instead of saying &ldquo;I fell off, I guess I am starting from zero again,&rdquo; you know where to return.</P>
       </Section>
 
@@ -458,17 +602,116 @@ export default function AllInPage() {
         is cleared to appear as a coaching result beside this price.
       */}
 
-      {/* ── PRICE ────────────────────────────────────────────────────── */}
+      {/* ── WHAT YOU GET ─────────────────────────────────────────────
+          Joel, 2026-08-30, from the LIVE, NOT JUST EXIST deck. The phase
+          values ($6,000 / $8,000 / $5,000 / $2,500) are the deck's own and
+          they sum to TOTAL_VALUE. They are labelled "value", never "was" or
+          "regular price", because nothing here has ever sold separately at
+          those numbers and calling them a former price would be a lie. */}
+      <Section>
+        <H>What you get</H>
+        <P style={{ fontWeight: 700, color: C.ink, fontSize: 18.5 }}>
+          Ninety days of nurse-led transformation, plus one full year in the community.
+        </P>
+        <div style={{ borderTop: `1px solid ${C.line}`, margin: '0 0 24px' }}>
+          {WHAT_YOU_GET.map((item) => (
+            <p key={item} style={{
+              display: 'flex', gap: 12, alignItems: 'baseline', margin: 0,
+              padding: '13px 0', borderBottom: `1px solid ${C.line}`,
+              fontSize: 17, lineHeight: 1.5, color: C.inkSoft,
+            }}>
+              <span aria-hidden="true" style={{ fontWeight: 700, color: C.ink }}>+</span>
+              <span>{item}</span>
+            </p>
+          ))}
+        </div>
+        <P style={{ margin: 0 }}>Do less, in the right order. Here is how it is built.</P>
+      </Section>
+
+      {/* ── THE STACK, phase by phase ────────────────────────────────── */}
       <Section bg={C.paper}>
-        <H>The final {PRICE} enrollment</H>
-        <P>The investment for this coaching experience is:</P>
+        {VALUE_STACK.map((block) => (
+          <div key={block.phase} style={{
+            border: `1px solid ${C.line}`, borderRadius: 8, background: C.cream,
+            padding: '22px 20px', margin: '0 0 16px',
+          }}>
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+              gap: 14, flexWrap: 'wrap', margin: '0 0 6px',
+            }}>
+              <span style={{ fontSize: 12, letterSpacing: '0.16em', fontWeight: 700, color: C.muted }}>
+                {block.phase}
+              </span>
+              <span style={{ fontSize: 12.5, letterSpacing: '0.06em', fontWeight: 700, color: C.ink }}>
+                {block.value} VALUE
+              </span>
+            </div>
+            <h3 style={{
+              fontFamily: SERIF, fontSize: 26, fontWeight: 700, lineHeight: 1.15,
+              color: C.ink, margin: '0 0 8px', letterSpacing: '-0.01em',
+            }}>
+              {block.name}
+            </h3>
+            <p style={{ fontSize: 16.5, lineHeight: 1.6, color: C.muted, margin: '0 0 16px' }}>
+              {block.lead}
+            </p>
+            {block.items.map((item) => (
+              <p key={item} style={{
+                display: 'flex', gap: 11, alignItems: 'baseline',
+                fontSize: 16.5, lineHeight: 1.55, color: C.inkSoft, margin: '0 0 9px',
+              }}>
+                <span aria-hidden="true" style={{ fontWeight: 700, color: C.ink }}>+</span>
+                <span>{item}</span>
+              </p>
+            ))}
+          </div>
+        ))}
+
+        <div style={{
+          border: `2px solid ${C.ink}`, borderRadius: 8, background: C.cream,
+          padding: '22px 20px', textAlign: 'center', margin: '24px 0 0',
+        }}>
+          <p style={{ fontSize: 12.5, letterSpacing: '0.16em', fontWeight: 700, color: C.muted, margin: '0 0 4px' }}>
+            TOTAL VALUE
+          </p>
+          <p style={{ fontFamily: SERIF, fontSize: 34, fontWeight: 700, color: C.muted, margin: '0 0 18px' }}>
+            {TOTAL_VALUE}
+          </p>
+          <p style={{ fontSize: 12.5, letterSpacing: '0.16em', fontWeight: 700, color: C.ink, margin: '0 0 4px' }}>
+            YOUR INVESTMENT
+          </p>
+          <p style={{ fontFamily: SERIF, fontSize: 'clamp(40px, 8vw, 54px)', fontWeight: 700, color: C.ink, margin: 0, lineHeight: 1 }}>
+            {PRICE}
+          </p>
+        </div>
+      </Section>
+
+      {/* ── PRICE ────────────────────────────────────────────────────── */}
+      <Section>
+        <H>Only {DEPOSIT} down to reserve your spot today</H>
+        <P>The investment for a full year of this coaching is:</P>
         <p style={{ fontFamily: SERIF, fontSize: 44, fontWeight: 700, margin: '0 0 20px' }}>{PRICE} total</p>
-        <P>If you are accepted and decide to join, you may reserve your place with:</P>
+        <P>You can reserve your place today with:</P>
         <p style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 700, margin: '0 0 16px' }}>{DEPOSIT}</p>
-        <P>That {DEPOSIT} is applied toward your {PRICE} total. Payment options may also be available.</P>
-        <P>When we open this level of coaching again, the planned enrollment price is:</P>
-        <p style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 700, margin: '0 0 16px' }}>{NEXT_PRICE}</p>
-        <P>I am telling you that plainly because some of you have been waiting for me to coach again. I do not want you finding out afterward that this door was open today.</P>
+        <P>
+          That {DEPOSIT} comes off the price, not on top of it. The remaining balance can be paid in
+          full or spread over 6, 9 or 12 monthly payments, and you pick which on the next page.
+        </P>
+        <P style={{ color: C.muted, fontSize: 15.5 }}>
+          Places are limited because the room is small and it is the two of us in it every week.
+        </P>
+        <div style={{ textAlign: 'center', margin: '28px 0 0' }}>
+          <a
+            href="/allin/pay"
+            style={{
+              display: 'inline-block', background: C.ink, color: C.cream, textDecoration: 'none',
+              padding: '18px 34px', fontSize: 15, fontWeight: 700, letterSpacing: '0.08em',
+              borderRadius: 4, width: '100%', maxWidth: 420, boxSizing: 'border-box',
+            }}
+          >
+            RESERVE MY SPOT FOR {DEPOSIT}
+          </a>
+        </div>
       </Section>
 
       {/* ── MEET THEM ─────────────────────────────────────────────────
@@ -553,7 +796,7 @@ export default function AllInPage() {
    the rate limiter, validation, KV write, Joel's notify email and the delayed
    applicant ack. A non-ok response is surfaced honestly with a real address to
    fall back on, never swallowed into a fake success state: this form is now
-   the ONLY way into a $1,997 program, so a silent failure is a lost sale AND a
+   the ONLY application path into the program, so a silent failure is a lost sale AND a
    woman who thinks she applied.
    ========================================================================== */
 function ApplyForm() {
