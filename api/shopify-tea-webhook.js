@@ -38,6 +38,7 @@
 import crypto from 'node:crypto';
 import { kv } from '@vercel/kv';
 import { chicagoDateKey } from './triangle-webhook.js';
+import { pouchGramsOf, withPouchSize } from './_pouch-size.js';
 import { sendTeaWelcome, firstNameOf } from './_tea-welcome-email.js';
 import { capturePurchase } from './_posthog.js';
 
@@ -137,7 +138,8 @@ export function buildLedgerRecord(order) {
     blend,
     email: order.email || order.contact_email || order.customer?.email || '',
     name,
-    items: mapLineItems(order, blend),
+    items: mapLineItems(order, blend).map((i) => ({ ...i, name: withPouchSize(i.name, pouchGramsOf({ itemName: i.name, source: 'shopify' })) })),
+    pouchGrams: pouchGramsOf({ itemName: (mapLineItems(order, blend)[0] || {}).name || '', source: 'shopify' }),
     amountCents: amountCentsOf(order),
     subscription: false,
     source: 'shopify',

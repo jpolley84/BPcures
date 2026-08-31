@@ -32,6 +32,7 @@ import { modulesForTier, bundleNameForTier, bundleLabelForTier } from './_kit-ma
 import { signUnsubToken } from './triangle-unsubscribe.js';
 import { capturePurchase } from './_triangle-posthog.js';
 import { markPurchase } from './_dupe-guard.js';
+import { pouchGramsOf, withPouchSize } from './_pouch-size.js';
 import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
 
 assertLiveRoom(ZOOM_MAIN);
@@ -683,14 +684,20 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   }
 
   const addr = address || {};
+  const grams = pouchGramsOf({ itemName: (items || [])[0]?.name || '', source });
+  const sizedItems = (items || []).map((i) => ({ ...i, name: withPouchSize(i.name, grams) }));
   const record = {
     at: new Date().toISOString(),
     sessionId: dedupeId,
     blend, // 'steady' | 'satin' — the nightly digest marks each order by blend
     teaArm, // '/tea' split arm behind the sale, or null if it never went through /tea
+    // 2026-08-31: pouch size, resolved once and written down. 3-pouch product
+    // names never stated it, so a packer had to infer size from the price. That
+    // inference failed once and cost three 150 g bags on a 100 g order.
+    pouchGrams: grams,
     email: customerEmail,
     name: name || '',
-    items: items || [],
+    items: sizedItems,
     amountCents: amountCents || 0,
     subscription: Boolean(isSubscription),
     source: source || 'checkout_session',
