@@ -362,7 +362,7 @@ const CSS = `
     color:#fff; padding:14px 16px; border-radius:10px; font-weight:900; }
 }
 @media (max-width:560px) {
-  .lca h1 { font-size:41px; margin-bottom:12px; }
+  .lca h1 { font-size:41px; margin-bottom:10px; }
   .lca .page { padding-left:18px; padding-right:18px; padding-top:26px; }
   .lca .phase h3 { font-size:22px; }
   .lca .payment-head h2 { font-size:26px; }
@@ -379,8 +379,8 @@ const CSS = `
   .lca .program-strip { gap:8px; margin:16px 0 0; }
   .lca .program-pill { padding:7px 10px; font-size:12.5px; }
   .lca .brand-line { margin-bottom:12px; }
-  .lca .guarantee-band { padding:16px; gap:14px; margin-bottom:0; }
-  .lca .guarantee-seal { width:58px; height:58px; }
+  .lca .guarantee-band { padding:15px; gap:13px; margin-bottom:0; }
+  .lca .guarantee-seal { width:56px; height:56px; }
   .lca .guarantee-seal .n { font-size:20px; }
   .lca .guarantee-band h2 { font-size:20px; }
   .lca .guarantee-band p { font-size:14px; }
@@ -400,7 +400,7 @@ const CSS = `
 }
 
 @media (max-width:880px), (pointer:coarse) {
-  .lca .guarantee-band .more { display:inline-block; padding:12px 2px; margin-top:2px; }
+  .lca .guarantee-band .more { display:inline-block; padding:10px 2px 4px; margin-top:0; }
   .lca .apply-out a { display:inline-block; padding:13px 6px; }
   .lca .footer-links a { display:inline-block; padding:11px 0; }
   .lca .mini-guarantee a { display:inline-block; padding:6px 2px; }
@@ -422,7 +422,8 @@ const CSS = `
      a budget to keep the band inside that. */
   .lca .program-strip { gap:7px; margin:16px 0 0; }
   .lca .program-pill { padding:6px 9px; font-size:12px; }
-  .lca .save-spot { padding:15px 18px; font-size:18px; margin-bottom:14px; }
+  .lca .save-spot { padding:13px 18px; font-size:18px; margin-bottom:12px; }
+  .lca .save-spot-sub { margin-top:3px; }
 }
 
 @media (prefers-reduced-motion:reduce) { .lca * { transition:none !important; } }
@@ -611,7 +612,7 @@ export default function AllInPage() {
             </p>
             <p className="narrow-only">
               Give it 30 honest days. If you show up, do the agreed first steps and still cannot point to
-              a real shift, tell us and we refund the program payments you made to us.
+              a real shift, tell us and we refund your program payments.
             </p>
             <a className="more" href="#guarantee">Read the full guarantee terms</a>
           </div>
