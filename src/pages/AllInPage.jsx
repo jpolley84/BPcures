@@ -330,14 +330,28 @@ const CSS = `
     color:#fff; padding:14px 16px; border-radius:10px; font-weight:900; }
 }
 @media (max-width:560px) {
-  .lca h1 { font-size:43px; }
-  .lca .page { padding-left:18px; padding-right:18px; }
+  .lca h1 { font-size:41px; margin-bottom:12px; }
+  .lca .page { padding-left:18px; padding-right:18px; padding-top:26px; }
   .lca .phase h3 { font-size:22px; }
   .lca .payment-head h2 { font-size:26px; }
   .lca .time-box { min-width:44px; }
   .lca .time-num { font-size:16px; }
   .lca .phase-head { align-items:flex-start; }
-  .lca .guarantee-band { grid-template-columns:1fr; gap:12px; }
+  /* Joel asked for the guarantee above the fold. On a 375x812 phone his
+     desktop spacing pushed the band's top to 679px, so only the seal peeked
+     over the edge. Everything below buys back the ~110px that lets the seal,
+     the heading and the body land on the first screen. The band stays a
+     two-column layout here rather than stacking, because stacking the seal
+     above the text costs more height than the seal is worth. */
+  .lca .subhead { margin-bottom:16px; font-size:16.5px; }
+  .lca .program-strip { gap:8px; margin-bottom:16px; }
+  .lca .program-pill { padding:7px 10px; font-size:12.5px; }
+  .lca .brand-line { margin-bottom:12px; }
+  .lca .guarantee-band { padding:16px; gap:14px; margin-bottom:26px; }
+  .lca .guarantee-seal { width:58px; height:58px; }
+  .lca .guarantee-seal .n { font-size:20px; }
+  .lca .guarantee-band h2 { font-size:20px; }
+  .lca .guarantee-band p { font-size:14px; }
 }
 @media (prefers-reduced-motion:reduce) { .lca * { transition:none !important; } }
 `;
