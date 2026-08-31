@@ -1358,7 +1358,7 @@ function escAllIn(s) {
 
 // Buyer confirmation for an All-In purchase. Best-effort; a send failure never
 // fails the webhook (the Joel alert is the fulfillment backstop).
-async function sendAllInConfirmation({ email, firstName, plan }) {
+async function sendAllInConfirmation({ email, firstName, plan, amountCents = null }) {
   const name = firstName ? escAllIn(firstName) : 'there';
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
@@ -1366,19 +1366,45 @@ async function sendAllInConfirmation({ email, firstName, plan }) {
   // "paid in full" for anything it did not recognize, so a 3pay or 9pay buyer
   // would have been told she was paid in full while her card kept getting
   // charged every two weeks. Each plan states its own real cadence.
+  // WARNING 2026-08-31. Every line below described the RETIRED $1,997 offer.
+  // Sandra V Williams paid $500 on 2026-08-31 and was emailed "Your $197
+  // deposit is in": told in writing that she paid a different amount than she
+  // paid, on a program that no longer sells at that price. Rewritten for the
+  // live $7,500 / $500 deposit / $7,000 balance offer.
+  //
+  // Two further live bugs fixed at the same time: 'balance-9pay' and
+  // 'balance-12pay' are sellable (PLAN_BY_TIER in create-embedded-checkout.js)
+  // but had NO entry here, so they fell through the `|| ...full` default and
+  // told a woman on a 9- or 12-month plan she was "paid in full" while her
+  // card kept getting charged.
+  //
+  // The default is no longer `full`. Defaulting an unknown plan to the most
+  // reassuring sentence in the map is how both of those bugs stayed quiet.
   const ALLIN_BUYER_PLAN_LINES = {
-    deposit: 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at changemylifechallenge.com/payment, where every option credits your deposit. I will reach out about your start date.',
+    deposit: 'Your $500 deposit is in and your spot is locked. That $500 comes off the price, not on top of it. When you are ready, settle the remaining $7,000 at changemylifechallenge.com/payment, where you can pay it in full or spread it over 6, 9 or 12 monthly payments.',
+    'balance-full': 'Your balance is settled in full. With your deposit, you are all paid up and your spot is locked.',
+    'balance-6pay': 'Your first balance payment is in. Five more payments of $1,295 run automatically each month, six in total, on top of the deposit you already paid. After the sixth payment you are done.',
+    'balance-9pay': 'Your first balance payment is in. Eight more payments of $935 run automatically each month, nine in total, on top of the deposit you already paid. After the ninth payment you are done.',
+    'balance-12pay': 'Your first balance payment is in. Eleven more payments of $750 run automatically each month, twelve in total, on top of the deposit you already paid. After the twelfth payment you are done.',
+    full: 'You are all in, paid in full. Your spot is locked.',
+    // Legacy $1,997-era plans, kept ONLY so in-flight subscribers still get
+    // accurate mail. Do not sell these.
     '3pay': 'Your first payment is in and your spot is locked. Two more payments of $699 run automatically every two weeks, three in total.',
     plan: 'Your first payment is in and your spot is locked. Five more payments of $367 run automatically every two weeks, six in total.',
     '9pay': 'Your first payment is in and your spot is locked. Eight more payments of $267 run automatically every two weeks, nine in total.',
-    'balance-full': 'Your balance is settled in full. With your earlier deposit, you are all paid up and your spot is locked.',
     'balance-3pay': 'Your first balance payment is in. Two more payments of $633 run automatically every two weeks, three in total, on top of the deposit you already paid.',
-    'balance-6pay': 'Your first balance payment is in. Five more payments of $333 run automatically every two weeks, six in total, on top of the deposit you already paid.',
     'balance-5pay-360': 'Your first balance payment is in. Four more payments of $360 run automatically each month, five in total, on top of the deposit you already paid. After the fifth payment you are done.',
     'balance-4pay-450': 'Your first balance payment is in. Three more payments of $450 run automatically each month, four in total, on top of the deposit you already paid. After the fourth payment you are done.',
-    full: 'You are all in, paid in full. Your spot is locked.',
   };
-  const planLine = ALLIN_BUYER_PLAN_LINES[plan] || ALLIN_BUYER_PLAN_LINES.full;
+  // An unrecognised plan now says only what Stripe actually charged and claims
+  // nothing about what happens next.
+  const buyerPaid = Number.isFinite(amountCents) && amountCents > 0
+    ? `$${(amountCents / 100).toLocaleString('en-US')}`
+    : null;
+  const planLine = ALLIN_BUYER_PLAN_LINES[plan]
+    || (buyerPaid
+      ? `Your payment of ${buyerPaid} is in and your spot is locked. I will confirm your payment schedule with you directly.`
+      : 'Your payment is in and your spot is locked. I will confirm your payment schedule with you directly.');
   // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome
   // + the Sunday 7pm ET kickoff Q&A clarity call, same room every week
   // (import from _zoom-rooms.mjs, never paste a URL — see that file's header
@@ -1395,7 +1421,7 @@ Q&amp;A Clarity Call &middot; Sunday, ${escAllIn(ALLIN_KICKOFF_DATE_LABEL)} at $
 <a href="${escAllIn(ZOOM_MAIN)}" style="color:#B93C20;font-weight:700;">Join on Zoom</a>
 </p>
 <p>Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.</p>
-<p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk the 12 weeks with you.</p>
+<p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk this with you.</p>
 <p style="margin-top:1.6rem;">I am glad you decided. See you Sunday.</p>
 <p style="margin-top:1.2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
@@ -1435,35 +1461,46 @@ BraveWorks RN / BPQuiz.com`;
 }
 
 // Alert Joel that an All-In buyer came in so he builds their assessment/onboarding.
-async function alertJoelAllIn({ sessionId, email, name, plan }) {
+async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null }) {
   if (!process.env.RESEND_API_KEY) return;
   const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
   const ALLIN_JOEL_PLAN_LINES = {
-    deposit: 'DEPOSIT only ($197). Balance of $1,800 still to collect before/at start. Send her changemylifechallenge.com/payment (deposit-credited options: $1,800 full / 3 x $633 / 6 x $333).',
-    '3pay': '3 x $699 bi-weekly ($2,097 over 6 weeks; subscription auto-capped after the 3rd charge).',
-    plan: '6 x $367 bi-weekly ($2,202 over 12 weeks; subscription auto-capped after the 6th charge).',
-    '9pay': '9 x $267 bi-weekly ($2,403 over 18 weeks; subscription auto-capped after the 9th charge).',
-    'balance-full': 'BALANCE paid in full ($1,800 after the $197 deposit). Fully settled.',
-    'balance-3pay': 'BALANCE 3 x $633 bi-weekly ($1,899 after the $197 deposit; auto-capped after the 3rd charge).',
-    'balance-6pay': 'BALANCE 6 x $333 bi-weekly ($1,998 after the $197 deposit; auto-capped after the 6th charge).',
-    'balance-5pay-360': 'BALANCE 5 x $360 MONTHLY ($1,800 exactly after the $197 deposit; auto-capped after the 5th charge). Negotiated plan (Brenda L Powell, 2026-08-18).',
-    'balance-4pay-450': 'BALANCE 4 x $450 MONTHLY ($1,800 exactly after the $197 deposit; auto-capped after the 4th charge). Negotiated plan (Brenda Dancil-Jones, 2026-08-26).',
-    full: 'Paid in full ($1,997).',
+    deposit: 'DEPOSIT only ($500). Balance of $7,000 still to collect before/at start. Send her changemylifechallenge.com/payment (deposit-credited: $7,000 full / 6 x $1,295 / 9 x $935 / 12 x $750, all MONTHLY).',
+    'balance-full': 'BALANCE paid in full ($7,000 after the $500 deposit). Fully settled at $7,500.',
+    'balance-6pay': 'BALANCE 6 x $1,295 MONTHLY ($7,770 after the $500 deposit; auto-capped after the 6th charge).',
+    'balance-9pay': 'BALANCE 9 x $935 MONTHLY ($8,415 after the $500 deposit; auto-capped after the 9th charge).',
+    'balance-12pay': 'BALANCE 12 x $750 MONTHLY ($9,000 after the $500 deposit; auto-capped after the 12th charge).',
+    full: 'Paid in full ($7,500).',
+    // Legacy $1,997-era plans. In-flight subscribers only; not sellable.
+    '3pay': 'LEGACY 3 x $699 bi-weekly ($2,097 over 6 weeks; auto-capped after the 3rd charge).',
+    plan: 'LEGACY 6 x $367 bi-weekly ($2,202 over 12 weeks; auto-capped after the 6th charge).',
+    '9pay': 'LEGACY 9 x $267 bi-weekly ($2,403 over 18 weeks; auto-capped after the 9th charge).',
+    'balance-3pay': 'LEGACY BALANCE 3 x $633 bi-weekly ($1,899 after the $197 deposit; auto-capped after the 3rd charge).',
+    'balance-5pay-360': 'LEGACY BALANCE 5 x $360 MONTHLY ($1,800 after the $197 deposit; auto-capped after the 5th charge). Negotiated (Brenda L Powell, 2026-08-18).',
+    'balance-4pay-450': 'LEGACY BALANCE 4 x $450 MONTHLY ($1,800 after the $197 deposit; auto-capped after the 4th charge). Negotiated (Brenda Dancil-Jones, 2026-08-26).',
   };
   const planLine = ALLIN_JOEL_PLAN_LINES[plan] || `UNKNOWN PLAN '${plan}' — check Stripe before assuming anything.`;
+  // Stated separately from the plan line and read straight off the Stripe
+  // session, so a stale map entry can misdescribe the schedule but can never
+  // misreport the money. alertJoelCaseReview already works this way, after the
+  // same class of bug overstated a $97 sale as $297 on 2026-08-21.
+  const paidToday = Number.isFinite(amountCents) && amountCents > 0
+    ? `$${(amountCents / 100).toLocaleString('en-US')}`
+    : 'amount unconfirmed, check Stripe';
   try {
     await getResend().emails.send({
       from: 'BraveWorks Ops <joel@bpquiz.com>',
       to,
       replyTo: REPLY_TO,
-      subject: `[ACTION] New ALL IN buyer — build their assessment (${email || 'unknown'})`,
-      text: `A buyer just enrolled in the $1,997 All In 90-Day Program.
+      subject: `[ACTION] New ALL IN buyer — ${paidToday} — build their assessment (${email || 'unknown'})`,
+      text: `A buyer just enrolled in the Life Change Accelerator.
 
-Buyer:      ${name || '(no name)'} <${email || 'unknown'}>
-Payment:    ${planLine}
+Buyer:         ${name || '(no name)'} <${email || 'unknown'}>
+Charged today: ${paidToday}   (read from the Stripe session, never assumed)
+Plan:          ${planLine}
 Stripe session: ${sessionId}
 
-Next step: build their personalized assessment/intake and start their 12-week onboarding. Their automated confirmation ("You are in") has already gone out, so they are expecting their intake next.`,
+Next step: build their personalized assessment/intake and start their onboarding. Their automated confirmation ("You are in") has already gone out, so they are expecting their intake next.`,
     });
   } catch (err) {
     console.error('stripe-webhook: failed to send all-in Joel alert', err.message);
@@ -1474,13 +1511,17 @@ Next step: build their personalized assessment/intake and start their 12-week on
 // caps the bi-weekly plan subscription at 6 charges, sends the buyer
 // confirmation, and alerts Joel. plan: 'full' | 'deposit' | 'plan'.
 async function processAllIn(session, plan = 'full') {
+  // The single source of truth for "what did she actually pay". Never inferred
+  // from the plan name: that inference is what emailed Sandra V Williams
+  // "$197" for a $500 charge on 2026-08-31.
+  const allInAmountCents = session.amount_total ?? session.amount_subtotal ?? null;
   const customerEmail = session.customer_details?.email;
   const customerName = session.customer_details?.name;
   const firstName = firstNameOf(customerName);
 
   if (!customerEmail) {
     console.error('stripe-webhook: all-in session has no customer email', session.id);
-    await alertJoelAllIn({ sessionId: session.id, email: null, name: customerName, plan });
+    await alertJoelAllIn({ sessionId: session.id, email: null, name: customerName, plan, amountCents: allInAmountCents });
     return { action: 'all_in', delivered: false, reason: 'no_email', plan };
   }
 
@@ -1616,7 +1657,7 @@ async function processAllIn(session, plan = 'full') {
   let delivered = Boolean(progress.confirmationSentAt);
   if (!delivered) {
     try {
-      await sendAllInConfirmation({ email: customerEmail, firstName, plan });
+      await sendAllInConfirmation({ email: customerEmail, firstName, plan, amountCents: allInAmountCents });
       delivered = true;
       progress.confirmationSentAt = new Date().toISOString();
       try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
@@ -1626,7 +1667,7 @@ async function processAllIn(session, plan = 'full') {
   }
 
   // ── Alert Joel (always) ──
-  await alertJoelAllIn({ sessionId: session.id, email: customerEmail, name: customerName, plan });
+  await alertJoelAllIn({ sessionId: session.id, email: customerEmail, name: customerName, plan, amountCents: allInAmountCents });
 
   progress.completedAt = new Date().toISOString();
   try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
