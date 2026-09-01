@@ -10,7 +10,7 @@
 // nothing on the page is true, and this audience returns constantly: they come
 // from Facebook and TikTok, several times a week, for months. The /allin copy
 // also says in Joel's own words "this is the final opportunity to enter this
-// coaching experience at $1,997" and names $4,997 as the next price. A nightly
+// coaching experience" at the current price. A nightly
 // resetting timer would make that sentence a lie in writing.
 //
 // So: to run this again, set a NEW real date in CLOSE_ISO_ET and mean it.
@@ -184,7 +184,7 @@ export default function ClosingSoonBanner({ href = '#apply', label = 'Apply now'
           maxWidth: 900, margin: '8px auto 0', textAlign: 'center',
           fontSize: 11.5, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.66)',
         }}>
-          Enrollment at $1,997 closes {whenWords}. The next opening is planned at $4,997.
+          Enrollment closes {whenWords}.
         </p>
         <span style={{
           position: 'absolute', width: 1, height: 1, overflow: 'hidden',

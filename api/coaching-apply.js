@@ -995,7 +995,7 @@ async function handleAllIn(req, res) {
   const application = {
     source: 'allin-apply',
     tier: 'allin',
-    program: 'The Life Change Accelerator (12-week, $1,997)',
+    program: 'The Life Change Accelerator ($7,500, $500 deposit)',
     name: safe(b.name),
     email: trimmedEmail,
     phone,
@@ -1031,7 +1031,7 @@ async function handleAllIn(req, res) {
       '</div></div>';
 
     const subject =
-      '[ALL IN $1,997] ' + application.name + ' [' + fitTier + ']' +
+      '[ALL IN $7,500] ' + application.name + ' [' + fitTier + ']' +
       (flags.length ? ' [FLAGS: ' + flags.join('; ') + ']' : '');
 
     const html =

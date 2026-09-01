@@ -195,7 +195,7 @@ export default function PaymentPage() {
           Your deposit is in. Here is the rest.
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 8px' }}>
-          Your $197 deposit already holds your place, and every option below credits it against the
+          Your $500 deposit already holds your place, and every option below credits it against the
           $7,500 program price. The remaining balance is $7,000.
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>
@@ -247,7 +247,7 @@ export default function PaymentPage() {
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
               <strong>How this plan bills:</strong> your card is charged {option.headline.split(' x ')[1]} today
               and then automatically once a month until all {option.headline.split(' x ')[0]} monthly payments are made.
-              It stops on its own after the final payment. Nothing renews afterward. Your $197 deposit is separate
+              It stops on its own after the final payment. Nothing renews afterward. Your $500 deposit is separate
               and already paid. Questions, write to braveworksrn@gmail.com.
             </p>
           </div>

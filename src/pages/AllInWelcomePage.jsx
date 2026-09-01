@@ -1,5 +1,5 @@
 // AllInWelcomePage (route: /allin-welcome) — post-purchase landing for the
-// $1,997 All In 90-Day Program. Stripe embedded checkout redirects the top
+// Life Change Accelerator ($7,500 / $500 deposit). Stripe embedded checkout redirects the top
 // frame here on completion: /allin-welcome?plan=<full|deposit|plan>&session_id=...
 //
 // 2026-07-20. Wrapped in SiteLayout by App.jsx. The buyer confirmation email +
@@ -11,11 +11,17 @@ import { CheckCircle2, Mail, Stethoscope } from 'lucide-react';
 import { track } from '../utils/analytics';
 
 function planLine(plan) {
-  if (plan === 'deposit') return 'Your $197 deposit is in and your spot is locked. When you are ready, settle the remaining balance at changemylifechallenge.com/payment, where every option credits your deposit. Joel will reach out about your start date.';
-  if (plan === 'plan') return 'Your first payment is in and your spot is locked. The rest runs automatically every two weeks across the 12 weeks.';
+  // 2026-09-01: rewritten for the live $7,500 / $500-deposit offer. The old
+  // version told a $500 depositor "Your $197 deposit is in" (retired $1,997
+  // offer), and balance-9pay/12pay fell through to "paid in full".
+  if (plan === 'deposit') return 'Your $500 deposit is in and your spot is locked. It comes off the price, not on top of it. Settle the remaining $7,000 at changemylifechallenge.com/payment, in full or across 6, 9 or 12 monthly payments. Joel will reach out about your start date.';
   if (plan === 'balance-full') return 'Your balance is settled in full. With your earlier deposit, you are all paid up and your spot is locked.';
-  if (plan === 'balance-3pay' || plan === 'balance-6pay') return 'Your first balance payment is in. The rest runs automatically every two weeks and stops on its own after the final payment.';
-  return 'You are all in, paid in full. Your spot is locked.';
+  if (plan === 'balance-6pay' || plan === 'balance-9pay' || plan === 'balance-12pay') return 'Your first balance payment is in. The rest runs automatically once a month and stops on its own after the final payment.';
+  // LEGACY $1,997-era plans (not sellable; kept so an old link still reads true).
+  if (plan === 'plan') return 'Your first payment is in and your spot is locked. The rest runs automatically every two weeks across the 12 weeks.';
+  if (plan === 'balance-3pay') return 'Your first balance payment is in. The rest runs automatically and stops on its own after the final payment.';
+  if (plan === 'full') return 'You are all in, paid in full. Your spot is locked.';
+  return 'Your payment is in and your spot is locked. Joel will confirm your payment schedule with you directly.';
 }
 
 export default function AllInWelcomePage() {
