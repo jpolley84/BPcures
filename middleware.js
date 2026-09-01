@@ -33,7 +33,7 @@
 // no longer stocked. Align public/tea/index.html to $60 / $150 / 150 g first,
 // or accept that you are running a deliberate discount test.
 
-export const config = { matcher: ['/', '/tea'] };
+export const config = { matcher: ['/', '/tea', '/allin'] };
 
 const SHOPIFY_URL = 'https://hormoneteas.com/products/steady';
 const COOKIE = 'tea_arm';
@@ -115,6 +115,15 @@ export default function middleware(request) {
   if (url.pathname === '/tea') return teaSplit(request, url);
 
   if (host === 'changemylifechallenge.com' || host === 'www.changemylifechallenge.com') {
+    // 2026-09-01 (Joel): shares of changemylifechallenge.com/allin showed the
+    // BPQuiz card (crawlers read the SPA shell's head). Rewrite that ONE path
+    // on this host to dist/allin-share.html — same bundle, Accelerator og:*
+    // tags, duo photo. bpquiz.com/allin is untouched (host-guarded here).
+    if (url.pathname === '/allin') {
+      const dest = new URL('/allin-share.html', url);
+      return new Response(null, { headers: { 'x-middleware-rewrite': dest.toString() } });
+    }
+    if (url.pathname !== '/') return undefined;
     // 2026-08-17 (Joel): the domain root now serves the NEW static challenge
     // page (Joel's B design, $97 seat, cohort 2026-08-17) instead of the SPA
     // shell /cmlc.html. Same rewrite mechanism as before: middleware runs
