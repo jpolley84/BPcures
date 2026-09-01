@@ -1,7 +1,7 @@
 // /apply - private coaching application for Joel Polley, RN.
 //
 // 2026-06-09: replaces the old /apply -> /1on1 redirect. One questionnaire
-// for the $1,997 90-Day Group and the four 1:1 tiers (Triangle Session,
+// for the $1,997 30-Day Group and the four 1:1 tiers (Triangle Session,
 // Inner Circle, Brave Household, Pillar Year). Tier preselected from
 // ?tier=<slug> query param; defaults to "ninety".
 //
@@ -21,10 +21,10 @@ const EASE = [0.22, 1, 0.36, 1];
 const TIERS = [
   // 2026-07-15: Be There — webinar-only offer (The_Front_Row_Webinar_Script.pdf;
   // webinar was scripted as "The Front Row," Joel renamed the offer "Be There").
-  // $1,997 or 3x $697, 90-day live cohort capped at 40, Front-Row Promise guarantee.
+  // $1,997 or 3x $697, 30-day live cohort capped at 40, Front-Row Promise guarantee.
   // /coaching redirects straight here with ?tier=bethere for this cohort's traffic.
-  { slug: 'bethere', name: 'Be There', shortName: 'Be There', price: '$1,997', cadence: '90-day live cohort · or 3x $697' },
-  { slug: 'ninety', name: 'The 90-Day Personalized Group', shortName: 'the 90-Day Group', price: '$1,997', cadence: '90 days, group' },
+  { slug: 'bethere', name: 'Be There', shortName: 'Be There', price: '$1,997', cadence: '30-day live cohort · or 3x $697' },
+  { slug: 'ninety', name: 'The 30-Day Personalized Group', shortName: 'the 30-Day Group', price: '$1,997', cadence: '30 days, group' },
   { slug: 'triangle', name: 'The Triangle Session', shortName: 'the Triangle Session', price: '$1,500 one-time', cadence: 'One 90-minute 1:1' },
   { slug: 'inner-circle', name: 'The Inner Circle', shortName: 'the Inner Circle', price: '$1,500/month', cadence: 'Weekly 1:1' },
   { slug: 'household', name: 'The Brave Household', shortName: 'the Brave Household', price: '$5,000/month', cadence: 'Whole family' },
@@ -648,7 +648,7 @@ export default function ApplyPage() {
               </motion.div>
 
               <motion.div {...reveal(0.05)}>
-                <Question index={8} label="Describe what winning looks like for you 90 days from now." error={errors.winning90}>
+                <Question index={8} label="Describe what winning looks like for you 30 days from now." error={errors.winning90}>
                   <textarea
                     className={`apply-input${errors.winning90 ? ' apply-input-error' : ''}`}
                     rows={3}

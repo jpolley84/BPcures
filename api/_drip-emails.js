@@ -24,7 +24,7 @@ export const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 //              fires as a downsell on a $297 decline — NEVER a cold pitch.
 //   $297     → 30-Day Personalized Sprint / case review (/case-review,
 //              real cap 5/month). The back-end door.
-//   $1,997   → 90-Day Group (Cohort 2), apply-only. Top of the ladder.
+//   $1,997   → 30-Day Group (Cohort 2), apply-only. Top of the ladder.
 export const KIT_URL       = 'https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A';
 export const RESET_KIT_URL = 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k';
 export const CHALLENGE_URL = 'https://buy.stripe.com/9B67sL7fZ6PI8bp9ZvfnO0H';
@@ -1567,7 +1567,7 @@ const day21 = {
     ${p(`Three meals a day × 10 minutes = 30 minutes of movement that costs you nothing. Most clients see A1c drop 0.3-0.5 in 90 days from this single habit. Multiple cardiology meta-analyses (Buffey 2022 most recent) replicate the effect.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`This single habit is the easiest way to test if blood sugar is your loudest Pressure. Run it for 14 days. If morning BP drops 3+ points, you've found your corner.`)}
-    ${upsellFooter({ kicker: 'READY FOR THE 90-DAY WORK?', body: 'Cohort 2, my $1,997 90-day group, is the deepest room on the ladder. Live group calls Wednesdays at 7 PM ET, office hours, the medication-tapering conversation with your doctor. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE 30-DAY WORK?', body: 'Cohort 2, my $1,997 30-day group, is the deepest room on the ladder. Live group calls Wednesdays at 7 PM ET, office hours, the medication-tapering conversation with your doctor. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},
@@ -1797,7 +1797,7 @@ const day26 = {
     ${p(`Bring the results to your next appointment. The conversation changes when you have data.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`Tomorrow, 16:8 intermittent fasting. The safety screen + protocol. Not for everyone, accelerates everyone it IS for.`)}
-    ${upsellFooter({ kicker: 'READY FOR THE FULL TAPERING ARC?', body: 'Cohort 2, my $1,997 90-day group, is where lab interpretation, the doctor conversation, and the medication-tapering plan happen together with me on live Wednesday 7 PM ET calls. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
+    ${upsellFooter({ kicker: 'READY FOR THE FULL TAPERING ARC?', body: 'Cohort 2, my $1,997 30-day group, is where lab interpretation, the doctor conversation, and the medication-tapering plan happen together with me on live Wednesday 7 PM ET calls. Application only.', ctaLabel: 'Apply for Cohort 2 →', ctaUrl: COHORT2_URL })}
     ${footerSecondaryCTAs()}
   `,
   textBody: ({ firstName }) => `Hi ${firstName || 'there'},

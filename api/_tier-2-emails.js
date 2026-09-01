@@ -5,11 +5,11 @@
 // State = 'tier-2'. Fired by daysSinceTier2EnteredAt.
 // 10 emails over 30 days. Fulfills the 30-day promise (chapter walkthroughs +
 // weekly Wednesday Zoom + Skool VIP + bonus kits) and invites to Cohort 2
-// ($1,997, the 90-day group) from Day 18 onward.
+// ($1,997, the 30-day group) from Day 18 onward.
 //
 // 2026-07-03: ALL fake urgency on Cohort 2 removed ("closes Friday",
 // "tonight", seat countdowns, credit-lock deadlines). The honest frame:
-// the 90-day group opens when there is a real cohort; apply at
+// the 30-day group opens when there is a real cohort; apply at
 // /apply?tier=ninety and Joel tells you the next real start date.
 // Bonus links now point at the live /library (the old /bonus/* routes 404).
 //
@@ -569,7 +569,7 @@ const day15 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Day 30:</strong> you graduate. You'll have a 30-day BP log, a clean baseline-vs-final comparison, and a body that's used to the new rhythm. Many of you will want to bring this data to your next cardiology appointment.</p>
     `)}
     ${p(`Here's the thing I want to put on your radar, without pitching it today.`)}
-    ${p(`What happens <em>after</em> Day 30 is the question I get most from Challenge graduates. The short answer: there's a deeper room. <strong style="color:${PALETTE.text};">Cohort 2</strong>, the 90-day Sprint, is for the Challenge graduates who want me on their numbers for the next three months, watching every reading, adjusting the protocol every week, walking them through the doctor conversation when the time comes.`)}
+    ${p(`What happens <em>after</em> Day 30 is the question I get most from Challenge graduates. The short answer: there's a deeper room. <strong style="color:${PALETTE.text};">Cohort 2</strong>, the 30-day Sprint, is for the Challenge graduates who want me on their numbers for the next 30 days, watching every reading, adjusting the protocol every week, walking them through the doctor conversation when the time comes.`)}
     ${p(`I'll tell you the full mechanism on Day 18. For now, just know it exists. If you've been wondering what's after this, that's the answer.`, { margin: '0 0 28px' })}
     ${clayBlock('THIS WEEK\'S ASSIGNMENT', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Reply to this email with three numbers:</p>
@@ -612,7 +612,7 @@ Day 30: you graduate. 30-day BP log, clean baseline-vs-final comparison, body us
 
 Here's the thing I want to put on your radar, without pitching it today.
 
-What happens AFTER Day 30 is the question I get most from Challenge graduates. The short answer: there's a deeper room. COHORT 2, the 90-day Sprint, is for graduates who want me on their numbers for the next three months, watching every reading, adjusting the protocol every week, walking them through the doctor conversation when the time comes.
+What happens AFTER Day 30 is the question I get most from Challenge graduates. The short answer: there's a deeper room. COHORT 2, the 30-day Sprint, is for graduates who want me on their numbers for the next 30 days, watching every reading, adjusting the protocol every week, walking them through the doctor conversation when the time comes.
 
 I'll tell you the full mechanism on Day 18. For now, just know it exists.
 
@@ -645,7 +645,7 @@ Unsubscribe: ${unsubUrl || ''}
 const day18 = {
   subject: 'After the Challenge: there\'s a deeper room',
   subjectB: 'Cohort 2 opens to graduates first',
-  preview: 'The 90-day Sprint, what it is, who it\'s for, why it exists.',
+  preview: 'The 30-day Sprint, what it is, who it\'s for, why it exists.',
   htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`I told you on Day 15 there was a deeper room. Today I want to tell you what's in it, and who it's for.`)}
@@ -664,23 +664,23 @@ const day18 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">Her doctor lowered her metformin first. Her doctor lowered her amlodipine second. Consandra's writing her own bonus chapter for the Sprint cookbook this month, the woman who 90 days ago thought she'd be on pills for life is now teaching the women coming in behind her.</p>
     `)}
     ${bigQuote('TRANSFORMATION: From morning-number tracker to medication-conversation owner.')}
-    ${p(`The Challenge taught you the Triangle protocol. Cohort 2, the 90-day Sprint, gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations beside other clients.`)}
+    ${p(`The Challenge taught you the Triangle protocol. Cohort 2, the 30-day Sprint, gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations beside other clients.`)}
     ${p(`Inside the Sprint you get: weekly group Zoom calls with me (60 minutes, small cohort, real face time), <strong style="color:${PALETTE.text};">WhatsApp office hours Sun–Thu 9 AM–5 PM ET</strong> so you're never more than a day from an answer, full lab review at the start and again at the finish, my eyes on your BP log every Wednesday, the full Doctor Conversation Script (the exact words, the order, the fallback if they say no), the Med Wean Tracker for the actual taper window I coordinate with your prescriber, your spouse included free, and the Skool VIP Sprint room, a smaller, tighter cohort than the Challenge.`)}
     ${p(`The graduates from Cohort 1 of the Sprint are now ~70% off at least one medication, with their doctor's blessing. That's the outcome. <strong style="color:${PALETTE.text};">Doctor-cleared independence.</strong>`, { margin: '0 0 28px' })}
-    ${bigQuote('OFFER: $1,997 for the 90-day Sprint. Application only.')}
-    ${p(`Cohort 2 is application only. I keep it small so I can actually be on every Wednesday with every client. And here is the honest part: the 90-day group opens when there is a real cohort ready, not on a marketing clock. No fake deadline, no seat countdown. You apply, I read it, and I tell you the next real start date myself.`)}
+    ${bigQuote('OFFER: $1,997 for the 30-day Sprint. Application only.')}
+    ${p(`Cohort 2 is application only. I keep it small so I can actually be on every Wednesday with every client. And here is the honest part: the 30-day group opens when there is a real cohort ready, not on a marketing clock. No fake deadline, no seat countdown. You apply, I read it, and I tell you the next real start date myself.`)}
     ${p(`I'll walk the guarantee and the application questions on Day 26 of this Challenge. Today is just the reveal, so you know what room is being opened.`, { margin: '0 0 28px' })}
     ${clayBlock('RESPONSE, IF THIS RESONATES', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">Look at the application now. Don't apply yet, just read what it is. Get a feel for whether the deeper room is somewhere you want to be after Day 30.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Read the Cohort 2 application →</a></p>
     `)}
     ${ctaButton(COHORT2_URL, 'Read about Cohort 2 (no commitment) →')}
-    ${p(`Day 22: I'll tell you exactly what Consandra's Wednesday looks like inside the Sprint. The weekly tracker. The Wednesday call. The doctor visit prep. So you can see, in real terms, what the next 90 days could look like for you.`, { margin: '0 0 28px' })}
+    ${p(`Day 22: I'll tell you exactly what Consandra's Wednesday looks like inside the Sprint. The weekly tracker. The Wednesday call. The doctor visit prep. So you can see, in real terms, what the next 30 days could look like for you.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
-    ${psBox(`If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient", read this email again. The Sprint exists because the 30-day window is too short for a real conversation about getting off the meds. You need the next 60 with a coach on your data.`)}
+    ${psBox(`If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient", read this email again. The Sprint exists to put a coach on your data and get you to a real conversation about getting off the meds.`)}
     ${upsellFooter({
-      kicker: 'COHORT 2, THE 90-DAY SPRINT',
-      body: 'The group opens when there is a real cohort ready. Apply and I will tell you the next real start date. The 90 days that turn your Challenge into a real doctor conversation about the meds.',
+      kicker: 'COHORT 2, THE 30-DAY SPRINT',
+      body: 'The group opens when there is a real cohort ready. Apply and I will tell you the next real start date. The 30 days that turn your Challenge into a real doctor conversation about the meds.',
       ctaLabel: 'Read the Cohort 2 application',
       ctaUrl: COHORT2_URL,
     })}
@@ -716,15 +716,15 @@ Her doctor lowered her metformin first. Her doctor lowered her amlodipine second
 
 TRANSFORMATION: FROM MORNING-NUMBER TRACKER TO MEDICATION-CONVERSATION OWNER.
 
-The Challenge taught you the Triangle protocol. Cohort 2, the 90-day Sprint, gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations.
+The Challenge taught you the Triangle protocol. Cohort 2, the 30-day Sprint, gets you to the doctor conversation with the right data, the right framing, and a coach who's been in 200+ of these conversations.
 
 Inside the Sprint: weekly group Zoom calls with me (60 min, small cohort, real face time), WhatsApp office hours Sun-Thu 9-5 ET, full lab review at start and finish, my eyes on your BP log every Wednesday, the full Doctor Conversation Script, the Med Wean Tracker I coordinate with your prescriber, spouse included free, and the Skool VIP Sprint room, a smaller, tighter cohort than the Challenge.
 
 Graduates from Cohort 1 are now ~70% off at least one medication with their doctor's blessing. DOCTOR-CLEARED INDEPENDENCE.
 
-OFFER: $1,997 FOR THE 90-DAY SPRINT. APPLICATION ONLY.
+OFFER: $1,997 FOR THE 30-DAY SPRINT. APPLICATION ONLY.
 
-Cohort 2 is application only. I keep it small so I can be on every Wednesday with every client. And here is the honest part: the 90-day group opens when there is a real cohort ready, not on a marketing clock. No fake deadline, no seat countdown. You apply, I read it, and I tell you the next real start date myself.
+Cohort 2 is application only. I keep it small so I can be on every Wednesday with every client. And here is the honest part: the 30-day group opens when there is a real cohort ready, not on a marketing clock. No fake deadline, no seat countdown. You apply, I read it, and I tell you the next real start date myself.
 
 Guarantee and application questions on Day 26 of this Challenge. Today is just the reveal.
 
@@ -738,7 +738,7 @@ Day 22: I'll tell you exactly what Consandra's Wednesday looks like inside the S
 Joel
 RN, BraveWorks
 
-P.S. If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient", read this email again. The Sprint exists because the 30-day window is too short for a real conversation about getting off the meds. You need the next 60 with a coach on your data.
+P.S. If you're already past Day 90 of being on BP meds and you're frustrated that "everyone says I need to be patient", read this email again. The Sprint exists to put a coach on your data and get you to a real conversation about getting off the meds.
 
 → COHORT 2, THE 90-DAY SPRINT: ${COHORT2_URL}
 The group opens when there is a real cohort ready. Apply and I will tell you the next real start date.
@@ -754,12 +754,12 @@ Unsubscribe: ${unsubUrl || ''}
 // ─── DAY 22 — Consandra's first 30 days inside the Sprint (BAB case study) ─
 // Before-After-Bridge. Tangible Wednesday-in-the-life inside Cohort 2.
 const day22 = {
-  subject: 'Consandra\'s Wednesday, a peek inside 90-day work',
+  subject: 'Consandra\'s Wednesday, a peek inside 30-day work',
   subjectB: 'What Sprint clients do on Day 30',
   preview: 'The Wednesday call. The tracker. The doctor visit prep.',
   htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 90-day Cohort 2 isn't an abstraction for you anymore.`)}
+    ${p(`On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 30-day Cohort 2 isn't an abstraction for you anymore.`)}
     ${p(`This is the BEFORE-AFTER-BRIDGE that most Challenge graduates need to see before the picture clicks.`, { margin: '0 0 28px' })}
     ${bigQuote('BEFORE: 90 days ago.')}
     ${p(`Consandra was 90 days into a personal stuck place. Morning BP averaging 152/95 on amlodipine and metformin. Type-2 diabetes diagnosed two years prior. Sleep fragmented, waking 3 AM, lying awake for an hour. Mid-section weight that hadn't moved in years. She'd done the Challenge once, gotten 6 mmHg off her morning average, but the numbers had crept back in the 30 days after Day 30 because she didn't know what to keep doing or who to ask.`)}
@@ -781,7 +781,7 @@ const day22 = {
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">All week, WhatsApp office hours.</strong> Sun–Thu 9 AM–5 PM ET. Every Sprint client can drop a question, send a photo of a label, or ask "should I take this today?" in the group thread. I answer same-day in front of the cohort, so every question becomes a teaching moment for the whole room. This is the personalization that doesn't need a private call.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">9 PM: Skool VIP Sprint room.</strong> Consandra posts her "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.</p>
     `)}
-    ${p(`That's the rhythm. <strong style="color:${PALETTE.text};">Every Wednesday for 90 days.</strong> By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), they're maintenance-only.`, { margin: '0 0 28px' })}
+    ${p(`That's the rhythm. <strong style="color:${PALETTE.text};">Every Wednesday for 30 days.</strong> By week three, the doctor visit prep happens. By Day 30 (graduation), most Sprint clients are walking into their first dose-lowering conversation with the plan in hand, then it's maintenance.`, { margin: '0 0 28px' })}
     ${bigQuote('Why I cap it at 5.')}
     ${p(`Five women is the most I can review every Wednesday with real attention. I tried thirty in the first cohort I ever ran (years ago, before the Triangle Method was branded). I missed things. Clients drifted. I cut it to five and the outcomes more than doubled.`)}
     ${p(`Cohort 2 stays small on purpose. And there is no fake deadline here: the group opens when there is a real cohort ready. Apply and I will tell you the next real start date. I'll walk the application questions on Day 26.`, { margin: '0 0 28px' })}
@@ -794,7 +794,7 @@ const day22 = {
     ${joelSignoff()}
     ${psBox(`The single thing Consandra said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Wednesday call buys you. Someone watching your numbers with the same seriousness you watch them with.`)}
     ${upsellFooter({
-      kicker: 'COHORT 2, THE 90-DAY GROUP',
+      kicker: 'COHORT 2, THE 30-DAY GROUP',
       body: 'Read the application. See what kind of woman the Sprint is for. The group opens when there is a real cohort ready, and I will tell you the next real start date when you apply.',
       ctaLabel: 'Read the Cohort 2 application',
       ctaUrl: COHORT2_URL,
@@ -803,7 +803,7 @@ const day22 = {
   `,
   textBody: ({ firstName, unsubUrl }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
-On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 90-day Cohort 2 isn't an abstraction for you anymore.
+On Day 18, I told you Consandra Taylor closed in 16 days. Today I want to walk you through what her Wednesday actually looks like inside the Sprint, so the 30-day Cohort 2 isn't an abstraction for you anymore.
 
 BEFORE: 90 DAYS AGO.
 
@@ -835,7 +835,7 @@ WAKITA'S WEDNESDAY INSIDE THE SPRINT:
 
 → 9 PM: Skool VIP Sprint room. Consandra posts "wins of the week" in a smaller, tighter cohort (5 women max). She reads what others are seeing. She gives advice to women on Day 12 because she's now on Day 47 and she knows the bumps.
 
-That's the rhythm. EVERY WEDNESDAY FOR 90 DAYS. By Day 60, the doctor visit happens. By Day 90, most Sprint clients are running their first dose-lowering conversation. By Day 120 (graduation), maintenance-only.
+That's the rhythm. EVERY WEDNESDAY FOR 30 DAYS. By week three, the doctor visit prep happens. By Day 30 (graduation), most Sprint clients are walking into their first dose-lowering conversation with the plan in hand, then it's maintenance.
 
 WHY I CAP IT AT 5.
 
@@ -856,7 +856,7 @@ RN, BraveWorks
 
 P.S. The single thing Consandra said on Day 20 that I keep telling Challenge graduates: "I needed the protocol AND the witness. Without the witness I drift." That's what the Wednesday call buys you. Someone watching your numbers with the same seriousness you watch them with.
 
-→ COHORT 2, THE 90-DAY GROUP: ${COHORT2_URL}
+→ COHORT 2, THE 30-DAY GROUP: ${COHORT2_URL}
 Read the application. See what kind of woman the Sprint is for. I will tell you the next real start date when you apply.
 
 —
@@ -879,42 +879,42 @@ const day26 = {
     ${p(`If you've been waiting for the full picture before deciding whether to apply, this is the email.`, { margin: '0 0 28px' })}
     ${bigQuote('WHAT COHORT 2 IS.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A 90-day, small-group Sprint.</strong> Application-only. It starts when a real cohort is ready, and I tell you the date when you apply. Ends 90 days later with a maintenance-phase graduation.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A 30-day, small-group Sprint.</strong> Application-only. It starts when a real cohort is ready, and I tell you the date when you apply. Ends 30 days later with a maintenance-phase graduation.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">A weekly Wednesday call</strong> with me at 7 PM EST, 60 minutes, full cohort. Recordings if you miss live.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">WhatsApp office hours, Sun–Thu, 9 AM–5 PM ET.</strong> Direct line to me, five days a week. Drop a question, send a photo of a label, ask "should I take this today", same-day answer in the group thread. The personalization happens here, not on private weekly calls.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Full lab review at the start and again at the finish.</strong> Two complete walk-throughs of your labs, so we know exactly what's moving underneath your numbers.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Spouse included free.</strong> Parallel 30-minute briefing so they're rowing with you, not pulling against. Single biggest predictor of who finishes the 90 days.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Spouse included free.</strong> Parallel 30-minute briefing so they're rowing with you, not pulling against. Single biggest predictor of who finishes the 30 days.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Weekly tracker review.</strong> Every Wednesday I open every client's tracker between 9 and 11 AM ET. One comment per client. I see trends the client can't see.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">The Doctor Conversation Script + Med Wean Tracker.</strong> The two assets that turn 90 days of clean numbers into an actual taper conversation with your prescriber.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">The Doctor Conversation Script + Med Wean Tracker.</strong> The two assets that turn 30 days of clean numbers into an actual taper conversation with your prescriber.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">A smaller, tighter Skool VIP room.</strong> A handful of women only. Different feel than the Challenge cohort. Higher-touch.</p>
     `)}
     ${bigQuote('WHAT IT IS NOT.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a re-run of the Challenge.</strong> You've already done the chapter walkthroughs. The Sprint is the implementation phase, applying the Triangle to your specific case, week by week, with my eyes on the data.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a medical service.</strong> I'm a Registered Nurse and naturopathic practitioner. I do not prescribe, diagnose, or treat. Your prescribing doctor remains your prescribing doctor. The Sprint coaches the lifestyle and protocol side, they coach the medication side.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a guarantee that you'll be off your meds in 90 days.</strong> Your doctor decides medication changes. Most Sprint Cohort 1 graduates are down at least one dose. Some are off one medication entirely. A few are still on the same regimen but with sustained 20+ mmHg reductions, and an open conversation with their doctor about tapering at the 6-month mark.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">Not a guarantee that you'll be off your meds in 30 days.</strong> Your doctor decides medication changes. Most Sprint Cohort 1 graduates are down at least one dose. Some are off one medication entirely. A few are still on the same regimen but with sustained 20+ mmHg reductions, and an open conversation with their doctor about tapering at the 6-month mark.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Not for everyone.</strong> If you don't have 30 minutes a day for the protocol, the Sprint is the wrong fit. If you can't make Wednesday calls (or watch recordings within 48 hours), the Sprint is the wrong fit. Better to know now.</p>
     `)}
     ${bigQuote('THE PRICE.')}
     ${p(`The full Sprint is <strong style="color:${PALETTE.text};">$1,997</strong>. The application itself never charges you anything. You apply, we talk, I tell you the next real start date, and you decide with the full picture in hand. There is a payment plan option on the application. Same total, no interest.`, { margin: '0 0 28px' })}
     ${bigQuote('THE GUARANTEE.')}
     ${p(`Inside the first 14 days of the Sprint, if you've shown up to both Wednesday calls, completed both weekly trackers, and you don't see a clear path to your medication conversation, write me a paragraph telling me what's missing and I'll refund the Sprint in full. Not a fight. Not 27 forms. One paragraph.`)}
-    ${p(`That's the deal because I know what the Sprint produces in the women who show up for it, and the women who show up for it the first two Wednesdays virtually always finish the 90 days.`, { margin: '0 0 28px' })}
+    ${p(`That's the deal because I know what the Sprint produces in the women who show up for it, and the women who show up for it the first two Wednesdays virtually always finish the 30 days.`, { margin: '0 0 28px' })}
     ${clayBlock('THE THREE COMMON QUESTIONS', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"Can I do it if I work full-time?"</strong> Yes. Most Cohort 1 women worked full-time. The Wednesday call is the only fixed live commitment, the rest is async tracker entry (4 min/day) and WhatsApp office-hour questions you send on your own schedule.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">"What if my doctor won't budge on the taper?"</strong> The Sprint includes the Script for navigating that exact conversation, including a second-opinion-pathway script for when your current prescriber won't engage with data. A few Sprint graduates have switched physicians as part of this; most haven't needed to.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">"Can I pay in installments?"</strong> Yes. The application has a payment-plan option. Three or four monthly payments. Same total. No interest.</p>
     `)}
     ${clayBlock('HOW THE APPLICATION WORKS', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The application is short. Most women finish it in about 15 minutes. I read every one personally. The 90-day group opens when there is a real cohort ready, so when you apply, I write back with the next real start date. If you're not a fit, for any reason, I'll tell you the better path instead.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">The application is short. Most women finish it in about 15 minutes. I read every one personally. The 30-day group opens when there is a real cohort ready, so when you apply, I write back with the next real start date. If you're not a fit, for any reason, I'll tell you the better path instead.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for Cohort 2 →</a></p>
     `)}
-    ${ctaButton(COHORT2_URL, 'Apply for the 90-day group →')}
+    ${ctaButton(COHORT2_URL, 'Apply for the 30-day group →')}
     ${p(`Day 30: your graduation email. And what happens next regardless of which door you walk through.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If you know the deeper room is yours, apply. Not because of a clock. There isn't one. But momentum matters. I will tell you the next real start date and you can plan around it.`)}
     ${upsellFooter({
-      kicker: 'COHORT 2, THE 90-DAY GROUP',
+      kicker: 'COHORT 2, THE 30-DAY GROUP',
       body: 'Apply and I will tell you the next real start date. Short application, read personally, honest answer either way.',
       ctaLabel: 'Apply for Cohort 2',
       ctaUrl: COHORT2_URL,
@@ -929,7 +929,7 @@ If you've been waiting for the full picture before deciding whether to apply, th
 
 WHAT COHORT 2 IS:
 
-→ A 90-day, small-group Sprint. Application-only. It starts when a real cohort is ready, and I tell you the date when you apply.
+→ A 30-day, small-group Sprint. Application-only. It starts when a real cohort is ready, and I tell you the date when you apply.
 → A weekly Wednesday call with me at 7 PM EST, 60 minutes, full cohort. Recordings if you miss live.
 → WhatsApp office hours Sun-Thu 9-5 ET, direct line to me, five days a week, same-day answers in the group thread.
 → Full lab review at start and finish, two complete walk-throughs.
@@ -942,7 +942,7 @@ WHAT IT IS NOT:
 
 → Not a re-run of the Challenge. The Sprint is the implementation phase, applying the Triangle to YOUR case, week by week, with my eyes on the data.
 → Not a medical service. I'm an RN and naturopathic practitioner. I do not prescribe, diagnose, or treat. Your prescribing doctor remains your prescribing doctor.
-→ Not a guarantee that you'll be off your meds in 90 days. Your doctor decides medication changes. Most Cohort 1 graduates are down at least one dose. Some are off one medication entirely.
+→ Not a guarantee that you'll be off your meds in 30 days. Your doctor decides medication changes. Most Cohort 1 graduates are down at least one dose. Some are off one medication entirely.
 → Not for everyone. If you can't make Wednesday calls (or recordings within 48 hours), the Sprint is the wrong fit.
 
 THE PRICE.
@@ -963,7 +963,7 @@ THE THREE COMMON QUESTIONS:
 
 HOW THE APPLICATION WORKS.
 
-The application is short. Most women finish in about 15 minutes. I read every one personally. The 90-day group opens when there is a real cohort ready, so when you apply, I write back with the next real start date. If you're not a fit, I'll tell you the better path instead.
+The application is short. Most women finish in about 15 minutes. I read every one personally. The 30-day group opens when there is a real cohort ready, so when you apply, I write back with the next real start date. If you're not a fit, I'll tell you the better path instead.
 → ${COHORT2_URL}
 
 Day 30: your graduation email. And what happens next regardless of which door you walk through.
@@ -973,7 +973,7 @@ RN, BraveWorks
 
 P.S. If you know the deeper room is yours, apply. Not because of a clock. There isn't one. But momentum matters. I will tell you the next real start date and you can plan around it.
 
-→ COHORT 2, THE 90-DAY GROUP: ${COHORT2_URL}
+→ COHORT 2, THE 30-DAY GROUP: ${COHORT2_URL}
 Apply and I will tell you the next real start date.
 
 —
@@ -1003,12 +1003,12 @@ const day30 = {
     `)}
     ${bigQuote('What\'s next, either door.')}
     ${p(`Two paths open up at Day 30, and I want both of them to be clear.`, { margin: '0 0 28px' })}
-    ${clayBlock('DOOR 1: COHORT 2 (THE 90-DAY GROUP)', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">If the Challenge has been the right work but you want me on your numbers for the next 90 days, weekly Wednesday group call, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, the doctor conversation prep, spouse included free, this is the door. The group is $1,997 and it opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date myself.</p>
+    ${clayBlock('DOOR 1: COHORT 2 (THE 30-DAY GROUP)', `
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">If the Challenge has been the right work but you want me on your numbers for the next 30 days, weekly Wednesday group call, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, the doctor conversation prep, spouse included free, this is the door. The group is $1,997 and it opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date myself.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ <a href="${COHORT2_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">Apply for Cohort 2 →</a></p>
     `)}
     ${clayBlock('DOOR 2: THE COMMUNITY', `
-      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">If Cohort 2 isn't the right fit right now, that's a real answer. You stay in the Skool community, you keep every tool from these 30 days, and I keep teaching there and on YouTube every week. When a new 90-day group is forming, you'll hear about it from me directly.</p>
+      <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;">If Cohort 2 isn't the right fit right now, that's a real answer. You stay in the Skool community, you keep every tool from these 30 days, and I keep teaching there and on YouTube every week. When a new 30-day group is forming, you'll hear about it from me directly.</p>
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">No action needed. You're already in. Just keep showing up.</p>
     `)}
     ${bigQuote('Your graduation gift.')}
@@ -1023,11 +1023,11 @@ const day30 = {
     ${p(`Whether you walk into Cohort 2 now or come back in three months, the Triangle stays with you. The herbs stay with you. The "AND not INSTEAD OF" frame stays with you. Pills manage output. Protocol fixes input. That sentence is yours now.`, { margin: '0 0 28px' })}
     ${p(`If this Challenge has helped, even a little, there's one thing I'd ask. Forward this email to one woman in your life who's on a BP med and doesn't know there's an "AND" path. That's the most useful single thing you can do with what you learned over the last 30 days.`, { margin: '0 0 28px' })}
     ${p(`Thank you for trusting me with these thirty days. The Triangle works because women like you do the work. I'm glad you're on the graduate side.`, { margin: '0 0 28px' })}
-    ${ctaButton(COHORT2_URL, 'Apply for the 90-day group →')}
+    ${ctaButton(COHORT2_URL, 'Apply for the 30-day group →')}
     ${joelSignoff()}
-    ${psBox(`One honest note on timing: the 90-day group starts when there is a real cohort ready. If you apply today, I will write back with the next real start date so you can plan your calendar around it. No deadline games, ever.`)}
+    ${psBox(`One honest note on timing: the 30-day group starts when there is a real cohort ready. If you apply today, I will write back with the next real start date so you can plan your calendar around it. No deadline games, ever.`)}
     ${upsellFooter({
-      kicker: 'COHORT 2, THE 90-DAY GROUP',
+      kicker: 'COHORT 2, THE 30-DAY GROUP',
       body: 'The group opens when there is a real cohort ready. Apply and I will tell you the next real start date. If you know the deeper room is yours, this is the door.',
       ctaLabel: 'Apply for Cohort 2',
       ctaUrl: COHORT2_URL,
@@ -1054,12 +1054,12 @@ Two paths open up at Day 30.
 
 DOOR 1: COHORT 2 (THE 90-DAY GROUP).
 
-If the Challenge has been the right work but you want me on your numbers for the next 90 days, weekly Wednesday group call, WhatsApp office hours Sun-Thu 9-5, full lab review at start and finish, doctor conversation prep, spouse included free, this is the door. The group is $1,997 and it opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date myself.
+If the Challenge has been the right work but you want me on your numbers for the next 30 days, weekly Wednesday group call, WhatsApp office hours Sun-Thu 9-5, full lab review at start and finish, doctor conversation prep, spouse included free, this is the door. The group is $1,997 and it opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date myself.
 → ${COHORT2_URL}
 
 DOOR 2: THE COMMUNITY.
 
-If Cohort 2 isn't the right fit right now, that's a real answer. You stay in the Skool community, you keep every tool from these 30 days, and I keep teaching there and on YouTube every week. When a new 90-day group is forming, you'll hear about it from me directly.
+If Cohort 2 isn't the right fit right now, that's a real answer. You stay in the Skool community, you keep every tool from these 30 days, and I keep teaching there and on YouTube every week. When a new 30-day group is forming, you'll hear about it from me directly.
 
 No action needed. You're already in. Just keep showing up.
 
@@ -1089,9 +1089,9 @@ APPLY FOR THE 90-DAY GROUP:
 Joel
 RN, BraveWorks
 
-P.S. One honest note on timing: the 90-day group starts when there is a real cohort ready. If you apply today, I will write back with the next real start date so you can plan your calendar around it. No deadline games, ever.
+P.S. One honest note on timing: the 30-day group starts when there is a real cohort ready. If you apply today, I will write back with the next real start date so you can plan your calendar around it. No deadline games, ever.
 
-→ COHORT 2, THE 90-DAY GROUP: ${COHORT2_URL}
+→ COHORT 2, THE 30-DAY GROUP: ${COHORT2_URL}
 Apply and I will tell you the next real start date.
 
 —

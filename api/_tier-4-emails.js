@@ -1,6 +1,6 @@
 // _tier-4-emails.js — onboarding sequence for TIER-4 buyers.
 //
-// Audience: 90-Day Group Coaching ($1,997) OR legacy 1:1 Coaching ($6,997) buyers.
+// Audience: 30-Day Group Coaching ($1,997) OR legacy 1:1 Coaching ($6,997) buyers.
 // State = `tier-4`. Wakita Taylor is the proof case (closed 2026-05-15).
 //
 // Goal: ONBOARD + RETAIN + REFERRAL momentum. NEVER sell.
@@ -131,11 +131,11 @@ function upsellFooter({ kicker, body, ctaLabel, ctaUrl }) {
 // ─── DAY 0 — Welcome + Wednesday kickoff + intake form ───────────────────
 const day0 = {
   subject: 'You\'re in. Wednesday at 7 PM EST: here\'s everything.',
-  subjectB: 'Welcome, your 90-day journey starts Wednesday',
+  subjectB: 'Welcome, your 30-day journey starts Wednesday',
   preview: 'Your intake form, the Wednesday Zoom link, and what to bring.',
   htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.`)}
+    ${p(`You said yes. I said yes to walking it with you for the next 30 days. Welcome inside.`)}
     ${p(`This email has the four things you need to start the right way. Read it once today and once Saturday, that's the only homework before we meet.`, { margin: '0 0 28px' })}
     ${bigQuote('Wednesday, 7:00 PM EST.')}
     ${p(`That's our kickoff. Sixty minutes on Zoom, me, you, and the others in this cohort. Bring a notebook and a beverage. We're not on camera the whole time; this is working, not performing.`, { margin: '0 0 28px' })}
@@ -143,12 +143,12 @@ const day0 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">The four pieces of your Week 1:</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">${INTAKE_STEP_HTML}</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">2. Wednesday kickoff</strong>, 7 PM EST. Zoom link below. Full Triangle map, your weeks 1-2 plan, and what we're doing first.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly group Zoom</strong>, same time every week, twelve weeks. Small cohort, real face time. Once we meet Wednesday I'll lock the recurring slot on your calendar.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;"><strong style="color:${PALETTE.text};">3. Weekly group Zoom</strong>, same time every week, all 30 days. Small cohort, real face time. Once we meet Wednesday I'll lock the recurring slot on your calendar.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. WhatsApp office hours</strong>, Sun-Thu, 9 AM-5 PM ET. My number drops Wednesday on the call. Once it's in your phone, text me direct, same-day answers in the cohort thread.</p>
     `)}
     ${p(`Get the intake done first. Everything else flows from there.`, { margin: '0 0 18px' })}
     ${ctaButton(INTAKE_FORM_URL, INTAKE_CTA_LABEL)}
-    ${clayBlock('Wednesday, Zoom link (same one all 12 weeks)', `
+    ${clayBlock('Wednesday, Zoom link (same one all 30 days)', `
       <p style="font-size:15px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 10px;">7:00 PM EST. Bookmark it. Calendar invite is coming separately.</p>
       <p style="font-size:14px;line-height:1.55;color:${PALETTE.textSoft};margin:0;word-break:break-all;"><a href="${WEDNESDAY_ZOOM_URL}" style="color:${PALETTE.accentClay};font-weight:600;text-decoration:none;">${WEDNESDAY_ZOOM_URL}</a></p>
     `)}
@@ -164,7 +164,7 @@ const day0 = {
   `,
   textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
-You said yes. I said yes to walking it with you for the next 90 days. Welcome inside.
+You said yes. I said yes to walking it with you for the next 30 days. Welcome inside.
 
 This email has the four things you need to start the right way. Read it once today and once Saturday, that's the only homework before we meet.
 
@@ -176,13 +176,13 @@ THE FOUR PIECES OF YOUR WEEK 1:
 
 1. ${INTAKE_STEP_TEXT}
 2. Wednesday kickoff, 7 PM EST. Zoom link below.
-3. Weekly group Zoom, same time every week, twelve weeks. Small cohort, real face time.
+3. Weekly group Zoom, same time every week, all 30 days. Small cohort, real face time.
 4. WhatsApp office hours, Sun-Thu, 9 AM-5 PM ET. Same-day answers in the cohort thread.
 
 YOUR INTAKE:
 ${INTAKE_FORM_ENV ? INTAKE_FORM_URL : 'Reply to this email and I will send your intake today (braveworksrn@gmail.com).'}
 
-WEDNESDAY ZOOM LINK (same for all 12 weeks):
+WEDNESDAY ZOOM LINK (same for all 30 days):
 ${WEDNESDAY_ZOOM_URL}
 
 THREE THINGS BEFORE WEDNESDAY:
@@ -294,7 +294,7 @@ const day3 = {
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Your VIP Skool room is live. Walk in.`, { margin: '0 0 28px' })}
     ${ctaButton(SKOOL_VIP_URL, 'Open your VIP Skool room →')}
-    ${p(`This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me, and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
+    ${p(`This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 30 days with, and me, and that's it. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.`)}
     ${p(`That's intentional. The reason most online communities don't move the needle is they're noisy. Ninety percent of the room is shopping, ten percent is working. In here it's reversed.`, { margin: '0 0 28px' })}
     ${bigQuote('One ask today.')}
     ${p(`Introduce yourself in the room. Two paragraphs. There's a pinned post titled "Start here, introduce yourself", drop your reply on that thread.`)}
@@ -320,7 +320,7 @@ Your VIP Skool room is live. Walk in.
 
 → ${SKOOL_VIP_URL}
 
-This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 90 days with, and me. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.
+This is not the public Skool community. This room is locked. It holds you, the other Sprint clients I'm walking the same 30 days with, and me. Twelve people, give or take. Everyone in it paid full price. Everyone in it is doing the same protocol on the same arc.
 
 ONE ASK TODAY.
 
@@ -361,12 +361,12 @@ P.S. Can't get the Skool link to open? Hit reply with the email address you used
 // evergreen replacement: how to actually use the VIP space, and what to
 // bring to the first Wednesday call. Onboarding only, never selling.
 const day5 = {
-  subject: 'Two habits that make the 90 days work',
+  subject: 'Two habits that make the 30 days work',
   subjectB: 'Your VIP room, and what to bring Wednesday',
   preview: 'How to use the VIP space day to day, and what to bring to your first call.',
   htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
-    ${p(`Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.`, { margin: '0 0 28px' })}
+    ${p(`Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 30 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.`, { margin: '0 0 28px' })}
     ${bigQuote('Habit 1: Use the VIP room like a logbook, not a library.')}
     ${p(`Most people treat an online space like a library. They walk in quietly, read what's on the shelves, and leave without a word. That's the wrong way to use yours.`)}
     ${sageBlock(`
@@ -391,7 +391,7 @@ const day5 = {
   `,
   textBody: ({ firstName }) => `${appLaunchHeroText()}Hi ${firstName || 'there'},
 
-Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 90 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.
+Quick one today. Five days in, I've watched enough clients walk this road to know something: the ones who get the most out of the 30 days aren't the ones with the hardest cases or the strongest willpower. They're the ones who build two small habits in Week 1.
 
 HABIT 1: USE THE VIP ROOM LIKE A LOGBOOK, NOT A LIBRARY.
 
@@ -518,7 +518,7 @@ const day10 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Do not change the protocol.</strong> No new herb. No new food rule. No "let me add something to fix this." Adding more during the dip is how people break the foundation we built.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Text me on WhatsApp.</strong> One line: "I'm in the dip." I'll know what you mean. I'll send you the right voice note inside the hour.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">3. Reread your Week 1 reflection.</strong> The "what's working" list you wrote me on Day 7. Read it out loud. Those changes haven't disappeared because the cuff paused. They are still happening underneath.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. Hold for 72 hours.</strong> Almost every dip clears inside three days when the protocol is held. The post-dip drop is often the biggest jump of the 90 days.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">4. Hold for 72 hours.</strong> Almost every dip clears inside three days when the protocol is held. The post-dip drop is often the biggest jump of the 30 days.</p>
     `)}
     ${p(`I write this email on Day 10 every cohort. Half of you will text me Day 13 and say "Joel I'm in it." A few will text me Day 17 and say "Joel I thought I was in it but I just had my best cuff reading of the protocol." Both are correct.`, { margin: '0 0 28px' })}
     ${p(`You bought a coach. The whole reason you bought a coach is for moments like this one. Use me.`, { margin: '0 0 28px' })}
@@ -559,7 +559,7 @@ THE MOVE WHEN IT SHOWS UP.
 
 3. REREAD YOUR WEEK 1 REFLECTION. The "what's working" list from Day 7. Out loud. Those changes haven't disappeared because the cuff paused.
 
-4. HOLD FOR 72 HOURS. Almost every dip clears inside three days. The post-dip drop is often the biggest jump of the 90 days.
+4. HOLD FOR 72 HOURS. Almost every dip clears inside three days. The post-dip drop is often the biggest jump of the 30 days.
 
 I write this email on Day 10 every cohort. Half of you will text me Day 13 and say "Joel I'm in it."
 
@@ -886,15 +886,15 @@ P.S. Tell me the date of your next appointment when you book it. I block 15 minu
 `,
 };
 
-// ─── DAY 30 — First-month check-in + 60/90 day preview ────────────────
+// ─── DAY 30 — Graduation check-in + maintenance preview ───────────────
 const day30 = {
   subject: '30 days in, what\'s working, what to adjust',
   subjectB: 'Your first taper conversation',
-  preview: 'Where we\'ve been. What changes in the next 60 days.',
+  preview: 'Where we\'ve been. What changes after Day 30.',
   htmlBody: ({ firstName }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Thirty days. That's a milestone.`)}
-    ${p(`Most BP protocols on the internet are 30-day programs. They are designed to deliver a "before and after" result, a small win, a screenshot, a testimonial that makes them buyable. <strong style="color:${PALETTE.text};">You are not on a 30-day program. You are 30 days into a 90-day repatterning.</strong> The work you've done is the foundation. The next 60 days are where it becomes a body.`, { margin: '0 0 28px' })}
+    ${p(`Most BP protocols on the internet are 30-day programs. They are designed to deliver a "before and after" result, a small win, a screenshot, a testimonial that makes them buyable. <strong style="color:${PALETTE.text};">You did not run a quick-fix protocol. You just finished a 30-day repatterning.</strong> The work you've done is the foundation. The maintenance phase ahead is where it becomes a body.`, { margin: '0 0 28px' })}
     ${bigQuote('Where we\'ve been.')}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month one, Foundation laid. Look at what's true now that wasn't true 30 days ago:</p>
@@ -906,14 +906,14 @@ const day30 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">→ You have a script for your doctor. Some of you have already had the conversation.</p>
     `)}
     ${p(`That is not a small list. That is a body that does not look like the one that bought this program 30 days ago.`, { margin: '0 0 28px' })}
-    ${bigQuote('What changes in the next 60 days.')}
+    ${bigQuote('What changes after Day 30.')}
     ${sageBlock(`
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month two, Replace. Days 31-60.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Maintenance, Replace and Stabilize.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 14px;">The herb stack completes. Anti-BP Plate becomes the default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch the Sodium corner drain and the morning-evening gap close.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Month three, Stabilize + Negotiate. Days 61-90.</p>
-      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">The doctor conversation happens for everyone who hasn't already had it. We move from "tracking" to "tapering" under your physician. For some of you, the first dose reduction lands inside the 90 days. For some it lands in month four, that's normal. The point isn't the dose number. The point is that you are on the road off, with your doctor's signature on the path.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Negotiate.</p>
+      <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;">The doctor conversation happens for everyone who hasn't already had it. We move from "tracking" to "tapering" under your physician. For some of you, the first dose reduction lands inside the 30 days. For some it lands in the months after, that's normal. The point isn't the dose number. The point is that you are on the road off, with your doctor's signature on the path.</p>
     `)}
-    ${p(`After Day 90 the structure changes. The cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship doesn't end, it changes shape.`, { margin: '0 0 28px' })}
+    ${p(`After Day 30 the structure changes. The cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship doesn't end, it changes shape.`, { margin: '0 0 28px' })}
     ${bigQuote('What I need from you today.')}
     ${p(`Three things, simple to do this week.`)}
     ${sageBlock(`
@@ -921,7 +921,7 @@ const day30 = {
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Tell me one woman you'd want in this room.</strong> I'm not asking you to sell anything. I'm asking who you think would benefit from the work you've done. If a name pops, that's the right one, text or email me her first name. I send her a personal note from you, no sales pitch attached. Half the women in this cohort came in because someone like you said a name.</p>
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">3. Post a 30-day reflection in Skool.</strong> One paragraph. What's different. The person three weeks behind you lifts every word.</p>
     `)}
-    ${p(`See you on the call this week. We're not slowing down, we're laying the next 60 on top of the first 30.`, { margin: '0 0 28px' })}
+    ${p(`See you on the call this week. We're not slowing down, we're laying maintenance on top of the first 30.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If your Day 30 numbers haven't moved as much as you hoped, read this twice. The Triangle does not always show its hand in the cuff first. Sometimes it shows up in sleep, in mood, in your relationship, in the way your husband looks at you across the kitchen. The cuff will catch up. Trust the body.`)}
     ${footerSecondaryCTAs()}
@@ -930,7 +930,7 @@ const day30 = {
 
 Thirty days. That's a milestone.
 
-Most BP protocols on the internet are 30-day programs. They're designed to deliver a "before and after", a small win, a screenshot, a buyable testimonial. You are not on a 30-day program. You are 30 days into a 90-day repatterning. The work you've done is the foundation. The next 60 days are where it becomes a body.
+Most BP protocols on the internet are 30-day programs. They're designed to deliver a "before and after", a small win, a screenshot, a buyable testimonial. You did not run a quick-fix protocol. You just finished a 30-day repatterning. The work you've done is the foundation. The maintenance phase ahead is where it becomes a body.
 
 WHERE WE'VE BEEN.
 
@@ -945,15 +945,15 @@ Month one, Foundation laid. Look at what's true now that wasn't 30 days ago:
 
 That is not a small list. That is a body that does not look like the one that bought this program 30 days ago.
 
-WHAT CHANGES IN THE NEXT 60 DAYS.
+WHAT CHANGES AFTER DAY 30.
 
-MONTH TWO, REPLACE. Days 31-60.
+MAINTENANCE, REPLACE AND STABILIZE.
 The herb stack completes. Anti-BP Plate is default lunch and breakfast. Walking after meals locks in. Ashwagandha and holy basil layer on top of the gratitude practice. We watch the Sodium corner drain and the morning-evening gap close.
 
-MONTH THREE, STABILIZE + NEGOTIATE. Days 61-90.
-Doctor conversation for everyone who hasn't had it. From "tracking" to "tapering" under your physician. For some, first dose reduction inside the 90 days. For some, month four, normal. The point isn't the dose number. The point is you are on the road off, with your doctor's signature on the path.
+NEGOTIATE.
+Doctor conversation for everyone who hasn't had it. From "tracking" to "tapering" under your physician. For some, first dose reduction inside the 30 days. For some, the months after, normal. The point isn't the dose number. The point is you are on the road off, with your doctor's signature on the path.
 
-After Day 90 the structure changes. Cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship changes shape, doesn't end.
+After Day 30 the structure changes. Cohort calls slow to monthly. WhatsApp office hours stay open for clients who want them (most do). Skool stays open for life. The relationship changes shape, doesn't end.
 
 WHAT I NEED FROM YOU TODAY.
 

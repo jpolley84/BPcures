@@ -32,10 +32,10 @@ export default function SprintWelcomePage() {
             You're in the Sprint
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl mb-4" style={{ color: 'var(--ink)', lineHeight: 1.15 }}>
-            Welcome to the next 90 days.
+            Welcome to the next 30 days.
           </h1>
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
-            You just bought yourself a 90-day relationship with a 20-year ICU/ER nurse and his hormone-corner co-coach. Below is everything you need to do in the next 48 hours to kick this off right.
+            You just bought yourself a 30-day relationship with a 20-year ICU/ER nurse and his hormone-corner co-coach. Below is everything you need to do in the next 48 hours to kick this off right.
           </p>
         </div>
       </section>

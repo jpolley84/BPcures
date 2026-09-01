@@ -12,13 +12,13 @@
 //          personalized 30-day protocol + 60-min kickoff call + 4 live group
 //          coaching sessions in Skool. Recognized + fulfilled by the shared
 //          stripe-webhook.js 'diagnostic' tier (do not touch that file).
-//   $1,997 The 90-Day Program — direct buy, EXISTING Stripe link (reused, not
+//   $1,997 The 30-Day Program — direct buy, EXISTING Stripe link (reused, not
 //          recreated: buy.stripe.com/cNifZh0RBfme4ZdfjPfnO0M -> /sprint-welcome).
 //          FLAGGED BEST VALUE per Joel. Deliverables pulled from the REAL,
 //          already-live /sprint-welcome page: 60-min kickoff + full lab review,
 //          WhatsApp 1:1 access to Joel Sun-Thu 9-5 ET, weekly live group call +
 //          protocol library in Skool VIP, Annie looped in if a hormone-baseline
-//          call is warranted, 90 days. Anchored against the $6,997 regular
+//          call is warranted, 30 days. Anchored against the $6,997 regular
 //          price already mapped in stripe-webhook.js (AMOUNT_TO_TIER 699700).
 //          NOTE: "weekly 1:1" is represented honestly as the WhatsApp direct
 //          access + the kickoff call, since that is what is ACTUALLY delivered
@@ -67,7 +67,7 @@ const EMAIL = 'concierge@bpquiz.com';
 const EASE = [0.22, 1, 0.36, 1];
 
 const SPRINT_297_LINK = 'https://buy.stripe.com/00weVddEnca2ajx0oVfnO0O';
-// 2026-07-09: the $1,997 90-Day Program no longer sells via a direct Stripe
+// 2026-07-09: the $1,997 30-Day Program no longer sells via a direct Stripe
 // link. It is application-routed (/apply?tier=ninety -> fit call -> close) per
 // Joel's hybrid model. The old direct-buy link is retired from the page; the
 // Stripe price still exists for the invoice Joel sends after the fit call.
@@ -178,7 +178,7 @@ const CHECKLIST_ITEMS = [
   'Your labs, meds, and supplements have never all been looked at together by one person, and neither has the stress corner underneath them',
   'You want a written plan before your next doctor visit, not after, because fifteen minutes never leaves room for the real question',
   'You\'ve already worked the obvious levers and the number still hasn\'t moved, so you want someone checking your work weekly instead of guessing again',
-  'You want the whole 90 days walked with you this time, not just the first ten',
+  'You want the whole 30 days walked with you this time, not just the first ten',
 ];
 
 function mailtoFor(subject) {
@@ -198,7 +198,7 @@ function ChecklistSection({ reveal }) {
     'One is enough to be worth a conversation.',
     'Two is a pattern worth a real look, not a guess.',
     'Three or more, and the $297 Sprint is the honest starting point below.',
-    'Four or five, and the 90-Day Program is built for exactly this.',
+    'Four or five, and the 30-Day Program is built for exactly this.',
   ];
   const echo = echoes[Math.min(count, echoes.length - 1)];
 
@@ -431,7 +431,7 @@ export default function CoachingPage() {
                 </div>
               </header>
               <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
-                The honest starting point. For the person ready to run a real protocol with my eyes on their numbers, without the 90-day commitment.
+                The honest starting point. For the person ready to run a real protocol with my eyes on their numbers, without the 30-day commitment.
               </p>
               <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
                 {[
@@ -456,7 +456,7 @@ export default function CoachingPage() {
               </a>
             </motion.article>
 
-            {/* $1,997 — The 90-Day Program (BEST VALUE) */}
+            {/* $1,997 — The 30-Day Program (BEST VALUE) */}
             <motion.article
               {...reveal(0.08)}
               className="coach-card"
@@ -467,7 +467,7 @@ export default function CoachingPage() {
               </span>
               <header className="mb-4">
                 <h3 className="font-serif" style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.55rem)', color: 'var(--ink)', fontStyle: 'italic', lineHeight: 1.2, marginBottom: '0.6rem' }}>
-                  The 90-Day Program
+                  The 30-Day Program
                 </h3>
                 <div className="flex items-baseline gap-2">
                   <span style={{ fontSize: '1rem', color: 'var(--muted)', textDecoration: 'line-through' }}>$6,997</span>
@@ -477,16 +477,16 @@ export default function CoachingPage() {
                 </div>
                 <div aria-hidden="true" style={{ width: '2.5rem', height: 2, marginTop: '0.5rem', background: 'linear-gradient(90deg, var(--gold), rgba(200, 162, 82, 0))' }} />
                 <div className="mt-2 text-xs font-bold uppercase" style={{ color: 'var(--clay)', letterSpacing: '0.16em', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>
-                  90 DAYS · 1:1 ACCESS + GROUP
+                  30 DAYS · 1:1 ACCESS + GROUP
                 </div>
               </header>
               <p className="text-sm mb-4" style={{ color: 'var(--ink-soft)', lineHeight: 1.6, fontStyle: 'italic' }}>
-                For the person whose numbers took years to climb and wants me walking the whole 90 days with them, not just the kickoff.
+                For the person whose numbers took years to climb and wants me walking the whole 30 days with them, not just the kickoff.
               </p>
               <ul className="space-y-2.5 mb-6" style={{ flexGrow: 1 }}>
                 {[
                   'A 60-minute kickoff Zoom with a full lab review. Home BP log, meds, supplements, A1c, lipids, kidney, thyroid, all read together.',
-                  'Direct 1:1 access to me by WhatsApp, Sunday through Thursday, 9 to 5 ET, for the full 90 days.',
+                  'Direct 1:1 access to me by WhatsApp, Sunday through Thursday, 9 to 5 ET, for the full 30 days.',
                   'A weekly live group call plus the full protocol library in the Skool VIP community.',
                   'If your case calls for it, Annie is looped in for a hormone-baseline call.',
                   'A doctor-conversation script, and your Week 1 protocol drafted before you even meet.',
@@ -506,7 +506,7 @@ export default function CoachingPage() {
                 className="coach-cta coach-cta-clay inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg font-bold text-base"
                 style={{ background: 'var(--clay-hover)', color: '#FFFFFF', textDecoration: 'none' }}
               >
-                Apply for the 90-Day Program
+                Apply for the 30-Day Program
                 <ArrowRight size={16} className="coach-cta-arrow" />
               </Link>
             </motion.article>
@@ -561,7 +561,7 @@ export default function CoachingPage() {
           </motion.p>
 
           <motion.p {...reveal(0.26)} className="text-base italic" style={{ color: 'var(--ink)', lineHeight: 1.75, borderLeft: '3px solid var(--gold)', paddingLeft: '1.1rem' }}>
-            Picture the weeks right after you say yes, thirty of them or ninety, whichever one you start with. Not a PDF sitting in a folder you forgot about, and not a program that never asks how you're actually doing. A real person, looking at what's actually happening with your numbers and helping you decide the next move. Life happens. The trip gets booked, work throws a curveball, the schedule falls apart, and instead of starting over from zero, we adjust the plan and keep going. You're not up at 11pm with a spreadsheet trying to decide if your number is good or bad. Someone who actually reads labs, and understands stress and sugar and sodium, is already thinking about what we'll cover the next time we talk. That's the whole difference. Not more information. A person walking next to you who won't let you drift, in your corner on the weeks the numbers cooperate and the weeks they don't.
+            Picture the days right after you say yes, all thirty of them. Not a PDF sitting in a folder you forgot about, and not a program that never asks how you're actually doing. A real person, looking at what's actually happening with your numbers and helping you decide the next move. Life happens. The trip gets booked, work throws a curveball, the schedule falls apart, and instead of starting over from zero, we adjust the plan and keep going. You're not up at 11pm with a spreadsheet trying to decide if your number is good or bad. Someone who actually reads labs, and understands stress and sugar and sodium, is already thinking about what we'll cover the next time we talk. That's the whole difference. Not more information. A person walking next to you who won't let you drift, in your corner on the weeks the numbers cooperate and the weeks they don't.
           </motion.p>
         </div>
       </section>

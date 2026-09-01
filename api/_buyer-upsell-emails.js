@@ -18,7 +18,7 @@
 //     (real cap, confirmed). No invented slot counts, no deadlines.
 //   - Buyer credit math: $17 already paid → $280 to start
 //   - Cohort credit-stacking lines KEPT ($280 stacks toward the $1,997
-//     90-day cohort — still on the ladder per Joel 2026-06-09)
+//     30-day cohort — still on the ladder per Joel 2026-06-09)
 //   - "Results not typical" rider near outcome claims (Doreen)
 //   - No em dashes in rendered copy
 //   - Doreen (not Marlene) for the Day 14 case study to avoid name
@@ -129,7 +129,7 @@ export const buyerUpsellDay10 = {
     <p style="font-size:14px;color:${PALETTE.textSoft};margin:0 0 14px;">If this isn't your moment, hit reply with "not now" and I'll stop mentioning it. No drama. The kit is yours forever either way.</p>
 
     <p style="margin:18px 0 4px;">Joel</p>
-    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. The Sprint is the bridge to deeper work for the buyers who want to keep going. Your $280 today stacks as credit toward the 90-day cohort if you ever do. Most don't. Some do. That's the door.</p>
+    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. The Sprint is the bridge to deeper work for the buyers who want to keep going. Your $280 today stacks as credit toward the 30-day cohort if you ever do. Most don't. Some do. That's the door.</p>
 
     ${unsubFooter(unsubUrl)}
   `),
@@ -226,7 +226,7 @@ export const buyerUpsellDay17 = {
     <p style="font-size:14px;color:${PALETTE.textSoft};margin:0 0 14px;">If you're not going to start, that's fine. Reply "not now" and I'll stop. The Kit is yours forever, the protocol is yours, and the drip emails keep coming. No pressure.</p>
 
     <p style="margin:18px 0 4px;">Joel</p>
-    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. Nothing you spend with me gets spent twice. If you ever go deeper into the 90-day cohort, your $280 stacks as credit toward it.</p>
+    <p style="font-size:13px;color:${PALETTE.textSoft};font-style:italic;margin:0 0 12px;">P.S. Nothing you spend with me gets spent twice. If you ever go deeper into the 30-day cohort, your $280 stacks as credit toward it.</p>
 
     ${unsubFooter(unsubUrl)}
   `),

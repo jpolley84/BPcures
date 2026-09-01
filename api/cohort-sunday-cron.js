@@ -21,12 +21,12 @@ I want to leave you with three things.
 
 ONE — what's in the room when you say yes:
 
-• 12 weekly 1:1 sessions with me, starting Monday at 7 PM ET
-• 6 biweekly hormone sessions with Annie Chitate, RN
+• Weekly 1:1 sessions with me, every week of the 30 days, starting Monday at 7 PM ET
+• Hormone sessions with Annie Chitate, RN
 • Full supplement + diet audit (most members save $200-400/mo)
 • Daily schedule audit
-• WhatsApp office hours — Sun-Thu 9-5 ET — 90 days
-• Skool VIP — 90 days
+• WhatsApp office hours — Sun-Thu 9-5 ET — 30 days
+• Skool VIP — 30 days
 • All my courses + every eBook — lifetime
 • Daily email coaching tailored to YOUR protocol
 • Tracker suite + Partner Inclusion Guide
@@ -47,7 +47,7 @@ ${APPLY_URL}
 I'll read every application tonight and reach out personally on Monday to the people who are the right fit.
 
 This isn't about the program.
-It's about the version of you on the other side of 90 days.
+It's about the version of you on the other side of 30 days.
 
 Joel Polley, RN
 BraveWorks
@@ -69,7 +69,7 @@ ${priceBlockHtml()}
 <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;font-weight:700;margin:24px 0 6px;">Three — the link:</div>
 ${ctaButtonHtml('Apply before 11:59 PM tonight →')}
 <p style="font-size:14px;color:#5B564C;margin:0 0 18px;line-height:1.65;">I'll read every application tonight and reach out personally on Monday to the people who are the right fit.</p>
-<p style="font-size:15.5px;color:#2C2A26;margin:24px 0 18px;line-height:1.65;font-style:italic;">This isn't about the program. It's about the version of you on the other side of 90 days.</p>
+<p style="font-size:15.5px;color:#2C2A26;margin:24px 0 18px;line-height:1.65;font-style:italic;">This isn't about the program. It's about the version of you on the other side of 30 days.</p>
 <p style="font-size:15.5px;margin:0 0 4px;color:#2C2A26;font-weight:600;font-family:Georgia,serif;">Joel Polley, RN</p>
 <p style="font-size:13px;color:#9C9485;font-style:italic;margin:0 0 28px;">BraveWorks</p>
 <hr style="border:none;border-top:1px solid #E6DECE;margin:0 0 20px;" />

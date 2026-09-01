@@ -1,4 +1,4 @@
-// /api/coaching-apply — handles applications for the 90-Day BP Triangle
+// /api/coaching-apply — handles applications for the 30-Day BP Triangle
 // Freedom Sprint ($4,997 flagship, Joel + Annie co-coach).
 //
 // Application-only flow (Brunson high-ticket rule). No payment collected
@@ -14,7 +14,7 @@
 // `source: 'apply-page'`:
 //   - legacy (/cohort2): name/email/whyNow/ageRange/investmentRange/whenStart
 //     — validation, scoring, emails unchanged. Backward compatible.
-//   - apply-page: tier-based application for the $1,997 90-Day Group and the
+//   - apply-page: tier-based application for the $1,997 30-Day Group and the
 //     four 1:1 tiers. Tier slug validated against APPLY_TIERS (server-side
 //     canonical name/price — client copy is not trusted). Tier name + price
 //     go in Joel's notify subject + body; tier stored in the KV record;
@@ -72,7 +72,7 @@ const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 // sends tierName/tierPrice too, but we resolve from the slug server-side so
 // a tampered client can't rewrite prices in Joel's notify email.
 const APPLY_TIERS = {
-  'ninety': { name: 'The 90-Day Personalized Group', price: '$1,997' },
+  'ninety': { name: 'The 30-Day Personalized Group', price: '$1,997' },
   'triangle': { name: 'The Triangle Session', price: '$1,500 one-time' },
   'inner-circle': { name: 'The Inner Circle', price: '$1,500/month' },
   'household': { name: 'The Brave Household', price: '$5,000/month' },
@@ -159,7 +159,7 @@ export default async function handler(req, res) {
 
   // 2026-05-18: Cohort 2 application window. The May 17 founding cohort
   // closed; this endpoint is now serving Cohort 2 applications (the
-  // 90-day group program opening May 24, 2026). Window stays open
+  // 30-day group program opening May 24, 2026). Window stays open
   // through Aug 31 to allow rolling enrollment + waitlist conversion.
   // Update when rolling Cohort 3. (Legacy path only — see isApplyPage.)
   const COHORT_2_CLOSE_ISO = '2026-08-31T23:59:59Z';
@@ -353,7 +353,7 @@ export default async function handler(req, res) {
         <h3 style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#3F5A3C;border-bottom:1px solid #E6DECE;padding-bottom:6px;margin:20px 0 8px;">Their words</h3>
         <table style="width:100%;border-collapse:collapse;">
           ${row('BraveWorks materials used', (application.materialsUsed || []).join(', '))}
-          ${row('Winning in 90 days', application.winning90)}
+          ${row('Winning in 30 days', application.winning90)}
           ${row('Already tried', application.triedAlready)}
           ${row('Anything else', application.anythingElse)}
         </table>
@@ -907,7 +907,7 @@ async function handleBeThere(req, res) {
 
     const coldBody = `
       <p style="margin:0 0 16px;">Your application for <strong>Be There</strong> just landed in my inbox. Thank you for putting your real story in front of me.</p>
-      <p style="margin:0 0 16px;">I read every word personally. Based on what you shared, I do not think the 12 week program is the right step for you right now, and I would rather tell you that plainly than take your money for something that is not the fit.</p>
+      <p style="margin:0 0 16px;">I read every word personally. Based on what you shared, I do not think the 30 day program is the right step for you right now, and I would rather tell you that plainly than take your money for something that is not the fit.</p>
       <p style="margin:0 0 16px;">That is not the end of it. The free community and the daily emails are open to you, and there is real help in both. If your situation changes, write back and tell me. I will take another look.</p>
       <p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Whatever you do next, do it alongside your doctor, never instead of them.</p>`;
 

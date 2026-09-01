@@ -124,7 +124,7 @@ export default function CaseReviewConfirmedPage() {
       {/* ---- Soft bridge onward (no price, no pressure) ---- */}
       <p style={{ fontSize: '0.9rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', maxWidth: '58ch', margin: '1.5rem auto 0', textAlign: 'center' }}>
         And after your review lands: if you read it and find yourself wanting Joel closer for the next
-        90 days, just reply to that same email and ask about the group. No pressure either way. The
+        30 days, just reply to that same email and ask about the group. No pressure either way. The
         review stands on its own.
       </p>
 

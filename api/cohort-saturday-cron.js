@@ -24,12 +24,12 @@ The founding cohort closes tomorrow night at 11:59 PM Eastern. Five slots. One f
 
 Here's everything you get for $1,997 (or 3 × $697):
 
-• 12 weekly 1:1 sessions with me (Mondays 7 PM ET)
-• 6 biweekly hormone sessions with Annie Chitate, RN
+• Weekly 1:1 sessions with me, every week of the 30 days (Mondays 7 PM ET)
+• Hormone sessions with Annie Chitate, RN
 • Full supplement + diet audit (live, 60 min) — most members save $200-400/mo
 • Daily schedule audit
-• WhatsApp office hours — Sun-Thu 9-5 ET — 90 days
-• Skool VIP membership — 90 days
+• WhatsApp office hours — Sun-Thu 9-5 ET — 30 days
+• Skool VIP membership — 30 days
 • All BraveWorks courses — lifetime
 • eBook library — lifetime
 • Daily email coaching tailored to your protocol

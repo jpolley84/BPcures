@@ -4,7 +4,7 @@
 // per Joel's "vacation-selling page with application quiz" direction.
 //
 // No price visible. Outcome-focused. Application-only qualifying.
-// 90-day group program opening Sunday May 24, 2026.
+// 30-day group program opening Sunday May 24, 2026.
 //
 // Voice: Hardy future-self + Salesgirls warmth + Brunson application-
 // funnel structure. Annie + Joel as the guides for the transformation
@@ -114,13 +114,13 @@ export default function Cohort2Page() {
             The Cohort
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-6 text-center" style={{ color: 'var(--ink)' }}>
-            90 days. Two nurses. A small group of women. One outcome.
+            30 days. Two nurses. A small group of women. One outcome.
           </h2>
           <p className="text-base sm:text-lg mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
             This isn't a course. It isn't a chatbot. It isn't a $19 PDF.
           </p>
           <p className="text-base sm:text-lg mb-5" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-            It's twelve weeks of real human guidance from a registered nurse with twenty years in ICU and emergency medicine, his wife, a hormone-corner co-coach who's walked her own restoration, and a curated group of women in the same season of life, doing this together.
+            It's 30 days of real human guidance from a registered nurse with twenty years in ICU and emergency medicine, his wife, a hormone-corner co-coach who's walked her own restoration, and a curated group of women in the same season of life, doing this together.
           </p>
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.7 }}>
             You're not figuring out blood pressure alone anymore. You're not Googling your medications anymore. You're not wondering whether to take that supplement anymore. You have guides who answer.
@@ -135,7 +135,7 @@ export default function Cohort2Page() {
             The Transformation
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-10 text-center" style={{ color: 'var(--ink)' }}>
-            Picture yourself ninety days from now.
+            Picture yourself thirty days from now.
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -174,7 +174,7 @@ export default function Cohort2Page() {
               "You're 45+ and you suspect hormones are part of what's happening to your body, but no one has actually checked.",
               "You want to bring your spouse along on this. Their support matters to you.",
               "You're spiritually inclined. You believe healing involves more than chemistry, and you want guides who get that without making it weird.",
-              "You're ready to invest in yourself, financially, in time, in attention, for the next 90 days.",
+              "You're ready to invest in yourself, financially, in time, in attention, for the next 30 days.",
             ].map((line) => (
               <li key={line} className="flex gap-3" style={{ color: 'var(--ink-soft)' }}>
                 <CheckCircle2 size={22} color="var(--sage-deep)" style={{ flexShrink: 0, marginTop: 3 }} />
@@ -228,7 +228,7 @@ export default function Cohort2Page() {
       <section className="py-16" style={{ background: 'var(--paper)' }}>
         <div className="max-w-2xl mx-auto px-5">
           <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--clay)', letterSpacing: '0.14em' }}>
-            What's inside the 90 days
+            What's inside the 30 days
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl mb-8" style={{ color: 'var(--ink)' }}>
             Real human guidance. Weekly.
@@ -237,8 +237,8 @@ export default function Cohort2Page() {
             {[
               { h: 'Weekly live cohort calls with Joel.', p: 'Monday evenings. We work case-by-case in front of the cohort: your numbers, your supplements, your medication taper. You learn from your own protocol and from everyone else\'s.' },
               { h: 'Daily group office hours with Joel.', p: 'WhatsApp thread, Sun-Thu, 9 AM-5 PM ET. Send a photo of a lab, a question, a confusing symptom, and get a same-day answer in front of the cohort so everyone benefits.' },
-              { h: 'Hormone session with Annie.', p: 'One scheduled call with Annie inside the 90 days for women whose loudest Pressure is cortisol or hormones. Optional, but most of the women in Cohort 2 will use it.' },
-              { h: 'Full deprescribing plan, worked WITH your doctor.', p: 'You bring the script to your prescriber. We adjust based on what they say. We never go around them. Most clients drop one to three medications inside 90 days.' },
+              { h: 'Hormone session with Annie.', p: 'One scheduled call with Annie inside the 30 days for women whose loudest Pressure is cortisol or hormones. Optional, but most of the women in Cohort 2 will use it.' },
+              { h: 'Full deprescribing plan, worked WITH your doctor.', p: 'You bring the script to your prescriber. We adjust based on what they say. We never go around them. Most clients drop one to three medications inside the program.' },
               { h: 'Partner inclusion guide.', p: 'Your spouse gets a 30-minute briefing call so they\'re rowing with you, not pulling against you. Protocols stick when the household is aligned.' },
               { h: 'The complete Cohort 2 Kit.', p: 'Every BraveWorks PDF (BP, cortisol, blood sugar, hormones) plus the daily tracker, the doctor scripts, and the recipe library.' },
             ].map((row) => (
@@ -307,7 +307,7 @@ export default function Cohort2Page() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: 'var(--ink)' }}>If we're a fit, what investment range are you ready to commit to your health for the next 90 days?</label>
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: 'var(--ink)' }}>If we're a fit, what investment range are you ready to commit to your health for the next 30 days?</label>
               <select value={form.investmentRange} onChange={set('investmentRange')} className="w-full px-3.5 py-2.5 rounded-lg text-base" style={{ background: 'var(--paper)', border: '1.5px solid var(--border)', color: 'var(--ink)', outline: 'none' }}>
                 <option value="">Pick one…</option>
                 <option>Under $500</option>

@@ -82,7 +82,7 @@ const DOWNLOADS = {
 // canonical community CTA for kit buyers (the old free-group + DM-Joel
 // 2-step is retired from this email).
 const SKOOL_URL = 'https://www.skool.com/braveworksrn/about';
-// The FREE ~1,200-member community. Still used by the 90-Day Sprint
+// The FREE ~1,200-member community. Still used by the 30-Day Sprint
 // coaching block (Sprint clients join free, then DM Joel for VIP access).
 const FREE_SKOOL_URL = 'https://www.skool.com/how-to-be-your-own-doctor-8010/about';
 
@@ -255,7 +255,7 @@ export const TIER_CONFIG = {
   // "30-Day BP Triangle Challenge + Skool" tier. Replaces the prior
   // standalone VIP product. Delivers the FULL BraveWorks bonus stack
   // (every BP/cortisol/BS PDF) + Skool access + weekly group coaching.
-  // 2026-06-23 Phase 1: top of the ladder is the $1,997 90-Day Group
+  // 2026-06-23 Phase 1: top of the ladder is the $1,997 30-Day Group
   // (Cohort 2), not the retired $1,297 1:1. Upgrade points there.
   vip: {
     product: '30-Day BP Triangle Challenge + Skool',
@@ -278,9 +278,9 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     coachingFlavor: 'vip',
     upgradeUrl: `${SITE_URL}/cohort2`,
-    upgradeLabel: 'Ready for the deeper room? The 90-Day Group Sprint ($1,997, application-gated)',
-    upgradeDesc: 'For people who want Joel on their numbers for the next 90 days: weekly live group coaching, WhatsApp office hours, a full deprescribing plan worked alongside your prescriber, and your spouse included free. Application-gated; Joel reads each one personally and caps the cohort at 5.',
-    upgradeCta: 'Apply for the 90-Day Group →',
+    upgradeLabel: 'Ready for the deeper room? The 30-Day Group Sprint ($1,997, application-gated)',
+    upgradeDesc: 'For people who want Joel on their numbers for the next 30 days: weekly live group coaching, WhatsApp office hours, a full deprescribing plan worked alongside your prescriber, and your spouse included free. Application-gated; Joel reads each one personally and caps the cohort at 5.',
+    upgradeCta: 'Apply for the 30-Day Group →',
   },
   // DEPRECATED 2026-05-09: $397 / $297 Premium tiers retired in funnel
   // restructure (canonical-ladder.md). Stripe links deactivated. Kept in
@@ -303,11 +303,11 @@ export const TIER_CONFIG = {
     includesChallenge: true,
     coachingFlavor: 'premium',
     upgradeUrl: `${SITE_URL}/cohort2`,
-    upgradeLabel: 'Ready for the deeper room? Apply for the 90-Day Group Sprint',
-    upgradeDesc: 'Application-gated 90-day group program. $1,997. Apply at bpquiz.com/cohort2.',
-    upgradeCta: 'Apply for the 90-Day Group →',
+    upgradeLabel: 'Ready for the deeper room? Apply for the 30-Day Group Sprint',
+    upgradeDesc: 'Application-gated 30-day group program. $1,997. Apply at bpquiz.com/cohort2.',
+    upgradeCta: 'Apply for the 30-Day Group →',
   },
-  // 2026-05-15: Coaching tier — the 90-Day BP Triangle Freedom Sprint.
+  // 2026-05-15: Coaching tier — the 30-Day BP Triangle Freedom Sprint.
   // Two price points: $1,997 founding cohort + $6,997 regular. Application-
   // only via /coaching; buyer pays via Stripe invoice that Joel sends
   // after the fit call. Webhook fires this confirmation as a TIME-BUYER
@@ -315,7 +315,7 @@ export const TIER_CONFIG = {
   // shipment + program schedule. No PDF downloads here — coaching is
   // 1:1 and the materials are custom.
   coaching: {
-    product: 'BP Triangle Freedom Sprint, 90-Day Group Coaching',
+    product: 'BP Triangle Freedom Sprint, 30-Day Group Coaching',
     subject: "You're in the Sprint. Week 1 starts now",
     downloads: [], // intentional — group coaching, no kit PDFs
     includesCoaching: true,
@@ -377,7 +377,7 @@ export const TIER_CONFIG = {
 // per panel consensus (each additional offer = ~30% conversion drop per
 // Kennedy; future-self version of this op has 5 SKUs not 11 per Hardy).
 //
-// Active ladder: $27 → $47 → $97 → $297 Sprint → $1,997 90-Day Group.
+// Active ladder: $27 → $47 → $97 → $297 Sprint → $1,997 30-Day Group.
 // Legacy entries kept ONLY for in-flight buyers; no frontend path.
 //
 // tier=1 is the default starter (BP-flavored). stripe-webhook.js refines
@@ -394,7 +394,7 @@ export const AMOUNT_TO_TIER = {
   4700: 2,        // $47 BP Reset Kit (standalone)
   9700: 'vip',    // $97 BP Triangle Challenge + Skool (canonical post-restructure)
 
-  // ── 2026-05-15: Coaching tier (90-Day BP Triangle Freedom Sprint) ──
+  // ── 2026-05-15: Coaching tier (30-Day BP Triangle Freedom Sprint) ──
   // Application-only via /coaching; Joel sends a Stripe invoice after
   // the fit call. These amounts MUST be mapped or the webhook silently
   // drops the buyer with no confirmation email. (Wakita's $1,997 payment
@@ -602,7 +602,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
   // Coaching block content varies by tier flavor:
   //   'vip'      → weekly group coaching only (Wednesdays 7 PM EST)
   //   'premium'  → Barbara O'Neill LIVE + group coaching
-  //   'sprint'   → 90-Day 1:1 Sprint kickoff (Joel + Annie, weekly Zoom,
+  //   'sprint'   → 30-Day 1:1 Sprint kickoff (Joel + Annie, weekly Zoom,
   //                daily WhatsApp, Skool VIP, partner inclusion)
   let coachingBlock = '';
   if (config.includesCoaching && config.coachingFlavor === 'sprint') {
@@ -610,7 +610,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
     <tr><td style="padding:6px 28px 18px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#3F5A3C;border-radius:14px;">
         <tr><td style="padding:28px 24px;">
-          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:18px;">Your 90-Day Sprint. Week 1 starts now</div>
+          <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.8);margin-bottom:18px;">Your 30-Day Sprint. Week 1 starts now</div>
 
           <div style="margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,0.15);">
             <div style="font-family:Georgia,serif;font-size:19px;color:#FFFFFF;margin-bottom:8px;font-weight:500;">Step 1. Take the free BP quiz, then I'll set your kickoff</div>
@@ -794,7 +794,7 @@ export function renderPurchaseEmail({ name, tier, apologyMode }) {
         </p>
         <p style="font-size:14px;line-height:1.6;color:#5A5A5A;margin:0 0 12px;">
           ${tier === 'coaching'
-            ? 'You\'re in the Sprint. The next 90 days, you have a 20-year ICU/ER nurse, and a hormone-corner co-coach, in your corner daily. Below: every step of Week 1, your Calendly link, your Skool VIP path, and a heads-up on the WhatsApp office hours. Read the whole thing. It\'s the map for what happens next.'
+            ? 'You\'re in the Sprint. The next 30 days, you have a 20-year ICU/ER nurse, and a hormone-corner co-coach, in your corner daily. Below: every step of Week 1, your Calendly link, your Skool VIP path, and a heads-up on the WhatsApp office hours. Read the whole thing. It\'s the map for what happens next.'
             : tier === 3
             ? 'You\'re in the 30-Day Challenge. Here\'s your full BraveWorks library. Short teaching emails start tomorrow, and your Skool community access is live now. Weekly group coaching happens in Skool, schedule posted there.'
             : tier === 'vip'

@@ -422,7 +422,7 @@ function App() {
               mechanism is mailto concierge@bpquiz.com; that alias MUST forward
               to Joel or the high-ticket inquiries bounce. */}
           {/* 2026-07-15: /coaching temporarily repointed to the "Be There"
-              application (webinar-only $1,997 90-day cohort — webinar script
+              application (webinar-only $1,997 30-day cohort — webinar script
               was titled The Front Row, offer is branded Be There — see
               The_Front_Row_Webinar_Script.pdf) for this cohort's traffic.
               Previous behavior (opt-in funnel page 1) preserved at

@@ -77,7 +77,7 @@ function standingPSHtml(audience, alt = false) {
     return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> If you want this kind of teaching live, I run a call every Wednesday at 7pm ET inside the <a href="${SKOOL_URL}" style="color:#B85A36;font-weight:700;">Weekly Reset, $27 a month</a>. Bring your numbers and I will walk through them with you. Cancel any time.</p>`;
   }
   if (audience === 'sprint') {
-    return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, there is one more room: my 90-day women's coaching group, <a href="${COACHING_URL}" style="color:#B85A36;font-weight:700;">Life Beyond the Numbers</a>. And if you want the daily tea, <a href="${TEA_URL}" style="color:#B85A36;font-weight:700;">Steady</a> is here. No rush on either.</p>`;
+    return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, there is one more room: my 30-day women's coaching group, <a href="${COACHING_URL}" style="color:#B85A36;font-weight:700;">Life Beyond the Numbers</a>. And if you want the daily tea, <a href="${TEA_URL}" style="color:#B85A36;font-weight:700;">Steady</a> is here. No rush on either.</p>`;
   }
   if (audience === 'buyer') {
     return `<p style="font-size:14px;line-height:1.7;color:#2B2824;margin:22px 0 0;"><strong>P.S.</strong> Whenever you are ready, the one door past the kit is the <a href="${SPRINT_URL}" style="color:#B85A36;font-weight:700;">30-Day Sprint</a>. I read your case myself, build your next 30 days in order, and we walk it through on a 1:1 call. I take 5 a month.</p>`;
@@ -86,7 +86,7 @@ function standingPSHtml(audience, alt = false) {
 }
 function standingPSText(audience, alt = false) {
   if (alt && audience !== 'sprint') return `P.S. If you want this kind of teaching live, I run a call every Wednesday at 7pm ET inside the Weekly Reset, $27 a month (${SKOOL_URL}). Bring your numbers and I will walk through them with you. Cancel any time.`;
-  if (audience === 'sprint') return `P.S. Whenever you are ready, there is one more room: my 90-day women's coaching group, Life Beyond the Numbers (${COACHING_URL}). And the daily tea, Steady, is here (${TEA_URL}).`;
+  if (audience === 'sprint') return `P.S. Whenever you are ready, there is one more room: my 30-day women's coaching group, Life Beyond the Numbers (${COACHING_URL}). And the daily tea, Steady, is here (${TEA_URL}).`;
   if (audience === 'buyer') return `P.S. Whenever you are ready, the one door past the kit is the 30-Day Sprint (${SPRINT_URL}). I read your case myself, build your next 30 days in order, and we walk it through on a 1:1 call. I take 5 a month.`;
   return `P.S. Whenever you are ready, your next step is here: Get the BP Reset Kit, $17 (${KIT_URL}). The 10-day plan built for your loudest trigger. No rush.`;
 }

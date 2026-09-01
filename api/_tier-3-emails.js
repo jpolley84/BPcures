@@ -21,7 +21,7 @@
 //   5  — Consandra's first 30 days inside the Sprint (BAB)
 //   7  — Cohort 2 reveal: full pitch + credit math (PASTOR)
 //   9  — Objection killer #1: "I'm not ready"
-//   10 — Future-self: 90 days from today
+//   10 — Future-self: 30 days from today
 //   11 — Objection killer #2: "Will this work for MY situation?"
 //   12 — Why the group is small + honest timing (no countdowns, no deadlines)
 //   14 — Final note + graceful exit (credit does not expire)
@@ -303,8 +303,8 @@ const day3 = {
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">You take the written 30-day protocol home and run it. You email me each Wednesday during the 30-day follow-up window. I read every Wednesday email and answer within 24 hours.</p>
       <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Best for:</strong> self-starters, people whose case is straightforward, people who like learning the why before being guided through the how. Most clients pick this.</p>
     `)}
-    ${clayBlock('Path 2, Cohort 2 (90-day group sprint)', `
-      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">For the clients who want me in their corner daily for the next twelve weeks. Weekly group Zoom, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion guide. I'll tell you more about it on the call, but I want to plant the seed now.</p>
+    ${clayBlock('Path 2, Cohort 2 (30-day group sprint)', `
+      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">For the clients who want me in their corner daily for the next 30 days. Weekly group Zoom, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion guide. I'll tell you more about it on the call, but I want to plant the seed now.</p>
       <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">Best for:</strong> three or more medications, complex history, partner involvement needed, the "I'm tired of guessing and I want a guide" energy.</p>
     `)}
     ${sageBlock(`
@@ -330,7 +330,7 @@ You take the written 30-day protocol home and run it. Email me each Wednesday du
 Best for: self-starters, straightforward cases, people who like learning the why before the how.
 
 PATH 2, COHORT 2 (90-DAY GROUP SPRINT)
-For the clients who want me in their corner daily for the next twelve weeks. Weekly group Zoom, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion guide.
+For the clients who want me in their corner daily for the next 30 days. Weekly group Zoom, daily WhatsApp office hours, full medication-tapering plan worked with your prescriber, partner inclusion guide.
 Best for: 3+ medications, complex history, partner involvement needed, the "I'm tired of guessing" energy.
 
 PATH 3, JUST THE DIAGNOSTIC, SEE YOU IN 90 DAYS
@@ -356,7 +356,7 @@ Unsubscribe: ${unsubUrl}
 // DAY 5 — Consandra's first 30 days inside the Sprint (BAB)
 // ─────────────────────────────────────────────────────────────────────
 const day5 = {
-  subject: "Consandra's Wednesday, a peek inside the 90-day work",
+  subject: "Consandra's Wednesday, a peek inside the 30-day work",
   subjectB: "Inside the Sprint, first 30 days",
   preview: "What an actual Cohort 2 week looks like, from a real client.",
   htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
@@ -445,8 +445,8 @@ const day7 = {
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Twelve weeks. Small group with me, RN.</strong> Capped at five seats so I can actually keep my eyes on every client. Annie Chitate, RN, my wife and the hormone-corner co-coach, joins for the hormone work (about half the cases involve hormones).</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Weekly group Zoom.</strong> Wednesday 7 PM EST. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress, and you learn from everyone else's protocols too. The cohort effect is part of why it works.</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">WhatsApp office hours, group thread.</strong> Sunday through Thursday, 9 AM–5 PM ET. Drop a question, send a photo of a label, ask <em>"should I take this today?"</em> I answer same-day in front of the cohort, so every question becomes a teaching moment for everyone.</p>
-      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop one to three medications inside the 90 days. Always alongside the doctor, never instead of.</p>
-      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Partner inclusion guide.</strong> Your spouse or partner gets a parallel 30-minute briefing so they're rowing with you, not against you. This is the single biggest predictor of who finishes the 90 days and who doesn't.</p>
+      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop one to three medications inside the program. Always alongside the doctor, never instead of.</p>
+      <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0 0 10px;">→ <strong style="color:${PALETTE.text};">Partner inclusion guide.</strong> Your spouse or partner gets a parallel 30-minute briefing so they're rowing with you, not against you. This is the single biggest predictor of who finishes the 30 days and who doesn't.</p>
       <p style="font-size:15.5px;line-height:1.75;color:${PALETTE.textSoft};margin:0;">→ <strong style="color:${PALETTE.text};">The Cohort 2 Kit.</strong> Everything in the BP Reset Kit, plus extended protocol PDFs, plus Annie's hormone-specific protocols, plus the cardiologist conversation script versioned for your case specifically.</p>
     `)}
     ${bigQuote("What Cohort 2 is NOT.")}
@@ -462,7 +462,7 @@ const day7 = {
       <p style="font-size:17px;line-height:1.6;color:${PALETTE.text};margin:0 0 8px;font-weight:700;">Your Cohort 2 price: $1,700 net.</p>
       <p style="font-size:14px;line-height:1.6;color:${PALETTE.textSoft};margin:0;">The credit is yours because you already paid for the diagnostic. It does not expire, and there is no deadline trick attached to it.</p>
     `)}
-    ${p(`One honest note on timing: the 90-day group opens when there is a real cohort ready, not on a marketing clock. Apply, and I will tell you the next real start date myself so you can plan around it.`)}
+    ${p(`One honest note on timing: the 30-day group opens when there is a real cohort ready, not on a marketing clock. Apply, and I will tell you the next real start date myself so you can plan around it.`)}
     ${ctaButton(COHORT2_URL, 'Apply for Cohort 2 ($1,700 with your credit)')}
     ${p(`If you're not sure yet, that's fine. The next emails address the most common questions diagnostic graduates ask before they decide. I'll see you in a couple days.`)}
     ${joelSignoff()}
@@ -484,8 +484,8 @@ WHAT COHORT 2 IS:
 → Twelve weeks. Small group with me, RN. Capped at five seats. Annie Chitate, RN (my wife) joins for hormone work.
 → Weekly group Zoom. Wednesday 7 PM EST. We work the cohort case-by-case, live.
 → WhatsApp office hours. Sun-Thu, 9 AM-5 PM ET. Same-day answers.
-→ Full deprescribing plan worked WITH your prescriber. Most clients drop 1-3 meds in 90 days.
-→ Partner inclusion guide. Single biggest predictor of who finishes the 90 days.
+→ Full deprescribing plan worked WITH your prescriber. Most clients drop 1-3 meds inside the program.
+→ Partner inclusion guide. Single biggest predictor of who finishes the 30 days.
 → The Cohort 2 Kit. Everything in the Reset Kit + extended PDFs + Annie's hormone protocols.
 
 WHAT COHORT 2 IS NOT:
@@ -502,7 +502,7 @@ YOUR COHORT 2 PRICE: $1,700 NET.
 
 The credit is yours because you already paid for the diagnostic. It does not expire, and there is no deadline trick attached to it.
 
-One honest note on timing: the 90-day group opens when there is a real cohort ready, not on a marketing clock. Apply, and I will tell you the next real start date myself.
+One honest note on timing: the 30-day group opens when there is a real cohort ready, not on a marketing clock. Apply, and I will tell you the next real start date myself.
 
 Apply for Cohort 2 ($1,700 with your credit):
 → ${COHORT2_URL}
@@ -611,16 +611,16 @@ Unsubscribe: ${unsubUrl}
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// DAY 10 — Future-self / 90 days from today (Hardy / Story)
+// DAY 10 — Future-self / 30 days from today (Hardy / Story)
 // ─────────────────────────────────────────────────────────────────────
 const day10 = {
   subject: 'A Tuesday in October, written by you',
-  subjectB: 'What 90 days from now looks like',
+  subjectB: 'What 30 days from now looks like',
   preview: 'Not optimism. The actual arc for clients who follow through.',
   htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
     ${p(`Hi ${firstName || 'there'},`)}
     ${p(`Quick exercise. Don't reply, just read it slow.`)}
-    ${bigQuote('Picture yourself ninety days from today.')}
+    ${bigQuote('Picture yourself thirty days from today.')}
     ${p(`Your morning BP is fifteen to twenty-five points lower than it is right now. Top number under 130 most mornings. You wake up before your alarm, not jolted awake by it.`)}
     ${p(`You walk to the kitchen and the first thing you do is drink water, twenty ounces, with a pinch of Celtic salt, not check your phone. Your phone stays in the other room until you're done with the first hour of your day.`)}
     ${p(`You take fewer supplements than you used to. Three or four, all the ones that actually move something. Not the fifteen you were guessing at this year. You can name what each one is doing, Stress, Sugar, or Sodium, and why it's there.`)}
@@ -630,9 +630,9 @@ const day10 = {
     ${p(`You hand them a one-page conversation script you've been waiting to use. They read it. They nod. They tell you which medication they want to taper first, and at what dose decrement. You leave the office with a new prescription that has a smaller number on it.`)}
     ${p(`You walk to your car. You don't cry, but the muscles in your face do something they haven't done in a long time. You sit in the driver's seat for a minute before you start the engine.`)}
     ${bigQuote(`That's a real picture.`)}
-    ${p(`It's not optimism. It's the actual ninety-day arc for clients who follow through. I've watched it happen close to a hundred times now.`)}
+    ${p(`It's not optimism. It's the actual thirty-day arc for clients who follow through. I've watched it happen close to a hundred times now.`)}
     ${p(`The diagnostic gave you the protocol. Cohort 2 gives you the runway. The Wednesday calls, the WhatsApp answers, the partner briefing, the cardiologist script, these are the things that turn the protocol from a PDF in your inbox into the actual Tuesday-in-October above.`)}
-    ${p(`Your $297 credit is yours, and it does not expire. The 90-day group opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date so you can plan around it.`)}
+    ${p(`Your $297 credit is yours, and it does not expire. The 30-day group opens when there is a real cohort ready, not on a marketing clock. Apply and I will tell you the next real start date so you can plan around it.`)}
     ${ctaButton(COHORT2_URL, 'Apply for Cohort 2 ($1,700 with your credit)')}
     ${p(`No pressure today. Just wanted you to see the picture so you know what you're choosing between.`)}
     ${joelSignoff()}
@@ -668,7 +668,7 @@ You hand them a one-page script. They nod. They tell you which medication to tap
 
 You walk to your car. You don't cry, but the muscles in your face do something they haven't done in a long time.
 
-That's a real picture. It's not optimism. It's the actual ninety-day arc for clients who follow through.
+That's a real picture. It's not optimism. It's the actual thirty-day arc for clients who follow through.
 
 The diagnostic gave you the protocol. Cohort 2 gives you the runway.
 
@@ -714,12 +714,12 @@ const day11 = {
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">1. Stress Pressure–dominant, supplement-loaded.</strong> Sleep is broken at 3 AM, jaw tension, mid-afternoon crash, taking 10+ supplements. Numbers come down 8–15 points by week 6 with cortisol-focused removals.</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">2. Sugar Pressure–dominant, "I don't eat that much sugar."</strong> Morning fasting glucose over 100, post-meal heaviness, snacking after dinner. A1c trending up year-over-year. Numbers move when we name the glucose volatility, not the sugar.</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">3. Sodium-dominant, held-water signature.</strong> Cold hands, faint pulses, family history of stroke or heart disease, sometimes already on a statin. The Sodium protocol, hibiscus and garlic to ease the line plus potassium-rich foods to drain held sodium, moves these clients fastest when stacked with the right minerals.</p>
-      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">4. Hormone-driven, perimenopause/post.</strong> BP started climbing around 50, hot flashes, sleep disruption that isn't cortisol. Annie runs point on these. Often the most dramatic 90-day arc.</p>
+      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">4. Hormone-driven, perimenopause/post.</strong> BP started climbing around 50, hot flashes, sleep disruption that isn't cortisol. Annie runs point on these. Often the most dramatic 30-day arc.</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 12px;"><strong style="color:${PALETTE.text};">5. Medication-tangled, three or more BP drugs.</strong> Lisinopril plus a diuretic plus a calcium channel blocker. Side effects stacking. Deprescribing protocol is the heart of the work. This is who Cohort 2 was originally built for.</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0;"><strong style="color:${PALETTE.text};">6. Two-corner combo.</strong> Stress + Sugar, or Sugar + Sodium, or Stress + Sodium. Most cases that "haven't responded to anything" turn out to be combos that need sequenced work, not piled-on work. This is why a kit alone often plateaus.</p>
     `)}
     ${p(`When we did your diagnostic, we named which pattern you sit in. Or if you haven't had the call yet, we'll do that on the call. Cohort 2 is built to handle all six.`)}
-    ${p(`<strong>The one case I'll tell you Cohort 2 is NOT for:</strong> if you're under 40 with a single elevated reading and no medications, you don't need 90 days of structure. You need the basics from the BP Reset Kit. Reply and I'll tell you.`)}
+    ${p(`<strong>The one case I'll tell you Cohort 2 is NOT for:</strong> if you're under 40 with a single elevated reading and no medications, you don't need 30 days of structure. You need the basics from the BP Reset Kit. Reply and I'll tell you.`)}
     ${p(`Everyone else, your case is one of those six. We have a path for each one.`)}
     ${ctaButton(COHORT2_URL, 'Apply for Cohort 2 ($1,700 with your credit)')}
     ${joelSignoff()}
@@ -751,7 +751,7 @@ THE SIX PATTERNS, IN ORDER OF FREQUENCY:
 
 3. SODIUM-DOMINANT, held-water signature. Cold hands, faint pulses, family history of stroke or heart disease, often on a statin. Hibiscus and garlic to ease the line plus potassium to drain held sodium. Moves fastest with the right minerals.
 
-4. HORMONE-DRIVEN, perimenopause/post. BP started climbing around 50, hot flashes, sleep disruption. Annie runs point. Often the most dramatic 90-day arc.
+4. HORMONE-DRIVEN, perimenopause/post. BP started climbing around 50, hot flashes, sleep disruption. Annie runs point. Often the most dramatic 30-day arc.
 
 5. MEDICATION-TANGLED, 3+ BP drugs. Side effects stacking. Deprescribing protocol is the heart. This is who Cohort 2 was originally built for.
 
@@ -788,7 +788,7 @@ Unsubscribe: ${unsubUrl}
 // opens when there is a real cohort; apply and Joel gives the real date).
 // ─────────────────────────────────────────────────────────────────────
 const day12 = {
-  subject: 'Why the 90-day group is small',
+  subject: 'Why the 30-day group is small',
   subjectB: 'No countdown. No deadline. Just the honest shape.',
   preview: 'Why Cohort 2 is intentionally small, and how the timing really works.',
   htmlBody: ({ firstName, unsubUrl }) => `${appLaunchHero()}
@@ -866,7 +866,7 @@ const day14 = {
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">→ You'd benefit from daily WhatsApp access to a nurse who knows your file</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">→ Your spouse needs to be brought along (partner inclusion is significant)</p>
       <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0 0 8px;">→ You want the hormone-corner deep dive (Annie's specialty)</p>
-      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0;">→ On our call you said "I want a guide for the next 90 days" and you meant it</p>
+      <p style="font-size:15.5px;line-height:1.7;color:${PALETTE.textSoft};margin:0;">→ On our call you said "I want a guide for the next 30 days" and you meant it</p>
     `)}
     ${sageBlock(`
       <p style="font-size:16px;line-height:1.65;color:${PALETTE.text};margin:0 0 12px;font-weight:600;">Don't enroll if:</p>
@@ -909,7 +909,7 @@ ENROLL IN COHORT 2 IF:
 → You'd benefit from daily WhatsApp access to a nurse who knows your file
 → Your spouse needs to be brought along
 → You want the hormone-corner deep dive (Annie)
-→ On our call you said "I want a guide for the next 90 days" and meant it
+→ On our call you said "I want a guide for the next 30 days" and meant it
 
 DON'T ENROLL IF:
 → Your numbers are already trending well, you just want to maintain

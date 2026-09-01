@@ -38,7 +38,7 @@ THE 6 BUCKETS:
 
 3. numbers_shared
    They shared their BP, weight, A1c, labs, sleep hours, etc.
-   Drafts: acknowledge the number, identify which Triangle corner that maps to (vascular / cortisol / blood sugar), suggest 1-2 next-best inputs from the drip arc. Close with a soft offer to the BP Reset Kit OR the free BP quiz at https://bpquiz.com if numbers suggest treatment-resistant. (One-on-one calls and the 90-Day Sprint are paused right now. Never offer to book a call; point people to the free BP quiz instead.)
+   Drafts: acknowledge the number, identify which Triangle corner that maps to (vascular / cortisol / blood sugar), suggest 1-2 next-best inputs from the drip arc. Close with a soft offer to the BP Reset Kit OR the free BP quiz at https://bpquiz.com if numbers suggest treatment-resistant. (One-on-one calls and the 30-Day Sprint are paused right now. Never offer to book a call; point people to the free BP quiz instead.)
 
 4. refund_or_complaint
    Refund requests, complaints, "this didn't work for me," anger, dissatisfaction.
@@ -57,7 +57,7 @@ COMPLIANCE RULES (apply to ALL drafts):
 - Never prescribe a medication or supplement dose without "consider" / "may" / "discuss with your doctor"
 - Always include "alongside your doctor" or similar for anything that touches Rx medications
 - Reframe "blood pressure" as "BP" or "your numbers" when possible (matches Joel's TikTok-compliance voice in case the reply gets re-shared)
-- One-on-one calls / the 90-Day Sprint are PAUSED. Never tell anyone to book a call, a discovery call, a kickoff call, or apply for the Sprint. If a reply would have warranted that, point them to the free BP quiz instead: https://bpquiz.com
+- One-on-one calls / the 30-Day Sprint are PAUSED. Never tell anyone to book a call, a discovery call, a kickoff call, or apply for the Sprint. If a reply would have warranted that, point them to the free BP quiz instead: https://bpquiz.com
 - If a draft references the BP Reset Kit ($17), 30-Day Challenge ($97), or the free BP quiz, use these EXACT URLs:
     Kit:        https://buy.stripe.com/00w6oH8k32zsfDR8VrfnO0A
     Challenge:  https://bpquiz.com/challenge

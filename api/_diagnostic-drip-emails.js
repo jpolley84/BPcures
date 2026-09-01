@@ -18,7 +18,7 @@
 //   5  — The three paths after the call (Cohort 2 introduced gently)
 //   7  — Cohort 2 reveal: what it is, what it's not
 //   9  — Wakita's first 30 days inside the program (deep case)
-//   11 — Future-self / 90 days from today
+//   11 — Future-self / 30 days from today
 //   14 — Enrollment closes Friday (final close)
 
 const PALETTE = {
@@ -164,8 +164,8 @@ export const diagnosticDripDay5 = {
     </div>
 
     <div style="background:${PALETTE.paperLight};border-left:3px solid ${PALETTE.clay};border-radius:6px;padding:18px 20px;margin:18px 0;">
-      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — 90-Day Group Coaching</div>
-      <p style="margin:6px 0 8px;font-size:15px;">For the people who want me on call for the next twelve weeks. Weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, full medication-tapering plan worked with your prescriber, spouse included free. I'll tell you more on the call — this is for buyers who want the deepest version.</p>
+      <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${PALETTE.clay};font-weight:700;margin-bottom:4px;">Path 2 — 30-Day Group Coaching</div>
+      <p style="margin:6px 0 8px;font-size:15px;">For the people who want me on call for the next 30 days. Weekly group Zoom, WhatsApp office hours Sun–Thu 9–5, full lab review at start and finish, full medication-tapering plan worked with your prescriber, spouse included free. I'll tell you more on the call — this is for buyers who want the deepest version.</p>
       <p style="margin:0;font-size:14px;color:${PALETTE.textSoft};"><strong>Best for:</strong> 4+ medications, complex history, partner involvement needed, "I'm tired of guessing and want a guide" energy.</p>
     </div>
 
@@ -188,22 +188,22 @@ export const diagnosticDripDay5 = {
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay7 = {
   subject: "Cohort 2 — what it is, what it's not",
-  preview: 'A real picture of the 90-day group program opening May 24.',
+  preview: 'A real picture of the 30-day group program opening May 24.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Yesterday I laid out the three paths after your diagnostic. Today I want to give you a real picture of Path 2 — Cohort 2, the 90-day group program — so you can decide if it fits before we talk.</p>
+    <p style="margin:0 0 14px;">Yesterday I laid out the three paths after your diagnostic. Today I want to give you a real picture of Path 2 — Cohort 2, the 30-day group program — so you can decide if it fits before we talk.</p>
 
     <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is</p>
 
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
-      <li><strong>Twelve weeks. Small-group cohort with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
+      <li><strong>Thirty days. Small-group cohort with me + Annie.</strong> Annie Chitate, RN — my wife and the hormone-corner co-coach. Half the caseload involves hormone work; Annie handles that thread.</li>
       <li><strong>Weekly group Zoom call.</strong> Monday nights 7 PM ET. We work the cohort case-by-case, live. Your numbers, your symptoms, your medication-tapering progress — and you learn from everyone else's protocols too.</li>
       <li><strong>WhatsApp office hours, group thread.</strong> Sun–Thu, 9 AM–5 PM ET. Drop a question, send a photo, ask "should I take this today." I answer same-day in front of the cohort — so everyone benefits from each question.</li>
       <li><strong>Full lab review at the start and again at the finish.</strong> So we know exactly what's moving underneath the numbers.</li>
-      <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the 90 days.</li>
+      <li><strong>Full deprescribing plan, worked WITH your prescriber.</strong> We design the taper, you bring it to your doctor, we adjust based on their feedback. Most clients drop 1–3 meds inside the program.</li>
       <li><strong>Spouse included free.</strong> Spouses/partners get a parallel 30-minute briefing so they're rowing with you, not pulling against.</li>
-      <li><strong>The 90-Day Group Coaching Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
+      <li><strong>The 30-Day Group Coaching Kit.</strong> Everything in the BP Reset Kit + the extended protocol PDFs + the hormone-specific protocols Annie uses.</li>
     </ul>
 
     <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">What Cohort 2 is NOT</p>
@@ -211,7 +211,7 @@ export const diagnosticDripDay7 = {
     <ul style="font-size:15px;line-height:1.75;padding-left:22px;margin:0 0 18px;">
       <li>Not a self-paced course. The group meets live every Monday.</li>
       <li>Not a passive sit-back. Cohort members share their own logs, ask their own questions, and learn from the protocols I design for the people sitting next to them.</li>
-      <li>Not a 30-day reset. The protocols compound at week 6–10. You need the runway.</li>
+      <li>Not a solo reset. The protocols compound fastest with live eyes on your numbers every week.</li>
       <li>Not for everyone. If your numbers are good and you just want education, the Kit covers it.</li>
     </ul>
 
@@ -233,12 +233,12 @@ export const diagnosticDripDay7 = {
 // DAY 9 — Wakita case study (real founding client, real arc)
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay9 = {
-  subject: 'Wakita\'s first 30 days inside 90-Day Group Coaching',
-  preview: 'What an actual 90-Day Group Coaching week looks like, from one of my real clients.',
+  subject: 'Wakita\'s first 30 days inside 30-Day Group Coaching',
+  preview: 'What an actual 30-Day Group Coaching week looks like, from one of my real clients.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
-    <p style="margin:0 0 14px;">Since 90-Day Group Coaching is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
+    <p style="margin:0 0 14px;">Since 30-Day Group Coaching is the kind of program you don't fully understand until you've seen one, I want to walk you through a real client's first 30 days. I have her permission to share — using a first-name pseudonym to protect her privacy.</p>
 
     <p style="margin:0 0 14px;"><strong>Wakita</strong> — age 60, complex GI history, BP 145/92 morning, 138/88 afternoon, on three BP meds, dealing with chronic abdominal pain from a December hospitalization, on a Mexican naturopathic protocol that was layering complication on top of complication.</p>
 
@@ -254,28 +254,28 @@ export const diagnosticDripDay9 = {
     <p style="margin:0 0 14px;font-weight:600;color:${PALETTE.text};">Week 4 — Doctor conversation.</p>
     <p style="margin:0 0 14px;">We drafted the conversation she'd take to her cardiologist. Specific numbers, specific labs to request, a deprescribing-language script. He listened. Reduced one of her meds by 25%. He'd never had a patient bring him a script like this.</p>
 
-    <p style="margin:0 0 18px;">That's one month. We have eleven more weeks together. By Week 12 most clients are on 1–2 fewer medications, sleeping a full night, and have a daily protocol that's so dialed it no longer feels like a program.</p>
+    <p style="margin:0 0 18px;">That's the 30 days. By the end, most clients are on 1–2 fewer medications, sleeping a full night, and have a daily protocol that's so dialed it no longer feels like a program.</p>
 
     <p style="margin:0 0 14px;">If something in that arc made you go "yes, that's the program I want" — book Cohort 2 when we talk. If it sounds like more than you need, Path 1 is great.</p>
 
     <p style="margin:18px 0 4px;">— Joel</p>
 
     ${unsubFooter(unsubUrl)}
-  `, 'BraveWorks RN · A real 90-day month'),
+  `, 'BraveWorks RN · A real 30-day month'),
 };
 
 // ─────────────────────────────────────────────────────────────────────
 // DAY 11 — Future-self
 // ─────────────────────────────────────────────────────────────────────
 export const diagnosticDripDay11 = {
-  subject: '90 days from today',
+  subject: '30 days from today',
   preview: 'A picture of where this could go if you decide to keep going.',
   html: ({ firstName, unsubUrl }) => shell(`
     <p style="font-size:17px;margin:18px 0 14px;">Hi ${firstName || 'there'},</p>
 
     <p style="margin:0 0 14px;">Quick exercise. Don't reply — just read.</p>
 
-    <p style="margin:0 0 14px;"><strong>Picture yourself ninety days from today.</strong></p>
+    <p style="margin:0 0 14px;"><strong>Picture yourself thirty days from today.</strong></p>
 
     <p style="margin:0 0 14px;">Your morning BP is fifteen to twenty-five points lower than it is right now. You wake up before your alarm. You walk to the kitchen and the first thing you do is drink water, not check your phone. You take fewer supplements than you used to — three or four, all the ones that actually move something, not the fifteen you were guessing at last year.</p>
 
@@ -283,7 +283,7 @@ export const diagnosticDripDay11 = {
 
     <p style="margin:0 0 14px;">You sit down with your cardiologist with a printed BP log. Steady. Clean. Trending the right direction. They look up from the page and say "what are you doing?" You hand them a one-page script you've been waiting to use. They read it. They nod. They tell you which med they want to taper first.</p>
 
-    <p style="margin:0 0 14px;">That's a real picture. It's not optimistic — it's the actual ninety-day arc for clients who follow through.</p>
+    <p style="margin:0 0 14px;">That's a real picture. It's not optimistic — it's the actual thirty-day arc for clients who follow through.</p>
 
     <p style="margin:0 0 14px;">The diagnostic gives you the protocol. Cohort 2 gives you the runway. The choice is whether you want the runway.</p>
 
@@ -321,7 +321,7 @@ export const diagnosticDripDay14 = {
       <li>You'd benefit from daily WhatsApp access to a nurse who knows your file</li>
       <li>Your spouse needs to be brought along (partner inclusion is significant)</li>
       <li>You want the hormone-corner deep dive (Annie's specialty)</li>
-      <li>You said "I want a guide for the next 90 days" on our call and meant it</li>
+      <li>You said "I want a guide for the next 30 days" on our call and meant it</li>
     </ul>
 
     <p style="margin:0 0 14px;">Don't enroll in Cohort 2 if:</p>

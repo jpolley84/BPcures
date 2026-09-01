@@ -1,5 +1,5 @@
 // /coaching (and /coaching-vip) — "Life Beyond the Numbers", the Be There
-// 90-day program landing.
+// 30-day program landing.
 //
 // 2026-07-17 v3: full rebuild on Annie's high-converting sales-page draft
 // (Life-Beyond-the-Numbers-Sales-Page.html) at Joel's direction: her section
@@ -44,7 +44,7 @@
 // stops a BP medication because a sales page made her feel brave can stroke.
 // What we promise is the honest and still-valuable thing: we help her become
 // the patient whose doctor CAN have that conversation with her, because she
-// arrives with three months of her own data instead of a hope. Every med
+// arrives with a month of her own data instead of a hope. Every med
 // reference on this page must keep that shape. See the FAQ answer, which is
 // deliberately long, and the "About the Pills" section.
 //
@@ -240,7 +240,7 @@ const METHOD_STEPS = [
   { letter: 'E', title: 'Extend the Life You Love', body: 'Build your travel plan, holiday plan, and hard-week plan, so this becomes your new normal.' },
 ];
 
-// THE RESET — the ten-day working unit inside the 90 days (locked by Joel
+// THE RESET — the ten-day working unit inside the 30 days (locked by Joel
 // 2026-08-06; canon in BRAVEWORKS_FRAMEWORK_BIBLE.md Part 1.4). BE THERE is
 // the container, RESET is the engine that runs inside it. Copy obeys this
 // page's hard rule: no promises about what the number will do.
@@ -309,7 +309,7 @@ const FAQS = [
   },
   {
     q: 'I want to get off my medication. Can this help me do that?',
-    a: 'Here is the honest answer, and it is not the one that sells best. Joel will never tell you to stop, lower, or skip a medication. Only the person who prescribed it can make that call, and a woman who stops a blood pressure medication on her own can have a stroke. What this program changes is the conversation. In twelve weeks you walk into that appointment with three months of your own readings and a written record of what you changed and what happened. Whether anything about your prescription changes is between you and your doctor, and we will not pretend to know. What we can tell you is that you will stop walking in with nothing but a hope.',
+    a: 'Here is the honest answer, and it is not the one that sells best. Joel will never tell you to stop, lower, or skip a medication. Only the person who prescribed it can make that call, and a woman who stops a blood pressure medication on her own can have a stroke. What this program changes is the conversation. In thirty days you walk into that appointment with a month of your own readings and a written record of what you changed and what happened. Whether anything about your prescription changes is between you and your doctor, and we will not pretend to know. What we can tell you is that you will stop walking in with nothing but a hope.',
   },
   {
     q: 'What if my blood pressure is very high right now?',
@@ -828,7 +828,7 @@ export default function BeThereLandingPage() {
             you hoped, the only explanation left on the table was you.
           </p>
           <p className="headline2">
-            It was never you. Life Beyond the Numbers&trade; is 12 weeks of live coaching with Joel, a nurse who
+            It was never you. Life Beyond the Numbers&trade; is 30 days of live coaching with Joel, a nurse who
             spent twenty years in intensive care and emergency medicine watching what happens
             when people are handed a diagnosis and no plan. Together you find what is actually
             pulling on your number, and you change it in the life you already have. Not the
@@ -916,15 +916,15 @@ export default function BeThereLandingPage() {
           </p>
           <p className="intro">
             <strong>Joel will never tell you to stop, skip, cut, or lower a medication.</strong>{' '}
-            Not once, not in month three, not if you beg him. He is a nurse, not your
+            Not once, not in week four, not if you beg him. He is a nurse, not your
             prescriber, and a woman who stops a blood pressure medication because a website
             made her feel brave can have a stroke. Anyone willing to hint otherwise to close
             a sale is telling you something about themselves.
           </p>
           <p className="intro">
             <strong>Here is what we actually do.</strong> Right now, when your doctor asks how
-            things are going, you have a feeling and a guess. Twelve weeks from now you walk in
-            with three months of your own readings, taken correctly, and a written record of
+            things are going, you have a feeling and a guess. Thirty days from now you walk in
+            with a month of your own readings, taken correctly, and a written record of
             what you changed and what happened when you did.
           </p>
           <p className="intro">
@@ -1152,7 +1152,7 @@ export default function BeThereLandingPage() {
             ))}
           </div>
           <p className="outro" data-rv>
-            Twelve weeks of live coaching holds eight of these cycles, run back to back, with Joel beside you for
+            Thirty days of live coaching holds three of these cycles, run back to back, with Joel beside you for
             every one. You never work on everything at once. You reset one thing, hold it, and
             move to the next.
           </p>

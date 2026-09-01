@@ -770,7 +770,7 @@ const day19 = {
     )}
     ${outcomeRider()}
     ${ctaButton(SPRINT_URL, 'Start your Sprint ($297)')}
-    ${p(`And if you want 90 days working directly with me in a small group, that exists too. Reply with the word NINETY and I will send the details.`, { margin: '0 0 28px' })}
+    ${p(`And if you want 30 days working directly with me in a small group, that exists too. Reply with the word NINETY and I will send the details.`, { margin: '0 0 28px' })}
     ${p(`In two days, the last email of this series. The whole map in one place.`, { margin: '0 0 28px' })}
     ${joelSignoff()}
     ${psBox(`If the honest wall is money, hit reply and tell me. The $27 Starter Kit and the free week in the Weekly Reset both exist for exactly that. I read every reply and I will not pressure you.`)}
@@ -809,7 +809,7 @@ ${OUTCOME_RIDER_TEXT}
 
 → Start your Sprint ($297): ${SPRINT_URL}
 
-And if you want 90 days working directly with me in a small group, that exists too. Reply with the word NINETY and I will send the details.
+And if you want 30 days working directly with me in a small group, that exists too. Reply with the word NINETY and I will send the details.
 
 In two days, the last email of this series. The whole map in one place.
 
@@ -844,7 +844,7 @@ const day21 = {
         : `My wife Annie, an RN and fellow naturopath, teaches that side of the work at <a href="${RESTOREHER_URL}" style="color:${PALETTE.accentClay};font-weight:600;">restoreherhormones.com</a>.`}</p>
       <p style="font-size:14.5px;line-height:1.6;color:${PALETTE.textSoft};margin:0;"><strong>Want me to write your plan?</strong> <a href="${SPRINT_URL}" style="color:${PALETTE.accentClay};font-weight:600;">The 30-Day Personalized Sprint</a>, $297 flat. I write your 30 days from your numbers and we walk them together. I take 5 new readers a month.</p>
     `)}
-    ${p(`And if you want 90 days working directly with me in a small group, reply with the word NINETY and I will send the details.`, { margin: '0 0 24px' })}
+    ${p(`And if you want 30 days working directly with me in a small group, reply with the word NINETY and I will send the details.`, { margin: '0 0 24px' })}
     ${p(`Not sure? Then take the smallest honest step, the $27 kit.`, { margin: '0 0 24px' })}
     ${ctaButton(KIT_URL, 'Start with the BP Starter Kit ($27)')}
     ${p(`<span style="color:#999;font-size:14px;">You can read the whole Starter Kit story at <a href="https://bpquiz.com" style="color:${PALETTE.accentClay};">bpquiz.com</a>.</span>`, { margin: '0 0 28px' })}
@@ -888,7 +888,7 @@ ${restoreHerLive()
 Want me to write your plan? The 30-Day Personalized Sprint, $297 flat. I write your 30 days from your numbers and we walk them together. I take 5 new readers a month.
 → ${SPRINT_URL}
 
-And if you want 90 days working directly with me in a small group, reply with the word NINETY and I will send the details.
+And if you want 30 days working directly with me in a small group, reply with the word NINETY and I will send the details.
 
 Not sure? Then take the smallest honest step, the $27 kit.
 → ${KIT_URL}
