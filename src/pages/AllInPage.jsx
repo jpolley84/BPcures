@@ -96,47 +96,82 @@ const CLOSE_LABEL_SHORT = `${new Intl.DateTimeFormat('en-US', {
 // ─── the offer stack, from the LIVE, NOT JUST EXIST deck ─────────────────
 const PHASES = [
   {
-    kicker: 'Phase 1',
-    title: 'Understand what’s going on.',
-    value: '$6,000 value',
+    kicker: 'Step 1',
+    title: 'The Life-Change Blueprint',
+    value: 'Your numbers',
     items: [
-      'Personal Health Review',
-      'Your Top 3 Health Priorities',
-      'Your 90-Day Health Plan',
-      'Know Your Numbers: BP, A1C, blood sugar and labs',
-      'Doctor Conversation Guide',
-      'Personal Case Manager Kickoff',
+      'Finally know what YOUR body needs, and do it in about 15 minutes a day',
+      '12 weeks of nurse-led transformation, so you stop guessing and get lasting results',
+      'Weekly coaching plus live Q&A, with your questions answered in real time',
+      'Answers in language you can understand and actually implement',
     ],
-    payoff: 'So you finally know what deserves your attention first.',
+    payoff: 'Do less, in the right order. That is the whole method.',
   },
   {
-    kicker: 'Phase 2',
-    title: 'Make it work in real life.',
-    value: '$8,000 value',
+    kicker: 'Step 2',
+    title: 'Understand what your body is saying',
+    value: 'Clarity',
     items: [
-      'Personalized Food Plan',
-      'Meal and Recipe App built around foods you actually like',
-      'Personal Movement Plan',
-      'Green, Yellow and Red Day Plan',
-      'Herbs and Supplements Guidance',
-      'Weekly Coaching + Accountability',
-      'Monthly Progress Review',
+      'Know Your Labs: understand your numbers and walk into your appointment able to talk about them without fear',
+      'Decode Your Symptoms System: finally understand what your body has been trying to tell you',
+      'The Normal Numbers Blueprint: get your numbers into a range you can be proud of',
+      'Doctor Conversation Guide, root-driver clarity and symptom sorting',
     ],
-    payoff: 'Built for your kitchen, your schedule, your body, and your actual life.',
+    payoff: 'You stop being a passenger in your own health.',
   },
   {
-    kicker: 'Phase 3',
-    title: 'Get more of your life back.',
-    value: '$5,000 value',
+    kicker: 'Step 3',
+    title: 'Make it work in your real life',
+    value: 'Food + movement',
     items: [
-      'Hair, Skin and Confidence Program',
-      'Bring Sexy Back Sessions',
-      'Expert Q&A Sessions',
-      'Your Next Chapter Planning',
-      '12-Month Community + Support',
+      'Food That Loves You Back Playbook: meals your family LOVES that are deeply nourishing, so you pass on generational health',
+      '90 days of budget-friendly meal plans, plus our food experts',
+      'The Easy-Fit System: the right kind of movement for YOU, personalized, that keeps working for up to 48 hours',
+      'Age-appropriate and doable even if you are starting from a chair or a wheelchair',
+      'Herbs and Supplements Guidance: not more supplements, a few of the right ones in the right order',
     ],
-    payoff: 'This is not just about better numbers. It is about the life your health gives you access to.',
+    payoff: 'Less is more. Let your body lose the weight.',
   },
+  {
+    kicker: 'Step 4',
+    title: 'Get your life back, not just your numbers',
+    value: 'The whole you',
+    items: [
+      'Bring Sexy Back: get your energy, your confidence and your drive back',
+      'The Healing Circle: community, accountability, guidance and 24-hour support',
+      'Exclusive access to our expert team, including a naturopath, a trauma expert and 36 years of nurse advice',
+      'A full year with us, not just the 90 days',
+    ],
+    payoff: 'Community is everything. Stop doing this alone.',
+  },
+];
+
+// The email's three bonuses, in its own words.
+const BONUSES = [
+  {
+    name: 'Two For One',
+    body: 'Bring someone you love with you. Healing, with built-in accountability.',
+  },
+  {
+    name: 'Skin + Hair Bonus',
+    body: 'Learn with Annie how to create your own natural skin and hair products and, if you want, how to turn what you make into something you can sell.',
+  },
+  {
+    name: 'One-on-One Coaching Session',
+    body: 'Personal eyes on YOUR situation, so you can win well before the 90 days are up, even though you have a full year with us.',
+  },
+];
+
+// Deck slide 9. The reason any of this matters.
+const SO_YOU_CAN = [
+  'Be there',
+  'Be healed',
+  'Enjoy the kids',
+  'Bring sexy back',
+  'Take the trip',
+  'Write the book',
+  'Run the business',
+  'Say YES to purpose',
 ];
 
 const FAQ = [
@@ -266,6 +301,13 @@ const CSS = `
 .lca .fast-deadline { margin-top:14px; font-size:13px; font-weight:850; color:#594817; }
 .lca .fast-countdown { margin-top:5px; font-size:25px; font-weight:900; letter-spacing:-.035em;
   font-variant-numeric:tabular-nums; }
+.lca .soyoucan-box { border:1px solid var(--line); border-radius:var(--radius); padding:23px;
+  margin-top:22px; background:rgba(255,255,255,.76); }
+.lca .soyoucan-box h3 { margin:0 0 14px; font-size:22px; letter-spacing:-.025em; }
+.lca .soyoucan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:9px 18px; }
+.lca .soyoucan-grid span { font-size:16px; font-weight:750; }
+.lca .soyoucan-grid span::before { content:"✓"; color:#b88700; font-weight:950; margin-right:8px; }
+
 .lca .value-box { background:var(--ink); color:#fff; border:0; }
 .lca .value-box .phase-kicker { color:#cfc9bd; }
 .lca .value-total { display:flex; align-items:baseline; justify-content:space-between; gap:20px;
@@ -654,8 +696,9 @@ export default function AllInPage() {
             <div className="offer-summary" id="whats-inside" style={{ scrollMarginTop: 14 }}>
               <h2>Do less. In the right order.</h2>
               <p>
-                A clear plan, real support, and someone paying attention, built around the exact
-                problems women told us they wanted help solving.
+                All the right steps, in the right order. 90 days of nurse-led transformation and a
+                full year of coaching, built around the exact problems women told us they wanted
+                help solving.
               </p>
             </div>
 
@@ -676,12 +719,12 @@ export default function AllInPage() {
             ))}
 
             <div className="bonus-box">
-              <div className="phase-kicker">Included bonuses</div>
+              <div className="phase-kicker">Your bonuses</div>
               <h3>You get these too.</h3>
               <ul className="bonus-list">
-                <li><strong>Bring Your +1:</strong> your spouse, partner or adult daughter can start too.</li>
-                <li><strong>Make Your Own Hair and Skin Products:</strong> learn formulas, ingredients and simple product ideas.</li>
-                <li><strong>You’re Not Done:</strong> turn what life taught you into something useful.</li>
+                {BONUSES.map((b) => (
+                  <li key={b.name}><strong>{b.name}:</strong> {b.body}</li>
+                ))}
               </ul>
               <div className="micro-payoff">Because getting your health back should make life bigger, not smaller.</div>
             </div>
@@ -700,6 +743,14 @@ export default function AllInPage() {
                 </div>
               </div>
             )}
+
+            <div className="soyoucan-box">
+              <div className="phase-kicker">So you can</div>
+              <h3>Because it was never really about the numbers.</h3>
+              <div className="soyoucan-grid">
+                {SO_YOU_CAN.map((line) => <span key={line}>{line}</span>)}
+              </div>
+            </div>
 
             <div className="value-box">
               <div className="phase-kicker">Total coaching value</div>
