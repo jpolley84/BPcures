@@ -52,6 +52,18 @@ const CASES = [
   { text: 'tell me about magnesium', expect: 'buyer_mag' },
   { text: 'how do I join the group', expect: 'skool' },
 
+  // ── 2026-09-01: coaching / accelerator / pitched-offer asks -> hotlead ──
+  { text: 'how do I join the change my life accelerator', expect: 'hotlead' },
+  { text: 'Accelerator', expect: 'hotlead' },
+  { text: 'im interested in coaching', expect: 'hotlead' },
+  { text: 'I want the all in offer you pitched', expect: 'hotlead' },
+  { text: 'can I work with you', expect: 'hotlead' },
+  { text: 'tell me about your program', expect: 'hotlead' },
+  { text: 'I want coaching, I am on lisinopril for my heart', expectNot: ['hotlead'],
+    note: 'hotlead yields to clinical context like buyer lanes' },
+  { text: 'help', expect: null, note: 'bare help stays with the LLM, never a deterministic sell' },
+  { text: 'help me with my bp meds', expect: null, note: 'help+clinical must not become hotlead' },
+
   // ── ops/optout never yield to clinical (by design) ─────────────────────
   { text: 'I was charged twice for my order', expect: 'ops' },
   { text: 'where is my tea, I ordered it for my blood pressure', expect: 'ops',

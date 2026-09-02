@@ -55,6 +55,12 @@ export const CLINICAL_MARKER = /\bmy (bp|blood pressure|doctor|meds?|medication|
 const KEYWORDS = [
   [/\bunsubscribe\b|\bstop messaging\b|don'?t (message|text|contact) me|remove me/i, 'optout'],
   [/refund|charged|charge me|double.?charg|didn'?t (get|receive)|never (got|arrived|received)|where('| i)?s my (order|tea|kit|book)|track(ing)?( my)? (order|package)|shipp/i, 'ops'],
+  // 2026-09-01 (Joel): coaching / the pitched offer / Change My Life
+  // Accelerator asks route hotlead and are answered with
+  // changemylifechallenge.com/allin by the ManyChat hotlead branch.
+  // Deliberately NOT matched here: bare "help" -- "help me with my BP" is
+  // clinical territory; generic help-asks stay with the LLM.
+  [/accelerator|\bcoach(ing|ed)?\b|coach me|work with (you|joel)|\byour (offer|program)\b|\bthe offer\b|\ball.?in\b/i, 'hotlead'],
   [/\b(tea|steady)\b/i, 'buyer_tea'],
   [/magnesium|max.?calm/i, 'buyer_mag'],
   [/\b(quiz|link please|send( me)? the link|the link|get started|sign me up)\b/i, 'buyer_quiz'],
@@ -80,7 +86,7 @@ export function keywordLane(text) {
   for (const [re, lane] of KEYWORDS) {
     if (re.test(text)) {
       // buyer shortcuts yield to clinical context; ops/optout never do
-      if (lane.startsWith('buyer') || lane === 'skool') {
+      if (lane.startsWith('buyer') || lane === 'skool' || lane === 'hotlead') {
         if (CLINICAL_MARKER.test(text)) return null;
       }
       return lane;
@@ -97,7 +103,7 @@ redflag   - emergency signs: chest pain, stroke signs, BP over 180/120, self-har
 buyer_tea - wants the tea / asks price or how to buy it
 buyer_quiz- wants the quiz or "the link" to get started
 buyer_mag - asks about magnesium or MaxCalm
-hotlead   - wants to work with Joel, coaching, a plan, "how do I start", ready to pay
+hotlead   - wants to work with Joel: coaching, the Change My Life Accelerator, the offer he pitched, asks for help joining or getting started, a plan, "how do I start", ready to pay
 navigation- site/page/video won't open, can't find something, how-to-access question
 proof     - reports a result they credit to Joel (numbers down, meds reduced, sleeping better)
 compliment- thanks/praise for the content with no question
