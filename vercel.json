@@ -100,6 +100,11 @@
       "permanent": false
     },
     {
+      "source": "/juicing",
+      "destination": "https://www.tiktok.com/@braveworksrn",
+      "permanent": false
+    },
+    {
       "source": "/saffron",
       "destination": "https://www.tiktok.com/t/ZP9rebBAGVd8G-duWOM/",
       "permanent": false
