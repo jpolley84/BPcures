@@ -34,6 +34,7 @@ import { capturePurchase } from './_triangle-posthog.js';
 import { markPurchase } from './_dupe-guard.js';
 import { pouchGramsOf, withPouchSize } from './_pouch-size.js';
 import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
+import { generateCoachingAgreementPDF, AGREEMENT_PLAN_FILL } from './_coaching-agreement.js';
 
 assertLiveRoom(ZOOM_MAIN);
 // All-In kickoff: the weekly Q&A Clarity Call, every Sunday 7pm ET, same room
@@ -1367,7 +1368,7 @@ function escAllIn(s) {
 
 // Buyer confirmation for an All-In purchase. Best-effort; a send failure never
 // fails the webhook (the Joel alert is the fulfillment backstop).
-async function sendAllInConfirmation({ email, firstName, plan, amountCents = null }) {
+async function sendAllInConfirmation({ email, firstName, plan, amountCents = null, agreementPdf = null }) {
   const name = firstName ? escAllIn(firstName) : 'there';
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
@@ -1429,6 +1430,14 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
 Q&amp;A Clarity Call &middot; Sunday, ${escAllIn(ALLIN_KICKOFF_DATE_LABEL)} at ${escAllIn(ALLIN_KICKOFF_TIME_LABEL)}<br/>
 <a href="${escAllIn(ZOOM_MAIN)}" style="color:#B93C20;font-weight:700;">Join on Zoom</a>
 </p>
+<p style="margin:1.2rem 0 0.4rem;font-weight:700;">Your three first steps</p>
+<ol style="margin:0 0 1.2rem;padding-left:1.2rem;">
+<li style="margin:0 0 0.6rem;">${agreementPdf
+    ? '<strong>Sign your coaching agreement</strong> — it is attached to this email (BraveWorks-Coaching-Agreement.pdf). Sign the last page and reply with it, or bring it to your 1:1.'
+    : '<strong>Sign your coaching agreement</strong> — we will send your personalized agreement in a separate email. Sign the last page and reply with it, or bring it to your 1:1.'}</li>
+<li style="margin:0 0 0.6rem;"><strong>Take your assessment:</strong> <a href="https://bpquiz.com/accelerator-assessment" style="color:#B93C20;font-weight:700;">bpquiz.com/accelerator-assessment</a> &mdash; this is the one thing we need back before your 1:1.</li>
+<li style="margin:0;"><strong>Book your 1:1 with both of us:</strong> reply to this email with two times that work and we will lock one in.</li>
+</ol>
 <p>Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.</p>
 <p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk this with you.</p>
 <p style="margin-top:1.6rem;">I am glad you decided. See you Sunday.</p>
@@ -1445,6 +1454,13 @@ ${planLine}
 WE BEGIN TOGETHER THIS SUNDAY.
 Q&A Clarity Call: Sunday, ${ALLIN_KICKOFF_DATE_LABEL} at ${ALLIN_KICKOFF_TIME_LABEL}
 Join on Zoom: ${ZOOM_MAIN}
+
+YOUR THREE FIRST STEPS
+1. ${agreementPdf
+    ? 'Sign your coaching agreement — it is attached to this email (BraveWorks-Coaching-Agreement.pdf). Sign the last page and reply with it, or bring it to your 1:1.'
+    : 'Sign your coaching agreement — we will send your personalized agreement in a separate email. Sign the last page and reply with it, or bring it to your 1:1.'}
+2. Take your assessment: https://bpquiz.com/accelerator-assessment — this is the one thing we need back before your 1:1.
+3. Book your 1:1 with both of us: reply to this email with two times that work and we will lock one in.
 
 Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.
 
@@ -1466,6 +1482,9 @@ BraveWorks RN / BPQuiz.com`;
       'List-Unsubscribe': `<${unsubUrl}>`,
       'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
     },
+    ...(agreementPdf
+      ? { attachments: [{ filename: 'BraveWorks-Coaching-Agreement.pdf', content: agreementPdf.toString('base64') }] }
+      : {}),
   });
 }
 
@@ -1665,8 +1684,28 @@ async function processAllIn(session, plan = 'full') {
   // ── Buyer confirmation (skip if a prior attempt of this session sent it) ──
   let delivered = Boolean(progress.confirmationSentAt);
   if (!delivered) {
+    // Personalized coaching agreement, attached to the welcome email. The
+    // welcome email NEVER waits on the PDF: any generation failure (or an
+    // unknown/legacy plan with no current-era fill) logs and sends without it.
+    let agreementPdf = null;
     try {
-      await sendAllInConfirmation({ email: customerEmail, firstName, plan, amountCents: allInAmountCents });
+      const fill = AGREEMENT_PLAN_FILL[plan];
+      if (fill) {
+        agreementPdf = await generateCoachingAgreementPDF({
+          name: customerName || '',
+          email: customerEmail,
+          paid: fill.paid,
+          balance: fill.balance,
+        });
+      } else {
+        console.error(`stripe-webhook: no agreement fill for all-in plan '${plan}' — welcome email sent WITHOUT the coaching agreement; send it by hand`, session.id);
+      }
+    } catch (err) {
+      agreementPdf = null;
+      console.error('stripe-webhook: coaching agreement PDF generation failed — welcome email sent WITHOUT it; send it by hand', err.message);
+    }
+    try {
+      await sendAllInConfirmation({ email: customerEmail, firstName, plan, amountCents: allInAmountCents, agreementPdf });
       delivered = true;
       progress.confirmationSentAt = new Date().toISOString();
       try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
