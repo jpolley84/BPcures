@@ -1025,7 +1025,7 @@
     fetch('/api/challenge-signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ intent: 'waitlist', firstName: name, email: email, phone: phone, tier: 'challenge-ga' })
+      body: JSON.stringify({ intent: 'waitlist', firstName: name, email: email, phone: phone, tier: 'challenge-ga', source: 'challenge-b' })
     }).then(function (r) {
       if (!r.ok) throw new Error('save failed');
       // Conversion beacons (2026-08-24). sendBeacon so navigation/unload can't

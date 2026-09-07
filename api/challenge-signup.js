@@ -256,6 +256,15 @@ const NEXT_COHORT = {
   // what the page removed. Do not add a priceLabel here without checking that
   // decision first.
   datesLabel: null,
+  // The waitlist's OWN key namespace (2026-09-07, Joel: "make sure both sites
+  // pull to a clean list"). Before this, intent 'waitlist' wrote into
+  // challenge:<CHALLENGE.cohort>:interest, i.e. the AUGUST cohort's namespace,
+  // because K.interest is built from CHALLENGE.cohort. Nothing was lost, but
+  // pulling "the September list" meant pulling an August-named key that also
+  // holds August 'seat-link' captures, and it would have collided the moment a
+  // new cohort id landed. The waitlist is for a cohort that does not exist yet,
+  // so it gets a key of its own that no cohort rollover can touch.
+  waitlistKey: 'sept-2026',
 };
 
 const K = {
@@ -265,6 +274,12 @@ const K = {
   session: (id) => `challenge:${CHALLENGE.cohort}:session:${id}`,
   interest: (email) => `challenge:${CHALLENGE.cohort}:interest:${email}`,
   interestSet: `challenge:${CHALLENGE.cohort}:interest`,
+  // Waitlist-only. Keyed on the cohort being waited FOR, not the one that just
+  // closed. Both surfaces (the static challenge-b page and the React
+  // ChallengePage) post intent 'waitlist' to this same handler, so writing it
+  // here is what makes them land in one clean list.
+  waitlist: (email) => `challenge:waitlist:${NEXT_COHORT.waitlistKey}:${email}`,
+  waitlistSet: `challenge:waitlist:${NEXT_COHORT.waitlistKey}`,
 };
 
 // ─── Rate limit (kept from the previous file, unchanged semantics) ────
@@ -1096,22 +1111,35 @@ async function handleInterest(req, res, mode) {
   const phone = normalizePhoneOrEmpty(req.body?.phone);
 
   const kvUp = Boolean(process.env.KV_REST_API_URL);
+  // A 'waitlist' capture is interest in the NEXT cohort, so it goes in the
+  // waitlist namespace. A 'seat-link' capture is a dead checkout on the cohort
+  // that is open RIGHT NOW, so it stays with that cohort. Dedupe follows the
+  // key: one address on the waitlist is one record, whichever page it came in
+  // through, which is the whole point of routing both surfaces here.
+  const isWaitlist = mode === 'waitlist';
+  const recKey = isWaitlist ? K.waitlist(email) : K.interest(email);
+  const setKey = isWaitlist ? K.waitlistSet : K.interestSet;
   let already = false;
   if (kvUp) {
     try {
-      const existing = await kv.get(K.interest(email));
+      const existing = await kv.get(recKey);
       already = Boolean(existing && existing.email);
-      await kv.set(K.interest(email), {
+      await kv.set(recKey, {
         email,
         firstName: firstName || existing?.firstName || '',
-        cohort: CHALLENGE.cohort,
+        // For a waitlist record this names the cohort being waited FOR. For a
+        // seat-link it names the cohort whose checkout died. Never both.
+        cohort: isWaitlist ? NEXT_COHORT.waitlistKey : CHALLENGE.cohort,
         reason: mode, // 'waitlist' | 'seat-link'
         phone: phone || existing?.phone || '',
         wantedTier: wantedTier || existing?.wantedTier || null,
+        // Which page they came in through, so the two surfaces stay
+        // distinguishable inside the one list.
+        source: existing?.source || (req.body?.source === 'challenge-b' ? 'challenge-b' : 'spa'),
         firstSeenAt: existing?.firstSeenAt || new Date().toISOString(),
         lastSeenAt: new Date().toISOString(),
       });
-      await kv.sadd(K.interestSet, email);
+      await kv.sadd(setKey, email);
     } catch (err) {
       console.warn('challenge-signup: interest write failed (non-fatal)', err.message);
     }
