@@ -31,7 +31,6 @@ import { track } from '../utils/analytics.js';
 import { QUESTIONS } from '../data/triggerQuestions';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
-const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
 
 export default function QuizFirstHome() {
   const navigate = useNavigate();
@@ -50,126 +49,117 @@ export default function QuizFirstHome() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        background: 'var(--cream, #FBF8F1)',
-        color: 'var(--ink, #121110)',
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
-    >
-      <section style={{ maxWidth: 680, margin: '0 auto', padding: '2.25rem 1.25rem 3rem' }}>
-        <div
-          style={{
-            display: 'inline-block',
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'var(--clay, #B85A36)',
-            marginBottom: '0.9rem',
-          }}
-        >
-          Free &middot; 2 minutes &middot; No email to start
-        </div>
+    <main className="qfh">
+      <style>{`
+        /* 2026-09-07 (Joel: "everything above the fold, desktop and mobile").
+           Was inline styles; moved to a scoped block because fitting a fold
+           needs HEIGHT media queries, which inline styles cannot express.
+           Measured before: 951px tall on 1440x800 and 1175px on 375x812, so
+           the disclaimer and part of the answer list sat below the fold on
+           both. Nothing was removed to make it fit -- every element, including
+           the legal line, is still here, just on a tighter type and spacing
+           scale that steps down as the viewport gets shorter.
 
-        <h1
-          style={{
-            ...serif,
-            fontSize: 'clamp(1.9rem, 6.5vw, 2.7rem)',
-            lineHeight: 1.15,
-            letterSpacing: '-0.01em',
-            margin: '0 0 0.9rem',
-          }}
-        >
-          Find the one thing driving your blood pressure up.
-        </h1>
+           One knob drives it: --u, the spacing unit. The three height
+           breakpoints shrink --u and the type together, so the block keeps its
+           proportions instead of collapsing unevenly. */
+        .qfh{
+          --u:1rem; --h1:clamp(1.5rem,5.2vw,2.15rem); --q:clamp(1.05rem,4vw,1.25rem);
+          --opt:0.92rem; --sub:0.92rem; --fine:0.72rem; --dot:26px;
+          min-height:100vh; min-height:100svh;
+          background:var(--cream,#FBF8F1); color:var(--ink,#121110);
+          font-family:'Inter',system-ui,sans-serif;
+          /* Centred rather than top-aligned: once the block fits the fold, a
+             top-aligned hero leaves all its slack in one lump at the bottom. */
+          display:flex; align-items:center;
+        }
+        .qfh-wrap{width:100%;max-width:680px;margin:0 auto;padding:calc(var(--u)*1.4) 1.25rem calc(var(--u)*1.2);}
+        /* Tall screens have room to spare, so spend it on presence instead of
+           leaving the block looking shrunken on a big monitor. */
+        @media (min-height:900px){
+          .qfh{--u:1.15rem;--h1:clamp(1.9rem,5.6vw,2.5rem);--q:clamp(1.15rem,4vw,1.4rem);
+               --opt:0.98rem;--sub:1rem;--photo:56px;--dot:28px;}
+        }
+        .qfh-eyebrow{
+          display:inline-block;font-size:var(--fine);font-weight:700;letter-spacing:0.14em;
+          text-transform:uppercase;color:var(--clay,#B85A36);margin-bottom:calc(var(--u)*0.55);
+        }
+        .qfh h1{
+          font-family:'Fraunces',Georgia,serif;font-weight:550;font-size:var(--h1);
+          line-height:1.13;letter-spacing:-0.01em;margin:0 0 calc(var(--u)*0.5);
+        }
+        .qfh-sub{font-size:var(--sub);line-height:1.5;color:var(--ink-soft,#2B2824);margin:0 0 calc(var(--u)*0.85);}
+        .qfh-card{
+          background:#fff;border:1px solid var(--line,#D8CFBD);border-radius:14px;
+          padding:calc(var(--u)*0.8) calc(var(--u)*0.75);margin-bottom:calc(var(--u)*0.85);
+        }
+        .qfh-kicker{
+          font-size:var(--fine);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+          color:var(--sage-deep,#2E3A30);margin-bottom:calc(var(--u)*0.35);
+        }
+        .qfh-card h2{
+          font-family:'Fraunces',Georgia,serif;font-weight:550;font-size:var(--q);
+          line-height:1.3;margin:0 0 calc(var(--u)*0.6);
+        }
+        .qfh-options{display:flex;flex-direction:column;gap:calc(var(--u)*0.45);}
+        .qfh-option{
+          display:flex;align-items:center;gap:0.7rem;text-align:left;width:100%;
+          background:#fff;border:1.5px solid var(--line,#D8CFBD);border-radius:11px;
+          padding:calc(var(--u)*0.5) calc(var(--u)*0.6);
+          font-family:inherit;font-size:var(--opt);line-height:1.35;
+          color:var(--ink,#121110);cursor:pointer;
+          transition:border-color .15s ease,background .15s ease;
+        }
+        .qfh-option:hover{border-color:var(--sage-deep,#2E3A30);background:var(--cream,#FBF8F1);}
+        .qfh-option:focus-visible{outline:2px solid var(--sage-deep,#2E3A30);outline-offset:2px;}
+        .qfh-letter{
+          flex-shrink:0;width:var(--dot);height:var(--dot);border-radius:50%;
+          border:1.5px solid var(--line,#D8CFBD);display:inline-flex;align-items:center;
+          justify-content:center;font-size:0.72rem;font-weight:700;color:var(--sage-deep,#2E3A30);
+        }
+        .qfh-bio{display:flex;align-items:center;gap:0.75rem;margin-bottom:calc(var(--u)*0.7);}
+        .qfh-bio img{
+          width:var(--photo,48px);height:var(--photo,48px);border-radius:50%;object-fit:cover;
+          border:2px solid var(--line,#D8CFBD);flex-shrink:0;
+        }
+        .qfh-bio p{font-size:calc(var(--fine)*1.08);line-height:1.45;color:var(--ink-soft,#2B2824);margin:0;}
+        .qfh-fine{
+          font-size:var(--fine);line-height:1.45;color:var(--muted,#7A7061);margin:0;
+          border-top:1px solid var(--line-soft,#E8E1D1);padding-top:calc(var(--u)*0.6);
+        }
+        .qfh-fine a{color:var(--muted,#7A7061);}
 
-        <p
-          style={{
-            fontSize: '1.02rem',
-            lineHeight: 1.65,
-            color: 'var(--ink-soft, #2B2824)',
-            margin: '0 0 1.6rem',
-          }}
-        >
+        /* Short viewports: laptops at 800 and under, and phones once the
+           browser chrome is counted. Each step tightens the same knob. */
+        @media (max-height:860px){
+          .qfh{--u:0.82rem;--h1:clamp(1.35rem,4.6vw,1.85rem);--sub:0.86rem;--opt:0.88rem;--photo:42px;--dot:24px;}
+        }
+        @media (max-height:740px){
+          .qfh{--u:0.62rem;--h1:clamp(1.2rem,4.2vw,1.6rem);--q:clamp(0.98rem,3.6vw,1.12rem);
+               --sub:0.8rem;--opt:0.84rem;--fine:0.68rem;--photo:36px;--dot:22px;}
+        }
+        /* Touch targets stay tappable no matter how short the screen is. */
+        @media (pointer:coarse){ .qfh-option{min-height:44px;} }
+      `}</style>
+
+      <section className="qfh-wrap">
+        <div className="qfh-eyebrow">Free &middot; 2 minutes &middot; No email to start</div>
+
+        <h1>Find the one thing driving your blood pressure up.</h1>
+
+        <p className="qfh-sub">
           {QUESTIONS.length} quick questions from a nurse who spent twenty years watching what
           actually moves the number. Start with the first one, right here.
         </p>
 
         {/* ── Question one, in the hero ─────────────────────────── */}
-        <div
-          style={{
-            background: '#fff',
-            border: '1px solid var(--line, #D8CFBD)',
-            borderRadius: 16,
-            padding: '1.25rem 1.1rem',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--sage-deep, #2E3A30)',
-              marginBottom: '0.55rem',
-            }}
-          >
-            Question 1 of {QUESTIONS.length}
-          </div>
-          <h2
-            style={{
-              ...serif,
-              fontSize: 'clamp(1.2rem, 4.5vw, 1.45rem)',
-              lineHeight: 1.35,
-              margin: '0 0 1.1rem',
-            }}
-          >
-            {q1.title}
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="qfh-card">
+          <div className="qfh-kicker">Question 1 of {QUESTIONS.length}</div>
+          <h2>{q1.title}</h2>
+          <div className="qfh-options">
             {q1.options.map((opt, i) => (
-              <button
-                key={opt.key}
-                type="button"
-                onClick={() => answer(opt.key)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.85rem',
-                  textAlign: 'left',
-                  background: '#fff',
-                  border: '1.5px solid var(--line, #D8CFBD)',
-                  borderRadius: 12,
-                  padding: '0.85rem 1rem',
-                  fontSize: '0.95rem',
-                  lineHeight: 1.45,
-                  color: 'var(--ink, #121110)',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  width: '100%',
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    flexShrink: 0,
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    border: '1.5px solid var(--line, #D8CFBD)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: 'var(--sage-deep, #2E3A30)',
-                  }}
-                >
-                  {LETTERS[i]}
-                </span>
+              <button key={opt.key} type="button" className="qfh-option" onClick={() => answer(opt.key)}>
+                <span aria-hidden="true" className="qfh-letter">{LETTERS[i]}</span>
                 <span>{opt.text}</span>
               </button>
             ))}
@@ -177,46 +167,24 @@ export default function QuizFirstHome() {
         </div>
 
         {/* ── Who is asking ─────────────────────────────────────── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', marginBottom: '1.5rem' }}>
+        <div className="qfh-bio">
           <picture>
             <source srcSet="/headshot.webp" type="image/webp" />
-            <img
-              src="/headshot.jpg"
-              alt="Joel Polley, RN"
-              width="56"
-              height="56"
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                border: '2px solid var(--line, #D8CFBD)',
-                flexShrink: 0,
-              }}
-            />
+            <img src="/headshot.jpg" alt="Joel Polley, RN" width="48" height="48" />
           </picture>
-          <p style={{ fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
+          <p>
             <strong style={{ color: 'var(--ink, #121110)' }}>Joel Polley, RN.</strong> Twenty years
             in the ICU and ER, where he watched the same preventable emergency come through the
             doors again and again.
           </p>
         </div>
 
-        <p
-          style={{
-            fontSize: '0.78rem',
-            lineHeight: 1.6,
-            color: 'var(--muted, #7A7061)',
-            margin: 0,
-            borderTop: '1px solid var(--line-soft, #E8E1D1)',
-            paddingTop: '1.1rem',
-          }}
-        >
+        <p className="qfh-fine">
           This is education and lifestyle support, not medical advice, diagnosis, or treatment.
           Never start, stop, or change a medication without your doctor.{' '}
-          <Link to="/privacy" style={{ color: 'var(--muted, #7A7061)' }}>Privacy</Link>
+          <Link to="/privacy">Privacy</Link>
           {' · '}
-          <Link to="/terms" style={{ color: 'var(--muted, #7A7061)' }}>Terms</Link>
+          <Link to="/terms">Terms</Link>
         </p>
       </section>
     </main>
