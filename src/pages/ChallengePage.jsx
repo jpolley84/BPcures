@@ -73,8 +73,11 @@ const CHALLENGE = {
   // api/challenge-signup.js (cohort, startIsoEt, closeMs, labels, nights).
   // Move ALL of them together or registrations land in the wrong bucket.
   COHORT_ID: '2026-08-24',
-  DATE_RANGE_LABEL: 'September 2026',
-  TIME_LABEL: 'Dates announced to the waitlist first',
+  // 2026-09-07 (Joel): September dates SET. Tue-Thu Sept 15-17, 11:00am
+  // CENTRAL (daytime, not the old 7pm ET evening slot). Mirrored in
+  // NEXT_COHORT.datesLabel in api/challenge-signup.js.
+  DATE_RANGE_LABEL: 'Tuesday to Thursday, September 15, 16 and 17',
+  TIME_LABEL: '11:00am Central (12:00pm Eastern), about an hour each day',
   DAY_COUNT: 3,
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
 };
@@ -516,7 +519,7 @@ export default function ChallengePage() {
       <section className="hero">
         <div className="wrap">
           <span className="eyebrow">{CHALLENGE.NAME} &middot; Live with Annie and Joel, RNs</span>
-          <h1>Three Nights to Find Out What Is Actually Driving Your Numbers</h1>
+          <h1>Three Days to Find Out What Is Actually Driving Your Numbers</h1>
           <p className="tagline">
             For women over 40 whose blood pressure, blood sugar and hormones are all pulling on
             the same rope. You leave with your own pattern on one page, and a plan you can hand
@@ -554,7 +557,7 @@ export default function ChallengePage() {
               <div className="l">Blood pressure and hormones taught together, by the two people who live it</div>
             </div>
             <div>
-              <div className="n">3 nights</div>
+              <div className="n">3 days</div>
               <div className="l">Live and unscripted, not a recorded course you watch alone</div>
             </div>
           </div>
@@ -598,7 +601,7 @@ export default function ChallengePage() {
             <li><b>&#10003;</b><span>You are already on medication, you are taking it, and your numbers still are not where you want them.</span></li>
             <li><b>&#10003;</b><span>You are doing things you were told to do and you cannot tell which of them is actually working.</span></li>
             <li><b>&#10003;</b><span>You want to work with your doctor, not around them, and you want to walk in prepared.</span></li>
-            <li><b>&#10003;</b><span>You can give one hour a night for three nights, or watch the replay within 48 hours.</span></li>
+            <li><b>&#10003;</b><span>You can give one hour a day at 11am Central for three days, or watch the replay within 48 hours.</span></li>
           </ul>
           <div className="notfor">
             <strong>This is not for you if</strong> you want someone to tell you to stop your medication,
@@ -705,13 +708,13 @@ export default function ChallengePage() {
           <div className="freeline">
             <span className="free">September</span>
           </div>
-          <div className="was">Three days, live, with Annie and Joel in September.</div>
-          <div className="lastfree">Get the dates before seats open to anyone else.</div>
+          <div className="was">Tuesday to Thursday, September 15 to 17, at 11:00am Central, live with Annie and Joel.</div>
+          <div className="lastfree">Join the list and you hear first when seats open.</div>
 
           {state === 'done' ? (
             <div className="regdone" role="status">
-              <strong>You are on the list.</strong> We will email you the September dates before we
-              open seats to anyone else. If nothing arrives, check spam, then write to{' '}
+              <strong>You are on the list.</strong> September 15 to 17 at 11:00am Central. We will email you
+              before we open seats to anyone else. If nothing arrives, check spam, then write to{' '}
               {CHALLENGE.SUPPORT_EMAIL}.
             </div>
           ) : (
