@@ -19,6 +19,7 @@
 // charges so nothing is missed when a KV write failed.
 import { kv } from '@vercel/kv';
 import { sendTeaShipped, firstNameOf } from './_tea-shipped-email.js';
+import { syncFulfillmentToShopify } from './_shopify-fulfill.js';
 import Stripe from 'stripe';
 import crypto from 'node:crypto';
 
@@ -182,7 +183,12 @@ export default async function handler(req, res) {
           orderRef: String(existing.sessionId || '').slice(-8).toUpperCase(),
         });
       }
-      return res.status(200).json({ ok: true, id, status, notified });
+      // Mirror to Shopify when the dashboard is what flipped it.
+      let shopify = null;
+      if (newlyFulfilled && String(existing.source || '').startsWith('shopify')) {
+        shopify = await syncFulfillmentToShopify(existing);
+      }
+      return res.status(200).json({ ok: true, id, status, notified, shopify });
     } catch (err) {
       console.error('ops-orders POST failed', err.message);
       return res.status(500).json({ error: 'Update failed' });
