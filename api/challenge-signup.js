@@ -248,14 +248,15 @@ const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
 const NEXT_COHORT = {
   label: 'September',
   dayCount: 'three days',
-  // Set when it exists. While datesLabel is null the email says dates are
-  // coming rather than inventing any.
+  // 2026-09-07: dates are SET. Monday, September 14 through Wednesday,
+  // September 16, 2026, 7:00pm ET. The waitlist confirmation email reads this
+  // and states the dates instead of "not public yet".
   //
   // NO PRICE FIELD, deliberately (Joel, 2026-08-27): the waitlist page mentions
   // money in NEITHER direction, and the confirmation email must not reintroduce
   // what the page removed. Do not add a priceLabel here without checking that
   // decision first.
-  datesLabel: null,
+  datesLabel: 'Monday, September 14 through Wednesday, September 16, at 7:00pm ET (6:00pm CT)',
   // The waitlist's OWN key namespace (2026-09-07, Joel: "make sure both sites
   // pull to a clean list"). Before this, intent 'waitlist' wrote into
   // challenge:<CHALLENGE.cohort>:interest, i.e. the AUGUST cohort's namespace,

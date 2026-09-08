@@ -22,12 +22,12 @@ if (!existsSync(src)) {
   process.exit(1);
 }
 
-const TITLE = 'The Change My Life Challenge | Free 3-Night Live Challenge with Annie and Joel, RNs';
+const TITLE = 'The Change My Life Challenge | September 14-16 · 3-Day Live Challenge with Annie and Joel, RNs';
 const DESC =
-  'Your blood pressure, hormones, sleep, weight, energy and mood are not separate problems. They are telling one connected story. Three free live nights with Annie Chitate, RN and Joel Polley, RN, August 4 to 6, 7pm ET.';
+  'Your blood pressure, hormones, sleep, weight, energy and mood are not separate problems. They are telling one connected story. Three live days with Annie Chitate, RN and Joel Polley, RN, September 14 to 16, 7pm ET.';
 const OG_TITLE = 'The Change My Life Challenge';
 const OG_DESC =
-  'Free 3-night live challenge with two registered nurses. See your numbers as one connected story and walk into your next appointment prepared. Aug 4 to 6, 7pm ET.';
+  '3-day live challenge with two registered nurses. See your numbers as one connected story and walk into your next appointment prepared. Sept 14 to 16, 7pm ET.';
 const URL = 'https://changemylifechallenge.com/';
 const IMG = 'https://changemylifechallenge.com/challenge-og.jpg';
 
@@ -45,7 +45,7 @@ const swaps = [
   [/(<meta property="og:image" content=")[^"]*(")/, `$1${IMG}$2`],
   [/(<meta property="og:image:width" content=")[^"]*(")/, '$1851$2'],
   [/(<meta property="og:image:height" content=")[^"]*(")/, '$1315$2'],
-  [/(<meta property="og:image:alt" content=")[^"]*(")/, '$1Free 3-Day Challenge: Change My Life Challenge, with Annie Chitate, RN and Joel Polley, RN$2'],
+  [/(<meta property="og:image:alt" content=")[^"]*(")/, '$13-Day Live Challenge: Change My Life Challenge, with Annie Chitate, RN and Joel Polley, RN$2'],
   [/<meta property="product:price:amount" content="[^"]*" \/>\s*/, ''],
   [/<meta property="product:price:currency" content="[^"]*" \/>\s*/, ''],
   [/(<meta name="twitter:title" content=")[^"]*(")/, `$1${OG_TITLE}$2`],
