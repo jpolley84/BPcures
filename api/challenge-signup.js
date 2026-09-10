@@ -633,7 +633,7 @@ Annie Chitate, RN . Joel Polley, RN . Louisville, Kentucky`;
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {
       preheader: `Three days, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt}. Everything you need is in here.`,
     }),
-    text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
+    text: `${bodyText.replace(/\n{3,}/g, "\n\n")}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,
   };
 }
@@ -694,7 +694,7 @@ Joel Polley, RN . BraveWorks RN`;
         ? 'Nothing was charged. I will send you the seat link as soon as it is working.'
         : `You are on the list for the ${NEXT_COHORT.label} cohort.`,
     }),
-    text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
+    text: `${bodyText.replace(/\n{3,}/g, "\n\n")}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,
   };
 }
