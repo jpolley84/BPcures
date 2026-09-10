@@ -375,11 +375,13 @@ function firstNameOf(full) {
 }
 
 // ─── Shared email furniture ───────────────────────────────────────────
-// The medication disclaimer is VERBATIM from src/pages/CheckoutPage.jsx. Do
-// not paraphrase, shorten, or reorder it. It ships under Joel's RN licence.
+// The medication disclaimer started VERBATIM from src/pages/CheckoutPage.jsx.
+// 2026-09-10 (Joel): the challenge is co-hosted, and the meds language moved OUT
+// of the email body into this footer so it sits at the bottom of every email.
+// It now names both RNs and says plainly it does not replace their doctor.
 const MED_DISCLAIMER_LINES = [
   'These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, or prevent any disease.',
-  'Educational and lifestyle content only. Joel Polley is a Registered Nurse, not a prescribing physician. Never start, stop, or adjust medication without your doctor.',
+  'Educational content only. This does not replace care from your doctor or healthcare provider. Annie Chitate and Joel Polley are Registered Nurses, not prescribing physicians. Never start, stop, or adjust a medication without your doctor.',
   'Results not typical. Most readers see modest results or none.',
 ];
 
@@ -452,7 +454,7 @@ function zoomHtml(email) {
   if (!ZOOM.url) {
     return callout({
       kicker: 'Your join link',
-      body: `The Zoom room for this cohort goes out in its own email before each live session. If it has not landed an hour before the call, reply to this email and I will send it to you by hand.`,
+      body: `Your Zoom link is the same for all three days. It comes in its own email before Day 1. If it has not landed an hour before the first call, reply to this email and I will send it to you by hand.`,
     });
   }
   const details = [
@@ -496,7 +498,7 @@ ${FB_GROUP_URL}`;
 
 function zoomText(email) {
   if (!ZOOM.url) {
-    return `Your join link: the Zoom room for this cohort goes out in its own email before each live session. If it has not landed an hour before the call, reply to this email and I will send it by hand.`;
+    return `Your join link: your Zoom link is the same for all three days. It comes in its own email before Day 1. If it has not landed an hour before the first call, reply to this email and I will send it by hand.`;
   }
   const bits = [`Join on Zoom: ${zoomTrackedUrl(email)}`];
   if (ZOOM.meetingId) bits.push(`Meeting ID: ${ZOOM.meetingId}`);
@@ -548,9 +550,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     ? p(
         `<strong>Your seat is free.</strong> Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
       )
-    : p(
-        `<strong>Your guarantee: The Show Up and Win Guarantee.</strong> Attend all three days live and finish your Life Change Map. If by the end of Day 3 you can't name your biggest domino and your first step, tell us by ${esc(CHALLENGE.logDueLabel)} and we refund your ${esc(priceLabel)}. Replays are included with your seat, but only live attendance qualifies for the guarantee. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
-      );
+    : ''; // 2026-09-10: the $97 seat carries no guarantee. Only VIP will.
 
   const secondPrepHtml = free
     ? p(
@@ -563,9 +563,10 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   const bodyHtml = [
     p(`Hey ${name},`),
     p(
-      `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. You can watch from your own chair with the camera off.`
+      `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.`
     ),
     zoomHtml(email),
+    p(`If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.`),
     fbGroupHtml(),
     h2('The three days'),
     nightsHtml(),
@@ -578,20 +579,19 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     ),
     secondPrepHtml,
     vipHtml,
-    h2('The plain part'),
-    guaranteeHtml,
-    p(
-      `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.`
-    ),
+    // 2026-09-10 (Joel): no guarantee in the paid email, only VIP will carry one.
+    // The medication paragraph moved to the footer disclaimer on every email.
+    ...(free ? [h2('The plain part'), guaranteeHtml] : []),
     p(`We will see you on Day 1, and the replays cover anything you miss.`),
     p(`Annie and Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Annie Chitate, RN &middot; Joel Polley, RN &middot; Louisville, Kentucky</span>`),
   ].join('');
 
   const bodyText = `Hey ${firstName || 'friend'},
 
-Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. You can watch from your own chair with the camera off.
+Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.
 
 ${zoomText(email)}
+If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.
 Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all three days on your calendar.
 
 ${fbGroupText()}
@@ -620,12 +620,10 @@ Then questions until they run out, and a second pass at the doctor conversation 
 }
 ${
   free
-    ? `YOUR SEAT IS FREE. Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
-    : `YOUR GUARANTEE: THE SHOW UP AND WIN GUARANTEE. Attend all three days live and finish your Life Change Map. If by the end of Day 3 you can't name your biggest domino and your first step, tell us by ${CHALLENGE.logDueLabel} and we refund your ${priceLabel}. Replays are included with your seat, but only live attendance qualifies for the guarantee. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
+    ? `YOUR SEAT IS FREE. Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.
+`
+    : ''
 }
-
-You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.
-
 We will see you on Day 1, and the replays cover anything you miss.
 
 Annie and Joel
