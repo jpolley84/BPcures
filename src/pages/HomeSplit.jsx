@@ -15,7 +15,7 @@
 import { useEffect, useMemo } from 'react';
 import CheckoutPage from './CheckoutPage';
 import FoodsGuideLanding from './FoodsGuideLanding';
-import MasterclassBanner from '../components/MasterclassBanner';
+import ChangeMyLifeBanner from '../components/ChangeMyLifeBanner';
 import { track, resolveHomeVariant, isHomeVariantCohorted } from '../utils/analytics.js';
 
 export default function HomeSplit() {
@@ -36,14 +36,15 @@ export default function HomeSplit() {
     });
   }, [variant]);
 
-  // 2026-07-22 (Joel): the free-masterclass banner rides above BOTH variants,
+  // 2026-09-10 (Joel): the Change My Life Challenge banner replaced the
+  // masterclass strip in this slot. It rides above BOTH variants,
   // so A and B get it identically and it stays out of the split's copy.
   // showBanner={false} is load-bearing: FoodsGuideLanding defaults it to true
   // for its own /101foods route, and without this prop variant B stacked two
   // identical countdown banners and lost ~79px of fold.
   return (
     <>
-      <MasterclassBanner />
+      <ChangeMyLifeBanner />
       {variant === 'b' ? <FoodsGuideLanding showBanner={false} /> : <CheckoutPage />}
     </>
   );
