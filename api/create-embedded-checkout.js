@@ -123,14 +123,18 @@ const VALID_CORNERS = new Set(['stress', 'sugar', 'sodium', 'sleep', 'stillness'
 //   - this constant + the 'cmlc-97' branch below
 //   - api/challenge-signup.js CHALLENGE.cohort
 //   - src/pages/ChallengePage.jsx CHALLENGE.COHORT_ID
-const CHALLENGE_COHORT = '2026-08-17';           // cohort id, also the Day 1 date
+// 2026-09-09 (Joel): SEPTEMBER cohort. Tue-Thu Sept 22, 23, 24, 12:00pm ET
+// (11:00am CT). Moved together with api/challenge-signup.js CHALLENGE.cohort
+// and src/pages/ChallengePage.jsx COHORT_ID -- all three MUST match or a paid
+// buyer is charged and never seated.
+const CHALLENGE_COHORT = '2026-09-22';           // cohort id, also the Day 1 date
 // 2026-07-28 (Joel): the call moved to 7:00pm EASTERN (was 7:00pm CT, which is
 // 8:00pm ET). Both wall clocks below describe the SAME instant, and both are
 // stamped into Stripe metadata so a later reader does not have to guess which
 // zone an ambiguous string meant. Mirrored in src/pages/ChallengePage.jsx
 // (START_ISO_ET) and api/challenge-signup.js (startIsoEt).
-const CHALLENGE_START_ET = '2026-08-17T19:00:00'; // Day 1, 7:00pm ET
-const CHALLENGE_START_CT = '2026-08-17T18:00:00'; // the same instant, 6:00pm CT
+const CHALLENGE_START_ET = '2026-09-22T12:00:00'; // Day 1, 12:00pm ET
+const CHALLENGE_START_CT = '2026-09-22T11:00:00'; // the same instant, 11:00am CT
 // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
 // 2026-08-05 ET, a night before the challenge itself ends. Mirrors
 // CHALLENGE.CLOSE_ISO_ET in src/pages/ChallengePage.jsx.
@@ -582,7 +586,7 @@ export default async function handler(req, res) {
       funnel: 'braveworks-bp',
       offer: 'challenge',
       seat: 'ga',
-      cohort: '2026-08-17',
+      cohort: '2026-09-22',
       ...phMeta,
       ...abMeta,
       ...utmMeta,

@@ -34,9 +34,10 @@ const SUPPORT_EMAIL = 'braveworksrn@gmail.com';
 
 // Kept in sync with the CHALLENGE config block in src/pages/ChallengePage.jsx.
 const NIGHTS = [
-  ['Night 1', 'Tuesday, August 4', 'Your Signals, On One Page'],
-  ['Night 2', 'Wednesday, August 5', 'One Connected Story'],
-  ['Night 3', 'Thursday, August 6', 'The Conversation'],
+  // 2026-09-22 cohort. Mirrors CHALLENGE.nights in api/challenge-signup.js.
+  ['Day 1', 'Tuesday, September 22', 'Lower Your Numbers Naturally'],
+  ['Day 2', 'Wednesday, September 23', 'Bring Sexy Back'],
+  ['Day 3', 'Thursday, September 24', 'Restore Your Body From the Inside Out'],
 ];
 
 function readParams() {
@@ -137,7 +138,7 @@ export default function ChallengeConfirmedPage() {
             </p>
 
             <div style={{ background: '#FFFFFF', border: '1px solid #E4DACE', borderRadius: 12, padding: '1rem 1.1rem', margin: '1.2rem 0' }}>
-              <p style={{ margin: '0 0 0.6rem', fontWeight: 700 }}>Your three nights</p>
+              <p style={{ margin: '0 0 0.6rem', fontWeight: 700 }}>Your three days</p>
               {NIGHTS.map(([n, date, title]) => (
                 <div key={n} style={{ display: 'flex', gap: '0.6rem', padding: '0.32rem 0', fontSize: '0.93rem', borderBottom: '1px solid #F2EAE0' }}>
                   <span style={{ color: CLAY, fontWeight: 700, minWidth: 56 }}>{n}</span>
@@ -153,7 +154,7 @@ export default function ChallengeConfirmedPage() {
                 </div>
               )}
               <p style={{ margin: '0.7rem 0 0', fontSize: '0.93rem', color: '#4A5A58' }}>
-                Every night starts at 7:00pm ET, which is 6:00pm CT, and runs about an hour.
+                Every day starts at 12:00pm ET, which is 11:00am CT, and runs about an hour.
                 {tier === 'challenge-vip'
                   ? ' Your VIP Bonus Day is Sunday, August 9 at 11:00am ET (10:00am CT) and runs about ninety minutes.'
                   : ''}
@@ -163,21 +164,16 @@ export default function ChallengeConfirmedPage() {
             <div style={{ background: '#F4E6DE', borderRadius: 12, padding: '0.9rem 1.1rem', margin: '1.2rem 0' }}>
               <p style={{ margin: '0 0 0.35rem', fontWeight: 700 }}>What happens next</p>
               <p style={{ margin: 0, fontSize: '0.95rem', color: '#3A4A48' }}>
-                Watch your inbox for the join details. Save that email. It is the same room all three nights,
+                Watch your inbox for the join details. Save that email. It is the same room all three days,
                 so you only need the one link. If it has not arrived within about an hour, check your spam
                 folder first, then write to {SUPPORT_EMAIL} and I will send it by hand.
               </p>
             </div>
 
             <p style={{ fontSize: '0.95rem', color: '#4A5A58' }}>
-              Your seat also includes the 10-Day BP Reset Kit. It is already in your library.
+              Your Day 1 action guide arrives by email before the first session. Your only job now is to
+              put 12:00pm ET (11:00am CT) on September 22, 23 and 24 in your calendar.
             </p>
-            <Link
-              to="/library"
-              style={{ display: 'inline-block', background: CLAY, color: '#fff', fontWeight: 800, textDecoration: 'none', padding: '0.8rem 1.4rem', borderRadius: 999, minHeight: 48, lineHeight: '2rem' }}
-            >
-              Open my library
-            </Link>
           </>
         )}
 

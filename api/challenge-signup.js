@@ -138,20 +138,24 @@ const CHALLENGE = {
   // COHORT_ID. The previous mismatch ('2026-08-04' here vs '2026-08-17' on the
   // checkout metadata) made handleRegister reject every paid cmlc-97 session:
   // charged and never seated. If the cohort ever moves again, move ALL THREE.
-  cohort: '2026-08-24',
+  // 2026-09-09 (Joel): SEPTEMBER cohort, PAID $97. Moved together with
+  // CHALLENGE_COHORT + the cmlc-97 branch in api/create-embedded-checkout.js
+  // and COHORT_ID in src/pages/ChallengePage.jsx. All three must match or a
+  // paid buyer is charged and never seated.
+  cohort: '2026-09-22',
   // 2026-08-03 (Joel, explicit): renamed to the Women of Power Rising
   // Challenge, co-hosted with Annie Chitate, RN (Everyday Nurse Annie).
   // "Connected story" positioning; mechanics unchanged.
   // 2026-08-03 (later same evening): renamed again to the Change My Life
   // Challenge, now on its own domain changemylifechallenge.com.
   name: 'The Change My Life Challenge',
-  subtitle: 'Seven days live with Annie Chitate, RN and Joel Polley, RN',
+  subtitle: 'Three days live with Annie Chitate, RN and Joel Polley, RN',
   // 2026-07-28 (Joel): the call moved to SEVEN PM EASTERN. It previously ran
   // 7:00pm CT, which is 8:00pm ET. 7:00pm ET is 6:00pm CT, so the instant below
   // is now expressed in EASTERN wall time and every label moved with it. The
   // same change is mirrored in src/pages/ChallengePage.jsx (START_ISO_ET) and
   // api/create-embedded-checkout.js (CHALLENGE_START_ET).
-  startIsoEt: '2026-08-24T19:00:00',
+  startIsoEt: '2026-09-22T12:00:00',
   // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
   // 2026-08-05 ET. Note this is NOT endLabel: Night 3 still runs on the
   // Thursday for everyone already registered. Mirrors CHALLENGE.CLOSE_ISO_ET in
@@ -166,21 +170,24 @@ const CHALLENGE = {
   // (end of the cohort; late joiners still get 48-hour replays). EDT is UTC-4,
   // so that instant is 2026-08-31T04:00:00Z. Re-resolved for the 08-24 move
   // rather than assuming the old offset still applied.
-  closeMs: Date.parse('2026-08-31T04:00:00Z'),
-  closeLabel: 'Sunday night',
-  startLabel: 'Monday, August 24',
-  endLabel: 'Sunday, August 30',
-  timeEt: '7:00pm ET',
-  timeCt: '6:00pm CT',
-  timeWindowEt: '7:00pm to 8:00pm ET',
+  // Doors close at midnight ET ending Thursday, September 24 (the last day of
+  // the cohort). September is inside EDT (UTC-4), so that instant is
+  // 2026-09-25T04:00:00Z. Re-resolved rather than assuming the old offset.
+  closeMs: Date.parse('2026-09-25T04:00:00Z'),
+  closeLabel: 'Thursday night',
+  startLabel: 'Tuesday, September 22',
+  endLabel: 'Thursday, September 24',
+  timeEt: '12:00pm ET',
+  timeCt: '11:00am CT',
+  timeWindowEt: '12:00pm to 1:00pm ET',
   nightLength: 'about 60 minutes',
-  logDueLabel: 'Tuesday, September 1',
-  refundByLabel: 'September 1',
+  logDueLabel: 'Saturday, September 26',
+  refundByLabel: 'September 26',
   // 2026-07-27 (Joel): founding-cohort seat is $17 (the kit price). $97 is the
   // NEXT cohort. Must match ChallengePage SEAT_PRICE and what Stripe charges.
   // 2026-08-17: the live seat is the $97 cmlc-97 tier (single seat, no GA/VIP
   // split). The VIP labels below are legacy and unreachable from the page.
-  seatPriceLabel: 'Free',
+  seatPriceLabel: '$97',
   // 2026-07-28 (Joel): VIP is $47 and is now a seat sold on /challenge, not a
   // post-purchase upsell. It adds a FOURTH session on Sunday morning.
   // This key was referenced twice in the guarantee copy below but never
@@ -195,14 +202,11 @@ const CHALLENGE = {
   // the pre-2026-08-17 sequence, so confirmation emails were listing days
   // that no longer matched the page. Corrected with the date move.
   nights: [
-    { n: 1, date: 'Monday, August 24', title: 'What Happened to My Body?' },
-    { n: 2, date: 'Tuesday, August 25', title: 'Connect the Dots' },
-    { n: 3, date: 'Wednesday, August 26', title: 'Stop Guessing With Food' },
-    { n: 4, date: 'Thursday, August 27', title: 'Bring Sexy Back' },
-    { n: 5, date: 'Friday, August 28', title: 'Move Different' },
-    { n: 6, date: 'Saturday, August 29', title: 'Know Your Numbers Without Fear' },
-    { n: 7, date: 'Sunday, August 30', title: 'Take Back Your Future' },
+    { n: 1, date: 'Tuesday, September 22', title: 'Lower Your Numbers Naturally' },
+    { n: 2, date: 'Wednesday, September 23', title: 'Bring Sexy Back' },
+    { n: 3, date: 'Thursday, September 24', title: 'Restore Your Body From the Inside Out' },
   ],
+
 };
 
 // Zoom details for THIS cohort. Env only. There is deliberately no fallback to
@@ -458,15 +462,15 @@ function zoomHtml(email) {
     .filter(Boolean)
     .join(' &middot; ');
   const ics = ZOOM.icsUrl
-    ? `<p style="font-size:14px;line-height:1.6;color:${PALETTE.muted};margin:6px 0 0;"><a href="${esc(ZOOM.icsUrl)}" style="color:${PALETTE.clay};">Add all seven days to your calendar</a>.</p>`
+    ? `<p style="font-size:14px;line-height:1.6;color:${PALETTE.muted};margin:6px 0 0;"><a href="${esc(ZOOM.icsUrl)}" style="color:${PALETTE.clay};">Add all three days to your calendar</a>.</p>`
     : '';
   return `<div style="background:${PALETTE.paperWarm};border-radius:12px;padding:20px 22px;margin:0 0 24px;">
     <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:10px;">Your join link, save this email</div>
     ${ctaButton('Join the challenge on Zoom', esc(zoomTrackedUrl(email)))}
     ${details ? `<p style="font-size:14px;line-height:1.6;color:${PALETTE.inkSoft};margin:0;">${details}</p>` : ''}
     ${ics}
-    <p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:10px 0 0;">The same link works all seven days.</p>
-    <p style="font-size:14px;line-height:1.6;color:${PALETTE.ink};margin:12px 0 0;"><strong>Set an alarm on your phone now for ${esc(CHALLENGE.timeCt)} (${esc(CHALLENGE.timeEt)}), and put all seven days on your calendar.</strong> The people who make it through this week are the ones who decided in advance that this hour is spoken for.</p>
+    <p style="font-size:13px;line-height:1.6;color:${PALETTE.muted};margin:10px 0 0;">The same link works all three days.</p>
+    <p style="font-size:14px;line-height:1.6;color:${PALETTE.ink};margin:12px 0 0;"><strong>Set an alarm on your phone now for ${esc(CHALLENGE.timeCt)} (${esc(CHALLENGE.timeEt)}), and put all three days on your calendar.</strong> The people who make it through this week are the ones who decided in advance that this hour is spoken for.</p>
   </div>`;
 }
 
@@ -498,7 +502,7 @@ function zoomText(email) {
   if (ZOOM.meetingId) bits.push(`Meeting ID: ${ZOOM.meetingId}`);
   if (ZOOM.passcode) bits.push(`Passcode: ${ZOOM.passcode}`);
   if (ZOOM.icsUrl) bits.push(`Add to calendar: ${ZOOM.icsUrl}`);
-  bits.push('The same link works all seven days.');
+  bits.push('The same link works all three days.');
   return bits.join('\n');
 }
 
@@ -545,7 +549,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
         `<strong>Your seat is free.</strong> Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
       )
     : p(
-        `<strong>Your guarantee: Show Up and Do the Work.</strong> Your seat is fully refundable for any reason right up until ${esc(CHALLENGE.startLabel)} at ${esc(CHALLENGE.timeEt)}. Change your mind, reply REFUND, done. After that I cannot un-hold a live room, so here is what replaces it: attend or watch all seven sessions within the available replay period, complete your daily action guides, and finish your Personal Life Change Map. If you did the work and, at the end of Day 7, you genuinely do not believe the week delivered the value of your ${esc(priceLabel)}, send us your completed Life Change Map by ${esc(CHALLENGE.logDueLabel)} (within 48 hours of Day 7) and we refund the full ${esc(priceLabel)}. No argument, no endless hoops. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome; we are guaranteeing the chance to go through the full process with us and leave with a clearer next move.`
+        `<strong>Your guarantee: The Show Up and Win Guarantee.</strong> Give us three days. Attend live. Complete your Life Change Map. If you do not believe the experience delivered far more value than the ${esc(priceLabel)} you paid, tell us by ${esc(CHALLENGE.logDueLabel)} (within 48 hours of Day 3) and you get a full refund. No questions asked. Live attendance is required to qualify. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome; we are guaranteeing three days that leave you with a clear next move.`
       );
 
   const secondPrepHtml = free
@@ -559,18 +563,18 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   const bodyHtml = [
     p(`Hey ${name},`),
     p(
-      `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Seven days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. You can watch from your own chair with the camera off.`
+      `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. You can watch from your own chair with the camera off.`
     ),
     zoomHtml(email),
     fbGroupHtml(),
-    h2('The seven days'),
+    h2('The three days'),
     nightsHtml(),
     p(
-      `Every session has a replay, up for 48 hours afterward. If one evening is your grandson's ball game, watch the replay the next morning. The work still stacks.`
+      `Every session has a replay, up for 48 hours afterward. If one day your grandson has a doctor's appointment, watch the replay that evening. The work still stacks.`
     ),
     h2('Two things before Day 1'),
     p(
-      `<strong>One.</strong> Find your home blood pressure cuff and put it somewhere you will see it. That is the only equipment for the whole week.`
+      `<strong>One.</strong> Keep a notebook and a pen next to wherever you will watch. If you have a home blood pressure cuff, set it out too. That is all the equipment you need.`
     ),
     secondPrepHtml,
     vipHtml,
@@ -579,26 +583,26 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     p(
       `And the thing that matters more than anything else in the week, said up front: you never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.`
     ),
-    p(`We will see you on the next live night, and the replays cover anything you missed.`),
+    p(`We will see you on Day 1, and the replays cover anything you miss.`),
     p(`Annie and Joel<br/><span style="color:${PALETTE.muted};font-size:14px;">Annie Chitate, RN &middot; Joel Polley, RN &middot; Louisville, Kentucky</span>`),
   ].join('');
 
   const bodyText = `Hey ${firstName || 'friend'},
 
-Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Seven days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. You can watch from your own chair with the camera off.
+Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. You can watch from your own chair with the camera off.
 
 ${zoomText(email)}
-Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all seven days on your calendar.
+Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all three days on your calendar.
 
 ${fbGroupText()}
 
-THE SEVEN DAYS
+THE THREE DAYS
 ${nightsText()}
 
 Every session has a replay, up for 48 hours afterward.
 
 TWO THINGS BEFORE DAY 1
-One. Find your home blood pressure cuff. That is the only equipment for the whole week.
+One. Keep a notebook and a pen next to wherever you will watch. If you have a home blood pressure cuff, set it out too. That is all the equipment you need.
 ${
   free
     ? `Two. Keep a notebook nearby. Each day has a short action guide, and writing down what you notice is most of the work.`
@@ -617,19 +621,19 @@ Then questions until they run out, and a second pass at the doctor conversation 
 ${
   free
     ? `YOUR SEAT IS FREE. Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
-    : `YOUR GUARANTEE. Your seat is fully refundable for any reason right up until ${CHALLENGE.startLabel} at ${CHALLENGE.timeEt}. After that I cannot un-hold a live call, so here is what replaces it: attend or watch all seven sessions within the available replay period, complete your daily action guides, and finish your Personal Life Change Map. If you did the work and at the end of Day 7 you genuinely do not believe the week delivered the value of your ${priceLabel}, send us your completed Life Change Map by ${CHALLENGE.logDueLabel} (within 48 hours of Day 7) and we refund the full ${priceLabel}. No argument, no endless hoops. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
+    : `YOUR GUARANTEE: THE SHOW UP AND WIN GUARANTEE. Give us three days. Attend live. Complete your Life Change Map. If you do not believe the experience delivered far more value than the ${priceLabel} you paid, tell us by ${CHALLENGE.logDueLabel} (within 48 hours of Day 3) and you get a full refund. No questions asked. Live attendance is required to qualify. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
 }
 
 You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.
 
-We will see you on the next live night, and the replays cover anything you missed.
+We will see you on Day 1, and the replays cover anything you miss.
 
 Annie and Joel
 Annie Chitate, RN . Joel Polley, RN . Louisville, Kentucky`;
 
   return {
     html: emailShell(bodyHtml + footerHtml({ unsubUrl, provenance }), {
-      preheader: `Seven days, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt}. Everything you need is in here.`,
+      preheader: `Three days, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt}. Everything you need is in here.`,
     }),
     text: `${bodyText}\n\n${footerText({ unsubUrl, provenance })}`,
     unsubUrl,
@@ -858,7 +862,8 @@ async function handleRegister(req, res) {
     // in-flight legacy session.)
     owes: isVip
       ? ['three-nights', 'replays', 'workbook', 'kit', 'bonus-day', 'qa', '48-hour-answer']
-      : ['seven-days', 'replays', 'daily-guides', 'life-change-map', 'labs-mini-training', 'qa', 'support-circle'],
+      // 2026-09-22 cohort: exactly the page's offer stack. Q&A moved to the VIP upsell.
+      : ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training'],
     confirmationSentAt: null,
   };
 
@@ -893,7 +898,7 @@ async function handleRegister(req, res) {
     } catch (err) {
       console.warn('challenge-signup: members/count write failed (non-fatal)', err.message);
     }
-    await touchTriangleRecord(email, firstName, ['challenge-2026-08', isVip ? 'challenge-vip' : 'challenge-ga'], {
+    await touchTriangleRecord(email, firstName, ['challenge-2026-09', isVip ? 'challenge-vip' : 'challenge-ga'], {
       promoteToBuyer: true,
     });
   }
@@ -906,7 +911,7 @@ async function handleRegister(req, res) {
       to: email,
       replyTo: REPLY_TO,
       campaign: 'challenge-seat-saved-paid',
-      subject: `Your seat is saved: seven days, starting ${CHALLENGE.startLabel}`,
+      subject: `Your seat is saved: three days, starting ${CHALLENGE.startLabel}`,
       html,
       text,
       ...(unsubUrl

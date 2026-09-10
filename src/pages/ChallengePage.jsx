@@ -72,11 +72,16 @@ const CHALLENGE = {
   // 2026-08-17: cohort moved to the following Monday. Mirrored in
   // api/challenge-signup.js (cohort, startIsoEt, closeMs, labels, nights).
   // Move ALL of them together or registrations land in the wrong bucket.
-  COHORT_ID: '2026-08-24',
+  // 2026-09-09 (Joel): SEPTEMBER cohort, PAID $97, sold through the static
+  // page at public/challenge-b/index.html. Mirrored in
+  // api/challenge-signup.js CHALLENGE.cohort and the cmlc-97 branch +
+  // CHALLENGE_COHORT in api/create-embedded-checkout.js. Move all three or a
+  // paid buyer is charged and never seated.
+  COHORT_ID: '2026-09-22',
   // 2026-09-07 (Joel): September dates SET. Tue-Thu Sept 15-17, 11:00am
   // CENTRAL (daytime, not the old 7pm ET evening slot). Mirrored in
   // NEXT_COHORT.datesLabel in api/challenge-signup.js.
-  DATE_RANGE_LABEL: 'Tuesday to Thursday, September 15, 16 and 17',
+  DATE_RANGE_LABEL: 'Tuesday to Thursday, September 22, 23 and 24',
   TIME_LABEL: '11:00am Central (12:00pm Eastern), about an hour each day',
   DAY_COUNT: 3,
   SUPPORT_EMAIL: 'braveworksrn@gmail.com',
