@@ -27,7 +27,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import MasterclassBanner from '../components/MasterclassBanner';
+import ChangeMyLifeBanner from '../components/ChangeMyLifeBanner';
 import { track, identify } from '../utils/analytics.js';
 
 const FUNNEL_VERSION = 'foods101-v2';
@@ -282,7 +282,7 @@ export default function FoodsGuideLanding({ showBanner = true }) {
         .bpq-textlink { color: var(--clay, #B85A36); font-weight: 700; text-decoration: underline; }
       `}</style>
 
-      {showBanner && <MasterclassBanner />}
+      {showBanner && <ChangeMyLifeBanner />}
 
       <div style={shell}>
         {/* Wordmark only. No nav on a squeeze. */}
