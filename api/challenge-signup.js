@@ -549,7 +549,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
         `<strong>Your seat is free.</strong> Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
       )
     : p(
-        `<strong>Your guarantee: The Show Up and Win Guarantee.</strong> Give us three days. Attend live. Complete your Life Change Map. If you do not believe the experience delivered far more value than the ${esc(priceLabel)} you paid, tell us by ${esc(CHALLENGE.logDueLabel)} (within 48 hours of Day 3) and you get a full refund. No questions asked. Live attendance is required to qualify. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome; we are guaranteeing three days that leave you with a clear next move.`
+        `<strong>Your guarantee: The Show Up and Win Guarantee.</strong> Attend all three days live and finish your Life Change Map. If by the end of Day 3 you can't name your biggest domino and your first step, tell us by ${esc(CHALLENGE.logDueLabel)} and we refund your ${esc(priceLabel)}. Replays are included with your seat, but only live attendance qualifies for the guarantee. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
       );
 
   const secondPrepHtml = free
@@ -621,7 +621,7 @@ Then questions until they run out, and a second pass at the doctor conversation 
 ${
   free
     ? `YOUR SEAT IS FREE. Nothing was charged, nothing renews, and there is no fine print to read twice. The only thing this seat costs is showing up, and the replays cover you if life gets in the way.`
-    : `YOUR GUARANTEE: THE SHOW UP AND WIN GUARANTEE. Give us three days. Attend live. Complete your Life Change Map. If you do not believe the experience delivered far more value than the ${priceLabel} you paid, tell us by ${CHALLENGE.logDueLabel} (within 48 hours of Day 3) and you get a full refund. No questions asked. Live attendance is required to qualify. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
+    : `YOUR GUARANTEE: THE SHOW UP AND WIN GUARANTEE. Attend all three days live and finish your Life Change Map. If by the end of Day 3 you can't name your biggest domino and your first step, tell us by ${CHALLENGE.logDueLabel} and we refund your ${priceLabel}. Replays are included with your seat, but only live attendance qualifies for the guarantee. We are not guaranteeing a number on the scale, a blood pressure reading, or any medical outcome.`
 }
 
 You never start, stop, or adjust a medication on your own. Your doctor makes every one of those calls. Our job is to walk you in with better information than you have ever had.

@@ -1152,6 +1152,41 @@
       .coach-stats div{padding:16px 10px}
       .hosts-close{font-size:1rem}
     }
+
+    /* ── 2026-09-10 expert-feedback pass ─────────────────────────────── */
+    .hero-pain{
+      max-width:820px;margin:0 auto 14px;text-align:center;
+      font-family:Georgia,"Times New Roman",serif;color:var(--body);
+      font-size:clamp(1.05rem,1.7vw,1.3rem);line-height:1.4;
+    }
+    .price-strip{
+      display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px 20px;
+      max-width:960px;margin:22px auto 0;padding:18px 20px;
+      background:var(--teal-soft);border:1px solid var(--line);border-radius:14px;
+    }
+    .price-strip-price{
+      font-family:Georgia,"Times New Roman",serif;font-weight:700;color:var(--coral);
+      font-size:2.3rem;line-height:1;
+    }
+    .price-strip-meta{color:var(--navy);font-weight:800;font-size:.98rem}
+    .objection{padding:18px 0;border-bottom:1px solid var(--line)}
+    .objection:last-child{border-bottom:0}
+    .objection h3{
+      font-size:clamp(1.3rem,2.2vw,1.7rem);margin:0 0 8px;color:var(--navy);
+    }
+    .objection p{margin:0;color:var(--body);font-size:1.05rem;line-height:1.6}
+    .results-note{
+      max-width:900px;margin:16px auto 0;text-align:center;
+      color:var(--muted);font-size:.82rem;font-style:italic;
+    }
+    @media(max-width:640px){
+      .hero-pain{font-size:1rem;margin-bottom:10px}
+      .price-strip{flex-direction:column;padding:16px 14px}
+      .price-strip-price{font-size:2rem}
+      .price-strip-meta{font-size:.9rem;text-align:center}
+      .objection h3{font-size:1.2rem}
+      .objection p{font-size:.98rem}
+    }
     /* The nowrap one-liners above are a DESKTOP trick. Below ~1000px the
        purpose line is wider than the column and pushed the page sideways,
        so hand wrapping back before that happens. */
@@ -1221,13 +1256,14 @@
 </head>
 <body>
 <div class="announcement">
-<span>LIMITED COACHING SEATS AVAILABLE!   SEPTEMBER 22–24, 2026</span>
+<span>LIVE ON ZOOM · SEPTEMBER 22–24, 2026 · 12 PM ET</span>
 <a class="announcement-cta" href="#checkout">JOIN THE CHALLENGE</a>
 </div><header class="hero" id="top">
 <div class="wrap">
 <div class="enough-line">For the woman over 40 who's had <strong>ENOUGH.</strong></div>
-<h1>Girl, Your Health Is A Mess. Your Body Feels Out Of Control. Nothing You've Tried Has Worked.<br/><span class="hero-second-line">It's Time To Fix It A Different Way.</span></h1>
-<p class="hero-sub">Become the woman other women quietly envy again. Get your confidence back, without fad diets, crazy exercises or toxic shortcuts.</p>
+<p class="hero-pain">Girl, your health is a mess. Your body feels out of control. Nothing you've tried has worked.</p>
+<h1>In 3 Live Days, Find Out What Your Body Has Been Trying To Tell You, <span class="hero-second-line">And Exactly Where To Start.</span></h1>
+<p class="hero-sub">Become the woman other women quietly envy again. Get your confidence back, without fad diets, crazy exercises or another quick fix.</p>
 <div class="hero-space"></div>
 <p class="experience">A 3-Day LIVE Coaching Experience to Change Your Life</p>
 <p class="date-line">September 22, 23 &amp; 24, 2026 · 12 PM Eastern / 11 AM Central</p>
@@ -1244,7 +1280,7 @@
 </header><section class="section white compact-section">
 <div class="narrow">
 <h2 class="section-title small center">You've Tried Everything.</h2>
-<p class="section-copy tried-list">The prescriptions. The supplements. The collagen to stop speedy aging. The creams and tweezers for chin hair. The mantras and affirmations. The gurus. The diets. The exercise routines. The videos you've saved.</p><p class="section-copy tried-hit">And yet here you are. <strong>Nothing is working. If anything, it feels like it is getting worse.</strong></p><p class="relief-line">It's not because you haven't tried hard enough. <strong>It's because no one ever told you these things could be connected.</strong></p><div class="emphasis-line connected-story">Your symptoms are telling you <span>one connected story</span>, and no one ever taught you how to listen to your body.</div></div></section><section class="section teal-soft pre-vsl-proof compact-section">
+<p class="section-copy tried-list">The prescriptions. The supplements. The collagen to stop speedy aging. The creams and tweezers for chin hair. The affirmations and positive self-talk. The gurus. The diets. The exercise routines. The videos you've saved.</p><p class="section-copy tried-hit">And yet here you are. <strong>Nothing is working. If anything, it feels like it is getting worse.</strong></p><p class="relief-line">It's not because you haven't tried hard enough. <strong>It's because no one ever told you these things could be connected.</strong></p><div class="emphasis-line connected-story">Your symptoms are telling you <span>one connected story</span>, and no one ever taught you how to listen to your body.</div></div></section><section class="section teal-soft pre-vsl-proof compact-section">
 <div class="wrap">
 <div class="testimonials proof-pair">
 <!-- REVIEW CLAIM -->
@@ -1259,6 +1295,7 @@
 </div>
 </div>
 </div>
+<p class="results-note">Individual results vary. These are real messages from real women.</p>
 </section><section class="section white compact-vsl">
 <div class="wrap center">
 <h2 class="vsl-invite">If something in you is saying, “I’ve had enough. I’m ready for change.” watch this video.</h2>
@@ -1269,6 +1306,11 @@
 <div class="video video-still">
 <img alt="Annie Chitate, RN and Joel Polley, RN live on Zoom together" src="/challenge-b/img/zoom-still.jpg"/>
 <p class="video-still-label">Annie + Joel, live with the room</p>
+</div>
+<div class="price-strip">
+<span class="price-strip-price">$97</span>
+<span class="price-strip-meta">3 live days · Sept 22–24 · 12 PM ET · with Annie + Joel</span>
+<a class="cta" href="#final-checkout">I'M READY TO SECURE MY TICKET</a>
 </div>
 </div>
 </section><section class="section teal-soft challenge-experience compact-section">
@@ -1288,7 +1330,7 @@
 
 
 
-<p class="section-copy days-lead"><strong>Three days. Three live coaching sessions.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">You'll leave with your <strong>Life Change Map</strong> showing you what your body has been telling you, what deserves your attention first, your biggest domino, and where to start.</p>
+<p class="section-copy days-lead"><strong>Three days. Three live coaching sessions. One outcome: your biggest domino and your first step.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">You'll leave with your <strong>Life Change Map</strong> showing you what your body has been telling you, what deserves your attention first, your biggest domino, and where to start.</p>
 <figure class="inline-photo map-photo">
 <img alt="The Personal Life Change Map workbook, open to a filled-in example spread" src="/challenge-b/img/life-change-map.jpg"/>
 <figcaption>Your Life Change Map. You build it with us, live, across the three days.</figcaption>
@@ -1299,7 +1341,7 @@
 <div class="day-num">DAY 1</div>
 <h3>Lower Your Numbers Naturally</h3>
 <!-- REVIEW CLAIM -->
-<p>Finally lower numbers like your weight, blood pressure, blood sugar and cholesterol naturally by finding your personalized source of these related issues. Connect the dots and know exactly where to start.</p>
+<p>Learn the natural daily habits that support healthy weight, blood pressure, blood sugar and cholesterol. Find the personal source behind your numbers, connect the dots, and know exactly where to start and what to ask your doctor.</p>
 </article>
 <article class="day">
 <div class="day-num">DAY 2</div>
@@ -1310,7 +1352,7 @@
 <div class="day-num">DAY 3</div>
 <h3>Restore Your Body From the Inside Out</h3>
 <!-- REVIEW CLAIM -->
-<p>Rebuild the body you love so you can enjoy the life you want. Discover the simplest way to restore your energy, stabilize your moods, reverse speedy hormone aging, stop hot flashes, chin hair, thinning hair and more unwanted symptoms without toxic pills, crazy diets or excessive exercise.</p>
+<p>Rebuild the body you love so you can enjoy the life you want. Learn the simple daily habits that support your energy, your moods and your hormones, and how they connect to hot flashes, chin hair, thinning hair and more, without another quick fix, crazy diets or excessive exercise.</p>
 </article>
 </div>
 <div class="center" style="margin-top:30px"><a class="cta" href="#checkout">YES  -  I WANT THESE 3 DAYS</a></div>
@@ -1351,18 +1393,25 @@
 
 <p class="urgency-punch"><strong>Waiting does not hold your place. Your body keeps going the way it is already going. One more year is one more year in that direction.</strong></p><p class="urgency-calm">You do not need to panic. You need to start.</p><div class="source-line">Sources: American Heart Association · CDC</div>
 </div>
-</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">This Is the Week That Changes Your Life.</p><div style="margin-top:28px"><a class="cta" href="#final-checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section white compact-checkout" id="checkout">
+</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">This Is the Week That Changes Your Life.</p><div style="margin-top:28px"><a class="cta" href="#final-checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
+<div class="narrow">
+<h2 class="section-title small center">Still Wondering If This Is For You?</h2>
+<div class="objection"><h3>“I work at noon.”</h3><p>Each session is one hour. Join from your phone on your lunch break, camera off. If one day slips, the replay is up for 48 hours. To qualify for the guarantee, attend all three days live.</p></div>
+<div class="objection"><h3>“I'm on medication.”</h3><p>Good. Nothing here asks you to stop or change it. You'll learn what your numbers mean, so your next conversation with your doctor is a better one.</p></div>
+<div class="objection"><h3>“I'm 70.”</h3><p>Women in their 70s and 80s have sat in this room. Age changes where you start, not whether you can start.</p></div>
+</div>
+</section><section class="section white compact-checkout" id="checkout">
 <div class="wrap center">
 <h2 class="section-title medium">Three Live Days. One Clear Starting Point.</h2>
 
 </div>
 <div class="wrap">
 <div class="value-stack">
-<div class="value-row"><div><strong>3 Live Coaching Sessions with Annie + Joel</strong><br/><span>Three focused nights of live teaching, coaching and implementation.</span></div><span>$297 value</span></div>
-<div class="value-row"><div><strong>Your Personal Life Change Map</strong><br/><span>A simple map you build through the challenge so you leave knowing where to start.</span></div><span>$97 value</span></div>
-<div class="value-row"><div><strong>Daily Action Guides</strong><br/><span>Simple steps that keep the challenge from becoming another pile of notes.</span></div><span>$47 value</span></div>
-<div class="value-row"><div><strong>48-Hour Replays</strong><br/><span>If life happens, you still have a short window to catch the teaching.</span></div><span>$47 value</span></div>
-<div class="value-row"><div><strong>Know Your Labs Mini-Training</strong><br/><span>Understand your numbers better so you can ask stronger questions.</span></div><span>$97 value</span></div>
+<div class="value-row"><div><strong>Get coached live, by two registered nurses</strong><br/><span>Three one-hour live sessions with Annie + Joel, September 22–24, reading your body and your numbers with you.</span></div><span>$297 value</span></div>
+<div class="value-row"><div><strong>Know exactly where to start</strong><br/><span>Your Personal Life Change Map: your biggest domino and your first step, on one page you build with us.</span></div><span>$97 value</span></div>
+<div class="value-row"><div><strong>Never wonder what to do today</strong><br/><span>Daily Action Guides: one clear step for each day, so this never becomes another pile of notes.</span></div><span>$47 value</span></div>
+<div class="value-row"><div><strong>Life happens, and you still get every minute</strong><br/><span>48-hour replays of every session.</span></div><span>$47 value</span></div>
+<div class="value-row"><div><strong>Walk into your next appointment with better questions</strong><br/><span>Know Your Labs Mini-Training: what your own lab numbers mean, and what to ask about them.</span></div><span>$97 value</span></div>
 </div>
 <div class="value-total">Total Experience Value: $585</div>
 <div class="price">$97</div>
@@ -1371,7 +1420,7 @@
 <div class="guarantee-seal">✓</div>
 <div>
 <strong>THE SHOW UP &amp; WIN GUARANTEE</strong>
-<p>Give us three days. Attend live. Complete your Life Change Map. If you don't believe the experience delivered far more value than the $97 you paid, tell us within 48 hours of Day 3 and you'll get a refund. No questions asked.</p><small class="guarantee-note">Live attendance is required to qualify for the guarantee.</small>
+<p>Attend all three days live and finish your Life Change Map. If by the end of Day 3 you can't name your biggest domino and your first step, tell us by Sept 26 and we refund your $97.</p><small class="guarantee-note">Replays are included, but only live attendance qualifies for the guarantee.</small>
 </div>
 </div>
 <div class="center"><a class="cta" href="#final-checkout">YES, SAVE MY SEAT</a></div>
@@ -1410,12 +1459,13 @@
 <!-- REVIEW CLAIM -->
 <div class="testimonial"><blockquote>“My blood pressure is back to normal: 124/80. Reduced salt, started little exercises.”</blockquote><cite>BraveWorks reader</cite></div>
 </div>
+<p class="results-note">Individual results vary. These are real messages from real women.</p>
 <div class="chat-proof">
 
 </div>
 </div>
 </section><section class="section sky compact-fit">
-<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You're over 40, your body is changing, and you don't like what you're seeing or feeling.</li><li>You know something has to change, but you've felt stuck because you don't know where to start.</li><li>You've collected enough information. Now you want results.</li><li>You want something simple and experts you can trust.</li><li>You're ready to show up, participate and give yourself three focused days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You're looking for another video library you probably won't watch.</li><li>You want a magic overnight fix or another toxic pill.</li><li>You want another generic plan handed to every woman.</li><li>You want to keep doing everything the hard way for temporary results.</li><li>You have a skeptical spirit and you're more committed to finding reasons something won't work than finding out what might.</li></ul></div></div><div class="come-line">Come scared. Come messy. Just come.</div></div>
+<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You're over 40, your body is changing, and you don't like what you're seeing or feeling.</li><li>You know something has to change, but you've felt stuck because you don't know where to start.</li><li>You've collected enough information. Now you want results.</li><li>You want something simple and experts you can trust.</li><li>You're ready to show up, participate and give yourself three focused days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You're looking for another video library you probably won't watch.</li><li>You want a magic overnight fix or another shortcut.</li><li>You want another generic plan handed to every woman.</li><li>You want to keep doing everything the hard way for temporary results.</li><li>You have a skeptical spirit and you're more committed to finding reasons something won't work than finding out what might.</li></ul></div></div><div class="come-line">Come scared. Come messy. Just come.</div></div>
 </section><section class="section white compact-section coach-proof-before"><div class="wrap"><div class="testimonials" style="margin-top:44px">
 <div class="testimonial"><blockquote>“She understands our bodies, and she takes the time to help us understand ourselves.”</blockquote><cite>Simone Cato · Mom of 4 · Challenge participant</cite></div>
 <div class="testimonial"><blockquote>“Attentive, clear, and down-to-earth. Her knowledge and passion for health and wellness are impressive.”</blockquote><cite>Candace Andrews · Mom of 2</cite></div>
@@ -1472,7 +1522,7 @@ delivered live, to you, about your body.</em></li>
 <div><strong>36 years</strong><span>combined nursing experience</span></div>
 <div><strong>10+ years</strong><span>coaching women through this</span></div>
 <div><strong>Radio &middot; Podcast &middot; YouTube</strong><span>hosts, every single week</span></div>
-<div><strong>660,000+</strong><span>people follow their teaching</span></div>
+<div><strong>680,000+</strong><span>people follow Annie and Joel</span></div>
 </div>
 
 <p class="hosts-close">Here is what all of that buys you: <strong>three days where nobody hands you a
@@ -1505,7 +1555,7 @@ anywhere else.</em></p>
 <h2 class="section-title medium center">Frequently Asked Questions.</h2>
 <details>
 <summary>What if I miss a session?</summary>
-<p>Each core session is one hour. Replays are available for 48 hours, so if life happens, you can catch up while the challenge is still moving.</p>
+<p>Each core session is one hour. Replays are available for 48 hours, so if life happens, you can catch up while the challenge is still moving. To qualify for the guarantee, attend all three days live.</p>
 </details>
 <details>
 <summary>What if I'm already on medication or working with my doctor?</summary>
