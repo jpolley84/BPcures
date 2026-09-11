@@ -1259,6 +1259,26 @@ html,body{overflow-x:hidden}
 .sticky-cta.show{display:flex}
 .sticky-cta .sc-txt{color:#F5EFE4;font-weight:700;font-size:.86rem;letter-spacing:.02em}
 .sticky-cta a{background:#E9C7B8;color:#243A2B;font-weight:800;font-size:.9rem;padding:13px 22px;border-radius:999px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+
+/* 2026-09-11 Joel copy pass: hero compressed so the countdown + CTA sit
+   above the fold, and the value stack is a grid so every number lines up
+   with the total in one right-aligned column. */
+.hero{padding-top:clamp(18px,3vh,34px)!important;padding-bottom:clamp(18px,3vh,30px)!important}
+.hero h1{font-size:clamp(1.9rem,4.6vw,3.3rem)!important;margin-bottom:10px!important}
+.hero .hero-sub{margin-bottom:8px!important;font-size:clamp(.98rem,1.6vw,1.15rem)!important;line-height:1.5!important}
+.hero .hero-invite{margin-bottom:10px!important}
+.hero .experience{margin-top:4px!important}
+.countdown{margin-bottom:14px!important}
+.countdown-label{margin-top:6px!important}
+.value-stack{max-width:760px;margin:0 auto}
+.value-row{display:grid!important;grid-template-columns:1fr 96px!important;gap:12px!important;align-items:center!important}
+.value-row > span.value-amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:800}
+.value-total-row{border-top:2px solid rgba(36,58,43,.35);margin-top:6px;padding-top:14px}
+.value-total-row strong{font-size:1.05rem}
+.value-total-row .value-amt{font-size:1.2rem}
+.guarantee-box{border:2px solid #243A2B;border-radius:14px}
+.guarantee-box h3{text-transform:uppercase;letter-spacing:.04em}
+@media(max-width:560px){.value-row{grid-template-columns:1fr 78px!important}}
 </style>
 <script src="/pixels.js"></script>
 </head>
@@ -1268,12 +1288,11 @@ html,body{overflow-x:hidden}
 <a class="announcement-cta" href="#checkout">JOIN THE CHALLENGE</a>
 </div><header class="hero" id="top">
 <div class="wrap">
-<div class="enough-line">For the woman over 40 who's had <strong>ENOUGH.</strong></div>
-<p class="hero-pain">You’ve tried the diets, the plans, the advice — and your body still isn’t telling you what’s wrong. It’s not that nothing works. It’s that nobody has connected <strong>your</strong> dots yet.</p>
-<h1>In 3 Live Days, Find Out What Your Body Has Been Trying To Tell You, <span class="hero-second-line">And Exactly Where To Start.</span></h1>
-<p class="hero-sub">Leave with your biggest health domino and your exact first step, on one page — without fad diets, punishing exercise, or stopping your medication.</p>
-<p class="hero-proof">“My blood pressure is back to normal: 124/80.” — a BraveWorks reader</p>
-<div class="hero-space"></div>
+<div class="enough-line">For the woman over 40 who is tired of not feeling like herself.</div>
+
+<h1>Girl, Your Body Changed. <span class="hero-second-line">And Nobody Gave You The New Rules.</span></h1>
+<p class="hero-sub">The weight. The mood swings. The chin hair. The thinning hair. The blood pressure. The blood sugar. The tiredness. You keep trying to fix each thing by itself. <strong>But what if they are connected?</strong></p>
+<p class="hero-sub hero-invite">Come spend three live days with us and learn how to listen to your body, connect the dots, and finally know where to start.</p>
 <p class="experience">A 3-Day LIVE Coaching Experience to Change Your Life</p>
 <p class="date-line">September 22, 23 &amp; 24, 2026 · 12 PM Eastern / 11 AM Central</p>
 <div class="countdown-label">We begin in:</div>
@@ -1283,13 +1302,13 @@ html,body{overflow-x:hidden}
 <div class="countdown-unit"><b id="minutes">00</b><span>Minutes</span></div>
 <div class="countdown-unit"><b id="seconds">00</b><span>Seconds</span></div>
 </div>
-<a class="cta" href="#checkout">I'M READY TO SECURE MY TICKET</a>
+<a class="cta" href="#checkout">YES — SAVE MY SEAT</a>
 <div class="micro">Three live days with Annie Chitate, RN + Joel Polley, RN</div>
 </div>
 </header><section class="section white compact-section">
 <div class="narrow">
-<h2 class="section-title small center">You've Tried Everything.</h2>
-<p class="section-copy tried-list">The prescriptions. The supplements. The collagen to stop speedy aging. The creams and tweezers for chin hair. The affirmations and positive self-talk. The gurus. The diets. The exercise routines. The videos you've saved.</p><p class="section-copy tried-hit">And yet here you are. <strong>Nothing is working. If anything, it feels like it is getting worse.</strong></p><p class="relief-line">It's not because you haven't tried hard enough. <strong>It's because no one ever told you these things could be connected.</strong></p><div class="emphasis-line connected-story">Your symptoms are telling you <span>one connected story</span>, and no one ever taught you how to listen to your body.</div></div></section><section class="section teal-soft pre-vsl-proof compact-section">
+<h2 class="section-title small center">You Have Tried Enough.</h2>
+<p class="section-copy tried-list">The prescriptions. The supplements. The collagen. The creams. The tweezers. The diets. The workouts. The videos you saved and said you would come back to.</p><p class="section-copy tried-hit">And after all of that, you are still thinking: <strong>“Why do I still not feel like myself?”</strong></p><p class="relief-line">Maybe the problem is not that you have not tried hard enough. <strong>Maybe nobody ever helped you connect the dots.</strong></p><div class="emphasis-line connected-story">Your body has been giving you <span>clues</span>. We are going to help you start reading them.</div></div></section><section class="section teal-soft pre-vsl-proof compact-section">
 <div class="wrap">
 <div class="testimonials proof-pair">
 <!-- REVIEW CLAIM -->
@@ -1304,10 +1323,10 @@ html,body{overflow-x:hidden}
 </div>
 </div>
 </div>
-<p class="results-note">Individual results vary. These are real messages from real women.</p>
+<p class="results-note">Different women. Different starting points. Same decision: stop ignoring what their body was telling them. Individual results vary. These are real messages from real women.</p>
 </section><section class="section white compact-vsl">
 <div class="wrap center">
-<h2 class="vsl-invite">If something in you is saying, “I’ve had enough. I’m ready for change,” this is the room where it happens.</h2>
+<h2 class="vsl-invite">If something inside you keeps saying, “I cannot keep doing this another year…” watch this.</h2>
 <div aria-hidden="true" class="vsl-arrow">↓↓</div><!-- VSL SLOT. Until the video lands (Joel, due 2026-09-10) this shows a REAL frame of
      Annie + Joel live on Zoom, 2026-08-09 session. Deliberately NO play triangle: a play
      button over a still that does not play is a fake video. Swap this whole block for the
@@ -1324,22 +1343,22 @@ html,body{overflow-x:hidden}
 </div>
 </section><section class="section teal-soft challenge-experience compact-section">
 <div class="narrow center">
-<h2 class="section-title medium">The Change My Life Challenge Experience.</h2>
-<p class="section-copy" style="font-size:clamp(1.2rem,2vw,1.5rem);color:var(--ink)">The Change My Life Challenge is a three-day live coaching experience where you will finally <strong>uncover the source of the changes.</strong> Know what your body is telling you, connect the dots with your symptoms, and know exactly what to do next without second-guessing yourself.</p>
-<p class="challenge-fit-line">This challenge was built for you if you're ready to take charge of your future. Whether you have one unwanted symptom or everything happening at once, or you simply want to be <strong>THAT girl again.</strong></p>
+<h2 class="section-title medium">Three Days To Stop Guessing.</h2>
+<p class="section-copy" style="font-size:clamp(1.2rem,2vw,1.5rem);color:var(--ink)">The Change My Life Challenge is a <strong>three-day live coaching experience</strong> designed to help you understand your body in a new way. Not one symptom at a time. The whole picture. You will start connecting what you eat, how you sleep, how you move, your stress, your hormones, your numbers, and the symptoms you keep noticing.</p>
+<p class="challenge-fit-line">By Day 3, you will build your own <strong>Life Change Map</strong> so you know what deserves your attention first, what your biggest domino may be, and what to do next. This challenge is for the woman with one thing bothering her. And it is for the woman thinking: <strong>“Girl, EVERYTHING is happening at once.”</strong> Either way, you need a place to start.</p>
 </div>
 </section><section class="section dark body-speaking compact-section">
 <div class="wrap">
-<h2 class="section-title center">Your Body Is Speaking.</h2>
-<p>Every symptom. Every sign. Every ache. Every pain. Everything you've Googled. <strong>That's your body speaking. That's key information.</strong> And you need to know what it is so you can know what to do about it.</p>
+<h2 class="section-title center">Your Body Is Speaking. We Are Going To Teach You How To Listen.</h2>
+<p>That belly that suddenly showed up. The chin hair. The bad sleep. The mood. The cravings. The fatigue. The blood pressure. The blood sugar. The hair. <strong>Your body is not randomly turning against you. These are clues worth paying attention to.</strong> Stop fighting every clue by itself. Start looking at the whole picture.</p>
 </div>
 </section><section class="section soft compact-days" id="days-section">
 <div class="wrap center">
-<h2 class="section-title">Here's What You Get.</h2>
+<h2 class="section-title">Three Days. Three Live Sessions. One Clear Starting Point.</h2>
 
 
 
-<p class="section-copy days-lead"><strong>Three days. Three live coaching sessions. One outcome: your biggest domino and your first step.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">You'll leave with your <strong>Life Change Map</strong> showing you what your body has been telling you, what deserves your attention first, your biggest domino, and where to start.</p>
+<p class="section-copy days-lead"><strong>Three focused hours versus another year of trying to figure this out alone.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">You will leave with your own <strong>Life Change Map.</strong> Not somebody else’s diet. Not a giant list of supplements. Not 76 things to change Monday morning. <strong>Your next steps.</strong></p>
 <figure class="inline-photo map-photo">
 <img alt="The Personal Life Change Map workbook, open to a filled-in example spread" src="/challenge-b/img/life-change-map.jpg"/>
 <figcaption>Your Life Change Map. You build it with us, live, across the three days.</figcaption>
@@ -1348,27 +1367,25 @@ html,body{overflow-x:hidden}
 <div class="days">
 <article class="day">
 <div class="day-num">DAY 1</div>
-<h3>Lower Your Numbers Naturally</h3>
-<!-- REVIEW CLAIM -->
-<p>Learn the natural daily habits that support healthy weight, blood pressure, blood sugar and cholesterol. Find the personal source behind your numbers, connect the dots, and know exactly where to start and what to ask your doctor.</p>
+<h3>Your Numbers Are Trying To Tell You Something</h3>
+<p>Weight. Blood pressure. Blood sugar. Cholesterol. These numbers matter, but the number is not the whole story. On Day 1, we are going to help you look at the patterns underneath the numbers and start asking: <strong>“What is driving this in MY body?”</strong> You will begin connecting the dots and finding the first place to start.</p>
 </article>
 <article class="day">
 <div class="day-num">DAY 2</div>
 <h3>Bring Sexy Back</h3>
-<p>Get your confidence back in 3 simple steps. Feel vibrant, desirable and amazing in your own body again. So you can stop, stare and smile at your mirror reflection at any age.</p>
+<p>Yes. We are talking about it. The body. The confidence. The energy. The part of you that used to feel alive, feminine, vibrant, and desirable. Because getting healthy is not only about avoiding disease. <strong>You want to feel good being YOU again.</strong> On Day 2, Annie will walk you through simple shifts that can help you reconnect with your body instead of fighting it. The goal? To look in the mirror and think: <strong>“There she is.”</strong></p>
 </article>
 <article class="day">
 <div class="day-num">DAY 3</div>
-<h3>Restore Your Body From the Inside Out</h3>
-<!-- REVIEW CLAIM -->
-<p>Rebuild the body you love so you can enjoy the life you want. Learn the simple daily habits that support your energy, your moods and your hormones, and how they connect to hot flashes, chin hair, thinning hair and more, without another quick fix, crazy diets or excessive exercise.</p>
+<h3>Restore Your Body From The Inside Out</h3>
+<p>Now we put the pieces together. Your energy. Your sleep. Your food. Your stress. Your movement. Your hormones. Your symptoms. Your numbers. Instead of chasing each one separately, we will help you see the patterns and build a simple plan for what comes next. <strong>You do not need to change everything. You need to know your first domino.</strong></p>
 </article>
 </div>
 <div class="center" style="margin-top:30px"><a class="cta" href="#checkout">YES  -  I WANT THESE 3 DAYS</a></div>
 </div>
 </section><section class="section white compact-section">
 <div class="wrap">
-<h2 class="section-title medium center">You're tired of your health deciding what you get out of life.</h2>
+<h2 class="section-title medium center">Because This Was Never Only About The Number On The Scale.</h2>
 <div class="check-grid">
 <div class="check-item"><span class="check">✓</span><span>You want enough health to start or finish your purpose.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to enjoy your children and your grandchildren.</span></div>
@@ -1376,7 +1393,7 @@ html,body{overflow-x:hidden}
 <div class="check-item"><span class="check">✓</span><span>You want to feel desirable and alive for your spouse.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to look in the mirror and love what you see.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to pass on a legacy of health.</span></div>
-</div><div class="deserve-line">You've poured into everybody else. You deserve to feel better. You deserve to feel amazing in your body again. You deserve to come alive again.</div><div class="purpose-line">You want your <span>purpose</span> and your <span>power</span> back.</div>
+</div><div class="deserve-line">After years of pouring into everybody else… <strong>you want some of YOU back.</strong></div><div class="purpose-line">Your health affects <span>how much life</span> you get to enjoy.</div>
 <div class="chat-proof">
 <h3 class="proof-intro">This is what women told us they were fighting for.</h3>
 <div class="chat-grid">
@@ -1391,18 +1408,11 @@ html,body{overflow-x:hidden}
 </div>
 </section><img alt="Change My Life Challenge. Your next chapter starts here." class="transition-band" src="/challenge-b/img/next-chapter-banner.jpg"/><section class="section urgency-section compact-urgency">
 <div class="narrow center">
-<h2 class="section-title medium">Waiting Isn't Neutral.</h2>
-<p class="urgency-copy">Your 40s and 50s are when your body changes the fastest. Here is what the numbers say.</p>
-<ul class="urgency-facts">
-<li>Women going through the change are <strong>2 times more likely</strong> to have poor heart health. The two biggest reasons are cholesterol and blood sugar. <span>American Heart Association, 2026</span></li>
-<li>After age 55, your chance of a stroke <strong>doubles every 10 years.</strong> <span>CDC</span></li>
-<li>Most people who get type 2 diabetes get it <strong>after age 45.</strong> <span>CDC</span></li>
-</ul>
-
-
-<p class="urgency-punch"><strong>Waiting does not hold your place. Your body keeps going the way it is already going. One more year is one more year in that direction.</strong></p><p class="urgency-calm">You do not need to panic. You need to start.</p><div class="source-line">Sources: American Heart Association · CDC</div>
+<h2 class="section-title medium">Waiting Doesn’t Make It Easier.</h2>
+<p class="urgency-copy">Nobody wakes up at 55 and says: <strong>“You know what? I wish I had waited longer to take care of myself.”</strong></p>
+<p class="urgency-punch">Another year of the same habits usually gives you another year of the same problems. You do not have to become perfect today. You do not have to fix everything. <strong>But you do need to start.</strong></p><p class="urgency-calm">Your future body is being built by what you do now.</p>
 </div>
-</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">This Is the Week That Changes Your Life.</p><div style="margin-top:28px"><a class="cta" href="#checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
+</section><section class="interruption"><h2>This is not another course you buy and never finish.</h2><p class="interruption-copy">No giant video library. No 63 lessons. No notebook that ends up in a drawer. For three days: <strong>You show up. We coach. You apply it.</strong> One hour a day. That is it.</p><p class="interruption-contrast">Three focused hours versus another year of guessing.</p><div style="margin-top:28px"><a class="cta" href="#checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
 <div class="narrow">
 <h2 class="section-title small center">Still Wondering If This Is For You?</h2>
 <div class="objection"><h3>“I work at noon.”</h3><p>Each session is one hour. Join from your phone on your lunch break. If one day slips, the replay is up for 48 hours.</p></div>
@@ -1411,20 +1421,21 @@ html,body{overflow-x:hidden}
 </div>
 </section><section class="section white compact-checkout" id="checkout">
 <div class="wrap center">
-<h2 class="section-title medium">Three Live Days. One Clear Starting Point.</h2>
+<h2 class="section-title medium">Here’s What Your $97 Gets You.</h2>
 
 </div>
 <div class="wrap">
 <div class="value-stack">
-<div class="value-row"><div><strong>Get coached live, by two registered nurses</strong><br/><span>Three one-hour live sessions with Annie + Joel, September 22–24, reading your body and your numbers with you.</span></div><span>$297 value</span></div>
-<div class="value-row"><div><strong>Know exactly where to start</strong><br/><span>Your Personal Life Change Map: your biggest domino and your first step, on one page you build with us.</span></div><span>$97 value</span></div>
-<div class="value-row"><div><strong>Never wonder what to do today</strong><br/><span>Daily Action Guides: one clear step for each day, so this never becomes another pile of notes.</span></div><span>$47 value</span></div>
-<div class="value-row"><div><strong>Life happens, and you still get every minute</strong><br/><span>48-hour replays of every session.</span></div><span>$47 value</span></div>
-<div class="value-row"><div><strong>Walk into your next appointment with better questions</strong><br/><span>Know Your Labs Mini-Training: what your own lab numbers mean, and what to ask about them.</span></div><span>$97 value</span></div>
+<div class="value-row"><div><strong>3 Live Coaching Sessions with Annie + Joel</strong><br/><span>Three focused days of teaching, coaching, and implementation.</span></div><span class="value-amt">$297</span></div>
+<div class="value-row"><div><strong>Your Personal Life Change Map</strong><br/><span>A simple map you build during the challenge so you know what to focus on first.</span></div><span class="value-amt">$97</span></div>
+<div class="value-row"><div><strong>Daily Action Guides</strong><br/><span>Simple steps so you actually DO something with what you learn.</span></div><span class="value-amt">$47</span></div>
+<div class="value-row"><div><strong>Live Nurse-Led Q&amp;A</strong><br/><span>Bring your questions. Hear Annie and Joel coach real women through real situations.</span></div><span class="value-amt">$147</span></div>
+<div class="value-row"><div><strong>48-Hour Replays</strong><br/><span>Life happens. You will have 48 hours to catch anything you miss.</span></div><span class="value-amt">$47</span></div>
+<div class="value-row"><div><strong>Know Your Labs Mini-Training</strong><br/><span>Learn what common health numbers mean so you can ask better questions and have better conversations with your healthcare team.</span></div><span class="value-amt">$97</span></div>
+<div class="value-row value-total-row"><div><strong>Total Experience Value</strong></div><span class="value-amt">$732</span></div>
 </div>
-<div class="value-total">Total Experience Value: $585</div>
 <div class="price">$97</div>
-<div class="price-note">One payment. Three live coaching days.</div>
+<div class="price-note">Join us for $97. One payment. Three live days. One clear place to start.</div>
 <div class="center"><a class="cta" href="#checkout">YES, SAVE MY SEAT</a></div>
 <!-- LIVE CHECKOUT. Stripe EMBEDDED Checkout, tier 'cmlc-97' ($97 one-time,
      price_1U4NSeHseZnO3rRZfxzUCAjk). POST /api/create-embedded-checkout ->
@@ -1441,14 +1452,18 @@ html,body{overflow-x:hidden}
 <div id="checkoutStatus">Loading secure checkout...</div>
 <p class="checkout-secure">Secure payment by Stripe. Your card details never touch this page.</p>
 </div>
+<div class="after-register guarantee-box">
+<h3>The Show Up &amp; Win Guarantee</h3>
+<p>We are asking you to give yourself three days. Attend live. Participate. Complete your Life Change Map. If you do those things and genuinely feel the experience was not worth far more than the $97 you paid, email us within 48 hours after Day 3 and we will refund you. <strong>Live attendance is required for the guarantee.</strong></p>
+</div>
 <div class="after-register">
-<h3>What happens the moment you register?</h3>
-<p>You're in. We'll send your confirmation, Zoom details, challenge materials and reminders. You'll also see an optional VIP upgrade for extra coaching/Q&amp;A time. <strong>Then your only job is to show up.</strong></p>
+<h3>What happens after you register?</h3>
+<p>You’re in. We will send you your Zoom link, your challenge materials, your reminders, and everything you need to be ready for Day 1. You may also see an optional VIP upgrade for women who want additional access and coaching, but your $97 gets you the full core challenge. Then your only job is simple: <strong>Show up.</strong></p>
 </div>
 </div>
 </section><section class="section teal-soft compact-section">
 <div class="wrap">
-<h2 class="section-title center">What Women Are Saying.</h2>
+<h2 class="section-title center">These Women Started Where You Are.</h2>
 <div class="testimonials">
 <!-- REVIEW CLAIM -->
 <div class="testimonial"><blockquote>“I have done everything you said and all my meds are decreasing.”</blockquote><cite>Dorothy M. · BraveWorks community member</cite></div>
@@ -1467,7 +1482,7 @@ html,body{overflow-x:hidden}
 </div>
 </div>
 </section><section class="section sky compact-fit">
-<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You're over 40, your body is changing, and you don't like what you're seeing or feeling.</li><li>You know something has to change, but you've felt stuck because you don't know where to start.</li><li>You've collected enough information. Now you want results.</li><li>You want something simple and experts you can trust.</li><li>You're ready to show up, participate and give yourself three focused days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You're looking for another video library you probably won't watch.</li><li>You want a magic overnight fix or another shortcut.</li><li>You want another generic plan handed to every woman.</li><li>You want to keep doing everything the hard way for temporary results.</li><li>You have a skeptical spirit and you're more committed to finding reasons something won't work than finding out what might.</li></ul></div></div><div class="come-line">Come scared. Come messy. Just come.</div></div>
+<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You are over 40 and your body does not feel like the body you remember.</li><li>You know something needs to change.</li><li>You are tired of piecing health advice together from 500 different places.</li><li>You want simple. You want someone to help you understand what matters first.</li><li>And you are willing to give yourself three days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You want another course to sit in your inbox.</li><li>You are looking for a miracle overnight.</li><li>You want somebody to hand you 47 things to change at once.</li><li>You are not ready to participate.</li><li>Or you have already decided nothing can help before you even walk through the door.</li></ul></div></div><div class="come-line">You do not have to come perfect. Come tired. Come frustrated. Come nervous. Come confused. <strong>Just come.</strong></div></div>
 </section><section class="section white compact-section coach-proof-before"><div class="wrap"><div class="testimonials" style="margin-top:44px">
 <div class="testimonial"><blockquote>“She understands our bodies, and she takes the time to help us understand ourselves.”</blockquote><cite>Simone Cato · Mom of 4 · Challenge participant</cite></div>
 <div class="testimonial"><blockquote>“Attentive, clear, and down-to-earth. Her knowledge and passion for health and wellness are impressive.”</blockquote><cite>Candace Andrews · Mom of 2</cite></div>
@@ -1477,9 +1492,8 @@ html,body{overflow-x:hidden}
 <div class="testimonial"><blockquote>“Just your videos in general are already great info. You actually tell us what to do/use. Not having to wait for a link, etc.”</blockquote><cite>Tiffany · Facebook follower</cite></div>
 </div></div></section><section class="section teal-soft">
 <div class="wrap">
-<h2 class="section-title medium center">Meet Annie and Joel.</h2>
-<p class="hosts-lead">You are not being handed a program by a stranger. You are being coached, live, by two
-registered nurses who have spent their careers on exactly what is happening in your body right now.</p>
+<h2 class="section-title medium center">One Woman. Two Nurses. The Whole Picture.</h2>
+<p class="hosts-lead">Annie understands the things women notice first. Joel reads the numbers underneath them. Together, they stopped separating the conversation — because your body does not live in separate boxes, and neither should your health plan.</p>
 <figure class="hosts-photo">
 <img alt="Annie Chitate, RN and Joel Polley, RN teaching the Change My Life Challenge together" src="/challenge-b/img/annie-joel-teaching.jpg"/>
 </figure>
@@ -1539,15 +1553,15 @@ anywhere else.</em></p>
 <div class="realities">
 <div class="reality">
 <h3>Do nothing.</h3>
-<p>Keep watching the numbers, the symptoms and the things you miss change, and hope the direction changes on its own.</p>
+<p>Keep watching the symptoms. Keep watching the numbers. Keep hoping something changes by itself.</p>
 </div>
 <div class="reality">
-<h3>Keep trying.</h3>
-<p>Another supplement. Another diet. Another saved video. Another Monday. Keep piecing it together by yourself.</p>
+<h3>Keep piecing it together alone.</h3>
+<p>Another supplement. Another diet. Another saved video. Another promise to start Monday.</p>
 </div>
 <div class="reality join">
-<h3>Join us.</h3>
-<p>Give yourself three live days to understand your body differently, connect the dots and finally know where to start.</p>
+<h3>Come spend three days with us.</h3>
+<p>Learn to look at your body differently. Connect the dots. Find your starting point. Build your Life Change Map. And finally move.</p>
 </div>
 </div>
 <div class="center" style="margin-top:30px"><a class="cta" href="#checkout">I'M CHOOSING TO JOIN  -  $97</a></div>
@@ -1561,11 +1575,11 @@ anywhere else.</em></p>
 </details>
 <details>
 <summary>What if I'm already on medication or working with my doctor?</summary>
-<p>Come. This challenge does not replace your healthcare provider, and Annie and Joel will not tell you to stop or change prescribed medication. The goal is to help you understand your own health information, routines and patterns so you can make better-informed decisions with your care team.</p>
+<p>Come. This challenge does not replace your doctor or healthcare team. We will not tell you to stop or change prescribed medication. We want to help you better understand your habits, symptoms, patterns, and health information so you can become a stronger participant in your own care.</p>
 </details>
 <details>
 <summary>What if I'm older - or I don't have every symptom on this page?</summary>
-<p>You do not need every symptom, and you are not too old. Whether it's one thing getting your attention or five things happening at once, if your body has changed and you know something deserves your attention, start there.</p>
+<p>Girl, come. There is no age where taking better care of yourself stops mattering. You do not need every symptom on this page either. One thing bothering you is enough reason to start paying attention.</p>
 </details>
 <details>
 <summary>Do I need to buy supplements, special foods or equipment?</summary>
@@ -1586,13 +1600,14 @@ anywhere else.</em></p>
 </div>
 </section><section class="section final">
 <div class="narrow center">
-<h2 class="section-title">You know something has to change.</h2>
-<p class="section-copy" style="font-size:1.25rem">You don't have to fix everything today. But you do have to stop pretending you have forever to start.</p>
+<h2 class="section-title">Girl, You Already Know Something Has To Change.</h2>
+<p class="section-copy" style="font-size:1.25rem">You do not have to fix your whole life today. You do not have to lose all the weight. You do not have to understand every hormone. You do not need another 47-step plan. <strong>You just need to stop standing in the same place.</strong></p>
+<p class="section-copy" style="font-size:1.15rem;margin-top:14px">Give yourself three days. Come learn what your body has been trying to tell you. Come find your starting point. Come build your map. Come get YOU moving again.</p>
 <p class="section-copy" style="font-size:1.25rem;margin-top:14px"><strong>September 22, 23 &amp; 24. Three live days. $97.</strong></p>
-<div style="margin-top:26px"><a class="cta" href="#checkout">YES  -  I'M READY TO CHANGE SOMETHING</a></div>
+<div style="margin-top:26px"><a class="cta" href="#checkout">YES — I'M READY</a></div>
 </div>
 </section><section class="power-final">
-<div class="power-band">Health Is Power.</div>
+<div class="power-band">Come Change Something.</div>
 <div class="power-final-cta">
 <p>Take yours back on September 22.</p>
 <a class="cta" href="#checkout">YES — SAVE MY SEAT FOR $97</a>
