@@ -29,7 +29,6 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { track } from '../utils/analytics.js';
 import { QUESTIONS } from '../data/triggerQuestions';
-import ChallengeQuizBanner from '../components/ChallengeQuizBanner.jsx';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -144,7 +143,6 @@ export default function QuizFirstHome() {
       `}</style>
 
       <section className="qfh-wrap">
-        <ChallengeQuizBanner placement="home-hero" />
         <div className="qfh-eyebrow">Free &middot; 2 minutes &middot; No email to start</div>
 
         <h1>Find the one thing driving your blood pressure up.</h1>
