@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="One-time VIP upgrade for the Change My Life Challenge.">
+<title>Upgrade to VIP | Change My Life Challenge</title>
+<style>
+:root{
+  --deep:#082825;
+  --green:#103a36;
+  --soft:#e7f0e9;
+  --cream:#fff8ed;
+  --coral:#c9513e;
+  --coral-dark:#a43b2e;
+  --gold:#b78a39;
+  --ink:#182a27;
+  --body:#354b47;
+  --muted:#61716d;
+  --line:#d5e0da;
+  --white:#fff;
+  --max:1100px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:#fff;
+  line-height:1.42;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p{margin-top:0}
+h1,h2,h3{
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--deep);
+  line-height:1.08;
+  letter-spacing:-.018em;
+}
+.wrap{width:min(calc(100% - 28px),var(--max));margin-inline:auto}
+.topbar{
+  background:var(--coral-dark);
+  color:#fff;
+  text-align:center;
+  padding:8px 12px;
+  font-size:.78rem;
+  font-weight:950;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+.hero{
+  padding:24px 0 18px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:#fff;
+}
+.hero .kicker{
+  font-size:.8rem;
+  color:var(--coral-dark);
+  font-weight:950;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+.hero h1{
+  max-width:880px;
+  margin:0 auto 7px;
+  font-size:clamp(2rem,4.2vw,3.85rem);
+}
+.hero h1 span{color:var(--coral)}
+.hero .sub{
+  max-width:800px;
+  margin:0 auto;
+  color:var(--body);
+  font-size:clamp(.95rem,1.45vw,1.12rem);
+}
+.main{
+  padding:24px 0 30px;
+  background:linear-gradient(180deg,#fff 0%,var(--cream) 100%);
+}
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.18fr) minmax(350px,.82fr);
+  gap:22px;
+  align-items:start;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 10px 26px rgba(8,40,37,.07);
+}
+.offer{overflow:hidden}
+.offer-head{
+  background:var(--green);
+  color:#fff;
+  padding:16px 20px 14px;
+}
+.offer-head h2{
+  color:#fff;
+  margin-bottom:3px;
+  font-size:clamp(1.35rem,2.4vw,2rem);
+}
+.offer-head p{
+  margin:0;
+  color:rgba(255,255,255,.8);
+  font-size:.84rem;
+}
+.offer-list{padding:3px 20px 6px}
+.item{
+  display:grid;
+  grid-template-columns:20px 1fr auto;
+  gap:9px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
+  align-items:start;
+}
+.item:last-child{border-bottom:0}
+.check{
+  width:18px;height:18px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--soft);color:var(--green);
+  font-weight:950;font-size:.7rem;margin-top:1px;
+}
+.item h3{
+  margin-bottom:2px;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:.92rem;
+  line-height:1.28;
+  color:var(--green);
+  letter-spacing:0;
+}
+.item p{
+  margin:0;
+  color:var(--body);
+  font-size:.79rem;
+  line-height:1.4;
+}
+.value{
+  color:var(--coral-dark);
+  font-weight:950;
+  white-space:nowrap;
+  font-size:.8rem;
+}
+.replay-diff{
+  display:block;
+  margin-top:4px;
+  color:var(--coral-dark);
+  font-weight:900;
+  font-size:.75rem;
+}
+.total{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:13px 20px;
+  background:var(--soft);
+  color:var(--green);
+  font-weight:950;
+  font-size:.87rem;
+}
+.total .strike{
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.45rem;
+  text-decoration:line-through;
+  text-decoration-thickness:2px;
+}
+.order{
+  padding:18px;
+  position:sticky;
+  top:10px;
+  text-align:center;
+  border:2px solid var(--gold);
+}
+.upgrade-big{
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--coral-dark);
+  font-weight:900;
+  font-size:clamp(1.65rem,3vw,2.55rem);
+  line-height:1.05;
+  margin-bottom:5px;
+}
+.order h2{
+  font-size:1.25rem;
+  margin:0 0 8px;
+}
+.math{
+  border:1px solid var(--line);
+  background:var(--cream);
+  border-radius:10px;
+  padding:11px 12px;
+  margin:0 0 11px;
+}
+.math-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  color:var(--body);
+  font-size:.83rem;
+  padding:2px 0;
+}
+.math-row strong{color:var(--deep)}
+.math-row.total-price{
+  border-top:1px solid #ddcfaf;
+  margin-top:5px;
+  padding-top:7px;
+  font-size:.9rem;
+  font-weight:950;
+}
+.pay-today{
+  font-family:Georgia,"Times New Roman",serif;
+  color:var(--deep);
+  font-weight:900;
+  font-size:2.7rem;
+  line-height:1;
+  margin:7px 0 2px;
+}
+.pay-label{
+  color:var(--coral-dark);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:.69rem;
+  font-weight:950;
+}
+.no-reenter{
+  color:var(--body);
+  font-size:.79rem;
+  margin:8px 0 11px;
+}
+.checkout-mini{
+  text-align:left;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:10px;
+  padding:11px;
+  margin-bottom:10px;
+}
+.checkout-mini .row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:.77rem;
+  padding:3px 0;
+  color:var(--body);
+}
+.checkout-mini .row strong{color:var(--deep)}
+.checkout-mini .secure-line{
+  border-top:1px solid var(--line);
+  margin-top:6px;
+  padding-top:7px;
+  font-size:.72rem;
+  color:var(--green);
+  font-weight:900;
+  text-align:center;
+}
+.cta{
+  display:block;
+  width:100%;
+  padding:14px 15px;
+  border-radius:7px;
+  background:var(--coral);
+  color:#fff;
+  text-decoration:none;
+  font-weight:950;
+  font-size:.94rem;
+  letter-spacing:.02em;
+  box-shadow:0 8px 18px rgba(164,59,46,.16);
+}
+.cta:hover{background:var(--coral-dark)}
+.oneclick{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:.69rem;
+}
+.decline{
+  display:inline-block;
+  margin-top:9px;
+  color:var(--muted);
+  font-size:.7rem;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+.why{
+  margin-top:12px;
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+}
+.why h3{
+  font-size:1.05rem;
+  margin-bottom:3px;
+}
+.why p{
+  margin:0;
+  color:var(--body);
+  font-size:.78rem;
+}
+.proof{
+  padding:30px 0 36px;
+}
+.proof h2{
+  text-align:center;
+  margin-bottom:17px;
+  font-size:clamp(1.5rem,2.8vw,2.25rem);
+}
+.testimonials{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:11px;
+}
+.testimonial{
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  padding:14px;
+  box-shadow:0 6px 16px rgba(8,40,37,.045);
+}
+.testimonial:before{
+  content:"★★★★★";
+  display:block;
+  color:var(--gold);
+  letter-spacing:.11em;
+  font-size:.72rem;
+  margin-bottom:7px;
+}
+.testimonial blockquote{
+  margin:0 0 7px;
+  color:var(--body);
+  font-size:.78rem;
+  line-height:1.42;
+}
+.testimonial cite{
+  color:var(--green);
+  font-weight:850;
+  font-style:normal;
+  font-size:.69rem;
+}
+.footer{
+  padding:18px 14px 23px;
+  text-align:center;
+  color:var(--muted);
+  font-size:.67rem;
+}
+@media(max-width:840px){
+  .grid{grid-template-columns:1fr}
+  .order{position:static}
+}
+@media(max-width:620px){
+  .wrap{width:min(calc(100% - 20px),var(--max))}
+  .hero{padding:18px 0 14px}
+  .hero h1{font-size:2rem}
+  .main{padding:16px 0 22px}
+  .offer-head{padding:13px 15px}
+  .offer-list{padding:2px 15px 5px}
+  .item{
+    grid-template-columns:18px 1fr;
+    gap:7px;
+    padding:10px 0;
+  }
+  .value{grid-column:2;font-size:.74rem}
+  .item h3{font-size:.86rem}
+  .item p{font-size:.75rem}
+  .total{padding:11px 15px}
+  .order{padding:15px}
+  .testimonials{grid-template-columns:1fr}
+  .proof{padding:23px 0 28px}
+  .testimonial{padding:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">ONLY 30 VIP SEATS AVAILABLE</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">ONE-TIME VIP UPGRADE</div>
+    <h1>Upgrade Your Change My Life Challenge To <span>VIP</span></h1>
+    <p class="sub">You already said yes to the Challenge. For just $100 more, move into the VIP coaching room and make your total VIP price $197.</p>
+  </div>
+</header>
+
+<main>
+<section class="main">
+  <div class="wrap">
+    <div class="grid">
+
+      <div>
+        <article class="card offer">
+          <div class="offer-head">
+            <h2>Your VIP Change My Life Experience</h2>
+            <p>Everything in the regular Challenge, plus more coaching, more access and more time with the replays.</p>
+          </div>
+
+          <div class="offer-list">
+
+            <div class="item">
+              <div class="check">✓</div>
+              <div>
+                <h3>3 Days of LIVE Change My Life Coaching on Zoom</h3>
+                <p>Your complete three-day coaching experience with Annie and Joel.</p>
+              </div>
+              <div class="value">$297 value</div>
+            </div>
+
+            <div class="item">
+              <div class="check">✓</div>
+              <div>
+                <h3>VIP Coaching Room: 3 Extra Hours</h3>
+                <p>Stay for an additional 60-minute VIP Q&amp;A and coaching room each day.</p>
+              </div>
+              <div class="value">$1,497 value</div>
+            </div>
+
+            <div class="item">
+              <div class="check">✓</div>
+              <div>
+                <h3>Direct Q&amp;A Access to Joel + Annie</h3>
+                <p>Bring your questions. Get real-time clarification and learn how the principles apply to you while the coaching is happening.</p>
+              </div>
+              <div class="value">$997 value</div>
+            </div>
+
+            <div class="item">
+              <div class="check">✓</div>
+              <div>
+                <h3>Learn From Other Women Being Coached Live</h3>
+                <p>Hear the questions, breakthroughs and coaching happening in the room, then apply the insights to your own health.</p>
+              </div>
+              <div class="value">Included</div>
+            </div>
+
+            <div class="item">
+              <div class="check">✓</div>
+              <div>
+                <h3>Full Daily Replay Recordings Through Tuesday AFTER The Challenge</h3>
+                <p>Get the full daily training and coaching recordings delivered straight to your inbox and keep access through the Tuesday after the Challenge ends.</p>
+                <span class="replay-diff">Regular Challenge replay access lasts only 48 hours. VIP keeps the recordings available through Tuesday after the Challenge.</span>
+              </div>
+              <div class="value">$197 value</div>
+            </div>
+
+          </div>
+
+          <div class="total">
+            <span>Total VIP Experience Value</span>
+            <span class="strike">$2,988</span>
+          </div>
+        </article>
+
+        <div class="why">
+          <h3>Why Upgrade?</h3>
+          <p>For only $100 more, you get three extra hours in the closer coaching room, direct Q&amp;A access and extended replay access after the regular 48-hour window ends.</p>
+        </div>
+      </div>
+
+      <aside class="card order">
+        <div class="upgrade-big">ONE-TIME VIP UPGRADE</div>
+        <h2>Your Challenge Is Already Paid For</h2>
+
+        <div class="math">
+          <div class="math-row"><span>Already paid for Challenge</span><strong>$97</strong></div>
+          <div class="math-row"><span>Add VIP today</span><strong>$100</strong></div>
+          <div class="math-row total-price"><span>Your total VIP price</span><strong>$197</strong></div>
+        </div>
+
+        <div class="pay-label">ADD VIP TODAY FOR</div>
+        <div class="pay-today">$100</div>
+
+        <p class="no-reenter"><strong>No need to enter your information again.</strong> Your Challenge order is already complete. Just confirm the VIP upgrade below.</p>
+
+        <div class="checkout-mini">
+          <div class="row"><span>Product</span><strong>Change My Life VIP Upgrade</strong></div>
+          <div class="row"><span>Additional charge today</span><strong>$100</strong></div>
+          <div class="row"><span>Total VIP investment</span><strong>$197</strong></div>
+          <div class="secure-line">✓ USE THE PAYMENT METHOD FROM MY CHALLENGE ORDER</div>
+        </div>
+
+        <!-- CLICKFUNNELS: Connect this button to the 1-click OTO / upsell product action.
+             Do NOT send the buyer to another checkout page. -->
+        <a class="cta" href="#">YES, UPGRADE ME TO VIP FOR $100</a>
+
+        <div class="oneclick">One click. No new form. No re-entering your card. You become VIP immediately.</div>
+
+        <!-- CLICKFUNNELS: decline / continue to next funnel step -->
+        <a class="decline" href="#">No thanks, keep my regular Challenge seat.</a>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<section class="proof">
+  <div class="wrap">
+    <h2>Real Women. Real Breakthroughs.</h2>
+    <div class="testimonials">
+
+      <article class="testimonial">
+        <blockquote>“Knowing I’m not a failure and I can accomplish the change in my health with consistency. I went to the gym today.”</blockquote>
+        <cite>Challenge participant</cite>
+      </article>
+
+      <article class="testimonial">
+        <blockquote>“I was more relaxed and felt amazing.”</blockquote>
+        <cite>Challenge participant</cite>
+      </article>
+
+      <article class="testimonial">
+        <blockquote>“I appreciate understanding my weeks and moods. The cat scenario was phenomenal. Thank you.”</blockquote>
+        <cite>Challenge participant</cite>
+      </article>
+
+      <article class="testimonial">
+        <blockquote>“She understands our bodies, and she takes the time to help us understand ourselves.”</blockquote>
+        <cite>Simone Cato</cite>
+      </article>
+
+      <article class="testimonial">
+        <blockquote>“You have no earthly idea how much I appreciate you. I am feeling so much better, 62 years old and was feeling pretty bad. I have to honestly say I love you.”</blockquote>
+        <cite>Margie, 62</cite>
+      </article>
+
+      <article class="testimonial">
+        <blockquote>“She seeks the simplest, most natural path to the best outcomes. 10/10 would recommend.”</blockquote>
+        <cite>Bongi</cite>
+      </article>
+
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  Educational wellness coaching only. The Change My Life Challenge and VIP Coaching Room do not diagnose, treat, cure or prevent disease and do not replace care from your licensed healthcare professional.
+</footer>
+
+
+<script>
+/* 2026-09-11 — one-click VIP wiring. The buyer arrives here straight from the
+   paid $97 embedded checkout (?session_id=cs_...). The CTA charges $100 to the
+   card saved on that session via /api/challenge-vip-charge; both outcomes end
+   on /challenge-confirmed, which is what registers the seat — so this page
+   must ALWAYS forward, never dead-end a paid buyer. */
+(function () {
+  var params = new URLSearchParams(location.search);
+  var sid = params.get('session_id') || '';
+  var confirmedGa = '/challenge-confirmed?session_id=' + encodeURIComponent(sid) + '&tier=challenge-ga';
+  var confirmedVip = '/challenge-confirmed?session_id=' + encodeURIComponent(sid) + '&tier=challenge-vip';
+
+  var cta = document.querySelector('a.cta');
+  var decline = document.querySelector('a.decline');
+  if (decline) decline.setAttribute('href', confirmedGa);
+
+  // No session id means the page was reached out of flow (a shared link, a
+  // crawler). There is no card to charge — send them to the sales page.
+  if (!sid) {
+    if (cta) cta.setAttribute('href', '/');
+    if (decline) decline.setAttribute('href', '/');
+    return;
+  }
+
+  var busy = false;
+  if (cta) cta.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (busy) return;
+    busy = true;
+    var label = cta.textContent;
+    cta.textContent = 'UPGRADING YOUR SEAT…';
+    fetch('/api/challenge-vip-charge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: sid }),
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .catch(function () { return { ok: false, j: {} }; })
+      .then(function (out) {
+        if (out.ok) { location.href = confirmedVip; return; }
+        // Declined card, 3DS wall, or an old session with no saved card:
+        // never strand the buyer. Say it plainly, keep the regular seat path.
+        busy = false;
+        cta.textContent = label;
+        var msg = document.getElementById('vipErr');
+        if (!msg) {
+          msg = document.createElement('p');
+          msg.id = 'vipErr';
+          msg.setAttribute('role', 'alert');
+          msg.style.cssText = 'color:#b3402e;font-weight:700;text-align:center;margin:10px 0 0;font-size:14px;';
+          cta.parentNode.insertBefore(msg, cta.nextSibling);
+        }
+        msg.textContent = 'That card could not be charged for the upgrade. Your $97 Challenge seat is safe — continue below and reply to your welcome email if you still want VIP.';
+      });
+  });
+})();
+</script>
+<script>window.SABBATH_SOURCE = 'challenge';</script>
+<script src="/sabbath-gate.js"></script>
+</body>
+</html>

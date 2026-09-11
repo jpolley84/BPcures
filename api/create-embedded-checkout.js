@@ -599,11 +599,19 @@ export default async function handler(req, res) {
         line_items: [{ price: process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk', quantity: 1 }],
         metadata,
         customer_creation: 'always',
+        // 2026-09-11 (Joel): save the card for the one-click $100 VIP upgrade
+        // that now sits between payment and the confirmation page. Without
+        // off_session the upsell page has nothing to charge (same restore the
+        // corner branch needed for the kit OTO).
+        payment_intent_data: { setup_future_usage: 'off_session' },
         // Same reason as the retired challenge tiers: the seat record is built
         // from the Stripe session, so if we do not ask, we get 75 paid seats
         // and zero phone numbers.
         phone_number_collection: { enabled: true },
-        return_url: `${siteUrl}/challenge-confirmed?session_id={CHECKOUT_SESSION_ID}&tier=challenge-ga`,
+        // 2026-09-11: buyers land on the VIP one-click upsell FIRST; that page
+        // forwards to /challenge-confirmed (which registers the seat) whether
+        // they upgrade or decline. See public/challenge-vip/ + api/challenge-vip-charge.js.
+        return_url: `${siteUrl}/challenge-vip/?session_id={CHECKOUT_SESSION_ID}`,
         ...(email ? { customer_email: email } : {}),
       });
       return res.status(200).json({ clientSecret: session.client_secret });
