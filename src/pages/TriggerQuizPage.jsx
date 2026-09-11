@@ -430,7 +430,6 @@ export default function TriggerQuizPage() {
         <MiniHeader />
 
         {/* ─── QUIZ ─────────────────────────────────────────────── */}
-        {phase === 'quiz' && <ChallengeQuizBanner placement="quiz-start" />}
         {phase === 'quiz' && (
           <div style={cardStyle}>
             <div
