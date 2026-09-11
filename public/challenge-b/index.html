@@ -582,7 +582,7 @@
     @media(max-width:640px){
       .announcement{gap:8px;padding:9px 10px}
       .announcement > span{font-size:.72rem}
-      .announcement-cta{font-size:.69rem;padding:7px 11px}
+      .announcement-cta{font-size:.72rem;padding:13px 14px;min-height:44px;display:inline-flex;align-items:center}
       .hero{padding:28px 0 34px}
       .enough-line{font-size:1.72rem;margin-bottom:12px}
       .hero h1{font-size:2.5rem;margin-bottom:14px}
@@ -1251,19 +1251,28 @@
       .trust-item{font-size:.9rem}
       summary{font-size:1rem;padding:16px 0}
     }
+
+/* 2026-09-11 panel fixes: sticky CTA + overflow guards */
+html,body{overflow-x:hidden}
+.value-row{flex-wrap:wrap;gap:10px}
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#243A2B;box-shadow:0 -8px 24px rgba(0,0,0,.22);padding:10px 14px;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.sticky-cta.show{display:flex}
+.sticky-cta .sc-txt{color:#F5EFE4;font-weight:700;font-size:.86rem;letter-spacing:.02em}
+.sticky-cta a{background:#E9C7B8;color:#243A2B;font-weight:800;font-size:.9rem;padding:13px 22px;border-radius:999px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 </style>
 <script src="/pixels.js"></script>
 </head>
 <body>
 <div class="announcement">
-<span>LIVE ON ZOOM · SEPTEMBER 22–24, 2026 · 12 PM ET</span>
+<span>LIVE ON ZOOM · SEPT 22–24 · 12 PM ET · $97</span>
 <a class="announcement-cta" href="#checkout">JOIN THE CHALLENGE</a>
 </div><header class="hero" id="top">
 <div class="wrap">
 <div class="enough-line">For the woman over 40 who's had <strong>ENOUGH.</strong></div>
-<p class="hero-pain">Girl, your health is a mess. Your body feels out of control. Nothing you've tried has worked.</p>
+<p class="hero-pain">You’ve tried the diets, the plans, the advice — and your body still isn’t telling you what’s wrong. It’s not that nothing works. It’s that nobody has connected <strong>your</strong> dots yet.</p>
 <h1>In 3 Live Days, Find Out What Your Body Has Been Trying To Tell You, <span class="hero-second-line">And Exactly Where To Start.</span></h1>
-<p class="hero-sub">Become the woman other women quietly envy again. Get your confidence back, without fad diets, crazy exercises or another quick fix.</p>
+<p class="hero-sub">Leave with your biggest health domino and your exact first step, on one page — without fad diets, punishing exercise, or stopping your medication.</p>
+<p class="hero-proof">“My blood pressure is back to normal: 124/80.” — a BraveWorks reader</p>
 <div class="hero-space"></div>
 <p class="experience">A 3-Day LIVE Coaching Experience to Change Your Life</p>
 <p class="date-line">September 22, 23 &amp; 24, 2026 · 12 PM Eastern / 11 AM Central</p>
@@ -1298,7 +1307,7 @@
 <p class="results-note">Individual results vary. These are real messages from real women.</p>
 </section><section class="section white compact-vsl">
 <div class="wrap center">
-<h2 class="vsl-invite">If something in you is saying, “I’ve had enough. I’m ready for change.” watch this video.</h2>
+<h2 class="vsl-invite">If something in you is saying, “I’ve had enough. I’m ready for change,” this is the room where it happens.</h2>
 <div aria-hidden="true" class="vsl-arrow">↓↓</div><!-- VSL SLOT. Until the video lands (Joel, due 2026-09-10) this shows a REAL frame of
      Annie + Joel live on Zoom, 2026-08-09 session. Deliberately NO play triangle: a play
      button over a still that does not play is a fake video. Swap this whole block for the
@@ -1310,7 +1319,7 @@
 <div class="price-strip">
 <span class="price-strip-price">$97</span>
 <span class="price-strip-meta">3 live days · Sept 22–24 · 12 PM ET · with Annie + Joel</span>
-<a class="cta" href="#final-checkout">I'M READY TO SECURE MY TICKET</a>
+<a class="cta" href="#checkout">I'M READY TO SECURE MY TICKET</a>
 </div>
 </div>
 </section><section class="section teal-soft challenge-experience compact-section">
@@ -1393,7 +1402,7 @@
 
 <p class="urgency-punch"><strong>Waiting does not hold your place. Your body keeps going the way it is already going. One more year is one more year in that direction.</strong></p><p class="urgency-calm">You do not need to panic. You need to start.</p><div class="source-line">Sources: American Heart Association · CDC</div>
 </div>
-</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">This Is the Week That Changes Your Life.</p><div style="margin-top:28px"><a class="cta" href="#final-checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
+</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">This Is the Week That Changes Your Life.</p><div style="margin-top:28px"><a class="cta" href="#checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
 <div class="narrow">
 <h2 class="section-title small center">Still Wondering If This Is For You?</h2>
 <div class="objection"><h3>“I work at noon.”</h3><p>Each session is one hour. Join from your phone on your lunch break. If one day slips, the replay is up for 48 hours.</p></div>
@@ -1416,7 +1425,7 @@
 <div class="value-total">Total Experience Value: $585</div>
 <div class="price">$97</div>
 <div class="price-note">One payment. Three live coaching days.</div>
-<div class="center"><a class="cta" href="#final-checkout">YES, SAVE MY SEAT</a></div>
+<div class="center"><a class="cta" href="#checkout">YES, SAVE MY SEAT</a></div>
 <!-- LIVE CHECKOUT. Stripe EMBEDDED Checkout, tier 'cmlc-97' ($97 one-time,
      price_1U4NSeHseZnO3rRZfxzUCAjk). POST /api/create-embedded-checkout ->
      clientSecret -> stripe.initEmbeddedCheckout mounts the card form INLINE
@@ -1541,7 +1550,7 @@ anywhere else.</em></p>
 <p>Give yourself three live days to understand your body differently, connect the dots and finally know where to start.</p>
 </div>
 </div>
-<div class="center" style="margin-top:30px"><a class="cta" href="#final-checkout">I'M CHOOSING TO JOIN  -  $97</a></div>
+<div class="center" style="margin-top:30px"><a class="cta" href="#checkout">I'M CHOOSING TO JOIN  -  $97</a></div>
 </div>
 </section><section class="section soft">
 <div class="wrap">
@@ -1580,13 +1589,13 @@ anywhere else.</em></p>
 <h2 class="section-title">You know something has to change.</h2>
 <p class="section-copy" style="font-size:1.25rem">You don't have to fix everything today. But you do have to stop pretending you have forever to start.</p>
 <p class="section-copy" style="font-size:1.25rem;margin-top:14px"><strong>September 22, 23 &amp; 24. Three live days. $97.</strong></p>
-<div style="margin-top:26px"><a class="cta" href="#final-checkout">YES  -  I'M READY TO CHANGE SOMETHING</a></div>
+<div style="margin-top:26px"><a class="cta" href="#checkout">YES  -  I'M READY TO CHANGE SOMETHING</a></div>
 </div>
 </section><section class="power-final">
 <div class="power-band">Health Is Power.</div>
 <div class="power-final-cta">
 <p>Take yours back on September 22.</p>
-<a class="cta" href="#final-checkout">YES — SAVE MY SEAT FOR $97</a>
+<a class="cta" href="#checkout">YES — SAVE MY SEAT FOR $97</a>
 </div>
 </section><footer class="footer">
     The Change My Life Challenge · Annie Chitate, RN + Joel Polley, RN<br/>
@@ -1671,12 +1680,30 @@ anywhere else.</em></p>
   } else {
     start();
   }
-  document.querySelectorAll('a[href="#final-checkout"], a[href="#checkout"]').forEach(function (a) {
+  document.querySelectorAll('a[href="#checkout"], a[href="#checkout"]').forEach(function (a) {
     a.addEventListener('click', start);
   });
 })();
 </script>
 <script>window.SABBATH_SOURCE="challenge";</script><script src="/sabbath-gate.js"></script>
 <script defer src="/_vercel/insights/script.js"></script>
+<div class="sticky-cta" id="stickyCta" aria-hidden="true"><span class="sc-txt">Sept 22–24 · 3 live days · $97</span><a href="#checkout">SAVE MY SEAT</a></div>
+<script>
+(function(){
+  var bar = document.getElementById("stickyCta");
+  var checkout = document.getElementById("checkout");
+  if (!bar || !checkout) return;
+  function sync(){
+    var y = window.pageYOffset || 0;
+    var r = checkout.getBoundingClientRect();
+    var checkoutVisible = r.top < window.innerHeight && r.bottom > 0;
+    var show = y > 600 && !checkoutVisible;
+    bar.classList.toggle("show", show);
+    bar.setAttribute("aria-hidden", show ? "false" : "true");
+  }
+  window.addEventListener("scroll", sync, { passive: true });
+  sync();
+})();
+</script>
 </body>
 </html>

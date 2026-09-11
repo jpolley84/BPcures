@@ -23,6 +23,10 @@ const VIP = {
   amount: 10000, // $100 upgrade on top of the $97 seat
   cohort: '2026-09-22',
   description: 'Change My Life Challenge — VIP upgrade (Sept 22-24 cohort)',
+  // 2026-09-11 (expert panel + Joel "fix all"): the page says VIP is capped at
+  // 30 because the Q&A room only works small. A scarcity claim the server
+  // does not enforce is a lie, so the server enforces it.
+  seatCap: 30,
 };
 
 const JOEL_EMAIL = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
@@ -73,6 +77,19 @@ export default async function handler(req, res) {
 
   const email = (session.customer_details?.email || '').trim().toLowerCase();
   const name = (session.customer_details?.name || '').trim();
+
+  // Enforce the 30-seat cap BEFORE charging. Fail closed on the count: if KV
+  // cannot be read we refuse the charge rather than risk selling seat 31 —
+  // an upsell lost beats a scarcity claim broken.
+  try {
+    const taken = await kv.scard(`challenge:${VIP.cohort}:vip`);
+    if (Number(taken) >= VIP.seatCap) {
+      return res.status(409).json({ error: 'vip_sold_out' });
+    }
+  } catch (err) {
+    console.error('challenge-vip: seat count read failed, refusing charge', err.message);
+    return res.status(503).json({ error: 'try_again' });
+  }
 
   let pi;
   try {

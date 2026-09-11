@@ -369,11 +369,12 @@ h1,h2,h3{
   .proof{padding:23px 0 28px}
   .testimonial{padding:12px}
 }
+.vip-guarantee{font-size:13px;line-height:1.55;color:#4a4238;background:#f6f1e6;border-radius:10px;padding:12px 14px;margin:12px 0 0}
 </style>
 </head>
 <body>
 
-<div class="topbar">ONLY 30 VIP SEATS AVAILABLE</div>
+<div class="topbar">VIP IS CAPPED AT 30 — THE COACHING ROOM ONLY WORKS SMALL</div>
 
 <header class="hero">
   <div class="wrap">
@@ -412,7 +413,7 @@ h1,h2,h3{
                 <h3>VIP Coaching Room: 3 Extra Hours</h3>
                 <p>Stay for an additional 60-minute VIP Q&amp;A and coaching room each day.</p>
               </div>
-              <div class="value">$1,497 value</div>
+              <div class="value">More live coaching time than the entire regular Challenge</div>
             </div>
 
             <div class="item">
@@ -421,7 +422,7 @@ h1,h2,h3{
                 <h3>Direct Q&amp;A Access to Joel + Annie</h3>
                 <p>Bring your questions. Get real-time clarification and learn how the principles apply to you while the coaching is happening.</p>
               </div>
-              <div class="value">$997 value</div>
+              <div class="value">A single 1:1 hour with an RN costs more than this whole upgrade</div>
             </div>
 
             <div class="item">
@@ -440,14 +441,14 @@ h1,h2,h3{
                 <p>Get the full daily training and coaching recordings delivered straight to your inbox and keep access through the Tuesday after the Challenge ends.</p>
                 <span class="replay-diff">Regular Challenge replay access lasts only 48 hours. VIP keeps the recordings available through Tuesday after the Challenge.</span>
               </div>
-              <div class="value">$197 value</div>
+              <div class="value">4 extra days of access</div>
             </div>
 
           </div>
 
           <div class="total">
-            <span>Total VIP Experience Value</span>
-            <span class="strike">$2,988</span>
+            <span>Three extra hours in the small room, for less than one coaching hour costs anywhere</span>
+            <span class="strike">$100</span>
           </div>
         </article>
 
@@ -459,7 +460,7 @@ h1,h2,h3{
 
       <aside class="card order">
         <div class="upgrade-big">ONE-TIME VIP UPGRADE</div>
-        <h2>Your Challenge Is Already Paid For</h2>
+        <h2>Wait — Your Order Isn’t Complete Yet</h2>
 
         <div class="math">
           <div class="math-row"><span>Already paid for Challenge</span><strong>$97</strong></div>
@@ -470,7 +471,7 @@ h1,h2,h3{
         <div class="pay-label">ADD VIP TODAY FOR</div>
         <div class="pay-today">$100</div>
 
-        <p class="no-reenter"><strong>No need to enter your information again.</strong> Your Challenge order is already complete. Just confirm the VIP upgrade below.</p>
+        <p class="no-reenter"><strong>No need to enter your information again.</strong> Your $97 seat is secure — one decision left before your order is final.</p>
 
         <div class="checkout-mini">
           <div class="row"><span>Product</span><strong>Change My Life VIP Upgrade</strong></div>
@@ -482,11 +483,12 @@ h1,h2,h3{
         <!-- CLICKFUNNELS: Connect this button to the 1-click OTO / upsell product action.
              Do NOT send the buyer to another checkout page. -->
         <a class="cta" href="#">YES, UPGRADE ME TO VIP FOR $100</a>
+        <p class="vip-guarantee"><strong>The VIP guarantee:</strong> come to the VIP room all three days. If it isn’t worth ten times the $100, email us after day 3 and we refund your upgrade. Your Challenge seat stays yours either way.</p>
 
         <div class="oneclick">One click. No new form. No re-entering your card. You become VIP immediately.</div>
 
         <!-- CLICKFUNNELS: decline / continue to next funnel step -->
-        <a class="decline" href="#">No thanks, keep my regular Challenge seat.</a>
+        <a class="decline" href="#">No thanks — I’ll pass on the extra 3 coaching hours and direct Q&amp;A, and keep my regular seat.</a>
       </aside>
 
     </div>
@@ -589,7 +591,9 @@ h1,h2,h3{
           msg.style.cssText = 'color:#b3402e;font-weight:700;text-align:center;margin:10px 0 0;font-size:14px;';
           cta.parentNode.insertBefore(msg, cta.nextSibling);
         }
-        msg.textContent = 'That card could not be charged for the upgrade. Your $97 Challenge seat is safe — continue below and reply to your welcome email if you still want VIP.';
+        msg.textContent = (out.j && out.j.error === 'vip_sold_out')
+          ? 'All 30 VIP seats are taken. Your $97 Challenge seat is safe — continue below.'
+          : 'That card could not be charged for the upgrade. Your $97 Challenge seat is safe — continue below and reply to your welcome email if you still want VIP.';
       });
   });
 })();
