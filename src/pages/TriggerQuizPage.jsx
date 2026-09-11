@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
 import { tagQuizTaken } from '../utils/manychat.js';
+import ChallengeQuizBanner from '../components/ChallengeQuizBanner.jsx';
 
 // ---- The 5 triggers -------------------------------------------------------
 export const TRIGGERS = {
@@ -204,44 +205,6 @@ function readPrefill() {
 }
 
 
-// ─── Challenge banner (2026-09-11, Joel) ───────────────────────────────
-// Advertises the Sept 22-24 Change My Life Challenge at the start of the quiz
-// and on the results (offer) screen. The ENTIRE banner is one link to
-// changemylifechallenge.com — no inner buttons, per Joel's spec. Dates come
-// from the cohort record (project_challenge_sept_cohort_2026-09-10): Sept
-// 22-24 2026, 12pm ET / 11am CT, $97. Roll or remove after Sept 24.
-function ChallengeBanner({ placement }) {
-  return (
-    <a
-      href="https://changemylifechallenge.com/?utm_source=bpquiz&utm_medium=banner&utm_campaign=sept-cohort&utm_content=quiz"
-      onClick={() => track('challenge_banner_click', { placement, cohort: '2026-09-22' })}
-      style={{
-        display: 'block',
-        textDecoration: 'none',
-        background: 'linear-gradient(120deg, #243A2B, #2E4A38 60%, #1c2e22)',
-        borderRadius: 14,
-        padding: '14px 18px',
-        margin: '0 0 14px',
-        boxShadow: '0 10px 26px rgba(36,58,43,0.28)',
-        border: '1px solid rgba(233,199,184,0.25)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 240px', minWidth: 0 }}>
-          <div style={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#E9C7B8', marginBottom: 3 }}>
-            Live Sept 22&ndash;24 &middot; The Change My Life Challenge
-          </div>
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem', lineHeight: 1.35 }}>
-            3 live days with Annie + Joel, RNs &mdash; find out what your body has been trying to tell you.
-          </div>
-        </div>
-        <div style={{ flex: '0 0 auto', background: '#E9C7B8', color: '#243A2B', fontWeight: 800, fontSize: '0.8rem', borderRadius: 999, padding: '9px 16px', whiteSpace: 'nowrap' }}>
-          Save my seat &middot; $97 &rarr;
-        </div>
-      </div>
-    </a>
-  );
-}
 
 export default function TriggerQuizPage() {
   const navigate = useNavigate();
@@ -467,7 +430,7 @@ export default function TriggerQuizPage() {
         <MiniHeader />
 
         {/* ─── QUIZ ─────────────────────────────────────────────── */}
-        {phase === 'quiz' && <ChallengeBanner placement="quiz-start" />}
+        {phase === 'quiz' && <ChallengeQuizBanner placement="quiz-start" />}
         {phase === 'quiz' && (
           <div style={cardStyle}>
             <div
@@ -700,7 +663,7 @@ export default function TriggerQuizPage() {
             5-trigger Blueprint) go out by email via lead-magnet.js the
             moment the gate form posts, so she still gets them, just not
             on-page and not before the offer. */}
-        {phase === 'offer' && t && <ChallengeBanner placement="results" />}
+        {phase === 'offer' && t && <ChallengeQuizBanner placement="results" />}
         {phase === 'offer' && t && (
           <div style={cardStyle}>
             <div
