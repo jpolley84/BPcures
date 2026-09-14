@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="The Change My Life Challenge - September 22-24, 2026. Three days of live coaching with Annie Chitate, RN and Joel Polley, RN." name="description"/>
+<meta content="The Change My Life Challenge — September 22–24, 2026. Three days of live coaching with Annie Chitate, RN and Joel Polley, RN." name="description"/>
 <link href="https://changemylifechallenge.com/" rel="canonical"/>
 <meta content="website" property="og:type"/>
 <meta content="The Change My Life Challenge" property="og:site_name"/>
@@ -582,7 +582,7 @@
     @media(max-width:640px){
       .announcement{gap:8px;padding:9px 10px}
       .announcement > span{font-size:.72rem}
-      .announcement-cta{font-size:.72rem;padding:13px 14px;min-height:44px;display:inline-flex;align-items:center}
+      .announcement-cta{font-size:.69rem;padding:7px 11px}
       .hero{padding:28px 0 34px}
       .enough-line{font-size:1.72rem;margin-bottom:12px}
       .hero h1{font-size:2.5rem;margin-bottom:14px}
@@ -698,20 +698,6 @@
       font-size:1.03rem;
       line-height:1.55;
     }
-
-    .guarantee-badge{
-      max-width:760px;
-      margin:22px auto 24px;
-      display:flex;
-      align-items:flex-start;
-      gap:16px;
-      background:#fff;
-      border:2px solid var(--gold);
-      border-radius:16px;
-      padding:18px 20px;
-      text-align:left;
-      box-shadow:0 8px 22px rgba(8,40,37,.06);
-    }
     .guarantee-seal{
       flex:0 0 46px;
       width:46px;
@@ -759,9 +745,11 @@
     @media(max-width:640px){
       .fit-callout{text-align:center}
       .urgency-section{padding:46px 0}
-      .guarantee-badge{display:block;text-align:center}
-      .guarantee-seal{margin:0 auto 12px}
     }
+    /* ^ 2026-09-14: this closing brace was MISSING in Joel's v17 file. Without
+       it every rule below (V8 hero, V10, V11b spacing, the fit-cols cards,
+       V14/V15/V17 hero) was nested inside max-width:640px and never applied
+       on desktop. */
 
   
     /* V8 hero copy refinement */
@@ -895,9 +883,8 @@
     .days-lead{margin-top:8px!important;margin-bottom:0!important}
     .three-hours-contrast{margin-top:8px!important}
     .map-line{max-width:830px!important;margin:16px auto 0!important}
-    /* 2026-09-09 (Joel): day titles are DARK GREEN on this page, not coral. */
-    .day h3{color:var(--navy)!important}
-    .day-num{color:var(--teal)!important;font-weight:950!important}
+    .day h3{color:var(--coral)!important}
+    .day-num{color:var(--coral)!important;font-weight:950!important}
 
     .deserve-line{font-size:clamp(1.28rem,2.2vw,1.75rem)!important;margin-top:24px!important}
     .purpose-line{margin-top:18px!important}
@@ -934,9 +921,7 @@
       .connected-story{font-size:1.5rem!important}
     }
 
-    /* WHO THIS IS [AND ISN'T] FOR - two columns, side by side. The v11b
-       markup shipped .fit-cols/.fit-box with no layout rules at all, so the
-       two panels stacked. This is the grid they were written for. */
+    /* Side-by-side Who This Is / Isn't For cards */
     .fit-cols{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
@@ -948,48 +933,189 @@
     .fit-box{
       background:#fff;
       border:1px solid var(--line);
-      border-radius:18px;
-      padding:26px 26px 24px;
-      box-shadow:0 10px 26px rgba(8,40,37,.07);
-      display:flex;
-      flex-direction:column;
+      border-radius:16px;
+      padding:28px 28px 24px;
+      text-align:left;
+      box-shadow:0 10px 24px rgba(8,40,37,.06);
+      height:100%;
     }
-    .fit-box.yes{border-top:5px solid var(--teal)}
-    .fit-box.no{border-top:5px solid var(--coral)}
+    .fit-box.yes{border-top:5px solid var(--teal);}
+    .fit-box.no{border-top:5px solid var(--coral);}
     .fit-box h3{
-      font-family:Arial,Helvetica,sans-serif;
-      font-weight:900;
-      letter-spacing:.03em;
+      margin:0 0 18px;
+      font-family:Georgia,"Times New Roman",serif;
       color:var(--navy);
-      margin:0 0 16px;
-      padding-bottom:14px;
-      border-bottom:1px solid var(--line);
+      font-size:clamp(1.2rem,1.8vw,1.55rem)!important;
+      line-height:1.25!important;
     }
-    .fit-box ul{margin:0;padding:0;list-style:none}
+    .fit-box ul{
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
     .fit-box li{
       position:relative;
-      padding-left:28px;
+      margin:0!important;
+      padding:11px 0 11px 30px;
+      border-bottom:1px solid var(--line);
       color:var(--body);
+      font-size:1rem!important;
+      line-height:1.5!important;
     }
-    .fit-box li:last-child{margin-bottom:0!important}
-    .fit-box.yes li::before{
-      content:"\2713";position:absolute;left:0;top:0;
-      color:var(--teal);font-weight:900;
-    }
+    .fit-box li:last-child{border-bottom:0;}
+    .fit-box.yes li::before,
     .fit-box.no li::before{
-      content:"\2715";position:absolute;left:0;top:0;
-      color:var(--coral);font-weight:900;
+      position:absolute;
+      left:0;
+      top:11px;
+      font-family:Arial,Helvetica,sans-serif;
+      font-weight:900;
     }
+    .fit-box.yes li::before{content:"✓";color:var(--teal);}
+    .fit-box.no li::before{content:"×";color:var(--coral);font-size:1.18rem;line-height:1.2;}
     .come-line{
-      max-width:900px;margin:28px auto 0;text-align:center;
-      font-family:Georgia,"Times New Roman",serif;color:var(--navy);font-weight:700;
+      text-align:center;
+      font-family:Georgia,"Times New Roman",serif;
+      color:var(--navy);
+      font-weight:700;
     }
     @media(max-width:760px){
-      .fit-cols{grid-template-columns:1fr;gap:16px}
-      .fit-box{padding:22px 20px}
+      .fit-cols{grid-template-columns:1fr;gap:16px;}
+      .fit-box{padding:24px 22px 20px;}
     }
 
-    /* Inline Stripe embedded checkout */
+
+    /* Final day-label color: use the page highlight orange */
+    .day-num{color:#c9513e!important;}
+
+    /* Final hero turn: reserve orange for the change/solution line */
+    .hero-second-line{
+      color:#c9513e!important;
+      font-size:.80em;
+      line-height:1.08;
+      font-weight:700;
+      margin-top:14px;
+    }
+    @media(max-width:640px){
+      .hero-second-line{
+        font-size:.82em;
+        margin-top:11px;
+      }
+    }
+
+
+    /* V14: exact 3-line hero + orange 4th-line turn */
+    :root{--highlight-orange:#E87522;}
+    .hero .wrap{
+      width:min(calc(100% - 24px),1180px);
+    }
+    .hero h1.hero-four-line-title{
+      max-width:1180px;
+      width:100%;
+      margin:0 auto 20px;
+      font-size:clamp(2.35rem,3.6vw,3.25rem);
+      line-height:1.03;
+      letter-spacing:-.035em;
+    }
+    .hero-main-line{
+      display:block;
+      white-space:nowrap;
+      color:var(--navy-2)!important;
+    }
+    .hero-second-line{
+      display:block;
+      white-space:nowrap;
+      color:var(--highlight-orange)!important;
+      font-size:.80em;
+      line-height:1.08;
+      font-weight:700;
+      margin-top:14px;
+    }
+    .day-num{
+      color:var(--highlight-orange)!important;
+    }
+    @media(max-width:640px){
+      .hero .wrap{
+        width:calc(100% - 12px);
+      }
+      .hero h1.hero-four-line-title{
+        font-size:clamp(.82rem,4.18vw,1.12rem);
+        line-height:1.08;
+        letter-spacing:-.045em;
+        margin-bottom:16px;
+      }
+      .hero-main-line,
+      .hero-second-line{
+        white-space:nowrap;
+      }
+      .hero-second-line{
+        font-size:.94em;
+        margin-top:10px;
+      }
+    }
+
+    /* V15: force the hero hierarchy exactly as requested */
+    .hero .wrap{
+      width:min(calc(100% - 20px),1320px)!important;
+      max-width:1320px!important;
+    }
+    .hero h1.hero-four-line-title{
+      width:100%!important;
+      max-width:1320px!important;
+      margin:0 auto 20px!important;
+      font-size:clamp(2.65rem,3.55vw,4.15rem)!important;
+      line-height:1.04!important;
+      letter-spacing:-.04em!important;
+      color:#111111!important;
+    }
+    .hero h1.hero-four-line-title .hero-main-line{
+      display:block!important;
+      white-space:nowrap!important;
+      color:#111111!important;
+    }
+    .hero h1.hero-four-line-title .hero-second-line{
+      display:block!important;
+      white-space:nowrap!important;
+      color:#F36C21!important;
+      font-size:.82em!important;
+      line-height:1.08!important;
+      font-weight:700!important;
+      margin-top:14px!important;
+    }
+    @media(max-width:640px){
+      .hero .wrap{
+        width:calc(100% - 10px)!important;
+      }
+      .hero h1.hero-four-line-title{
+        font-size:3.45vw!important;
+        line-height:1.12!important;
+        letter-spacing:-.035em!important;
+        margin-bottom:16px!important;
+      }
+      .hero h1.hero-four-line-title .hero-main-line,
+      .hero h1.hero-four-line-title .hero-second-line{
+        white-space:nowrap!important;
+      }
+      .hero h1.hero-four-line-title .hero-second-line{
+        font-size:1em!important;
+        margin-top:11px!important;
+      }
+    }
+
+
+    /* V17: exact requested hero colors */
+    .hero h1.hero-four-line-title,
+    .hero h1.hero-four-line-title .hero-main-line{
+      color:#082825!important;
+      -webkit-text-fill-color:#082825!important;
+    }
+    .hero h1.hero-four-line-title .hero-second-line{
+      color:#c9513e!important;
+      -webkit-text-fill-color:#c9513e!important;
+    }
+
+
+    /* ── Carried from the wired live page (2026-09-14 port) ── */
     .checkout-live{
       margin:30px auto 0;max-width:640px;background:#fff;
       border:1px solid var(--line);border-radius:18px;padding:22px 20px;
@@ -1002,305 +1128,29 @@
     }
     #checkoutStatus{font-size:.95rem;color:var(--muted);text-align:center;padding:26px 8px}
     .checkout-secure{margin:14px 0 0;text-align:center;font-size:.8rem;color:var(--muted)}
-
-    /* ══════════ 2026-09-09 Joel pass ══════════ */
-
-    /* "Three focused hours versus another year of guessing" was wrapping to two
-       lines and shouting on desktop. One line, calmer weight. */
-    .three-hours-contrast{
-      font-size:clamp(1.05rem,1.85vw,1.5rem)!important;
-      line-height:1.3!important;
-      white-space:nowrap;
-      max-width:none!important;
-    }
-
-    /* Same treatment for the purpose line: still the biggest type on the page,
-       but it has to hold one line on desktop. */
-    .purpose-line{
-      font-size:clamp(1.7rem,4vw,3.4rem)!important;
-      white-space:nowrap;
-      max-width:none!important;
-    }
-
-    /* Photos pulled from the previous page build. */
-    .inline-photo{margin:26px auto 0;max-width:760px;text-align:center}
-    .inline-photo img{
-      width:100%;height:auto;display:block;border-radius:16px;
-      border:1px solid var(--line);box-shadow:0 14px 34px rgba(8,40,37,.12);
-    }
-    .inline-photo figcaption{
-      margin-top:10px;color:var(--muted);font-size:.88rem;
-    }
-    .video-still{position:relative;padding:0;overflow:hidden;background:var(--navy-2)}
-    .video-still img{width:100%;height:100%;object-fit:cover;display:block}
-    .video-still-label{
-      position:absolute;left:0;right:0;bottom:0;margin:0;padding:12px 14px;
-      background:linear-gradient(transparent,rgba(8,40,37,.85));
-      color:rgba(255,255,255,.94);font-size:.74rem;letter-spacing:.09em;
-      text-transform:uppercase;font-weight:900;text-align:center;
-    }
-    .host-image{padding:0;overflow:hidden;border-radius:16px}
-    .host-image img{width:100%;height:100%;min-height:470px;object-fit:cover;display:block}
-
-    /* Full-bleed transition band between the purpose section and the stats. */
-    .transition-band{
-      display:block;width:100%;height:clamp(180px,26vw,340px);
-      object-fit:cover;object-position:center 40%;
-    }
-
-    /* Waiting Isn't Neutral: plain-language facts, one per line. */
-    .urgency-section{background:var(--sky);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-    .urgency-facts{
-      max-width:760px;margin:0 auto 18px;padding:0;list-style:none;text-align:left;
-    }
-    .urgency-facts li{
-      position:relative;padding:14px 0 14px 34px;border-bottom:1px solid var(--line);
-      color:var(--body);font-size:1.06rem;line-height:1.55;
-    }
-    .urgency-facts li::before{
-      content:"\2192";position:absolute;left:0;top:14px;color:var(--teal);font-weight:900;
-    }
-    .urgency-facts strong{color:var(--navy)}
-    .urgency-facts span{display:block;margin-top:4px;color:var(--muted);font-size:.78rem;letter-spacing:.02em}
-
-    /* Health Is Power, moved to the close, now carrying the last CTA. */
-    .power-final{background:var(--teal)}
-    .power-final .power-band{padding-bottom:6px}
-    .power-final-cta{text-align:center;padding:0 18px 46px;background:var(--teal)}
-    .power-final-cta p{
-      margin:0 auto 22px;color:rgba(255,255,255,.92);
-      font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.2rem,2.2vw,1.6rem);
-    }
-    .power-final-cta .cta{background:#fff;color:var(--teal-2)!important;border-color:#fff}
-    .power-final-cta .cta:hover{background:var(--gold-soft);border-color:var(--gold-soft)}
-
-
-
-    /* ── Meet Annie and Joel (2026-09-09 rewrite) ────────────────────── */
-    .hosts-lead{
-      max-width:820px;margin:0 auto 26px;text-align:center;
-      color:var(--body);font-size:1.08rem;line-height:1.6;
-    }
-    .hosts-photo{margin:0 auto 30px;max-width:900px}
-    .hosts-photo img{
-      width:100%;height:auto;display:block;border-radius:18px;
-      border:1px solid var(--line);box-shadow:0 16px 38px rgba(8,40,37,.13);
-    }
-    .coach-cards{
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;
-      max-width:1080px;margin:0 auto;align-items:stretch;
-    }
-    .coach-card{
-      background:#fff;border:1px solid var(--line);border-radius:18px;
-      padding:26px 26px 22px;box-shadow:0 10px 26px rgba(8,40,37,.07);
-      border-top:5px solid var(--teal);
-    }
-    .coach-card h3{
-      font-size:clamp(1.5rem,2.6vw,2.05rem);margin:0 0 4px;color:var(--navy);
-    }
-    .coach-role{
-      margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid var(--line);
-      font-family:Arial,Helvetica,sans-serif;font-size:.8rem;font-weight:900;
-      letter-spacing:.08em;text-transform:uppercase;color:var(--teal);
-    }
-    .coach-list{margin:0;padding:0;list-style:none}
-    .coach-list li{
-      position:relative;padding:0 0 15px 26px;margin-bottom:15px;
-      border-bottom:1px solid var(--line);
-      color:var(--body);font-size:1rem;line-height:1.55;
-    }
-    .coach-list li:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
-    .coach-list li::before{
-      content:"\2713";position:absolute;left:0;top:0;color:var(--teal);font-weight:900;
-    }
-    .coach-list strong{color:var(--ink)}
-    .coach-list em{font-style:normal;color:var(--coral-dark);font-weight:700}
-    .coach-stats{
-      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;
-      max-width:1080px;margin:30px auto 0;
-      border-top:2px solid var(--navy);border-bottom:1px solid var(--line);
-    }
-    .coach-stats div{
-      padding:20px 16px;text-align:center;border-right:1px solid var(--line);
-    }
-    .coach-stats div:last-child{border-right:0}
-    .coach-stats strong{
-      display:block;font-family:Georgia,"Times New Roman",serif;
-      color:var(--teal);font-size:clamp(1.05rem,1.9vw,1.5rem);line-height:1.15;
-    }
-    .coach-stats span{
-      display:block;margin-top:6px;color:var(--muted);
-      font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;font-weight:800;
-    }
-    .hosts-close{
-      max-width:880px;margin:28px auto 0;text-align:center;
-      color:var(--body);font-size:1.08rem;line-height:1.62;
-    }
-    .hosts-close strong{color:var(--navy)}
-    .hosts-close em{font-style:normal;color:var(--coral-dark);font-weight:700}
-    @media(max-width:860px){
-      .coach-cards{grid-template-columns:1fr}
-      .coach-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .coach-stats div:nth-child(2){border-right:0}
-      .coach-stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
-    }
-    @media(max-width:640px){
-      .hosts-lead{font-size:1rem}
-      .coach-card{padding:20px 18px 18px}
-      .coach-card h3{font-size:1.38rem}
-      .coach-list li{font-size:.96rem;padding-left:24px}
-      .coach-stats div{padding:16px 10px}
-      .hosts-close{font-size:1rem}
-    }
-
-    /* ── 2026-09-10 expert-feedback pass ─────────────────────────────── */
-    .hero-pain{
-      max-width:820px;margin:0 auto 14px;text-align:center;
-      font-family:Georgia,"Times New Roman",serif;color:var(--body);
-      font-size:clamp(1.05rem,1.7vw,1.3rem);line-height:1.4;
-    }
-    .price-strip{
-      display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px 20px;
-      max-width:960px;margin:22px auto 0;padding:18px 20px;
-      background:var(--teal-soft);border:1px solid var(--line);border-radius:14px;
-    }
-    .price-strip-price{
-      font-family:Georgia,"Times New Roman",serif;font-weight:700;color:var(--coral);
-      font-size:2.3rem;line-height:1;
-    }
-    .price-strip-meta{color:var(--navy);font-weight:800;font-size:.98rem}
-    .objection{padding:18px 0;border-bottom:1px solid var(--line)}
-    .objection:last-child{border-bottom:0}
-    .objection h3{
-      font-size:clamp(1.3rem,2.2vw,1.7rem);margin:0 0 8px;color:var(--navy);
-    }
-    .objection p{margin:0;color:var(--body);font-size:1.05rem;line-height:1.6}
-    .results-note{
-      max-width:900px;margin:16px auto 0;text-align:center;
-      color:var(--muted);font-size:.82rem;font-style:italic;
-    }
-    @media(max-width:640px){
-      .hero-pain{font-size:1rem;margin-bottom:10px}
-      .price-strip{flex-direction:column;padding:16px 14px}
-      .price-strip-price{font-size:2rem}
-      .price-strip-meta{font-size:.9rem;text-align:center}
-      .objection h3{font-size:1.2rem}
-      .objection p{font-size:.98rem}
-    }
-    /* The nowrap one-liners above are a DESKTOP trick. Below ~1000px the
-       purpose line is wider than the column and pushed the page sideways,
-       so hand wrapping back before that happens. */
-    @media(max-width:1000px){
-      .purpose-line{white-space:normal;font-size:clamp(1.6rem,4.4vw,2.6rem)!important}
-      .three-hours-contrast{white-space:normal}
-    }
-    /* ══════════ MOBILE. Hard pass: this page is read on a phone. ══════════ */
-    @media(max-width:640px){
-      .wrap,.narrow{width:calc(100% - 28px)}
-      .section{padding:34px 0}
-      .hero{padding:22px 0 30px}
-      .enough-line{font-size:1.45rem;line-height:1.15;margin-bottom:10px}
-      .hero h1{font-size:1.78rem;line-height:1.14;margin-bottom:12px}
-      .hero-second-line{margin-top:8px}
-      .hero-sub{font-size:1.06rem;line-height:1.45}
-      .hero-space{height:16px}
-      .experience{font-size:1rem}
-      .date-line{font-size:1.08rem;margin-bottom:16px}
-      .countdown{gap:10px;margin-bottom:20px}
-      .countdown-unit{min-width:58px}
-      .countdown-unit b{font-size:1.62rem}
-      .countdown-unit span{font-size:.6rem;letter-spacing:.07em}
-      .cta{width:100%;padding:17px 18px;font-size:1rem}
-
-      .section-title{font-size:1.72rem!important;line-height:1.14}
-      .section-title.medium{font-size:1.6rem!important}
-      .section-title.small{font-size:1.5rem!important}
-      .section-copy{font-size:1rem}
-      .big-paragraph{font-size:1.02rem}
-      .emphasis-line,.connected-story{font-size:1.32rem!important;line-height:1.22}
-      .relief-line{font-size:1.04rem!important}
-
-      /* nowrap is a desktop-only trick; on a phone it would overflow. */
-      .three-hours-contrast{white-space:normal;font-size:1.18rem!important}
-      .purpose-line{white-space:normal;font-size:1.55rem!important;margin-top:16px!important}
-      .deserve-line{font-size:1.12rem!important}
-
-      .day{padding:22px 20px 26px}
-      .day h3{font-size:1.5rem;margin-bottom:12px}
-      .day p{font-size:.98rem}
-
-      .price{font-size:4.2rem}
-      .value-row{padding:14px 0;font-size:.98rem}
-      .checkout-live{padding:16px 12px;border-radius:14px}
-      .guarantee-badge{padding:16px 16px}
-
-      .testimonial{padding:18px 18px 16px;border-radius:14px}
-      .testimonial blockquote{font-size:1.06rem;line-height:1.4}
-      .chat-shot{padding:14px 14px 12px}
-      .chat-text{font-size:.96rem}
-      .proof-intro{font-size:1.42rem}
-
-      .power-band{font-size:2.05rem;padding:26px 16px}
-      .interruption{padding-top:34px!important;padding-bottom:34px!important}
-      .interruption h2{font-size:1.5rem!important}
-      .interruption-contrast{font-size:1.22rem}
-
-      .urgency-facts li{font-size:1rem;padding-left:28px}
-      .host-image img{min-height:280px}
-      .inline-photo{margin-top:20px}
-      .trust-item{font-size:.9rem}
-      summary{font-size:1rem;padding:16px 0}
-    }
-
-/* 2026-09-11 panel fixes: sticky CTA + overflow guards */
-html,body{overflow-x:hidden}
-.value-row{flex-wrap:wrap;gap:10px}
-.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#243A2B;box-shadow:0 -8px 24px rgba(0,0,0,.22);padding:10px 14px;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
-.sticky-cta.show{display:flex}
-.sticky-cta .sc-txt{color:#F5EFE4;font-weight:700;font-size:.86rem;letter-spacing:.02em}
-.sticky-cta a{background:#E9C7B8;color:#243A2B;font-weight:800;font-size:.9rem;padding:13px 22px;border-radius:999px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
-
-/* 2026-09-11 Joel copy pass: hero compressed so the countdown + CTA sit
-   above the fold, and the value stack is a grid so every number lines up
-   with the total in one right-aligned column. */
-.hero{padding-top:clamp(18px,3vh,34px)!important;padding-bottom:clamp(18px,3vh,30px)!important}
-.hero h1{font-size:clamp(1.9rem,4.6vw,3.3rem)!important;margin-bottom:10px!important}
-.hero .hero-sub{margin-bottom:8px!important;font-size:clamp(.98rem,1.6vw,1.15rem)!important;line-height:1.5!important}
-.hero .hero-invite{margin-bottom:10px!important}
-.hero .experience{margin-top:4px!important}
-.countdown{margin-bottom:14px!important}
-.countdown-label{margin-top:6px!important}
-.value-stack{max-width:760px;margin:0 auto}
-.value-row{display:grid!important;grid-template-columns:1fr 96px!important;gap:12px!important;align-items:center!important}
-.value-row > span.value-amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:800}
-.value-row div span{white-space:normal!important}
-.value-total-row{border-top:2px solid rgba(36,58,43,.35);margin-top:6px;padding-top:14px}
-.value-total-row strong{font-size:1.05rem}
-.value-total-row .value-amt{font-size:1.2rem}
-.guarantee-box{border:2px solid #243A2B;border-radius:14px}
-.guarantee-box h3{text-transform:uppercase;letter-spacing:.04em}
-@media(max-width:560px){.value-row{grid-template-columns:1fr 78px!important}}
-@media(max-width:600px){
-  .hero .hero-invite{display:none}
-  .hero h1{font-size:1.72rem!important}
-  .hero .hero-sub{font-size:.94rem!important}
-  .countdown{gap:8px!important;margin-bottom:10px!important}
-  .countdown-unit{min-width:52px!important}
-}
+    @media(max-width:640px){ .checkout-live{padding:16px 12px;border-radius:14px} }
+    .video{overflow:hidden}
+    .video img{width:100%;height:100%;object-fit:cover;display:block}
+    .host-image.has-photo{padding:0;min-height:0;background:none;overflow:hidden}
+    .host-image.has-photo img{width:100%;height:100%;object-fit:cover;display:block}
+    .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--navy-2);box-shadow:0 -8px 24px rgba(0,0,0,.22);padding:10px 14px;display:none;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .sticky-cta.show{display:flex}
+    .sticky-cta .sc-txt{color:#fff;font-weight:700;font-size:.86rem;letter-spacing:.02em}
+    .sticky-cta a{background:var(--coral);color:#fff;font-weight:800;font-size:.9rem;padding:13px 22px;border-radius:3px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+    html,body{overflow-x:hidden}
 </style>
 <script src="/pixels.js"></script>
 </head>
 <body>
 <div class="announcement">
-<span>LIVE ON ZOOM · SEPT 22–24 · 12 PM ET · $97</span>
+<span>LIMITED COACHING SEATS AVAILABLE!   SEPTEMBER 22–24, 2026</span>
 <a class="announcement-cta" href="#checkout">JOIN THE CHALLENGE</a>
 </div><header class="hero" id="top">
 <div class="wrap">
-<div class="enough-line">For the woman over 40 who is tired of not feeling like herself.</div>
-
-<h1>Girl, Your Body Changed. <span class="hero-second-line">And Nobody Gave You The New Rules.</span></h1>
-<p class="hero-sub">The weight. The mood swings. The chin hair. The thinning hair. The blood pressure. The blood sugar. The tiredness. You keep trying to fix each thing by itself. <strong>But what if they are connected?</strong></p>
-<p class="hero-sub hero-invite">Come spend three live days with us and learn how to listen to your body, connect the dots, and finally know where to start.</p>
+<div class="enough-line">For the woman over 40 who's had <strong>ENOUGH.</strong></div>
+<h1 class="hero-four-line-title" style="color:#082825!important;-webkit-text-fill-color:#082825!important;"><span class="hero-main-line" style="display:block!important;white-space:nowrap!important;color:#082825!important;-webkit-text-fill-color:#082825!important;">Girl, Your Health Is A Mess.</span><span class="hero-main-line" style="display:block!important;white-space:nowrap!important;color:#082825!important;-webkit-text-fill-color:#082825!important;">Your Body And Symptoms Feel Out Of Control.</span><span class="hero-main-line" style="display:block!important;white-space:nowrap!important;color:#082825!important;-webkit-text-fill-color:#082825!important;">Nothing You've Tried Has Worked.</span><span class="hero-second-line" style="display:block!important;white-space:nowrap!important;color:#c9513e!important;-webkit-text-fill-color:#c9513e!important;">It's Time To Fix It A Different Way.</span></h1>
+<p class="hero-sub">Discover what's really behind your rising weight, mood swings, chin hair, blood pressure, blood sugar and more - so you can finally know where to start.</p>
+<div class="hero-space"></div>
 <p class="experience">A 3-Day LIVE Coaching Experience to Change Your Life</p>
 <p class="date-line">September 22, 23 &amp; 24, 2026 · 12 PM Eastern / 11 AM Central</p>
 <div class="countdown-label">We begin in:</div>
@@ -1310,13 +1160,12 @@ html,body{overflow-x:hidden}
 <div class="countdown-unit"><b id="minutes">00</b><span>Minutes</span></div>
 <div class="countdown-unit"><b id="seconds">00</b><span>Seconds</span></div>
 </div>
-<a class="cta" href="#checkout">YES — SAVE MY SEAT</a>
+<a class="cta" href="#checkout">YES  -  SAVE MY SEAT</a>
 <div class="micro">Three live days with Annie Chitate, RN + Joel Polley, RN</div>
 </div>
 </header><section class="section white compact-section">
-<div class="narrow">
-<h2 class="section-title small center">You Have Tried Enough.</h2>
-<p class="section-copy tried-list">The prescriptions. The supplements. The collagen. The creams. The tweezers. The diets. The workouts. The videos you saved and said you would come back to.</p><p class="section-copy tried-hit">And after all of that, you are still thinking: <strong>“Why do I still not feel like myself?”</strong></p><p class="relief-line">Maybe the problem is not that you have not tried hard enough. <strong>Maybe nobody ever helped you connect the dots.</strong></p><div class="emphasis-line connected-story">Your body has been giving you <span>clues</span>. We are going to help you start reading them.</div></div></section><section class="section teal-soft pre-vsl-proof compact-section">
+<div class="wrap center"><h2 class="section-title small">You've Tried Everything.</h2></div>
+<p class="section-copy tried-list">The prescriptions. The supplements. The collagen to stop speedy aging. The creams and tweezers for chin hair. The mantras and affirmations. The gurus. The diets. The exercise routines. The videos you've saved.</p><p class="section-copy tried-hit">And yet here you are. <strong>Nothing is working. If anything, it feels like it is getting worse.</strong></p><p class="relief-line">It's not because you haven't tried hard enough. <strong>It's because no one ever helped you figure out what matters first.</strong></p><div class="emphasis-line connected-story">Your symptoms and numbers may be telling you <span>one connected story.</span> You don't need 76 more things to try. You need to know what deserves your attention first.</div></section><section class="section teal-soft pre-vsl-proof compact-section">
 <div class="wrap">
 <div class="testimonials proof-pair">
 <!-- REVIEW CLAIM -->
@@ -1331,69 +1180,57 @@ html,body{overflow-x:hidden}
 </div>
 </div>
 </div>
-<p class="results-note">Different women. Different starting points. Same decision: stop ignoring what their body was telling them. Individual results vary. These are real messages from real women.</p>
 </section><section class="section white compact-vsl">
 <div class="wrap center">
-<h2 class="vsl-invite">If something inside you keeps saying, “I cannot keep doing this another year…” this is the room where it changes.</h2>
-<div aria-hidden="true" class="vsl-arrow">↓↓</div><!-- VSL SLOT. Until the video lands (Joel, due 2026-09-10) this shows a REAL frame of
-     Annie + Joel live on Zoom, 2026-08-09 session. Deliberately NO play triangle: a play
-     button over a still that does not play is a fake video. Swap this whole block for the
-     embed when the file arrives. -->
-<div class="video video-still">
-<img alt="Annie Chitate, RN and Joel Polley, RN live on Zoom together" src="/challenge-b/img/zoom-still.jpg"/>
-<p class="video-still-label">Annie + Joel, live with the room</p>
-</div>
-<div class="price-strip">
-<span class="price-strip-price">$97</span>
-<span class="price-strip-meta">3 live days · Sept 22–24 · 12 PM ET · with Annie + Joel</span>
-<a class="cta" href="#checkout">YES — SAVE MY SEAT</a>
+<h2 class="vsl-invite">If something in you is saying, “I’ve had enough. I’m ready for change.” watch this video.</h2>
+<div aria-hidden="true" class="vsl-arrow">↓↓</div><div class="video">
+<!-- VSL NOT RECORDED YET (2026-09-14). Real still from a live session until
+     the embed exists. No play button: a play icon that plays nothing is a
+     broken promise. Swap this img for the embed when the VSL lands. -->
+<img src="/challenge-b/img/zoom-still.jpg" alt="Annie and Joel coaching women live on Zoom" width="960" height="540" />
 </div>
 </div>
 </section><section class="section teal-soft challenge-experience compact-section">
 <div class="narrow center">
-<h2 class="section-title medium">Three Days To Stop Guessing.</h2>
-<p class="section-copy" style="font-size:clamp(1.2rem,2vw,1.5rem);color:var(--ink)">The Change My Life Challenge is a <strong>three-day live coaching experience</strong> designed to help you understand your body in a new way. Not one symptom at a time. The whole picture. You will start connecting what you eat, how you sleep, how you move, your stress, your hormones, your numbers, and the symptoms you keep noticing.</p>
-<p class="challenge-fit-line">By Day 3, you will build your own <strong>Life Change Map</strong> so you know what deserves your attention first, what your biggest domino may be, and what to do next. This challenge is for the woman with one thing bothering her. And it is for the woman thinking: <strong>“Girl, EVERYTHING is happening at once.”</strong> Either way, you need a place to start.</p>
+<h2 class="section-title medium">The Change My Life Challenge Experience.</h2>
+<p class="section-copy" style="font-size:clamp(1.2rem,2vw,1.5rem);color:var(--ink)">The Change My Life Challenge is a three-day live coaching experience for the woman who has already tried a lot and still doesn't know what to do first. <strong>We'll help you connect what is happening in your symptoms and numbers, narrow the noise down, and find the first domino that deserves your attention.</strong></p>
+<p class="challenge-fit-line">This challenge was built for you if you're ready to take charge of your future. Whether you have one unwanted symptom or everything happening at once, or you simply want to be <strong>THAT girl again.</strong></p>
 </div>
 </section><section class="section dark body-speaking compact-section">
 <div class="wrap">
-<h2 class="section-title center">Your Body Is Speaking. We Are Going To Teach You How To Listen.</h2>
-<p>That belly that suddenly showed up. The chin hair. The bad sleep. The mood. The cravings. The fatigue. The blood pressure. The blood sugar. The hair. <strong>Your body is not randomly turning against you. These are clues worth paying attention to.</strong> Stop fighting every clue by itself. Start looking at the whole picture.</p>
+<h2 class="section-title center">Your Body Is Speaking.</h2>
+<p>Every symptom. Every sign. Every ache. Every pain. Everything you've Googled. <strong>That's information.</strong> You don't need to chase every signal. You need to understand what it may be pointing to and <strong>what deserves your attention first.</strong></p>
 </div>
 </section><section class="section soft compact-days" id="days-section">
 <div class="wrap center">
-<h2 class="section-title">Three Days. Three Live Sessions. One Clear Starting Point.</h2>
+<h2 class="section-title">Here's What You Get.</h2>
 
 
 
-<p class="section-copy days-lead"><strong>Three focused hours versus another year of trying to figure this out alone.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">You will leave with your own <strong>Life Change Map.</strong> Not somebody else’s diet. Not a giant list of supplements. Not 76 things to change Monday morning. <strong>Your next steps.</strong></p>
-<figure class="inline-photo map-photo">
-<img alt="The Personal Life Change Map workbook, open to a filled-in example spread" src="/challenge-b/img/life-change-map.jpg"/>
-<figcaption>Your Life Change Map. You build it with us, live, across the three days.</figcaption>
-</figure></div>
+<p class="section-copy days-lead"><strong>Three days. Three live coaching sessions.</strong></p><div class="three-hours-contrast">Three focused hours versus another year of guessing.</div><p class="section-copy map-line">By the end of these three days, you'll have answers to the questions women keep asking us: <strong>Why is my number still high? Why don't I feel like myself? What do I do first?</strong> You'll know what deserves your attention now, where to start, and what to stop wasting your energy on.</p></div>
 <div class="wrap">
 <div class="days">
 <article class="day">
 <div class="day-num">DAY 1</div>
-<h3>Your Numbers Are Trying To Tell You Something</h3>
-<p>Weight. Blood pressure. Blood sugar. Cholesterol. These numbers matter, but the number is not the whole story. On Day 1, we are going to help you look at the patterns underneath the numbers and start asking: <strong>“What is driving this in MY body?”</strong> You will begin connecting the dots and finding the first place to start.</p>
+<h3>Lower Your Numbers Naturally</h3>
+<p>You've tried doing what you were told, but the weight, blood pressure, blood sugar or cholesterol still isn't moving the way you hoped. On Day 1, you'll start connecting the dots so you can see what may actually be driving your numbers and what deserves your attention first. <strong>So you can stop asking, “Why is my number still high?”</strong></p>
 </article>
 <article class="day">
 <div class="day-num">DAY 2</div>
 <h3>Bring Sexy Back</h3>
-<p>Yes. We are talking about it. The body. The confidence. The energy. The part of you that used to feel alive, feminine, vibrant, and desirable. Because getting healthy is not only about avoiding disease. <strong>You want to feel good being YOU again.</strong> On Day 2, Annie will walk you through simple shifts that can help you reconnect with your body instead of fighting it. The goal? To look in the mirror and think: <strong>“There she is.”</strong></p>
+<p>Maybe you don't feel like THAT girl anymore and you've lost your spark. We'll show you the 3 things to start fixing so you can get your energy, confidence, desire and that woman you miss back. <strong>So you can look in the mirror and feel like YOU again.</strong></p>
 </article>
 <article class="day">
 <div class="day-num">DAY 3</div>
-<h3>Restore Your Body From The Inside Out</h3>
-<p>Now we put the pieces together. Your energy. Your sleep. Your food. Your stress. Your movement. Your hormones. Your symptoms. Your numbers. Instead of chasing each one separately, we will help you see the patterns and build a simple plan for what comes next. <strong>You do not need to change everything. You need to know your first domino.</strong></p>
+<h3>Take Back Your Future</h3>
+<p>You don't need 76 more things to change. You'll connect the dots between what your body has been telling you and see what may be behind it, what to do first, and the 4 simple steps to get your body back. <strong>So you can stop feeling afraid of what might happen and finally know where to start.</strong></p>
 </article>
 </div>
 <div class="center" style="margin-top:30px"><a class="cta" href="#checkout">YES  -  I WANT THESE 3 DAYS</a></div>
 </div>
 </section><section class="section white compact-section">
 <div class="wrap">
-<h2 class="section-title medium center">Because This Was Never Only About The Number On The Scale.</h2>
+<h2 class="section-title medium center">You're tired of your health deciding what you get out of life.</h2>
 <div class="check-grid">
 <div class="check-item"><span class="check">✓</span><span>You want enough health to start or finish your purpose.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to enjoy your children and your grandchildren.</span></div>
@@ -1401,7 +1238,7 @@ html,body{overflow-x:hidden}
 <div class="check-item"><span class="check">✓</span><span>You want to feel desirable and alive for your spouse.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to look in the mirror and love what you see.</span></div>
 <div class="check-item"><span class="check">✓</span><span>You want to pass on a legacy of health.</span></div>
-</div><div class="deserve-line">After years of pouring into everybody else… <strong>you want some of YOU back.</strong></div><div class="purpose-line">Your health affects <span>how much life</span> you get to enjoy.</div>
+</div><div class="deserve-line">You've poured into everybody else. You deserve to feel better. You deserve to feel amazing in your body again. You deserve to come alive again.</div><div class="purpose-line">You want your <span>purpose</span> and your <span>power</span> back.</div>
 <div class="chat-proof">
 <h3 class="proof-intro">This is what women told us they were fighting for.</h3>
 <div class="chat-grid">
@@ -1414,37 +1251,32 @@ html,body{overflow-x:hidden}
 <div class="chat-shot"><div class="chat-meta"><span class="redacted"></span><span>00:20:43</span></div><p class="chat-text">“I have a non profit ministry that I plan to pass on to those behind me to help youth that age out of the system get help”</p></div><div class="chat-shot"><div class="chat-meta"><span class="redacted"></span><span>00:18:46</span></div><p class="chat-text">“For my health and to be an example for my children”</p></div></div>
 </div>
 </div>
-</section><img alt="Change My Life Challenge. Your next chapter starts here." class="transition-band" src="/challenge-b/img/next-chapter-banner.jpg"/><section class="section urgency-section compact-urgency">
+</section><div class="power-band">Health Is Power.</div><section class="section urgency-section compact-urgency">
 <div class="narrow center">
-<h2 class="section-title medium">Waiting Doesn’t Make It Easier.</h2>
-<p class="urgency-copy">Nobody wakes up at 55 and says: <strong>“You know what? I wish I had waited longer to take care of myself.”</strong></p>
-<p class="urgency-punch">Another year of the same habits usually gives you another year of the same problems. You do not have to become perfect today. You do not have to fix everything. <strong>But you do need to start.</strong></p><p class="urgency-calm">Your future body is being built by what you do now.</p>
+<h2 class="section-title medium">Waiting Isn't Neutral.</h2>
+<p class="urgency-copy">Midlife is a real health turning point. A 2026 American Heart Association analysis found perimenopausal women were <strong>twice as likely to have a low overall cardiovascular-health score</strong>, driven largely by cholesterol and blood sugar. The CDC says stroke risk about <strong>doubles every 10 years after 55</strong>, and type 2 diabetes most often develops after 45.</p>
+
+
+<p class="urgency-punch"><strong>Waiting isn't neutral. Another year doesn't press pause. It makes things worse.</strong></p><p class="urgency-calm">Start changing your life today.</p><div class="source-line">Sources: American Heart Association · CDC</div>
 </div>
-</section><section class="interruption"><h2>This is not another course you buy and never finish.</h2><p class="interruption-copy">No giant video library. No 63 lessons. No notebook that ends up in a drawer. For three days: <strong>You show up. We coach. You apply it.</strong> One hour a day. That is it.</p><p class="interruption-contrast">Three focused hours versus another year of guessing.</p><div style="margin-top:28px"><a class="cta" href="#checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section soft objections">
-<div class="narrow">
-<h2 class="section-title small center">Still Wondering If This Is For You?</h2>
-<div class="objection"><h3>“I work at noon.”</h3><p>Each session is one hour. Join from your phone on your lunch break. If one day slips, the replay is up for 48 hours.</p></div>
-<div class="objection"><h3>“I'm on medication.”</h3><p>Good. Nothing here asks you to stop or change it. You'll learn what your numbers mean, so your next conversation with your doctor is a better one.</p></div>
-<div class="objection"><h3>“I'm 70.”</h3><p>Women in their 70s and 80s have sat in this room. Age changes where you start, not whether you can start.</p></div>
-</div>
-</section><section class="section white compact-checkout" id="checkout">
+</section><section class="interruption"><h2>This isn't another course you'll never complete. It isn't another video library or pile of notes you'll put away.</h2><p class="interruption-copy">It's a three-day LIVE coaching experience for one hour a day. You show up. We coach. You apply it. Your life changes.</p><p class="interruption-contrast">Three focused hours versus another year of guessing.</p><div style="margin-top:28px"><a class="cta" href="#final-checkout">JOIN THE 3-DAY CHALLENGE</a></div></section><section class="section white compact-checkout" id="checkout">
 <div class="wrap center">
-<h2 class="section-title medium">Here’s What Your $97 Gets You.</h2>
+<h2 class="section-title medium">Three Live Days. One Clear Starting Point.</h2>
 
 </div>
 <div class="wrap">
 <div class="value-stack">
-<div class="value-row"><div><strong>3 Live Coaching Sessions with Annie + Joel</strong><br/><span>Three focused days of teaching, coaching, and implementation.</span></div><span class="value-amt">$297</span></div>
-<div class="value-row"><div><strong>Your Personal Life Change Map</strong><br/><span>A simple map you build during the challenge so you know what to focus on first.</span></div><span class="value-amt">$97</span></div>
-<div class="value-row"><div><strong>Daily Action Guides</strong><br/><span>Simple steps so you actually DO something with what you learn.</span></div><span class="value-amt">$47</span></div>
-<div class="value-row"><div><strong>Live Nurse-Led Q&amp;A</strong><br/><span>Bring your questions. Hear Annie and Joel coach real women through real situations.</span></div><span class="value-amt">$147</span></div>
-<div class="value-row"><div><strong>48-Hour Replays</strong><br/><span>Life happens. You will have 48 hours to catch anything you miss.</span></div><span class="value-amt">$47</span></div>
-<div class="value-row"><div><strong>Know Your Labs Mini-Training</strong><br/><span>Learn what common health numbers mean so you can ask better questions and have better conversations with your healthcare team.</span></div><span class="value-amt">$97</span></div>
-<div class="value-row value-total-row"><div><strong>Total Experience Value</strong></div><span class="value-amt">$732</span></div>
+<div class="value-row"><div><strong>3 Live Coaching Sessions with Annie + Joel</strong><br/><span>Three focused live sessions of teaching, coaching and implementation.</span></div><span>$297 value</span></div>
+<div class="value-row"><div><strong>Your Big 3 + Clear Starting Point</strong><br/><span>Narrow the noise down so you know what deserves your attention first and where to start.</span></div><span>$97 value</span></div>
+<div class="value-row"><div><strong>Daily Action Guides</strong><br/><span>Simple steps that keep the challenge from becoming another pile of notes.</span></div><span>$47 value</span></div>
+<div class="value-row"><div><strong>Nurse-Led Q&amp;A</strong><br/><span>Bring your questions and hear Annie + Joel coach the room live.</span></div><span>$147 value</span></div>
+<div class="value-row"><div><strong>48-Hour Replays</strong><br/><span>If life happens, you still have a short window to catch the teaching.</span></div><span>$47 value</span></div>
+<div class="value-row"><div><strong>Know Your Labs Mini-Training</strong><br/><span>Understand your numbers better so you can ask stronger questions.</span></div><span>$97 value</span></div>
 </div>
+<div class="value-total">Total Experience Value: $732</div>
 <div class="price">$97</div>
-<div class="price-note">Join us for $97. One payment. Three live days. One clear place to start.</div>
-<div class="center"><a class="cta" href="#checkout">YES, SAVE MY SEAT</a></div>
+<div class="price-note">One payment. Three live coaching days.</div>
+<div class="center"><a class="cta" href="#final-checkout">YES, SAVE MY SEAT</a></div>
 <!-- LIVE CHECKOUT. Stripe EMBEDDED Checkout, tier 'cmlc-97' ($97 one-time,
      price_1U4NSeHseZnO3rRZfxzUCAjk). POST /api/create-embedded-checkout ->
      clientSecret -> stripe.initEmbeddedCheckout mounts the card form INLINE
@@ -1461,13 +1293,13 @@ html,body{overflow-x:hidden}
 <p class="checkout-secure">Secure payment by Stripe. Your card details never touch this page.</p>
 </div>
 <div class="after-register">
-<h3>What happens after you register?</h3>
-<p>You’re in. We will send you your Zoom link, your challenge materials, your reminders, and everything you need to be ready for Day 1. You may also see an optional VIP upgrade for women who want additional access and coaching, but your $97 gets you the full core challenge. Then your only job is simple: <strong>Show up.</strong></p>
+<h3>What happens the moment you register?</h3>
+<p>You're in. We'll send your confirmation, Zoom details, challenge materials and reminders. You'll also see an optional VIP upgrade for extra coaching/Q&amp;A time. <strong>Then your only job is to show up.</strong></p>
 </div>
 </div>
 </section><section class="section teal-soft compact-section">
 <div class="wrap">
-<h2 class="section-title center">These Women Started Where You Are.</h2>
+<h2 class="section-title center">What Women Are Saying.</h2>
 <div class="testimonials">
 <!-- REVIEW CLAIM -->
 <div class="testimonial"><blockquote>“I have done everything you said and all my meds are decreasing.”</blockquote><cite>Dorothy M. · BraveWorks community member</cite></div>
@@ -1480,13 +1312,12 @@ html,body{overflow-x:hidden}
 <!-- REVIEW CLAIM -->
 <div class="testimonial"><blockquote>“My blood pressure is back to normal: 124/80. Reduced salt, started little exercises.”</blockquote><cite>BraveWorks reader</cite></div>
 </div>
-<p class="results-note">Individual results vary. These are real messages from real women.</p>
 <div class="chat-proof">
 
 </div>
 </div>
 </section><section class="section sky compact-fit">
-<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You are over 40 and your body does not feel like the body you remember.</li><li>You know something needs to change.</li><li>You are tired of piecing health advice together from 500 different places.</li><li>You want simple. You want someone to help you understand what matters first.</li><li>And you are willing to give yourself three days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You want another course to sit in your inbox.</li><li>You are looking for a miracle overnight.</li><li>You want somebody to hand you 47 things to change at once.</li><li>You are not ready to participate.</li><li>Or you have already decided nothing can help before you even walk through the door.</li></ul></div></div><div class="come-line">You do not have to come perfect. Come tired. Come frustrated. Come nervous. Come confused. <strong>Just come.</strong></div></div>
+<div class="wrap"><h2 class="section-title medium center fit-main-title">WHO THIS IS [AND ISN'T] FOR</h2><div class="fit-cols"><div class="fit-box yes"><h3>THIS CHALLENGE IS FOR YOU IF YOU'RE A WOMAN WHO...</h3><ul><li>You're over 40, your body is changing, and you don't like what you're seeing or feeling.</li><li>You know something has to change, but you've felt stuck because you don't know where to start.</li><li>You've collected enough information. Now you want results.</li><li>You want something simple and experts you can trust.</li><li>You're ready to show up, participate and give yourself three focused days.</li></ul></div><div class="fit-box no"><h3>THIS CHALLENGE IS NOT FOR YOU IF...</h3><ul><li>You're looking for another video library you probably won't watch.</li><li>You want a magic overnight fix or another toxic pill.</li><li>You want another generic plan handed to every woman.</li><li>You want to keep doing everything the hard way for temporary results.</li><li>You have a skeptical spirit and you're more committed to finding reasons something won't work than finding out what might.</li></ul></div></div><div class="come-line">Come scared. Come messy. Just come.</div></div>
 </section><section class="section white compact-section coach-proof-before"><div class="wrap"><div class="testimonials" style="margin-top:44px">
 <div class="testimonial"><blockquote>“She understands our bodies, and she takes the time to help us understand ourselves.”</blockquote><cite>Simone Cato · Mom of 4 · Challenge participant</cite></div>
 <div class="testimonial"><blockquote>“Attentive, clear, and down-to-earth. Her knowledge and passion for health and wellness are impressive.”</blockquote><cite>Candace Andrews · Mom of 2</cite></div>
@@ -1496,59 +1327,17 @@ html,body{overflow-x:hidden}
 <div class="testimonial"><blockquote>“Just your videos in general are already great info. You actually tell us what to do/use. Not having to wait for a link, etc.”</blockquote><cite>Tiffany · Facebook follower</cite></div>
 </div></div></section><section class="section teal-soft">
 <div class="wrap">
-<h2 class="section-title medium center">One Woman. Two Nurses. The Whole Picture.</h2>
-<p class="hosts-lead">Annie understands the things women notice first. Joel reads the numbers underneath them. Together, they stopped separating the conversation — because your body does not live in separate boxes, and neither should your health plan.</p>
-<figure class="hosts-photo">
-<img alt="Annie Chitate, RN and Joel Polley, RN teaching the Change My Life Challenge together" src="/challenge-b/img/annie-joel-teaching.jpg"/>
-</figure>
-<div class="coach-cards">
-
-<article class="coach-card">
-<h3>Annie Chitate, RN</h3>
-<p class="coach-role">Hormones, energy, and getting your body back</p>
-<ul class="coach-list">
-<li><strong>She knows the symptoms you have stopped mentioning</strong> to anyone: the belly that will not
-move, the sleep that will not come, the chin hair, the thinning hair, the mood that turns on you, the
-day you looked in the mirror and did not recognize yourself. <em>So you can finally say it out loud and
-hear an actual explanation instead of "that's just your age."</em></li>
-<li><strong>She has coached women through this for more than a decade</strong>, one on one and in rooms of
-hundreds. <em>So you get answers that have already worked for thousands of women in your exact season,
-not theory from a textbook.</em></li>
-<li><strong>She hosts a health radio show and a podcast, and teaches on YouTube every week.</strong>
-<em>So you can hear her, judge her for yourself, and know exactly who is going to be on that Zoom
-before you ever pay a dollar.</em></li>
-</ul>
-</article>
-
-<article class="coach-card">
-<h3>Joel Polley, RN</h3>
-<p class="coach-role">Blood pressure, blood sugar, and the numbers that decide your future</p>
-<ul class="coach-list">
-<li><strong>Twenty years in emergency and critical care</strong>, meeting women on the worst day of their
-lives. <em>So he can tell you which of your numbers actually matters right now and which one you can
-stop losing sleep over.</em></li>
-<li><strong>He reads blood pressure, blood sugar and cholesterol as a pattern, not a verdict.</strong>
-<em>So you walk out understanding what your own labs are telling you, and you can ask your doctor a
-sharper question at your next visit.</em></li>
-<li><strong>He teaches this to a following of more than 660,000 people</strong> across Facebook, TikTok and
-YouTube. <em>So you get the explanation that already made sense to hundreds of thousands of women,
-delivered live, to you, about your body.</em></li>
-</ul>
-</article>
+<h2 class="section-title medium center">Meet Your Coaches.</h2>
+<div class="hosts">
+<div class="host-image has-photo"><img src="/challenge-b/img/annie-joel-teaching.jpg" alt="Annie Chitate, RN and Joel Polley, RN" width="800" height="600" /></div>
+<div class="host-copy">
+<h3>One woman. Two nurses looking at the whole picture.</h3>
+<p>Annie understands the things women notice first: the fatigue, the sleep, the belly, the chin hair, the thinning hair, the mood, the confidence, the feeling that your body changed.</p>
+<p>Joel helps you understand the numbers that can shape your future: blood pressure, blood sugar, patterns, risk, and what years in emergency and critical care taught him about waiting too long to pay attention.</p>
+<p><strong>Together, they stopped separating the conversation.</strong></p>
 
 </div>
-
-<div class="coach-stats">
-<div><strong>36 years</strong><span>combined nursing experience</span></div>
-<div><strong>10+ years</strong><span>coaching women through this</span></div>
-<div><strong>Radio &middot; Podcast &middot; YouTube</strong><span>hosts, every single week</span></div>
-<div><strong>680,000+</strong><span>people follow Annie and Joel</span></div>
 </div>
-
-<p class="hosts-close">Here is what all of that buys you: <strong>three days where nobody hands you a
-generic plan.</strong> Annie reads what your body is doing. Joel reads what your numbers are doing. You
-leave knowing which one to start with, and why. <em>That is the part you have never been able to buy
-anywhere else.</em></p>
 
 </div>
 </section><section class="section white">
@@ -1557,18 +1346,18 @@ anywhere else.</em></p>
 <div class="realities">
 <div class="reality">
 <h3>Do nothing.</h3>
-<p>Keep watching the symptoms. Keep watching the numbers. Keep hoping something changes by itself.</p>
+<p>Keep watching the numbers, the symptoms and the things you miss change, and hope the direction changes on its own.</p>
 </div>
 <div class="reality">
-<h3>Keep piecing it together alone.</h3>
-<p>Another supplement. Another diet. Another saved video. Another promise to start Monday.</p>
+<h3>Keep trying.</h3>
+<p>Another supplement. Another diet. Another saved video. Another Monday. Keep piecing it together by yourself.</p>
 </div>
 <div class="reality join">
-<h3>Come spend three days with us.</h3>
-<p>Learn to look at your body differently. Connect the dots. Find your starting point. Build your Life Change Map. And finally move.</p>
+<h3>Join us.</h3>
+<p>Give yourself three live days to understand your body differently, connect the dots and finally know where to start.</p>
 </div>
 </div>
-<div class="center" style="margin-top:30px"><a class="cta" href="#checkout">I'M CHOOSING TO JOIN  -  $97</a></div>
+<div class="center" style="margin-top:30px"><a class="cta" href="#final-checkout">I'M CHOOSING TO JOIN  -  $97</a></div>
 </div>
 </section><section class="section soft">
 <div class="wrap">
@@ -1579,11 +1368,15 @@ anywhere else.</em></p>
 </details>
 <details>
 <summary>What if I'm already on medication or working with my doctor?</summary>
-<p>Come. This challenge does not replace your doctor or healthcare team. We will not tell you to stop or change prescribed medication. We want to help you better understand your habits, symptoms, patterns, and health information so you can become a stronger participant in your own care.</p>
+<p>Come. This challenge does not replace your healthcare provider, and Annie and Joel will not tell you to stop or change prescribed medication. The goal is to help you understand your own health information, routines and patterns so you can make better-informed decisions with your care team.</p>
+</details>
+<details>
+<summary>What if my labs say I'm “normal,” but I still don't feel normal?</summary>
+<p>Come. A lab result is one piece of information. So are the changes you've noticed in your energy, sleep, weight, mood, hair, blood pressure, blood sugar and how you feel day to day. We'll help you look at the bigger pattern instead of assuming “normal” means there is nothing worth paying attention to.</p>
 </details>
 <details>
 <summary>What if I'm older - or I don't have every symptom on this page?</summary>
-<p>Girl, come. There is no age where taking better care of yourself stops mattering. You do not need every symptom on this page either. One thing bothering you is enough reason to start paying attention.</p>
+<p>You do not need every symptom, and you are not too old. Whether it's one thing getting your attention or five things happening at once, if your body has changed and you know something deserves your attention, start there.</p>
 </details>
 <details>
 <summary>Do I need to buy supplements, special foods or equipment?</summary>
@@ -1591,7 +1384,7 @@ anywhere else.</em></p>
 </details>
 <details>
 <summary>Do I have to be on camera or share private health information?</summary>
-<p>You don't have to, but we encourage it. This is a safe space, a room of women going through the same things. Participate as much as you're comfortable, and you never have to share anything you want to keep private.</p>
+<p>No. Participate as much as you're comfortable. You never have to share anything you want to keep private.</p>
 </details>
 <details>
 <summary>Where does the challenge happen?</summary>
@@ -1604,17 +1397,10 @@ anywhere else.</em></p>
 </div>
 </section><section class="section final">
 <div class="narrow center">
-<h2 class="section-title">Girl, You Already Know Something Has To Change.</h2>
-<p class="section-copy" style="font-size:1.25rem">You do not have to fix your whole life today. You do not have to lose all the weight. You do not have to understand every hormone. You do not need another 47-step plan. <strong>You just need to stop standing in the same place.</strong></p>
-<p class="section-copy" style="font-size:1.15rem;margin-top:14px">Give yourself three days. Come learn what your body has been trying to tell you. Come find your starting point. Come build your map. Come get YOU moving again.</p>
+<h2 class="section-title">You know something has to change.</h2>
+<p class="section-copy" style="font-size:1.25rem">You don't have to fix everything today. You need to know what deserves your attention first and where to start.</p>
 <p class="section-copy" style="font-size:1.25rem;margin-top:14px"><strong>September 22, 23 &amp; 24. Three live days. $97.</strong></p>
-<div style="margin-top:26px"><a class="cta" href="#checkout">YES — I'M READY</a></div>
-</div>
-</section><section class="power-final">
-<div class="power-band">Come Change Something.</div>
-<div class="power-final-cta">
-<p>Take yours back on September 22.</p>
-<a class="cta" href="#checkout">YES — SAVE MY SEAT FOR $97</a>
+<div style="margin-top:26px"><a class="cta" href="#final-checkout">YES  -  I'M READY TO CHANGE SOMETHING</a></div>
 </div>
 </section><footer class="footer">
     The Change My Life Challenge · Annie Chitate, RN + Joel Polley, RN<br/>
@@ -1639,7 +1425,8 @@ anywhere else.</em></p>
     }
     updateCountdown();
     setInterval(updateCountdown,1000);
-  </script><script>
+  </script>
+<script>
 /* Inline Stripe embedded checkout for the $97 seat (tier cmlc-97). */
 (function () {
   var STRIPE_PK = '%%STRIPE_PK%%';
@@ -1699,7 +1486,7 @@ anywhere else.</em></p>
   } else {
     start();
   }
-  document.querySelectorAll('a[href="#checkout"], a[href="#checkout"]').forEach(function (a) {
+  document.querySelectorAll('a[href="#checkout"], a[href="#final-checkout"]').forEach(function (a) {
     a.addEventListener('click', start);
   });
 })();
