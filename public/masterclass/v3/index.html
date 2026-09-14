@@ -341,12 +341,10 @@
   </footer>
 
 <script>
-  /* ====== CADENCE. Standing Monday 6:00 PM Central class (same Zoom room as
-     the existing /masterclass page). The very first joint class is a one-off
-     Tuesday date (2026-09-15); every class after that lands back on the
-     Monday 6pm Central slot. Copy never says "every week" or "recurring". ====== */
-  const FIRST_CLASS_UTC_NAIVE = Date.UTC(2026,8,15,18,0,0); // 2026-09-15 18:00 America/Chicago (naive)
-  const WEEKLY_HOUR_CT = 18; // 6pm Central, every Monday after the first class
+  /* ====== CADENCE. Standing Monday 6:00 PM Central class (first one
+     2026-09-14). Always targets the next Monday 6pm CT, today included if
+     it hasn't started. Copy never says "every week" or "recurring". ====== */
+  const WEEKLY_HOUR_CT = 18; // 6pm Central, Mondays
 
   function chicagoOffsetMs(atUtcMs){
     const d = new Date(atUtcMs);
@@ -355,9 +353,6 @@
     const g = t => Number(parts.find(p=>p.type===t).value);
     const asUtc = Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second'));
     return asUtc - atUtcMs;
-  }
-  function firstClassTarget(){
-    return FIRST_CLASS_UTC_NAIVE - chicagoOffsetMs(FIRST_CLASS_UTC_NAIVE);
   }
   function nextMondayTarget(afterMs){
     for(let addDays=0; addDays<8; addDays++){
@@ -373,12 +368,7 @@
     }
     return afterMs + 7*86400000;
   }
-  function nextTarget(){
-    const now = Date.now();
-    const first = firstClassTarget();
-    if(now < first) return first;
-    return nextMondayTarget(now);
-  }
+  function nextTarget(){ return nextMondayTarget(Date.now()); }
   const LIVE_WINDOW_MS = 75 * 60000;
   (function(){
   try{
