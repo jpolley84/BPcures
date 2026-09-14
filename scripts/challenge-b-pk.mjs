@@ -14,7 +14,10 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const file = resolve(root, 'dist/challenge-b/index.html');
+// 2026-09-14: /vip (masterclass fast-action VIP checkout) is a second static
+// page with the same %%STRIPE_PK%% placeholder.
+const files = ['dist/challenge-b/index.html', 'dist/vip/index.html'].map((f) => resolve(root, f));
+const file = files[0];
 
 if (!existsSync(file)) {
   console.error('challenge-b-pk: dist/challenge-b/index.html not found, run vite build first');
@@ -37,5 +40,9 @@ if (!pk.startsWith('pk_')) {
   process.exit(0);
 }
 
-writeFileSync(file, html.split('%%STRIPE_PK%%').join(pk));
+for (const f of files) {
+  if (!existsSync(f)) continue;
+  const h = readFileSync(f, 'utf8');
+  if (h.includes('%%STRIPE_PK%%')) writeFileSync(f, h.split('%%STRIPE_PK%%').join(pk));
+}
 console.log(`challenge-b-pk: stamped publishable key (${pk.slice(0, 8)}…) into dist/challenge-b/index.html`);

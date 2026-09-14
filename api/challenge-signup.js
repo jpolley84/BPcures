@@ -520,17 +520,21 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   // 2026-07-28: VIP is the FOURTH DAY, not a nightly side room. The previous
   // copy here described a 5-night cohort with a pre-call VIP room and promised
   // an "expanded Doctor Conversation Sheet on Night 5". There is no Night 5.
+  // 2026-09-14: VIP for the Sept 22-24 cohort is what public/vip/index.html
+  // (masterclass fast-action) and the +$100 upsell both sell: one extra live
+  // Q&A hour on Zoom BEFORE the challenge begins, plus the two fast-action
+  // bonuses. No date is promised here because none is set yet; the VIP room
+  // has its own Zoom link and its own email, which Joel sends by hand (see
+  // challenge-vip-charge.js). The old "Sunday, August 9 Bonus Day" copy that
+  // lived here would have gone to every VIP buyer from tonight's masterclass.
   const vipHtml = isVip
     ? [
-        h2('Your Bonus Day'),
+        h2('Your VIP seat'),
         p(
-          `You have the VIP seat, so you get a fourth live session: <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)}</strong> (${esc(CHALLENGE.vipTimeCt)}), about ninety minutes.`
+          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the date and time, so watch for two emails from us, not one.`
         ),
         p(
-          `It is a smaller, private session with Annie and Joel. It sits on Sunday and not inside the week for one reason: by Sunday you finally have three days of your own readings to look at. There is nothing to look at on Tuesday. We read real logs out loud together, including yours if you want it read, and show you what the pattern across a week is actually saying.`
-        ),
-        p(
-          `Then questions, until they run out rather than until the hour does, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too, and it is yours to keep alongside the other three.`
+          `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
         ),
       ].join('')
     : '';
@@ -859,13 +863,27 @@ async function handleRegister(req, res) {
     // (The isVip branch is unreachable from the live page; kept for any
     // in-flight legacy session.)
     owes: isVip
-      ? ['three-nights', 'replays', 'workbook', 'kit', 'bonus-day', 'qa', '48-hour-answer']
+      // 2026-09-14 VIP (masterclass fast-action / +$100 upsell): the core stack
+      // plus the pre-challenge VIP Q&A hour and the two fast-action bonuses.
+      ? ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training', 'vip-qa-hour', 'fast-clarity-workshop', 'stick-with-it-kit']
       // 2026-09-22 cohort: exactly the page's offer stack. Q&A moved to the VIP upsell.
       : ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training'],
     confirmationSentAt: null,
   };
 
   if (kvUp) {
+    // 2026-09-14: a VIP seat bought outright (cmlc-97-vip) never passes
+    // through challenge-vip-charge.js, which is where the +$100 path writes the
+    // VIP roster. Write it here too so challenge:<cohort>:vip is THE list for
+    // the VIP Zoom send, whichever door she came in. sadd is idempotent.
+    if (isVip) {
+      try {
+        await kv.sadd(`challenge:${CHALLENGE.cohort}:vip`, email);
+        await kv.set(`challenge:${CHALLENGE.cohort}:vip:${email}`, JSON.stringify({
+          email, name: record.fullName || '', sessionId, source: md.source || 'vip-seat', upgradedAt: new Date().toISOString(),
+        }), { ex: 60 * 60 * 24 * 120 });
+      } catch (err) { console.error('challenge-signup: VIP roster write failed', err.message); }
+    }
     try {
       await kv.set(K.reg(email), record);
     } catch (err) {
@@ -963,7 +981,7 @@ async function handleRegister(req, res) {
 Tier: ${tier}
 Cohort: ${CHALLENGE.cohort}
 Session: ${sessionId}
-${isVip ? '\nVIP. You owe this person live Q and A after every night plus a written answer within 48 hours to every question they submit.' : ''}`
+${isVip ? '\nVIP. You owe this person: the VIP Zoom link + date/time for the pre-challenge Q&A hour (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated.' : ''}`
   );
 
   return res.status(200).json({

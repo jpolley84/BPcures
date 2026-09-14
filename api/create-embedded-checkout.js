@@ -20,6 +20,23 @@
 
 import Stripe from 'stripe';
 import { recentPurchase } from './_dupe-guard.js';
+import { kv } from '@vercel/kv';
+
+// ── cmlc-97-vip: the MASTERCLASS FAST-ACTION seat (2026-09-14, Joel) ──────
+// Same $97 price as cmlc-97, but the buyer is seated as VIP on the spot: no
+// +$100 upsell page, straight to /challenge-confirmed with tier=challenge-vip,
+// and challenge-signup 'register' reads metadata.seat === 'vip'. Sold ONLY from
+// public/vip/index.html, the link Joel gives people on the live masterclass.
+//
+// "Tonight only." The page says it, so the server enforces it: after this
+// instant the tier returns 410 and the page sends her to the regular $97 seat.
+// To run the offer again for another masterclass, move this date. It is the
+// only thing to change.
+const VIP_FAST_ACTION_UNTIL = new Date('2026-09-15T04:59:59Z'); // 11:59:59 PM CT, Mon Sept 14
+// The VIP room is capped at 30 (challenge-vip-charge.js enforces the same
+// number for the +$100 path). Fail CLOSED: if KV cannot answer, no VIP seat is
+// sold that might not exist.
+const VIP_SEAT_CAP = 30;
 
 // Tiers the duplicate-purchase guard must NEVER block. These are physical
 // consumables that customers really do buy twice in a row (a second pouch, or
@@ -581,6 +598,47 @@ export default async function handler(req, res) {
   // email wall. This branch inherits PM_CONFIG_CARD_NO_LINK like every other
   // session in this file, which is the whole reason the buy button points
   // here. Keep the price id in sync with CHALLENGE.PRICE in ChallengePage.jsx.
+  if (tier === 'cmlc-97-vip') {
+    if (Date.now() > VIP_FAST_ACTION_UNTIL.getTime()) {
+      return res.status(410).json({ error: 'fast_action_ended', message: 'The fast-action VIP offer has ended.' });
+    }
+    try {
+      const taken = await kv.scard('challenge:2026-09-22:vip');
+      if (taken >= VIP_SEAT_CAP) return res.status(409).json({ error: 'vip_sold_out', message: 'The VIP room is full.' });
+    } catch (err) {
+      console.error('create-embedded-checkout cmlc-97-vip: VIP count read failed, refusing', err.message);
+      return res.status(503).json({ error: 'vip_count_unavailable', message: 'Checkout is not available right now.' });
+    }
+    const metadata = {
+      funnel: 'braveworks-bp',
+      offer: 'challenge',
+      seat: 'vip',
+      source: 'masterclass-fast-action',
+      cohort: '2026-09-22',
+      ...phMeta,
+      ...abMeta,
+      ...utmMeta,
+    };
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ui_mode: 'embedded',
+        payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
+        mode: 'payment',
+        line_items: [{ price: process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk', quantity: 1 }],
+        metadata,
+        customer_creation: 'always',
+        phone_number_collection: { enabled: true },
+        // VIP is already included, so the +$100 upsell page is skipped.
+        return_url: `${siteUrl}/challenge-confirmed?session_id={CHECKOUT_SESSION_ID}&tier=challenge-vip`,
+        ...(email ? { customer_email: email } : {}),
+      });
+      return res.status(200).json({ clientSecret: session.client_secret });
+    } catch (err) {
+      console.error('create-embedded-checkout cmlc-97-vip error:', err.message);
+      return res.status(500).json({ error: 'Failed to start checkout' });
+    }
+  }
+
   if (tier === 'cmlc-97') {
     const metadata = {
       funnel: 'braveworks-bp',
