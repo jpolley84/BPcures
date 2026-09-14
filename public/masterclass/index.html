@@ -10,6 +10,10 @@
 (function(){
   try{
     if(/(?:^|\/)v3\/?/.test(location.pathname)) return;
+    /* 2026-09-14 (Joel): class day — 100% of traffic to v3 today only.
+       Cookie untouched, so the normal 50/50 split resumes tomorrow. */
+    var today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+    if(today==='2026-09-14'){ location.replace('/masterclass/v3/'+location.search); return; }
     var m=document.cookie.match(/(?:^|; )mc_variant=([^;]+)/);
     var v=m?decodeURIComponent(m[1]):null;
     if(v!=='a' && v!=='b'){
