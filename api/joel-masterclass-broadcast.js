@@ -15,8 +15,11 @@
 // SAFETY MODEL (per /send-campaign):
 //   - Default mode is DRY-RUN: scans, counts eligibles, renders samples,
 //     sends NOTHING.
-//   - Real fire requires ?mode=send&email=<1|2|3> AND header
+//   - Manual fire requires ?mode=send&email=<1|2|3> AND header
 //     `x-confirm: SEND-MASTERCLASS-<N>` matching the email number.
+//   - Cron fire: ?cron=1&email=<N>, Vercel-cron authorized, AND today in
+//     America/Chicago === CRON_FIRE_DATE. Any other day it is a no-op, so the
+//     vercel.json cron entries self-disarm after class day.
 //   - Per-record flag makes re-fires resume-safe (Vercel 300s cap).
 //
 // Dry-run:
@@ -32,6 +35,7 @@ import { signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js'
 import { isAuthorizedCron } from './_cron-auth.js';
 
 const REGISTER_URL = 'https://bpquiz.com/masterclass/v3/';
+const CRON_FIRE_DATE = '2026-09-14';
 const RATE_LIMIT_MS = 70;
 const MAX_RUN_MS = 250 * 1000;
 const SENT_FLAG_PREFIX = 'joelMcInvite'; // + emailNum, e.g. joelMcInvite1Sent
@@ -245,8 +249,14 @@ export default async function handler(req, res) {
   const SENT_FLAG = `${SENT_FLAG_PREFIX}${emailNum}Sent`;
   const SENT_SET = `${SENT_SET_PREFIX}${emailNum}`;
 
-  const sendMode =
+  const cronMode = req.query?.cron === '1';
+  if (cronMode) {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    if (today !== CRON_FIRE_DATE) return res.status(200).json({ ok: true, skipped: 'cron date guard', today, fireDate: CRON_FIRE_DATE });
+  }
+  const manualSend =
     req.query?.mode === 'send' && req.headers['x-confirm'] === `SEND-MASTERCLASS-${emailNum}`;
+  const sendMode = cronMode || manualSend;
 
   let allKeys = [];
   try {
@@ -264,12 +274,20 @@ export default async function handler(req, res) {
 
   const resend = sendMode ? getResend() : null;
 
-  for (const k of allKeys) {
+  // Read records in mget batches (one KV round trip per 500 keys) instead of
+  // one kv.get per key — per-key reads capped a 250s fire at ~1,300 sends.
+  const CHUNK = 500;
+  outer:
+  for (let ci = 0; ci < allKeys.length; ci += CHUNK) {
+    const keyChunk = allKeys.slice(ci, ci + CHUNK);
+    let recs;
+    try { recs = await kv.mget(...keyChunk); } catch { continue; }
+    for (let ri = 0; ri < keyChunk.length; ri++) {
+    const k = keyChunk[ri];
+    const rec = recs[ri];
     stats.total++;
-    if (sendMode && Date.now() - startedAt > MAX_RUN_MS) { results.bailedOnTimeout = true; break; }
+    if (sendMode && Date.now() - startedAt > MAX_RUN_MS) { results.bailedOnTimeout = true; break outer; }
 
-    let rec;
-    try { rec = await kv.get(k); } catch { continue; }
     if (!rec || !rec.email) { stats.noEmail++; continue; }
     if (rec.unsubscribed) { stats.unsub++; continue; }
     if (rec.paused) { stats.paused++; continue; }
@@ -320,12 +338,13 @@ export default async function handler(req, res) {
       if (results.errors.length < 10) results.errors.push({ email: rec.email, error: err.message });
     }
     await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
+    }
   }
 
   return res.status(200).json({
     ok: true,
     emailNum,
-    mode: sendMode ? 'SEND' : 'DRY-RUN',
+    mode: sendMode ? (cronMode ? 'CRON-SEND' : 'SEND') : 'DRY-RUN',
     from: FROM,
     stats,
     ...(sendMode ? { results } : { samples }),

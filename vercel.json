@@ -18,17 +18,32 @@
     },
     {
       "source": "/apply",
-      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "changemylifechallenge.com"
+        }
+      ],
       "destination": "/cohort-apply/index.html"
     },
     {
       "source": "/apply/",
-      "has": [{ "type": "host", "value": "changemylifechallenge.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "changemylifechallenge.com"
+        }
+      ],
       "destination": "/cohort-apply/index.html"
     },
     {
       "source": "/apply",
-      "has": [{ "type": "host", "value": "www.changemylifechallenge.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.changemylifechallenge.com"
+        }
+      ],
       "destination": "/cohort-apply/index.html"
     },
     {
@@ -169,6 +184,30 @@
     {
       "path": "/api/case-review-nudge-cron",
       "schedule": "15 16 * * *"
+    },
+    {
+      "path": "/api/joel-masterclass-broadcast?cron=1&email=2",
+      "schedule": "45-59/5 21 * * *"
+    },
+    {
+      "path": "/api/joel-masterclass-broadcast?cron=1&email=2",
+      "schedule": "0-30/5 22 * * *"
+    },
+    {
+      "path": "/api/annie-masterclass-broadcast?cron=1&email=2",
+      "schedule": "45-59/5 21 * * *"
+    },
+    {
+      "path": "/api/annie-masterclass-broadcast?cron=1&email=2",
+      "schedule": "0-30/5 22 * * *"
+    },
+    {
+      "path": "/api/joel-masterclass-broadcast?cron=1&email=3",
+      "schedule": "0-45/5 23 * * *"
+    },
+    {
+      "path": "/api/annie-masterclass-broadcast?cron=1&email=3",
+      "schedule": "0-45/5 23 * * *"
     }
   ]
 }
