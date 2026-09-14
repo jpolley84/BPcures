@@ -21,6 +21,12 @@
 // rewrite of the same path fight each other and the winner is not obvious.
 // One owner for /tea is worth more than a clever two-layer setup.
 //
+// ⛔ SPLIT ENDED 2026-09-14 (Joel): "stop the split and push just to the 60 bag."
+// Two weeks of arm-tagged data showed revenue per visitor tied ($1.11 vs $1.10)
+// and a gap that would need ~590 weeks of traffic to prove, so it was called on
+// margin instead. TEA_SPLIT_PCT is set to 0 in Vercel production. Do not raise
+// it again without Joel: the legacy page still sells the $48 / 100 g bag.
+//
 // ⚠️ DEFAULTS TO OFF. With TEA_SPLIT_PCT unset or 0, every visitor is sent to
 // Shopify, byte for byte the behavior /tea had before this file changed. The
 // split only starts when someone sets the env var on purpose.
@@ -33,7 +39,15 @@
 // no longer stocked. Align public/tea/index.html to $60 / $150 / 150 g first,
 // or accept that you are running a deliberate discount test.
 
-export const config = { matcher: ['/', '/tea', '/allin'] };
+// 2026-09-14: '/tea/' and '/tea/index.html' added. Before this, only the bare
+// '/tea' passed through the split. The trailing-slash form — which every tea
+// link in the email drips uses (triangle-lead-cron, _evergreen-emails,
+// TeaOneClickOffer) — skipped middleware entirely and always served the $48
+// legacy page. So email buyers were never in the test, and turning the split
+// off would not have moved them to the $60 bag. Emails already sitting in
+// inboxes can only be caught here, server-side, which is why this is fixed in
+// routing rather than by rewriting the links.
+export const config = { matcher: ['/', '/tea', '/tea/', '/tea/index.html', '/allin'] };
 
 const SHOPIFY_URL = 'https://hormoneteas.com/products/steady';
 const COOKIE = 'tea_arm';
@@ -112,7 +126,9 @@ export default function middleware(request) {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
 
-  if (url.pathname === '/tea') return teaSplit(request, url);
+  if (url.pathname === '/tea' || url.pathname === '/tea/' || url.pathname === '/tea/index.html') {
+    return teaSplit(request, url);
+  }
 
   if (host === 'changemylifechallenge.com' || host === 'www.changemylifechallenge.com') {
     // 2026-09-01 (Joel): shares of changemylifechallenge.com/allin showed the
