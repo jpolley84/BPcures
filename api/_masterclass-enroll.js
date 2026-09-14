@@ -36,7 +36,11 @@ const REPLY_TO = 'braveworksrn@gmail.com';
 const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
 const ZOOM_MEETING_ID = '828 5171 5003';
 const ZOOM_PASSCODE = '027302';
-const ZOOM_ICS_URL = 'https://us06web.zoom.us/meeting/tZYlcuivrz4qGteAqlbK2AYwXusuC8S2hKkm/ics?meetingMasterEventId=s_n7ZdIRQQqFG74vSu1ypw';
+// 2026-09-14: Zoom's generated .ics link started returning a "meeting doesn't
+// exist" page. Calendar links now come from our own api/masterclass-calendar.js,
+// which carries the same Zoom room, ID and passcode as this email.
+const CALENDAR_ICS_URL = 'https://bpquiz.com/api/masterclass-calendar';
+const CALENDAR_GOOGLE_URL = 'https://bpquiz.com/api/masterclass-calendar?google=1';
 
 export function clean(s, max = 80) {
   return typeof s === 'string' ? s.trim().slice(0, max) : '';
@@ -85,7 +89,7 @@ function confirmationEmail({ firstName, provenance }) {
   <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
   <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>
   <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
-  <a href="${ZOOM_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> so Monday night finds you ready.</p>
+  <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>) so Monday night finds you ready.</p>
 </div>
 <p><strong>What we'll cover:</strong> the 3 hidden daily triggers quietly driving your numbers up. The habit almost nobody connects to their readings, the "healthy" trap working against you, and the one everyone blames for the wrong reason.</p>
 <p><strong>Do one thing before Monday:</strong> if you haven't taken the free BP quiz yet, it takes 2 minutes and tells you which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B93C20;">Take it here</a>.</p>
