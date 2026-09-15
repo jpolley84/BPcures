@@ -194,10 +194,10 @@ const CHALLENGE = {
   // post-purchase upsell. It adds a FOURTH session on Sunday morning.
   // This key was referenced twice in the guarantee copy below but never
   // defined, so every VIP confirmation rendered the refund amount blank.
-  vipPriceLabel: '$47',
-  vipDayLabel: 'Tuesday, September 22',
-  vipTimeEt: '6:00pm ET',
-  vipTimeCt: '5:00pm CT',
+  vipPriceLabel: '$197',
+  vipDayLabel: 'Sunday, September 27', // 2026-09-15: the Bonus Day Joel sold on the 09-14 masterclass
+  vipTimeEt: '7:00pm ET',
+  vipTimeCt: '6:00pm CT',
   vipLength: 'about 60 minutes',
   pageUrl: 'https://changemylifechallenge.com/',
   // Day titles mirror DAYS in src/pages/ChallengePage.jsx. These were still
@@ -531,9 +531,9 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   // lived here would have gone to every VIP buyer from tonight's masterclass.
   const vipHtml = isVip
     ? [
-        h2('Your VIP seat'),
+        h2('Your VIP Bonus Day'),
         p(
-          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>, on <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)} (${esc(CHALLENGE.vipTimeCt)})</strong>. Bring the symptoms, the numbers, and the one question you really want answered. Use the same challenge Zoom link in this email. It opens an hour early for VIP.`
+          `You have a <strong>fourth live day</strong>: the VIP Bonus Day on <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)} (${esc(CHALLENGE.vipTimeCt)})</strong>, about an hour, with Annie and Joel. It is the small room where your questions get answered: bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered. The Bonus Day has its own Zoom link, which comes in a separate email, so watch for two emails from us.`
         ),
         p(
           `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
@@ -616,8 +616,8 @@ ${
 ${
   isVip
     ? `
-YOUR VIP SEAT
-You are in the VIP room: an extra live Q&A hour on Zoom with Annie and Joel before the challenge begins, on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}). Bring the symptoms, the numbers, and the one question you really want answered. Use the same challenge Zoom link in this email. It opens an hour early for VIP.
+YOUR VIP BONUS DAY
+You have a fourth live day: the VIP Bonus Day on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), about an hour, with Annie and Joel. It is the small room where your questions get answered: bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered. The Bonus Day has its own Zoom link, which comes in a separate email, so watch for two emails from us.
 Your two fast-action bonuses, the Fast Clarity Workshop and the Finally Stick With It Kit (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.
 `
     : ''
@@ -986,7 +986,7 @@ async function handleRegister(req, res) {
 Tier: ${tier}
 Cohort: ${CHALLENGE.cohort}
 Session: ${sessionId}
-${isVip ? '\nVIP. You owe this person: the VIP Zoom link + date/time for the pre-challenge Q&A hour (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated. (The 1:1 hour with Joel is ONLY for the VIPs who bought live on the 09-14 masterclass call, capped; not promised to anyone since.)' : ''}`
+${isVip ? '\nVIP. You owe this person: the VIP Zoom link for the Bonus Day, Sunday, September 27 7:00pm ET (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated. (The 1:1 hour with Joel is ONLY for the VIPs who bought live on the 09-14 masterclass call, capped; not promised to anyone since.)' : ''}`
   );
 
   return res.status(200).json({
