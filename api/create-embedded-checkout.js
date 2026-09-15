@@ -21,6 +21,7 @@
 import Stripe from 'stripe';
 import { recentPurchase } from './_dupe-guard.js';
 import { kv } from '@vercel/kv';
+import { VIP_SEAT_CAP, VIP_ROSTER_KEY } from './_challenge-vip-cap.js';
 
 // ── cmlc-97-vip: the MASTERCLASS FAST-ACTION seat (2026-09-14, Joel) ──────
 // Same $97 price as cmlc-97, but the buyer is seated as VIP on the spot: no
@@ -33,10 +34,9 @@ import { kv } from '@vercel/kv';
 // To run the offer again for another masterclass, move this date. It is the
 // only thing to change.
 const VIP_FAST_ACTION_UNTIL = new Date('2026-09-15T04:59:59Z'); // 11:59:59 PM CT, Mon Sept 14
-// The VIP room is capped at 30 (challenge-vip-charge.js enforces the same
-// number for the +$100 path). Fail CLOSED: if KV cannot answer, no VIP seat is
+// VIP_SEAT_CAP lives in _challenge-vip-cap.js (shared with the +$100 path and
+// the public seat counter). Fail CLOSED: if KV cannot answer, no VIP seat is
 // sold that might not exist.
-const VIP_SEAT_CAP = 30;
 
 // Tiers the duplicate-purchase guard must NEVER block. These are physical
 // consumables that customers really do buy twice in a row (a second pouch, or
@@ -603,7 +603,7 @@ export default async function handler(req, res) {
       return res.status(410).json({ error: 'fast_action_ended', message: 'The fast-action VIP offer has ended.' });
     }
     try {
-      const taken = await kv.scard('challenge:2026-09-22:vip');
+      const taken = await kv.scard(VIP_ROSTER_KEY);
       if (taken >= VIP_SEAT_CAP) return res.status(409).json({ error: 'vip_sold_out', message: 'The VIP room is full.' });
     } catch (err) {
       console.error('create-embedded-checkout cmlc-97-vip: VIP count read failed, refusing', err.message);

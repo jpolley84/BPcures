@@ -117,6 +117,20 @@
     .two{grid-template-columns:1fr}
   }
 
+  /* Super bonus + scarcity + countdown (2026-09-14 8pm, Joel). Same tokens. */
+  .super-item{margin:14px -4px 2px;padding:16px 14px;border:2px solid var(--green);border-radius:12px;background:#e7f1ed;display:grid;grid-template-columns:28px 1fr;gap:10px}
+  .super-item .check{background:var(--green);color:#fff;font-size:.7rem}
+  .super-item strong{display:block;color:var(--green);font-size:1.08rem;margin-bottom:3px}
+  .super-item span{color:var(--body);font-size:.95rem}
+  .super-item em{font-style:normal;color:var(--orange-dark);font-weight:900}
+  .seats-left{margin:12px 0 0;text-align:center;font-weight:900;color:var(--orange-dark);font-size:.95rem;letter-spacing:.02em}
+  .seats-left b{font-size:1.25rem}
+  .countdown-wrap{margin:10px 0 0;text-align:center}
+  .countdown-label{font-size:.72rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+  .countdown{display:flex;justify-content:center;gap:14px;margin-top:6px}
+  .countdown div{min-width:54px}
+  .countdown b{display:block;font-family:Georgia,"Times New Roman",serif;color:var(--green);font-size:1.8rem;line-height:1}
+  .countdown span{display:block;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-top:3px}
   /* Wired pieces (2026-09-14). Same tokens as the rest of the page. */
   #checkoutStatus{font-size:.95rem;color:var(--muted);text-align:center;padding:26px 8px}
   #checkoutStatus a{color:var(--orange-dark);font-weight:900}
@@ -126,7 +140,7 @@
 </head>
 <body>
 
-<div class="topbar"><strong>MASTERCLASS FAST-ACTION:</strong> VIP UPGRADE + BOTH BONUSES INCLUDED WHEN YOU JOIN NOW</div>
+<div class="topbar"><strong>MASTERCLASS FAST-ACTION:</strong> VIP UPGRADE + BONUSES + A 1:1 HOUR WITH JOEL — OPEN UNTIL MIDNIGHT TONIGHT</div>
 
 <header class="hero">
   <div class="wrap">
@@ -179,6 +193,12 @@
           <div><strong>Finally Stick With It Kit™</strong><span>Includes the 21-Day Consistency Tracker + Never Miss Twice Reset System™ so you can stop starting over.</span></div>
         </div>
 
+        <div class="bonus-label">Super Bonus — Tonight Only</div>
+        <div class="super-item">
+          <div class="check">1:1</div>
+          <div><strong>A Private One-Hour Coaching Call with Joel Polley, RN</strong><span>One hour, just you and Joel, on your numbers and your situation. <em>$250 value, included free with VIP tonight.</em> This is why the room is small: these seats are bounded by his calendar.</span></div>
+        </div>
+
         <p class="simple-note"><strong>Core challenge:</strong> September 22–24 at 7 PM Eastern / 6 PM Central, approximately 1 hour a day, live on Zoom. <strong>VIP:</strong> one extra live Q&amp;A hour before the challenge begins.</p>
       </div>
     </section>
@@ -191,7 +211,16 @@
           <div class="old-price">VIP $197</div>
           <div class="today-price">$97</div>
         </div>
-        <p><strong>One payment. No subscription.</strong><br>Your VIP upgrade + both fast-action bonuses are included today.</p>
+        <p><strong>One payment. No subscription.</strong><br>Your VIP upgrade, both fast-action bonuses and the 1:1 hour with Joel are included today.</p>
+        <p class="seats-left" id="seatsLeft" hidden>Only <b id="seatsLeftNum"></b> VIP spots left</p>
+        <div class="countdown-wrap">
+          <div class="countdown-label">VIP offer closes at midnight Central</div>
+          <div class="countdown" aria-label="Countdown to midnight Central">
+            <div><b id="cdH">00</b><span>Hours</span></div>
+            <div><b id="cdM">00</b><span>Min</span></div>
+            <div><b id="cdS">00</b><span>Sec</span></div>
+          </div>
+        </div>
       </div>
 
       <div class="order-summary">
@@ -199,6 +228,7 @@
         <div class="order-row"><span>Automatic VIP Upgrade</span><strong>FREE Today</strong></div>
         <div class="order-row"><span>Fast Clarity Workshop™</span><strong>FREE Today</strong></div>
         <div class="order-row"><span>Finally Stick With It Kit™</span><strong>FREE Today</strong></div>
+        <div class="order-row"><span>1:1 Coaching Hour with Joel ($250 value)</span><strong>FREE Tonight</strong></div>
         <div class="order-row total"><span>Total Due Today</span><span>$97</span></div>
       </div>
 
@@ -281,6 +311,27 @@
     if (err && (err.message === 'ended' || err.message === 'sold out')) return;
     fail('Checkout could not start.');
   });
+})();
+</script>
+<script>
+/* Seats left: the same number the server enforces (api/challenge-vip-seats).
+   Countdown: midnight Central tonight, the instant the server stops selling
+   the tier (VIP_FAST_ACTION_UNTIL in create-embedded-checkout.js). */
+(function () {
+  fetch('/api/challenge-vip-seats').then(function (r) { return r.json(); }).then(function (d) {
+    if (typeof d.left !== 'number') return;
+    document.getElementById('seatsLeftNum').textContent = d.left;
+    document.getElementById('seatsLeft').hidden = false;
+  }).catch(function () {});
+  var end = Date.parse('2026-09-15T04:59:59Z');
+  function tick() {
+    var diff = Math.max(0, end - Date.now());
+    var h = Math.floor(diff / 3600000), m = Math.floor(diff % 3600000 / 60000), s = Math.floor(diff % 60000 / 1000);
+    document.getElementById('cdH').textContent = String(h).padStart(2, '0');
+    document.getElementById('cdM').textContent = String(m).padStart(2, '0');
+    document.getElementById('cdS').textContent = String(s).padStart(2, '0');
+  }
+  tick(); setInterval(tick, 1000);
 })();
 </script>
 <script>window.SABBATH_SOURCE="challenge";</script><script src="/sabbath-gate.js"></script>

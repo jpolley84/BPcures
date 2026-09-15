@@ -15,6 +15,7 @@
 // a reload or double-click can never double-charge.
 
 import Stripe from 'stripe';
+import { VIP_SEAT_CAP } from './_challenge-vip-cap.js';
 import { kv } from '@vercel/kv';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -26,7 +27,7 @@ const VIP = {
   // 2026-09-11 (expert panel + Joel "fix all"): the page says VIP is capped at
   // 30 because the Q&A room only works small. A scarcity claim the server
   // does not enforce is a lie, so the server enforces it.
-  seatCap: 30,
+  seatCap: VIP_SEAT_CAP, // shared, see _challenge-vip-cap.js (14 as of 2026-09-14)
 };
 
 const JOEL_EMAIL = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
