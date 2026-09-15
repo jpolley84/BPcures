@@ -115,6 +115,7 @@ import { kv } from '@vercel/kv';
 import { looksLikeValidEmail } from './_email-validation.js';
 import { captureEvent } from './_posthog.js';
 import { signUnsubToken } from './triangle-unsubscribe.js';
+import { sendVipDetails } from './_challenge-vip-details.js';
 import {
   FROM,
   REPLY_TO,
@@ -944,6 +945,11 @@ async function handleRegister(req, res) {
       } catch {
         /* stamp only, non-fatal */
       }
+    }
+    // VIP seat: send the VIP details email (idempotent, never throws).
+    if (isVip) {
+      const vip = await sendVipDetails({ email, firstName });
+      if (vip?.error) console.error('challenge-signup: VIP details not sent', email, vip.error);
     }
   } catch (err) {
     console.error('challenge-signup: confirmation send failed', err.message);

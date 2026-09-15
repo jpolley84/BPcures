@@ -17,6 +17,7 @@
 import Stripe from 'stripe';
 import { VIP_SEAT_CAP } from './_challenge-vip-cap.js';
 import { kv } from '@vercel/kv';
+import { sendVipDetails } from './_challenge-vip-details.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -137,11 +138,17 @@ export default async function handler(req, res) {
     }
   } catch (err) { console.error('challenge-vip: roster write failed', err.message); }
 
-  // The VIP room has its OWN Zoom link and its own email, which is not
-  // automated yet — so a human must send the VIP details. Never silent.
+  // VIP details email goes out automatically (idempotent, never throws).
+  const firstName = name.split(/\s+/)[0] || '';
+  const vip = email ? await sendVipDetails({ email, firstName }) : { skipped: 'no_email' };
+  const vipLine = vip?.sent
+    ? 'The VIP details email (Zoom link, VIP hour, Facebook group) was sent automatically.'
+    : vip?.skipped === 'already_sent'
+      ? 'The VIP details email was already sent to this address earlier, so it was not re-sent.'
+      : `The VIP details email did NOT send (${vip?.error || vip?.skipped || 'unknown'}). Send it by hand.`;
   await alertJoel(
     `VIP upgrade: ${name || email} paid $100 (${VIP.cohort} cohort)`,
-    `One-click VIP upgrade succeeded.\n\nName: ${name || '(none)'}\nEmail: ${email || '(none)'}\nSession: ${sessionId}\nPaymentIntent: ${pi.id}\n\nACTION: send them the VIP room details (VIP Zoom link + extended replay note). The GA welcome email goes out automatically; the VIP email does not exist yet.`
+    `One-click VIP upgrade succeeded.\n\nName: ${name || '(none)'}\nEmail: ${email || '(none)'}\nSession: ${sessionId}\nPaymentIntent: ${pi.id}\n\nACTION: none needed if sent. ${vipLine}`
   );
 
   return res.status(200).json({ ok: true });
