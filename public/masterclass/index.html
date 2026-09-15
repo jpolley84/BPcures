@@ -10,17 +10,13 @@
 (function(){
   try{
     if(/(?:^|\/)v3\/?/.test(location.pathname)) return;
-    /* 2026-09-14 (Joel): class day — 100% of traffic to v3 today only.
-       Cookie untouched, so the normal 50/50 split resumes tomorrow. */
-    var today=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-    if(today==='2026-09-14'){ location.replace('/masterclass/v3/'+location.search); return; }
-    var m=document.cookie.match(/(?:^|; )mc_variant=([^;]+)/);
-    var v=m?decodeURIComponent(m[1]):null;
-    if(v!=='a' && v!=='b'){
-      v = Math.random()<0.5 ? 'a' : 'b';
-      document.cookie='mc_variant='+v+'; path=/masterclass; max-age='+(60*60*24*30);
-    }
-    if(v==='b'){ location.replace('/masterclass/v3/'+location.search); }
+    /* 2026-09-15 (Joel: "why is /masterclass back to the old page?"): the A/B
+       split is OVER. v3 ("4 Biggest Mistakes") is the page every link now
+       points at (minoritypossible.com, ManyChat greeting, the VIP email), so
+       the control must never be served again. 100% to v3, permanently. The
+       one-day class-day override that expired at midnight 09-14 is what made
+       it look like a rollback. Control markup below is kept for history only. */
+    location.replace('/masterclass/v3/'+location.search); return;
   }catch(e){}
 })();
 </script>
