@@ -532,7 +532,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     ? [
         h2('Your VIP seat'),
         p(
-          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the date and time, so watch for two emails from us, not one.`
+          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel on <strong>Bonus Day, Sunday, September 27</strong>, after the three days. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the time, so watch for two emails from us, not one.`
         ),
         p(
           `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
@@ -985,7 +985,7 @@ async function handleRegister(req, res) {
 Tier: ${tier}
 Cohort: ${CHALLENGE.cohort}
 Session: ${sessionId}
-${isVip ? '\nVIP. You owe this person: the VIP Zoom link + date/time for the pre-challenge Q&A hour (MANUAL, separate email), the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1, and a ONE-HOUR 1:1 CALL WITH JOEL (they were told to reply with times). None of it is automated.' : ''}`
+${isVip ? '\nVIP. You owe this person: the VIP Zoom link + time for the Sunday Sept 27 Bonus Day Q&A hour (MANUAL, separate email), the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1, and a ONE-HOUR 1:1 CALL WITH JOEL (they were told to reply with times). None of it is automated.' : ''}`
   );
 
   return res.status(200).json({
