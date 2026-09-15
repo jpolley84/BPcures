@@ -57,7 +57,8 @@ const TRIANGLE_CORNERS = [
 // 2026-07-16 Annie-v2 sleep/stillness trigger sets were removed from the
 // library on 2026-07-29 (Joel: declutter to the current Triangle ladder).
 // Their files still serve at /downloads/* for anyone with a direct link.
-const EXTRA_TRIGGERS_LIST = [];
+// 2026-09-15 (Joel): restored, since pre-2026-08-29 Sleep/Stillness buyers use this page as their backup route to what they bought.
+const EXTRA_TRIGGERS_LIST = [{ key: 'sleep', label: 'Sleep' }, { key: 'stillness', label: 'Stillness' }];
 
 // Build the "Your Triangle Kit" groups from the manifest. Same {title, desc,
 // files:[{name, desc, href}]} shape the legacy groups use, except each file
