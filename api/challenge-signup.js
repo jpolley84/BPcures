@@ -532,13 +532,10 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     ? [
         h2('Your VIP seat'),
         p(
-          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel on <strong>Bonus Day, Sunday, September 27</strong>, after the three days. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the time, so watch for two emails from us, not one.`
+          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the date and time, so watch for two emails from us, not one.`
         ),
         p(
           `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
-        ),
-        p(
-          `And the super bonus: <strong>a private one-hour 1:1 coaching call with Joel</strong>. Reply to this email with two or three times that work for you and he will get it on the calendar.`
         ),
       ].join('')
     : '';
@@ -869,7 +866,7 @@ async function handleRegister(req, res) {
     owes: isVip
       // 2026-09-14 VIP (masterclass fast-action / +$100 upsell): the core stack
       // plus the pre-challenge VIP Q&A hour and the two fast-action bonuses.
-      ? ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training', 'vip-qa-hour', 'fast-clarity-workshop', 'stick-with-it-kit', 'joel-1on1-hour']
+      ? ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training', 'vip-qa-hour', 'fast-clarity-workshop', 'stick-with-it-kit']
       // 2026-09-22 cohort: exactly the page's offer stack. Q&A moved to the VIP upsell.
       : ['three-days', 'replays-48h', 'daily-guides', 'life-change-map', 'labs-mini-training'],
     confirmationSentAt: null,
@@ -985,7 +982,7 @@ async function handleRegister(req, res) {
 Tier: ${tier}
 Cohort: ${CHALLENGE.cohort}
 Session: ${sessionId}
-${isVip ? '\nVIP. You owe this person: the VIP Zoom link + time for the Sunday Sept 27 Bonus Day Q&A hour (MANUAL, separate email), the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1, and a ONE-HOUR 1:1 CALL WITH JOEL (they were told to reply with times). None of it is automated.' : ''}`
+${isVip ? '\nVIP. You owe this person: the VIP Zoom link + date/time for the pre-challenge Q&A hour (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated. (The 1:1 hour with Joel is ONLY for the VIPs who bought live on the 09-14 masterclass call, capped; not promised to anyone since.)' : ''}`
   );
 
   return res.status(200).json({
