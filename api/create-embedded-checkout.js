@@ -599,9 +599,13 @@ export default async function handler(req, res) {
   // session in this file, which is the whole reason the buy button points
   // here. Keep the price id in sync with CHALLENGE.PRICE in ChallengePage.jsx.
   if (tier === 'cmlc-97-vip') {
-    if (Date.now() > VIP_FAST_ACTION_UNTIL.getTime()) {
-      return res.status(410).json({ error: 'fast_action_ended', message: 'The fast-action VIP offer has ended.' });
-    }
+    // 2026-09-15 (Joel): after the masterclass window the VIP seat keeps
+    // selling at its regular $197 (challenge + VIP), not 410. Same product,
+    // second price. The page reads which price it is from this response.
+    const fastAction = Date.now() <= VIP_FAST_ACTION_UNTIL.getTime();
+    const vipPrice = fastAction
+      ? (process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk')
+      : (process.env.CMLC_197_VIP_PRICE_ID || 'price_1UG3ENHseZnO3rRZytbrSFJC');
     try {
       const taken = await kv.scard(VIP_ROSTER_KEY);
       if (taken >= VIP_SEAT_CAP) return res.status(409).json({ error: 'vip_sold_out', message: 'The VIP room is full.' });
@@ -613,7 +617,7 @@ export default async function handler(req, res) {
       funnel: 'braveworks-bp',
       offer: 'challenge',
       seat: 'vip',
-      source: 'masterclass-fast-action',
+      source: fastAction ? 'masterclass-fast-action' : 'vip-seat-197',
       cohort: '2026-09-22',
       ...phMeta,
       ...abMeta,
@@ -624,7 +628,7 @@ export default async function handler(req, res) {
         ui_mode: 'embedded',
         payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
         mode: 'payment',
-        line_items: [{ price: process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk', quantity: 1 }],
+        line_items: [{ price: vipPrice, quantity: 1 }],
         metadata,
         customer_creation: 'always',
         phone_number_collection: { enabled: true },
