@@ -194,10 +194,10 @@ const CHALLENGE = {
   // This key was referenced twice in the guarantee copy below but never
   // defined, so every VIP confirmation rendered the refund amount blank.
   vipPriceLabel: '$47',
-  vipDayLabel: 'Sunday, August 9',
-  vipTimeEt: '11:00am ET',
-  vipTimeCt: '10:00am CT',
-  vipLength: 'about 90 minutes',
+  vipDayLabel: 'Tuesday, September 22',
+  vipTimeEt: '6:00pm ET',
+  vipTimeCt: '5:00pm CT',
+  vipLength: 'about 60 minutes',
   pageUrl: 'https://changemylifechallenge.com/',
   // Day titles mirror DAYS in src/pages/ChallengePage.jsx. These were still
   // the pre-2026-08-17 sequence, so confirmation emails were listing days
@@ -532,7 +532,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     ? [
         h2('Your VIP seat'),
         p(
-          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email with the date and time, so watch for two emails from us, not one.`
+          `You are in the <strong>VIP room</strong>: an extra live Q&amp;A hour on Zoom with Annie and Joel <strong>before the challenge begins</strong>, on <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)} (${esc(CHALLENGE.vipTimeCt)})</strong>. Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email before Day 1, so watch for two emails from us, not one.`
         ),
         p(
           `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
@@ -571,7 +571,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
       `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.`
     ),
     zoomHtml(email),
-    p(`If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.`),
+    ...(isVip ? [] : [p(`If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.`)]),
     fbGroupHtml(),
     h2('The three days'),
     nightsHtml(),
@@ -596,7 +596,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
 Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.
 
 ${zoomText(email)}
-If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.
+${isVip ? '' : 'If you upgrade to VIP, your VIP session has its own separate Zoom link, sent in its own email.'}
 Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all three days on your calendar.
 
 ${fbGroupText()}
@@ -616,10 +616,9 @@ ${
 ${
   isVip
     ? `
-YOUR BONUS DAY
-You have the VIP seat, so you get a fourth live session: ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), about ninety minutes.
-It is a smaller, private session with Annie and Joel. It sits on Sunday because by then you finally have three days of your own readings to look at. We read real logs out loud together, including yours if you want it read, and show you what the pattern across a week is actually saying.
-Then questions until they run out, and a second pass at the doctor conversation using whatever your own log turned up. The Bonus Day has a replay too.
+YOUR VIP SEAT
+You are in the VIP room: an extra live Q&A hour on Zoom with Annie and Joel before the challenge begins, on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}). Bring the symptoms, the numbers, and the one question you really want answered. The VIP room has its own Zoom link, and it comes in a separate email before Day 1, so watch for two emails from us, not one.
+Your two fast-action bonuses, the Fast Clarity Workshop and the Finally Stick With It Kit (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.
 `
     : ''
 }
