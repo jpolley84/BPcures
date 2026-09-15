@@ -150,8 +150,8 @@ const CHALLENGE_COHORT = '2026-09-22';           // cohort id, also the Day 1 da
 // stamped into Stripe metadata so a later reader does not have to guess which
 // zone an ambiguous string meant. Mirrored in src/pages/ChallengePage.jsx
 // (START_ISO_ET) and api/challenge-signup.js (startIsoEt).
-const CHALLENGE_START_ET = '2026-09-22T12:00:00'; // Day 1, 12:00pm ET
-const CHALLENGE_START_CT = '2026-09-22T11:00:00'; // the same instant, 11:00am CT
+const CHALLENGE_START_ET = '2026-09-22T19:00:00'; // Day 1, 7:00pm ET (moved from noon, Joel 2026-09-14)
+const CHALLENGE_START_CT = '2026-09-22T18:00:00'; // the same instant, 6:00pm CT
 // 2026-08-05 (Joel): registration closes at MIDNIGHT ending Wednesday
 // 2026-08-05 ET, a night before the challenge itself ends. Mirrors
 // CHALLENGE.CLOSE_ISO_ET in src/pages/ChallengePage.jsx.

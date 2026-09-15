@@ -177,9 +177,10 @@ const CHALLENGE = {
   closeLabel: 'Thursday night',
   startLabel: 'Tuesday, September 22',
   endLabel: 'Thursday, September 24',
-  timeEt: '12:00pm ET',
-  timeCt: '11:00am CT',
-  timeWindowEt: '12:00pm to 1:00pm ET',
+  // 2026-09-14 (Joel): moved from 12:00pm ET to 7:00pm ET.
+  timeEt: '7:00pm ET',
+  timeCt: '6:00pm CT',
+  timeWindowEt: '7:00pm to 8:00pm ET',
   nightLength: 'about 60 minutes',
   logDueLabel: 'Saturday, September 26',
   refundByLabel: 'September 26',
@@ -262,7 +263,7 @@ const NEXT_COHORT = {
   // money in NEITHER direction, and the confirmation email must not reintroduce
   // what the page removed. Do not add a priceLabel here without checking that
   // decision first.
-  datesLabel: 'Tuesday, September 15 through Thursday, September 17, at 11:00am Central (12:00pm Eastern)',
+  datesLabel: 'Tuesday, September 22 through Thursday, September 24, at 7:00pm Eastern (6:00pm Central)',
   // The waitlist's OWN key namespace (2026-09-07, Joel: "make sure both sites
   // pull to a clean list"). Before this, intent 'waitlist' wrote into
   // challenge:<CHALLENGE.cohort>:interest, i.e. the AUGUST cohort's namespace,

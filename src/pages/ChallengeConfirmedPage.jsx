@@ -154,7 +154,7 @@ export default function ChallengeConfirmedPage() {
                 </div>
               )}
               <p style={{ margin: '0.7rem 0 0', fontSize: '0.93rem', color: '#4A5A58' }}>
-                Every day starts at 12:00pm ET, which is 11:00am CT, and runs about an hour.
+                Every day starts at 7:00pm ET, which is 6:00pm CT, and runs about an hour.
                 {tier === 'challenge-vip'
                   ? ' Your VIP Q&A hour happens before the challenge begins; its date and its own Zoom link come in a separate email, so expect two emails from us.'
                   : ''}
@@ -172,7 +172,7 @@ export default function ChallengeConfirmedPage() {
 
             <p style={{ fontSize: '0.95rem', color: '#4A5A58' }}>
               Your Day 1 action guide arrives by email before the first session. Your only job now is to
-              put 12:00pm ET (11:00am CT) on September 22, 23 and 24 in your calendar.
+              put 7:00pm ET (6:00pm CT) on September 22, 23 and 24 in your calendar.
             </p>
           </>
         )}
