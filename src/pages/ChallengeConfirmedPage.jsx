@@ -148,15 +148,22 @@ export default function ChallengeConfirmedPage() {
               ))}
               {tier === 'challenge-vip' && (
                 <div style={{ display: 'flex', gap: '0.6rem', padding: '0.32rem 0', fontSize: '0.93rem', borderBottom: '1px solid #F2EAE0' }}>
+                  <span style={{ color: CLAY, fontWeight: 700, minWidth: 56 }}>VIP</span>
+                  <span style={{ flex: 1 }}>Sept 22, 23 &amp; 24</span>
+                  <span style={{ color: '#6A7A78' }}>Q&amp;A hour, 6:00pm ET, before each session</span>
+                </div>
+              )}
+              {tier === 'challenge-vip' && (
+                <div style={{ display: 'flex', gap: '0.6rem', padding: '0.32rem 0', fontSize: '0.93rem', borderBottom: '1px solid #F2EAE0' }}>
                   <span style={{ color: CLAY, fontWeight: 700, minWidth: 56 }}>Bonus</span>
                   <span style={{ flex: 1 }}>Sunday, September 27</span>
-                  <span style={{ color: '#6A7A78' }}>VIP Bonus Day, 7:00pm ET (link by separate email)</span>
+                  <span style={{ color: '#6A7A78' }}>VIP Bonus Day, 7:00pm ET</span>
                 </div>
               )}
               <p style={{ margin: '0.7rem 0 0', fontSize: '0.93rem', color: '#4A5A58' }}>
                 Every day starts at 7:00pm ET, which is 6:00pm CT, and runs about an hour.
                 {tier === 'challenge-vip'
-                  ? ' Your VIP Bonus Day is Sunday, September 27 at 7:00pm ET (6:00pm CT); its own Zoom link comes in a separate email, so expect two emails from us.'
+                  ? ' Your VIP Q&A hour is 6:00pm ET (5:00pm CT) before each session, and your Bonus Day is Sunday, September 27 at 7:00pm ET (6:00pm CT). The VIP Zoom link comes in a separate email, so expect two emails from us.'
                   : ''}
               </p>
             </div>

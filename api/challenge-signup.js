@@ -531,9 +531,12 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   // lived here would have gone to every VIP buyer from tonight's masterclass.
   const vipHtml = isVip
     ? [
-        h2('Your VIP Bonus Day'),
+        h2('Your VIP seat'),
         p(
-          `You have a <strong>fourth live day</strong>: the VIP Bonus Day on <strong>${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)} (${esc(CHALLENGE.vipTimeCt)})</strong>, about an hour, with Annie and Joel. It is the small room where your questions get answered: bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered. The Bonus Day has its own Zoom link, which comes in a separate email, so watch for two emails from us.`
+          `<strong>VIP Q&amp;A hour, 6:00pm ET (5:00pm CT), before each challenge day</strong>, September 22, 23 and 24: the small room where your questions get answered, an hour before the 7:00pm session. Bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered.`
+        ),
+        p(
+          `<strong>Bonus Day: ${esc(CHALLENGE.vipDayLabel)} at ${esc(CHALLENGE.vipTimeEt)} (${esc(CHALLENGE.vipTimeCt)})</strong>, a fourth live day with Annie and Joel. The VIP room has its own Zoom link, which comes in a separate email, so watch for two emails from us.`
         ),
         p(
           `Your two fast-action bonuses, the <strong>Fast Clarity Workshop</strong> and the <strong>Finally Stick With It Kit</strong> (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.`
@@ -616,8 +619,9 @@ ${
 ${
   isVip
     ? `
-YOUR VIP BONUS DAY
-You have a fourth live day: the VIP Bonus Day on ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), about an hour, with Annie and Joel. It is the small room where your questions get answered: bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered. The Bonus Day has its own Zoom link, which comes in a separate email, so watch for two emails from us.
+YOUR VIP SEAT
+VIP Q&A hour, 6:00pm ET (5:00pm CT), before each challenge day, September 22, 23 and 24: the small room where your questions get answered, an hour before the 7:00pm session. Bring the symptoms, the numbers, the labs or imaging that are not making sense, and the one question you really want answered.
+Bonus Day: ${CHALLENGE.vipDayLabel} at ${CHALLENGE.vipTimeEt} (${CHALLENGE.vipTimeCt}), a fourth live day with Annie and Joel. The VIP room has its own Zoom link, which comes in a separate email, so watch for two emails from us.
 Your two fast-action bonuses, the Fast Clarity Workshop and the Finally Stick With It Kit (the 21-Day Consistency Tracker and the Never Miss Twice Reset System), arrive by email before Day 1.
 `
     : ''
@@ -986,7 +990,7 @@ async function handleRegister(req, res) {
 Tier: ${tier}
 Cohort: ${CHALLENGE.cohort}
 Session: ${sessionId}
-${isVip ? '\nVIP. You owe this person: the VIP Zoom link for the Bonus Day, Sunday, September 27 7:00pm ET (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated. (The 1:1 hour with Joel is ONLY for the VIPs who bought live on the 09-14 masterclass call, capped; not promised to anyone since.)' : ''}`
+${isVip ? '\nVIP. You owe this person: the VIP Zoom link for the 6:00pm ET Q&A hour on Sept 22/23/24 AND the Bonus Day Sunday Sept 27 7:00pm ET (MANUAL, separate email), and the Fast Clarity Workshop + Finally Stick With It Kit by email before Day 1. Neither is automated. (The 1:1 hour with Joel is ONLY for the VIPs who bought live on the 09-14 masterclass call, capped; not promised to anyone since.)' : ''}`
   );
 
   return res.status(200).json({
