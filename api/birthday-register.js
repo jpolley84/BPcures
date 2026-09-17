@@ -58,7 +58,7 @@ export function confirmationEmail({ firstName }) {
     : '';
   return `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
-<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">The First Domino &middot; Free Birthday Masterclass</p>
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Discover the #1 Problem Keeping You Sick &middot; Free Birthday Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
 <p>Friday is my birthday, and I'm spending the morning teaching. I'm glad you're coming.</p>
 <p><strong>Friday, September 18 at 11:00 AM Central</strong> (12:00 PM Eastern &middot; 10:00 AM Mountain &middot; 9:00 AM Pacific). One hour, live on Zoom.</p>
@@ -68,7 +68,7 @@ export function confirmationEmail({ firstName }) {
   <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
   <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>) so Friday morning finds you ready.</p>
 </div>
-<p><strong>What we'll cover:</strong> 3 health myths that keep your blood pressure, blood sugar, and weight stuck, and the first domino: the one place to start so the next steps get easier.</p>
+<p><strong>What we'll cover:</strong> the #1 problem keeping you sick (hint: you fall for it every day), and the one place to start once you see it.</p>
 <p><strong>Come live.</strong> I have a birthday gift for everyone who's in the room.</p>
 <p>Questions? Just reply. I read these myself.</p>
 <p style="margin-top:2rem;">Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>

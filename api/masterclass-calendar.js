@@ -83,11 +83,11 @@ const WEEKLY = {
 };
 const BIRTHDAY = {
   uid: 'birthday-popup-2026-09-18@bpquiz.com',
-  title: "Joel's Birthday Pop-Up Masterclass: The First Domino (Zoom)",
+  title: "Joel's Birthday Masterclass: Discover the #1 Problem Keeping You Sick (Zoom)",
   hour: 11,
   rrule: null,
   description: [
-    'Free live birthday masterclass with Joel Polley, RN: 3 health myths keeping your numbers stuck, and the one place to start.',
+    'Free live birthday masterclass with Joel Polley, RN: discover the #1 problem keeping you sick (hint: you fall for it every day).',
     'Friday, September 18 at 11:00 AM Central / 12:00 PM Eastern, live on Zoom.',
     '',
     `Join here: ${ZOOM_JOIN_URL}`,
