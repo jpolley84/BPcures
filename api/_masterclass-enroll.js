@@ -33,9 +33,9 @@ const REPLY_TO = 'braveworksrn@gmail.com';
 // Weekly Zoom (Mondays 7pm ET / 6pm CT, moved 2026-08-03), provided by Joel 2026-07-20.
 // 2026-08-09: room 81893444167 was a personal room carrying an individual's
 // full name, which showed on every recording. Retired. Canon: scripts/_zoom-rooms.mjs.
-const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
-const ZOOM_MEETING_ID = '828 5171 5003';
-const ZOOM_PASSCODE = '027302';
+export const ZOOM_JOIN_URL = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+export const ZOOM_MEETING_ID = '828 5171 5003';
+export const ZOOM_PASSCODE = '027302';
 // 2026-09-14: Zoom's generated .ics link started returning a "meeting doesn't
 // exist" page. Calendar links now come from our own api/masterclass-calendar.js,
 // which carries the same Zoom room, ID and passcode as this email.
@@ -99,6 +99,47 @@ function confirmationEmail({ firstName, provenance }) {
 <p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because ${why}. Educational content only, not medical advice. Never start, stop, or adjust medication without your doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
 ${postal}
 </body></html>`;
+}
+
+/**
+ * Enroll into the lead-nurture drip (bwbp:drip:*), the same machine the
+ * quiz EmailGate feeds via capture-lead.js. Rules mirrored from there:
+ * enrich-only if a record exists (never reset state/timer, never demote a
+ * buyer back to 'lead'); new emails start at Day 0 of the lead sequence.
+ * Non-fatal: logs and returns on any KV error.
+ * 2026-09-16: extracted so api/birthday-register.js shares it.
+ */
+export async function enrollLeadDrip({ email, firstName = '', source, tag }) {
+  try {
+    const dripKey = `bwbp:drip:${email}`;
+    const drip = await kv.get(dripKey);
+    if (drip) {
+      await kv.set(dripKey, {
+        ...drip,
+        firstName: drip.firstName || firstName,
+        tags: Array.from(new Set([...(drip.tags || []), tag])),
+        lastCaptureAt: new Date().toISOString(),
+      });
+    } else {
+      const now = new Date().toISOString();
+      await kv.set(dripKey, {
+        email,
+        firstName,
+        corner: null,
+        readiness: null,
+        scores: null,
+        state: 'lead',
+        stateEnteredAt: now,
+        enrolledAt: now,
+        // 2026-07-26: was hardcoded 'masterclass-page'; now carries the caller's
+        // source so funnels stay separable in analytics.
+        source,
+        tags: [tag],
+      });
+    }
+  } catch (err) {
+    console.warn('masterclass-enroll: drip enroll failed (non-fatal)', err.message);
+  }
 }
 
 /**
@@ -168,41 +209,7 @@ export async function registerMasterclass({
     console.warn('masterclass-enroll: sadd/incr failed (non-fatal)', err.message);
   }
 
-  // Enroll into the lead-nurture drip (bwbp:drip:*), the same machine the
-  // quiz EmailGate feeds via capture-lead.js. Rules mirrored from there:
-  // enrich-only if a record exists (never reset state/timer, never demote a
-  // buyer back to 'lead'); new emails start at Day 0 of the lead sequence.
-  try {
-    const dripKey = `bwbp:drip:${normEmail}`;
-    const drip = await kv.get(dripKey);
-    if (drip) {
-      await kv.set(dripKey, {
-        ...drip,
-        firstName: drip.firstName || firstName,
-        tags: Array.from(new Set([...(drip.tags || []), 'masterclass'])),
-        lastCaptureAt: new Date().toISOString(),
-      });
-    } else {
-      const now = new Date().toISOString();
-      await kv.set(dripKey, {
-        email: normEmail,
-        firstName,
-        corner: null,
-        readiness: null,
-        scores: null,
-        state: 'lead',
-        stateEnteredAt: now,
-        enrolledAt: now,
-        // 2026-07-26: was hardcoded 'masterclass-page'; now carries the caller's
-        // source so funnels stay separable in analytics. The /masterclass page
-        // path still lands on 'masterclass-page' via the default above.
-        source: normSource,
-        tags: ['masterclass'],
-      });
-    }
-  } catch (err) {
-    console.warn('masterclass-enroll: drip enroll failed (non-fatal)', err.message);
-  }
+  await enrollLeadDrip({ email: normEmail, firstName, source: normSource, tag: 'masterclass' });
 
   // Mirror into the Resend audience so Joel can segment/broadcast from the
   // Resend dashboard too. KV stays the source of truth; non-fatal.

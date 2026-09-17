@@ -70,9 +70,39 @@ function fold(line) {
   return out.join('\r\n');
 }
 
-function buildIcs(start) {
-  const endMin = START_HOUR_CT * 60 + DURATION_MIN;
-  const dtstart = stampLocal(start, START_HOUR_CT, 0);
+// 2026-09-16: ?event=birthday serves Joel's one-time birthday pop-up class
+// (Friday 2026-09-18, 11:00 AM Central, same Zoom room, no RRULE).
+const WEEKLY = {
+  uid: 'masterclass-monday@bpquiz.com',
+  title: TITLE,
+  hour: START_HOUR_CT,
+  rrule: 'RRULE:FREQ=WEEKLY;BYDAY=MO',
+  description: DESCRIPTION_LINES,
+  filename: 'bpquiz-masterclass.ics',
+  start: () => nextMondayCT(),
+};
+const BIRTHDAY = {
+  uid: 'birthday-popup-2026-09-18@bpquiz.com',
+  title: "Joel's Birthday Pop-Up Masterclass: The First Domino (Zoom)",
+  hour: 11,
+  rrule: null,
+  description: [
+    'Free live birthday masterclass with Joel Polley, RN: 3 health myths keeping your numbers stuck, and the one place to start.',
+    'Friday, September 18 at 11:00 AM Central / 12:00 PM Eastern, live on Zoom.',
+    '',
+    `Join here: ${ZOOM_JOIN_URL}`,
+    `Meeting ID: ${ZOOM_MEETING_ID}`,
+    `Passcode: ${ZOOM_PASSCODE}`,
+    '',
+    'Class details: https://bpquiz.com/birthday',
+  ],
+  filename: 'bpquiz-birthday-masterclass.ics',
+  start: () => ({ y: 2026, m: 9, d: 18 }),
+};
+
+function buildIcs(start, ev = WEEKLY) {
+  const endMin = ev.hour * 60 + DURATION_MIN;
+  const dtstart = stampLocal(start, ev.hour, 0);
   const dtend = stampLocal(start, Math.floor(endMin / 60), endMin % 60);
   const now = new Date();
   const dtstamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
@@ -100,13 +130,13 @@ function buildIcs(start) {
     'END:STANDARD',
     'END:VTIMEZONE',
     'BEGIN:VEVENT',
-    'UID:masterclass-monday@bpquiz.com',
+    `UID:${ev.uid}`,
     `DTSTAMP:${dtstamp}`,
     `DTSTART;TZID=${TZ}:${dtstart}`,
     `DTEND;TZID=${TZ}:${dtend}`,
-    'RRULE:FREQ=WEEKLY;BYDAY=MO',
-    `SUMMARY:${icsEscape(TITLE)}`,
-    `DESCRIPTION:${icsEscape(DESCRIPTION_LINES.join('\n'))}`,
+    ...(ev.rrule ? [ev.rrule] : []),
+    `SUMMARY:${icsEscape(ev.title)}`,
+    `DESCRIPTION:${icsEscape(ev.description.join('\n'))}`,
     `LOCATION:${icsEscape(ZOOM_JOIN_URL)}`,
     `URL:${ZOOM_JOIN_URL}`,
     'STATUS:CONFIRMED',
@@ -122,28 +152,29 @@ function buildIcs(start) {
   return lines.map(fold).join('\r\n') + '\r\n';
 }
 
-function googleUrl(start) {
-  const endMin = START_HOUR_CT * 60 + DURATION_MIN;
+function googleUrl(start, ev = WEEKLY) {
+  const endMin = ev.hour * 60 + DURATION_MIN;
   const q = new URLSearchParams({
     action: 'TEMPLATE',
-    text: TITLE,
-    dates: `${stampLocal(start, START_HOUR_CT, 0)}/${stampLocal(start, Math.floor(endMin / 60), endMin % 60)}`,
+    text: ev.title,
+    dates: `${stampLocal(start, ev.hour, 0)}/${stampLocal(start, Math.floor(endMin / 60), endMin % 60)}`,
     ctz: TZ,
-    details: DESCRIPTION_LINES.join('\n'),
+    details: ev.description.join('\n'),
     location: ZOOM_JOIN_URL,
-    recur: 'RRULE:FREQ=WEEKLY;BYDAY=MO',
+    ...(ev.rrule ? { recur: ev.rrule } : {}),
   });
   return `https://calendar.google.com/calendar/render?${q.toString()}`;
 }
 
 export default async function handler(req, res) {
-  const start = nextMondayCT();
+  const ev = String(req.query?.event || '') === 'birthday' ? BIRTHDAY : WEEKLY;
+  const start = ev.start();
   res.setHeader('Cache-Control', 'no-store');
   if (String(req.query?.google || '') === '1') {
-    res.setHeader('Location', googleUrl(start));
+    res.setHeader('Location', googleUrl(start, ev));
     return res.status(302).end();
   }
   res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="bpquiz-masterclass.ics"');
-  return res.status(200).send(buildIcs(start));
+  res.setHeader('Content-Disposition', `attachment; filename="${ev.filename}"`);
+  return res.status(200).send(buildIcs(start, ev));
 }
