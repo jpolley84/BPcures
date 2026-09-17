@@ -52,28 +52,28 @@ async function readJsonBody(req) {
 }
 
 export function confirmationEmail({ firstName }) {
-  const name = firstName ? escapeHtml(firstName) : 'friend';
+  const name = firstName ? escapeHtml(firstName) : 'Friend';
   const postal = process.env.BUSINESS_POSTAL_ADDRESS
     ? `<p style="color:#9A9A9A;font-size:0.78rem;margin-top:0.4rem;">BraveWorks RN &middot; ${escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS)}</p>`
     : '';
+  // Copy: SecondBrain/email-marketing/outputs/2026-09-17-birthday-masterclass-FIRE-rework.md, section C.
+  // Until Joel names the prize, the giveaway line stays generic.
   return `<!doctype html>
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
-<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Discover the #1 Problem Keeping You Sick &middot; Free Birthday Masterclass</p>
-<h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
-<p>Friday is my birthday, and I'm spending the morning teaching. I'm glad you're coming.</p>
-<p><strong>Friday, September 18 at 11:00 AM Central</strong> (12:00 PM Eastern &middot; 10:00 AM Mountain &middot; 9:00 AM Pacific). One hour, live on Zoom.</p>
-<div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
-  <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
-  <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join Friday's Class on Zoom &rarr;</a></p>
-  <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
-  <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>) so Friday morning finds you ready.</p>
-</div>
-<p><strong>What we'll cover:</strong> the #1 problem keeping you sick (hint: you fall for it every day), and the one place to start once you see it.</p>
-<p><strong>Come live.</strong> I have a birthday gift for everyone who's in the room.</p>
-<p>Questions? Just reply. I read these myself.</p>
-<p style="margin-top:2rem;">Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
+<div style="display:none;max-height:0;overflow:hidden;">Your Zoom link, and the one thing to do before class.</div>
+<p>${name},</p>
+<p>You're in.</p>
+<p><strong>The #1 Hidden Reason Behind High Blood Pressure, Hormone Trouble, and Diabetes</strong><br/>Friday, September 18<br/>11:00 AM Central / 12:00 PM Eastern<br/>One hour, live on Zoom</p>
+<p>Here's your link. Save this email so you can find it Friday morning.</p>
+<p style="margin:1.2rem 0;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.8rem 1.5rem;border-radius:999px;">JOIN FRIDAY'S CLASS ON ZOOM &rarr;</a></p>
+<p style="color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong></p>
+<p>Add it to your calendar so Friday doesn't sneak up on you: <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add to my calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>)</p>
+<p>One thing to do before class: write down your last blood pressure reading. From your home cuff, the pharmacy machine, or your last visit. Even from memory is fine. You'll see why in the first few minutes.</p>
+<p>Friday is my birthday. Annie and I are giving you the #1 thing underneath chronic illness. It's the only time we're doing this masterclass, and there's a special giveaway on the call for everyone who comes live.</p>
+<p>See you Friday,<br/>Joel Polley, RN</p>
+<p>P.S. Hit reply and tell me the one number you most want to understand. I read these.</p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
-<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because you saved a seat at bpquiz.com/birthday. Educational content only, not medical advice. Never start, stop, or adjust medication without your doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
+<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">Giveaway: no purchase necessary. Must be on the live call to win. You're getting this because you saved a seat at bpquiz.com/birthday. Educational only, not medical advice. Never stop or change a medication except with your own doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
 ${postal}
 </body></html>`;
 }
@@ -135,7 +135,7 @@ export default async function handler(req, res) {
           to: email,
           reply_to: REPLY_TO,
           campaign: 'birthday-popup-seat-saved',
-          subject: 'Your seat is saved for Friday (11 AM Central)',
+          subject: "You're in: Friday 11 AM Central (save this email)",
           html: confirmationEmail({ firstName }),
         });
       } catch (err) {
