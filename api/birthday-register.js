@@ -63,7 +63,7 @@ export function confirmationEmail({ firstName }) {
 <div style="display:none;max-height:0;overflow:hidden;">Your Zoom link, and the one thing to do before class.</div>
 <p>${name},</p>
 <p>You're in.</p>
-<p><strong>The #1 Hidden Reason Behind High Blood Pressure, Hormone Trouble, and Diabetes</strong><br/>Friday, September 18<br/>11:00 AM Central / 12:00 PM Eastern<br/>One hour, live on Zoom</p>
+<p><strong>The #1 Thing Your Doctor Never Tests For</strong><br/>Friday, September 18<br/>11:00 AM Central / 12:00 PM Eastern<br/>One hour, live on Zoom</p>
 <p>Here's your link. Save this email so you can find it Friday morning.</p>
 <p style="margin:1.2rem 0;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.8rem 1.5rem;border-radius:999px;">JOIN FRIDAY'S CLASS ON ZOOM &rarr;</a></p>
 <p style="color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong></p>

@@ -83,11 +83,11 @@ const WEEKLY = {
 };
 const BIRTHDAY = {
   uid: 'birthday-popup-2026-09-18@bpquiz.com',
-  title: "Joel's Birthday Masterclass: Discover the #1 Problem Keeping You Sick (Zoom)",
+  title: "Birthday Masterclass: The #1 Thing Your Doctor Never Tests For (Zoom)",
   hour: 11,
   rrule: null,
   description: [
-    'Free live birthday masterclass with Joel Polley, RN: discover the #1 problem keeping you sick (hint: you fall for it every day).',
+    'Free live birthday masterclass with Joel Polley, RN and Annie Chitate, RN: the #1 thing nobody tests for, and how it drives your blood pressure, your hormones, and your blood sugar all at once.',
     'Friday, September 18 at 11:00 AM Central / 12:00 PM Eastern, live on Zoom.',
     '',
     `Join here: ${ZOOM_JOIN_URL}`,
