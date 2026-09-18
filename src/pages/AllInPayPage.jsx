@@ -124,12 +124,11 @@ const OPTIONS = [
 // checkout response), because the server is what actually charges. Mirrors
 // BDAY42_CENTS in api/create-embedded-checkout.js.
 const BDAY42_UNTIL = Date.parse('2026-09-18T23:50:00Z');
-// Deposit is $200 on the birthday ($500 struck), so the balance is $4,150.
 const BDAY42 = {
   full: { headline: '$4,350', total: 'Total $4,350 · 42% off $7,500, until sunset' },
-  '6pay': { headline: '6 x $768', cadence: 'A $200 deposit today (normally $500), then 6 monthly payments.', total: 'Total $4,808 with your deposit', note: 'The $200 comes off the price. Six months, paid off well before your year is done.' },
-  '9pay': { headline: '9 x $554', cadence: 'A $200 deposit today (normally $500), then 9 monthly payments.', total: 'Total $5,186 with your deposit', note: 'The $200 comes off the price. Nine months, a smaller amount each time.' },
-  '12pay': { headline: '12 x $445', cadence: 'A $200 deposit today (normally $500), then 12 monthly payments.', total: 'Total $5,540 with your deposit' },
+  '6pay': { headline: '6 x $712', total: 'Total $4,772 with your deposit' },
+  '9pay': { headline: '9 x $514', total: 'Total $5,126 with your deposit' },
+  '12pay': { headline: '12 x $413', total: 'Total $5,456 with your deposit' },
 };
 
 export default function AllInPayPage() {
@@ -292,7 +291,7 @@ export default function AllInPayPage() {
           <div style={{ border: `2px solid ${C.ink}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
               <strong>Read this before you pay:</strong> your card is charged{' '}
-              <strong>{bday42 ? '$200' : DEPOSIT_LABEL} today</strong>, not {option.headline.split(' x ')[1]}. That {bday42 ? '$200' : DEPOSIT_LABEL}{' '}
+              <strong>{DEPOSIT_LABEL} today</strong>, not {option.headline.split(' x ')[1]}. That {DEPOSIT_LABEL}{' '}
               comes off the price and holds your place. On the very next screen you set up the
               remaining {option.headline.split(' x ')[0]} monthly payments of {option.headline.split(' x ')[1]},
               billed automatically once a month, for {option.total.replace('Total ', '').replace(' with your deposit', ' in total including the deposit')}.

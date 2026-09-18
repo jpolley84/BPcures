@@ -565,7 +565,6 @@ export default async function handler(req, res) {
     // taken at $500 before this change would still get its correct $3,850.
     const BDAY42_UNTIL = Date.parse('2026-09-18T23:50:00Z');
     const BDAY42_TOTAL = 435000;
-    const BDAY42_DEPOSIT = 20000;
     const REGULAR_BALANCE = 700000;
     const REGULAR_PLAN_CENTS = {
       'allin-balance-full': 700000,
@@ -585,7 +584,9 @@ export default async function handler(req, res) {
     let BDAY42_CENTS = {};
     if (tier === 'allin-full' || tier === 'allin-deposit') {
       bday42 = Date.now() < BDAY42_UNTIL;
-      BDAY42_CENTS = { 'allin-full': BDAY42_TOTAL, 'allin-deposit': BDAY42_DEPOSIT };
+      // 2026-09-18 13:14 (Joel): "ignore the $200 deposit change, keep it $500".
+      // The deposit is charged at its regular price, only stamped bday42.
+      BDAY42_CENTS = { 'allin-full': BDAY42_TOTAL };
     } else if (tier.startsWith('allin-balance-') && req.body?.depositSession) {
       try {
         const dep = await stripe.checkout.sessions.retrieve(String(req.body.depositSession).slice(0, 255));

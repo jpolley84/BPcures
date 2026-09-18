@@ -58,10 +58,7 @@ const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
-// 2026-09-18 12:27 (Joel): the birthday deposit is $200, with $500 struck.
-// After the sale, DEPOSIT goes back to '$500' and REGULAR_DEPOSIT goes away.
-const REGULAR_DEPOSIT = '$500';
-const DEPOSIT = '$200';
+const DEPOSIT = '$500';
 // 2026-09-18 BIRTHDAY 42 (Joel turns 42): 42% off $7,500 = $4,350 until
 // sunset tonight. The server charges these amounts, not this file; see
 // BDAY42_CENTS in api/create-embedded-checkout.js. When the sale is over, put
@@ -69,7 +66,7 @@ const DEPOSIT = '$200';
 // and the struck-through prices that read it.
 const REGULAR_PRICE = '$7,500';
 const PRICE = '$4,350';
-const BALANCE = '$4,150';
+const BALANCE = '$3,850';
 const TOTAL_VALUE = '$21,500';
 
 // ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
@@ -187,6 +184,21 @@ const SO_YOU_CAN = [
 ];
 
 const FAQ = [
+  {
+    q: 'What is the birthday deal?',
+    a: `I turn 42 today, so the whole Life Change Accelerator is 42% off until sunset tonight, ${CLOSE_LABEL}: `
+      + `${PRICE} instead of ${REGULAR_PRICE}. Same program, same year of support, same guarantee. Nothing is removed to hit the price.`,
+  },
+  {
+    q: 'What if I reserve today but pay the rest later?',
+    a: `You keep the birthday price. Reserve with ${DEPOSIT} before sunset and your balance is locked at ${BALANCE}, `
+      + 'even if you settle it next week or spread it over up to 12 monthly payments.',
+  },
+  {
+    q: 'What happens at sunset?',
+    a: `The birthday price ends and enrollment for this cohort closes at ${ctTime(CLOSE_AT)} CT. `
+      + 'There is no extension, because the Sabbath starts at sunset and the site closes with it.',
+  },
   {
     q: 'What am I paying today?',
     a: `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`,
@@ -616,11 +628,11 @@ export default function AllInPage() {
           <span className="wide-only">
             For my 42nd birthday, the whole program is <strong>42% off until sunset tonight</strong>:
             {' '}<s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>. Secure your place with a
-            {' '}<s>{REGULAR_DEPOSIT}</s> <strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
+            {' '}<strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
           </span>
           <span className="narrow-only">
             42% off for my birthday, until sunset: <s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>.
-            {' '}<s>{REGULAR_DEPOSIT}</s> <strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
+            {' '}<strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
           </span>
         </div>
 
@@ -642,7 +654,7 @@ export default function AllInPage() {
             onClick={() => track('allin_save_spot_click', { placement: 'hero' })}
           >
             Save My Spot
-            <span className="save-spot-sub">ONLY {SPOTS} SPOTS AVAILABLE · <s>{REGULAR_DEPOSIT}</s> {DEPOSIT} today</span>
+            <span className="save-spot-sub">ONLY {SPOTS} SPOTS AVAILABLE · {DEPOSIT} today</span>
           </a>
         )}
 
@@ -817,7 +829,7 @@ export default function AllInPage() {
               <div className="price-line"><span>Payment terms</span><strong>Up to 12 months</strong></div>
               <div className="due-now">
                 <span className="label">Due today</span>
-                <span className="amount">{closed ? '—' : (<><s style={{ opacity: 0.5, fontSize: '0.6em', marginRight: 8 }}>{REGULAR_DEPOSIT}</s>{DEPOSIT}</>)}</span>
+                <span className="amount">{closed ? '—' : DEPOSIT}</span>
               </div>
             </div>
 
