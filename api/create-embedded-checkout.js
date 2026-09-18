@@ -537,11 +537,65 @@ export default async function handler(req, res) {
       console.error('create-embedded-checkout: no price configured for tier', tier);
       return res.status(503).json({ error: 'That payment option is not available yet. Please pick another, or email braveworksrn@gmail.com.' });
     }
+    // ─── 2026-09-18 BIRTHDAY 42 (Joel turns 42) ──────────────────────
+    // 42% off the $7,500 program until sunset tonight: $4,350. Sunset is the
+    // Sabbath gate's own Friday sundown for 2026-09-18 (6:50:20 PM CT, same
+    // formula as public/sabbath-gate.js), so the sale and the site close at
+    // the same instant.
+    //
+    // No Stripe objects are created. The discounted amount is sent as inline
+    // price_data on the existing product, so nothing outlives the sale.
+    //
+    // The $500 deposit stays $500 and is credited, so a birthday deposit
+    // leaves a $3,850 balance. That balance keeps its price AFTER sunset: she
+    // locked it in tonight. /payment passes the deposit session id and the
+    // server trusts only a PAID deposit session stamped promo=bday42, never
+    // the request body. Installment amounts are the regular plan x 0.55
+    // ($3,850 / $7,000), so each plan keeps its financing ratio, rounded to
+    // whole dollars. Keep these numbers in sync with BDAY42 in
+    // src/pages/AllInPage.jsx, AllInPayPage.jsx, PaymentPage.jsx and the
+    // birthday lines in api/triangle-webhook.js.
+    const BDAY42_UNTIL = Date.parse('2026-09-18T23:50:00Z');
+    const BDAY42_CENTS = {
+      'allin-full': 435000,
+      'allin-balance-full': 385000,
+      'allin-balance-6pay': 71200,
+      'allin-balance-9pay': 51400,
+      'allin-balance-12pay': 41300,
+    };
+    let bday42 = false;
+    if (tier === 'allin-full' || tier === 'allin-deposit') {
+      bday42 = Date.now() < BDAY42_UNTIL;
+    } else if (tier.startsWith('allin-balance-') && req.body?.depositSession) {
+      try {
+        const dep = await stripe.checkout.sessions.retrieve(String(req.body.depositSession).slice(0, 255));
+        bday42 = dep.status === 'complete' && dep.payment_status === 'paid'
+          && dep.metadata?.offer === 'all-in' && dep.metadata?.promo === 'bday42';
+      } catch (err) {
+        console.warn('create-embedded-checkout: deposit session lookup failed, regular price', err.message);
+      }
+    }
+    let allinLineItem = { price: ALLIN_PRICES[tier], quantity: 1 };
+    if (bday42 && BDAY42_CENTS[tier]) {
+      const base = await stripe.prices.retrieve(ALLIN_PRICES[tier]);
+      allinLineItem = {
+        quantity: 1,
+        price_data: {
+          currency: base.currency,
+          product: typeof base.product === 'string' ? base.product : base.product.id,
+          unit_amount: BDAY42_CENTS[tier],
+          ...(base.recurring
+            ? { recurring: { interval: base.recurring.interval, interval_count: base.recurring.interval_count } }
+            : {}),
+        },
+      };
+    }
     const metadata = {
       funnel: 'braveworks-bp',
       brand: 'braveworks-bp',
       offer: 'all-in',
       plan,
+      ...(bday42 ? { promo: 'bday42' } : {}),
       ...(tier === 'allin-deposit' && req.body?.balancePlan
         ? { balance_plan: String(req.body.balancePlan).slice(0, 20) }
         : {}),
@@ -554,7 +608,7 @@ export default async function handler(req, res) {
         ui_mode: 'embedded',
         payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
         mode: isSub ? 'subscription' : 'payment',
-        line_items: [{ price: ALLIN_PRICES[tier], quantity: 1 }],
+        line_items: [allinLineItem],
         metadata,
         ...(isSub ? { subscription_data: { metadata } } : {}),
         // 2026-08-30: a DEPOSIT is not the end of the purchase, it is the
@@ -567,7 +621,7 @@ export default async function handler(req, res) {
             : `${siteUrl}/allin-welcome?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
         ...(email ? { customer_email: email } : {}),
       });
-      return res.status(200).json({ clientSecret: session.client_secret });
+      return res.status(200).json({ clientSecret: session.client_secret, ...(bday42 ? { promo: 'bday42' } : {}) });
     } catch (err) {
       console.error('create-embedded-checkout all-in error:', err.message);
       return res.status(500).json({ error: 'Failed to start checkout' });

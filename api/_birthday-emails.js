@@ -87,7 +87,7 @@ export const BIRTHDAY_EMAILS = {
    "slot": "Fri 9/18 · 10:50 AM CT",
    "subject": "Girl, the room is open (starting now)",
    "preheader": "Come in now. Bring him too.",
-   "body": "{{first_name}},\n\nThe room is open.\n\nWe start in 10 minutes.\n\n11 AM Central / 12 PM Eastern.\n\nGrab your water. Grab your husband.\n\nStay to the end for the surprise giveaway.\n\n[BUTTON: COME IN NOW → https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1]\n\nCome on. We're waiting on you.\n\nEveryday Nurse Annie\n\n<small>No purchase necessary. Must be on the live call to win.</small>"
+   "body": "{{first_name}},\n\nThe room is open.\n\nWe are starting now.\n\n11 AM Central / 12 PM Eastern.\n\nGrab your water. Grab your husband.\n\nStay to the end for the surprise giveaway.\n\n[BUTTON: COME IN NOW → https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1]\n\nCome on. We're waiting on you.\n\nEveryday Nurse Annie\n\n<small>No purchase necessary. Must be on the live call to win.</small>"
   },
   "5": {
    "slot": "Fri 9/18 · 1:30 PM CT",
