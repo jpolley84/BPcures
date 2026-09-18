@@ -59,8 +59,14 @@ const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
 const DEPOSIT = '$500';
-const PRICE = '$7,500';
-const BALANCE = '$7,000';
+// 2026-09-18 BIRTHDAY 42 (Joel turns 42): 42% off $7,500 = $4,350 until
+// sunset tonight. The server charges these amounts, not this file; see
+// BDAY42_CENTS in api/create-embedded-checkout.js. When the sale is over, put
+// PRICE back to '$7,500', BALANCE back to '$7,000', and delete REGULAR_PRICE
+// and the struck-through prices that read it.
+const REGULAR_PRICE = '$7,500';
+const PRICE = '$4,350';
+const BALANCE = '$3,850';
 const TOTAL_VALUE = '$21,500';
 
 // ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
@@ -72,7 +78,10 @@ const SPOTS = 9;
 // that reliably rots on a page like this is a hand-typed date left behind
 // after the constant moved.
 const FAST_ACTION_ISO_CT = '2026-08-31T23:59:59';
-const CLOSE_ISO_CT = '2026-09-01T23:59:59';
+// 2026-09-18: reopened for the birthday sale only. Closes at tonight's Friday
+// sundown (6:50:20 PM CT, the Sabbath gate's own formula), the same instant
+// the server stops pricing at 42% off.
+const CLOSE_ISO_CT = '2026-09-18T18:50:00';
 const FAST_ACTION_AT = zonedInstant(FAST_ACTION_ISO_CT, 'America/Chicago');
 const CLOSE_AT = zonedInstant(CLOSE_ISO_CT, 'America/Chicago');
 
@@ -572,8 +581,8 @@ export default function AllInPage() {
           <div className="close-copy">
             {closed ? 'Enrollment for this cohort is closed' : (
               <>
-                <span className="wide-only">{`Enrollment closes ${CLOSE_LABEL}`}</span>
-                <span className="narrow-only">{`Closes ${CLOSE_LABEL_SHORT}`}</span>
+                <span className="wide-only">{`My 42nd birthday: 42% off until sunset, ${CLOSE_LABEL}`}</span>
+                <span className="narrow-only">{`42% off · ends at sunset, ${ctTime(CLOSE_AT)} CT`}</span>
               </>
             )}
           </div>
@@ -602,12 +611,13 @@ export default function AllInPage() {
           <strong>90 days of nurse-led transformation, plus one full year of community and support.</strong>
           <br />
           <span className="wide-only">
-            Secure your place today with a <strong>{DEPOSIT} deposit</strong>. Your deposit is credited
-            toward the full {PRICE} investment, with payment terms available up to 12 months.
+            For my 42nd birthday, the whole program is <strong>42% off until sunset tonight</strong>:
+            {' '}<s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>. Secure your place with a
+            {' '}<strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
           </span>
           <span className="narrow-only">
-            Secure your place with a <strong>{DEPOSIT} deposit</strong>, credited toward the full
-            {' '}{PRICE}. Payment terms up to 12 months.
+            42% off for my birthday, until sunset: <s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>.
+            {' '}<strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
           </span>
         </div>
 
@@ -756,8 +766,8 @@ export default function AllInPage() {
               <div className="phase-kicker">Total coaching value</div>
               <h3>Everything above is valued at {TOTAL_VALUE}.</h3>
               <div className="value-total">
-                <span>Your investment</span>
-                <strong>{PRICE}</strong>
+                <span>Your birthday investment</span>
+                <strong><s style={{ opacity: 0.55, fontWeight: 600, marginRight: 8 }}>{REGULAR_PRICE}</s>{PRICE}</strong>
               </div>
             </div>
 
@@ -799,7 +809,8 @@ export default function AllInPage() {
 
             <div className="price-block">
               <div className="price-line"><span>Total coaching value</span><strong className="strike">{TOTAL_VALUE}</strong></div>
-              <div className="price-line"><span>Your investment</span><strong>{PRICE}</strong></div>
+              <div className="price-line"><span>Regular price</span><strong className="strike">{REGULAR_PRICE}</strong></div>
+              <div className="price-line"><span>42% birthday price, until sunset</span><strong>{PRICE}</strong></div>
               <div className="price-line"><span>Payment terms</span><strong>Up to 12 months</strong></div>
               <div className="due-now">
                 <span className="label">Due today</span>

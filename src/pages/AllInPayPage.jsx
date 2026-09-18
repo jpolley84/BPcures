@@ -119,11 +119,25 @@ const OPTIONS = [
   },
 ];
 
+// 2026-09-18 BIRTHDAY 42: 42% off until sunset (6:50 PM CT). The page opens on
+// the local clock, then takes the server's word (promo:'bday42' on the
+// checkout response), because the server is what actually charges. Mirrors
+// BDAY42_CENTS in api/create-embedded-checkout.js.
+const BDAY42_UNTIL = Date.parse('2026-09-18T23:50:00Z');
+const BDAY42 = {
+  full: { headline: '$4,350', total: 'Total $4,350 · 42% off $7,500, until sunset' },
+  '6pay': { headline: '6 x $712', total: 'Total $4,772 with your deposit' },
+  '9pay': { headline: '9 x $514', total: 'Total $5,126 with your deposit' },
+  '12pay': { headline: '12 x $413', total: 'Total $5,456 with your deposit' },
+};
+
 export default function AllInPayPage() {
   const [selected, setSelected] = useState('full');
   const [error, setError] = useState('');
+  const [bday42, setBday42] = useState(() => Date.now() < BDAY42_UNTIL);
   const containerRef = useRef(null);
-  const option = OPTIONS.find((o) => o.key === selected) || OPTIONS[0];
+  const options = bday42 ? OPTIONS.map((o) => ({ ...o, ...(BDAY42[o.key] || {}) })) : OPTIONS;
+  const option = options.find((o) => o.key === selected) || options[0];
 
   useEffect(() => {
     track('allin_pay_view', { page: 'allin-pay' });
@@ -183,6 +197,7 @@ export default function AllInPayPage() {
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
         if (cancelled) return;
+        setBday42(data.promo === 'bday42');
         const stripe = await stripePromise;
         if (cancelled) return;
         checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
@@ -226,7 +241,7 @@ export default function AllInPayPage() {
 
         {/* ── the four options ─────────────────────────────────────── */}
         <div id="choose" role="radiogroup" aria-label="Payment option" style={{ margin: '0 0 28px', scrollMarginTop: 92 }}>
-          {OPTIONS.map((o) => {
+          {options.map((o) => {
             const active = o.key === selected;
             return (
               <button
@@ -289,7 +304,7 @@ export default function AllInPayPage() {
         {option.key === 'full' && (
           <div style={{ border: `1px solid ${C.line}`, borderRadius: 8, padding: '16px 18px', margin: '0 0 24px', background: C.paper }}>
             <p style={{ fontSize: 14.5, lineHeight: 1.65, color: C.inkSoft, margin: 0 }}>
-              <strong>How this bills:</strong> one payment of $7,500 today. Nothing recurring, nothing to
+              <strong>How this bills:</strong> one payment of {option.headline} today. Nothing recurring, nothing to
               remember, nothing renews. This is the lowest total of any option on this page.
               Questions, write to braveworksrn@gmail.com.
             </p>

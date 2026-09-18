@@ -102,6 +102,27 @@ const OPTIONS = [
   },
 ];
 
+// 2026-09-18 BIRTHDAY 42: a deposit paid during the birthday sale keeps the
+// 42% price on its balance, forever. The page never decides that: it sends
+// the deposit session id and the server answers promo:'bday42' only for a
+// PAID deposit stamped with it, and charges these same amounts. Mirrors
+// BDAY42_CENTS in api/create-embedded-checkout.js.
+const BDAY42 = {
+  'balance-full': { headline: '$3,850', total: 'Total $3,850 · with your deposit, $4,350 all settled' },
+  'balance-6pay': { headline: '6 x $712', total: 'Total $4,272 on top of your deposit · $4,772 all in' },
+  'balance-9pay': { headline: '9 x $514', total: 'Total $4,626 on top of your deposit · $5,126 all in' },
+  'balance-12pay': { headline: '12 x $413', total: 'Total $4,956 on top of your deposit · $5,456 all in' },
+};
+
+function depositSessionFromQuery() {
+  try {
+    const s = new URLSearchParams(window.location.search).get('session_id') || '';
+    return /^cs_(live|test)_[A-Za-z0-9]+$/.test(s) ? s : '';
+  } catch {
+    return '';
+  }
+}
+
 // ?plan=6pay -> 'balance-6pay'. Anything unrecognised falls back to settling in
 // full, which is the option that costs her least.
 function planFromQuery() {
@@ -116,8 +137,11 @@ function planFromQuery() {
 export default function PaymentPage() {
   const [selected, setSelected] = useState(planFromQuery);
   const [error, setError] = useState('');
+  const [bday42, setBday42] = useState(false);
+  const [depositSession] = useState(depositSessionFromQuery);
   const containerRef = useRef(null);
-  const option = OPTIONS.find((o) => o.key === selected) || OPTIONS[0];
+  const options = bday42 ? OPTIONS.map((o) => ({ ...o, ...(BDAY42[o.key] || {}) })) : OPTIONS;
+  const option = options.find((o) => o.key === selected) || options[0];
 
   useEffect(() => {
     track('allin_balance_pay_view', { page: 'payment' });
@@ -160,11 +184,13 @@ export default function PaymentPage() {
             tier: option.tier,
             distinctId: getDistinctId(),
             abHomeVariant: getAbHomeVariant(),
+            ...(depositSession ? { depositSession } : {}),
           }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
         if (cancelled) return;
+        setBday42(data.promo === 'bday42');
         const stripe = await stripePromise;
         if (cancelled) return;
         checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
@@ -195,8 +221,9 @@ export default function PaymentPage() {
           Your deposit is in. Here is the rest.
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 8px' }}>
-          Your $500 deposit already holds your place, and every option below credits it against the
-          $7,500 program price. The remaining balance is $7,000.
+          {bday42
+            ? 'Your $500 deposit already holds your place at the 42% birthday price, and every option below credits it against the $4,350 program price. The remaining balance is $3,850, and it stays that way.'
+            : 'Your $500 deposit already holds your place, and every option below credits it against the $7,500 program price. The remaining balance is $7,000.'}
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>
           Settling it in one payment costs the least, and the longer a plan runs the more it comes to.
@@ -205,7 +232,7 @@ export default function PaymentPage() {
 
         {/* ── the three options ─────────────────────────────────────── */}
         <div id="choose" role="radiogroup" aria-label="Payment option" style={{ margin: '0 0 28px', scrollMarginTop: 92 }}>
-          {OPTIONS.map((o) => {
+          {options.map((o) => {
             const active = o.key === selected;
             return (
               <button
