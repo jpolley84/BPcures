@@ -1368,24 +1368,37 @@ function escAllIn(s) {
 
 // Buyer confirmation for an All-In purchase. Best-effort; a send failure never
 // fails the webhook (the Joel alert is the fulfillment backstop).
-// 2026-09-18 BIRTHDAY 42: 42% off, $4,350 program, $500 deposit credited,
-// $3,850 balance. Numbers mirror BDAY42_CENTS in create-embedded-checkout.js.
-const BDAY42_BUYER_LINES = {
-  deposit: 'Your $500 deposit is in and your spot is locked at the birthday price: 42% off, $4,350 for the whole program instead of $7,500. That $500 comes off the price, so your remaining balance is $3,850, and it stays $3,850. Settle it at changemylifechallenge.com/payment, where you can pay it in full or spread it over 6, 9 or 12 monthly payments.',
-  'balance-full': 'Your balance is settled in full at the birthday price. With your deposit, you are all paid up at $4,350 and your spot is locked.',
-  'balance-6pay': 'Your first balance payment is in at the birthday price. Five more payments of $712 run automatically each month, six in total, on top of the deposit you already paid. After the sixth payment you are done.',
-  'balance-9pay': 'Your first balance payment is in at the birthday price. Eight more payments of $514 run automatically each month, nine in total, on top of the deposit you already paid. After the ninth payment you are done.',
-  'balance-12pay': 'Your first balance payment is in at the birthday price. Eleven more payments of $413 run automatically each month, twelve in total, on top of the deposit you already paid. After the twelfth payment you are done.',
-  full: 'You are all in, paid in full at the birthday price: $4,350, 42% off. Your spot is locked.',
-};
-const BDAY42_JOEL_LINES = {
-  deposit: 'BIRTHDAY 42% DEPOSIT ($500). Program $4,350, balance $3,850 still to collect. Her /payment link is priced from her deposit session automatically: $3,850 full / 6 x $712 / 9 x $514 / 12 x $413, all MONTHLY.',
-  'balance-full': 'BIRTHDAY 42% BALANCE paid in full ($3,850 after the $500 deposit). Fully settled at $4,350.',
-  'balance-6pay': 'BIRTHDAY 42% BALANCE 6 x $712 MONTHLY ($4,272 after the $500 deposit; auto-capped after the 6th charge).',
-  'balance-9pay': 'BIRTHDAY 42% BALANCE 9 x $514 MONTHLY ($4,626 after the $500 deposit; auto-capped after the 9th charge).',
-  'balance-12pay': 'BIRTHDAY 42% BALANCE 12 x $413 MONTHLY ($4,956 after the $500 deposit; auto-capped after the 12th charge).',
-  full: 'BIRTHDAY 42% paid in full ($4,350).',
-};
+// 2026-09-18 BIRTHDAY 42: 42% off, $4,350 program. The deposit is $200 on the
+// birthday (Joel, 12:27 CT; it was $500 for the first hour and none sold), so
+// every line here is BUILT from what Stripe actually charged instead of typed:
+// a deposit line states the balance as $4,350 minus the deposit, a plan line
+// states its own charge as the per-payment amount. Mirrors bdayBalanceCents()
+// in create-embedded-checkout.js.
+const BDAY42_TOTAL_CENTS = 435000;
+const BDAY42_PLAN_COUNT = { 'balance-6pay': 6, 'balance-9pay': 9, 'balance-12pay': 12 };
+const BDAY42_WORDS = { 6: ['Five', 'sixth'], 9: ['Eight', 'ninth'], 12: ['Eleven', 'twelfth'] };
+const usd = (c) => `$${(c / 100).toLocaleString('en-US')}`;
+function bday42BuyerLine(plan, amountCents) {
+  if (!Number.isFinite(amountCents) || amountCents <= 0) return null;
+  if (plan === 'deposit') {
+    return `Your ${usd(amountCents)} deposit is in and your spot is locked at the birthday price: 42% off, $4,350 for the whole program instead of $7,500. That deposit comes off the price, so your remaining balance is ${usd(BDAY42_TOTAL_CENTS - amountCents)}, and it stays that way. Settle it at changemylifechallenge.com/payment, where you can pay it in full or spread it over 6, 9 or 12 monthly payments.`;
+  }
+  if (plan === 'balance-full') return 'Your balance is settled in full at the birthday price. With your deposit, you are all paid up at $4,350 and your spot is locked.';
+  if (plan === 'full') return 'You are all in, paid in full at the birthday price: $4,350, 42% off. Your spot is locked.';
+  const n = BDAY42_PLAN_COUNT[plan];
+  if (!n) return null;
+  const [more, nth] = BDAY42_WORDS[n];
+  return `Your first balance payment is in at the birthday price. ${more} more payments of ${usd(amountCents)} run automatically each month, ${n} in total, on top of the deposit you already paid. After the ${nth} payment you are done.`;
+}
+function bday42JoelLine(plan, amountCents) {
+  if (!Number.isFinite(amountCents) || amountCents <= 0) return null;
+  if (plan === 'deposit') return `BIRTHDAY 42% DEPOSIT (${usd(amountCents)}). Program $4,350, balance ${usd(BDAY42_TOTAL_CENTS - amountCents)} still to collect. Her /payment link prices itself from this deposit session automatically, all plans MONTHLY.`;
+  if (plan === 'balance-full') return `BIRTHDAY 42% BALANCE paid in full (${usd(amountCents)}). Fully settled at $4,350.`;
+  if (plan === 'full') return 'BIRTHDAY 42% paid in full ($4,350).';
+  const n = BDAY42_PLAN_COUNT[plan];
+  if (!n) return null;
+  return `BIRTHDAY 42% BALANCE ${n} x ${usd(amountCents)} MONTHLY (${usd(n * amountCents)} on top of the deposit; auto-capped after the ${n}th charge).`;
+}
 
 async function sendAllInConfirmation({ email, firstName, plan, amountCents = null, agreementPdf = null, promo = null }) {
   const name = firstName ? escAllIn(firstName) : 'there';
@@ -1430,7 +1443,7 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
   const buyerPaid = Number.isFinite(amountCents) && amountCents > 0
     ? `$${(amountCents / 100).toLocaleString('en-US')}`
     : null;
-  const planLine = (promo === 'bday42' && BDAY42_BUYER_LINES[plan])
+  const planLine = (promo === 'bday42' && bday42BuyerLine(plan, amountCents))
     || ALLIN_BUYER_PLAN_LINES[plan]
     || (buyerPaid
       ? `Your payment of ${buyerPaid} is in and your spot is locked. I will confirm your payment schedule with you directly.`
@@ -1527,7 +1540,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null
     'balance-5pay-360': 'LEGACY BALANCE 5 x $360 MONTHLY ($1,800 after the $197 deposit; auto-capped after the 5th charge). Negotiated (Brenda L Powell, 2026-08-18).',
     'balance-4pay-450': 'LEGACY BALANCE 4 x $450 MONTHLY ($1,800 after the $197 deposit; auto-capped after the 4th charge). Negotiated (Brenda Dancil-Jones, 2026-08-26).',
   };
-  const planLine = (promo === 'bday42' && BDAY42_JOEL_LINES[plan])
+  const planLine = (promo === 'bday42' && bday42JoelLine(plan, amountCents))
     || ALLIN_JOEL_PLAN_LINES[plan] || `UNKNOWN PLAN '${plan}' — check Stripe before assuming anything.`;
   // Stated separately from the plan line and read straight off the Stripe
   // session, so a stale map entry can misdescribe the schedule but can never

@@ -555,22 +555,44 @@ export default async function handler(req, res) {
     // whole dollars. Keep these numbers in sync with BDAY42 in
     // src/pages/AllInPage.jsx, AllInPayPage.jsx, PaymentPage.jsx and the
     // birthday lines in api/triangle-webhook.js.
+    //
+    // 2026-09-18 12:27 (Joel): the birthday DEPOSIT is $200 too, $500 struck.
+    // So the balance is no longer a constant: it is $4,350 minus whatever the
+    // deposit actually charged (read off the paid deposit session), and each
+    // plan is the regular plan scaled by balance / $7,000, whole dollars.
+    // A $200 birthday deposit -> $4,150 balance = 6 x $768 / 9 x $554 /
+    // 12 x $445, per bdayBalanceCents() below. Deriving it from amount_total means a deposit
+    // taken at $500 before this change would still get its correct $3,850.
     const BDAY42_UNTIL = Date.parse('2026-09-18T23:50:00Z');
-    const BDAY42_CENTS = {
-      'allin-full': 435000,
-      'allin-balance-full': 385000,
-      'allin-balance-6pay': 71200,
-      'allin-balance-9pay': 51400,
-      'allin-balance-12pay': 41300,
+    const BDAY42_TOTAL = 435000;
+    const BDAY42_DEPOSIT = 20000;
+    const REGULAR_BALANCE = 700000;
+    const REGULAR_PLAN_CENTS = {
+      'allin-balance-full': 700000,
+      'allin-balance-6pay': 129500,
+      'allin-balance-9pay': 93500,
+      'allin-balance-12pay': 75000,
+    };
+    const bdayBalanceCents = (depositCents) => {
+      const balance = BDAY42_TOTAL - depositCents;
+      const out = {};
+      for (const [t, reg] of Object.entries(REGULAR_PLAN_CENTS)) {
+        out[t] = t === 'allin-balance-full' ? balance : Math.round((reg * balance) / REGULAR_BALANCE / 100) * 100;
+      }
+      return out;
     };
     let bday42 = false;
+    let BDAY42_CENTS = {};
     if (tier === 'allin-full' || tier === 'allin-deposit') {
       bday42 = Date.now() < BDAY42_UNTIL;
+      BDAY42_CENTS = { 'allin-full': BDAY42_TOTAL, 'allin-deposit': BDAY42_DEPOSIT };
     } else if (tier.startsWith('allin-balance-') && req.body?.depositSession) {
       try {
         const dep = await stripe.checkout.sessions.retrieve(String(req.body.depositSession).slice(0, 255));
         bday42 = dep.status === 'complete' && dep.payment_status === 'paid'
-          && dep.metadata?.offer === 'all-in' && dep.metadata?.promo === 'bday42';
+          && dep.metadata?.offer === 'all-in' && dep.metadata?.promo === 'bday42'
+          && Number.isFinite(dep.amount_total) && dep.amount_total > 0;
+        if (bday42) BDAY42_CENTS = bdayBalanceCents(dep.amount_total);
       } catch (err) {
         console.warn('create-embedded-checkout: deposit session lookup failed, regular price', err.message);
       }
@@ -621,7 +643,12 @@ export default async function handler(req, res) {
             : `${siteUrl}/allin-welcome?plan=${plan}&session_id={CHECKOUT_SESSION_ID}`,
         ...(email ? { customer_email: email } : {}),
       });
-      return res.status(200).json({ clientSecret: session.client_secret, ...(bday42 ? { promo: 'bday42' } : {}) });
+      return res.status(200).json({
+        clientSecret: session.client_secret,
+        ...(bday42 ? { promo: 'bday42' } : {}),
+        // /payment renders exactly what the server will charge for each plan.
+        ...(bday42 && tier.startsWith('allin-balance-') ? { bdayCents: BDAY42_CENTS } : {}),
+      });
     } catch (err) {
       console.error('create-embedded-checkout all-in error:', err.message);
       return res.status(500).json({ error: 'Failed to start checkout' });

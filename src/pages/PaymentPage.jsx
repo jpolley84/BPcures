@@ -107,12 +107,26 @@ const OPTIONS = [
 // the deposit session id and the server answers promo:'bday42' only for a
 // PAID deposit stamped with it, and charges these same amounts. Mirrors
 // BDAY42_CENTS in api/create-embedded-checkout.js.
-const BDAY42 = {
-  'balance-full': { headline: '$3,850', total: 'Total $3,850 · with your deposit, $4,350 all settled' },
-  'balance-6pay': { headline: '6 x $712', total: 'Total $4,272 on top of your deposit · $4,772 all in' },
-  'balance-9pay': { headline: '9 x $514', total: 'Total $4,626 on top of your deposit · $5,126 all in' },
-  'balance-12pay': { headline: '12 x $413', total: 'Total $4,956 on top of your deposit · $5,456 all in' },
-};
+// Built from the SERVER's bdayCents (what it will charge for each plan, from
+// the deposit actually paid), never typed here, because the birthday deposit
+// changed from $500 to $200 mid-sale and a typed table would be wrong for one
+// of them.
+const BDAY_COUNT = { 'balance-6pay': 6, 'balance-9pay': 9, 'balance-12pay': 12 };
+const money = (c) => `$${Math.round(c / 100).toLocaleString('en-US')}`;
+function bdayOverrides(cents) {
+  if (!cents || !cents['allin-balance-full']) return {};
+  const balance = cents['allin-balance-full'];
+  const deposit = 435000 - balance;
+  const out = {
+    'balance-full': { headline: money(balance), total: `Total ${money(balance)} · with your deposit, $4,350 all settled` },
+  };
+  for (const [key, n] of Object.entries(BDAY_COUNT)) {
+    const per = cents[`allin-${key}`];
+    if (!per) continue;
+    out[key] = { headline: `${n} x ${money(per)}`, total: `Total ${money(n * per)} on top of your deposit · ${money(n * per + deposit)} all in` };
+  }
+  return out;
+}
 
 function depositSessionFromQuery() {
   try {
@@ -138,9 +152,11 @@ export default function PaymentPage() {
   const [selected, setSelected] = useState(planFromQuery);
   const [error, setError] = useState('');
   const [bday42, setBday42] = useState(false);
+  const [bdayCents, setBdayCents] = useState(null);
   const [depositSession] = useState(depositSessionFromQuery);
   const containerRef = useRef(null);
-  const options = bday42 ? OPTIONS.map((o) => ({ ...o, ...(BDAY42[o.key] || {}) })) : OPTIONS;
+  const bdayMap = bday42 ? bdayOverrides(bdayCents) : {};
+  const options = bday42 ? OPTIONS.map((o) => ({ ...o, ...(bdayMap[o.key] || {}) })) : OPTIONS;
   const option = options.find((o) => o.key === selected) || options[0];
 
   useEffect(() => {
@@ -191,6 +207,7 @@ export default function PaymentPage() {
         if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
         if (cancelled) return;
         setBday42(data.promo === 'bday42');
+        setBdayCents(data.bdayCents || null);
         const stripe = await stripePromise;
         if (cancelled) return;
         checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
@@ -222,7 +239,7 @@ export default function PaymentPage() {
         </h1>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 8px' }}>
           {bday42
-            ? 'Your $500 deposit already holds your place at the 42% birthday price, and every option below credits it against the $4,350 program price. The remaining balance is $3,850, and it stays that way.'
+            ? `Your ${bdayCents ? money(435000 - bdayCents['allin-balance-full']) : ''} deposit already holds your place at the 42% birthday price, and every option below credits it against the $4,350 program price. The remaining balance is ${bdayCents ? money(bdayCents['allin-balance-full']) : ''}, and it stays that way.`
             : 'Your $500 deposit already holds your place, and every option below credits it against the $7,500 program price. The remaining balance is $7,000.'}
         </p>
         <p style={{ fontSize: 17, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 32px' }}>

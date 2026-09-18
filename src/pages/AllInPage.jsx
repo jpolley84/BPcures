@@ -58,7 +58,10 @@ const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
-const DEPOSIT = '$500';
+// 2026-09-18 12:27 (Joel): the birthday deposit is $200, with $500 struck.
+// After the sale, DEPOSIT goes back to '$500' and REGULAR_DEPOSIT goes away.
+const REGULAR_DEPOSIT = '$500';
+const DEPOSIT = '$200';
 // 2026-09-18 BIRTHDAY 42 (Joel turns 42): 42% off $7,500 = $4,350 until
 // sunset tonight. The server charges these amounts, not this file; see
 // BDAY42_CENTS in api/create-embedded-checkout.js. When the sale is over, put
@@ -66,11 +69,11 @@ const DEPOSIT = '$500';
 // and the struck-through prices that read it.
 const REGULAR_PRICE = '$7,500';
 const PRICE = '$4,350';
-const BALANCE = '$3,850';
+const BALANCE = '$4,150';
 const TOTAL_VALUE = '$21,500';
 
 // ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
-const SPOTS = 9;
+const SPOTS = 5; // Joel, 2026-09-18 12:27: "only 5 spots available"
 
 // ⚠️ REAL DEADLINES, from Joel's design. He wrote Central and the page says
 // "CT" out loud, so there is no ambiguity for the reader. Both labels below
@@ -581,8 +584,8 @@ export default function AllInPage() {
           <div className="close-copy">
             {closed ? 'Enrollment for this cohort is closed' : (
               <>
-                <span className="wide-only">{`My 42nd birthday: 42% off until sunset, ${CLOSE_LABEL}`}</span>
-                <span className="narrow-only">{`42% off · ends at sunset, ${ctTime(CLOSE_AT)} CT`}</span>
+                <span className="wide-only">{`My 42nd birthday: 42% off until sunset, ${CLOSE_LABEL} · Only ${SPOTS} spots available`}</span>
+                <span className="narrow-only">{`42% off · only ${SPOTS} spots · ends ${ctTime(CLOSE_AT)} CT`}</span>
               </>
             )}
           </div>
@@ -613,11 +616,11 @@ export default function AllInPage() {
           <span className="wide-only">
             For my 42nd birthday, the whole program is <strong>42% off until sunset tonight</strong>:
             {' '}<s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>. Secure your place with a
-            {' '}<strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
+            {' '}<s>{REGULAR_DEPOSIT}</s> <strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
           </span>
           <span className="narrow-only">
             42% off for my birthday, until sunset: <s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>.
-            {' '}<strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
+            {' '}<s>{REGULAR_DEPOSIT}</s> <strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
           </span>
         </div>
 
@@ -639,7 +642,7 @@ export default function AllInPage() {
             onClick={() => track('allin_save_spot_click', { placement: 'hero' })}
           >
             Save My Spot
-            <span className="save-spot-sub">ONLY {DEPOSIT} today. Enrollment closes soon.</span>
+            <span className="save-spot-sub">ONLY {SPOTS} SPOTS AVAILABLE · <s>{REGULAR_DEPOSIT}</s> {DEPOSIT} today</span>
           </a>
         )}
 
@@ -814,7 +817,7 @@ export default function AllInPage() {
               <div className="price-line"><span>Payment terms</span><strong>Up to 12 months</strong></div>
               <div className="due-now">
                 <span className="label">Due today</span>
-                <span className="amount">{closed ? '—' : DEPOSIT}</span>
+                <span className="amount">{closed ? '—' : (<><s style={{ opacity: 0.5, fontSize: '0.6em', marginRight: 8 }}>{REGULAR_DEPOSIT}</s>{DEPOSIT}</>)}</span>
               </div>
             </div>
 
