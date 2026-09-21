@@ -164,7 +164,43 @@
       .mobile-sticky{display:block;position:fixed;left:0;right:0;bottom:0;z-index:999;background:rgba(7,20,29,.98);padding:9px 10px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px rgba(0,0,0,.25)}
       .mobile-sticky a{display:flex;align-items:center;justify-content:center;min-height:48px;background:var(--gold);color:#1c2225;border-radius:8px;font-weight:900;font-size:.92rem;text-align:center}
     }
-  </style>
+  
+    /* ── 2026-09-21 challenge-style layout (.mc2-*): full-width bands, centered
+       copy, no cards. The form card inside #register keeps its own styles. ── */
+    .mc2{--mc-ink:#0b1f2d;--mc-deep:#07141d;--mc-accent:#b72e2e;--mc-gold:#e5b853;--mc-soft:#f1f4f5;--mc-cream:#f6f4ef;}
+    .mc2-band{padding:64px 0;background:#fff;color:var(--mc-ink);font-family:'Montserrat',Arial,sans-serif}
+    .mc2-band.soft{background:var(--mc-soft)}
+    .mc2-band.dark{background:var(--mc-deep);color:#fff}
+    .mc2-band.accent{background:var(--mc-accent);color:#fff}
+    .mc2-narrow{width:min(calc(100% - 36px),860px);margin:0 auto;text-align:center}
+    .mc2-wide{width:min(calc(100% - 36px),1120px);margin:0 auto}
+    .mc2-eyebrow{font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;color:var(--mc-accent);margin:0 0 12px}
+    .mc2-band.dark .mc2-eyebrow,.mc2-band.accent .mc2-eyebrow{color:var(--mc-gold)}
+    .mc2-h1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1.06;margin:0 auto 18px;max-width:1080px;text-transform:uppercase;color:var(--mc-ink)}
+    .mc2-h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.1;margin:0 0 18px;color:inherit}
+    .mc2-band p{font-size:clamp(1.05rem,1.6vw,1.2rem);line-height:1.6;margin:0 0 14px}
+    .mc2-hint{font-weight:800;color:var(--mc-accent)}
+    .mc2-list{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.25rem,2.2vw,1.7rem)!important;line-height:1.5!important;font-weight:600}
+    .mc2-big{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.6rem,3.2vw,2.6rem);line-height:1.15;margin:26px auto 0;font-weight:700;color:var(--mc-accent);text-transform:uppercase}
+    .mc2-band.dark .mc2-big,.mc2-band.accent .mc2-big{color:var(--mc-gold)}
+    .mc2-quote{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.3;margin:22px auto;max-width:760px;font-weight:600}
+    .mc2-cta{display:inline-block;margin-top:22px;background:var(--mc-accent);color:#fff;font-weight:900;letter-spacing:.03em;padding:17px 30px;border-radius:6px;text-decoration:none}
+    .mc2-band.dark .mc2-cta,.mc2-band.accent .mc2-cta{background:var(--mc-gold);color:var(--mc-deep)}
+    .mc2-register{max-width:560px;margin:0 auto}
+    .mc2-shot{width:100%;max-width:440px;height:auto;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.14);margin-top:8px}
+    .mc2-about{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center}
+    .mc2-about img{width:100%;max-width:420px;height:auto;border-radius:16px;display:block;margin:0 auto;background:#01070f}
+    .mc2-about .txt{text-align:left}
+    .mc2-three{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;text-align:left}
+    .mc2-three h3{font-family:'Oswald',Arial,sans-serif;font-size:1.6rem;margin:0 0 8px;color:var(--mc-accent);text-transform:uppercase}
+    .mc2-three p{font-size:1.02rem!important}
+    .mc2-final form{max-width:620px;margin:18px auto 0}
+    @media(max-width:800px){
+      .mc2-band{padding:46px 0}
+      .mc2-about,.mc2-three{grid-template-columns:1fr;gap:24px}
+      .mc2-about .txt{text-align:center}
+    }
+</style>
 </head>
 <body>
   <div class="top-banner">
@@ -181,154 +217,147 @@
        restoreherhormones.com/masterclass; built by one script so they cannot
        drift. His "Purpose:" and "Keep the current examples" lines were notes,
        not copy. -->
-  <section class="hero">
-    <div class="wrap">
-      <p class="support" style="font-weight:800;letter-spacing:.12em;margin:0 auto 10px">FREE LIVE MASTERCLASS</p>
-      <h1>THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h1>
-      <p class="hint">(Hint: It's not eating better, exercising more, taking supplements, or having more discipline.)</p>
-      <p class="support">If you did what they told you and the numbers are still moving in the wrong direction, I want you in this room. Discover the 4 mistakes that will change your health, with this nurse-led system that can work even if you have tried everything.</p>
-      <p style="margin:18px auto 0;max-width:420px"><a class="btn" href="#register">SAVE MY FREE SEAT</a></p>
+  <!-- 2026-09-21 challenge-style layout. Built by one script for both sites. -->
+  <div class="mc2">
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">FREE LIVE MASTERCLASS</p>
+      <h1 class="mc2-h1">THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h1>
+      <p class="mc2-hint">(Hint: It's not eating better, exercising more, taking supplements, or having more discipline.)</p>
+      <p>If you did what they told you and the numbers are still moving in the wrong direction, I want you in this room. Discover the 4 mistakes that will change your health, with this nurse-led system that can work even if you have tried everything.</p>
+      <a class="mc2-cta" href="#register">SAVE MY FREE SEAT</a>
     </div>
-    <div class="divider"></div>
   </section>
 
-  <section class="main">
-    <div class="wrap grid">
-      <div class="left-panel">
-        <p class="tiny-top">YOU DID WHAT THEY TOLD YOU. SO WHY ARE THE NUMBERS STILL RISING?</p>
-        <h2>STOP CHASING THE NUMBER. START LOOKING AT THE PATTERN.</h2>
-        <div class="gold-line"></div>
-        <p>You reduced the salt. You checked the labels. You walked more. You took the medication. You kept your appointments.</p>
-        <p>And the list keeps growing: blood pressure, weight, A1C, fatigue, sleep, thinning hair, chin hair, brain fog, mood changes, hot flashes.</p>
-        <p><strong>SAME WOMAN. SAME BODY. CONNECTED STORY.</strong></p>
-      </div>
-
-      <div class="right-panel">
-        <div class="form-card" id="register">
-          <h3>FREE LIVE MASTERCLASS</h3>
-          <p class="sub">with Joel Polley, RN + Special Guest Annie Chitate, RN</p>
-          <div class="price"><span class="strike">$67</span><span>FREE</span></div>
-          <p class="free-label">Save your seat now</p>
-          <p class="datebox">Next class: <span data-classdate>Monday · 6:00 PM Central</span></p>
-          <p class="cd-head">Class starts in</p>
-          <div class="countdown" aria-label="Time until the next class">
-            <div><b class="cd-d">00</b><span>Days</span></div>
-            <div><b class="cd-h">00</b><span>Hours</span></div>
-            <div><b class="cd-m">00</b><span>Min</span></div>
-            <div><b class="cd-s">00</b><span>Sec</span></div>
-          </div>
-          <form data-reg method="post" onsubmit="return handleSubmit(event)">
+  <section class="mc2-band soft">
+    <div class="mc2-register">
+      <div class="form-card" id="register">
+        <h3>FREE LIVE MASTERCLASS</h3>
+        <p class="sub">with Joel Polley, RN + Special Guest Annie Chitate, RN</p>
+        <div class="price"><span class="strike">$67</span><span>FREE</span></div>
+        <p class="free-label">Save your seat now</p>
+        <p class="datebox">Next class: <span data-classdate>Monday · 6:00 PM Central</span></p>
+        <p class="cd-head">Class starts in</p>
+        <div class="countdown" aria-label="Time until the next class">
+          <div><b class="cd-d">00</b><span>Days</span></div>
+          <div><b class="cd-h">00</b><span>Hours</span></div>
+          <div><b class="cd-m">00</b><span>Min</span></div>
+          <div><b class="cd-s">00</b><span>Sec</span></div>
+        </div>
+        <form data-reg method="post" onsubmit="return handleSubmit(event)">
             <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
             <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
             <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
             <div class="form-err" data-err role="alert"></div>
             <button class="btn" type="submit" data-btn>SAVE MY FREE SEAT</button>
           </form>
-          <p class="secure">100% Secure. Privacy Guaranteed.</p>
-        </div>
+        <p class="secure">100% Secure. Privacy Guaranteed.</p>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap" style="text-align:center">
-      <p class="tiny-top" style="margin-bottom:14px">FROM THE ZOOM ROOM</p>
-      <img src="/masterclass/v3/zoom-room-chat.jpg" alt="Messages from women in the live Zoom masterclass: this session is coming right on time, I came here because I wanted you guys to hear me, love the science, and more" width="900" height="1600" style="width:100%;max-width:440px;height:auto;border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.12)">
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">YOU DID WHAT THEY TOLD YOU. SO WHY ARE THE NUMBERS STILL RISING?</p>
+      <h2 class="mc2-h2">Stop chasing the number. Start looking at the pattern.</h2>
+      <p class="mc2-list">You reduced the salt. You checked the labels. You walked more. You took the medication. You kept your appointments.</p>
+      <p>And the list keeps growing:</p>
+      <p class="mc2-list">Blood pressure. Weight. A1C. Fatigue. Sleep. Thinning hair. Chin hair. Brain fog. Mood changes. Hot flashes.</p>
+      <div class="mc2-big">Same woman. Same body. Connected story.</div>
     </div>
   </section>
 
-  <section class="section soft">
-    <div class="wrap content">
-      <div class="box body">
-        <div class="eyebrow">THE CUFF IS A DOT. THE PATTERN IS THE STORY.</div>
-        <h2>Your blood pressure may be the loudest number, not the whole problem.</h2>
-        <p>Blood pressure is important.</p>
-        <p>But it is one signal coming from the same body that is producing the weight changes, A1C changes, fatigue, sleep issues, hair changes and other symptoms.</p>
-        <p>Stop looking at each symptom like it belongs to a different person.</p>
-        <div class="pull">START CONNECTING THE DOTS.</div>
-      </div>
-
-      <div class="box dark body">
-        <div class="eyebrow">THE HINT</div>
-        <h2>It is not more effort. It's doing the right things in the right order. Just 4 steps.</h2>
-        <p><strong>It is not eating better, exercising more, taking supplements, or having more discipline.</strong></p>
-        <p>You may already be doing many of the right things. The problem may be that nobody has helped you see <strong>what applies to you, what changed, and what needs attention first.</strong></p>
-        <p><strong>You may be doing all the right things in the wrong order.</strong></p>
-        <a class="btn" href="#register">SECURE MY SEAT</a>
-      </div>
+  <section class="mc2-band soft">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">FROM THE ZOOM ROOM</p>
+      <h2 class="mc2-h2">What women said in the room.</h2>
+      <img class="mc2-shot" src="/masterclass/v3/zoom-room-chat.jpg" alt="Messages from women in the live Zoom masterclass: this session is coming right on time, I came here because I wanted you guys to hear me, love the science, and more" width="900" height="1600">
     </div>
   </section>
 
-  <section class="section white">
-    <div class="wrap content">
-      <div class="body">
-        <div class="eyebrow">AFTER 20 YEARS IN ICU AND ER...</div>
-        <h2>I stopped being impressed by the number alone.</h2>
-        <p>People came through the doors who took their medication. Who were trying. Who watched their salt, tried to lose weight, and kept going back to the doctor.</p>
-        <div class="quote">The cuff matters. But the cuff is a snapshot. I want to understand the movie.</div>
-        <p>What other signals is your body sending? Because if we could look at your whole body, we would get the complete message of what may be wrong and what the cause could be.</p>
-        <p><strong>Address the cause. Fix the problem.</strong></p>
-        <p>That is the conversation I wish more people had before they ever ended up in my unit.</p>
-      </div>
-
-      <div class="box dark body">
-        <div class="eyebrow">WHY NOW?</div>
-        <h2>A private room where he cannot be silenced.</h2>
-        <p>Joel's TikTok account, with over 260,000 followers, was recently permanently banned for teaching the public how to lower blood pressure naturally, so their doctor can lower or take them off their medication.</p>
-        <p>Join this private Zoom room, off the internet streets, where he cannot be silenced. Share this masterclass with anyone who needs to change their health.</p>
-        <p><strong>Become empowered, so you can stop living in fear of the cuff.</strong></p>
-        <a class="btn" href="#register">SAVE MY FREE SEAT</a>
-      </div>
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">THE CUFF IS A DOT. THE PATTERN IS THE STORY.</p>
+      <h2 class="mc2-h2">Your blood pressure may be the loudest number, not the whole problem.</h2>
+      <p>Blood pressure is important.</p>
+      <p>But it is one signal coming from the same body that is producing the weight changes, A1C changes, fatigue, sleep issues, hair changes and other symptoms.</p>
+      <p>Stop looking at each symptom like it belongs to a different person.</p>
+      <div class="mc2-big">Start connecting the dots.</div>
     </div>
   </section>
 
-  <section class="section soft">
-    <div class="wrap content">
-      <div class="box body">
-        <div class="eyebrow">IT'S NOT YOUR FAULT</div>
-        <h2>It's not that you failed.</h2>
-        <p>Maybe no one taught you how to understand your body's messages.</p>
-        <p>You have already proven you are willing to try. Now come learn what your symptoms and your numbers may have been trying to tell you all along.</p>
-        <div class="pull">STOP FIXING THE WRONG THINGS.</div>
-      </div>
+  <section class="mc2-band dark">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">THE HINT</p>
+      <h2 class="mc2-h2">It is not more effort. It's doing the right things in the right order. Just 4 steps.</h2>
+      <p><strong>It is not eating better, exercising more, taking supplements, or having more discipline.</strong></p>
+      <p>You may already be doing many of the right things. The problem may be that nobody has helped you see <strong>what applies to you, what changed, and what needs attention first.</strong></p>
+      <div class="mc2-big">You may be doing all the right things in the wrong order.</div>
+      <a class="mc2-cta" href="#register">SECURE MY SEAT</a>
+    </div>
+  </section>
 
-      <div class="box dark body">
-        <div class="eyebrow">WHY WE'RE TEACHING THIS TOGETHER</div>
-        <h2>The numbers and the symptoms belong to the same woman.</h2>
-        <div class="host-visual">
-          <img src="/masterclass/v3/host-visual.jpg" alt="Joel Polley, RN and Annie Chitate, RN" loading="lazy" width="920" height="380">
-        </div>
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">AFTER 20 YEARS IN ICU AND ER...</p>
+      <h2 class="mc2-h2">I stopped being impressed by the number alone.</h2>
+      <p>People came through the doors who took their medication. Who were trying. Who watched their salt, tried to lose weight, and kept going back to the doctor.</p>
+      <div class="mc2-quote">"The cuff matters. But the cuff is a snapshot. I want to understand the movie."</div>
+      <p>What other signals is your body sending? Because if we could look at your whole body, we would get the complete message of what may be wrong and what the cause could be.</p>
+      <p><strong>Address the cause. Fix the problem.</strong></p>
+      <p>That is the conversation I wish more people had before they ever ended up in my unit.</p>
+    </div>
+  </section>
+
+  <section class="mc2-band soft">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">WHY NOW?</p>
+      <h2 class="mc2-h2">A private room where he cannot be silenced.</h2>
+      <p>Joel's TikTok account, with over 260,000 followers, was recently permanently banned for teaching the public how to lower blood pressure naturally, so their doctor can lower or take them off their medication.</p>
+      <p>Join this private Zoom room, off the internet streets, where he cannot be silenced. Share this masterclass with anyone who needs to change their health.</p>
+      <div class="mc2-big">Stop living in fear of the cuff.</div>
+      <a class="mc2-cta" href="#register">SAVE MY FREE SEAT</a>
+    </div>
+  </section>
+
+  <section class="mc2-band accent">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">IT'S NOT YOUR FAULT</p>
+      <h2 class="mc2-h2">It's not that you failed.</h2>
+      <p>Maybe no one taught you how to understand your body's messages.</p>
+      <p>You have already proven you are willing to try. Now come learn what your symptoms and your numbers may have been trying to tell you all along.</p>
+      <div class="mc2-big">Stop fixing the wrong things.</div>
+    </div>
+  </section>
+
+  <section class="mc2-band" id="about">
+    <div class="mc2-wide mc2-about">
+      <img src="/masterclass/v3/joel-annie.jpg" alt="Annie Chitate, RN and Joel Polley, RN in navy scrubs" width="644" height="1063">
+      <div class="txt">
+        <p class="mc2-eyebrow">ABOUT US · WHY WE'RE TEACHING THIS TOGETHER</p>
+        <h2 class="mc2-h2">The numbers and the symptoms belong to the same woman.</h2>
         <p><strong>Joel Polley, RN</strong> spent almost 20 years in ICU and emergency medicine. His work focuses on helping people look beyond the number and identify the pattern behind the pressure.</p>
         <p><strong>Annie Chitate, RN, Everyday Nurse</strong> has built her work around helping women understand the hormone changes behind the symptoms nobody wants to talk about.</p>
         <p>Together, we are on a mission to help change one million lives over the next five years.</p>
-        <div class="pull">WHEN YOU CHANGE YOUR HEALTH, YOU CHANGE YOUR LIFE.</div>
+        <div class="mc2-big" style="text-align:inherit">When you change your health, you change your life.</div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap triple">
-      <div class="card">
-        <h4>WHAT</h4>
-        <p>A free live masterclass exposing the four biggest mistakes women over 40 may be making while trying to fix rising blood pressure, weight, A1C, fatigue, thinning hair and other unwanted symptoms.</p>
-      </div>
-      <div class="card">
-        <h4>WHEN</h4>
-        <p><strong><span data-classdate-short>Monday</span> · 6:00 PM Central</strong><br>Register now and come live.</p>
-      </div>
-      <div class="card">
-        <h4>WHY</h4>
-        <p>So you can stop treating each symptom like a separate problem, connect the dots, and finally see more of the picture.</p>
-      </div>
+  <section class="mc2-band soft">
+    <div class="mc2-wide mc2-three">
+      <div><h3>What</h3><p>A free live masterclass exposing the four biggest mistakes women over 40 may be making while trying to fix rising blood pressure, weight, A1C, fatigue, thinning hair and other unwanted symptoms.</p></div>
+      <div><h3>When</h3><p><strong><span data-classdate-short>Monday</span> · 6:00 PM Central</strong><br>Register now and come live.</p></div>
+      <div><h3>Why</h3><p>So you can stop treating each symptom like a separate problem, connect the dots, and finally see more of the picture.</p></div>
     </div>
   </section>
 
-  <section class="final">
-    <div class="wrap final-box">
-      <h2>THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h2>
+  <section class="mc2-band dark mc2-final">
+    <div class="mc2-narrow">
+      <h2 class="mc2-h2">THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h2>
       <p><strong>(Hint: It's not eating better, exercising more, taking supplements, or having more discipline.)</strong></p>
       <p>Come learn what you may have never been told to look for.</p>
-      <form data-reg method="post" onsubmit="return handleSubmit(event)" style="max-width:620px;margin:0 auto;">
+      <form data-reg method="post" onsubmit="return handleSubmit(event)">
             <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
             <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
             <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
@@ -338,6 +367,7 @@
       <p class="secure">100% Secure. Privacy Guaranteed.</p>
     </div>
   </section>
+  </div>
 
   <div class="mobile-sticky"><a href="#register">SAVE MY FREE SEAT</a></div>
 
