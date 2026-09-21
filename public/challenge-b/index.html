@@ -1138,6 +1138,26 @@
     .sticky-cta .sc-txt{color:#fff;font-weight:700;font-size:.86rem;letter-spacing:.02em}
     .sticky-cta a{background:var(--coral);color:#fff;font-weight:800;font-size:.9rem;padding:13px 22px;border-radius:3px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
     html,body{overflow-x:hidden}
+
+    /* 2026-09-21 (Joel: "make the headline bigger on mobile"). The V15 rule
+       forced each line onto one row at 3.45vw, which made the headline about
+       13px on a 375px phone, smaller than the paragraph under it. On phones the
+       lines now wrap at a readable size. Desktop keeps the one-row lines. */
+    @media(max-width:640px){
+      .hero h1.hero-four-line-title{font-size:1.75rem!important;line-height:1.12!important;letter-spacing:-.02em!important;margin-bottom:14px!important}
+      .hero h1.hero-four-line-title .hero-main-line,
+      .hero h1.hero-four-line-title .hero-second-line{white-space:normal!important}
+      .hero h1.hero-four-line-title .hero-second-line{font-size:.9em!important;margin-top:10px!important}
+      .hero .hero-sub{font-size:1rem!important;line-height:1.45!important}
+      .hero .enough-line{font-size:1.4rem!important;margin-bottom:10px!important}
+      .hero .hero-space{height:14px!important}
+      /* keep YES - SAVE MY SEAT above the fold on a 375x812 phone */
+      .hero .date-line{font-size:1.08rem!important;margin-bottom:12px!important}
+      .hero .countdown-label{margin-bottom:4px!important}
+      .hero .countdown{margin-bottom:14px!important}
+      .hero .countdown-unit b{font-size:1.6rem!important}
+      .announcement{padding:7px 10px!important}
+    }
 </style>
 <script src="/pixels.js"></script>
 </head>
@@ -1160,7 +1180,7 @@
 </div><header class="hero" id="top">
 <div class="wrap">
 <div class="enough-line">For the woman over 40 who's had <strong>ENOUGH.</strong></div>
-<h1 class="hero-four-line-title" style="color:#082825!important;-webkit-text-fill-color:#082825!important;"><span class="hero-main-line" style="display:block!important;white-space:nowrap!important;color:#082825!important;-webkit-text-fill-color:#082825!important;">Your Blood Pressure Is STILL High</span><span class="hero-main-line" style="display:block!important;white-space:nowrap!important;color:#082825!important;-webkit-text-fill-color:#082825!important;">Even Though You've Done What They Told You.</span><span class="hero-second-line" style="display:block!important;white-space:nowrap!important;color:#c9513e!important;-webkit-text-fill-color:#c9513e!important;">It's Time To Fix It A Different Way.</span></h1>
+<h1 class="hero-four-line-title"><span class="hero-main-line">Your Blood Pressure Is STILL High</span><span class="hero-main-line">Even Though You've Done What They Told You.</span><span class="hero-second-line">It's Time To Fix It A Different Way.</span></h1>
 <p class="hero-sub">Discover the health domino behind your rising blood pressure, weight, cholesterol and other changes after 40, so you can get your life and body back, even if you've tried "everything." (Get steady numbers without more supplements, crazy diets or toxic shortcuts.)</p>
 <div class="hero-space"></div>
 <p class="date-line">September 22, 23 &amp; 24, 2026 · 7 PM Eastern / 6 PM Central</p>
