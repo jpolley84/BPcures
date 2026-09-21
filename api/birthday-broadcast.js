@@ -148,7 +148,7 @@ function buildTemplate(list, emailNum) {
     const unsubUrl = list === 'joel' ? joelUnsubUrl : annieUnsubUrl;
     return {
       slot: src.slot, plain: true, exclude: src.exclude || null, fromName: src.fromName || null,
-      include: src.include || null, cronDate: src.cronDate || null,
+      include: src.include || null, includePaused: !!src.includePaused, cronDate: src.cronDate || null,
       blocked: PLACEHOLDER_RE.test(src.subject + src.body),
       subject: (name) => merge(src.subject, name),
       preheader: src.preheader,
@@ -240,7 +240,7 @@ async function annieAudience() {
 }
 
 // Segment sends (2026-09-21): recipients = a KV set; first names from drip records when present.
-async function includeAudience(setKey) {
+async function includeAudience(setKey, allowPaused = false) {
   const members = ((await kv.smembers(setKey)) || []).map((e) => String(e).toLowerCase().trim()).filter((e) => EMAIL_RE.test(e));
   if (members.length === 0) throw new Error(`include set ${setKey} is empty`);
   const out = [];
@@ -251,7 +251,7 @@ async function includeAudience(setKey) {
     try { b = await kv.mget(...chunk.map((e) => `bwbp:drip:${e}`)); } catch { b = []; }
     chunk.forEach((email, j) => {
       const rec = a[j] || b[j] || null;
-      if (rec && (rec.unsubscribed || rec.paused)) return;
+      if (rec && (rec.unsubscribed || (rec.paused && !allowPaused))) return;
       out.push({ email, name: rec ? String(rec.firstName || '').trim() : '' });
     });
   }
@@ -292,7 +292,7 @@ export default async function handler(req, res) {
 
   let audience;
   try {
-    audience = template.include ? await includeAudience(template.include) : (list === 'joel' ? await joelAudience() : await annieAudience());
+    audience = template.include ? await includeAudience(template.include, template.includePaused) : (list === 'joel' ? await joelAudience() : await annieAudience());
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
