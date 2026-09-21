@@ -200,6 +200,26 @@
       .mc2-about,.mc2-three{grid-template-columns:1fr;gap:24px}
       .mc2-about .txt{text-align:center}
     }
+
+    /* 2026-09-21 10:54: split register band + hero sized to keep SAVE MY FREE SEAT above the fold */
+    .mc2-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center}
+    .mc2-split-text{text-align:left}
+    .mc2-split-text .mc2-big{text-align:left}
+    .mc2-hero{padding:34px 0 38px!important}
+    .mc2-hero .mc2-eyebrow{margin-bottom:8px}
+    .mc2-hero .mc2-h1{font-size:clamp(1.7rem,3.3vw,2.75rem);margin-bottom:12px}
+    .mc2-hero p{font-size:clamp(.98rem,1.3vw,1.08rem);margin-bottom:10px}
+    .mc2-hero .mc2-cta{margin-top:10px}
+    @media(max-width:880px){
+      .mc2-split{grid-template-columns:1fr;gap:28px}
+      .mc2-split-text,.mc2-split-text .mc2-big{text-align:center}
+    }
+    @media(max-width:640px){
+      .mc2-hero{padding:22px 0 26px!important}
+      .mc2-hero .mc2-h1{font-size:1.5rem;line-height:1.08}
+      .mc2-hero p{font-size:.95rem;line-height:1.45}
+      .mc2-hero .mc2-eyebrow{font-size:.75rem}
+    }
 </style>
 </head>
 <body>
@@ -219,7 +239,7 @@
        not copy. -->
   <!-- 2026-09-21 challenge-style layout. Built by one script for both sites. -->
   <div class="mc2">
-  <section class="mc2-band">
+  <section class="mc2-band mc2-hero">
     <div class="mc2-narrow">
       <p class="mc2-eyebrow">FREE LIVE MASTERCLASS</p>
       <h1 class="mc2-h1">THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h1>
@@ -229,9 +249,12 @@
     </div>
   </section>
 
+  <!-- 2026-09-21 (Joel): "you did what they told you" sits NEXT TO the
+       email-capture box on desktop; on phones the form comes first. -->
   <section class="mc2-band soft">
-    <div class="mc2-register">
-      <div class="form-card" id="register">
+    <div class="mc2-wide mc2-split">
+      <div class="mc2-split-form">
+        <div class="form-card" id="register">
         <h3>FREE LIVE MASTERCLASS</h3>
         <p class="sub">with Joel Polley, RN + Special Guest Annie Chitate, RN</p>
         <div class="price"><span class="strike">$67</span><span>FREE</span></div>
@@ -252,18 +275,16 @@
             <button class="btn" type="submit" data-btn>SAVE MY FREE SEAT</button>
           </form>
         <p class="secure">100% Secure. Privacy Guaranteed.</p>
+        </div>
       </div>
-    </div>
-  </section>
-
-  <section class="mc2-band">
-    <div class="mc2-narrow">
+      <div class="mc2-split-text">
       <p class="mc2-eyebrow">YOU DID WHAT THEY TOLD YOU. SO WHY ARE THE NUMBERS STILL RISING?</p>
       <h2 class="mc2-h2">Stop chasing the number. Start looking at the pattern.</h2>
       <p class="mc2-list">You reduced the salt. You checked the labels. You walked more. You took the medication. You kept your appointments.</p>
       <p>And the list keeps growing:</p>
       <p class="mc2-list">Blood pressure. Weight. A1C. Fatigue. Sleep. Thinning hair. Chin hair. Brain fog. Mood changes. Hot flashes.</p>
       <div class="mc2-big">Same woman. Same body. Connected story.</div>
+      </div>
     </div>
   </section>
 
