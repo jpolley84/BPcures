@@ -33,7 +33,7 @@ import { VIP_SEAT_CAP, VIP_ROSTER_KEY } from './_challenge-vip-cap.js';
 // instant the tier returns 410 and the page sends her to the regular $97 seat.
 // To run the offer again for another masterclass, move this date. It is the
 // only thing to change.
-const VIP_FAST_ACTION_UNTIL = new Date('2026-09-15T04:59:59Z'); // 11:59:59 PM CT, Mon Sept 14
+const VIP_FAST_ACTION_UNTIL = new Date('2026-09-22T04:59:59Z'); // 11:59:59 PM CT, Mon Sept 21 (Joel 09-21: $97 ends tonight)
 // VIP_SEAT_CAP lives in _challenge-vip-cap.js (shared with the +$100 path and
 // the public seat counter). Fail CLOSED: if KV cannot answer, no VIP seat is
 // sold that might not exist.
@@ -686,7 +686,7 @@ export default async function handler(req, res) {
     // second price. The page reads which price it is from this response.
     // 2026-09-21 (Joel): /vip is a discount page, $97 (regular $297 struck
     // out on the page). The $97 price holds with no cutoff until changed here.
-    const VIP_DISCOUNT_97 = true;
+    const VIP_DISCOUNT_97 = false; // 09-21: now ends at VIP_FAST_ACTION_UNTIL, then $197
     const fastAction = VIP_DISCOUNT_97 || Date.now() <= VIP_FAST_ACTION_UNTIL.getTime();
     const vipPrice = fastAction
       ? (process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk')

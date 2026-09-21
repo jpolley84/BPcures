@@ -205,6 +205,7 @@
           <div class="today-price">$97</div>
         </div>
         <p><strong>One payment. No subscription.</strong><br>The challenge, the VIP room and both bonuses are included.</p>
+        <p class="seats-left" id="vipCd" style="font-weight:800">$97 ends tonight at midnight Central: <span id="vipCdT"></span></p>
         <p class="seats-left" id="seatsLeft" hidden>Only <b id="seatsLeftNum"></b> VIP spots left — limited so every question gets answered live</p>
       </div>
 
@@ -306,6 +307,28 @@
     document.getElementById('seatsLeftNum').textContent = d.left;
     document.getElementById('seatsLeft').hidden = false;
   }).catch(function () {});
+})();
+</script>
+<script>
+/* 2026-09-21 (Joel): $97 ends 11:59:59 PM CT tonight; after that the page shows $197 (server switches too). */
+(function(){
+  var END=Date.parse('2026-09-22T04:59:59Z');
+  function tick(){
+    var ms=END-Date.now(), cd=document.getElementById('vipCd');
+    if(ms<=0){
+      cd.hidden=true;
+      document.querySelectorAll('.old-price').forEach(function(e){e.remove();});
+      document.querySelector('.today-price').textContent='$197';
+      var t=document.querySelector('.order-row.total span:last-child'); if(t) t.textContent='$197';
+      var h=document.querySelector('.hero-copy'); if(h) h.innerHTML=h.innerHTML.replace(/VIP is regularly <s>\$297<\/s>\. <strong>Your VIP seat today is \$97\. It adds/,'<strong>VIP is $197. It adds');
+      var b=document.querySelector('.bottom-note'); if(b) b.remove();
+      return;
+    }
+    var h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000), s=Math.floor(ms%60000/1000);
+    document.getElementById('vipCdT').textContent=h+'h '+('0'+m).slice(-2)+'m '+('0'+s).slice(-2)+'s';
+    setTimeout(tick,1000);
+  }
+  tick();
 })();
 </script>
 <script>window.SABBATH_SOURCE="challenge";</script><script src="/sabbath-gate.js"></script>
