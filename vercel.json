@@ -158,64 +158,12 @@
       "schedule": "0 13 * * *"
     },
     {
-      "path": "/api/triangle-lead-cron",
-      "schedule": "15 * * * *"
-    },
-    {
-      "path": "/api/sprint-flash-cron",
-      "schedule": "45 15 * * *"
-    },
-    {
-      "path": "/api/evergreen-cron",
-      "schedule": "0 16 * * *"
-    },
-    {
-      "path": "/api/triangle-buyer-cron",
-      "schedule": "30 15 * * *"
-    },
-    {
       "path": "/api/tea-daily-cron",
       "schedule": "30 4 * * *"
     },
     {
       "path": "/api/reconcile-purchases",
       "schedule": "30 8 * * *"
-    },
-    {
-      "path": "/api/case-review-nudge-cron",
-      "schedule": "15 16 * * *"
-    },
-    {
-      "path": "/api/joel-masterclass-broadcast?cron=1&email=2",
-      "schedule": "45-59/5 21 * * *"
-    },
-    {
-      "path": "/api/joel-masterclass-broadcast?cron=1&email=2",
-      "schedule": "0-30/5 22 * * *"
-    },
-    {
-      "path": "/api/annie-masterclass-broadcast?cron=1&email=2",
-      "schedule": "45-59/5 21 * * *"
-    },
-    {
-      "path": "/api/annie-masterclass-broadcast?cron=1&email=2",
-      "schedule": "0-30/5 22 * * *"
-    },
-    {
-      "path": "/api/joel-masterclass-broadcast?cron=1&email=3",
-      "schedule": "0-45/5 23 * * *"
-    },
-    {
-      "path": "/api/annie-masterclass-broadcast?cron=1&email=3",
-      "schedule": "0-45/5 23 * * *"
-    },
-    {
-      "path": "/api/birthday-broadcast?cron=1&list=joel&email=13",
-      "schedule": "15 2 22 9 *"
-    },
-    {
-      "path": "/api/birthday-broadcast?cron=1&list=joel&email=14",
-      "schedule": "15 4 22 9 *"
     }
   ]
 }

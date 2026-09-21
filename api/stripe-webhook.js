@@ -1287,6 +1287,8 @@ function recoveryOfferFor(session, cardWasAttempted = false) {
 }
 
 async function processCheckoutExpired(event) {
+  // 2026-09-21 (Joel): every sequence paused for the rebuild. Unset to resume.
+  if ((process.env.CART_RECOVERY_PAUSED || '').trim() === '1') return { recovered: false, reason: 'paused_for_rebuild' };
   const session = event.data?.object || {};
   const email = (session.customer_details?.email || '').trim().toLowerCase();
 
