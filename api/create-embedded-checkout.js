@@ -684,7 +684,10 @@ export default async function handler(req, res) {
     // 2026-09-15 (Joel): after the masterclass window the VIP seat keeps
     // selling at its regular $197 (challenge + VIP), not 410. Same product,
     // second price. The page reads which price it is from this response.
-    const fastAction = Date.now() <= VIP_FAST_ACTION_UNTIL.getTime();
+    // 2026-09-21 (Joel): /vip is a discount page, $97 (regular $297 struck
+    // out on the page). The $97 price holds with no cutoff until changed here.
+    const VIP_DISCOUNT_97 = true;
+    const fastAction = VIP_DISCOUNT_97 || Date.now() <= VIP_FAST_ACTION_UNTIL.getTime();
     const vipPrice = fastAction
       ? (process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk')
       : (process.env.CMLC_197_VIP_PRICE_ID || 'price_1UG3ENHseZnO3rRZytbrSFJC');
@@ -699,7 +702,7 @@ export default async function handler(req, res) {
       funnel: 'braveworks-bp',
       offer: 'challenge',
       seat: 'vip',
-      source: fastAction ? 'masterclass-fast-action' : 'vip-seat-197',
+      source: VIP_DISCOUNT_97 ? 'vip-discount-97' : fastAction ? 'masterclass-fast-action' : 'vip-seat-197',
       cohort: '2026-09-22',
       ...phMeta,
       ...abMeta,
