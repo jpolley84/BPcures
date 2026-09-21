@@ -208,6 +208,14 @@
     {
       "path": "/api/annie-masterclass-broadcast?cron=1&email=3",
       "schedule": "0-45/5 23 * * *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=13",
+      "schedule": "15 2 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=14",
+      "schedule": "15 4 22 9 *"
     }
   ]
 }

@@ -85,6 +85,7 @@ Unsubscribe: ${annieUnsubUrl(email)}`;
 // annie 1-10. Body markup: blank line = paragraph, **x** = bold,
 // [BUTTON: LABEL → url] = button, <small>x</small> = fine print, {{first_name}} = merge.
 const BUTTON_RE = /^\[BUTTON: (.+?) → (\S+)\]$/;
+const IMAGE_RE = /^\[IMAGE: (\S+)\]$/;
 const PLACEHOLDER_RE = /\[(GIVEAWAY PRIZE|IF REPLAY|IF NO REPLAY|REPLAY LINK)\]|\{\{ZOOM_JOIN_URL\}\}/;
 const BTN_STYLE = {
   joel: { bg: '#C9A85C', ink: '#10312A' },
@@ -113,6 +114,7 @@ function renderText(body) {
   return body.split('\n').map((line) => {
     const b = line.trim().match(BUTTON_RE);
     if (b) return `${b[1]}: ${absUrl(b[2])}`;
+    if (IMAGE_RE.test(line.trim())) return '';
     return line.replace(/\*\*(.+?)\*\*/g, '$1').replace(/<\/?small>/g, '');
   }).join('\n');
 }
@@ -124,6 +126,8 @@ function renderPlainHtml(body) {
     const p = para.trim();
     const b = p.match(BUTTON_RE);
     if (b) return `<p><a href="${escapeHtml(absUrl(b[2]))}" style="color:#1a0dab;font-weight:bold;">${escapeHtml(b[1])}</a></p>`;
+    const img = p.match(IMAGE_RE);
+    if (img) return `<p><img src="${escapeHtml(img[1])}" alt="Comments from the Zoom room" width="420" style="max-width:100%;height:auto;border:0;"></p>`;
     return `<p>${escapeHtml(p).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p>`;
   }).join('\n');
 }
@@ -144,6 +148,7 @@ function buildTemplate(list, emailNum) {
     const unsubUrl = list === 'joel' ? joelUnsubUrl : annieUnsubUrl;
     return {
       slot: src.slot, plain: true, exclude: src.exclude || null, fromName: src.fromName || null,
+      include: src.include || null, cronDate: src.cronDate || null,
       blocked: PLACEHOLDER_RE.test(src.subject + src.body),
       subject: (name) => merge(src.subject, name),
       preheader: src.preheader,
@@ -234,6 +239,27 @@ async function annieAudience() {
   return { people: out, stats };
 }
 
+// Segment sends (2026-09-21): recipients = a KV set; first names from drip records when present.
+async function includeAudience(setKey) {
+  const members = ((await kv.smembers(setKey)) || []).map((e) => String(e).toLowerCase().trim()).filter((e) => EMAIL_RE.test(e));
+  if (members.length === 0) throw new Error(`include set ${setKey} is empty`);
+  const out = [];
+  for (let i = 0; i < members.length; i += 250) {
+    const chunk = members.slice(i, i + 250);
+    let a = [], b = [];
+    try { a = await kv.mget(...chunk.map((e) => `drip:${e}`)); } catch { a = []; }
+    try { b = await kv.mget(...chunk.map((e) => `bwbp:drip:${e}`)); } catch { b = []; }
+    chunk.forEach((email, j) => {
+      const rec = a[j] || b[j] || null;
+      if (rec && (rec.unsubscribed || rec.paused)) return;
+      out.push({ email, name: rec ? String(rec.firstName || '').trim() : '' });
+    });
+  }
+  return { people: out, stats: { segment: members.length } };
+}
+
+const todayCT = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+
 export default async function handler(req, res) {
   if (!isAuthorizedCron(req)) return res.status(401).json({ error: 'unauthorized' });
 
@@ -253,7 +279,11 @@ export default async function handler(req, res) {
 
   const wantsSend = req.query?.mode === 'send';
   if (wantsSend && template.blocked) return res.status(409).json({ error: 'this email still has a placeholder ([GIVEAWAY PRIZE], [IF REPLAY], {{ZOOM_JOIN_URL}}, or two subjects); fill it in the draft and regenerate' });
-  const sendMode = req.query?.mode === 'send' && req.headers['x-confirm'] === `SEND-BIRTHDAY-${list.toUpperCase()}-${emailNum}`;
+  // Cron fire (2026-09-21): only for templates with a cronDate, and only on that Central date.
+  const cronFire = req.query?.cron === '1' && !!template.cronDate && template.cronDate === todayCT();
+  if (req.query?.cron === '1' && !cronFire) return res.status(200).json({ ok: true, skipped: 'cron date guard', cronDate: template.cronDate || null, today: todayCT() });
+  if (cronFire && template.blocked) return res.status(409).json({ error: 'placeholder in template' });
+  const sendMode = cronFire || (req.query?.mode === 'send' && req.headers['x-confirm'] === `SEND-BIRTHDAY-${list.toUpperCase()}-${emailNum}`);
   const SENT_SET = `bdayblast:${list}:sent:${emailNum}`;
   const from = template.fromName || (list === 'joel' ? JOEL_FROM : ANNIE_FROM);
   const replyTo = list === 'joel' ? JOEL_REPLY : ANNIE_REPLY;
@@ -262,7 +292,7 @@ export default async function handler(req, res) {
 
   let audience;
   try {
-    audience = list === 'joel' ? await joelAudience() : await annieAudience();
+    audience = template.include ? await includeAudience(template.include) : (list === 'joel' ? await joelAudience() : await annieAudience());
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
