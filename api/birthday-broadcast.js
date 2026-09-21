@@ -117,12 +117,40 @@ function renderText(body) {
   }).join('\n');
 }
 
+// Plain "handwritten" look (2026-09-21 TikTok email): no card, no logo, buttons as plain links,
+// one small unsubscribe line. Opt in per email with plain: true in _birthday-emails.js.
+function renderPlainHtml(body) {
+  return body.split(/\n\s*\n/).map((para) => {
+    const p = para.trim();
+    const b = p.match(BUTTON_RE);
+    if (b) return `<p><a href="${escapeHtml(absUrl(b[2]))}" style="color:#1a0dab;font-weight:bold;">${escapeHtml(b[1])}</a></p>`;
+    return `<p>${escapeHtml(p).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')}</p>`;
+  }).join('\n');
+}
+function plainWrap(bodyHtml, email, unsubUrl) {
+  return `<!doctype html><html><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#222;background:#fff;">
+${bodyHtml}
+<p style="font-size:11px;color:#999;margin-top:28px;"><a href="${unsubUrl(email)}" style="color:#999;">Unsubscribe</a></p>
+</body></html>`;
+}
+
 function buildTemplate(list, emailNum) {
   const src = BIRTHDAY_EMAILS[list]?.[emailNum];
   if (!src) return null;
   const wrap = list === 'joel' ? joelWrap : annieWrap;
   const footer = list === 'joel' ? joelFooterText : annieFooterText;
   const merge = (s, name) => s.replace(/\{\{first_name\}\}/g, name);
+  if (src.plain) {
+    const unsubUrl = list === 'joel' ? joelUnsubUrl : annieUnsubUrl;
+    return {
+      slot: src.slot, plain: true, exclude: src.exclude || null, fromName: src.fromName || null,
+      blocked: PLACEHOLDER_RE.test(src.subject + src.body),
+      subject: (name) => merge(src.subject, name),
+      preheader: src.preheader,
+      html: (name, email) => plainWrap(renderPlainHtml(merge(src.body, name)), email, unsubUrl),
+      text: (name, email) => `${renderText(merge(src.body, name))}\n\nUnsubscribe: ${unsubUrl(email)}`,
+    };
+  }
   return {
     slot: src.slot,
     blocked: PLACEHOLDER_RE.test(src.subject + src.body) || src.subject.includes(' | '),
@@ -227,7 +255,7 @@ export default async function handler(req, res) {
   if (wantsSend && template.blocked) return res.status(409).json({ error: 'this email still has a placeholder ([GIVEAWAY PRIZE], [IF REPLAY], {{ZOOM_JOIN_URL}}, or two subjects); fill it in the draft and regenerate' });
   const sendMode = req.query?.mode === 'send' && req.headers['x-confirm'] === `SEND-BIRTHDAY-${list.toUpperCase()}-${emailNum}`;
   const SENT_SET = `bdayblast:${list}:sent:${emailNum}`;
-  const from = list === 'joel' ? JOEL_FROM : ANNIE_FROM;
+  const from = template.fromName || (list === 'joel' ? JOEL_FROM : ANNIE_FROM);
   const replyTo = list === 'joel' ? JOEL_REPLY : ANNIE_REPLY;
   const unsubFor = list === 'joel' ? joelUnsubUrl : annieUnsubUrl;
   const startedAt = Date.now();
@@ -241,16 +269,26 @@ export default async function handler(req, res) {
   const sentList = await kv.smembers(SENT_SET);
   const alreadySent = new Set((sentList || []).map((e) => String(e).toLowerCase()));
 
-  const stats = { ...audience.stats, alreadySent: 0, eligible: 0 };
+  // Per-email skip list (2026-09-21): KV set named by the template's `exclude`.
+  let excludeSet = null;
+  if (template.exclude) {
+    const ex = await kv.smembers(template.exclude);
+    if (!ex || ex.length === 0) return res.status(500).json({ error: `exclude set ${template.exclude} is empty; refusing to send without it` });
+    excludeSet = new Set(ex.map((e) => String(e).toLowerCase()));
+  }
+
+  const stats = { ...audience.stats, excluded: 0, alreadySent: 0, eligible: 0 };
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
   const samples = [];
   const resend = sendMode ? getResend() : null;
   const pace = list === 'joel' ? 70 : 90;
 
   for (const p of audience.people) {
+    if (excludeSet && excludeSet.has(p.email)) { stats.excluded++; continue; }
     if (alreadySent.has(p.email)) { stats.alreadySent++; continue; }
     stats.eligible++;
-    const name = p.name || (list === 'joel' ? 'Friend' : 'Girl'); // draft's fallback rule
+    // Joel list keys sometimes hold full names ("Yulonda Vickers"); greet by first word only.
+    const name = (p.name || '').split(/\s+/)[0] || (list === 'joel' ? 'Friend' : 'Girl'); // draft's fallback rule
     const subject = template.subject(name);
     if (!sendMode) {
       if (samples.length < 3) samples.push({ email: p.email, firstName: p.name || null, slot: template.slot, blocked: template.blocked, subject, preheader: template.preheader, text: template.text(name, p.email) });
