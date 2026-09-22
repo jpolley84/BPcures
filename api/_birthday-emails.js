@@ -128,6 +128,58 @@ export const BIRTHDAY_EMAILS = {
    "fromName": "Joel Polley <joel@bpquiz.com>",
    "include": "cmlc921:seg:paused",
    "includePaused": true
+  },
+  "18": {
+   "subject": "I still hate telling this story.",
+   "preheader": "My girls picked another mommy.",
+   "body": "{{first_name}},\n\nI still hate telling this story.\n\nMy girls were little.\n\nWe were at the park when a woman arrived with her kids.\n\nShe looked alive. You know what I mean.\n\nPresent.\n\nLike she enjoyed being in her own skin.\n\nMy girls watched her.\n\nAnd later they started playing a game:\n\n\"Let's pretend she's our mommy.\"\n\nGirl.\n\nThat hurt.\n\nNot because my babies were trying to hurt me.\n\nBecause I knew what they were seeing.\n\nI was tired.\n\nI was carrying everybody.\n\nI didn't feel pretty.\n\nI didn't feel sexy.\n\nHalf the time, I didn't even feel like ME.\n\nAnd I had lived that way long enough that I was starting to call it normal.\n\nThat day at the park didn't make me want a perfect body.\n\nIt made me want myself back.\n\nThat is what I want you to think about before tonight.\n\nNot a number on the scale.\n\nNot a perfect blood pressure reading.\n\nNot whether you can fit into the jeans you wore at 25.\n\nI want you to ask:\n\nHow much of ME have I slowly learned to live without?\n\nMy energy?\n\nMy confidence?\n\nMy peace?\n\nWanting to take a picture without hiding behind somebody?\n\nWanting to get dressed and actually like what I see?\n\nWanting to make plans without wondering if my body will cooperate?\n\nThat is why Joel and I created the Change My Life Challenge.\n\nTonight is Day 1.\n\nTomorrow is Bring Sexy Back.\n\nAnd no, that day is not just about sex.\n\nIt is about reawakening the woman underneath all this surviving.\n\nYou can join us even if you are taking medication.\n\nWe are not going to tell you to stop anything your doctor prescribed.\n\nCome exactly as you are.\n\nBecause maybe you don't need to become somebody new.\n\nMaybe it is time to go get her back.\n\n[BUTTON: JOIN US TONIGHT → https://changemylifechallenge.com]\n\nLove The Girl You're In,\nAnnie (The Everyday Nurse, aka Hormone Queen)\n(and Joel)\n\nP.S. We start live tonight at 6 PM Central / 7 PM Eastern on Zoom. VIP begins at 5 PM Central. If life gets in the way, the replays will remain available through next Monday.",
+   "slot": "Tue 9/22 9:30 AM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "includePaused": true,
+   "fromName": "Annie & Joel <joel@bpquiz.com>"
+  },
+  "19": {
+   "subject": "{{first_name}}, imagine this happens to you! 🤯",
+   "preheader": "Christmas dinner. Somebody pulls out the phone.",
+   "body": "Imagine YOU...\n\nAt Christmas dinner. 2026.\n\nThe holiday party.\n\nEverybody dressed up, laughing, eating.\n\nThen somebody pulls out the phone:\n\n\"Everybody get together. Let's take a picture!\"\n\nYou know the picture.\n\nThe one somebody is going to post.\n\nExcept this year...\n\nsomething is different.\n\nYOU.\n\nYou don't start looking for the best angle.\n\nYou don't move to the back row.\n\nYou're not tugging your shirt down over your belly.\n\nYou're not thinking...\n\n\"Please don't post that one.\"\n\nYou step right in.\n\nMaybe even toward the FRONT.\n\nYou feel beautiful.\n\nYou feel lighter.\n\nYou feel radiant.\n\nYou actually WANT to be in the picture.\n\nGirl...\n\nImagine THAT.\n\nImagine having enough energy to enjoy the holidays instead of just surviving them.\n\nImagine getting dressed without changing three times because nothing feels right.\n\nImagine somebody who hasn't seen you in a while stopping and saying...\n\n\"{{first_name}}... what have you been doing?!\"\n\nNot because you became 25 again.\n\nBecause something about you looks ALIVE again.\n\nAnd here is what I want you to see:\n\nChristmas is about 90 days away.\n\nThose 90 days are coming whether you do anything with them or not.\n\nNo, I cannot promise you what your body will look like by Christmas.\n\nBut I CAN ask:\n\nWho could you become in 90 days if tonight was the night you finally stopped putting yourself last?\n\nThat is why Joel and I are doing the Change My Life Challenge.\n\nNot so you can collect three more days of information.\n\nSo you can finally START.\n\nTonight is Day 1: Lower Your Numbers Naturally. Which numbers? You guessed it. Blood pressure, blood sugar, weight, cholesterol... all of them.\n\nYour seat is still available.\n\nTomorrow is BRING SEXY BACK (because every woman deserves to look and feel amazing!).\n\nAnd by the end of these three days, our goal is for you to stop staring at 47 different things you think you need to fix...\n\nand start seeing where YOUR next step actually is.\n\nBecause I want Christmas pictures this year to tell a different story.\n\nNot:\n\n\"There she is hiding again.\"\n\nBut:\n\n\"There she is.\"\n\n[BUTTON: YES. I WANT TO START TONIGHT → https://changemylifechallenge.com]\n\nWe'd love to have you, but if you cannot join, don't give up. Just get better, however you get it done.\n\nI'm cheering for you!\n\nLove The Girl You're In,\nAnnie\nThe Everyday Nurse\n(and Joel)\n\nP.S. We start tonight at 6 PM Central / 7 PM Eastern on Zoom. VIP begins at 5 PM Central. If you're taking medication, keep taking it and continue working with your doctor. You can still participate with us. Replays stay up through next Monday.",
+   "slot": "Tue 9/22 12:30 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "includePaused": true,
+   "fromName": "Annie & Joel <joel@bpquiz.com>"
+  },
+  "20": {
+   "subject": "The $0 option is NOT free.",
+   "preheader": "There are really three ways tonight can go.",
+   "body": "{{first_name}},\n\nDoing nothing costs $0 tonight.\n\nThat is what makes it so tempting.\n\nNo credit card.\n\nNo Zoom.\n\nNo commitment.\n\nJust keep doing what you have been doing.\n\nBut it isn't free.\n\nBecause there are really three ways tonight can go.\n\nYou can keep waiting.\n\nAnd hope the blood pressure, weight, fatigue, blood sugar, sleep, hormones, or whatever has been bothering you somehow gets easier on its own.\n\nYou can keep collecting answers.\n\nAnother video.\n\nAnother supplement.\n\nAnother person saying, \"You should try this.\"\n\nAnother saved post you mean to go back and read.\n\nOr...\n\nYou can spend three days getting quiet enough to ask a better question:\n\nWhat actually deserves my attention first?\n\nThat is the choice.\n\nNot:\n\n\"Can these two nurses magically fix my entire life in three days?\"\n\nOf course not.\n\nThe better question is:\n\nCould three days of clarity change what I do for the next 90?\n\nThat is a much more interesting question.\n\nAnd if you've been thinking:\n\n\"But I'm on medication...\"\n\nCome.\n\nWe're not taking you off it.\n\n\"But I'm older...\"\n\nCome.\n\nYour starting point is your starting point.\n\n\"I've already tried so much...\"\n\nThat may be exactly why you need to stop adding random things and start connecting the dots.\n\nWe begin tonight.\n\nAnd we genuinely do not know when we'll run the next Change My Life Challenge.\n\nSo the real cost of waiting isn't $97.\n\nIt is another stretch of time spent knowing something needs to change...\n\nbut never choosing the day it begins.\n\n[BUTTON: MAKE TONIGHT THE DAY → https://changemylifechallenge.com]\n\nJoel + Annie",
+   "slot": "Tue 9/22 3:30 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "includePaused": true,
+   "fromName": "Joel Polley <joel@bpquiz.com>"
+  },
+  "21": {
+   "subject": "Don't join because of tonight.",
+   "preheader": "Join because of who you want to be in 90 days.",
+   "body": "{{first_name}},\n\nDon't join this challenge because you need something to do tonight.\n\nJoin because of the woman you want to be 90 days from tonight.\n\nThat is who this is really for.\n\nHer.\n\nThe woman who sleeps better.\n\nThe woman who doesn't feel scared every time she checks a number.\n\nThe woman who understands her body better.\n\nThe woman who feels attractive again.\n\nThe woman who has enough energy left to actually enjoy the people she has spent years taking care of.\n\nThe woman who stops saying:\n\n\"One day I'm going to take care of me.\"\n\nTonight could simply be the first vote for her.\n\nNot a giant overhaul.\n\nNot a promise that you'll be perfect.\n\nA beginning.\n\nWe open the main Zoom room at 6 PM Central / 7 PM Eastern.\n\nVIP is at 5 PM Central.\n\nIf you can't attend every minute live, the replays stay available through Monday.\n\nBut eventually there is a moment when watching, wondering, and thinking about changing has to become...\n\nI'm starting.\n\nMaybe this is yours.\n\n[BUTTON: COME START WITH US → https://changemylifechallenge.com]\n\nJoel + Annie\n\nP.S. Day 2 is Bring Sexy Back. And if you've forgotten what it feels like to look in the mirror and recognize yourself, Annie made that day for you.",
+   "slot": "Tue 9/22 5:20 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "includePaused": true,
+   "fromName": "Joel Polley <joel@bpquiz.com>"
   }
  },
  "annie": {
@@ -198,6 +250,54 @@ export const BIRTHDAY_EMAILS = {
    "plain": true,
    "exclude": "tiktokblast:exclude",
    "body": "{{first_name}},\n\nThey shut down Joel's TikTok account.\nBrave Works RN - The Blood Pressure Repair Guy\n\nNo reasons given.\n\n218 thousand people were changing their health with the advice he was giving there.\n\nSomehow it's not surprising. It happens all the time.\n\nYou cannot help people get better. Show them how to reverse illness.\n\nYou cannot take money from big pharma and not get shut down.\n\nHow dare anyone help people get well.\n\nBut all of it is working out for YOUR benefit.\n\nWe have built a powerful 3-day challenge that is transforming lives during the challenge itself.\n\nPrivate rooms on Zoom where we can tell you just how you can change your life!\n\nSo before you cut out another food…\n\nBuy another supplement…\n\nSave another health video…\n\nOr promise yourself you'll \"do better\" Monday…\n\nI want you to consider something.\n\nWhat if you've already tried enough THINGS?\n\nBecause most of the women I've talked to are trying really hard.\n\nThey've cut salt.\n\nThey're walking.\n\nThey take their medicine.\n\nThey drink more water.\n\nThey've tried herbs, diets, supplements, stress management.\n\nAnd that cuff number is STILL rising.\n\nSo maybe the next question isn't:\n\n\"What else should I try?\"\n\nMaybe it's:\n\n\"What is causing my blood pressure to rise?\"\n\nWe built 3 days that walk you to your freedom.\n\nA three-day challenge that uncovers what's behind your symptoms and your exact starting point, with simple steps so you can finally find it easy to be consistent.\n\nWomen who have come to this challenge have said...\n\n\"This session is coming right on time. I hope that I will learn something that I had not considered yet, and maybe put the whole picture together for me.\"\n\n\"I came here because I wanted you guys to hear me. I wanted to find out exactly what was going on, so now that I know what's going on, I can go ahead and take my own health into my own hands.\"\n\n\"You are talking directly to me right now, Oh My Gosh\"\n\n\"Day 3 was fire!!\"\n\n\"Love the science!!\"\n\n\"Changed my life for good.\"\n\n\"Thank you so much, you are an AMAZING TEAM\"\n\n\"Thought the aging process was irreversible!\"\n\nThat is the entire reason we built the Change My Life Challenge.\n\nThree LIVE days on Zoom.\n\nNot another 63-video course.\n\nNot 76 more things to add to your life.\n\nWe are going to help you find your Health Domino, the reason behind the body changes and rising pressure after 40.\n\nBecause when you don't know what matters first, everything feels important.\n\nAnd that is exhausting.\n\nDay 1 shows you how to lower your numbers naturally, without crazy diets or toxic shortcuts.\n\nDay 2 uncovers the reasons behind the changes, like chin hair, thinning hair, weight, cholesterol, and more, and shows you the simple way to get sexy back without symptom chasing.\n\nDay 3 reveals the secret to taking back your future, so you can stop living in fear and pursue purpose.\n\nThe Challenge starts tomorrow evening.\n\nAnd you can get your ticket to freedom from the cuff by clicking the link below.\n\n[BUTTON: HELP ME FIND MY HEALTH DOMINO → https://changemylifechallenge.com]\n\nAND if you're sitting there thinking,\n\n\"I'm interested… but I have questions,\"\n\nIt's your lucky day.\n\nWe already have a FREE live masterclass tonight at 7 PM Eastern / 6 PM Central.\n\nCome join us.\n\nBring your blood pressure question.\n\nBring your other symptoms.\n\nThere will be a live gift for all those who attend.\n\nIn our quest to change 1 million women's lives and help reduce the number of women dying from heart disease every year (currently more than all forms of cancer combined!),\n\nWe want to give you actionable steps to begin changing your life and legacy starting tonight!\n\n[BUTTON: COME ASK US TONIGHT → https://restoreherhormones.com/masterclass]\n\nHere is what our attendees had to say about the class.\n\n\"Thanks for the gift!!!! Highly appreciated!!!🙏🏽❤️🫂\"\n\n\"Thank you! How do we receive a recording? I want to share this with a friend.\"\n\nIf you will be attending tonight, just hit reply and type the word \"me.\"\n\nI look forward to seeing you there.\n\nAnnie",
+   "fromName": "Annie <annie@restoreherhormones.com>"
+  },
+  "18": {
+   "subject": "I still hate telling this story.",
+   "preheader": "My girls picked another mommy.",
+   "body": "{{first_name}},\n\nI still hate telling this story.\n\nMy girls were little.\n\nWe were at the park when a woman arrived with her kids.\n\nShe looked alive. You know what I mean.\n\nPresent.\n\nLike she enjoyed being in her own skin.\n\nMy girls watched her.\n\nAnd later they started playing a game:\n\n\"Let's pretend she's our mommy.\"\n\nGirl.\n\nThat hurt.\n\nNot because my babies were trying to hurt me.\n\nBecause I knew what they were seeing.\n\nI was tired.\n\nI was carrying everybody.\n\nI didn't feel pretty.\n\nI didn't feel sexy.\n\nHalf the time, I didn't even feel like ME.\n\nAnd I had lived that way long enough that I was starting to call it normal.\n\nThat day at the park didn't make me want a perfect body.\n\nIt made me want myself back.\n\nThat is what I want you to think about before tonight.\n\nNot a number on the scale.\n\nNot a perfect blood pressure reading.\n\nNot whether you can fit into the jeans you wore at 25.\n\nI want you to ask:\n\nHow much of ME have I slowly learned to live without?\n\nMy energy?\n\nMy confidence?\n\nMy peace?\n\nWanting to take a picture without hiding behind somebody?\n\nWanting to get dressed and actually like what I see?\n\nWanting to make plans without wondering if my body will cooperate?\n\nThat is why Joel and I created the Change My Life Challenge.\n\nTonight is Day 1.\n\nTomorrow is Bring Sexy Back.\n\nAnd no, that day is not just about sex.\n\nIt is about reawakening the woman underneath all this surviving.\n\nYou can join us even if you are taking medication.\n\nWe are not going to tell you to stop anything your doctor prescribed.\n\nCome exactly as you are.\n\nBecause maybe you don't need to become somebody new.\n\nMaybe it is time to go get her back.\n\n[BUTTON: JOIN US TONIGHT → https://changemylifechallenge.com]\n\nLove The Girl You're In,\nAnnie (The Everyday Nurse, aka Hormone Queen)\n(and Joel)\n\nP.S. We start live tonight at 6 PM Central / 7 PM Eastern on Zoom. VIP begins at 5 PM Central. If life gets in the way, the replays will remain available through next Monday.",
+   "slot": "Tue 9/22 9:30 AM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "fromName": "Annie <annie@restoreherhormones.com>"
+  },
+  "19": {
+   "subject": "{{first_name}}, imagine this happens to you! 🤯",
+   "preheader": "Christmas dinner. Somebody pulls out the phone.",
+   "body": "Imagine YOU...\n\nAt Christmas dinner. 2026.\n\nThe holiday party.\n\nEverybody dressed up, laughing, eating.\n\nThen somebody pulls out the phone:\n\n\"Everybody get together. Let's take a picture!\"\n\nYou know the picture.\n\nThe one somebody is going to post.\n\nExcept this year...\n\nsomething is different.\n\nYOU.\n\nYou don't start looking for the best angle.\n\nYou don't move to the back row.\n\nYou're not tugging your shirt down over your belly.\n\nYou're not thinking...\n\n\"Please don't post that one.\"\n\nYou step right in.\n\nMaybe even toward the FRONT.\n\nYou feel beautiful.\n\nYou feel lighter.\n\nYou feel radiant.\n\nYou actually WANT to be in the picture.\n\nGirl...\n\nImagine THAT.\n\nImagine having enough energy to enjoy the holidays instead of just surviving them.\n\nImagine getting dressed without changing three times because nothing feels right.\n\nImagine somebody who hasn't seen you in a while stopping and saying...\n\n\"{{first_name}}... what have you been doing?!\"\n\nNot because you became 25 again.\n\nBecause something about you looks ALIVE again.\n\nAnd here is what I want you to see:\n\nChristmas is about 90 days away.\n\nThose 90 days are coming whether you do anything with them or not.\n\nNo, I cannot promise you what your body will look like by Christmas.\n\nBut I CAN ask:\n\nWho could you become in 90 days if tonight was the night you finally stopped putting yourself last?\n\nThat is why Joel and I are doing the Change My Life Challenge.\n\nNot so you can collect three more days of information.\n\nSo you can finally START.\n\nTonight is Day 1: Lower Your Numbers Naturally. Which numbers? You guessed it. Blood pressure, blood sugar, weight, cholesterol... all of them.\n\nYour seat is still available.\n\nTomorrow is BRING SEXY BACK (because every woman deserves to look and feel amazing!).\n\nAnd by the end of these three days, our goal is for you to stop staring at 47 different things you think you need to fix...\n\nand start seeing where YOUR next step actually is.\n\nBecause I want Christmas pictures this year to tell a different story.\n\nNot:\n\n\"There she is hiding again.\"\n\nBut:\n\n\"There she is.\"\n\n[BUTTON: YES. I WANT TO START TONIGHT → https://changemylifechallenge.com]\n\nWe'd love to have you, but if you cannot join, don't give up. Just get better, however you get it done.\n\nI'm cheering for you!\n\nLove The Girl You're In,\nAnnie\nThe Everyday Nurse\n(and Joel)\n\nP.S. We start tonight at 6 PM Central / 7 PM Eastern on Zoom. VIP begins at 5 PM Central. If you're taking medication, keep taking it and continue working with your doctor. You can still participate with us. Replays stay up through next Monday.",
+   "slot": "Tue 9/22 12:30 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "fromName": "Annie <annie@restoreherhormones.com>"
+  },
+  "20": {
+   "subject": "The $0 option is NOT free.",
+   "preheader": "There are really three ways tonight can go.",
+   "body": "{{first_name}},\n\nDoing nothing costs $0 tonight.\n\nThat is what makes it so tempting.\n\nNo credit card.\n\nNo Zoom.\n\nNo commitment.\n\nJust keep doing what you have been doing.\n\nBut it isn't free.\n\nBecause there are really three ways tonight can go.\n\nYou can keep waiting.\n\nAnd hope the blood pressure, weight, fatigue, blood sugar, sleep, hormones, or whatever has been bothering you somehow gets easier on its own.\n\nYou can keep collecting answers.\n\nAnother video.\n\nAnother supplement.\n\nAnother person saying, \"You should try this.\"\n\nAnother saved post you mean to go back and read.\n\nOr...\n\nYou can spend three days getting quiet enough to ask a better question:\n\nWhat actually deserves my attention first?\n\nThat is the choice.\n\nNot:\n\n\"Can these two nurses magically fix my entire life in three days?\"\n\nOf course not.\n\nThe better question is:\n\nCould three days of clarity change what I do for the next 90?\n\nThat is a much more interesting question.\n\nAnd if you've been thinking:\n\n\"But I'm on medication...\"\n\nCome.\n\nWe're not taking you off it.\n\n\"But I'm older...\"\n\nCome.\n\nYour starting point is your starting point.\n\n\"I've already tried so much...\"\n\nThat may be exactly why you need to stop adding random things and start connecting the dots.\n\nWe begin tonight.\n\nAnd we genuinely do not know when we'll run the next Change My Life Challenge.\n\nSo the real cost of waiting isn't $97.\n\nIt is another stretch of time spent knowing something needs to change...\n\nbut never choosing the day it begins.\n\n[BUTTON: MAKE TONIGHT THE DAY → https://changemylifechallenge.com]\n\nJoel + Annie",
+   "slot": "Tue 9/22 3:30 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "fromName": "Annie <annie@restoreherhormones.com>"
+  },
+  "21": {
+   "subject": "Don't join because of tonight.",
+   "preheader": "Join because of who you want to be in 90 days.",
+   "body": "{{first_name}},\n\nDon't join this challenge because you need something to do tonight.\n\nJoin because of the woman you want to be 90 days from tonight.\n\nThat is who this is really for.\n\nHer.\n\nThe woman who sleeps better.\n\nThe woman who doesn't feel scared every time she checks a number.\n\nThe woman who understands her body better.\n\nThe woman who feels attractive again.\n\nThe woman who has enough energy left to actually enjoy the people she has spent years taking care of.\n\nThe woman who stops saying:\n\n\"One day I'm going to take care of me.\"\n\nTonight could simply be the first vote for her.\n\nNot a giant overhaul.\n\nNot a promise that you'll be perfect.\n\nA beginning.\n\nWe open the main Zoom room at 6 PM Central / 7 PM Eastern.\n\nVIP is at 5 PM Central.\n\nIf you can't attend every minute live, the replays stay available through Monday.\n\nBut eventually there is a moment when watching, wondering, and thinking about changing has to become...\n\nI'm starting.\n\nMaybe this is yours.\n\n[BUTTON: COME START WITH US → https://changemylifechallenge.com]\n\nJoel + Annie\n\nP.S. Day 2 is Bring Sexy Back. And if you've forgotten what it feels like to look in the mirror and recognize yourself, Annie made that day for you.",
+   "slot": "Tue 9/22 5:20 PM CT",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
    "fromName": "Annie <annie@restoreherhormones.com>"
   }
  }

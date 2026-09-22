@@ -189,7 +189,7 @@ async function scanKeys(pattern) {
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // Returns [{ email, name }] eligible before the sent-set check, plus stats.
-async function joelAudience() {
+async function joelAudience(allowPaused = false) {
   const keys = [...(await scanKeys('drip:*')), ...(await scanKeys('bwbp:drip:*'))];
   const stats = { total: 0, unsub: 0, paused: 0, coachingClient: 0, noEmail: 0, invalidEmail: 0, duplicate: 0 };
   const seen = new Set();
@@ -202,7 +202,7 @@ async function joelAudience() {
       stats.total++;
       if (!rec || !rec.email) { stats.noEmail++; continue; }
       if (rec.unsubscribed) { stats.unsub++; continue; }
-      if (rec.paused) { stats.paused++; continue; }
+      if (rec.paused && !allowPaused) { stats.paused++; continue; }
       if (rec.state === 'tier-4') { stats.coachingClient++; continue; }
       const email = String(rec.email).toLowerCase().trim();
       if (!EMAIL_RE.test(email)) { stats.invalidEmail++; continue; }
@@ -292,7 +292,7 @@ export default async function handler(req, res) {
 
   let audience;
   try {
-    audience = template.include ? await includeAudience(template.include, template.includePaused) : (list === 'joel' ? await joelAudience() : await annieAudience());
+    audience = template.include ? await includeAudience(template.include, template.includePaused) : (list === 'joel' ? await joelAudience(template.includePaused) : await annieAudience());
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -302,9 +302,14 @@ export default async function handler(req, res) {
   // Per-email skip list (2026-09-21): KV set named by the template's `exclude`.
   let excludeSet = null;
   if (template.exclude) {
-    const ex = await kv.smembers(template.exclude);
-    if (!ex || ex.length === 0) return res.status(500).json({ error: `exclude set ${template.exclude} is empty; refusing to send without it` });
-    excludeSet = new Set(ex.map((e) => String(e).toLowerCase()));
+    const names = Array.isArray(template.exclude) ? template.exclude : [template.exclude];
+    excludeSet = new Set();
+    for (const [idx, name] of names.entries()) {
+      const ex = (await kv.smembers(name)) || [];
+      // the first set is the required suppression list; later ones (live buyer sets) may be empty
+      if (idx === 0 && ex.length === 0) return res.status(500).json({ error: `exclude set ${name} is empty; refusing to send without it` });
+      for (const e of ex) excludeSet.add(String(e).toLowerCase());
+    }
   }
 
   const stats = { ...audience.stats, excluded: 0, alreadySent: 0, eligible: 0 };
