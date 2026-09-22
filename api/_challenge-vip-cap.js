@@ -7,5 +7,7 @@
 //
 // Read by: create-embedded-checkout.js (cmlc-97-vip), challenge-vip-charge.js
 // (+$100 upsell), challenge-vip-seats.js (the public "N left" count).
-export const VIP_SEAT_CAP = 14;
+// 2026-09-22 (Joel): cap removed. Infinity keeps every "taken >= cap" check false, and
+// challenge-vip-seats returns left:null, so the /vip page hides its "N spots left" line.
+export const VIP_SEAT_CAP = Infinity;
 export const VIP_ROSTER_KEY = 'challenge:2026-09-22:vip';
