@@ -166,7 +166,24 @@ export default async function handler(req, res) {
   // Minimal welcome that points back to the quiz so they self-segment by
   // pressure; the daily lead-cron then runs the full arc.
   let sent = false;
+  const isMasterclass = /allcomments/.test(srcTag);
   try {
+    if (isMasterclass) {
+      await getResend().emails.send({
+        from: 'Joel Polley, RN <joel@bpquiz.com>',
+        to: emailLower,
+        replyTo: 'braveworksrn@gmail.com',
+        subject: 'Your masterclass seat',
+        html: `<div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;color:#2c2a26;line-height:1.6;">
+        <p>Hey${fname ? ' ' + fname : ''}, thanks for saying yes. Here's your seat for my next live masterclass: <a href="${SITE_URL}/masterclass">bpquiz.com/masterclass</a></p>
+        <p>Joel Polley, RN</p>
+      </div>`,
+        text: `Hey${fname ? ' ' + fname : ''}, thanks for saying yes. Here's your seat for my next live masterclass: bpquiz.com/masterclass
+
+Joel Polley, RN`,
+      });
+      sent = true;
+    } else {
     await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: emailLower,
@@ -182,6 +199,7 @@ export default async function handler(req, res) {
       text: `Hey${fname ? ' ' + fname : ''},\n\nYou asked about your blood pressure on Instagram. Take the free 90-second BP Triangle quiz and I'll send you a plan built for your body:\n\n${SITE_URL}/quiz?utm_source=manychat&utm_medium=dm\n\nJoel Polley, RN`,
     });
     sent = true;
+    }
   } catch (err) {
     // Enroll already saved — lead-cron sends Day 0 tomorrow. Just flag it.
     await alert('[ALERT] manychat-capture: welcome send failed (lead saved)', `${emailLower}\n${err.message}\nThe lead is enrolled; the daily lead-cron will send Day 0.`);
