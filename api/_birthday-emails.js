@@ -153,7 +153,8 @@ export const BIRTHDAY_EMAILS = {
     "challenge:2026-09-22:members"
    ],
    "includePaused": true,
-   "fromName": "Annie & Joel <joel@bpquiz.com>"
+   "fromName": "Annie & Joel <joel@bpquiz.com>",
+   "cronDate": "2026-09-22"
   },
   "20": {
    "subject": "The $0 option is NOT free.",
@@ -166,7 +167,8 @@ export const BIRTHDAY_EMAILS = {
     "challenge:2026-09-22:members"
    ],
    "includePaused": true,
-   "fromName": "Joel Polley <joel@bpquiz.com>"
+   "fromName": "Joel Polley <joel@bpquiz.com>",
+   "cronDate": "2026-09-22"
   },
   "21": {
    "subject": "Don't join because of tonight.",
@@ -179,7 +181,8 @@ export const BIRTHDAY_EMAILS = {
     "challenge:2026-09-22:members"
    ],
    "includePaused": true,
-   "fromName": "Joel Polley <joel@bpquiz.com>"
+   "fromName": "Joel Polley <joel@bpquiz.com>",
+   "cronDate": "2026-09-22"
   }
  },
  "annie": {
@@ -274,7 +277,8 @@ export const BIRTHDAY_EMAILS = {
     "cmlc922:exclude",
     "challenge:2026-09-22:members"
    ],
-   "fromName": "Annie <annie@restoreherhormones.com>"
+   "fromName": "Annie <annie@restoreherhormones.com>",
+   "cronDate": "2026-09-22"
   },
   "20": {
    "subject": "The $0 option is NOT free.",
@@ -286,7 +290,8 @@ export const BIRTHDAY_EMAILS = {
     "cmlc922:exclude",
     "challenge:2026-09-22:members"
    ],
-   "fromName": "Annie <annie@restoreherhormones.com>"
+   "fromName": "Annie <annie@restoreherhormones.com>",
+   "cronDate": "2026-09-22"
   },
   "21": {
    "subject": "Don't join because of tonight.",
@@ -298,7 +303,8 @@ export const BIRTHDAY_EMAILS = {
     "cmlc922:exclude",
     "challenge:2026-09-22:members"
    ],
-   "fromName": "Annie <annie@restoreherhormones.com>"
+   "fromName": "Annie <annie@restoreherhormones.com>",
+   "cronDate": "2026-09-22"
   }
  }
 };

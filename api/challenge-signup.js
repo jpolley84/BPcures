@@ -579,7 +579,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     h2('The three days'),
     nightsHtml(),
     p(
-      `Every session has a replay, up for 48 hours afterward. If one day your grandson has a doctor's appointment, watch the replay that evening. The work still stacks.`
+      `Every session has a replay, up through Monday, September 28. If one day your grandson has a doctor's appointment, watch the replay that evening. The work still stacks.`
     ),
     h2('Two things before Day 1'),
     p(
@@ -607,7 +607,7 @@ ${fbGroupText()}
 THE THREE DAYS
 ${nightsText()}
 
-Every session has a replay, up for 48 hours afterward.
+Every session has a replay, up through Monday, September 28.
 
 TWO THINGS BEFORE DAY 1
 One. Keep a notebook and a pen next to wherever you will watch. If you have a home blood pressure cuff, set it out too. That is all the equipment you need.

@@ -606,7 +606,7 @@ export default function ChallengePage() {
             <li><b>&#10003;</b><span>You are already on medication, you are taking it, and your numbers still are not where you want them.</span></li>
             <li><b>&#10003;</b><span>You are doing things you were told to do and you cannot tell which of them is actually working.</span></li>
             <li><b>&#10003;</b><span>You want to work with your doctor, not around them, and you want to walk in prepared.</span></li>
-            <li><b>&#10003;</b><span>You can give one hour a day at 11am Central for three days, or watch the replay within 48 hours.</span></li>
+            <li><b>&#10003;</b><span>You can give one hour a day at 6 PM Central for three days, or watch the replays any time through Monday, September 28.</span></li>
           </ul>
           <div className="notfor">
             <strong>This is not for you if</strong> you want someone to tell you to stop your medication,
@@ -763,7 +763,7 @@ export default function ChallengePage() {
 
         <div className="assure">
           <div>Live with two RNs</div>
-          <div>Replays for 48 hours</div>
+          <div>Replays through Monday, Sept 28</div>
           <div>Works alongside your doctor</div>
         </div>
       </section>
