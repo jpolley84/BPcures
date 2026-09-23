@@ -216,6 +216,14 @@
     {
       "path": "/api/accelerator-reminder?mode=send",
       "schedule": "30 16 * * 3"
+    },
+    {
+      "path": "/api/challenge-live-now?mode=send",
+      "schedule": "30 21 23 9 *"
+    },
+    {
+      "path": "/api/challenge-live-now?mode=send",
+      "schedule": "30 21 24 9 *"
     }
   ]
 }
