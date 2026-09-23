@@ -208,6 +208,14 @@
     {
       "path": "/api/birthday-broadcast?cron=1&list=annie&email=21",
       "schedule": "20-55/5 22 22 9 *"
+    },
+    {
+      "path": "/api/accelerator-reminder?mode=send",
+      "schedule": "30 15 * * 3"
+    },
+    {
+      "path": "/api/accelerator-reminder?mode=send",
+      "schedule": "30 16 * * 3"
     }
   ]
 }
