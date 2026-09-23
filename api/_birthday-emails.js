@@ -191,7 +191,8 @@ export const BIRTHDAY_EMAILS = {
    "plain": true,
    "exclude": [
     "cmlc922:exclude",
-    "challenge:2026-09-22:members"
+    "challenge:2026-09-22:members",
+    "accel:cohort:members"
    ],
    "includePaused": true,
    "fromName": "Annie & Joel <joel@bpquiz.com>"
@@ -325,7 +326,8 @@ export const BIRTHDAY_EMAILS = {
    "plain": true,
    "exclude": [
     "cmlc922:exclude",
-    "challenge:2026-09-22:members"
+    "challenge:2026-09-22:members",
+    "accel:cohort:members"
    ],
    "fromName": "Annie <annie@restoreherhormones.com>"
   }
