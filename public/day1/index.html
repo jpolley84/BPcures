@@ -4,9 +4,9 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="robots" content="noindex"/>
-<meta content="Day 1 homework for The Change My Life Challenge: a 20-minute private exercise to find your Big Domino. Your answers stay on your device." name="description"/>
+<meta content="Day 1 homework for The Change My Life Challenge: a private 15-minute exercise to find your Big Domino and the 3 things to start right away. Your answers stay on your device." name="description"/>
 <meta content="Day 1 Homework: Find Your Big Domino" property="og:title"/>
-<meta content="Your 20-minute Day 1 unlock. Private. Nothing you type leaves your device." property="og:description"/>
+<meta content="Your Day 1 unlock. Private. Nothing you type leaves your device." property="og:description"/>
 <meta content="https://changemylifechallenge.com/og-image.jpg" property="og:image"/>
 <title>Day 1 Homework: Find Your Big Domino</title>
 <link rel="stylesheet" href="/day1/day1.css"/>
@@ -34,18 +34,15 @@
 <section class="screen" data-step="0" data-part="Welcome" data-minutes="">
   <p class="eyebrow">Day 1 Homework</p>
   <h1>Find Your Big Domino<sup>™</sup></h1>
-  <p class="lede">Your 20-Minute Day 1 Unlock</p>
+  <p class="lede">Your 15-Minute Day 1 Unlock</p>
 
   <div class="card">
-    <p>Tonight is not about fixing your health.</p>
-    <p>It is not about starting a new diet.</p>
-    <p>It is not about changing 76 things before bed.</p>
+    <p>Tonight is not about fixing your health. It is not about starting a new diet. It is not about changing 76 things before bed.</p>
     <p><strong>Tonight is about finally seeing something clearly.</strong></p>
-    <p>For the next 20 minutes, we want you to look at the numbers that have been taking up space in your life...</p>
-    <p>and separate the information from the fear.</p>
-    <p>By the time you finish, you should be able to answer one question:</p>
+    <p>We want you to look at the numbers that have been taking up space in your life... and separate the information from the fear.</p>
+    <p>By the time you finish, you will be able to answer one question:</p>
     <p class="big">WHAT DESERVES MY ATTENTION FIRST?</p>
-    <p>Take your time.<br>Be honest.<br>Nobody else needs to see your private numbers.</p>
+    <p>Take your time. Be honest. Nobody else needs to see your private numbers.</p>
     <p class="private">🔒 Everything you type stays on this device. Nothing is sent to us.</p>
   </div>
 
@@ -71,28 +68,10 @@
     <input type="text" name="p1_other" class="field inline" placeholder="Another number" aria-label="Another number">
   </fieldset>
 
-  <label class="q">The number I keep thinking about is:
-    <input type="text" name="p1_number" class="field">
-  </label>
-
-  <p class="prompt">Now finish this sentence:</p>
   <label class="q">What scares me is not only the number. I'm afraid it means...
-    <textarea name="p1_fear" class="field" rows="4"></textarea>
+    <textarea name="p1_fear" class="field" rows="3" placeholder="Don't clean it up. “My mother had this.” “I waited too long.” Write the real thought."></textarea>
   </label>
-
-  <div class="card soft">
-    <p>Don't clean up your answer.</p>
-    <p>If the real thought is:</p>
-    <ul class="quotes">
-      <li>“My mother had this.”</li>
-      <li>“I waited too long.”</li>
-      <li>“My body is getting worse.”</li>
-      <li>“I'll never get off these medications.”</li>
-      <li>“I'm becoming the people I watched get sick.”</li>
-    </ul>
-    <p>Write it.</p>
-    <p>You are not agreeing with the fear.<br>You are finally putting it on paper.</p>
-  </div>
+  <p class="hint">You are not agreeing with the fear. You are finally putting it on paper.</p>
 
   <div class="callout">
     <p>FEAR CAN TAKE ONE NUMBER AND WRITE A WHOLE FUTURE WITH IT.</p>
@@ -106,285 +85,162 @@
 </section>
 
 <!-- ═══════════ 2 · PART 2 ═══════════ -->
-<section class="screen" data-step="2" data-part="Part 2" data-minutes="7" hidden>
-  <p class="eyebrow">Part 2 · About 7 minutes</p>
+<section class="screen" data-step="2" data-part="Part 2" data-minutes="5" hidden>
+  <p class="eyebrow">Part 2 · About 5 minutes</p>
   <h2>Your Five Numbers<sup>™</sup></h2>
-  <p>There are more numbers shaping your health story than the number on the cuff. Let's look at five.</p>
-  <p>Not to judge them. To understand what they are telling you.</p>
+  <p>There are more numbers shaping your health story than the number on the cuff. One line each. Not to judge them. To understand what they are telling you.</p>
 
-  <div class="accordion" id="fiveNumbers">
+  <div class="tri">
+    <h3><span class="num">1</span> Your Fear Number</h3>
+    <label class="q">The story I have been attaching to this number is:
+      <textarea name="fear_story" class="field" rows="2"></textarea>
+    </label>
+  </div>
 
-    <details class="panel" open>
-      <summary><span class="num">1</span> Your Fear Number</summary>
-      <div class="panel-body">
-        <p>You already named the number that scares you. Now go one layer deeper.</p>
-        <label class="q">What am I most afraid could happen if nothing changes?
-          <textarea name="fear_worst" class="field" rows="3"></textarea>
-        </label>
-        <label class="q">What person, memory, diagnosis, or experience does this fear remind me of?
-          <textarea name="fear_reminds" class="field" rows="3"></textarea>
-        </label>
-        <p class="prompt">Now write one sentence:</p>
-        <label class="q">The story I have been attaching to this number is:
-          <textarea name="fear_story" class="field" rows="2"></textarea>
-        </label>
-        <button type="button" class="btn btn-small" data-panel-next>Next number</button>
-      </div>
-    </details>
+  <div class="tri">
+    <h3><span class="num">2</span> Your Health Number</h3>
+    <p class="hint">Now remove the story for a moment. FACT ≠ STORY.</p>
+    <div class="kv-head"><span>WHAT I KNOW</span><span>WHAT I'VE BEEN TELLING MYSELF IT MEANS</span></div>
+    <div class="kv-row">
+      <input type="text" name="health_know" class="field" aria-label="What I know" placeholder="My most recent information">
+      <input type="text" name="health_story" class="field" aria-label="What I've been telling myself it means" placeholder="The story I attached">
+    </div>
+  </div>
 
-    <details class="panel">
-      <summary><span class="num">2</span> Your Health Number</summary>
-      <div class="panel-body">
-        <p>Now remove the story for a moment.</p>
-        <label class="q">What do I actually KNOW? My most recent information is:
-          <textarea name="health_know" class="field" rows="3"></textarea>
-        </label>
-        <label class="q">What don't I know yet? Is there something I've been avoiding checking, asking about, or looking up?
-          <textarea name="health_unknown" class="field" rows="3"></textarea>
-        </label>
-        <p class="prompt">Write at least one thing on each side. Then look at them.</p>
-        <div class="kv-table" id="kvTable">
-          <div class="kv-head"><span>WHAT I KNOW</span><span>WHAT I'VE BEEN TELLING MYSELF IT MEANS</span></div>
-          <div class="kv-row">
-            <input type="text" class="field kv-know" aria-label="What I know" placeholder="Fact">
-            <input type="text" class="field kv-story" aria-label="What I've been telling myself it means" placeholder="Story">
-          </div>
-        </div>
-        <input type="hidden" name="health_rows">
-        <button type="button" class="btn btn-small btn-ghost" id="addRow">+ Add a row</button>
-        <div class="callout small">
-          <p>FACT ≠ STORY.</p>
-          <p class="sub">The information matters. The story you attached to it may or may not be true.</p>
-        </div>
-        <button type="button" class="btn btn-small" data-panel-next>Next number</button>
-      </div>
-    </details>
+  <div class="tri">
+    <h3><span class="num">3</span> Your Money Number</h3>
+    <label class="q">About how much have I spent in the last year trying to feel better? Supplements, copays, visits, programs, tests, special foods.
+      <span class="money"><span>$</span><input type="text" inputmode="decimal" name="money_amount" class="field" placeholder="best estimate"></span>
+    </label>
+    <p class="hint">This is not here to make you feel guilty. It proves something: <strong>you have been trying.</strong> Maybe you needed a clearer place to start.</p>
+  </div>
 
-    <details class="panel">
-      <summary><span class="num">3</span> Your Money Number</summary>
-      <div class="panel-body">
-        <p>Now let's look at another kind of number.</p>
-        <p>About how much have I spent in the last year trying to feel better or manage my health?</p>
-        <p class="hint">Think about: supplements, copays, doctor visits, programs, tests, special foods, gym memberships, things ordered online, things you tried for a few weeks and stopped.</p>
-        <label class="q">My best estimate:
-          <span class="money"><span>$</span><input type="text" inputmode="decimal" name="money_amount" class="field" placeholder="0"></span>
-        </label>
-        <fieldset class="group">
-          <legend>Now go beyond money. What else has this already cost me?</legend>
-          <div class="grid2">
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Time"><span>Time</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Sleep"><span>Sleep</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Energy"><span>Energy</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Missed work"><span>Missed work</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Confidence"><span>Confidence</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Travel"><span>Travel</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Intimacy"><span>Intimacy</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Peace of mind"><span>Peace of mind</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="Time with family"><span>Time with family</span></label>
-            <label class="choice"><input type="checkbox" name="money_costs[]" value="other"><span>Something else:</span></label>
-          </div>
-          <input type="text" name="money_other" class="field inline" placeholder="Something else" aria-label="Something else">
-        </fieldset>
-        <label class="q">The cost I feel the most is:
-          <input type="text" name="money_most" class="field">
-        </label>
-        <div class="card soft">
-          <p>This is not here to make you feel guilty. It proves something important:</p>
-          <p class="big">YOU HAVE BEEN TRYING.</p>
-          <p>Maybe effort was never the problem. Maybe you needed a clearer place to start.</p>
-        </div>
-        <button type="button" class="btn btn-small" data-panel-next>Next number</button>
-      </div>
-    </details>
+  <div class="tri">
+    <h3><span class="num">4</span> Your Time Number</h3>
+    <label class="q">How long has this been taking up space in my life?
+      <span class="row">
+        <input type="text" inputmode="numeric" name="time_amount" class="field short" placeholder="0">
+        <select name="time_unit" class="field short" aria-label="Months or years">
+          <option value="months">months</option>
+          <option value="years">years</option>
+        </select>
+      </span>
+    </label>
+    <p class="hint">The calendar doesn't pause while we decide.</p>
+  </div>
 
-    <details class="panel">
-      <summary><span class="num">4</span> Your Time Number</summary>
-      <div class="panel-body">
-        <label class="q">How long has this been taking up space in my life?
-          <span class="row">
-            <input type="text" inputmode="numeric" name="time_amount" class="field short" placeholder="0">
-            <select name="time_unit" class="field short" aria-label="Months or years">
-              <option value="months">months</option>
-              <option value="years">years</option>
-            </select>
-          </span>
-        </label>
-        <label class="q">How long have I been saying: “I really need to do something about this”?
-          <input type="text" name="time_saying" class="field">
-        </label>
-        <p class="prompt">Now look forward.</p>
-        <label class="q">If the next five years kept moving in the same direction as the last five... what would concern me most?
-          <textarea name="time_concern" class="field" rows="3"></textarea>
-        </label>
-        <label class="q">And what do I NOT want to lose another five years to?
-          <textarea name="time_lose" class="field" rows="3"></textarea>
-        </label>
-        <div class="callout small">
-          <p>THE CALENDAR DOESN'T PAUSE WHILE WE DECIDE.</p>
-          <p class="sub">This isn't a prediction. It's a direction check.</p>
-        </div>
-        <button type="button" class="btn btn-small" data-panel-next>Next number</button>
-      </div>
-    </details>
-
-    <details class="panel">
-      <summary><span class="num">5</span> Your Life Number</summary>
-      <div class="panel-body">
-        <p>Now we get to the most important one.</p>
-        <p>Forget blood pressure for a moment. Forget A1C. Forget weight. Forget cholesterol.</p>
-        <p class="big">WHAT DO YOU WANT YOUR HEALTH FOR?</p>
-        <fieldset class="group">
-          <legend>Maybe you want to:</legend>
-          <div class="grid2">
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Travel"><span>Travel</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Enjoy retirement"><span>Enjoy retirement</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Play with your grandchildren"><span>Play with your grandchildren</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Feel good in your marriage"><span>Feel good in your marriage</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Finish your purpose"><span>Finish your purpose</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Build the business"><span>Build the business</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Serve God"><span>Serve God</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Stay independent"><span>Stay independent</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Dance"><span>Dance</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Walk"><span>Walk</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Create"><span>Create</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Care for someone you love"><span>Care for someone you love</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="Feel like yourself again"><span>Feel like yourself again</span></label>
-            <label class="choice"><input type="checkbox" name="life_wants[]" value="other"><span>Something else:</span></label>
-          </div>
-          <input type="text" name="life_other" class="field inline" placeholder="Something else" aria-label="Something else">
-        </fieldset>
-        <label class="q">If my body gave me more capacity, the thing I most want to be able to do is:
-          <textarea name="life_capacity" class="field" rows="2"></textarea>
-        </label>
-        <label class="q">Something I still have NOT done that I intend to do is:
-          <textarea name="life_notdone" class="field" rows="2"></textarea>
-        </label>
-        <div class="callout">
-          <p>THE NUMBER ISN'T THE DREAM.<br>THE LIFE BEHIND IT IS.</p>
-          <p class="sub">Now read that again. Because this is why the numbers matter.</p>
-        </div>
-      </div>
-    </details>
+  <div class="tri">
+    <h3><span class="num">5</span> Your Life Number</h3>
+    <p class="big">WHAT DO YOU WANT YOUR HEALTH FOR?</p>
+    <label class="q">If my body gave me more capacity, the thing I most want to be able to do is:
+      <textarea name="life_capacity" class="field" rows="2" placeholder="Travel. Play with the grandkids. Stay independent. Serve God. Feel like myself again."></textarea>
+    </label>
+    <p class="hint">The number isn't the dream. The life behind it is.</p>
   </div>
 
   <div class="actions">
     <button class="btn btn-ghost" data-back>Back</button>
-    <button class="btn btn-primary" data-next>Next: Look for the pattern</button>
+    <button class="btn btn-primary" data-next>Next: The 5 Hidden Triggers</button>
   </div>
 </section>
 
-<!-- ═══════════ 3 · PART 3 ═══════════ -->
-<section class="screen" data-step="3" data-part="Part 3" data-minutes="4" hidden>
-  <p class="eyebrow">Part 3 · About 4 minutes</p>
+<!-- ═══════════ 3 · PART 3 · QUIZ ═══════════ -->
+<section class="screen" data-step="3" data-part="Part 3" data-minutes="3" hidden>
+  <p class="eyebrow">Part 3 · About 3 minutes</p>
   <h2>Look for the Pattern</h2>
-  <p>Now we're going to take everything you just wrote and look through the Blood Pressure Triangle<sup>™</sup>.</p>
-  <p>Do not try to diagnose yourself. You are looking for clues.</p>
-  <p><strong>Before you take the quiz, answer from your gut.</strong></p>
+  <p>Five quick questions from the BP Triangle<sup>™</sup> Quiz. Pick the one answer that sounds most like you. Do not diagnose yourself. You are looking for clues.</p>
 
-  <div class="tri">
-    <h3>Stress</h3>
-    <p class="hint">Have I been living in a season of constant pressure, worry, caregiving, rushing, poor sleep, or never really turning “off”? Do I notice my readings or symptoms acting differently during stressful seasons?</p>
-    <label class="q">What I notice:<textarea name="tri_stress" class="field" rows="2"></textarea></label>
-  </div>
-  <div class="tri">
-    <h3>Sugar</h3>
-    <p class="hint">Have my blood sugar, A1C, belly weight, hunger, cravings, or energy changed together? Do I notice crashes, strong cravings, or big changes in how I feel around meals?</p>
-    <label class="q">What I notice:<textarea name="tri_sugar" class="field" rows="2"></textarea></label>
-  </div>
-  <div class="tri">
-    <h3>Sodium</h3>
-    <p class="hint">How much of what I eat comes from restaurants, packaged foods, prepared foods, or foods where I don't really know the sodium? Do I notice certain meals or eating patterns showing up around changes in my readings?</p>
-    <label class="q">What I notice:<textarea name="tri_sodium" class="field" rows="2"></textarea></label>
-  </div>
-  <div class="tri">
-    <h3>Hormone changes</h3>
-    <p class="hint">Did some of these changes become louder as my body changed in my 40s, 50s, 60s, or beyond? Did things like sleep, belly weight, energy, mood, hot flashes, hair, or other body changes begin showing up during the same season?</p>
-    <label class="q">What I notice:<textarea name="tri_hormones" class="field" rows="2"></textarea></label>
-  </div>
-
-  <fieldset class="group">
-    <legend>Now answer this BEFORE taking the quiz. FROM MY GUT... the area that stands out most to me is:</legend>
-    <label class="choice"><input type="radio" name="gut" value="stress"><span>Stress</span></label>
-    <label class="choice"><input type="radio" name="gut" value="sugar"><span>Sugar</span></label>
-    <label class="choice"><input type="radio" name="gut" value="sodium"><span>Sodium</span></label>
-    <label class="choice"><input type="radio" name="gut" value="hormones"><span>Hormone changes / the bigger pattern</span></label>
-    <label class="choice"><input type="radio" name="gut" value="unsure"><span>I'm still not sure</span></label>
+  <fieldset class="group quiz">
+    <legend><span class="qn">1</span> When your day gets stressful, what does your body actually do?</legend>
+    <label class="choice"><input type="radio" name="q1" value="stress"><span>My chest tightens and my heart pounds for a while after.</span></label>
+    <label class="choice"><input type="radio" name="q1" value="sugar"><span>I crave something sweet almost immediately.</span></label>
+    <label class="choice"><input type="radio" name="q1" value="sodium"><span>I reach for something salty and crunchy without thinking.</span></label>
+    <label class="choice"><input type="radio" name="q1" value="sleep"><span>I get wired, and it messes with me falling asleep that night.</span></label>
+    <label class="choice"><input type="radio" name="q1" value="stillness"><span>I just sit and scroll. I do not move at all.</span></label>
   </fieldset>
-  <label class="q">I chose it because:
-    <textarea name="gut_why" class="field" rows="2"></textarea>
-  </label>
+
+  <fieldset class="group quiz">
+    <legend><span class="qn">2</span> How do you feel an hour or two after a big meal of pasta, bread, or dessert?</legend>
+    <label class="choice"><input type="radio" name="q2" value="stress"><span>My body feels fine, but my mind races more than usual.</span></label>
+    <label class="choice"><input type="radio" name="q2" value="sugar"><span>Slow and foggy. Sometimes shaky or dizzy.</span></label>
+    <label class="choice"><input type="radio" name="q2" value="sodium"><span>Puffy. My rings or shoes feel tighter than that morning.</span></label>
+    <label class="choice"><input type="radio" name="q2" value="sleep"><span>I crash hard and want a nap right away.</span></label>
+    <label class="choice"><input type="radio" name="q2" value="stillness"><span>I do not really notice. I am usually sitting anyway.</span></label>
+  </fieldset>
+
+  <fieldset class="group quiz">
+    <legend><span class="qn">3</span> How often does your food come from a box, can, restaurant, or drive-thru?</legend>
+    <label class="choice"><input type="radio" name="q3" value="stress"><span>More when I am stressed. It is just the fastest option.</span></label>
+    <label class="choice"><input type="radio" name="q3" value="sugar"><span>Often, and it usually comes with something sweet too.</span></label>
+    <label class="choice"><input type="radio" name="q3" value="sodium"><span>Most days. Easy wins over cooking.</span></label>
+    <label class="choice"><input type="radio" name="q3" value="sleep"><span>Late at night, when I should be winding down instead.</span></label>
+    <label class="choice"><input type="radio" name="q3" value="stillness"><span>Often, and I eat it sitting at a desk or on the couch.</span></label>
+    <label class="choice"><input type="radio" name="q3" value="none"><span>I cook almost everything myself, so this doesn't really apply.</span></label>
+  </fieldset>
+
+  <fieldset class="group quiz">
+    <legend><span class="qn">4</span> What does a normal night of sleep really look like for you?</legend>
+    <label class="choice"><input type="radio" name="q4" value="stress"><span>My mind will not shut off. I replay the whole day.</span></label>
+    <label class="choice"><input type="radio" name="q4" value="sugar"><span>I wake up around 2 or 3 a.m., sometimes hungry.</span></label>
+    <label class="choice"><input type="radio" name="q4" value="sodium"><span>I get up to use the bathroom more than once a night.</span></label>
+    <label class="choice"><input type="radio" name="q4" value="sleep"><span>I am tired all day, no matter how many hours I got.</span></label>
+    <label class="choice"><input type="radio" name="q4" value="stillness"><span>I sleep fine, but I wake up stiff and heavy anyway.</span></label>
+  </fieldset>
+
+  <fieldset class="group quiz">
+    <legend><span class="qn">5</span> Add up desk, car, and couch. How much of your day do you spend sitting?</legend>
+    <label class="choice"><input type="radio" name="q5" value="stress"><span>A lot, and I feel tension build the longer I sit.</span></label>
+    <label class="choice"><input type="radio" name="q5" value="sugar"><span>A lot, and I snack more the longer I sit at my desk.</span></label>
+    <label class="choice"><input type="radio" name="q5" value="sodium"><span>A lot. My legs or ankles feel swollen by evening.</span></label>
+    <label class="choice"><input type="radio" name="q5" value="sleep"><span>A lot, but I still do not feel rested at the end of it.</span></label>
+    <label class="choice"><input type="radio" name="q5" value="stillness"><span>Most of it. Some days 8 hours or more, easily.</span></label>
+  </fieldset>
 
   <div class="actions">
     <button class="btn btn-ghost" data-back>Back</button>
-    <button class="btn btn-primary" data-next>Next: Take the quiz</button>
+    <button class="btn btn-primary" data-next>See what the clues point to</button>
   </div>
 </section>
 
-<!-- ═══════════ 4 · PART 4 ═══════════ -->
+<!-- ═══════════ 4 · PART 4 · BIG DOMINO ═══════════ -->
 <section class="screen" data-step="4" data-part="Part 4" data-minutes="3" hidden>
   <p class="eyebrow">Part 4 · About 3 minutes</p>
-  <h2>Take the BP Triangle Quiz</h2>
-  <p>Take the free 90-second BP Triangle Quiz. It opens in a new tab. Your answers here are saved; come back when you finish.</p>
-  <p>Do not take the result as a diagnosis. Use it as another clue.</p>
-  <div class="actions center">
-    <a class="btn btn-primary" href="https://bpquiz.com/?utm_source=challenge&utm_medium=day1&utm_campaign=cmlc-2026-09-22" target="_blank" rel="noopener" data-track="day1_quiz_open">Open the quiz at BPQuiz.com ↗</a>
-  </div>
-
-  <label class="q">My quiz result pointed me toward:
-    <select name="quiz_result" class="field">
-      <option value="">Choose one</option>
-      <option value="stress">Stress</option>
-      <option value="sugar">Sugar</option>
-      <option value="sodium">Sodium</option>
-      <option value="hormones">Hormone changes / bigger pattern</option>
-      <option value="notyet">I have not taken it yet</option>
-    </select>
-  </label>
-  <p class="q">My gut pointed me toward: <strong id="gutEcho" class="echo">—</strong></p>
-
-  <fieldset class="group">
-    <legend>Now compare them. Did they point in the same direction?</legend>
-    <label class="choice"><input type="radio" name="agreement" value="yes"><span>Yes</span></label>
-    <label class="choice"><input type="radio" name="agreement" value="no"><span>No</span></label>
-    <label class="choice"><input type="radio" name="agreement" value="somewhat"><span>Somewhat</span></label>
-  </fieldset>
-
-  <div class="card soft">
-    <p>If they were different, that's okay. Ask one more question:</p>
-    <p class="big">WHICH AREA KEEPS SHOWING UP IN MY REAL LIFE?</p>
-    <p>Look back through everything you wrote tonight. Your fear. Your health information. Your spending. Your time. Your life. Your Triangle answers. Your quiz result.</p>
-  </div>
-  <label class="q">What pattern keeps raising its hand?
-    <textarea name="pattern" class="field" rows="3"></textarea>
-  </label>
-
-  <div class="actions">
-    <button class="btn btn-ghost" data-back>Back</button>
-    <button class="btn btn-primary" data-next>Next: Find your Big Domino</button>
-  </div>
-</section>
-
-<!-- ═══════════ 5 · PART 5 ═══════════ -->
-<section class="screen" data-step="5" data-part="Part 5" data-minutes="2" hidden>
-  <p class="eyebrow">Part 5 · About 2 minutes</p>
   <h2>Find Your Big Domino</h2>
-  <p>You are not choosing the cause of every problem in your body. You are choosing the area that deserves a closer look first.</p>
+
+  <div class="card soft" id="quizVerdict">
+    <p class="recap-label">Your five answers pointed most toward</p>
+    <p class="big" id="quizTop">—</p>
+    <p class="hint" id="quizNote">Answer the five questions on the last screen to see your result.</p>
+  </div>
+
+  <p>You are not choosing the cause of every problem in your body. You are choosing the area that deserves a closer look first. Look at your quiz result, then look at everything else you wrote tonight. <strong>Which area keeps showing up in your real life?</strong></p>
 
   <fieldset class="group">
-    <legend>Based on everything I saw tonight... MY POSSIBLE BIG DOMINO IS:</legend>
+    <legend>MY POSSIBLE BIG DOMINO IS:</legend>
     <label class="choice big-choice"><input type="radio" name="domino" value="stress"><span>Stress</span></label>
     <label class="choice big-choice"><input type="radio" name="domino" value="sugar"><span>Sugar</span></label>
     <label class="choice big-choice"><input type="radio" name="domino" value="sodium"><span>Sodium</span></label>
-    <label class="choice big-choice"><input type="radio" name="domino" value="hormones"><span>Hormone changes / bigger pattern</span></label>
+    <label class="choice big-choice"><input type="radio" name="domino" value="sleep"><span>Sleep</span></label>
+    <label class="choice big-choice"><input type="radio" name="domino" value="stillness"><span>Stillness (sitting too long)</span></label>
+    <label class="choice big-choice"><input type="radio" name="domino" value="hormones"><span>Hormone changes / the bigger pattern</span></label>
     <label class="choice big-choice"><input type="radio" name="domino" value="unsure"><span>Still looking</span></label>
   </fieldset>
   <p id="dominoNudge" class="nudge" hidden>No pick yet. “Still looking” is an honest answer too. Tap Next again to continue anyway.</p>
 
-  <p class="prompt">The clues that led me there are:</p>
-  <label class="q"><span class="num">1</span><input type="text" name="clue1" class="field"></label>
-  <label class="q"><span class="num">2</span><input type="text" name="clue2" class="field"></label>
-  <label class="q"><span class="num">3</span><input type="text" name="clue3" class="field"></label>
-  <p class="callout small"><span>That's enough. Three clues. Not 76.</span></p>
+  <div id="starts" class="card starts" hidden>
+    <p class="recap-label">3 things you can start right away</p>
+    <h3 id="startsName"></h3>
+    <p id="startsCopy" class="hint"></p>
+    <ol class="starts-list">
+      <li><span class="tag">Herb</span><span id="startHerb"></span></li>
+      <li><span class="tag">Food swap</span><span id="startFood"></span></li>
+      <li><span class="tag">One habit</span><span id="startHabit"></span></li>
+    </ol>
+  </div>
+
+  <label class="q">The one clue that convinced me:
+    <input type="text" name="clue1" class="field" placeholder="One clue. Not 76.">
+  </label>
 
   <div class="actions">
     <button class="btn btn-ghost" data-back>Back</button>
@@ -392,21 +248,12 @@
   </div>
 </section>
 
-<!-- ═══════════ 6 · PART 6 ═══════════ -->
-<section class="screen" data-step="6" data-part="Part 6" data-minutes="2" hidden>
-  <p class="eyebrow">Part 6 · About 2 minutes</p>
+<!-- ═══════════ 5 · PART 5 · UNLOCK ═══════════ -->
+<section class="screen" data-step="5" data-part="Part 5" data-minutes="2" hidden>
+  <p class="eyebrow">Part 5 · About 2 minutes</p>
   <h2>Your Day 1 Unlock</h2>
-  <p><strong>This is the most important part of the entire exercise.</strong></p>
-  <p>Look back at what you wrote under Your Life Number. Then look at your possible Big Domino. Complete this sentence:</p>
+  <p><strong>This is the most important part of the entire exercise.</strong> Look at what you want your health for. Then look at your Big Domino. Finish these:</p>
 
-  <label class="q">I WANT MY HEALTH FOR...
-    <textarea name="unlock_for" class="field" rows="2"></textarea>
-  </label>
-  <label class="q">And because that matters to me... THE FIRST AREA I AM WILLING TO PAY CLOSER ATTENTION TO IS...
-    <input type="text" name="unlock_area" class="field">
-  </label>
-
-  <p class="prompt">Now finish this:</p>
   <label class="q">Before tonight, I thought...
     <textarea name="before" class="field" rows="2"></textarea>
   </label>
@@ -418,24 +265,23 @@
   </label>
   <p class="hint">Stop there. Read those three answers. That is your Day 1 breakthrough.</p>
 
-  <fieldset class="group">
-    <legend>THREE THINGS I KNOW TONIGHT. Put a check beside each one as you read it.</legend>
-    <label class="choice"><input type="checkbox" name="know1" value="1"><span>My numbers are information. They are not my identity.</span></label>
-    <label class="choice"><input type="checkbox" name="know2" value="1"><span>Several numbers may be different clues in the same story.</span></label>
-    <label class="choice"><input type="checkbox" name="know3" value="1"><span>I do not need to fix everything tonight. I need to know what deserves my attention first.</span></label>
-  </fieldset>
-  <p class="hint">And now you have somewhere to start.</p>
+  <div class="card soft">
+    <p><strong>Three things I know tonight:</strong></p>
+    <ul class="plain">
+      <li>My numbers are information. They are not my identity.</li>
+      <li>Several numbers may be different clues in the same story.</li>
+      <li>I do not need to fix everything tonight. I need to know what deserves my attention first.</li>
+    </ul>
+  </div>
 
   <fieldset class="group">
-    <legend>Before you close this: pick the sentence that feels most true right now.</legend>
+    <legend>Pick the sentence that feels most true right now.</legend>
     <label class="choice"><input type="radio" name="feeling" value="clearer"><span>I feel clearer.</span></label>
     <label class="choice"><input type="radio" name="feeling" value="relieved"><span>I feel relieved.</span></label>
     <label class="choice"><input type="radio" name="feeling" value="hopeful"><span>I feel hopeful.</span></label>
     <label class="choice"><input type="radio" name="feeling" value="lessafraid"><span>I feel less afraid of the information.</span></label>
     <label class="choice"><input type="radio" name="feeling" value="somewhere"><span>I finally feel like I have somewhere to start.</span></label>
     <label class="choice"><input type="radio" name="feeling" value="questions"><span>I still have questions, but I don't feel as lost.</span></label>
-    <label class="choice"><input type="radio" name="feeling" value="other"><span>Something else:</span></label>
-    <input type="text" name="feeling_other" class="field inline" placeholder="Something else" aria-label="Something else">
   </fieldset>
 
   <div class="actions">
@@ -444,13 +290,14 @@
   </div>
 </section>
 
-<!-- ═══════════ 7 · RECAP ═══════════ -->
-<section class="screen" data-step="7" data-part="Your Day 1 Unlock" data-minutes="" hidden>
+<!-- ═══════════ 6 · RECAP ═══════════ -->
+<section class="screen" data-step="6" data-part="Your Day 1 Unlock" data-minutes="" hidden>
   <p class="eyebrow">Tonight you looked.</p>
 
   <div id="recapCard" class="recap">
     <p class="recap-label">My possible Big Domino</p>
     <p id="recapDomino" class="recap-domino">STILL LOOKING</p>
+    <ol id="recapStarts" class="recap-starts"></ol>
     <div class="recap-lines">
       <p><span>Before tonight, I thought</span><em id="recapBefore"></em></p>
       <p><span>Tonight, I realized</span><em id="recapTonight"></em></p>
@@ -467,7 +314,7 @@
 
   <div class="card next">
     <h3>Tomorrow, we are going to ask: “WHO FOUND A CLUE?”</h3>
-    <p>You do not have to share your private health numbers. Type your possible Big Domino in the chat: <strong>STRESS</strong>, <strong>SUGAR</strong>, <strong>SODIUM</strong>, <strong>HORMONE CHANGES / BIGGER PATTERN</strong>, or <strong>STILL LOOKING</strong>.</p>
+    <p>You do not have to share your private health numbers. Type your possible Big Domino in the chat: <strong>STRESS</strong>, <strong>SUGAR</strong>, <strong>SODIUM</strong>, <strong>SLEEP</strong>, <strong>STILLNESS</strong>, <strong>HORMONE CHANGES</strong>, or <strong>STILL LOOKING</strong>.</p>
     <p>Because even “still looking” is different from hiding.</p>
     <ul class="plain">
       <li><strong>Day 2 is Wednesday, September 23, 2026 at 12:00pm ET / 11:00am CT.</strong> Annie teaches hormones. Same Zoom link.</li>
