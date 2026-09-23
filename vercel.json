@@ -47,7 +47,7 @@
       "destination": "/cohort-apply/index.html"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
   ],
