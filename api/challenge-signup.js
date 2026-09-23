@@ -233,11 +233,12 @@ function zoomTrackedUrl(email) {
   return email ? `${base}&e=${encodeURIComponent(String(email).trim().toLowerCase())}` : base;
 }
 
-// 2026-08-25 (Joel): the private Facebook group is where the daily workbooks,
-// replays and the rest of the room live. A registrant who never joins it gets
-// the calls and nothing else, so the confirmation names it explicitly instead
-// of leaving it to a later email.
-const FB_GROUP_URL = (process.env.CHALLENGE_FB_GROUP_URL || 'https://www.facebook.com/groups/2124669075134383').trim();
+// 2026-09-23 (Joel): the cohort now lives in Skool, not the Facebook group.
+// The daily workbooks, replays and the rest of the room are all there, so a
+// registrant who never joins gets the calls and nothing else. The confirmation
+// names it explicitly instead of leaving it to a later email.
+// (Was CHALLENGE_FB_GROUP_URL -> facebook.com/groups/2124669075134383 until 2026-09-22.)
+const COMMUNITY_URL = (process.env.CHALLENGE_COMMUNITY_URL || 'https://www.skool.com/change-my-life-challenge-5814/about').trim();
 
 const JOEL_EMAIL = process.env.JOEL_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
 const FROM_INTERNAL = 'BraveWorks Ops <noreply@bpquiz.com>';
@@ -478,24 +479,24 @@ function zoomHtml(email) {
   </div>`;
 }
 
-// ─── Facebook group: where the workbooks and replays actually live ────
+// ─── Community: where the workbooks and replays actually live ────────
 // The calls are only half of it. Day workbooks, replays and the rest of the
-// room are in the private group, so a registrant who never joins gets less
+// room are in the Skool community, so a registrant who never joins gets less
 // than they signed up for. This block is deliberately as loud as the Zoom one.
-function fbGroupHtml() {
-  if (!FB_GROUP_URL) return '';
+function communityHtml() {
+  if (!COMMUNITY_URL) return '';
   return `<div style="background:${PALETTE.paperWarm};border-radius:12px;padding:20px 22px;margin:0 0 24px;">
-    <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:10px;">Join the private group, this is step two</div>
-    <p style="font-size:15px;line-height:1.6;color:${PALETTE.inkSoft};margin:0 0 14px;">Every daily workbook, every replay, and the rest of the room going through this week alongside you all live inside our private Facebook group. Join it today so nothing has to be chased down later.</p>
-    ${ctaButton('Join the Facebook group', esc(FB_GROUP_URL))}
+    <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${PALETTE.sage};font-weight:700;margin-bottom:10px;">Join the community, this is step two</div>
+    <p style="font-size:15px;line-height:1.6;color:${PALETTE.inkSoft};margin:0 0 14px;">Every daily workbook, every replay, and the rest of the room going through this week alongside you all live inside our private Skool community. Join it today so nothing has to be chased down later.</p>
+    ${ctaButton('Join the community', esc(COMMUNITY_URL))}
   </div>`;
 }
 
-function fbGroupText() {
-  if (!FB_GROUP_URL) return '';
-  return `JOIN THE PRIVATE GROUP, THIS IS STEP TWO
-Every daily workbook, every replay, and the rest of the room live inside our private Facebook group. Join it today so nothing has to be chased down later.
-${FB_GROUP_URL}`;
+function communityText() {
+  if (!COMMUNITY_URL) return '';
+  return `JOIN THE COMMUNITY, THIS IS STEP TWO
+Every daily workbook, every replay, and the rest of the room live inside our private Skool community. Join it today so nothing has to be chased down later.
+${COMMUNITY_URL}`;
 }
 
 function zoomText(email) {
@@ -575,7 +576,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
       `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.`
     ),
     zoomHtml(email),
-    fbGroupHtml(),
+    communityHtml(),
     h2('The three days'),
     nightsHtml(),
     p(
@@ -602,7 +603,7 @@ ${zoomText(email)}
 
 Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all three days on your calendar.
 
-${fbGroupText()}
+${communityText()}
 
 THE THREE DAYS
 ${nightsText()}
