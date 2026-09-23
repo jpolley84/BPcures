@@ -183,6 +183,18 @@ export const BIRTHDAY_EMAILS = {
    "includePaused": true,
    "fromName": "Joel Polley <joel@bpquiz.com>",
    "cronDate": "2026-09-22"
+  },
+  "22": {
+   "subject": "Annie's signature talk is tonight (women only)",
+   "preheader": "Bring Sexy Back. 6 PM Central, live on Zoom.",
+   "body": "{{first_name}},\n\nTonight Annie teaches the one people ask her for by name.\n\nBring Sexy Back.\n\n6:00 PM Central, 7:00 PM Eastern, live on Zoom.\n\nIt is women only. Not because we are being precious about it, but because Annie says things in that room she will not say with men in it.\n\nIf you are a man reading this, it is not for you, but it is very much for someone you love. Send it to her.\n\nHere is what she covers.\n\nWhy your energy left and did not come back after 40. Why the weight sits where it never used to sit. The thinning hair, and the chin hair nobody warns you about. The moods that show up out of nowhere. The libido you assumed was just gone for good.\n\nAnd the part most women never get told: almost none of that is age.\n\nIt is hormones, and hormones answer to what you feed them.\n\nAnnie is a nurse. She is also a woman who lost herself for a stretch of years and got herself back, and she teaches this like someone who has been on your side of it.\n\nThis is night two of the Change My Life Challenge, which is running right now. Your seat gets you tonight, tomorrow night, and every replay through Monday.\n\n[BUTTON: COME TONIGHT → https://changemylifechallenge.com]\n\nIf you cannot make it live, come anyway and watch the replay. The women who show up are the ones who start.\n\nJoel + Annie\n\nP.S. Tomorrow is Take Back Your Future, where all three nights turn into one clear next step. You want to be there for both.",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "includePaused": true,
+   "fromName": "Annie & Joel <joel@bpquiz.com>"
   }
  },
  "annie": {
@@ -305,6 +317,17 @@ export const BIRTHDAY_EMAILS = {
    ],
    "fromName": "Annie <annie@restoreherhormones.com>",
    "cronDate": "2026-09-22"
+  },
+  "22": {
+   "subject": "Annie's signature talk is tonight (women only)",
+   "preheader": "Bring Sexy Back. 6 PM Central, live on Zoom.",
+   "body": "{{first_name}},\n\nTonight Annie teaches the one people ask her for by name.\n\nBring Sexy Back.\n\n6:00 PM Central, 7:00 PM Eastern, live on Zoom.\n\nIt is women only. Not because we are being precious about it, but because Annie says things in that room she will not say with men in it.\n\nIf you are a man reading this, it is not for you, but it is very much for someone you love. Send it to her.\n\nHere is what she covers.\n\nWhy your energy left and did not come back after 40. Why the weight sits where it never used to sit. The thinning hair, and the chin hair nobody warns you about. The moods that show up out of nowhere. The libido you assumed was just gone for good.\n\nAnd the part most women never get told: almost none of that is age.\n\nIt is hormones, and hormones answer to what you feed them.\n\nAnnie is a nurse. She is also a woman who lost herself for a stretch of years and got herself back, and she teaches this like someone who has been on your side of it.\n\nThis is night two of the Change My Life Challenge, which is running right now. Your seat gets you tonight, tomorrow night, and every replay through Monday.\n\n[BUTTON: COME TONIGHT → https://changemylifechallenge.com]\n\nIf you cannot make it live, come anyway and watch the replay. The women who show up are the ones who start.\n\nJoel + Annie\n\nP.S. Tomorrow is Take Back Your Future, where all three nights turn into one clear next step. You want to be there for both.",
+   "plain": true,
+   "exclude": [
+    "cmlc922:exclude",
+    "challenge:2026-09-22:members"
+   ],
+   "fromName": "Annie <annie@restoreherhormones.com>"
   }
  }
 };
