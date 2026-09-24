@@ -59,6 +59,12 @@ export default function ChallengeConfirmedPage() {
   // 'working' | 'confirmed' | 'already' | 'nosession' | 'failed'
   const [state, setState] = useState(sessionId ? 'working' : 'nosession');
   const [email, setEmail] = useState('');
+  // 2026-09-24: a GA buyer emailed asking why she was shown a total of $197
+  // after paying $97. This page confirmed a seat without ever stating what was
+  // charged. amountCents comes from the Stripe session by way of
+  // /api/challenge-signup, so the line below is the charge, not a guess.
+  const [amountCents, setAmountCents] = useState(null);
+  const [paidTier, setPaidTier] = useState('');
   const fired = useRef(false);
 
   useEffect(() => {
@@ -85,6 +91,8 @@ export default function ChallengeConfirmedPage() {
         if (cancelled) return;
         if (res.ok && data.ok) {
           if (data.email) setEmail(String(data.email));
+          if (Number.isFinite(data.amountCents)) setAmountCents(data.amountCents);
+          if (data.tier) setPaidTier(String(data.tier));
           setState(data.already ? 'already' : 'confirmed');
           track('chal_registered', { tier: tier || data.tier || 'unknown', already: Boolean(data.already) });
           // Ad-pixel conversion (2026-08-24): first-time paid registration only
@@ -106,6 +114,20 @@ export default function ChallengeConfirmedPage() {
     return () => { cancelled = true; };
   }, [sessionId, tier]);
 
+
+  // The seat charge, as Stripe recorded it. paidTier comes from the session
+  // metadata; the tier in the URL is what the upsell page forwarded.
+  const effectiveTier = paidTier || tier;
+  const seatLabel = effectiveTier === 'challenge-vip' ? 'VIP' : 'General Admission';
+  const seatAmount =
+    Number.isFinite(amountCents) && amountCents > 0
+      ? `$${(amountCents / 100).toFixed(2).replace(/\.00$/, '')}`
+      : effectiveTier === 'challenge-vip'
+        ? '$197'
+        : '$97';
+  // She bought GA, then took the +$100 one-click upgrade on /challenge-vip.
+  // Two separate charges, so the receipt names both instead of quoting one.
+  const upgraded = tier === 'challenge-vip' && effectiveTier !== 'challenge-vip';
 
   return (
     <div style={{ background: CREAM, minHeight: '100vh', color: INK, fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -136,6 +158,23 @@ export default function ChallengeConfirmedPage() {
                 ? <>Your confirmation is on its way to <strong>{email}</strong>.</>
                 : 'Your confirmation is on its way to the address you paid with.'}
             </p>
+
+            <div style={{ background: '#EEF4F0', border: '1px solid #C8DCD0', borderRadius: 12, padding: '0.9rem 1.1rem', margin: '1.2rem 0' }}>
+              <p style={{ margin: '0 0 0.35rem', fontWeight: 700 }}>Your receipt</p>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: '#3A4A48' }}>
+                {upgraded
+                  ? <>You paid <strong>{seatAmount}</strong> for your seat and <strong>$100</strong> for the VIP upgrade, so
+                      your total is <strong>$197</strong>. Two charges, both one time.</>
+                  : <>You paid <strong>{seatAmount}</strong> for <strong>{seatLabel}</strong>. One payment.</>}
+                {' '}Nothing renews, and nothing else is owed.
+              </p>
+              {email && (
+                <p style={{ margin: '0.5rem 0 0', fontSize: '0.95rem', color: '#3A4A48' }}>
+                  Your seat is registered to <strong>{email}</strong>. Every email about these three days, including your
+                  Zoom link, goes to that address. If that is the wrong inbox, write to {SUPPORT_EMAIL} and I will move it.
+                </p>
+              )}
+            </div>
 
             <div style={{ background: '#FFFFFF', border: '1px solid #E4DACE', borderRadius: 12, padding: '1rem 1.1rem', margin: '1.2rem 0' }}>
               <p style={{ margin: '0 0 0.6rem', fontWeight: 700 }}>Your three days</p>

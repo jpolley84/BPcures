@@ -202,6 +202,25 @@ h1,h2,h3{
   padding:2px 0;
 }
 .math-row strong{color:var(--deep)}
+.paid-note{
+  margin:0 0 13px;
+  padding:10px 13px;
+  background:#eaf3ee;
+  border:1px solid #bcd8c8;
+  border-radius:7px;
+  font-size:.86rem;
+  line-height:1.5;
+  color:var(--green);
+}
+.paid-note strong{color:var(--deep)}
+.math-row.keep-row{
+  border-top:1px dashed var(--line);
+  margin-top:6px;
+  padding-top:8px;
+  font-size:.86rem;
+  font-weight:800;
+  color:var(--green);
+}
 .math-row.total-price{
   border-top:1px solid #ddcfaf;
   margin-top:5px;
@@ -380,7 +399,7 @@ h1,h2,h3{
   <div class="wrap">
     <div class="kicker">ONE-TIME VIP UPGRADE</div>
     <h1>Upgrade Your Change My Life Challenge To <span>VIP</span></h1>
-    <p class="sub">You already said yes to the Challenge. For just $100 more, move into the VIP coaching room and make your total VIP price $197.</p>
+    <p class="sub"><strong>Your $97 seat is paid and confirmed. You do not owe anything else.</strong> This page is one optional extra. For $100 more you can move into the VIP coaching room. If you do not want it, skip it and your $97 seat stays exactly as it is.</p>
   </div>
 </header>
 
@@ -459,23 +478,26 @@ h1,h2,h3{
 
       <aside class="card order">
         <div class="upgrade-big">ONE-TIME VIP UPGRADE</div>
-        <h2>Wait — Your Order Isn’t Complete Yet</h2>
+        <h2>Your $97 Seat Is Paid. This Part Is Optional.</h2>
+        <div class="paid-note"><strong>Paid today: $97.</strong> General Admission, all three days. Your confirmation email is on its way.</div>
 
         <div class="math">
-          <div class="math-row"><span>Already paid for Challenge</span><strong>$97</strong></div>
-          <div class="math-row"><span>Add VIP today</span><strong>$100</strong></div>
-          <div class="math-row total-price"><span>Your total VIP price</span><strong>$197</strong></div>
+          <div class="math-row"><span>Paid today (your seat)</span><strong>$97</strong></div>
+          <div class="math-row"><span>If you add VIP</span><strong>+ $100</strong></div>
+          <div class="math-row total-price"><span>Total <em>only if</em> you add VIP</span><strong>$197</strong></div>
+          <div class="math-row keep-row"><span>Total if you skip VIP</span><strong>$97</strong></div>
         </div>
 
         <div class="pay-label">ADD VIP TODAY FOR</div>
         <div class="pay-today">$100</div>
 
-        <p class="no-reenter"><strong>No need to enter your information again.</strong> Your $97 seat is secure — one decision left before your order is final.</p>
+        <p class="no-reenter"><strong>No need to enter your information again.</strong> Your $97 seat is already secure and nothing more will be charged unless you press the orange button below.</p>
 
         <div class="checkout-mini">
-          <div class="row"><span>Product</span><strong>Change My Life VIP Upgrade</strong></div>
-          <div class="row"><span>Additional charge today</span><strong>$100</strong></div>
-          <div class="row"><span>Total VIP investment</span><strong>$197</strong></div>
+          <div class="row"><span>Optional product</span><strong>Change My Life VIP Upgrade</strong></div>
+          <div class="row"><span>Extra charge if you say yes</span><strong>$100</strong></div>
+          <div class="row"><span>Your total if you say yes</span><strong>$197</strong></div>
+          <div class="row"><span>Your total if you say no</span><strong>$97 (already paid)</strong></div>
           <div class="secure-line">✓ USE THE PAYMENT METHOD FROM MY CHALLENGE ORDER</div>
         </div>
 
@@ -486,7 +508,7 @@ h1,h2,h3{
         <div class="oneclick">One click. No new form. No re-entering your card. You become VIP immediately.</div>
 
         <!-- CLICKFUNNELS: decline / continue to next funnel step -->
-        <a class="decline" href="#">No thanks — I’ll pass on the 6 PM Q&amp;A hours and the Bonus Day, and keep my regular seat.</a>
+        <a class="decline" href="#">No thanks. Keep my $97 seat as it is and take me to my confirmation.</a>
       </aside>
 
     </div>

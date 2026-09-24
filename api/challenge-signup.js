@@ -515,7 +515,13 @@ function zoomText(email) {
 // Wording follows the approved /challenge copy document. Zero em dashes in
 // visible copy. No clinical outcome promised anywhere. No seat count, no
 // countdown, no scarcity: the only deadline is that Night 1 is live.
-function registrationEmail({ firstName, isVip, email, free = false }) {
+// 2026-09-24 (Andrea Hackney, 09-23): a GA buyer who paid $97 once asked why
+// she was being shown a total of $197. The +$100 VIP upsell page answered that
+// question badly, and this email did not answer it at all: it never stated the
+// amount, the tier, or the address the seat is tied to. amountCents comes
+// straight off the Stripe session, so the receipt block below is the charge,
+// not a hardcoded guess.
+function registrationEmail({ firstName, isVip, email, free = false, amountCents = null }) {
   const name = firstName ? esc(firstName) : 'friend';
   const unsubUrl = unsubUrlFor(email);
   const provenance = `you registered for ${CHALLENGE.name} at changemylifechallenge.com`;
@@ -553,6 +559,22 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
   // the offer the buyer accepted, so the receipt may not narrow it afterward.
   // Only the price label differs between tiers.
   const priceLabel = isVip ? CHALLENGE.vipPriceLabel : CHALLENGE.seatPriceLabel;
+  // Prefer the number Stripe actually charged. Fall back to the tier label
+  // only when the caller had no session amount to hand us.
+  const paidLabel =
+    Number.isFinite(amountCents) && amountCents > 0
+      ? `$${(amountCents / 100).toFixed(2).replace(/\.00$/, '')}`
+      : priceLabel;
+  const tierLabel = isVip ? 'VIP' : 'General Admission';
+  const receiptHtml = free
+    ? ''
+    : callout({
+        kicker: 'Your receipt',
+        body: `<strong>You paid ${esc(paidLabel)} for ${esc(tierLabel)}.</strong> That is one payment, and it is the whole price of your seat. Nothing renews and nothing else is owed.<br/><br/>Your seat is registered to <strong>${esc(email)}</strong>. Every email about these three days, including your Zoom link, goes to that address, so watch that inbox. If it is the wrong one, reply to this email and I will move your seat.`,
+      });
+  const receiptText = free
+    ? ''
+    : `YOUR RECEIPT\nYou paid ${paidLabel} for ${tierLabel}. That is one payment, and it is the whole price of your seat. Nothing renews and nothing else is owed.\nYour seat is registered to ${email}. Every email about these three days, including your Zoom link, goes to that address, so watch that inbox. If it is the wrong one, reply to this email and I will move your seat.\n`;
   // 2026-08-03: the FREE seat has no refund to promise and no kit to deliver
   // (kit moved into VIP), so its "plain part" is a plain statement instead of
   // a guarantee, and its second prep item becomes the honest VIP invitation.
@@ -575,6 +597,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
     p(
       `Your ${free ? 'free ' : ''}seat is saved for <strong>${esc(CHALLENGE.name)}</strong>. Three days, live, ${esc(CHALLENGE.startLabel)} through ${esc(CHALLENGE.endLabel)}, ${esc(CHALLENGE.timeEt)} and ${esc(CHALLENGE.timeCt)}, ${esc(CHALLENGE.nightLength)} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.`
     ),
+    receiptHtml,
     zoomHtml(email),
     communityHtml(),
     h2('The three days'),
@@ -599,6 +622,7 @@ function registrationEmail({ firstName, isVip, email, free = false }) {
 
 Your ${free ? 'free ' : ''}seat is saved for ${CHALLENGE.name}. Three days, live, ${CHALLENGE.startLabel} through ${CHALLENGE.endLabel}, ${CHALLENGE.timeEt} and ${CHALLENGE.timeCt}, ${CHALLENGE.nightLength} a day. Come with your camera on if you can. This is a safe space: a room of women going through the same things, coached by two nurses who have heard it all. Nobody is judged, and you never have to share anything you want to keep private.
 
+${receiptText}
 ${zoomText(email)}
 
 Set an alarm on your phone now for ${CHALLENGE.timeCt} (${CHALLENGE.timeEt}), and put all three days on your calendar.
@@ -814,9 +838,18 @@ async function handleRegister(req, res) {
     try {
       const existing = await kv.get(K.reg(email));
       if (existing && existing.confirmationSentAt) {
-        return res
-          .status(200)
-          .json({ ok: true, already: true, emailed: true, tier, firstName, email, cohort: CHALLENGE.cohort });
+        return res.status(200).json({
+          ok: true,
+          already: true,
+          emailed: true,
+          tier,
+          firstName,
+          email,
+          cohort: CHALLENGE.cohort,
+          // 2026-09-24: the confirmation page prints the amount, so it has to
+          // come back here too, not only on the first-time branch.
+          amountCents: existing.amountCents ?? null,
+        });
       }
     } catch (err) {
       console.warn('challenge-signup: registration lookup failed (continuing)', err.message);
@@ -924,7 +957,7 @@ async function handleRegister(req, res) {
     });
   }
 
-  const { html, text } = registrationEmail({ firstName, isVip, email });
+  const { html, text } = registrationEmail({ firstName, isVip, email, amountCents: record.amountCents });
   const unsubUrl = unsubUrlFor(email);
   try {
     await getResend().emails.send({
@@ -982,6 +1015,7 @@ async function handleRegister(req, res) {
       firstName,
       email,
       cohort: CHALLENGE.cohort,
+      amountCents: record.amountCents ?? null,
     });
   }
 
@@ -1002,6 +1036,7 @@ ${isVip ? '\nVIP. You owe this person: the VIP Zoom link for the 6:00pm ET Q&A h
     firstName,
     email,
     cohort: CHALLENGE.cohort,
+    amountCents: record.amountCents ?? null,
   });
 }
 
