@@ -46,14 +46,26 @@ One note. Tonight is women only, because Annie says things in that room she will
 Joel + Annie`,
   },
   '2026-09-24': {
-    subject: 'Q&A at 5, last class at 6',
+    subject: 'Before you log on tonight, do this first',
     lines: (first) => `${first},
 
-Last night of the challenge. Same two windows.
+Last night of the challenge. Before you log on, one thing.
+
+Tonight Annie and I reveal the next step for the people who want us walking beside them for the next 12 weeks. We are sharing it only with people who have applied.
+
+Here is why. This is not for everyone, and we would rather find that out together than sell you something that is not right for you. The application lets you see if this is a fit for you. And it lets us see if we are a fit for you.
+
+Applying is free. It does not commit you to anything. And it does not guarantee you a spot.
+
+It takes about 3 minutes. Do it before 5:00 PM Central so we can read yours before we see you:
+
+${APPLY_URL}
+
+Then come to the room.
 
 5:00 PM Central: live Q&A with Annie and me. If you have been sitting on a question all week, this is the hour to ask it.
 
-6:00 PM Central: the class. Take Back Your Future. Everyone is welcome, men included. We take the last two nights and turn them into your actual starting point, the one thing that deserves your attention first.
+6:00 PM Central: the class. Take Back Your Future. Everyone is welcome, men included.
 
 Same room for both:
 
@@ -63,9 +75,7 @@ Passcode: 027302
 
 See you in the room.
 
-Joel + Annie
-
-P.S. At the end of class tonight, Annie and I will tell you about the one next step for people who want us walking beside them for the next 12 weeks. It starts with a short application. If you already know you are done doing this alone, you can fill it out now, before class starts: ${APPLY_URL}`,
+Joel + Annie`,
   },
 };
 
