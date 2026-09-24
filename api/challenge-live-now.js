@@ -22,6 +22,7 @@ const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'braveworksrn@gmail.com';
 const SENT_KEY = (d) => `challenge:livenow:sent:${d}`;
 const SEND_HOUR = 16; // 4 PM Central
+const APPLY_URL = 'https://changemylifechallenge.com/apply?utm_campaign=cmlc-0922-livenow';
 
 const NIGHTS = {
   '2026-09-23': {
@@ -62,7 +63,9 @@ Passcode: 027302
 
 See you in the room.
 
-Joel + Annie`,
+Joel + Annie
+
+P.S. At the end of class tonight, Annie and I will tell you about the one next step for people who want us walking beside them for the next 12 weeks. It starts with a short application. If you already know you are done doing this alone, you can fill it out now, before class starts: ${APPLY_URL}`,
   },
 };
 
@@ -154,7 +157,8 @@ export default async function handler(req, res) {
     const text = night.lines(person.first);
     const html = `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#222;">${
       text.split('\n\n').map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('')
-    }</div>`.replace(esc(ZOOM_MAIN), `<a href="${ZOOM_MAIN}">${esc(ZOOM_MAIN)}</a>`);
+    }</div>`.replace(esc(ZOOM_MAIN), `<a href="${ZOOM_MAIN}">${esc(ZOOM_MAIN)}</a>`)
+      .replace(esc(APPLY_URL), `<a href="${esc(APPLY_URL)}">${esc(APPLY_URL)}</a>`);
     try {
       await resend.emails.send({
         from: FROM, to: [person.email], reply_to: REPLY_TO,

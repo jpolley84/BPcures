@@ -59,14 +59,10 @@ const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
 const DEPOSIT = '$500';
-// 2026-09-18 BIRTHDAY 42 (Joel turns 42): 42% off $7,500 = $4,350 until
-// sunset tonight. The server charges these amounts, not this file; see
-// BDAY42_CENTS in api/create-embedded-checkout.js. When the sale is over, put
-// PRICE back to '$7,500', BALANCE back to '$7,000', and delete REGULAR_PRICE
-// and the struck-through prices that read it.
-const REGULAR_PRICE = '$7,500';
-const PRICE = '$4,350';
-const BALANCE = '$3,850';
+// 2026-09-24: the 09-18 birthday sale ($4,350) is over; back to full price.
+// The server charges the amounts, not this file (create-embedded-checkout.js).
+const PRICE = '$7,500';
+const BALANCE = '$7,000';
 const TOTAL_VALUE = '$21,500';
 
 // ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
@@ -185,21 +181,6 @@ const SO_YOU_CAN = [
 
 const FAQ = [
   {
-    q: 'What is the birthday deal?',
-    a: `I turn 42 today, so the whole Life Change Accelerator is 42% off until sunset tonight, ${CLOSE_LABEL}: `
-      + `${PRICE} instead of ${REGULAR_PRICE}. Same program, same year of support, same guarantee. Nothing is removed to hit the price.`,
-  },
-  {
-    q: 'What if I reserve today but pay the rest later?',
-    a: `You keep the birthday price. Reserve with ${DEPOSIT} before sunset and your balance is locked at ${BALANCE}, `
-      + 'even if you settle it next week or spread it over up to 12 monthly payments.',
-  },
-  {
-    q: 'What happens at sunset?',
-    a: `The birthday price ends and enrollment for this cohort closes at ${ctTime(CLOSE_AT)} CT. `
-      + 'There is no extension, because the Sabbath starts at sunset and the site closes with it.',
-  },
-  {
     q: 'What am I paying today?',
     a: `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`,
   },
@@ -209,7 +190,7 @@ const FAQ = [
       + 'Payment terms are available up to 12 months, and you pick yours on the next page.',
   },
   {
-    q: `Why are there only ${SPOTS} spots?`,
+    q: 'Why is each cohort small?',
     a: 'This program includes personalized review, case management and ongoing human support. The cohort is '
       + 'intentionally limited so the team can actually pay attention to the people inside it.',
   },
@@ -626,13 +607,11 @@ export default function AllInPage() {
           <strong>90 days of nurse-led transformation, plus one full year of community and support.</strong>
           <br />
           <span className="wide-only">
-            For my 42nd birthday, the whole program is <strong>42% off until sunset tonight</strong>:
-            {' '}<s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>. Secure your place with a
+            The program is <strong>{PRICE}</strong>. Secure your place with a
             {' '}<strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
           </span>
           <span className="narrow-only">
-            42% off for my birthday, until sunset: <s>{REGULAR_PRICE}</s> <strong>{PRICE}</strong>.
-            {' '}<strong>{DEPOSIT} deposit</strong> today, credited. Terms up to 12 months.
+            <strong>{PRICE}</strong>. <strong>{DEPOSIT} deposit</strong>, credited. Terms up to 12 months.
           </span>
         </div>
 
@@ -690,7 +669,7 @@ export default function AllInPage() {
             with the band sitting directly above it, that pill restated the
             same promise two inches away, which is the opposite of succinct. */}
         <div className="program-strip">
-          <div className="program-pill"><strong>{SPOTS} spots</strong> in this cohort</div>
+          {!closed && <div className="program-pill"><strong>{SPOTS} spots</strong> in this cohort</div>}
           <div className="program-pill"><strong>{DEPOSIT}</strong> secures your place</div>
           <div className="program-pill">Deposit credited toward your <strong>{PRICE}</strong></div>
         </div>
@@ -781,8 +760,8 @@ export default function AllInPage() {
               <div className="phase-kicker">Total coaching value</div>
               <h3>Everything above is valued at {TOTAL_VALUE}.</h3>
               <div className="value-total">
-                <span>Your birthday investment</span>
-                <strong><s style={{ opacity: 0.55, fontWeight: 600, marginRight: 8 }}>{REGULAR_PRICE}</s>{PRICE}</strong>
+                <span>Your investment</span>
+                <strong>{PRICE}</strong>
               </div>
             </div>
 
@@ -824,8 +803,7 @@ export default function AllInPage() {
 
             <div className="price-block">
               <div className="price-line"><span>Total coaching value</span><strong className="strike">{TOTAL_VALUE}</strong></div>
-              <div className="price-line"><span>Regular price</span><strong className="strike">{REGULAR_PRICE}</strong></div>
-              <div className="price-line"><span>42% birthday price, until sunset</span><strong>{PRICE}</strong></div>
+              <div className="price-line"><span>Your investment</span><strong>{PRICE}</strong></div>
               <div className="price-line"><span>Payment terms</span><strong>Up to 12 months</strong></div>
               <div className="due-now">
                 <span className="label">Due today</span>
