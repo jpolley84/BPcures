@@ -46,34 +46,39 @@ One note. Tonight is women only, because Annie says things in that room she will
 Joel + Annie`,
   },
   '2026-09-24': {
-    subject: 'Before you log on tonight, do this first',
+    // Joel's copy, 2026-09-24 1:30 PM CT (typo fixes only).
+    subject: 'Q&A at 5, class at 6 (apply first)',
     lines: (first) => `${first},
 
-Last night of the challenge. Before you log on, one thing.
+If you haven't had the chance to apply yet and you mean to, here is your reminder.
 
-Tonight Annie and I reveal the next step for the people who want us walking beside them for the next 12 weeks. We are sharing it only with people who have applied.
+Tonight Annie and I are revealing what the next 12 weeks can look like for the people who want us walking beside them.
 
-Here is why. This is not for everyone, and we would rather find that out together than sell you something that is not right for you. The application lets you see if this is a fit for you. And it lets us see if we are a fit for you.
+Applying is free.
 
-Applying is free. It does not commit you to anything. And it does not guarantee you a spot.
+It is not a commitment.
 
-It takes about 3 minutes. Do it before 5:00 PM Central so we can read yours before we see you:
+And applying does not guarantee you a space.
+
+It simply gives us a chance to look at where you are, and gives you a chance to decide whether working with us may be right for you.
+
+Fill it out before 5:00 PM Central:
 
 ${APPLY_URL}
 
-Then come to the room.
+Then come into the room.
 
-5:00 PM Central: live Q&A with Annie and me. If you have been sitting on a question all week, this is the hour to ask it.
+5:00 PM Central: VIP Q&A with Joel
 
-6:00 PM Central: the class. Take Back Your Future. Everyone is welcome, men included.
+6:00 PM Central: Take Back Your Future. Map out your 90 days of accelerated change.
 
-Same room for both:
+Same Zoom room:
 
 ${ZOOM_MAIN}
 Meeting ID: 828 5171 5003
 Passcode: 027302
 
-See you in the room.
+See you tonight,
 
 Joel + Annie`,
   },

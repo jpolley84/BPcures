@@ -575,7 +575,59 @@ function applicantAckSendAt(now = new Date()) {
   return target.toISOString();
 }
 
-const BETHERE_OFF_MEDS_OLD = 'I was hoping to get off my medications without my doctor';
+// 2026-09-24: tonight's room link for applicants. See step 4 in handleBeThere.
+const ROOM_LINK_UNTIL = Date.parse('2026-09-24T23:30:00Z'); // 6:30 PM CDT
+const ROOM_LINK_SENT = 'challenge:applyroom:2026-09-24:sent';
+const ROOM_ZOOM = 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+
+export function tonightRoomEmail(firstName) {
+  const text = `${firstName},
+
+Thank you for raising your hand. Your application is in.
+
+Your next step: join us in the room tonight.
+
+Tonight, Thursday, September 24
+6:00 PM Central / 7:00 PM Eastern
+Take Back Your Future. Map out your 90 days of accelerated change. After the class, Annie and I reveal the next step to the people who applied.
+
+Join here:
+${ROOM_ZOOM}
+Meeting ID: 828 5171 5003
+Passcode: 027302
+
+Come a few minutes early.
+
+See you tonight,
+
+Joel + Annie`;
+  const html = `<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.6;color:#222;max-width:560px;">${
+    text.split('\n\n').map((p) => `<p>${escapeHtml(p).replace(/\n/g, '<br>')}</p>`).join('')
+  }</div>`.replace(escapeHtml(ROOM_ZOOM), `<a href="${escapeHtml(ROOM_ZOOM)}">${escapeHtml(ROOM_ZOOM)}</a>`);
+  return { subject: 'You\'re in. Here is tonight\'s room link.', text, html };
+}
+
+async function sendTonightRoomLink(email, firstName) {
+  if (Date.now() >= ROOM_LINK_UNTIL) return;
+  try {
+    if (process.env.KV_REST_API_URL && !(await kv.sadd(ROOM_LINK_SENT, email))) return;
+    const { subject, text, html } = tonightRoomEmail(firstName);
+    const r = await getResend().emails.send({
+      from: 'Joel Polley, RN <joel@bpquiz.com>',
+      to: email,
+      replyTo: 'braveworksrn@gmail.com',
+      subject, text, html,
+    });
+    if (r.error) {
+      console.error('coaching-apply: room link rejected by Resend', JSON.stringify(r.error));
+      try { await kv.srem(ROOM_LINK_SENT, email); } catch { /* retry allowed */ }
+    }
+  } catch (err) {
+    console.error('coaching-apply: room link failed', err.message);
+  }
+}
+
+const BETHERE_OFF_MEDS_OLD ='I was hoping to get off my medications without my doctor';
 const BETHERE_OFF_MEDS = 'I was hoping to come off my medications without my doctor';
 const BETHERE_GATE_NO = 'No. I will pass for now.';
 const BETHERE_CASH_YES = 'Yes, I have the cash flow to invest in my health right now';
@@ -928,6 +980,12 @@ async function handleBeThere(req, res) {
   } catch (err) {
     console.error('coaching-apply(bethere): applicant ack failed', err.message);
   }
+
+  // 4. 2026-09-24 (Joel): everyone who applies before 6:30 PM CT tonight gets
+  // the challenge room link as their next step; the offer is revealed there
+  // to applicants. Dead code after the cutoff. SADD makes a double submit (or
+  // the backfill script) a no-op for anyone already sent.
+  await sendTonightRoomLink(trimmedEmail, application.name.split(' ')[0] || 'there');
 
   return res.status(200).json({ ok: true, submittedAt, fitTier });
 }
