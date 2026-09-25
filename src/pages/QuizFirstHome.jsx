@@ -141,7 +141,14 @@ export default function QuizFirstHome() {
         /* Cleanse banner: one line, tappable, never taller than it needs to be.
            Sized in the same --u rhythm so the short-viewport rules shrink it
            along with everything else and the quiz stays above the fold. */
+        /* .qfh is a centring flex row. A banner added as a sibling would become
+           a second COLUMN, so the axis turns vertical here: the bar sits on top
+           at full width, and margin:auto keeps the quiz block centred in the
+           space that is left. */
+        .qfh{flex-direction:column; align-items:stretch;}
+        .qfh-wrap{margin:auto;}
         .qfh-banner{
+          flex:0 0 auto;
           display:flex; align-items:center; justify-content:center; gap:8px;
           width:100%; box-sizing:border-box; padding:9px 14px; min-height:40px;
           background:#082825; color:#fff; text-decoration:none;
