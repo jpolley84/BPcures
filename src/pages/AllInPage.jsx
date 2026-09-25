@@ -74,10 +74,12 @@ const SPOTS = 5; // Joel, 2026-09-18 12:27: "only 5 spots available"
 // that reliably rots on a page like this is a hand-typed date left behind
 // after the constant moved.
 const FAST_ACTION_ISO_CT = '2026-08-31T23:59:59';
-// 2026-09-18: reopened for the birthday sale only. Closes at tonight's Friday
-// sundown (6:50:20 PM CT, the Sabbath gate's own formula), the same instant
-// the server stops pricing at 42% off.
-const CLOSE_ISO_CT = '2026-09-18T18:50:00';
+// 2026-09-24 19:20 CT (Joel, mid-pitch): enrollment is OPEN again at full
+// price, with NO deadline. HAS_DEADLINE=false hides the countdown rather than
+// counting down to a date nobody promised; the closebar shows the spots claim
+// instead. To run a real deadline again, set a date here AND HAS_DEADLINE=true.
+const CLOSE_ISO_CT = '2027-12-31T23:59:00';
+const HAS_DEADLINE = false;
 const FAST_ACTION_AT = zonedInstant(FAST_ACTION_ISO_CT, 'America/Chicago');
 const CLOSE_AT = zonedInstant(CLOSE_ISO_CT, 'America/Chicago');
 
@@ -493,7 +495,7 @@ export default function AllInPage() {
   const [now, setNow] = useState(() => Date.now());
   const [error, setError] = useState('');
 
-  const closeLeft = CLOSE_AT.getTime() - now;
+  const closeLeft = HAS_DEADLINE ? CLOSE_AT.getTime() - now : Number.MAX_SAFE_INTEGER;
   const fastLeft = FAST_ACTION_AT.getTime() - now;
   const closed = closeLeft <= 0;
   const cd = parts(closeLeft);
@@ -577,12 +579,12 @@ export default function AllInPage() {
           <div className="close-copy">
             {closed ? 'Enrollment for this cohort is closed' : (
               <>
-                <span className="wide-only">{`My 42nd birthday: 42% off until sunset, ${CLOSE_LABEL} · Only ${SPOTS} spots available`}</span>
-                <span className="narrow-only">{`42% off · only ${SPOTS} spots · ends ${ctTime(CLOSE_AT)} CT`}</span>
+                <span className="wide-only">{`Enrollment is open · Only ${SPOTS} spots in this cohort${HAS_DEADLINE ? ` · Closes ${CLOSE_LABEL}` : ''}`}</span>
+                <span className="narrow-only">{`Enrollment open · only ${SPOTS} spots${HAS_DEADLINE ? ` · ends ${ctTime(CLOSE_AT)} CT` : ''}`}</span>
               </>
             )}
           </div>
-          {!closed && (
+          {!closed && HAS_DEADLINE && (
             <>
               {/* One static sentence for screen readers. A region that updates
                   every second is unusable with one. */}
