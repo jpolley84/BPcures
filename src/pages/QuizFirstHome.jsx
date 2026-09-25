@@ -138,9 +138,49 @@ export default function QuizFirstHome() {
           .qfh{--u:0.62rem;--h1:clamp(1.2rem,4.2vw,1.6rem);--q:clamp(0.98rem,3.6vw,1.12rem);
                --sub:0.8rem;--opt:0.84rem;--fine:0.68rem;--photo:36px;--dot:22px;}
         }
+        /* Cleanse banner: one line, tappable, never taller than it needs to be.
+           Sized in the same --u rhythm so the short-viewport rules shrink it
+           along with everything else and the quiz stays above the fold. */
+        .qfh-banner{
+          display:flex; align-items:center; justify-content:center; gap:8px;
+          width:100%; box-sizing:border-box; padding:9px 14px; min-height:40px;
+          background:#082825; color:#fff; text-decoration:none;
+          font-size:0.82rem; line-height:1.25; text-align:center;
+        }
+        .qfh-banner:hover{background:#0c352f;}
+        .qfh-banner-tag{
+          flex:0 0 auto; background:#E87522; color:#111; border-radius:999px;
+          padding:2px 8px; font-size:0.66rem; font-weight:900; letter-spacing:.06em;
+          text-transform:uppercase;
+        }
+        .qfh-banner-txt strong{color:#FFD8A8;}
+        .qfh-banner-arrow{flex:0 0 auto; color:#E87522; font-weight:900;}
+        @media (max-height:740px){ .qfh-banner{min-height:34px;padding:6px 12px;font-size:0.76rem;} }
+        @media (max-width:430px){
+          .qfh-banner{gap:6px;padding:7px 10px;font-size:0.72rem;}
+          .qfh-banner-tag{font-size:0.6rem;padding:2px 6px;}
+        }
+        @media (pointer:coarse){ .qfh-banner{min-height:44px;} }
+
         /* Touch targets stay tappable no matter how short the screen is. */
         @media (pointer:coarse){ .qfh-option{min-height:44px;} }
       `}</style>
+
+      {/* 2026-09-25 (Joel): people are arriving here hunting the 10 day detox.
+          One slim bar sends them to /cleanse instead of making them guess.
+          It is a plain <a>, not a <Link>: /cleanse is a static page served
+          outside this SPA, so client-side routing would 404 it. */}
+      <a
+        className="qfh-banner"
+        href="/cleanse"
+        onClick={() => track('home_cleanse_banner_clicked', { page: 'home', to: '/cleanse' })}
+      >
+        <span className="qfh-banner-tag">New</span>
+        <span className="qfh-banner-txt">
+          Looking for the <strong>10-Day Lemonade Detox</strong>? Get the complete guide free
+        </span>
+        <span aria-hidden="true" className="qfh-banner-arrow">&rarr;</span>
+      </a>
 
       <section className="qfh-wrap">
         <div className="qfh-eyebrow">Free &middot; 2 minutes &middot; No email to start</div>
