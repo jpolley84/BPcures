@@ -22,6 +22,12 @@ const SITE_URL = process.env.VITE_SITE_URL || 'https://bpquiz.com';
 const GUIDE_URL = `${SITE_URL}/downloads/lemonade-detox-guide.pdf`;
 const FROM = process.env.RESEND_FROM || 'Joel Polley, RN <joel@bpquiz.com>';
 
+// Tags every cleanse lead carries on both rails, so this funnel stays
+// separable in later segmentation. 'no-quiz' matches the 101 Foods convention:
+// this address arrived without taking the Triangle quiz.
+const TAGS = ['cleanse', 'lemonade-detox', 'no-quiz'];
+const SOURCE = 'cleanse-squeeze';
+
 const K = {
   lead: (email) => `cleanse:lead:${email}`,
   set: 'cleanse:leads',
@@ -88,6 +94,8 @@ export default async function handler(req, res) {
     suppressed = Boolean(drip && (drip.unsubscribed || drip.status === 'unsubscribed'));
   } catch { /* KV down: fall through and try to deliver */ }
 
+  const nowIso = new Date().toISOString();
+
   try {
     const existing = await kv.get(K.lead(email));
     await kv.set(K.lead(email), {
@@ -95,13 +103,96 @@ export default async function handler(req, res) {
       firstName: firstName || existing?.firstName || '',
       phone: phone || existing?.phone || '',
       magnet: 'lemonade-detox',
-      source: 'cleanse-squeeze',
-      createdAt: existing?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      source: SOURCE,
+      createdAt: existing?.createdAt || nowIso,
+      updatedAt: nowIso,
     });
     await kv.sadd(K.set, email);
   } catch (err) {
     console.error('cleanse-optin: KV write failed', err.message);
+  }
+
+  // ─── The list. Both mail rails, tagged, same as every other lead magnet ───
+  // drip:<email> is the legacy subscriber + suppression store; bwbp:drip:<email>
+  // is the rail the live crons read. corner/trigger stay null: this lead never
+  // took the quiz, and nothing here may pretend she did.
+  if (!suppressed) {
+    try {
+      const dripKey = `drip:${email}`;
+      const legacy = await kv.get(dripKey);
+      if (legacy) {
+        const reEnterLead = !legacy.state || legacy.state === 'newsletter';
+        await kv.set(dripKey, {
+          ...legacy,
+          firstName: firstName || legacy.firstName || '',
+          phone: phone || legacy.phone || '',
+          firstSeen: legacy.firstSeen || legacy.enrolledAt || nowIso,
+          tags: Array.from(new Set([...(legacy.tags || []), ...TAGS])),
+          lastCaptureAt: nowIso,
+          ...(reEnterLead ? { state: 'lead', stateEnteredAt: legacy.stateEnteredAt || nowIso } : {}),
+        });
+      } else {
+        await kv.set(dripKey, {
+          email,
+          firstName,
+          phone,
+          cohort: 'cleanse',
+          enrolledAt: nowIso,
+          firstSeen: nowIso,
+          lastSentDay: 0,
+          optedIn: true, // asking for the guide IS the opt-in
+          source: SOURCE,
+          answers: {},
+          tags: TAGS,
+          state: 'lead',
+          stateEnteredAt: nowIso,
+        });
+      }
+      try {
+        const dayKey = nowIso.slice(0, 10);
+        await kv.sadd(`lead-log:${dayKey}`, email);
+        await kv.expire(`lead-log:${dayKey}`, 90 * 86400);
+      } catch { /* non-fatal counter */ }
+    } catch (err) {
+      console.error('cleanse-optin: drip enroll failed', err.message);
+    }
+
+    try {
+      const triKey = `bwbp:drip:${email}`;
+      const tri = await kv.get(triKey);
+      if (tri) {
+        // A rail tombstoned on its own still means do not mail.
+        if (tri.unsubscribed) {
+          suppressed = true;
+        } else {
+          await kv.set(triKey, {
+            ...tri,
+            firstName: tri.firstName || firstName,
+            phone: tri.phone || phone,
+            tags: Array.from(new Set([...(tri.tags || []), ...TAGS])),
+            lastCaptureAt: nowIso,
+          });
+        }
+      } else {
+        await kv.set(triKey, {
+          email,
+          firstName,
+          phone,
+          corner: null,
+          trigger: null,
+          triggerName: null,
+          readiness: null,
+          scores: null,
+          state: 'lead',
+          stateEnteredAt: nowIso,
+          enrolledAt: nowIso,
+          source: SOURCE,
+          tags: TAGS,
+        });
+      }
+    } catch (err) {
+      console.warn('cleanse-optin: triangle enroll failed (non-fatal)', err.message);
+    }
   }
 
   let emailed = false;
