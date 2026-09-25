@@ -23,6 +23,9 @@
   .bar{background:var(--navy-2);color:#fff;text-align:center;font-weight:800;letter-spacing:.05em;font-size:.78rem;padding:10px 16px;text-transform:uppercase}
   .bar span{color:var(--orange)}
   .wrap{width:min(calc(100% - 40px),1040px);margin-inline:auto}
+  .cover{display:block;width:min(240px,52vw);margin:0 auto 20px}
+  .cover img{width:100%;height:auto;display:block;border-radius:10px;box-shadow:0 16px 34px rgba(8,40,37,.20)}
+  @media(max-width:820px){.cover{width:min(190px,46vw);margin-bottom:16px}}
   .hero{padding:44px 0 52px;text-align:center}
   h1{font-size:clamp(1.9rem,4vw,3.1rem);max-width:880px;margin-inline:auto;text-wrap:balance}
   .sub{max-width:660px;margin:0 auto 26px;font-size:1.1rem}
@@ -64,6 +67,10 @@
 <header class="hero">
   <div class="wrap">
     <h1>The 10-Day Lemonade Detox, Start To Finish.</h1>
+    <picture class="cover">
+      <source srcset="/cleanse/img/lemonade-detox-cover.webp" type="image/webp">
+      <img src="/cleanse/img/lemonade-detox-cover.jpg" width="615" height="777" alt="The Lemonade Detox: a complete guide to your 10 day reset, by Joel Polley, RN, BSN" fetchpriority="high" decoding="async">
+    </picture>
     <p class="sub">The complete guide from Joel Polley, RN. The recipe, the daily plan, how to prepare, how to come off it safely, and what to do about the hard parts.</p>
 
     <div class="grid">
