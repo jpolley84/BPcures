@@ -63,7 +63,12 @@ const DEPOSIT = '$500';
 // The server charges the amounts, not this file (create-embedded-checkout.js).
 const PRICE = '$7,500';
 const BALANCE = '$7,000';
-const TOTAL_VALUE = '$21,500';
+// 2026-09-24 call, Annie, verbatim: phases plus access plus Easy-Fit = '$23,197',
+// and 'the total value, including your bonuses, comes up to thirty five thousand
+// one hundred and ninety seven dollars'. Per-phase dollar values are deliberately
+// NOT published: the per-phase numbers she read do not add to her own subtotal.
+const TOTAL_VALUE = '$35,197';
+const CORE_VALUE = '$23,197';
 
 // ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
 const SPOTS = 5; // Joel, 2026-09-18 12:27: "only 5 spots available"
@@ -73,14 +78,16 @@ const SPOTS = 5; // Joel, 2026-09-18 12:27: "only 5 spots available"
 // are DERIVED from these instants, never typed twice, because the one thing
 // that reliably rots on a page like this is a hand-typed date left behind
 // after the constant moved.
-const FAST_ACTION_ISO_CT = '2026-08-31T23:59:59';
+// 09-24 call: 'if you sign up before Monday at midnight, you get ... the skin and
+// hair regimen' plus the one-on-one. Joel 09-25: midnight EASTERN.
+const FAST_ACTION_ISO_ET = '2026-09-28T23:59:59';
 // 2026-09-24 19:20 CT (Joel, mid-pitch): enrollment is OPEN again at full
 // price, with NO deadline. HAS_DEADLINE=false hides the countdown rather than
 // counting down to a date nobody promised; the closebar shows the spots claim
 // instead. To run a real deadline again, set a date here AND HAS_DEADLINE=true.
 const CLOSE_ISO_CT = '2027-12-31T23:59:00';
 const HAS_DEADLINE = false;
-const FAST_ACTION_AT = zonedInstant(FAST_ACTION_ISO_CT, 'America/Chicago');
+const FAST_ACTION_AT = zonedInstant(FAST_ACTION_ISO_ET, 'America/New_York');
 const CLOSE_AT = zonedInstant(CLOSE_ISO_CT, 'America/Chicago');
 
 const ctDate = (d) => new Intl.DateTimeFormat('en-US', {
@@ -91,7 +98,9 @@ const ctTime = (d) => new Intl.DateTimeFormat('en-US', {
 }).format(d);
 
 const CLOSE_LABEL = `${ctDate(CLOSE_AT)} at ${ctTime(CLOSE_AT)} CT`;
-const FAST_LABEL = `${ctDate(FAST_ACTION_AT)} at ${ctTime(FAST_ACTION_AT)} CT`;
+const FAST_LABEL = `${ctDate(FAST_ACTION_AT)} at ${new Intl.DateTimeFormat('en-US', {
+  hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York',
+}).format(FAST_ACTION_AT)} ET`;
 
 // The long label wraps to two lines on a 375px phone and the red bar grows to
 // 105px, which is an eighth of the screen spent on a date. Same instant, same
@@ -156,16 +165,25 @@ const PHASES = [
 // The email's three bonuses, in its own words.
 const BONUSES = [
   {
-    name: 'Two For One',
-    body: 'Bring someone you love with you. Healing, with built-in accountability.',
+    name: 'A Full Year Of Access',
+    body: 'The coaching is 90 days. Your access is a year: the weekly Q&As, the community and the team stay with you, because life happens and you should not have to start over alone.',
   },
   {
-    name: 'Skin + Hair Bonus',
-    body: 'Learn with Annie how to create your own natural skin and hair products and, if you want, how to turn what you make into something you can sell.',
+    name: 'Two For One',
+    body: 'Bring your spouse or a friend with you at no extra cost. Healing, with built-in accountability. Some people split the cost between them.',
+  },
+];
+
+// Presented on the 09-24 call as the FAST-ACTION bonuses: 'if you sign up before
+// Monday at midnight'. They disappear from the page when that instant passes.
+const FAST_BONUSES = [
+  {
+    name: 'Skin + Hair Regimen',
+    body: 'Learn with Annie how to make your own natural skin and hair products, and, if you want it, how to sell what you make.',
   },
   {
     name: 'One-on-One Coaching Session',
-    body: 'Personal eyes on YOUR situation, so you can win well before the 90 days are up, even though you have a full year with us.',
+    body: 'Everyone gets one. Personal eyes on YOUR situation, so you can win well before the 90 days are up.',
   },
 ];
 
@@ -197,17 +215,29 @@ const FAQ = [
       + 'intentionally limited so the team can actually pay attention to the people inside it.',
   },
   {
+    q: 'When does the program start?',
+    a: 'Wednesday, September 30. You are added to the WhatsApp group and the community, and the weekly '
+      + 'coaching and Q&A begin from there.',
+  },
+  {
+    q: 'Is the $500 deposit refundable if I change my mind?',
+    a: 'Yes. If you put the deposit down and then decide this is not for you, tell us and we refund it.',
+  },
+  {
+    q: 'Do I have to pay the whole thing today?',
+    a: `No. ${DEPOSIT} secures your spot and comes off the total, leaving ${BALANCE} you can place on a payment `
+      + 'plan. Paying in full is the cheapest route, and third-party financing counts as paying in full.',
+  },
+  {
     q: 'What happens right after I reserve?',
     a: 'You choose your payment schedule, then you receive onboarding instructions, complete your Personal '
       + 'Health Review, and begin identifying your top priorities and first 90-day plan.',
   },
 ];
 
-const GUARANTEE_BODY = 'Give us 30 days of honest participation. Complete your Personal Health Review, attend '
-  + 'your scheduled coaching, and follow the first-step plan you agree on with your team. If, before the 30-day '
-  + 'window closes, you still cannot point to a meaningful shift in your clarity, confidence, consistency, or an '
-  + 'agreed personal progress marker, tell us. We’ll review your participation with you and, if you met the '
-  + 'participation requirements, refund the program payments you made to us.';
+// 2026-09-24 call, verbatim: 'It's a 90 day program. We guarantee your results in
+// those 90 days or your money back.' Joel confirmed 09-25 to publish it as spoken.
+const GUARANTEE_BODY = 'This is a 90-day program. We guarantee your results in those 90 days, or your money back.';
 
 const GUARANTEE_SMALL = 'This guarantee does not promise a specific medical result and does not replace '
   + 'individualized medical care. Individual outcomes vary.';
@@ -740,8 +770,9 @@ export default function AllInPage() {
                 <div className="phase-kicker">Fast-action bonuses</div>
                 <h3>Start by {FAST_LABEL} and receive:</h3>
                 <ul className="bonus-list">
-                  <li><strong>Your Next 5 Years Session:</strong> get clear on what you are getting healthy for.</li>
-                  <li><strong>Life Change Starter Box:</strong> something real arrives at your house to help you begin.</li>
+                  {FAST_BONUSES.map((f) => (
+                    <li key={f.name}><strong>{f.name}:</strong> {f.body}</li>
+                  ))}
                 </ul>
                 <div className="fast-deadline">Fast-action window closes in:</div>
                 <div className="fast-countdown">
@@ -761,6 +792,7 @@ export default function AllInPage() {
             <div className="value-box">
               <div className="phase-kicker">Total coaching value</div>
               <h3>Everything above is valued at {TOTAL_VALUE}.</h3>
+              <p className="small">{`The program itself is valued at ${CORE_VALUE}. With the bonuses it comes to ${TOTAL_VALUE}.`}</p>
               <div className="value-total">
                 <span>Your investment</span>
                 <strong>{PRICE}</strong>
