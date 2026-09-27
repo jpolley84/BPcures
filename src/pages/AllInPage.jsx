@@ -165,7 +165,11 @@ const CSS = `
   letter-spacing:.09em;font-size:.8rem;text-align:center;padding:12px 18px;position:sticky;top:0;z-index:100}
 
 .lca .hero{padding:72px 0 64px;background:radial-gradient(circle at top right, rgba(201,162,74,.14), transparent 30%), var(--cream)}
-.lca .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.lca .hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center}
+/* Grid children default to min-width:auto, so one long word (Accelerator™)
+   can push a column wider than the phone. */
+.lca .hero-grid > *,.lca .team > *,.lca .checkout-wrap > *{min-width:0}
+.lca h1,.lca h2,.lca h3{overflow-wrap:break-word}
 .lca .hero-copy p{margin-top:22px}
 .lca .trust-line{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:26px;color:var(--ink-soft);font-size:.95rem;font-weight:700}
 .lca .trust-line span::before{content:"✓";color:var(--success);margin-right:8px;font-weight:900}
@@ -211,7 +215,7 @@ const CSS = `
 .lca .include-item strong{display:block;margin-bottom:3px}
 .lca .include-item span{color:var(--ink-soft);font-size:.95rem}
 
-.lca .team{display:grid;grid-template-columns:.9fr 1.1fr;gap:52px;align-items:center}
+.lca .team{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:52px;align-items:center}
 .lca .team-photo{border-radius:28px;overflow:hidden;border:1px solid var(--line);background:#E9E2D5;min-height:420px}
 .lca .team-photo img{width:100%;height:100%;object-fit:cover;min-height:420px;object-position:center 20%}
 .lca .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
@@ -241,7 +245,7 @@ const CSS = `
 .lca .price{font-size:clamp(3.4rem,8vw,6.4rem);line-height:.9;font-weight:950;letter-spacing:-.06em;margin:16px 0 10px}
 .lca .today{display:inline-block;margin-top:20px;padding:12px 18px;border-radius:999px;background:var(--sage);color:var(--sage-deep);font-weight:850}
 
-.lca .checkout-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:42px;align-items:start}
+.lca .checkout-wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:42px;align-items:start}
 .lca .steps{display:grid;gap:16px;margin-top:26px}
 .lca .step{display:flex;gap:14px;align-items:flex-start}
 .lca .step-num{width:32px;height:32px;flex:0 0 32px;border-radius:50%;background:var(--sage);color:var(--sage-deep);display:grid;place-items:center;font-weight:900}
