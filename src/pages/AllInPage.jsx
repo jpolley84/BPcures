@@ -302,6 +302,9 @@ const CSS = `
   .lca .stack-row{padding:16px 18px}
   .lca .checkout-card{padding:20px}
   .lca .topbar{font-size:.72rem}
+  /* A long single-line button ("See How We Help You Change Your Numbers")
+     is wider than a 390px phone, which is what was pushing the page sideways. */
+  .lca .btn{width:100%;max-width:100%}
   .lca .mobile-cta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(31,35,33,.96);padding:10px 14px}
   .lca .mobile-cta a{display:block;text-align:center;background:var(--gold);color:#171717;font-weight:900;padding:14px;border-radius:999px}
   .lca .final{padding-bottom:110px}
