@@ -55,10 +55,10 @@ const SPRINT_PRICE = '$1,997';
 const TIERS = [
   {
     key: 'sprint',
-    tier: 'sprint-1997',
+    tier: 'sprint-deposit',
     name: 'The Life Change Sprint',
     price: SPRINT_PRICE,
-    priceNote: 'One payment. 6 weeks.',
+    priceNote: 'Start today for $200. Then $1,797 in full (with a bonus one-on-one) or 3 x $649.',
     tag: '6-week sprint',
     blurb: 'Six focused weeks with Annie and Joel to get moving on your numbers.',
     yes: [
@@ -67,16 +67,16 @@ const TIERS = [
       'Your plan and your starting priorities',
       'Step-by-step help through the 6 weeks',
       'Community access during the sprint',
-      `Every dollar credited if you upgrade to the ${'$7,500'} Accelerator`,
+      'Every dollar credited if you upgrade to the $7,500 Accelerator',
     ],
     no: [
       'The bonuses (Healing Circle, Know Your Labs, Two For One, Skin + Hair)',
-      'One-on-one coaching session',
+      'One-on-one coaching session (unless you pay the Sprint balance in full)',
       'One year of access',
       'The 90-day money-back guarantee',
     ],
-    cta: `Start the Sprint · ${SPRINT_PRICE}`,
-    fine: 'Paid in full today. Credited toward the Accelerator if you move up at any point.',
+    cta: 'Start the Sprint · $200',
+    fine: 'The $200 deposit is non-refundable. Everything you pay is credited toward the Accelerator if you move up at any point.',
   },
   {
     key: 'accelerator',
@@ -98,7 +98,7 @@ const TIERS = [
     ],
     no: [],
     cta: 'Save My Spot · $500',
-    fine: 'Your $500 is credited. The $7,000 balance goes on a plan you pick next, up to 12 months.',
+    fine: 'The $500 deposit is non-refundable and comes off the price. The $7,000 balance goes on a plan you pick next, up to 12 months.',
   },
 ];
 
@@ -247,9 +247,10 @@ const BONUSES = [
 ];
 
 const FAQ = [
-  ['What am I paying today?', `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`],
+  ['What am I paying today?', `For the Sprint, a $200 deposit. For the Accelerator, a ${DEPOSIT} deposit. Each is credited toward your total.`],
+  ['How is the Sprint balance paid?', 'The $1,797 balance can be paid in full, which adds a bonus one-on-one coaching session, or in 3 monthly payments of $649 that stop on their own after the third.'],
   ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
-  ['Is the deposit refundable if I change my mind?', `Yes, within 24 hours. Spots are limited, so if you change your mind we refund the ${DEPOSIT} and your spot opens back up for someone else.`],
+  ['Is the deposit refundable?', 'No. Both deposits, the $200 for the Sprint and the $500 for the Accelerator, are non-refundable. Each one holds a limited spot and comes off your price.'],
   ['Do I have to fill out the application first?', 'No. You can go straight to checkout and secure your spot. The application is really more for you than for us: it puts you in the mindset of deciding whether you want this and why.'],
   ['Is this a video course?', 'No. There is no video library to work through. Between Joel and Annie there are about a thousand videos online already, and the point of this program is that you do not have to watch them. You get coaching that works at your pace and gives you what you need, when you need it.'],
   ['Does it include all four phases?', 'Yes. All four phases, the 90 days of coaching, and a full year of access to the community and the weekly Q&A.'],
@@ -828,7 +829,7 @@ export default function AllInPage() {
       </section>
 
       <div className="mobile-cta">
-        <a href="#tiers">Two ways to join · from $1,997</a>
+        <a href="#tiers">Two ways to join · from $200 down</a>
       </div>
 
       <footer>

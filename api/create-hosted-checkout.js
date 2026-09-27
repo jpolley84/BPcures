@@ -21,15 +21,33 @@ import { recentPurchase } from './_dupe-guard.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
 const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U4LDUHseZnO3rRZx9nEqowD';
 
+// 2026-09-27 (Joel): the Sprint starts with a $200 NON-REFUNDABLE deposit.
+// The $1,797 balance settles on /sprint-balance: in full (a 1:1 session is
+// added) or 3 x $649 monthly (capped after the 3rd charge by the webhook).
+// Prices live on prod_VL6yKZvUoq4P69, created 2026-09-27 on Joel's go.
 const TIERS = {
-  'sprint-1997': {
-    price: process.env.SPRINT_1997_PRICE_ID || 'price_1UKQklHseZnO3rRZzGTIqroW',
-    plan: 'sprint',
-    success: '/allin-welcome?plan=sprint&session_id={CHECKOUT_SESSION_ID}',
+  'sprint-deposit': {
+    price: process.env.SPRINT_DEPOSIT_PRICE_ID || 'price_1UKQxkHseZnO3rRZSOtVjcH5',
+    plan: 'sprint-deposit',
+    mode: 'payment',
+    success: '/sprint-balance?session_id={CHECKOUT_SESSION_ID}',
+  },
+  'sprint-balance-full': {
+    price: process.env.SPRINT_BALANCE_FULL_PRICE_ID || 'price_1UKQxlHseZnO3rRZB6HCbTWq',
+    plan: 'sprint-balance-full',
+    mode: 'payment',
+    success: '/allin-welcome?plan=sprint-balance-full&session_id={CHECKOUT_SESSION_ID}',
+  },
+  'sprint-balance-3pay': {
+    price: process.env.SPRINT_BALANCE_3PAY_PRICE_ID || 'price_1UKQxlHseZnO3rRZT6mgipol',
+    plan: 'sprint-balance-3pay',
+    mode: 'subscription',
+    success: '/allin-welcome?plan=sprint-balance-3pay&session_id={CHECKOUT_SESSION_ID}',
   },
   'allin-deposit': {
     price: process.env.ALLIN_DEPOSIT_PRICE_ID || 'price_1TvOULHseZnO3rRZZG8iyG9S',
     plan: 'deposit',
+    mode: 'payment',
     success: '/payment?session_id={CHECKOUT_SESSION_ID}',
   },
 };
@@ -70,15 +88,16 @@ export default async function handler(req, res) {
 
   try {
     const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
+      mode: cfg.mode,
+      ...(cfg.mode === 'subscription' ? { subscription_data: { metadata } } : {}),
       payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
       line_items: [{ price: cfg.price, quantity: 1 }],
       metadata,
-      customer_creation: 'always',
+      ...(cfg.mode === 'payment' ? { customer_creation: 'always' } : {}),
       phone_number_collection: { enabled: true },
       allow_promotion_codes: false,
       success_url: `${siteUrl}${cfg.success}`,
-      cancel_url: `${siteUrl}/allin#tiers`,
+      cancel_url: `${siteUrl}${tier.startsWith('sprint-balance') ? '/sprint-balance' : '/allin#tiers'}`,
       ...(email ? { customer_email: email } : {}),
     });
     return res.status(200).json({ url: session.url });
