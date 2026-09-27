@@ -103,10 +103,37 @@ const INCLUDES = [
   ['Help Staying on Track', 'We help you keep going, even when life gets busy.'],
 ];
 
+// ⚠️ EVERY quote here is traceable to testimonials/CONSENT-LOG.md, and the
+// attribution matches exactly what that person granted. Two quotes that were
+// in Joel's v7 file ("Drago, 67" and "my blood pressure is back to normal:
+// 124/80") are NOT here: neither has a consent record, and this page carries
+// a price. See the note to Joel, 2026-09-27.
 const QUOTES = [
-  ['From my 20s to now being 67, being on 3 blood pressure meds, you have been the only person that has ever made any impact in my BP journey.', 'Drago, 67'],
-  ['I have done everything you said and all my meds are decreasing.', 'Dorothy M.'],
-  ['My blood pressure is back to normal: 124/80.', 'Community member'],
+  {
+    text: 'I have done everything you said and all my meds are decreasing because of your genius insight and empathy you have for us all.',
+    who: 'Dorothy M.',
+    note: 'Medication changes were made with her own doctor.',
+  },
+  {
+    text: 'I am so grateful for your contributions to making lives much better and healthy thru Truth and a life style change as well learning to help ourselves heal along with meds!!',
+    who: 'GT',
+  },
+  {
+    text: 'Just your videos in general are already great info. You actually tell us what to do/ use. Not having to wait for a link, etc.',
+    who: 'Tiffany',
+  },
+  {
+    text: 'Thank u for sharing that information by getting to the point and not tricking viewers into an online infomercial.',
+    who: 'Facebook comment, name withheld by request',
+  },
+  {
+    text: "I have to tell you that my mother would have loved you. She cared about nutrition back in the 50s and 60s, and most of her doctors ridiculed her to her face.",
+    who: 'Facebook comment',
+  },
+  {
+    text: "You're very informative & I like it when you add humor.",
+    who: 'Heather',
+  },
 ];
 
 const STACK = [
@@ -127,12 +154,18 @@ const BONUSES = [
   ['Fast-Action: Skin + Hair', 'Extra help for skin and hair.'],
 ];
 
+// Questions real people asked Joel and Annie on the 2026-09-24 challenge call,
+// answered the way they answered them live. Transcript in the session notes.
 const FAQ = [
   ['What am I paying today?', `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`],
-  ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page.`],
-  ['Is the deposit refundable if I change my mind?', 'Yes. If you put the deposit down and then decide this is not for you, tell us and we refund it.'],
+  ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
+  ['Is the deposit refundable if I change my mind?', `Yes, within 24 hours. Spots are limited, so if you change your mind we refund the ${DEPOSIT} and your spot opens back up for someone else.`],
+  ['Do I have to fill out the application first?', 'No. You can go straight to checkout and secure your spot. The application is really more for you than for us: it puts you in the mindset of deciding whether you want this and why.'],
+  ['Is this a video course?', 'No. There is no video library to work through. Between Joel and Annie there are about a thousand videos online already, and the point of this program is that you do not have to watch them. You get coaching that works at your pace and gives you what you need, when you need it.'],
+  ['Does it include all four phases?', 'Yes. All four phases, the 90 days of coaching, and a full year of access to the community and the weekly Q&A.'],
+  ['Will this work for me? My situation is different.', 'That is the first thing we look at. Your health review comes first, and the plan is built around your body, your history and what you can actually do. If your situation needs care beyond coaching, we say so and help you find it.'],
+  ['What if I am dealing with a serious diagnosis?', 'This is coaching and education alongside your medical team, never a replacement for it. We help you work on the food, movement, sleep and stress side, and we reassess with you as you go. Keep your doctor in the loop, and never stop or change prescribed medication on your own.'],
   ['When does the program start?', 'You are added to the group and the community after you enroll, and the weekly coaching and Q&A begin from there.'],
-  ['Do I have to pay the whole thing today?', `No. ${DEPOSIT} secures your spot and comes off the total. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
 ];
 
 // His stylesheet, scoped. Every rule that was bare (body, h1, section,
@@ -516,10 +549,11 @@ export default function AllInPage() {
           </div>
 
           <div className="proof-grid">
-            {QUOTES.map(([q, who]) => (
-              <article className="quote" key={who}>
-                <p>{`“${q}”`}</p>
-                <small>{`— ${who}`}</small>
+            {QUOTES.map((q) => (
+              <article className="quote" key={q.who + q.text.slice(0, 12)}>
+                <p>{`“${q.text}”`}</p>
+                <small>{`— ${q.who}`}</small>
+                {q.note && <small style={{ fontSize: '.8rem', marginTop: 6 }}>{q.note}</small>}
               </article>
             ))}
           </div>
