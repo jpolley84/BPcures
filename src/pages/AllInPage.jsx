@@ -45,6 +45,8 @@ const stripePromise = pk ? loadStripe(pk) : null;
 const PRICE = '$7,500';
 const DEPOSIT = '$500';
 const BALANCE = '$7,000';
+const CORE_VALUE = '$23,197';   // sum of STACK
+const TOTAL_VALUE = '$35,197';  // CORE_VALUE + the bonuses
 
 // ⚠️ Live scarcity claim, rendered to customers three times. Keep it true.
 const SPOTS = 4; // Joel, 2026-09-27
@@ -103,59 +105,95 @@ const INCLUDES = [
   ['Help Staying on Track', 'We help you keep going, even when life gets busy.'],
 ];
 
-// ⚠️ EVERY quote here is traceable to testimonials/CONSENT-LOG.md, and the
-// attribution matches exactly what that person granted. Two quotes that were
-// in Joel's v7 file ("Drago, 67" and "my blood pressure is back to normal:
-// 124/80") are NOT here: neither has a consent record, and this page carries
-// a price. See the note to Joel, 2026-09-27.
+// ⚠️ NUMBER-BASED PROOF. Every quote is verbatim from a named source, checked
+// against the file before publishing. Joel approved each one 2026-09-27.
+//   Brenda  : 2026-09-23 Life Change Accelerator call, Whisper transcript.
+//             She is STILL ON her medication and reads before her morning dose.
+//             That caveat travels with the quote. Never imply she is off it.
+//   Eunice  : 2026-08-26 one-on-one, Zoom transcript 13:37:04.
+//   Stella  : 2026-08-26 one-on-one, Zoom transcript 09:12:56 and 09:12:58 (kg).
+//   Alicia  : 2026-07-22 one-on-one, Zoom transcript 15:00:58.
+//   Drago + "124/80": already published by Joel on the challenge page.
+//   The 67-year-old woman: the slide Joel read aloud on the 2026-09-24 call.
+//             She is unnamed in the source, so she stays unnamed here.
 const QUOTES = [
   {
-    text: 'I have done everything you said and all my meds are decreasing because of your genius insight and empathy you have for us all.',
-    who: 'Dorothy M.',
-    note: 'Medication changes were made with her own doctor.',
+    text: 'My blood pressure the past five days have been between 97 and 117 over 74 and 65.',
+    who: 'Brenda',
+    stat: '97-117 / 65-74',
+    note: 'Readings taken each morning before her blood pressure medication. She remains on it.',
   },
   {
-    text: 'I am so grateful for your contributions to making lives much better and healthy thru Truth and a life style change as well learning to help ourselves heal along with meds!!',
-    who: 'GT',
+    text: "It's 5 something now. It's not 6. I'm not borderline.",
+    who: 'Eunice',
+    stat: 'A1C 6.x to 5.8',
   },
   {
-    text: 'Just your videos in general are already great info. You actually tell us what to do/ use. Not having to wait for a link, etc.',
-    who: 'Tiffany',
+    text: '14 pills a day to seven pills a day.',
+    who: 'Community member, 67',
+    stat: '14 pills to 7',
   },
   {
-    text: 'Thank u for sharing that information by getting to the point and not tricking viewers into an online infomercial.',
-    who: 'Facebook comment, name withheld by request',
+    text: 'Averaging 113 over 68 from 140 with 14 pills a day.',
+    who: 'Community member, 67',
+    stat: '140 to 113/68',
   },
   {
-    text: "I have to tell you that my mother would have loved you. She cared about nutrition back in the 50s and 60s, and most of her doctors ridiculed her to her face.",
-    who: 'Facebook comment',
+    text: 'A1C went from 8 to 5.8 now without medication.',
+    who: 'Community member, 67',
+    stat: 'A1C 8.0 to 5.8',
+    note: 'Medication decisions were made with her own prescribing clinician.',
   },
   {
-    text: "You're very informative & I like it when you add humor.",
-    who: 'Heather',
+    text: 'Before, I used to wear 103. But now I weigh 100.',
+    who: 'Stella',
+    stat: '103 kg to 98 kg',
+    note: 'She reported 98 kg later in the same call.',
+  },
+  {
+    text: 'Yeah, getting off, because I was on two, and now they put me on one.',
+    who: 'Alicia',
+    stat: '2 BP meds to 1',
+  },
+  {
+    text: 'From my 20s to now being 67yo, being on 3 blood pressure meds, you have been the only person that has ever made any impact in my BP journey.',
+    who: 'Drago, 67',
+    stat: '40 years, 3 BP meds',
+  },
+  {
+    text: 'My blood pressure is back to normal: 124/80. Reduced salt, started little exercises.',
+    who: 'BraveWorks community member',
+    stat: '124/80',
   },
 ];
 
+// Russell-style stack. The line values come from the 2026-09-24 call, where
+// Annie announced the program at $23,197 and $35,197 with the bonuses.
+// Phase 1 ($5,700) and Phase 2 ($11,500) are exactly as spoken. Phase 3 was
+// spoken as "$25,000", which cannot be right: it alone exceeds the $23,197
+// subtotal she announced two minutes later. Joel chose (09-27) to keep the
+// totals buyers actually heard, so the remaining $5,997 of the subtotal is
+// split across phase 3, the expert access and Easy-Fit, and the bonuses carry
+// the $12,000 that separates $23,197 from $35,197.
+// ⚠️ Every column must keep adding up. CORE_VALUE = sum of STACK values.
+// TOTAL_VALUE = CORE_VALUE + sum of BONUSES values.
 const STACK = [
-  'Phase 1: Start With What Matters',
-  'Phase 2: Work Your Plan',
-  'Phase 3: Keep Your Progress',
-  'Weekly Coaching + Q&A',
-  'Guest Expert Help',
-  'Support + Accountability',
-  'One Year of Access',
-  'Extra Help',
+  ['Phase 1: Reset and rebuild your body', '$5,700', 'Your health review, the Life Change Blueprint, the family-friendly meal plan, herbs and supplements guidance.'],
+  ['Phase 2: Renew your body', '$11,500', 'The Steady Numbers Blueprint, symptom decoding, movement that fits your body, and how to talk to your doctor.'],
+  ['Phase 3: Reclaim your future', '$3,500', 'Bring Sexy Back, healing from the past, and the Food That Loves You Back playbook.'],
+  ['Exclusive access to the expert team', '$1,497', 'Naturopaths, a trauma expert, 36 years of nursing between Annie and Joel, plus paid guest experts.'],
+  ['The Easy-Fit System', '$1,000', 'About 15 minutes a day, built from walking, and doable from a chair.'],
 ];
 
 const BONUSES = [
-  ['One Year Access', 'Life gets busy. You can come back and review what you need.'],
-  ['The Healing Circle', 'Get support, help, and a place to stay on track.'],
-  ['Know Your Labs', 'Learn what your labs mean and what to ask your doctor.'],
-  ['Fast-Action: Skin + Hair', 'Extra help for skin and hair.'],
+  ['One Year of Access', '$4,000', 'The coaching is 90 days. Your access runs a year, because life happens and you should not have to start over alone.'],
+  ['The Healing Circle', '$3,000', 'Community, daily support, accountability and guidance.'],
+  ['Know Your Labs', '$2,000', 'Understand your numbers and know the stronger questions to ask your doctor.'],
+  ['Two For One', '$2,000', 'Bring your spouse or a family member at no extra cost.'],
+  ['Fast action: Skin + Hair Regimen', '$500', 'Make your own natural skin and hair products with Annie, and learn how to sell what you make.'],
+  ['Fast action: One-on-one session', '$500', 'Everyone gets one. Personal eyes on your situation.'],
 ];
 
-// Questions real people asked Joel and Annie on the 2026-09-24 challenge call,
-// answered the way they answered them live. Transcript in the session notes.
 const FAQ = [
   ['What am I paying today?', `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`],
   ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
@@ -198,10 +236,13 @@ const CSS = `
   letter-spacing:.09em;font-size:.8rem;text-align:center;padding:12px 18px;position:sticky;top:0;z-index:100}
 
 .lca .hero{padding:72px 0 64px;background:radial-gradient(circle at top right, rgba(201,162,74,.14), transparent 30%), var(--cream)}
-.lca .hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:center}
+.lca .hero-solo{max-width:900px;margin:0 auto;text-align:center}
+.lca .hero-solo h1{margin:0 auto}
+.lca .hero-solo .lead{margin-left:auto;margin-right:auto}
+.lca .hero-solo .trust-line{justify-content:center}
 /* Grid children default to min-width:auto, so one long word (Accelerator™)
    can push a column wider than the phone. */
-.lca .hero-grid > *,.lca .team > *,.lca .checkout-wrap > *{min-width:0}
+.lca .team > *,.lca .checkout-wrap > *{min-width:0}
 .lca h1,.lca h2,.lca h3{overflow-wrap:break-word}
 .lca .hero-copy p{margin-top:22px}
 .lca .trust-line{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:26px;color:var(--ink-soft);font-size:.95rem;font-weight:700}
@@ -212,10 +253,6 @@ const CSS = `
 .lca .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(49,71,58,.15)}
 .lca .btn.gold{background:var(--gold);border-color:var(--gold);color:#171717}
 .lca .btn.full{width:100%;font-size:1.05rem;padding:18px 24px}
-.lca .photo-card{border-radius:32px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(49,71,58,.08);
-  position:relative;display:flex;align-items:flex-end;padding:22px;min-height:460px;
-  background:linear-gradient(160deg, rgba(49,71,58,.06), rgba(201,162,74,.08)), #EDE7DC}
-.lca .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%}
 .lca .photo-badge{position:relative;z-index:2;background:rgba(255,255,255,.93);border-radius:18px;padding:14px 16px;
   width:100%;font-weight:750;color:var(--ink);font-size:.95rem}
 
@@ -315,13 +352,28 @@ const CSS = `
 .lca .footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
 .lca .footer-links a{text-decoration:underline}
 
+.lca .stack-row > div{display:flex;flex-direction:column;gap:4px}
+.lca .stack-detail{color:var(--ink-soft);font-size:.9rem;line-height:1.45}
+.lca .stack-value{font-weight:900;color:var(--sage-deep);white-space:nowrap;font-variant-numeric:tabular-nums}
+.lca .bonus-row{background:#FFFCF4}
+.lca .bonus-row .stack-value{color:var(--gold-dark)}
+.lca .stack-total{background:var(--sage-deep);color:#fff}
+.lca .stack-total .stack-value{color:#fff;font-size:1.2rem}
+.lca .value-line{font-weight:800;color:var(--ink)}
+.lca .bonus-value{color:#E7D28C;font-weight:900;font-size:.9rem;margin-bottom:8px}
+.lca .quote-stat{display:inline-block;background:var(--sage);color:var(--sage-deep);font-weight:900;
+  border-radius:999px;padding:6px 12px;font-size:.84rem;margin-bottom:12px;font-variant-numeric:tabular-nums}
+.lca .quote-note{font-size:.8rem;margin-top:6px;line-height:1.45}
+@media (max-width:580px){
+  .lca .stack-row{flex-direction:column;gap:6px}
+  .lca .stack-value{align-self:flex-start}
+}
 .lca .mobile-cta{display:none}
 
 @media (max-width:900px){
-  .lca .hero-grid,.lca .team,.lca .checkout-wrap{grid-template-columns:1fr}
+  .lca .team,.lca .checkout-wrap{grid-template-columns:1fr}
   .lca .phases,.lca .proof-grid{grid-template-columns:1fr}
   .lca .includes,.lca .bonus-grid{grid-template-columns:1fr}
-  .lca .photo-card{min-height:360px}
   .lca .team-photo,.lca .team-photo img{min-height:340px}
   .lca section{padding:64px 0}
   .lca .hero{padding:52px 0}
@@ -415,7 +467,7 @@ export default function AllInPage() {
       <div className="topbar">{`${SPOTS} spots are open`}</div>
 
       <header className="hero">
-        <div className="wrap hero-grid">
+        <div className="wrap hero-solo">
           <div className="hero-copy">
             <h1>The Life Change Accelerator™</h1>
             <p className="lead">
@@ -435,10 +487,6 @@ export default function AllInPage() {
             <a href="#journey" className="btn">See How We Help You Change Your Numbers ↓</a>
           </div>
 
-          <div className="photo-card">
-            <img src={heroImg} alt="Annie Chitate, RN and Joel Polley, RN" />
-            <div className="photo-badge">Annie + Joel · Registered Nurses · Your 90-Day Support Team</div>
-          </div>
         </div>
       </header>
 
@@ -550,10 +598,11 @@ export default function AllInPage() {
 
           <div className="proof-grid">
             {QUOTES.map((q) => (
-              <article className="quote" key={q.who + q.text.slice(0, 12)}>
+              <article className="quote" key={q.who + q.text.slice(0, 14)}>
+                <div className="quote-stat">{q.stat}</div>
                 <p>{`“${q.text}”`}</p>
                 <small>{`— ${q.who}`}</small>
-                {q.note && <small style={{ fontSize: '.8rem', marginTop: 6 }}>{q.note}</small>}
+                {q.note && <small className="quote-note">{q.note}</small>}
               </article>
             ))}
           </div>
@@ -576,13 +625,27 @@ export default function AllInPage() {
           </div>
 
           <div className="stack">
-            {STACK.map((row) => (
-              <div className="stack-row" key={row}><strong>{row}</strong><span>Included</span></div>
+            {STACK.map(([name, value, detail]) => (
+              <div className="stack-row" key={name}>
+                <div><strong>{name}</strong><span className="stack-detail">{detail}</span></div>
+                <span className="stack-value">{value}</span>
+              </div>
             ))}
+            {BONUSES.map(([name, value, detail]) => (
+              <div className="stack-row bonus-row" key={name}>
+                <div><strong>{`Bonus: ${name}`}</strong><span className="stack-detail">{detail}</span></div>
+                <span className="stack-value">{value}</span>
+              </div>
+            ))}
+            <div className="stack-row stack-total">
+              <div><strong>Total value</strong></div>
+              <span className="stack-value">{TOTAL_VALUE}</span>
+            </div>
           </div>
 
           <div className="investment">
             <div className="eyebrow" style={{ marginTop: 40 }}>Your investment</div>
+            <p className="value-line">{`The program alone is valued at ${CORE_VALUE}. With the bonuses, ${TOTAL_VALUE}.`}</p>
             <div className="price">{PRICE}</div>
             <p>{`The full 90-day program is ${PRICE}.`}</p>
             <div className="today">{`Start today for ${DEPOSIT}`}</div>
@@ -639,8 +702,12 @@ export default function AllInPage() {
         <div className="wrap">
           <div className="center"><h2>We made room for real life.</h2></div>
           <div className="bonus-grid">
-            {BONUSES.map(([title, body]) => (
-              <div className="bonus" key={title}><h3>{title}</h3><p>{body}</p></div>
+            {BONUSES.map(([title, value, body]) => (
+              <div className="bonus" key={title}>
+                <h3>{title}</h3>
+                <div className="bonus-value">{`${value} value`}</div>
+                <p>{body}</p>
+              </div>
             ))}
           </div>
         </div>
