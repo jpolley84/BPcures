@@ -32,15 +32,11 @@
 // SPOTS is a live scarcity claim shown to customers. It must stay true.
 // Education alongside the doctor, never a replacement.
 
-import { useEffect, useRef, useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
+import { useEffect, useState } from 'react';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
 import scrubsImg from '../assets/annie-joel-scrubs-real.jpg';
 import teachingImg from '../assets/annie-joel-teaching-crop.jpg';
 
-const pk = STRIPE_PUBLISHABLE_KEY();
-const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
 const PRICE = '$7,500';
@@ -50,7 +46,62 @@ const CORE_VALUE = '$23,197';   // sum of STACK
 const TOTAL_VALUE = '$35,197';  // CORE_VALUE + the bonuses
 
 // ⚠️ Live scarcity claim, rendered to customers three times. Keep it true.
-const SPOTS = 4; // Joel, 2026-09-27
+const SPOTS = 4; // Joel, 2026-09-27: 4 open spots in EACH tier
+const SPRINT_PRICE = '$1,997';
+
+// "Two ways you can work with us" (Joel, 2026-09-27). What each tier includes
+// and, just as loudly, what it does not. The Sprint is deliberately bare:
+// no bonuses, no guarantee, no one-on-one, six weeks, credited on upgrade.
+const TIERS = [
+  {
+    key: 'sprint',
+    tier: 'sprint-1997',
+    name: 'The Life Change Sprint',
+    price: SPRINT_PRICE,
+    priceNote: 'One payment. 6 weeks.',
+    tag: '6-week sprint',
+    blurb: 'Six focused weeks with Annie and Joel to get moving on your numbers.',
+    yes: [
+      '6 weeks of weekly coaching + live Q&A',
+      'Your health review',
+      'Your plan and your starting priorities',
+      'Step-by-step help through the 6 weeks',
+      'Community access during the sprint',
+      `Every dollar credited if you upgrade to the ${'$7,500'} Accelerator`,
+    ],
+    no: [
+      'The bonuses (Healing Circle, Know Your Labs, Two For One, Skin + Hair)',
+      'One-on-one coaching session',
+      'One year of access',
+      'The 90-day money-back guarantee',
+    ],
+    cta: `Start the Sprint · ${SPRINT_PRICE}`,
+    fine: 'Paid in full today. Credited toward the Accelerator if you move up at any point.',
+  },
+  {
+    key: 'accelerator',
+    tier: 'allin-deposit',
+    name: 'The Life Change Accelerator™',
+    price: '$7,500',
+    priceNote: `Start today for ${'$500'}. Balance on your schedule.`,
+    tag: 'The full program',
+    featured: true,
+    blurb: 'The full 90 days, the whole offer stack, and a year with us.',
+    yes: [
+      '90 days of weekly coaching + live Q&A',
+      'All three phases and the Easy-Fit System',
+      'Exclusive access to the expert team',
+      'One-on-one coaching session',
+      'One year of access',
+      'Every bonus: Healing Circle, Know Your Labs, Two For One, Skin + Hair',
+      'The 90-day money-back guarantee',
+    ],
+    no: [],
+    cta: 'Save My Spot · $500',
+    fine: 'Your $500 is credited. The $7,000 balance goes on a plan you pick next, up to 12 months.',
+  },
+];
+
 
 // 2026-09-24 call, verbatim, confirmed for publication 09-27.
 const GUARANTEE = 'This is a 90-day program. We guarantee your results in those 90 days, or your money back.';
@@ -341,8 +392,7 @@ const CSS = `
 .lca .step-num{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;font-weight:900;font-size:.9rem}
 .lca .step strong{color:var(--ink)}
 .lca .checkout-card{background:#fff;border-radius:var(--radius);padding:24px;border:1px solid var(--line);box-shadow:var(--shadow)}
-.lca .checkout-mount{margin-top:16px;min-height:320px}
-.lca .checkout-error{margin-top:14px;background:#FFF4F2;border:1px solid #E9C4BC;border-radius:12px;padding:14px;color:#8A3524;font-size:.94rem}
+.lca .checkout-error{margin:18px auto 0;max-width:720px;background:#FFF4F2;border:1px solid #E9C4BC;border-radius:12px;padding:14px;color:#8A3524;font-size:.94rem}
 .lca .checkout-error a{text-decoration:underline;font-weight:800}
 .lca .secure{margin-top:12px;font-size:.84rem;color:var(--muted);text-align:center}
 
@@ -375,6 +425,27 @@ const CSS = `
 .lca footer{background:#061d1b;color:#AAB4B0;text-align:center;padding:22px;font-size:.8rem;line-height:1.55}
 .lca .footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
 .lca .footer-links a{text-decoration:underline}
+.lca .tiers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:36px;align-items:stretch}
+.lca .tier{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.lca .tier.featured{border:2px solid var(--teal);position:relative}
+.lca .tier-tag{display:inline-block;align-self:flex-start;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:5px 10px;margin-bottom:12px}
+.lca .tier.featured .tier-tag{background:var(--teal);color:#fff}
+.lca .tier h3{font-size:1.45rem}
+.lca .tier-blurb{margin-top:8px;font-size:.98rem}
+.lca .tier-price{font-family:Georgia,"Times New Roman",serif;font-size:2.6rem;line-height:1;color:var(--navy-2);margin-top:18px;letter-spacing:-.02em}
+.lca .tier-price-note{color:var(--ink-soft);font-size:.92rem;margin-top:6px}
+.lca .tier-spots{display:inline-block;align-self:flex-start;margin-top:12px;font-size:.8rem;font-weight:900;color:var(--coral);letter-spacing:.04em;text-transform:uppercase}
+.lca .tier-list{list-style:none;padding:0;margin:18px 0 22px;flex:1}
+.lca .tier-list li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--soft);font-size:.95rem;line-height:1.45}
+.lca .tier-list li > span:first-child{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:900;margin-top:1px}
+.lca .tier-list li.in > span:first-child{background:var(--teal-soft);color:var(--teal)}
+.lca .tier-list li.in{color:var(--ink);font-weight:700}
+.lca .tier-list li.out{color:var(--muted)}
+.lca .tier-list li.out > span:first-child{background:#F3E4E1;color:var(--coral)}
+.lca .tier-list li.out > span:last-child{text-decoration:line-through;text-decoration-color:rgba(83,101,96,.5)}
+.lca .tier-fine{margin-top:10px;font-size:.82rem;color:var(--muted);text-align:center;line-height:1.45}
+@media (max-width:820px){ .lca .tiers{grid-template-columns:1fr} }
 .lca .mobile-cta{display:none}
 
 @media (max-width:1024px){
@@ -408,13 +479,13 @@ const CSS = `
 `;
 
 export default function AllInPage() {
-  const mountRef = useRef(null);
   const [error, setError] = useState('');
+  const [busy, setBusy] = useState('');
 
   useEffect(() => {
-    track('allin_view', { page: 'allin', mode: 'checkout', design: 'v7' });
+    track('allin_view', { page: 'allin', mode: 'two-tier', design: 'v7' });
     const prev = document.title;
-    document.title = 'The Life Change Accelerator | Secure Your Spot';
+    document.title = 'The Life Change Accelerator | Two Ways To Work With Us';
     const root = document.documentElement;
     const prevScroll = root.style.scrollBehavior;
     root.style.scrollBehavior = 'smooth';
@@ -424,57 +495,32 @@ export default function AllInPage() {
     };
   }, []);
 
-  // ─── the real checkout. $500 deposit, tier allin-deposit. ─────────────
-  // No balancePlan is sent on purpose: this page does not ask her to pick a
-  // schedule, so /payment opens on "settle in full" and she chooses there.
-  useEffect(() => {
-    let checkout;
-    let cancelled = false;
+  // One hosted Stripe Checkout per click. Nothing is created on page load.
+  async function startCheckout(tier) {
+    if (busy) return;
     setError('');
-
-    async function mount() {
-      if (!stripePromise) {
-        setError('Checkout is not configured yet.');
-        return;
-      }
-      try {
-        const res = await fetch('/api/create-embedded-checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tier: 'allin-deposit',
-            distinctId: getDistinctId(),
-            abHomeVariant: getAbHomeVariant(),
-          }),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.clientSecret) throw new Error(data.error || 'Could not start checkout');
-        if (cancelled) return;
-        const stripe = await stripePromise;
-        if (cancelled) return;
-        checkout = await stripe.initEmbeddedCheckout({ clientSecret: data.clientSecret });
-        if (cancelled) { checkout.destroy(); return; }
-        if (mountRef.current) {
-          mountRef.current.innerHTML = '';
-          checkout.mount(mountRef.current);
-          track('allin_checkout_mounted', { tier: 'allin-deposit' });
-        }
-      } catch (err) {
-        if (!cancelled) setError(err.message || 'Could not start checkout. Please try again.');
-      }
+    setBusy(tier);
+    track('allin_checkout_click', { tier });
+    try {
+      const res = await fetch('/api/create-hosted-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, distinctId: getDistinctId(), abHomeVariant: getAbHomeVariant() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.message || data.error || 'Could not start checkout');
+      window.location.assign(data.url);
+    } catch (err) {
+      setBusy('');
+      setError(err.message || 'Could not start checkout. Please try again.');
     }
-    mount();
-    return () => {
-      cancelled = true;
-      try { checkout?.destroy(); } catch { /* already gone */ }
-    };
-  }, []);
+  }
 
   return (
     <div className="lca">
       <style>{CSS}</style>
 
-      <div className="topbar">{`${SPOTS} spots are open`}</div>
+      <div className="topbar">{`${SPOTS} spots open in each tier`}</div>
 
       <header className="hero">
         <div className="wrap hero-grid">
@@ -497,7 +543,7 @@ export default function AllInPage() {
             </div>
 
             <div className="hero-actions">
-              <a href="#checkout" className="btn gold">{`Save My Spot · ${DEPOSIT}`}</a>
+              <a href="#tiers" className="btn gold">See the two ways to join ↓</a>
               <a href="#journey" className="btn ghost">See how it works ↓</a>
             </div>
           </div>
@@ -635,7 +681,7 @@ export default function AllInPage() {
       <section className="white" style={{ paddingTop: 0 }}>
         <div className="narrow">
           <div className="center">
-            <h2>Everything you need to work on your numbers is here.</h2>
+            <h2>Everything inside the Accelerator.</h2>
             <p className="lead">
               You get the plan. You get the coaching. You get support. And when your numbers,
               symptoms, or progress raise a question, you have a place to ask.
@@ -674,45 +720,54 @@ export default function AllInPage() {
         </div>
       </section>
 
-      <section id="checkout">
-        <div className="wrap checkout-wrap">
-          <div>
-            <h2>If you are ready, this part is easy.</h2>
-            <p className="lead" style={{ marginTop: 20 }}>
-              {`Put down ${DEPOSIT} today to save your spot. We will show you what happens next.`}
-            </p>
+      <section id="checkout" className="white">
+        <div className="wrap" id="tiers">
+          <div className="center">
+            <div className="eyebrow">Two ways you can work with us</div>
+            <h2>Pick the pace that fits your life.</h2>
+            <p className="lead">{`${SPOTS} open spots in each. Both start with the same two nurses.`}</p>
+          </div>
 
-            <div className="steps">
-              <div className="step">
-                <div className="step-num">1</div>
-                <div><strong>Save your spot.</strong><p>{`Pay ${DEPOSIT} today.`}</p></div>
-              </div>
-              <div className="step">
-                <div className="step-num">2</div>
-                <div><strong>Choose your terms.</strong><p>{`Pick how you want to handle the ${BALANCE} balance.`}</p></div>
-              </div>
-              <div className="step">
-                <div className="step-num">3</div>
-                <div><strong>Start your 90 days.</strong><p>We will help you start your plan.</p></div>
-              </div>
+          <div className="tiers">
+            {TIERS.map((t) => (
+              <article className={`tier${t.featured ? ' featured' : ''}`} key={t.key}>
+                <div className="tier-tag">{t.tag}</div>
+                <h3>{t.name}</h3>
+                <p className="tier-blurb">{t.blurb}</p>
+                <div className="tier-price">{t.price}</div>
+                <div className="tier-price-note">{t.priceNote}</div>
+                <div className="tier-spots">{`${SPOTS} open spots`}</div>
+
+                <ul className="tier-list">
+                  {t.yes.map((line) => (
+                    <li className="in" key={line}><span aria-hidden="true">✓</span><span>{line}</span></li>
+                  ))}
+                  {t.no.map((line) => (
+                    <li className="out" key={line}><span aria-hidden="true">✕</span><span>{line}</span></li>
+                  ))}
+                </ul>
+
+                <button
+                  type="button"
+                  className="btn gold full"
+                  disabled={busy === t.tier}
+                  onClick={() => startCheckout(t.tier)}
+                >
+                  {busy === t.tier ? 'Opening secure checkout...' : t.cta}
+                </button>
+                <div className="tier-fine">{t.fine}</div>
+              </article>
+            ))}
+          </div>
+
+          {error && (
+            <div className="checkout-error">
+              {error}{' '}
+              <a href="mailto:braveworksrn@gmail.com">Email us</a> and we will send you a working
+              payment link by hand.
             </div>
-          </div>
-
-          <div className="checkout-card">
-            <h3>Secure My Spot</h3>
-            <p style={{ marginTop: 8 }}>{`${DEPOSIT} enrollment payment`}</p>
-
-            <div className="checkout-mount" ref={mountRef} />
-            {error && (
-              <div className="checkout-error">
-                {error}{' '}
-                <a href="mailto:braveworksrn@gmail.com">Email us</a> and we will send you a working
-                payment link by hand.
-              </div>
-            )}
-
-            <div className="secure">{`🔒 Secure checkout · ${SPOTS} spots currently available`}</div>
-          </div>
+          )}
+          <div className="secure">🔒 Secure checkout by Stripe. Your card details never touch this page.</div>
         </div>
       </section>
 
@@ -736,6 +791,7 @@ export default function AllInPage() {
           <div className="guarantee-box">
             <div className="seal">✓</div>
             <h2>Give Us 90 Days.</h2>
+            <div className="eyebrow" style={{ marginTop: 8 }}>Life Change Accelerator only</div>
             <p className="guarantee-quote">{GUARANTEE}</p>
             <p>
               Come in. Follow your plan. Show up for the coaching. Ask for help when you need it.
@@ -767,12 +823,12 @@ export default function AllInPage() {
           <p style={{ marginTop: 24, color: '#F4F2EC', fontWeight: 700 }}>
             Be there. Enjoy your family. Take the trip. Do the work you love. Live your life.
           </p>
-          <a href="#checkout" className="btn gold">{`Save My Spot · ${DEPOSIT}`}</a>
+          <a href="#tiers" className="btn gold">See the two ways to join ↓</a>
         </div>
       </section>
 
       <div className="mobile-cta">
-        <a href="#checkout">{`Secure My Spot · ${DEPOSIT} Today`}</a>
+        <a href="#tiers">Two ways to join · from $1,997</a>
       </div>
 
       <footer>

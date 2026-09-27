@@ -1332,6 +1332,8 @@ async function resolveAllInPlan(session) {
     if (md.plan === 'balance-12pay') return 'balance-12pay';
     if (md.plan === 'balance-5pay-360') return 'balance-5pay-360';
     if (md.plan === 'balance-4pay-450') return 'balance-4pay-450';
+    // 2026-09-27: Life Change Sprint, 6 weeks, $1,997 one-time, credited on upgrade.
+    if (md.plan === 'sprint') return 'sprint';
     if (md.plan === 'full' || !md.plan) return 'full';
     // A plan we do not recognize: never guess it is a one-time payment. If it
     // is a subscription, guessing 'full' is the forever-billing bug above.
@@ -1429,6 +1431,7 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
     'balance-9pay': 'Your first balance payment is in. Eight more payments of $935 run automatically each month, nine in total, on top of the deposit you already paid. After the ninth payment you are done.',
     'balance-12pay': 'Your first balance payment is in. Eleven more payments of $750 run automatically each month, twelve in total, on top of the deposit you already paid. After the twelfth payment you are done.',
     full: 'You are all in, paid in full. Your spot is locked.',
+    sprint: 'Your $1,997 Sprint payment is in and your spot is locked. This is the 6-week Sprint: weekly coaching and live Q&A, your health review and your plan. If you decide to move up to the full Life Change Accelerator at any point, every dollar of this payment is credited toward it.',
     // Legacy $1,997-era plans, kept ONLY so in-flight subscribers still get
     // accurate mail. Do not sell these.
     '3pay': 'Your first payment is in and your spot is locked. Two more payments of $699 run automatically every two weeks, three in total.',
@@ -1532,6 +1535,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null
     'balance-9pay': 'BALANCE 9 x $935 MONTHLY ($8,415 after the $500 deposit; auto-capped after the 9th charge).',
     'balance-12pay': 'BALANCE 12 x $750 MONTHLY ($9,000 after the $500 deposit; auto-capped after the 12th charge).',
     full: 'Paid in full ($7,500).',
+    sprint: 'SPRINT ($1,997, 6 weeks, paid in full). NO bonuses, NO guarantee, NO 1:1, NO year of access. Credit the full $1,997 if she upgrades to the $7,500 Accelerator.',
     // Legacy $1,997-era plans. In-flight subscribers only; not sellable.
     '3pay': 'LEGACY 3 x $699 bi-weekly ($2,097 over 6 weeks; auto-capped after the 3rd charge).',
     plan: 'LEGACY 6 x $367 bi-weekly ($2,202 over 12 weeks; auto-capped after the 6th charge).',

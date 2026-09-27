@@ -329,6 +329,7 @@ export function generateCoachingAgreementPDF({ name = '', email = '', paid = '',
 // legacy $1,997-era plans signed a different document.
 export const AGREEMENT_PLAN_FILL = {
   full: { paid: '$7,500 (paid in full)', balance: 'None — paid in full' },
+  sprint: { paid: '$1,997 (6-week Sprint, in full)', balance: 'None — credited if upgraded' },
   // NOTE: the signature-page value fields render with lineBreak:false in a
   // half-width column (~42 chars at 11pt) — keep these strings short.
   deposit: { paid: '$500 (deposit, credited)', balance: '$7,000 — changemylifechallenge.com/payment' },
