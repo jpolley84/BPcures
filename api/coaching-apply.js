@@ -1396,8 +1396,31 @@ async function handleCohort(req, res) {
   // 4. Instant auto-ack. Honest: does not claim the application was read yet.
   // 48-hour promise, no price, alongside-doctor footer. No booking link
   // (Joel's 07-22 rule) — the call is set up by reply or by phone.
+  //
+  // 2026-09-27 (Joel): while enrollment is open, the ack also invites the
+  // applicant to the live class and states how many seats are left. Both
+  // blocks are date-gated by LIVE_CLASS_UNTIL so this reverts to the plain
+  // ack on its own and never invites anyone to a class that already happened.
+  // Seat count lives in ACCELERATOR_SEATS_LEFT so it is one env change, not a
+  // copy edit.
   try {
     const firstName = application.name.split(' ')[0] || 'there';
+    const LIVE_CLASS_UNTIL = Date.parse(process.env.LIVE_CLASS_UNTIL || '2026-09-29T05:00:00Z');
+    const classOpen = Date.now() < LIVE_CLASS_UNTIL;
+    const seatsLeft = (process.env.ACCELERATOR_SEATS_LEFT || '').trim();
+    const zoomUrl = process.env.CHALLENGE_ZOOM_URL
+      || 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
+    const seatsLine = seatsLeft
+      ? `<p style="margin:0 0 16px;">We have <strong>${escapeHtml(seatsLeft)} spaces</strong> opening up.</p>`
+      : '';
+    const classBlock = classOpen
+      ? '<p style="margin:0 0 16px;">Before we talk, come hear us live.</p>'
+        + '<p style="margin:0 0 16px;">Tonight at <strong>7 PM Eastern</strong>, we are opening up the conversation about what it looks like to work with us closely over the next 90 days. We show you how we help, what the process looks like, who it is best suited for, and you decide whether it is the right next step for you.</p>'
+        + seatsLine
+        + `<p style="margin:0 0 16px;"><a href="${zoomUrl}">${zoomUrl}</a></p>`
+        + '<p style="margin:0 0 16px;">Enrollment closes <strong>Monday at midnight</strong>. It is the last group we can start this year and still finish a full 90 days before New Year\'s.</p>'
+        + '<p style="margin:0 0 16px;">If you cannot make it tonight, just reply to this email and one of us will reach out so you do not miss it.</p>'
+      : '';
     const ackResult = await getResend().emails.send({
       from: 'Joel Polley, RN <joel@bpquiz.com>',
       to: trimmedEmail,
@@ -1407,8 +1430,13 @@ async function handleCohort(req, res) {
         '<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#2C3E50;line-height:1.6;">' +
         '<p style="font-size:18px;color:#2C3E50;margin:0 0 16px;">Hi ' + escapeHtml(firstName) + ',</p>' +
         '<p style="margin:0 0 16px;">Your application for <strong>the Life Change Accelerator</strong> just landed with us. Thank you for writing it out honestly — especially the answer about what you would do if you knew you could not fail. That answer is where the whole 12 weeks starts.</p>' +
-        '<p style="margin:0 0 16px;">Joel and Annie review every application personally. You will hear from us within 48 hours, usually sooner. If it looks like a fit, one of us will reach out by phone or email to talk through the details together.</p>' +
-        '<p style="margin:0 0 16px;">Nothing has been charged and no spot is reserved yet. The next step is just a conversation.</p>' +
+        (classOpen
+          ? '<p style="margin:0 0 16px;">Joel and Annie read every application personally.</p>'
+          : '<p style="margin:0 0 16px;">Joel and Annie review every application personally. You will hear from us within 48 hours, usually sooner. If it looks like a fit, one of us will reach out by phone or email to talk through the details together.</p>') +
+        classBlock +
+        (classOpen
+          ? '<p style="margin:0 0 16px;">Nothing has been charged and no spot is reserved yet.</p>'
+          : '<p style="margin:0 0 16px;">Nothing has been charged and no spot is reserved yet. The next step is just a conversation.</p>') +
         '<p style="margin:0 0 24px;font-style:italic;color:#4A4A4A;">Everything we build together works alongside your doctor, never instead of them.</p>' +
         '<p style="margin:0 0 4px;color:#2C3E50;font-weight:600;">Joel and Annie</p>' +
         '<p style="margin:0 0 24px;font-size:14px;color:#4A4A4A;font-style:italic;">RNs, BraveWorks</p>' +
