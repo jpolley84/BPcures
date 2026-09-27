@@ -1,547 +1,318 @@
-// AllInPage (route: /allin) — "Life Change Accelerator" CHECKOUT.
+// AllInPage (route: /allin) — "The Life Change Accelerator" CHECKOUT.
 //
-// ── 2026-08-30: THIS PAGE TAKES MONEY AGAIN ──────────────────────────────
-// Joel supplied a finished design (life_change_accelerator_checkout_v2.html)
-// and asked for it wired up, with the checkout section made into the real
-// Stripe checkout. So this is no longer the application page it had been
-// since 2026-08-10. It is a direct-response checkout: $500 deposit, credited
-// toward a $7,500 investment, balance scheduled on /payment.
+// ── 2026-09-27: Joel's v7 design, wired ──────────────────────────────────
+// He supplied life-change-accelerator-allin-v7-clean-proof.html and said to
+// use it instead of the old page. His design is ported here rather than
+// rebuilt as a static file, because this route is a React page and the JSX is
+// the source of truth for what ships.
 //
-// The design is HIS, ported rather than reinvented. His CSS is kept close to
-// verbatim, with two deliberate changes:
-//   1. EVERY selector is scoped under `.lca`. His file was a standalone
-//      document and styled bare `body`, `h1`, `input`, `details` and `footer`.
-//      Dropped into this SPA unscoped, those rules survive client-side
-//      navigation and restyle every other page the visitor then visits.
-//   2. The payment form is gone. His markup had name/email/phone inputs and a
-//      placeholder card box, with a comment in his own file saying not to
-//      collect raw card data in custom HTML. It is right. Stripe's embedded
-//      checkout collects email and card itself, so hand-rolled duplicates of
-//      those fields are both redundant and a liability.
+// What changed from his file, and why:
+//   1. Every selector is scoped under `.lca`. His file styled bare body, h1,
+//      input and footer; unscoped in this SPA those rules would follow the
+//      visitor onto every other page.
+//   2. His checkout card had demo name/email inputs plus an "insert your
+//      checkout embed here" box. Those are replaced by the REAL Stripe
+//      embedded checkout ($500 deposit, tier allin-deposit). Stripe collects
+//      email and card itself, so hand-rolled copies are redundant and a
+//      liability.
+//   3. His two photo placeholders now carry the Annie + Joel photo.
+//   4. His single video slot carries Brenda's blood pressure story. Joel
+//      confirmed her consent on 2026-09-27; the record is in
+//      testimonials/records + CONSENT-LOG.md.
+//   5. "Add the exact balance and payment terms here" is filled in with the
+//      real terms: $500 deposit credited, $7,000 balance, plans up to 12
+//      months, chosen on /payment.
+//   6. His guarantee section shipped with participation terms full of blanks
+//      and a note saying not to invent them. Joel chose (09-27) to publish
+//      the guarantee exactly as he said it on the 09-24 call instead.
 //
-// ── WHAT JOEL ASKED FOR ON TOP OF THE DESIGN ─────────────────────────────
-//   - The checkout section is the real Stripe checkout (allin-deposit, $500).
-//   - Annie and Joel's photo is on the page.
-//   - A guarantee section ABOVE THE FOLD: the 30-day feel-it guarantee. His
-//     design only had it far down the left column plus a small note inside
-//     the payment card, so the band above the checkout grid is new.
-//
-// ── ⚠️ TWO THINGS THAT WILL BITE IF LEFT ALONE ───────────────────────────
-//   1. CLOSE_AT is a REAL deadline, and when it passes this page STOPS
-//      SELLING. That is his design ("Enrollment Closed"). It is also two days
-//      out. If nobody moves the date, /allin quietly stops taking money.
-//      Softened only in that the closed state still routes to /apply instead
-//      of dead-ending on a disabled button, because a dead end here is a lost
-//      lead on top of a lost sale.
-//   2. SPOTS is a scarcity claim shown to customers. It must stay true. The
-//      workspace already has a fake compare-at flagged on Annie's /rising
-//      page; a spot counter that never moves is the same defect.
-//
-// ── RULES THIS FILE STILL KEEPS ──────────────────────────────────────────
+// ── RULES THIS FILE KEEPS ────────────────────────────────────────────────
 // Not wrapped in SiteLayout (focused page, no nav to leak clicks).
-// ZERO em dashes in visible copy: his supplied copy had several and they are
-// converted to colons or commas, wording otherwise untouched.
-// No testimonials. Still nothing in testimonials/CONSENT-LOG.md cleared to
-// appear as a coaching result beside this price, so the page ships without
-// proof rather than with invented proof.
-// Education alongside the doctor, never a replacement. The guarantee says in
-// writing that it does not promise a medical result.
+// ZERO em dashes in visible copy.
+// SPOTS is a live scarcity claim shown to customers. It must stay true.
+// Education alongside the doctor, never a replacement.
 
 import { useEffect, useRef, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { STRIPE_PUBLISHABLE_KEY } from '../lib/loadEnv';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
-import { zonedInstant } from '../utils/tz.js';
 import heroImg from '../assets/annie-joel-scrubs.jpg';
 
 const pk = STRIPE_PUBLISHABLE_KEY();
 const stripePromise = pk ? loadStripe(pk) : null;
 
 // ─── the numbers. One place each. ────────────────────────────────────────
-const DEPOSIT = '$500';
-// 2026-09-24: the 09-18 birthday sale ($4,350) is over; back to full price.
-// The server charges the amounts, not this file (create-embedded-checkout.js).
 const PRICE = '$7,500';
+const DEPOSIT = '$500';
 const BALANCE = '$7,000';
-// 2026-09-24 call, Annie, verbatim: phases plus access plus Easy-Fit = '$23,197',
-// and 'the total value, including your bonuses, comes up to thirty five thousand
-// one hundred and ninety seven dollars'. Per-phase dollar values are deliberately
-// NOT published: the per-phase numbers she read do not add to her own subtotal.
-const TOTAL_VALUE = '$35,197';
-const CORE_VALUE = '$23,197';
 
-// ⚠️ Live scarcity claim, rendered to customers twice. Keep it true.
-const SPOTS = 5; // Joel, 2026-09-18 12:27: "only 5 spots available"
+// ⚠️ Live scarcity claim, rendered to customers three times. Keep it true.
+const SPOTS = 4; // Joel, 2026-09-27
 
-// ⚠️ REAL DEADLINES, from Joel's design. He wrote Central and the page says
-// "CT" out loud, so there is no ambiguity for the reader. Both labels below
-// are DERIVED from these instants, never typed twice, because the one thing
-// that reliably rots on a page like this is a hand-typed date left behind
-// after the constant moved.
-// 09-24 call: 'if you sign up before Monday at midnight, you get ... the skin and
-// hair regimen' plus the one-on-one. Joel 09-25: midnight EASTERN.
-const FAST_ACTION_ISO_ET = '2026-09-28T23:59:59';
-// 2026-09-24 19:20 CT (Joel, mid-pitch): enrollment is OPEN again at full
-// price, with NO deadline. HAS_DEADLINE=false hides the countdown rather than
-// counting down to a date nobody promised; the closebar shows the spots claim
-// instead. To run a real deadline again, set a date here AND HAS_DEADLINE=true.
-const CLOSE_ISO_CT = '2027-12-31T23:59:00';
-const HAS_DEADLINE = false;
-const FAST_ACTION_AT = zonedInstant(FAST_ACTION_ISO_ET, 'America/New_York');
-const CLOSE_AT = zonedInstant(CLOSE_ISO_CT, 'America/Chicago');
+// 2026-09-24 call, verbatim, confirmed for publication 09-27.
+const GUARANTEE = 'This is a 90-day program. We guarantee your results in those 90 days, or your money back.';
 
-const ctDate = (d) => new Intl.DateTimeFormat('en-US', {
-  weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/Chicago',
-}).format(d);
-const ctTime = (d) => new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago',
-}).format(d);
-
-const CLOSE_LABEL = `${ctDate(CLOSE_AT)} at ${ctTime(CLOSE_AT)} CT`;
-const FAST_LABEL = `${ctDate(FAST_ACTION_AT)} at ${new Intl.DateTimeFormat('en-US', {
-  hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York',
-}).format(FAST_ACTION_AT)} ET`;
-
-// The long label wraps to two lines on a 375px phone and the red bar grows to
-// 105px, which is an eighth of the screen spent on a date. Same instant, same
-// derivation, fewer characters. Shown only under 560px.
-const CLOSE_LABEL_SHORT = `${new Intl.DateTimeFormat('en-US', {
-  weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Chicago',
-}).format(CLOSE_AT)} · ${ctTime(CLOSE_AT)} CT`;
-
-// ─── the offer stack, from the LIVE, NOT JUST EXIST deck ─────────────────
 const PHASES = [
   {
-    kicker: 'Step 1',
-    title: 'The Life-Change Blueprint',
-    value: 'Your numbers',
+    n: 1,
+    title: 'Start With What Matters',
+    body: 'First, we look at your numbers, symptoms, habits, and where to start.',
     items: [
-      'Finally know what YOUR body needs, and do it in about 15 minutes a day',
-      '12 weeks of nurse-led transformation, so you stop guessing and get lasting results',
-      'Weekly coaching plus live Q&A, with your questions answered in real time',
-      'Answers in language you can understand and actually implement',
+      'Your Health Review',
+      'Life Change Blueprint + your numbers',
+      'Deeply Nourished family-friendly meal plan',
+      'Herbs + supplements guidance',
+      'Your clear starting priorities',
     ],
-    payoff: 'Do less, in the right order. That is the whole method.',
   },
   {
-    kicker: 'Step 2',
-    title: 'Understand what your body is saying',
-    value: 'Clarity',
+    n: 2,
+    title: 'Work Your Plan',
+    body: 'Next, you use proven lifestyle changes and see what helps your numbers move.',
     items: [
-      'Know Your Labs: understand your numbers and walk into your appointment able to talk about them without fear',
-      'Decode Your Symptoms System: finally understand what your body has been trying to tell you',
-      'The Normal Numbers Blueprint: get your numbers into a range you can be proud of',
-      'Doctor Conversation Guide, root-driver clarity and symptom sorting',
+      'Steady Numbers Blueprint',
+      'Understand your symptoms',
+      'Fun + Freedom movement',
+      'Easy-Fit System',
+      'Doctor conversation support',
     ],
-    payoff: 'You stop being a passenger in your own health.',
   },
   {
-    kicker: 'Step 3',
-    title: 'Make it work in your real life',
-    value: 'Food + movement',
+    n: 3,
+    title: 'Keep Your Progress',
+    body: 'Then, we help you keep the changes going so your progress can last.',
     items: [
-      'Food That Loves You Back Playbook: meals your family LOVES that are deeply nourishing, so you pass on generational health',
-      '90 days of budget-friendly meal plans, plus our food experts',
-      'The Easy-Fit System: the right kind of movement for YOU, personalized, that keeps working for up to 48 hours',
-      'Age-appropriate and doable even if you are starting from a chair or a wheelchair',
-      'Herbs and Supplements Guidance: not more supplements, a few of the right ones in the right order',
+      'Bring Sexy Back',
+      'Food That Loves You Back',
+      'Whole-person expert support',
+      'Healing from the past',
+      'Build habits you can actually keep',
     ],
-    payoff: 'Less is more. Let your body lose the weight.',
-  },
-  {
-    kicker: 'Step 4',
-    title: 'Get your life back, not just your numbers',
-    value: 'The whole you',
-    items: [
-      'Bring Sexy Back: get your energy, your confidence and your drive back',
-      'The Healing Circle: community, accountability, guidance and 24-hour support',
-      'Exclusive access to our expert team, including a naturopath, a trauma expert and 36 years of nurse advice',
-      'A full year with us, not just the 90 days',
-    ],
-    payoff: 'Community is everything. Stop doing this alone.',
   },
 ];
 
-// The email's three bonuses, in its own words.
+const INCLUDES = [
+  ['Evidence-Based Lifestyle Plan', 'Food, movement, sleep, stress, hydration, and other proven lifestyle methods chosen around your needs.'],
+  ['Your Health Review', 'We start with you, your health, and what you need.'],
+  ['Your 90-Day Plan', 'A clear plan built around what matters most for you.'],
+  ['Step-by-Step Help', 'You will know what to do next. No trying everything at once.'],
+  ['Weekly Coaching + Live Q&A', 'Bring your questions, wins, problems, and numbers each week.'],
+  ['Guest Expert Help', 'Get extra help from guest experts when you need it.'],
+  ['Progress Check-Ins', 'We check what is changing and where you need more help.'],
+  ['Support + Community', 'You will be with women who are doing the work too.'],
+  ['Help Staying on Track', 'We help you keep going, even when life gets busy.'],
+];
+
+const QUOTES = [
+  ['From my 20s to now being 67, being on 3 blood pressure meds, you have been the only person that has ever made any impact in my BP journey.', 'Drago, 67'],
+  ['I have done everything you said and all my meds are decreasing.', 'Dorothy M.'],
+  ['My blood pressure is back to normal: 124/80.', 'Community member'],
+];
+
+const STACK = [
+  'Phase 1: Start With What Matters',
+  'Phase 2: Work Your Plan',
+  'Phase 3: Keep Your Progress',
+  'Weekly Coaching + Q&A',
+  'Guest Expert Help',
+  'Support + Accountability',
+  'One Year of Access',
+  'Extra Help',
+];
+
 const BONUSES = [
-  {
-    name: 'A Full Year Of Access',
-    body: 'The coaching is 90 days. Your access is a year: the weekly Q&As, the community and the team stay with you, because life happens and you should not have to start over alone.',
-  },
-  {
-    name: 'Two For One',
-    body: 'Bring your spouse or a friend with you at no extra cost. Healing, with built-in accountability. Some people split the cost between them.',
-  },
-];
-
-// Presented on the 09-24 call as the FAST-ACTION bonuses: 'if you sign up before
-// Monday at midnight'. They disappear from the page when that instant passes.
-const FAST_BONUSES = [
-  {
-    name: 'Skin + Hair Regimen',
-    body: 'Learn with Annie how to make your own natural skin and hair products, and, if you want it, how to sell what you make.',
-  },
-  {
-    name: 'One-on-One Coaching Session',
-    body: 'Everyone gets one. Personal eyes on YOUR situation, so you can win well before the 90 days are up.',
-  },
-];
-
-// Deck slide 9. The reason any of this matters.
-const SO_YOU_CAN = [
-  'Be there',
-  'Be healed',
-  'Enjoy the kids',
-  'Bring sexy back',
-  'Take the trip',
-  'Write the book',
-  'Run the business',
-  'Say YES to purpose',
+  ['One Year Access', 'Life gets busy. You can come back and review what you need.'],
+  ['The Healing Circle', 'Get support, help, and a place to stay on track.'],
+  ['Know Your Labs', 'Learn what your labs mean and what to ask your doctor.'],
+  ['Fast-Action: Skin + Hair', 'Extra help for skin and hair.'],
 ];
 
 const FAQ = [
-  {
-    q: 'What am I paying today?',
-    a: `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`,
-  },
-  {
-    q: 'What happens with the remaining balance?',
-    a: `After your ${DEPOSIT} deposit, the remaining ${BALANCE} is placed on the payment schedule you choose. `
-      + 'Payment terms are available up to 12 months, and you pick yours on the next page.',
-  },
-  {
-    q: 'Why is each cohort small?',
-    a: 'This program includes personalized review, case management and ongoing human support. The cohort is '
-      + 'intentionally limited so the team can actually pay attention to the people inside it.',
-  },
-  {
-    q: 'When does the program start?',
-    a: 'Wednesday, September 30. You are added to the WhatsApp group and the community, and the weekly '
-      + 'coaching and Q&A begin from there.',
-  },
-  {
-    q: 'Is the $500 deposit refundable if I change my mind?',
-    a: 'Yes. If you put the deposit down and then decide this is not for you, tell us and we refund it.',
-  },
-  {
-    q: 'Do I have to pay the whole thing today?',
-    a: `No. ${DEPOSIT} secures your spot and comes off the total, leaving ${BALANCE} you can place on a payment `
-      + 'plan. Paying in full is the cheapest route, and third-party financing counts as paying in full.',
-  },
-  {
-    q: 'What happens right after I reserve?',
-    a: 'You choose your payment schedule, then you receive onboarding instructions, complete your Personal '
-      + 'Health Review, and begin identifying your top priorities and first 90-day plan.',
-  },
+  ['What am I paying today?', `${DEPOSIT} today. It is credited toward the full ${PRICE} Life Change Accelerator investment.`],
+  ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page.`],
+  ['Is the deposit refundable if I change my mind?', 'Yes. If you put the deposit down and then decide this is not for you, tell us and we refund it.'],
+  ['When does the program start?', 'You are added to the group and the community after you enroll, and the weekly coaching and Q&A begin from there.'],
+  ['Do I have to pay the whole thing today?', `No. ${DEPOSIT} secures your spot and comes off the total. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
 ];
 
-// 2026-09-24 call, verbatim: 'It's a 90 day program. We guarantee your results in
-// those 90 days or your money back.' Joel confirmed 09-25 to publish it as spoken.
-const GUARANTEE_BODY = 'This is a 90-day program. We guarantee your results in those 90 days, or your money back.';
-
-const GUARANTEE_SMALL = 'This guarantee does not promise a specific medical result and does not replace '
-  + 'individualized medical care. Individual outcomes vary.';
-
-// ─── Joel's stylesheet, scoped. See the note at the top of the file for why
-// every selector carries the `.lca` prefix. ──────────────────────────────
+// His stylesheet, scoped. Every rule that was bare (body, h1, section,
+// footer, input, details) now hangs off `.lca` so it cannot escape this page.
 const CSS = `
-.lca {
-  --ivory:#fbf8f0; --paper:#fff; --ink:#111; --muted:#6b675f; --line:#ded8cc;
-  --gold:#d7aa28; --gold-soft:#f7edc9; --red:#c9252d; --red-dark:#a91920;
-  --shadow:0 18px 46px rgba(32,26,13,.10); --radius:18px; --max:1180px;
-  background:var(--ivory); color:var(--ink); line-height:1.5;
-  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased; min-height:100vh;
+.lca{
+  --ink:#1F2321; --ink-soft:#4A504C; --cream:#F7F3EA; --white:#FFFFFF;
+  --gold:#C9A24A; --gold-dark:#9D7A2F; --sage:#DCE6DD; --sage-deep:#31473A;
+  --line:#DDD6C8; --soft:#EEE9DF; --success:#38634A;
+  --shadow:0 18px 60px rgba(31,35,33,.08); --radius:24px; --max:1160px;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color:var(--ink); background:var(--cream); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
 }
-.lca *,.lca *::before,.lca *::after { box-sizing:border-box; }
-.lca a { color:inherit; }
+.lca *,.lca *::before,.lca *::after{box-sizing:border-box}
+.lca img{max-width:100%;display:block}
+.lca a{text-decoration:none;color:inherit}
+.lca button,.lca input{font:inherit}
+.lca .wrap{width:min(92%, var(--max));margin:0 auto}
+.lca .narrow{width:min(92%, 820px);margin:0 auto}
+.lca h1,.lca h2,.lca h3{margin:0;line-height:1.05;letter-spacing:-.03em}
+.lca h1{font-size:clamp(2.6rem,6vw,5.4rem);font-weight:900;max-width:950px}
+.lca h2{font-size:clamp(2rem,4.2vw,3.6rem);font-weight:850}
+.lca h3{font-size:clamp(1.3rem,2.2vw,1.8rem);font-weight:800}
+.lca p{margin:0;font-size:1.05rem;color:var(--ink-soft)}
+.lca .lead{font-size:clamp(1.12rem,1.8vw,1.42rem);max-width:760px}
+.lca .eyebrow{font-weight:850;letter-spacing:.09em;text-transform:uppercase;font-size:.8rem;color:var(--gold-dark)}
 
-.lca .closebar { background:var(--red); color:#fff; border-bottom:1px solid rgba(0,0,0,.12); }
-.lca .closebar.is-closed { background:var(--ink); }
-.lca .closebar-inner { max-width:var(--max); margin:0 auto; padding:10px 24px 12px;
-  display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center; }
-.lca .close-copy { font-size:12px; font-weight:850; letter-spacing:.055em; text-transform:uppercase; }
-.lca .countdown { display:flex; align-items:center; gap:7px; font-variant-numeric:tabular-nums; }
-.lca .time-box { min-width:49px; background:#fff; color:var(--red-dark); border-radius:7px;
-  padding:6px 7px 5px; text-align:center; line-height:1; box-shadow:inset 0 0 0 1px rgba(0,0,0,.05); }
-.lca .time-num { display:block; font-weight:900; font-size:18px; letter-spacing:-.02em; }
-.lca .time-label { display:block; margin-top:3px; font-size:8px; font-weight:800;
-  letter-spacing:.08em; text-transform:uppercase; }
+.lca .topbar{background:var(--sage-deep);color:#fff;font-weight:800;text-transform:uppercase;
+  letter-spacing:.09em;font-size:.8rem;text-align:center;padding:12px 18px;position:sticky;top:0;z-index:100}
 
-.lca .page { max-width:var(--max); margin:0 auto; padding:46px 24px 72px; }
-.lca .brand-line { display:flex; align-items:center; gap:11px; margin-bottom:16px;
-  font-size:12px; font-weight:900; letter-spacing:.11em; text-transform:uppercase; }
-.lca .brand-line::before { content:""; width:34px; height:4px; border-radius:99px; background:var(--gold); }
-.lca h1 { font-size:clamp(38px,5.4vw,68px); line-height:1; letter-spacing:-.05em;
-  margin:0 0 17px; max-width:820px; }
-.lca .subhead { max-width:800px; color:#3f3b34; font-size:clamp(17px,2vw,20px); margin-bottom:24px; }
-.lca .program-strip { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 0; }
-.lca .program-pill { padding:8px 11px; border:1px solid var(--line); background:rgba(255,255,255,.62);
-  border-radius:999px; font-size:13px; font-weight:750; }
-.lca .program-pill strong { font-weight:900; }
+.lca .hero{padding:72px 0 64px;background:radial-gradient(circle at top right, rgba(201,162,74,.14), transparent 30%), var(--cream)}
+.lca .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.lca .hero-copy p{margin-top:22px}
+.lca .trust-line{display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:26px;color:var(--ink-soft);font-size:.95rem;font-weight:700}
+.lca .trust-line span::before{content:"✓";color:var(--success);margin-right:8px;font-weight:900}
+.lca .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--sage-deep);
+  color:#fff;padding:16px 24px;border-radius:999px;font-weight:850;margin-top:28px;transition:.2s ease;
+  border:1px solid var(--sage-deep);cursor:pointer;text-align:center}
+.lca .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(49,71,58,.15)}
+.lca .btn.gold{background:var(--gold);border-color:var(--gold);color:#171717}
+.lca .btn.full{width:100%;font-size:1.05rem;padding:18px 24px}
+.lca .photo-card{border-radius:32px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(49,71,58,.08);
+  position:relative;display:flex;align-items:flex-end;padding:22px;min-height:460px;
+  background:linear-gradient(160deg, rgba(49,71,58,.06), rgba(201,162,74,.08)), #EDE7DC}
+.lca .photo-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%}
+.lca .photo-badge{position:relative;z-index:2;background:rgba(255,255,255,.93);border-radius:18px;padding:14px 16px;
+  width:100%;font-weight:750;color:var(--ink);font-size:.95rem}
 
-/* ── the above-the-fold guarantee band (Joel, 2026-08-30) ── */
-.lca .save-spot { display:block; text-decoration:none; text-align:center; background:var(--ink);
-  color:#fff; border-radius:12px; padding:16px 22px; margin:0 0 18px; font-size:19px;
-  font-weight:900; letter-spacing:-.02em; box-shadow:var(--shadow);
-  transition:transform .12s ease, background .12s ease; }
-.lca .save-spot:hover { transform:translateY(-1px); background:#242424; }
-.lca .save-spot-sub { display:block; margin-top:4px; font-size:12.5px; font-weight:750;
-  letter-spacing:0; color:#cfc9bd; }
+.lca section{padding:80px 0}
+.lca .white{background:var(--white)}
+.lca .deep{background:var(--sage-deep);color:#fff}
+.lca .deep p{color:rgba(255,255,255,.78)}
+.lca .deep h2,.lca .deep h3{color:#fff}
+.lca .center{text-align:center}
+.lca .center .lead{margin:20px auto 0}
 
-.lca .guarantee-band { display:grid; grid-template-columns:auto minmax(0,1fr); gap:18px;
-  align-items:start; background:var(--ink); color:#fff; border-radius:var(--radius);
-  padding:20px 22px; margin-bottom:0; }
-.lca .guarantee-seal { width:74px; height:74px; border-radius:50%; display:grid; place-content:center;
-  text-align:center; border:2px solid var(--gold); color:var(--gold); line-height:1.05; }
-.lca .guarantee-seal .n { display:block; font-size:25px; font-weight:950; letter-spacing:-.04em; }
-.lca .guarantee-seal .d { display:block; font-size:9px; font-weight:900; letter-spacing:.1em; }
-.lca .guarantee-band h2 { font-size:23px; letter-spacing:-.03em; margin:2px 0 6px; }
-.lca .guarantee-band p { margin:0; color:#ece7dd; font-size:14.5px; }
-.lca .guarantee-band .more { display:inline-block; margin-top:9px; font-size:13px; font-weight:850;
-  color:var(--gold); }
+.lca .strip{padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--white)}
+.lca .strip-inner{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 28px;text-align:center;font-weight:800;color:var(--sage-deep)}
 
-.lca .checkout-grid { margin-top:34px; display:grid; grid-template-columns:minmax(0,1.18fr) minmax(360px,.82fr);
-  gap:42px; align-items:start; }
-.lca .offer-side { min-width:0; }
+.lca .statement{padding:72px 0;background:var(--ink);color:#fff;text-align:center}
+.lca .statement h2{max-width:850px;margin:0 auto;font-size:clamp(2.2rem,4.4vw,4rem);color:#fff}
+.lca .statement p{color:rgba(255,255,255,.72);margin:22px auto 0;max-width:720px;font-size:1.15rem}
 
-/* ── who you are doing this with ── */
-.lca .coaches { display:flex; align-items:center; gap:15px; border:1px solid var(--line);
-  background:rgba(255,255,255,.72); border-radius:var(--radius); padding:14px 16px; margin-bottom:8px; }
-.lca .coaches img { width:78px; height:78px; border-radius:50%; object-fit:cover;
-  object-position:50% 22%; flex:none; }
-.lca .coaches .who { font-size:16px; font-weight:900; letter-spacing:-.02em; margin:0 0 3px; }
-.lca .coaches .what { font-size:13.5px; color:var(--muted); margin:0; }
+.lca .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px}
+.lca .phase{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:0 10px 34px rgba(31,35,33,.04)}
+.lca .phase .num{display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;border-radius:50%;
+  background:var(--sage);color:var(--sage-deep);font-weight:900;margin-bottom:18px}
+.lca .phase p{margin-top:12px}
+.lca .phase ul{padding:0;margin:20px 0 0;list-style:none}
+.lca .phase li{padding:10px 0;border-top:1px solid var(--soft);font-weight:650;color:#313633}
 
-.lca .offer-summary { padding:25px 0 22px; border-top:1px solid var(--line); }
-.lca .offer-summary h2,.lca .section h2 { font-size:29px; line-height:1.08; letter-spacing:-.035em; margin:0 0 9px; }
-.lca .offer-summary p,.lca .section p { margin:0; color:var(--muted); }
-.lca .phase { padding:25px 0 27px; border-top:1px solid var(--line); }
-.lca .phase-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:12px; }
-.lca .phase-kicker { font-size:11px; font-weight:900; letter-spacing:.11em; text-transform:uppercase;
-  color:#5f584b; margin-bottom:6px; }
-.lca .phase h3 { font-size:25px; line-height:1.08; letter-spacing:-.025em; margin:0; }
-.lca .value-tag { white-space:nowrap; padding:7px 10px; border-radius:8px; background:var(--gold-soft);
-  border:1px solid #e9d58d; font-size:12px; font-weight:900; }
-.lca .phase ul,.lca .bonus-list,.lca .check-list { list-style:none; padding:0; margin:0; }
-.lca .phase li,.lca .bonus-list li,.lca .check-list li { position:relative; padding:7px 0 7px 26px; font-size:15.5px; }
-.lca .phase li::before,.lca .bonus-list li::before,.lca .check-list li::before {
-  content:"✓"; position:absolute; left:0; top:7px; color:#b88700; font-weight:950; }
-.lca .micro-payoff { margin-top:14px; font-weight:780; color:#24211d; }
+.lca .includes{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:40px}
+.lca .include-item{display:flex;gap:14px;align-items:flex-start;background:#FCFBF8;border:1px solid var(--line);border-radius:18px;padding:20px}
+.lca .check{width:26px;height:26px;flex:0 0 26px;border-radius:50%;background:var(--sage);color:var(--sage-deep);display:grid;place-items:center;font-weight:900}
+.lca .include-item strong{display:block;margin-bottom:3px}
+.lca .include-item span{color:var(--ink-soft);font-size:.95rem}
 
-.lca .bonus-box,.lca .guarantee-box,.lca .fast-box,.lca .value-box {
-  border:1px solid var(--line); border-radius:var(--radius); padding:23px; margin-top:22px;
-  background:rgba(255,255,255,.76); }
-.lca .bonus-box h3,.lca .guarantee-box h3,.lca .fast-box h3,.lca .value-box h3 {
-  margin:0 0 7px; font-size:22px; letter-spacing:-.025em; }
-.lca .fast-box { background:#fffdf7; border-color:#ddc77f; }
-.lca .fast-deadline { margin-top:14px; font-size:13px; font-weight:850; color:#594817; }
-.lca .fast-countdown { margin-top:5px; font-size:25px; font-weight:900; letter-spacing:-.035em;
-  font-variant-numeric:tabular-nums; }
-.lca .soyoucan-box { border:1px solid var(--line); border-radius:var(--radius); padding:23px;
-  margin-top:22px; background:rgba(255,255,255,.76); }
-.lca .soyoucan-box h3 { margin:0 0 14px; font-size:22px; letter-spacing:-.025em; }
-.lca .soyoucan-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:9px 18px; }
-.lca .soyoucan-grid span { font-size:16px; font-weight:750; }
-.lca .soyoucan-grid span::before { content:"✓"; color:#b88700; font-weight:950; margin-right:8px; }
+.lca .team{display:grid;grid-template-columns:.9fr 1.1fr;gap:52px;align-items:center}
+.lca .team-photo{border-radius:28px;overflow:hidden;border:1px solid var(--line);background:#E9E2D5;min-height:420px}
+.lca .team-photo img{width:100%;height:100%;object-fit:cover;min-height:420px;object-position:center 20%}
+.lca .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+.lca .mini{background:#F8F6F1;border:1px solid var(--line);border-radius:16px;padding:18px;font-weight:700}
 
-.lca .value-box { background:var(--ink); color:#fff; border:0; }
-.lca .value-box .phase-kicker { color:#cfc9bd; }
-.lca .value-total { display:flex; align-items:baseline; justify-content:space-between; gap:20px;
-  margin-top:9px; padding-top:15px; border-top:1px solid rgba(255,255,255,.2); }
-.lca .value-total span:first-child { color:#d7d2c8; font-size:14px; }
-.lca .value-total strong { font-size:34px; letter-spacing:-.04em; }
+.lca .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+.lca .quote{background:#fff;border-radius:20px;padding:26px;border:1px solid var(--line);box-shadow:0 8px 26px rgba(31,35,33,.04)}
+.lca .quote p{color:var(--ink);font-size:1rem;font-weight:650}
+.lca .quote small{display:block;margin-top:16px;color:var(--ink-soft)}
+.lca .disclaimer{font-size:.8rem;color:#777;margin-top:22px;text-align:center}
 
-.lca .payment-card { position:sticky; top:18px; border:1px solid #d7d0c4; border-radius:22px;
-  background:var(--paper); box-shadow:var(--shadow); overflow:hidden; }
-.lca .payment-head { padding:23px 24px 18px; border-bottom:1px solid var(--line); }
-.lca .spots { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:900;
-  letter-spacing:.08em; text-transform:uppercase; background:var(--ink); color:#fff;
-  border-radius:999px; padding:8px 11px; margin-bottom:15px; }
-.lca .spots-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); }
-.lca .payment-head h2 { font-size:30px; line-height:1.04; letter-spacing:-.04em; margin:0 0 8px; }
-.lca .payment-head p { margin:0; color:var(--muted); font-size:14px; }
+/* Brenda's story is a PORTRAIT phone video, so the card is 9:16 and capped,
+   not the 16:9 box his mockup drew for a placeholder. */
+.lca .video-proof{display:grid;grid-template-columns:1fr;max-width:400px;margin:36px auto 0}
+.lca .video-card{background:#111;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(31,35,33,.08)}
+.lca .video-card video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#111;display:block}
+.lca .video-caption{background:#fff;padding:16px 18px}
+.lca .video-caption strong{display:block}
+.lca .video-caption span{display:block;color:var(--ink-soft);font-size:.9rem;margin-top:4px}
 
-.lca .price-block { padding:19px 24px; background:#faf7ee; border-bottom:1px solid var(--line); }
-.lca .price-line { display:flex; align-items:baseline; justify-content:space-between; gap:16px;
-  padding:4px 0; font-size:14px; }
-.lca .price-line strong { font-size:15px; }
-.lca .strike { text-decoration:line-through; color:#79736a; }
-.lca .due-now { margin-top:12px; padding-top:14px; border-top:1px solid var(--line);
-  display:flex; align-items:baseline; justify-content:space-between; gap:18px; }
-.lca .due-now .label { font-weight:850; }
-.lca .due-now .amount { font-size:38px; font-weight:950; letter-spacing:-.05em; }
+.lca .stack{margin-top:36px;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#fff}
+.lca .stack-row{display:flex;justify-content:space-between;gap:30px;padding:18px 24px;border-bottom:1px solid var(--soft)}
+.lca .stack-row:last-child{border-bottom:none}
+.lca .stack-row strong{font-weight:800}
+.lca .stack-row span{color:var(--ink-soft)}
+.lca .investment{margin-top:34px;text-align:center}
+.lca .price{font-size:clamp(3.4rem,8vw,6.4rem);line-height:.9;font-weight:950;letter-spacing:-.06em;margin:16px 0 10px}
+.lca .today{display:inline-block;margin-top:20px;padding:12px 18px;border-radius:999px;background:var(--sage);color:var(--sage-deep);font-weight:850}
 
-.lca .payment-body { padding:22px 24px 24px; }
-.lca .mini-guarantee { border:1px solid #ead999; background:#fffaf0; border-radius:13px;
-  padding:13px 14px; margin-bottom:19px; font-size:13px; line-height:1.42; }
-.lca .mini-guarantee strong { display:block; margin-bottom:3px; }
-.lca .stripe-mount { min-height:320px; }
-.lca .pay-error { border:1px solid #e6b8ba; background:#fdf3f3; color:#8d2026; border-radius:10px;
-  padding:13px 14px; font-size:13.5px; line-height:1.5; }
-.lca .pay-error a { font-weight:850; }
-.lca .closed-panel { text-align:center; padding:6px 0 2px; }
-.lca .closed-panel h3 { margin:0 0 8px; font-size:20px; letter-spacing:-.02em; }
-.lca .closed-panel p { margin:0 0 16px; font-size:14px; color:var(--muted); }
-.lca .closed-panel a { display:block; text-decoration:none; background:var(--ink); color:#fff;
-  border-radius:11px; padding:15px 18px; font-size:15px; font-weight:900; }
-.lca .secure-note { text-align:center; color:#6c655b; font-size:12px; margin-top:12px; }
-.lca .terms-note { font-size:12px; color:#6c655b; margin-top:14px; line-height:1.5; }
-.lca .next-steps { padding:22px 24px; border-top:1px solid var(--line); background:#faf7ee; }
-.lca .next-steps h3 { margin:0 0 9px; font-size:17px; }
-.lca .next-steps ol { margin:0; padding-left:20px; color:#3a362f; font-size:13px; }
-.lca .next-steps li { padding:3px 0; }
+.lca .checkout-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:42px;align-items:start}
+.lca .steps{display:grid;gap:16px;margin-top:26px}
+.lca .step{display:flex;gap:14px;align-items:flex-start}
+.lca .step-num{width:32px;height:32px;flex:0 0 32px;border-radius:50%;background:var(--sage);color:var(--sage-deep);display:grid;place-items:center;font-weight:900}
+.lca .checkout-card{background:#fff;border-radius:26px;padding:26px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.lca .checkout-mount{margin-top:18px;min-height:320px}
+.lca .checkout-error{margin-top:14px;background:#FFF4F2;border:1px solid #E9C4BC;border-radius:12px;padding:14px;color:#8A3524;font-size:.94rem}
+.lca .checkout-error a{text-decoration:underline;font-weight:800}
+.lca .secure{margin-top:14px;font-size:.86rem;color:#6A706C;text-align:center}
 
-.lca .section { border-top:1px solid var(--line); padding-top:31px; margin-top:40px; }
-.lca .guarantee-box { background:#191919; color:#fff; border:0; }
-.lca .guarantee-box .phase-kicker { color:#d6c889; }
-.lca .guarantee-box p { color:#ece7dd; margin-bottom:0; }
-.lca .guarantee-box .small { font-size:12px; color:#bbb5aa; margin-top:13px; }
-.lca .faq { display:grid; gap:10px; }
-.lca details { border:1px solid var(--line); border-radius:12px; padding:0 16px; background:rgba(255,255,255,.68); }
-.lca summary { cursor:pointer; list-style:none; padding:16px 0; font-weight:820; }
-.lca summary::-webkit-details-marker { display:none; }
-.lca details p { margin:-3px 0 17px; font-size:14px; color:#5e574d; }
+.lca .guarantee-box{border:1px solid var(--gold);border-radius:30px;padding:48px;background:#FFFCF4;text-align:center;box-shadow:var(--shadow)}
+.lca .guarantee-box .seal{width:72px;height:72px;border-radius:50%;background:var(--sage-deep);color:#fff;display:grid;place-items:center;margin:0 auto 20px;font-size:1.8rem;font-weight:900}
+.lca .guarantee-box p{max-width:760px;margin:16px auto 0}
+.lca .guarantee-quote{font-size:clamp(1.2rem,2.2vw,1.6rem);font-weight:800;color:var(--ink);max-width:720px;margin:14px auto 0}
+.lca .guarantee-fine{font-size:.85rem;color:#777;margin-top:22px}
 
-.lca .scroll-prompt { display:none; }
+.lca .faq{margin-top:38px;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:#fff}
+.lca .faq details{border-bottom:1px solid var(--soft)}
+.lca .faq details:last-child{border-bottom:0}
+.lca .faq summary{cursor:pointer;list-style:none;padding:18px 24px;font-weight:800;color:var(--ink);display:flex;justify-content:space-between;gap:16px;align-items:center;min-height:56px}
+.lca .faq summary::-webkit-details-marker{display:none}
+.lca .faq summary::after{content:"+";color:var(--gold-dark);font-weight:900}
+.lca .faq details[open] summary::after{content:"–"}
+.lca .faq .answer{padding:0 24px 20px;color:var(--ink-soft);font-size:.98rem}
 
-.lca .apply-out { margin-top:26px; font-size:13.5px; color:var(--muted); text-align:center; }
-.lca .apply-out a { font-weight:850; color:var(--ink); }
+.lca .bonus-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:40px}
+.lca .bonus{border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:26px;background:rgba(255,255,255,.05)}
+.lca .bonus h3{margin-bottom:8px}
+.lca .bonus p{font-size:.98rem}
 
-.lca footer { max-width:var(--max); margin:0 auto; padding:24px 24px 48px; color:#7a7268;
-  font-size:11px; border-top:1px solid var(--line); }
-.lca .footer-links { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:10px; }
-.lca .mobile-cta { display:none; }
+.lca .final{text-align:center;padding:80px 0 90px;background:var(--ink);color:#fff}
+.lca .final h2{color:#fff}
+.lca .final p{color:rgba(255,255,255,.7);margin:18px auto 0;max-width:720px;font-size:1.1rem}
+.lca footer{background:#161917;color:#AAAFA9;text-align:center;padding:24px;font-size:.82rem}
+.lca .footer-links{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+.lca .footer-links a{text-decoration:underline}
 
-@media (max-width:880px) {
-  .lca .closebar-inner { grid-template-columns:1fr; gap:8px; }
-  .lca .countdown { justify-content:flex-start; }
-  .lca .page { padding-top:34px; }
-  .lca .checkout-grid { grid-template-columns:1fr; gap:28px; }
-  .lca .payment-card { position:static; }
+.lca .mobile-cta{display:none}
 
-  /* Joel, 2026-08-30: the checkout goes UP. Stacked, the payment card used
-     to land after every phase, bonus, value block and FAQ, about 5,000px
-     down. Reordering rather than moving it in the markup keeps the desktop
-     two-column layout exactly as designed, and keeps the DOM order sane for
-     a screen reader (offer, then checkout, then the prompt). */
-  .lca .payment-card { order:1; }
-  .lca .scroll-prompt { order:2; }
-  .lca .offer-side { order:3; }
-
-  .lca .scroll-prompt { display:flex; align-items:center; justify-content:center; gap:10px;
-    text-decoration:none; border:1px dashed #c6bda9; border-radius:999px; padding:13px 18px;
-    margin:-6px 0 -4px; color:#5f584b; background:rgba(255,255,255,.5); }
-  .lca .scroll-prompt-t { font-size:13.5px; font-weight:850; letter-spacing:.01em; }
-  .lca .scroll-prompt-a { font-size:16px; font-weight:900; color:var(--ink); }
-  .lca .mobile-cta { display:block; position:sticky; bottom:0; z-index:30;
-    background:rgba(251,248,240,.96); border-top:1px solid var(--line);
-    padding:10px 14px max(10px,env(safe-area-inset-bottom)); backdrop-filter:blur(10px); }
-  .lca .mobile-cta a { display:block; text-decoration:none; text-align:center; background:var(--ink);
-    color:#fff; padding:14px 16px; border-radius:10px; font-weight:900; }
+@media (max-width:900px){
+  .lca .hero-grid,.lca .team,.lca .checkout-wrap{grid-template-columns:1fr}
+  .lca .phases,.lca .proof-grid{grid-template-columns:1fr}
+  .lca .includes,.lca .bonus-grid{grid-template-columns:1fr}
+  .lca .photo-card{min-height:360px}
+  .lca .team-photo,.lca .team-photo img{min-height:340px}
+  .lca section{padding:64px 0}
+  .lca .hero{padding:52px 0}
 }
-@media (max-width:560px) {
-  .lca h1 { font-size:41px; margin-bottom:10px; }
-  .lca .page { padding-left:18px; padding-right:18px; padding-top:26px; }
-  .lca .phase h3 { font-size:22px; }
-  .lca .payment-head h2 { font-size:26px; }
-  .lca .time-box { min-width:44px; }
-  .lca .time-num { font-size:16px; }
-  .lca .phase-head { align-items:flex-start; }
-  /* Joel asked for the guarantee above the fold. On a 375x812 phone his
-     desktop spacing pushed the band's top to 679px, so only the seal peeked
-     over the edge. Everything below buys back the ~110px that lets the seal,
-     the heading and the body land on the first screen. The band stays a
-     two-column layout here rather than stacking, because stacking the seal
-     above the text costs more height than the seal is worth. */
-  .lca .subhead { margin-bottom:16px; font-size:16.5px; }
-  .lca .program-strip { gap:8px; margin:16px 0 0; }
-  .lca .program-pill { padding:7px 10px; font-size:12.5px; }
-  .lca .brand-line { margin-bottom:12px; }
-  .lca .guarantee-band { padding:15px; gap:13px; margin-bottom:0; }
-  .lca .guarantee-seal { width:56px; height:56px; }
-  .lca .guarantee-seal .n { font-size:20px; }
-  .lca .guarantee-band h2 { font-size:20px; }
-  .lca .guarantee-band p { font-size:14px; }
+@media (max-width:580px){
+  .lca .wrap,.lca .narrow{width:min(90%, var(--max))}
+  .lca h1{font-size:clamp(2.2rem,11vw,3.2rem)}
+  .lca .hero{padding:40px 0 48px}
+  .lca .statement{padding:56px 0}
+  .lca .guarantee-box{padding:30px 20px}
+  .lca .stack-row{padding:16px 18px}
+  .lca .checkout-card{padding:20px}
+  .lca .topbar{font-size:.72rem}
+  .lca .mobile-cta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:120;background:rgba(31,35,33,.96);padding:10px 14px}
+  .lca .mobile-cta a{display:block;text-align:center;background:var(--gold);color:#171717;font-weight:900;padding:14px;border-radius:999px}
+  .lca .final{padding-bottom:110px}
 }
-.lca .narrow-only { display:none; }
-
-/* Touch targets. Measured on the live page at 375px: these links rendered
-   16 to 20px tall, well under the ~44px a thumb can hit reliably. Two of them
-   matter a lot: "Read the full guarantee terms" is the link off the band Joel
-   asked to feature, and "Apply first" is the only path left for someone who
-   is not ready to pay today. Keyed on pointer:coarse as well as width, since
-   a tablet is a touch device at 800px. */
-@media (min-width:881px) {
-  /* Desktop shows the payment card in the right column, so the jump is a
-     short hop rather than a rescue. Sized to the copy instead of the page. */
-  .lca .save-spot { display:inline-block; margin-bottom:22px; padding:15px 30px; }
-}
-
-@media (max-width:880px), (pointer:coarse) {
-  .lca .guarantee-band .more { display:inline-block; padding:10px 2px 4px; margin-top:0; }
-  .lca .apply-out a { display:inline-block; padding:13px 6px; }
-  .lca .footer-links a { display:inline-block; padding:11px 0; }
-  .lca .mini-guarantee a { display:inline-block; padding:6px 2px; }
-}
-
-@media (max-width:560px) {
-  /* One copy of a sentence is shown, never both. Rendering both and letting
-     CSS choose avoids a resize listener and the flash of the wrong string. */
-  .lca .wide-only { display:none; }
-  .lca .narrow-only { display:inline; }
-  .lca p.narrow-only { display:block; }
-
-  /* 8px is below what a 55-year-old reader can comfortably resolve, and these
-     four labels sit under the only numbers on the page that are ticking. */
-  .lca .time-label { font-size:9px; }
-
-  /* The sticky Secure My Spot bar covers roughly the bottom 88px, so the real
-     mobile fold is ~724px, not 812. Everything above the guarantee band is on
-     a budget to keep the band inside that. */
-  .lca .program-strip { gap:7px; margin:16px 0 0; }
-  .lca .program-pill { padding:6px 9px; font-size:12px; }
-  .lca .save-spot { padding:13px 18px; font-size:18px; margin-bottom:12px; }
-  .lca .save-spot-sub { margin-top:3px; }
-}
-
-@media (prefers-reduced-motion:reduce) { .lca * { transition:none !important; } }
+@media (prefers-reduced-motion:reduce){ .lca *{transition:none !important} }
 `;
-
-const two = (n) => String(Math.floor(n)).padStart(2, '0');
-
-function parts(msLeft) {
-  const s = Math.max(0, Math.floor(msLeft / 1000));
-  return {
-    days: Math.floor(s / 86400),
-    hours: Math.floor((s % 86400) / 3600),
-    minutes: Math.floor((s % 3600) / 60),
-    seconds: s % 60,
-  };
-}
 
 export default function AllInPage() {
   const mountRef = useRef(null);
-  const [now, setNow] = useState(() => Date.now());
   const [error, setError] = useState('');
 
-  const closeLeft = HAS_DEADLINE ? CLOSE_AT.getTime() - now : Number.MAX_SAFE_INTEGER;
-  const fastLeft = FAST_ACTION_AT.getTime() - now;
-  const closed = closeLeft <= 0;
-  const cd = parts(closeLeft);
-  const fd = parts(fastLeft);
-
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    track('allin_view', { page: 'allin', mode: 'checkout', closed });
+    track('allin_view', { page: 'allin', mode: 'checkout', design: 'v7' });
     const prev = document.title;
-    document.title = 'Life Change Accelerator | Secure Your Spot';
-    // His design used `html { scroll-behavior: smooth }`. Set it here and put
-    // it back on unmount so it does not follow the visitor around the SPA.
+    document.title = 'The Life Change Accelerator | Secure Your Spot';
     const root = document.documentElement;
     const prevScroll = root.style.scrollBehavior;
     root.style.scrollBehavior = 'smooth';
@@ -549,15 +320,12 @@ export default function AllInPage() {
       document.title = prev;
       root.style.scrollBehavior = prevScroll;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ─── the real checkout. $500 deposit, tier allin-deposit. ─────────────
   // No balancePlan is sent on purpose: this page does not ask her to pick a
   // schedule, so /payment opens on "settle in full" and she chooses there.
-  // The deposit is credited either way; see api/create-embedded-checkout.js.
   useEffect(() => {
-    if (closed) return undefined;
     let checkout;
     let cancelled = false;
     setError('');
@@ -598,326 +366,288 @@ export default function AllInPage() {
       cancelled = true;
       try { checkout?.destroy(); } catch { /* already gone */ }
     };
-  }, [closed]);
+  }, []);
 
   return (
     <div className="lca">
       <style>{CSS}</style>
 
-      <div className={`closebar${closed ? ' is-closed' : ''}`}>
-        <div className="closebar-inner">
-          <div className="close-copy">
-            {closed ? 'Enrollment for this cohort is closed' : (
-              <>
-                <span className="wide-only">{`Enrollment is open · Only ${SPOTS} spots in this cohort${HAS_DEADLINE ? ` · Closes ${CLOSE_LABEL}` : ''}`}</span>
-                <span className="narrow-only">{`Enrollment open · only ${SPOTS} spots${HAS_DEADLINE ? ` · ends ${ctTime(CLOSE_AT)} CT` : ''}`}</span>
-              </>
-            )}
-          </div>
-          {!closed && HAS_DEADLINE && (
-            <>
-              {/* One static sentence for screen readers. A region that updates
-                  every second is unusable with one. */}
-              <p className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', margin: -1 }}>
-                {`Enrollment closes ${CLOSE_LABEL}.`}
-              </p>
-              <div className="countdown" aria-hidden="true">
-                <div className="time-box"><span className="time-num">{two(cd.days)}</span><span className="time-label">Days</span></div>
-                <div className="time-box"><span className="time-num">{two(cd.hours)}</span><span className="time-label">Hours</span></div>
-                <div className="time-box"><span className="time-num">{two(cd.minutes)}</span><span className="time-label">Min</span></div>
-                <div className="time-box"><span className="time-num">{two(cd.seconds)}</span><span className="time-label">Sec</span></div>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+      <div className="topbar">{`${SPOTS} spots are open`}</div>
 
-      <main className="page">
-        <div className="brand-line">Life Change Accelerator</div>
-        <h1>Stop guessing. Start getting your life back.</h1>
-        <div className="subhead">
-          <strong>90 days of nurse-led transformation, plus one full year of community and support.</strong>
-          <br />
-          <span className="wide-only">
-            The program is <strong>{PRICE}</strong>. Secure your place with a
-            {' '}<strong>{DEPOSIT} deposit</strong>, credited toward it, with payment terms up to 12 months.
-          </span>
-          <span className="narrow-only">
-            <strong>{PRICE}</strong>. <strong>{DEPOSIT} deposit</strong>, credited. Terms up to 12 months.
-          </span>
-        </div>
-
-        {/* ── SAVE MY SPOT (Joel, 2026-08-30) ─────────────────────────
-            Skips the whole offer column and lands on the checkout. This is
-            not a nicety on phones: the grid stacks, so the payment card sits
-            below every phase, bonus, value and FAQ block, roughly 5,000px
-            down. Someone who already decided should not have to read the
-            pitch again to pay.
-
-            It sits ABOVE the guarantee band, and the pills moved BELOW it,
-            because on a 375px phone the band only clears the fold if nothing
-            else is inserted before it. Order here is load-bearing; re-measure
-            if you move anything. */}
-        {!closed && (
-          <a
-            className="save-spot"
-            href="#checkout"
-            onClick={() => track('allin_save_spot_click', { placement: 'hero' })}
-          >
-            Save My Spot
-            <span className="save-spot-sub">ONLY {SPOTS} SPOTS AVAILABLE · {DEPOSIT} today</span>
-          </a>
-        )}
-
-        {/* ── ABOVE THE FOLD GUARANTEE (Joel, 2026-08-30) ──────────────
-            He asked for this specifically. It sits between the hero and the
-            checkout grid so it is read before the price is, on both layouts.
-            The full terms stay in the long guarantee box further down; this
-            band summarises and links to it rather than restating it loosely,
-            because two differently worded guarantees on one page is how you
-            end up arguing about which one applies. */}
-        <section className="guarantee-band" aria-labelledby="guarantee-band-h">
-          <div className="guarantee-seal" aria-hidden="true">
-            <span className="n">30</span>
-            <span className="d">DAY</span>
-          </div>
-          <div>
-            <h2 id="guarantee-band-h">The 30-Day Feel It Guarantee</h2>
-            <p className="wide-only">
-              Give it 30 honest days. Show up, complete your Personal Health Review, and follow the first
-              steps you agree on with your team. If you still cannot point to a real shift by the end of
-              that window, tell us and we refund the program payments you made to us.
+      <header className="hero">
+        <div className="wrap hero-grid">
+          <div className="hero-copy">
+            <h1>The Life Change Accelerator™</h1>
+            <p className="lead">
+              <strong>Lower your numbers. Feel better. Get your life back.</strong>
+              <br /><br />
+              Over the next 90 days, we help you use proven, evidence-based lifestyle changes to
+              support healthier blood pressure, blood sugar, A1C, weight, hormones, cholesterol, and
+              other numbers that may be keeping you stuck.
             </p>
-            <p className="narrow-only">
-              Give it 30 honest days. If you show up, do the agreed first steps and still cannot point to
-              a real shift, tell us and we refund your program payments.
-            </p>
-            <a className="more" href="#guarantee">Read the full guarantee terms</a>
-          </div>
-        </section>
 
-        {/* Moved below the guarantee band on 2026-08-30. The third pill used
-            to read "Protected by our 30-Day Feel It Guarantee" and is gone:
-            with the band sitting directly above it, that pill restated the
-            same promise two inches away, which is the opposite of succinct. */}
-        <div className="program-strip">
-          {!closed && <div className="program-pill"><strong>{SPOTS} spots</strong> in this cohort</div>}
-          <div className="program-pill"><strong>{DEPOSIT}</strong> secures your place</div>
-          <div className="program-pill">Deposit credited toward your <strong>{PRICE}</strong></div>
-        </div>
-
-        <div className="checkout-grid">
-          <section className="offer-side" aria-label="Offer summary">
-            {/* Annie and Joel, as asked. High on the page: she is about to
-                hand over money to two people she has mostly met through a
-                phone screen. */}
-            <div className="coaches">
-              {/* NOT lazy. It shipped lazy for one deploy and simply never
-                  loaded on production: the element sat at complete=false with
-                  natural size 0x0 while the same URL decoded fine on demand,
-                  so the card rendered as text beside an empty hole. This is a
-                  78px trust element near the top of a page asking for $500,
-                  which is the last thing that should be deferred. Explicit
-                  width/height so it reserves its box either way. */}
-              <img src={heroImg} alt="Annie and Joel, registered nurses" width="78" height="78" />
-              <div>
-                <p className="who">Annie and Joel, RNs</p>
-                <p className="what">
-                  Two registered nurses who coach this together, live, every week. Plus the guest
-                  experts we bring in when someone else is the right person to hear it from.
-                </p>
-              </div>
+            <div className="trust-line">
+              <span>A plan made for you</span>
+              <span>Evidence-based lifestyle methods</span>
+              <span>Weekly help + live Q&amp;A</span>
             </div>
 
-            <div className="offer-summary" id="whats-inside" style={{ scrollMarginTop: 14 }}>
-              <h2>Do less. In the right order.</h2>
-              <p>
-                All the right steps, in the right order. 90 days of nurse-led transformation and a
-                full year of coaching, built around the exact problems women told us they wanted
-                help solving.
-              </p>
-            </div>
+            <a href="#journey" className="btn">See How We Help You Change Your Numbers ↓</a>
+          </div>
 
+          <div className="photo-card">
+            <img src={heroImg} alt="Annie Chitate, RN and Joel Polley, RN" />
+            <div className="photo-badge">Annie + Joel · Registered Nurses · Your 90-Day Support Team</div>
+          </div>
+        </div>
+      </header>
+
+      <section className="strip">
+        <div className="wrap strip-inner">
+          <span>Blood Pressure</span>
+          <span>Blood Sugar / A1C</span>
+          <span>Weight</span>
+          <span>Hormones</span>
+          <span>Cholesterol</span>
+          <span>Energy</span>
+        </div>
+      </section>
+
+      <section className="statement">
+        <div className="narrow">
+          <h2>Do less.<br />In the right order.</h2>
+          <p>
+            You do not need more things to try. You need to know what to do first, what to do next,
+            and who to ask when you need help.
+          </p>
+        </div>
+      </section>
+
+      <section id="journey">
+        <div className="wrap">
+          <div className="center">
+            <h2>Your next 90 days can be simple.</h2>
+            <p className="lead">
+              We help you focus on the changes most likely to move your numbers in the right
+              direction. Then we help you stay with them long enough to see what works for your body.
+            </p>
+          </div>
+
+          <div className="phases">
             {PHASES.map((p) => (
-              <div className="phase" key={p.kicker}>
-                <div className="phase-head">
-                  <div>
-                    <div className="phase-kicker">{p.kicker}</div>
-                    <h3>{p.title}</h3>
-                  </div>
-                  <div className="value-tag">{p.value}</div>
-                </div>
-                <ul>
-                  {p.items.map((i) => <li key={i}>{i}</li>)}
-                </ul>
-                <div className="micro-payoff">{p.payoff}</div>
+              <article className="phase" key={p.n}>
+                <div className="num">{p.n}</div>
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+                <ul>{p.items.map((i) => <li key={i}>{i}</li>)}</ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="white">
+        <div className="wrap">
+          <div className="center">
+            <h2>You will know what to do next, and why it matters.</h2>
+          </div>
+          <div className="includes">
+            {INCLUDES.map(([title, body]) => (
+              <div className="include-item" key={title}>
+                <div className="check">✓</div>
+                <div><strong>{title}</strong><span>{body}</span></div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="bonus-box">
-              <div className="phase-kicker">Your bonuses</div>
-              <h3>You get these too.</h3>
-              <ul className="bonus-list">
-                {BONUSES.map((b) => (
-                  <li key={b.name}><strong>{b.name}:</strong> {b.body}</li>
-                ))}
-              </ul>
-              <div className="micro-payoff">Because getting your health back should make life bigger, not smaller.</div>
+      <section>
+        <div className="wrap team">
+          <div className="team-photo">
+            <img src={heroImg} alt="Annie Chitate, RN and Joel Polley, RN" />
+          </div>
+          <div>
+            <h2>You will have real people to help you.</h2>
+            <p className="lead" style={{ marginTop: 20 }}>
+              You will not get a pile of lessons and get left alone. Annie and Joel will help you
+              understand your numbers, choose your next steps, and stay with the plan. We also bring
+              in other experts when they can help.
+            </p>
+            <div className="mini-grid">
+              <div className="mini">Annie + Joel, RNs</div>
+              <div className="mini">Naturopathic support</div>
+              <div className="mini">Trauma expertise</div>
+              <div className="mini">Experienced nursing guidance</div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {fastLeft > 0 && (
-              <div className="fast-box">
-                <div className="phase-kicker">Fast-action bonuses</div>
-                <h3>Start by {FAST_LABEL} and receive:</h3>
-                <ul className="bonus-list">
-                  {FAST_BONUSES.map((f) => (
-                    <li key={f.name}><strong>{f.name}:</strong> {f.body}</li>
-                  ))}
-                </ul>
-                <div className="fast-deadline">Fast-action window closes in:</div>
-                <div className="fast-countdown">
-                  {`${two(fd.days)}d ${two(fd.hours)}h ${two(fd.minutes)}m ${two(fd.seconds)}s`}
-                </div>
+      <section className="white" id="proof">
+        <div className="wrap">
+          <div className="center">
+            <h2>Real women. Real changes.</h2>
+          </div>
+
+          <div className="video-proof">
+            <article className="video-card">
+              <video
+                controls
+                playsInline
+                preload="none"
+                poster="/video/brenda-bp-win-poster.jpg"
+                onPlay={() => track('allin_proof_video_play', { video: 'brenda-bp-win' })}
+              >
+                <source src="/video/brenda-bp-win.mp4" type="video/mp4" />
+              </video>
+              <div className="video-caption">
+                <strong>Brenda</strong>
+                <span>Her blood pressure story, in her own words.</span>
+              </div>
+            </article>
+          </div>
+
+          <div className="proof-grid">
+            {QUOTES.map(([q, who]) => (
+              <article className="quote" key={who}>
+                <p>{`“${q}”`}</p>
+                <small>{`— ${who}`}</small>
+              </article>
+            ))}
+          </div>
+
+          <div className="disclaimer">
+            Health outcomes differ by person. Medication decisions should be made with the
+            prescribing clinician.
+          </div>
+        </div>
+      </section>
+
+      <section className="white" style={{ paddingTop: 0 }}>
+        <div className="narrow">
+          <div className="center">
+            <h2>Everything you need to work on your numbers is here.</h2>
+            <p className="lead">
+              You get the plan. You get the coaching. You get support. And when your numbers,
+              symptoms, or progress raise a question, you have a place to ask.
+            </p>
+          </div>
+
+          <div className="stack">
+            {STACK.map((row) => (
+              <div className="stack-row" key={row}><strong>{row}</strong><span>Included</span></div>
+            ))}
+          </div>
+
+          <div className="investment">
+            <div className="eyebrow" style={{ marginTop: 40 }}>Your investment</div>
+            <div className="price">{PRICE}</div>
+            <p>{`The full 90-day program is ${PRICE}.`}</p>
+            <div className="today">{`Start today for ${DEPOSIT}`}</div>
+            <p style={{ marginTop: 16, fontSize: '.92rem' }}>
+              {`Your ${DEPOSIT} saves your spot and comes off the total. The remaining ${BALANCE} goes on the payment schedule you choose, with terms available up to 12 months. Paying in full is the cheapest route.`}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="checkout">
+        <div className="wrap checkout-wrap">
+          <div>
+            <h2>If you are ready, this part is easy.</h2>
+            <p className="lead" style={{ marginTop: 20 }}>
+              {`Put down ${DEPOSIT} today to save your spot. We will show you what happens next.`}
+            </p>
+
+            <div className="steps">
+              <div className="step">
+                <div className="step-num">1</div>
+                <div><strong>Save your spot.</strong><p>{`Pay ${DEPOSIT} today.`}</p></div>
+              </div>
+              <div className="step">
+                <div className="step-num">2</div>
+                <div><strong>Choose your terms.</strong><p>{`Pick how you want to handle the ${BALANCE} balance.`}</p></div>
+              </div>
+              <div className="step">
+                <div className="step-num">3</div>
+                <div><strong>Start your 90 days.</strong><p>We will help you start your plan.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="checkout-card">
+            <h3>Secure My Spot</h3>
+            <p style={{ marginTop: 8 }}>{`${DEPOSIT} enrollment payment`}</p>
+
+            <div className="checkout-mount" ref={mountRef} />
+            {error && (
+              <div className="checkout-error">
+                {error}{' '}
+                <a href="mailto:braveworksrn@gmail.com">Email us</a> and we will send you a working
+                payment link by hand.
               </div>
             )}
 
-            <div className="soyoucan-box">
-              <div className="phase-kicker">So you can</div>
-              <h3>Because it was never really about the numbers.</h3>
-              <div className="soyoucan-grid">
-                {SO_YOU_CAN.map((line) => <span key={line}>{line}</span>)}
-              </div>
-            </div>
-
-            <div className="value-box">
-              <div className="phase-kicker">Total coaching value</div>
-              <h3>Everything above is valued at {TOTAL_VALUE}.</h3>
-              <p className="small">{`The program itself is valued at ${CORE_VALUE}. With the bonuses it comes to ${TOTAL_VALUE}.`}</p>
-              <div className="value-total">
-                <span>Your investment</span>
-                <strong>{PRICE}</strong>
-              </div>
-            </div>
-
-            <div className="guarantee-box" id="guarantee" style={{ scrollMarginTop: 24 }}>
-              <div className="phase-kicker">Protected by</div>
-              <h3>The 30-Day Feel It Guarantee</h3>
-              <p>{GUARANTEE_BODY}</p>
-              <div className="small">{GUARANTEE_SMALL}</div>
-            </div>
-
-            <div className="section">
-              <h2>Quick answers before you reserve your place.</h2>
-              <div className="faq">
-                {FAQ.map((f) => (
-                  <details key={f.q}>
-                    <summary>{f.q}</summary>
-                    <p>{f.a}</p>
-                  </details>
-                ))}
-              </div>
-              <p className="apply-out">
-                Not ready to reserve? <a href="/apply">Apply first and talk to us</a>.
-              </p>
-            </div>
-          </section>
-
-          <aside className="payment-card" id="checkout" aria-label="Checkout" style={{ scrollMarginTop: 14 }}>
-            <div className="payment-head">
-              {!closed && (
-                <div className="spots"><span className="spots-dot" /> {SPOTS} spots available</div>
-              )}
-              <h2>{closed ? 'Enrollment closed.' : 'Secure your spot.'}</h2>
-              <p>
-                {closed
-                  ? 'This cohort has closed. Apply below and we will tell you the moment the next one opens.'
-                  : `${DEPOSIT} today reserves your place and is applied to your ${PRICE} investment.`}
-              </p>
-            </div>
-
-            <div className="price-block">
-              <div className="price-line"><span>Total coaching value</span><strong className="strike">{TOTAL_VALUE}</strong></div>
-              <div className="price-line"><span>Your investment</span><strong>{PRICE}</strong></div>
-              <div className="price-line"><span>Payment terms</span><strong>Up to 12 months</strong></div>
-              <div className="due-now">
-                <span className="label">Due today</span>
-                <span className="amount">{closed ? '—' : DEPOSIT}</span>
-              </div>
-            </div>
-
-            <div className="payment-body">
-              {closed ? (
-                <div className="closed-panel">
-                  <h3>The doors are closed for this cohort.</h3>
-                  <p>
-                    Tell us about what is going on and we will reach out when the next cohort opens.
-                  </p>
-                  <a href="/apply">Apply for the next cohort</a>
-                </div>
-              ) : (
-                <>
-                  <div className="mini-guarantee">
-                    <strong>The 30-Day Feel It Guarantee</strong>
-                    Show up, follow your agreed first steps, and give the process 30 honest days.
-                    {' '}
-                    <a href="#guarantee">See the full guarantee</a> on this page.
-                  </div>
-
-                  {error ? (
-                    <div className="pay-error" role="alert">
-                      {error}
-                      {' '}
-                      Email <a href="mailto:braveworksrn@gmail.com">braveworksrn@gmail.com</a> and we
-                      will take it from there.
-                    </div>
-                  ) : (
-                    <div className="stripe-mount" ref={mountRef} />
-                  )}
-
-                  <div className="secure-note">
-                    Secure checkout by Stripe · Your {DEPOSIT} deposit is applied to your {PRICE} investment
-                  </div>
-
-                  <div className="terms-note">
-                    By reserving your place you agree to the program terms, payment agreement and guarantee
-                    terms. The remaining {BALANCE} is paid on the schedule you choose on the next page.
-                  </div>
-                </>
-              )}
-            </div>
-
-            {!closed && (
-              <div className="next-steps">
-                <h3>What happens next</h3>
-                <ol>
-                  <li>Your place is reserved.</li>
-                  <li>You choose your payment schedule.</li>
-                  <li>You receive onboarding instructions.</li>
-                  <li>You complete your Personal Health Review.</li>
-                  <li>You receive your first 90-day plan.</li>
-                </ol>
-              </div>
-            )}
-          </aside>
-
-          {/* ── KEEP SCROLLING (Joel, 2026-08-30) ───────────────────────
-              Only exists on phones. On desktop the offer column sits beside
-              the payment card and is already in view, so a prompt telling
-              you to scroll would be pointing at something you can see.
-              On mobile the card is now ABOVE the offer, so without this the
-              page reads as though it ends at the checkout. */}
-          <a className="scroll-prompt" href="#whats-inside">
-            <span className="scroll-prompt-t">Keep scrolling to see what is inside</span>
-            <span className="scroll-prompt-a" aria-hidden="true">↓</span>
-          </a>
+            <div className="secure">{`🔒 Secure checkout · ${SPOTS} spots currently available`}</div>
+          </div>
         </div>
-      </main>
+      </section>
 
-      {!closed && (
-        <div className="mobile-cta">
-          <a href="#checkout">Secure My Spot · {DEPOSIT} Today</a>
+      <section className="deep">
+        <div className="wrap">
+          <div className="center"><h2>We made room for real life.</h2></div>
+          <div className="bonus-grid">
+            {BONUSES.map(([title, body]) => (
+              <div className="bonus" key={title}><h3>{title}</h3><p>{body}</p></div>
+            ))}
+          </div>
         </div>
-      )}
+      </section>
+
+      <section>
+        <div className="narrow">
+          <div className="guarantee-box">
+            <div className="seal">✓</div>
+            <h2>Give Us 90 Days.</h2>
+            <p className="guarantee-quote">{GUARANTEE}</p>
+            <p>
+              Come in. Follow your plan. Show up for the coaching. Ask for help when you need it.
+              Give the process an honest 90 days.
+            </p>
+            <p><strong>You do the work. We will do ours.</strong></p>
+            <div className="guarantee-fine">
+              This guarantee does not promise a specific medical result and does not replace
+              individualized medical care. Individual outcomes vary. Never stop or change prescribed
+              medication without your prescribing clinician.
+            </div>
+          </div>
+
+          <div className="faq">
+            {FAQ.map(([q, a]) => (
+              <details key={q}>
+                <summary>{q}</summary>
+                <div className="answer">{a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="final">
+        <div className="narrow">
+          <h2>You still have a lot of life to live.</h2>
+          <p>This starts with your numbers, but it is really about what better health lets you do next.</p>
+          <p style={{ marginTop: 24, color: '#F4F2EC', fontWeight: 700 }}>
+            Be there. Enjoy your family. Take the trip. Do the work you love. Live your life.
+          </p>
+          <a href="#checkout" className="btn gold">{`Save My Spot · ${DEPOSIT}`}</a>
+        </div>
+      </section>
+
+      <div className="mobile-cta">
+        <a href="#checkout">{`Secure My Spot · ${DEPOSIT} Today`}</a>
+      </div>
 
       <footer>
         <div className="footer-links">
@@ -926,10 +656,10 @@ export default function AllInPage() {
           <a href="mailto:braveworksrn@gmail.com">Contact Support</a>
         </div>
         <div>
-          Life Change Accelerator is an educational and coaching program and is not a substitute for
-          diagnosis, treatment, or medical care from your licensed healthcare professional. Individual
-          results vary. If you have an urgent or emergency medical concern, seek appropriate medical
-          care immediately.
+          The Life Change Accelerator is an educational and coaching program and is not a substitute
+          for diagnosis, treatment, or medical care from your licensed healthcare professional.
+          Individual results vary. If you have an urgent or emergency medical concern, seek
+          appropriate medical care immediately.
         </div>
       </footer>
     </div>
