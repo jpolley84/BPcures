@@ -1289,7 +1289,7 @@ const ALLIN_CANCEL_SECONDS = {
   // 274, 305, 335. Each window sits between the last wanted charge and the
   // first unwanted one.
   'balance-3pay': 36 * 24 * 60 * 60,   // LEGACY bi-weekly, kept for in-flight subs.
-  'sprint-balance-3pay': 76 * 24 * 60 * 60, // 3 monthly: last ~day 61, 4th ~day 91. (Sprint, 2026-09-27)
+  'sprint-balance-3pay': 36 * 24 * 60 * 60, // 3 charges EVERY 2 WEEKS: day 0, 14, 28; 4th would be day 42. (Sprint, 2026-09-30, was monthly 09-27)
   'balance-6pay': 167 * 24 * 60 * 60,  // 6 monthly: last ~day 152, 7th ~day 183.
   'balance-9pay': 259 * 24 * 60 * 60,  // 9 monthly: last ~day 244, 10th ~day 274.
   'balance-12pay': 350 * 24 * 60 * 60, // 12 monthly: last ~day 335, 13th ~day 365.
@@ -1435,9 +1435,9 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
     'balance-9pay': 'Your first balance payment is in. Eight more payments of $935 run automatically each month, nine in total, on top of the deposit you already paid. After the ninth payment you are done.',
     'balance-12pay': 'Your first balance payment is in. Eleven more payments of $750 run automatically each month, twelve in total, on top of the deposit you already paid. After the twelfth payment you are done.',
     full: 'You are all in, paid in full. Your spot is locked.',
-    'sprint-deposit': 'Your $200 Sprint deposit is in and your spot is locked. That deposit is non-refundable and it comes off the price. Settle the remaining $1,797 at bpquiz.com/sprint-balance: pay it in full and a one-on-one coaching session is added, or spread it across 3 monthly payments of $649.',
+    'sprint-deposit': 'Your $200 Sprint deposit is in and your spot is locked. That deposit is non-refundable and it comes off the price. Settle the remaining $1,797 at bpquiz.com/sprint-balance: pay it in full and a one-on-one coaching session is added, or spread it across 3 payments of $649, one every two weeks.',
     'sprint-balance-full': 'Your Sprint balance is settled in full. With your deposit you are all paid up, your spot is locked, and your bonus one-on-one coaching session is yours. We will reach out to schedule it.',
-    'sprint-balance-3pay': 'Your first Sprint balance payment is in. Two more payments of $649 run automatically each month, three in total, on top of the deposit you already paid. After the third payment you are done.',
+    'sprint-balance-3pay': 'Your first Sprint balance payment is in. Two more payments of $649 run automatically every two weeks, three in total, all inside your 6-week Sprint, on top of the deposit you already paid. After the third payment you are done.',
     sprint: 'Your $1,997 Sprint payment is in and your spot is locked. This is the 6-week Sprint: weekly coaching and live Q&A, your health review and your plan. If you decide to move up to the full Life Change Accelerator at any point, every dollar of this payment is credited toward it.',
     // Legacy $1,997-era plans, kept ONLY so in-flight subscribers still get
     // accurate mail. Do not sell these.
@@ -1542,9 +1542,9 @@ async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null
     'balance-9pay': 'BALANCE 9 x $935 MONTHLY ($8,415 after the $500 deposit; auto-capped after the 9th charge).',
     'balance-12pay': 'BALANCE 12 x $750 MONTHLY ($9,000 after the $500 deposit; auto-capped after the 12th charge).',
     full: 'Paid in full ($7,500).',
-    'sprint-deposit': 'SPRINT DEPOSIT ($200, NON-REFUNDABLE). 6-week Sprint. Balance $1,797 to collect at bpquiz.com/sprint-balance ($1,797 full + bonus 1:1, or 3 x $649 MONTHLY). NO bonuses, NO guarantee, NO year of access. Credit everything paid if she upgrades to $7,500.',
+    'sprint-deposit': 'SPRINT DEPOSIT ($200, NON-REFUNDABLE). 6-week Sprint. Balance $1,797 to collect at bpquiz.com/sprint-balance ($1,797 full + bonus 1:1, or 3 x $649 EVERY 2 WEEKS). NO bonuses, NO guarantee, NO year of access. Credit everything paid if she upgrades to $7,500.',
     'sprint-balance-full': 'SPRINT BALANCE paid in full ($1,797 after the $200 deposit). Fully settled at $1,997. SHE EARNED THE BONUS 1:1 SESSION: schedule it.',
-    'sprint-balance-3pay': 'SPRINT BALANCE 3 x $649 MONTHLY ($1,947 after the $200 deposit; auto-capped after the 3rd charge).',
+    'sprint-balance-3pay': 'SPRINT BALANCE 3 x $649 EVERY 2 WEEKS ($1,947 after the $200 deposit; day 0/14/28, auto-capped after the 3rd charge).',
     sprint: 'SPRINT ($1,997, 6 weeks, paid in full). NO bonuses, NO guarantee, NO 1:1, NO year of access. Credit the full $1,997 if she upgrades to the $7,500 Accelerator.',
     // Legacy $1,997-era plans. In-flight subscribers only; not sellable.
     '3pay': 'LEGACY 3 x $699 bi-weekly ($2,097 over 6 weeks; auto-capped after the 3rd charge).',

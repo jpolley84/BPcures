@@ -1,8 +1,8 @@
 // SprintBalancePage (route: /sprint-balance) — where the $200 Sprint deposit
 // lands. Two ways to settle the $1,797 balance (Joel, 2026-09-27):
 //   1. Pay in full, $1,797, and a one-on-one coaching session is added.
-//   2. 3 monthly payments of $649 ($1,947; capped after the 3rd charge by the
-//      webhook, same mechanism as every Accelerator plan).
+//   2. 3 payments of $649 EVERY 2 WEEKS, inside the 6-week sprint ($1,947;
+//      capped after the 3rd charge by the webhook). Joel, 2026-09-30.
 // Both buttons open hosted Stripe Checkout through api/create-hosted-checkout.
 // The deposit itself is non-refundable and the page says so.
 import { useEffect, useState } from 'react';
@@ -23,9 +23,9 @@ const OPTIONS = [
   },
   {
     tier: 'sprint-balance-3pay',
-    title: '3 monthly payments',
+    title: '3 payments, every 2 weeks',
     price: '3 x $649',
-    sub: '$1,947 in total. Stops on its own after the third payment.',
+    sub: '$1,947 in total, paid inside your 6 weeks. Stops on its own after the third payment.',
     bonus: null,
     cta: 'Start 3 x $649',
     featured: false,
@@ -91,7 +91,7 @@ export default function SprintBalancePage() {
         <div className="eyebrow">Your Sprint deposit is in</div>
         <h1>Now choose how to settle your balance.</h1>
         <p className="lead">
-          {`Your ${DEPOSIT} deposit locked your spot in the Life Change Sprint. The remaining ${BALANCE} can be paid in full today, or across three monthly payments.`}
+          {`Your ${DEPOSIT} deposit locked your spot in the Life Change Sprint. The remaining ${BALANCE} can be paid in full today, or across three payments, one every two weeks.`}
         </p>
 
         <div className="grid">

@@ -58,7 +58,7 @@ const TIERS = [
     tier: 'sprint-deposit',
     name: 'The Life Change Sprint',
     price: SPRINT_PRICE,
-    priceNote: 'Start today for $200. Then $1,797 in full (with a bonus one-on-one) or 3 x $649.',
+    priceNote: 'Start today for $200. Then $1,797 in full (with a bonus one-on-one) or 3 x $649 every 2 weeks.',
     tag: '6-week sprint',
     blurb: 'Six focused weeks with Annie and Joel to get moving on your numbers.',
     yes: [
@@ -248,7 +248,7 @@ const BONUSES = [
 
 const FAQ = [
   ['What am I paying today?', `For the Sprint, a $200 deposit. For the Accelerator, a ${DEPOSIT} deposit. Each is credited toward your total.`],
-  ['How is the Sprint balance paid?', 'The $1,797 balance can be paid in full, which adds a bonus one-on-one coaching session, or in 3 monthly payments of $649 that stop on their own after the third.'],
+  ['How is the Sprint balance paid?', 'The $1,797 balance can be paid in full, which adds a bonus one-on-one coaching session, or in 3 payments of $649, one every two weeks inside the 6-week Sprint, that stop on their own after the third.'],
   ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
   ['Is the deposit refundable?', 'No. Both deposits, the $200 for the Sprint and the $500 for the Accelerator, are non-refundable. Each one holds a limited spot and comes off your price.'],
   ['Do I have to fill out the application first?', 'No. You can go straight to checkout and secure your spot. The application is really more for you than for us: it puts you in the mindset of deciding whether you want this and why.'],

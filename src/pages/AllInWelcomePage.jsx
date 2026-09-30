@@ -20,9 +20,9 @@ function planLine(plan) {
   // LEGACY $1,997-era plans (not sellable; kept so an old link still reads true).
   if (plan === 'plan') return 'Your first payment is in and your spot is locked. The rest runs automatically every two weeks across the 12 weeks.';
   if (plan === 'balance-3pay') return 'Your first balance payment is in. The rest runs automatically and stops on its own after the final payment.';
-  if (plan === 'sprint-deposit') return 'Your $200 Sprint deposit is in and your spot is locked. It is non-refundable and it comes off the price. Settle the remaining $1,797 at bpquiz.com/sprint-balance, in full or across 3 monthly payments.';
+  if (plan === 'sprint-deposit') return 'Your $200 Sprint deposit is in and your spot is locked. It is non-refundable and it comes off the price. Settle the remaining $1,797 at bpquiz.com/sprint-balance, in full or across 3 payments every two weeks.';
   if (plan === 'sprint-balance-full') return 'Your Sprint balance is settled in full. With your deposit you are all paid up, and your bonus one-on-one coaching session is yours. We will reach out to schedule it.';
-  if (plan === 'sprint-balance-3pay') return 'Your first Sprint balance payment is in. Two more payments of $649 run automatically each month and stop on their own after the third.';
+  if (plan === 'sprint-balance-3pay') return 'Your first Sprint balance payment is in. Two more payments of $649 run automatically every two weeks, inside your 6-week Sprint, and stop on their own after the third.';
   if (plan === 'sprint') return 'Your $1,997 Sprint payment is in and your spot is locked. This is the 6-week Sprint. If you move up to the full Life Change Accelerator at any point, every dollar of it is credited toward the $7,500.';
   if (plan === 'full') return 'You are all in, paid in full. Your spot is locked.';
   return 'Your payment is in and your spot is locked. Joel will confirm your payment schedule with you directly.';
