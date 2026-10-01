@@ -24,5 +24,8 @@ export const ACCELERATOR_ROSTER = [
   { first: 'Priscilla', email: 'priscilla.harlins@gmail.com' },
   { first: 'Chuck', email: 'chuckharlins@gmail.com', note: "Priscilla's +1" },
   { first: 'Sandra', email: 'sandravwilliams2013@gmail.com' },
-  { first: 'Rahab', email: 'sullivanrahab@yahoo.com' },
+  // Rahab LEFT the program 2026-10-01 (Joel). Her 10-01 payment of $1,295 was
+  // refunded in full and her plan canceled. The row stays so she keeps being
+  // excluded from every bulk send; `withdrawn` is what stops the cohort mail.
+  { first: 'Rahab', email: 'sullivanrahab@yahoo.com', withdrawn: '2026-10-01' },
 ];

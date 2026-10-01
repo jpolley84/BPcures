@@ -84,7 +84,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'force=1 is for dry runs only; refusing an off-schedule send' });
   }
 
-  const roster = ACCELERATOR_ROSTER;
+  // A withdrawn member stays on the roster so the never-send list keeps her,
+  // but she must never get another cohort email.
+  const roster = ACCELERATOR_ROSTER.filter((m) => !m.withdrawn);
 
   if (!send) {
     return res.status(200).json({
