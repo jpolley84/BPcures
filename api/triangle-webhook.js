@@ -37,6 +37,11 @@ import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
 import { generateCoachingAgreementPDF, AGREEMENT_PLAN_FILL } from './_coaching-agreement.js';
 
 assertLiveRoom(ZOOM_MAIN);
+// PARKED 2026-10-05 (Joel): the Q&A Clarity Call is REMOVED from the welcome
+// email. It promised a Sunday that had already passed, so buyers were told to
+// join a call that did not exist. The labels below are intentionally unused —
+// kept so restoring the call means putting the email block back, not rebuilding
+// this date logic. Set the real day and time here before you restore it.
 // All-In kickoff: the weekly Q&A Clarity Call, every Sunday 7pm ET, same room
 // as ZOOM_MAIN. The date label is the NEXT Sunday from send-time so a buyer
 // who joins mid-week always sees the correct upcoming date instead of a
@@ -1465,21 +1470,17 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
     || (buyerPaid
       ? `Your payment of ${buyerPaid} is in and your spot is locked. I will confirm your payment schedule with you directly.`
       : 'Your payment is in and your spot is locked. I will confirm your payment schedule with you directly.');
-  // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome
-  // + the Sunday 7pm ET kickoff Q&A clarity call, same room every week
-  // (import from _zoom-rooms.mjs, never paste a URL — see that file's header
-  // for why). Intake-collection line kept: the call is the kickoff, not a
-  // replacement for Joel building the buyer's actual plan from their case.
+  // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome.
+  // 2026-10-05 (Joel): the Sunday Q&A Clarity Call block was REMOVED from this
+  // email. It is not in the HTML or the text any more and the subject no longer
+  // promises it. The three first steps carry the email now, and the 1:1 is the
+  // only meeting it commits to. To restore the call, put the block back and set
+  // a real day and time in the parked labels near the top of this file.
   const html = `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.65;background:#FAF6EF;">
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">You are in &middot; The Life Change Accelerator</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Congratulations, ${name}.</h2>
 <p>Prioritizing your health, on purpose, ahead of everything competing for that spot: that is not a small decision, and I do not treat it like one.</p>
 <p>${planLine}</p>
-<p style="margin:1.2rem 0;padding:0.9rem 1rem;background:#FFFFFF;border:1px solid #E4DACE;border-radius:10px;">
-<strong>We begin together this Sunday.</strong><br/>
-Q&amp;A Clarity Call &middot; Sunday, ${escAllIn(ALLIN_KICKOFF_DATE_LABEL)} at ${escAllIn(ALLIN_KICKOFF_TIME_LABEL)}<br/>
-<a href="${escAllIn(ZOOM_MAIN)}" style="color:#B93C20;font-weight:700;">Join on Zoom</a>
-</p>
 <p style="margin:1.2rem 0 0.4rem;font-weight:700;">Your three first steps</p>
 <ol style="margin:0 0 1.2rem;padding-left:1.2rem;">
 <li style="margin:0 0 0.6rem;">${agreementPdf
@@ -1488,9 +1489,9 @@ Q&amp;A Clarity Call &middot; Sunday, ${escAllIn(ALLIN_KICKOFF_DATE_LABEL)} at $
 <li style="margin:0 0 0.6rem;"><strong>Take your assessment:</strong> <a href="https://bpquiz.com/accelerator-assessment" style="color:#B93C20;font-weight:700;">bpquiz.com/accelerator-assessment</a> &mdash; this is the one thing we need back before your 1:1.</li>
 <li style="margin:0;"><strong>Book your 1:1 with both of us:</strong> reply to this email with two times that work and we will lock one in.</li>
 </ol>
-<p>Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.</p>
+<p>Watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can use your 1:1 for your real questions instead of paperwork.</p>
 <p>This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication. My job is to help you understand what your body has been trying to tell you, and to walk this with you.</p>
-<p style="margin-top:1.6rem;">I am glad you decided. See you Sunday.</p>
+<p style="margin-top:1.6rem;">I am glad you decided. Send me those two times and we will get your 1:1 on the calendar.</p>
 <p style="margin-top:1.2rem;">&mdash; Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
 <p style="color:#9A9A9A;font-size:0.78rem;margin:0;">Reply to this email any time. Educational content only, not medical advice.${process.env.BUSINESS_POSTAL_ADDRESS ? ` BraveWorks RN &middot; ${escAllIn(process.env.BUSINESS_POSTAL_ADDRESS)}` : ''}</p>
@@ -1501,10 +1502,6 @@ Prioritizing your health, on purpose, ahead of everything competing for that spo
 
 ${planLine}
 
-WE BEGIN TOGETHER THIS SUNDAY.
-Q&A Clarity Call: Sunday, ${ALLIN_KICKOFF_DATE_LABEL} at ${ALLIN_KICKOFF_TIME_LABEL}
-Join on Zoom: ${ZOOM_MAIN}
-
 YOUR THREE FIRST STEPS
 1. ${agreementPdf
     ? 'Sign your coaching agreement — it is attached to this email (BraveWorks-Coaching-Agreement.pdf). Sign the last page and reply with it, or bring it to your 1:1.'
@@ -1512,11 +1509,11 @@ YOUR THREE FIRST STEPS
 2. Take your assessment: https://bpquiz.com/accelerator-assessment — this is the one thing we need back before your 1:1.
 3. Book your 1:1 with both of us: reply to this email with two times that work and we will lock one in.
 
-Before then, watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can actually use Sunday's call for your real questions instead of paperwork.
+Watch your inbox over the next day or two for your intake. I personally build your plan around your numbers, your medications, and your history, so I need to see your case first. Fill it out as completely as you can. The more I see, the sharper your plan, and the more we can use your 1:1 for your real questions instead of paperwork.
 
 This is education and lifestyle support alongside your doctor, never a replacement for them. They make every call about your medication.
 
-I am glad you decided. See you Sunday.
+I am glad you decided. Send me those two times and we will get your 1:1 on the calendar.
 
 -- Joel Polley, RN
 BraveWorks RN / BPQuiz.com`;
@@ -1525,7 +1522,7 @@ BraveWorks RN / BPQuiz.com`;
     to: String(email).trim(),
     replyTo: REPLY_TO,
     campaign: 'allin-welcome',
-    subject: 'Congratulations! Your journey starts Sunday (Q&A Clarity Call, 7pm ET)',
+    subject: 'Congratulations! Your spot is locked (your first steps inside)',
     html,
     text,
     headers: {
