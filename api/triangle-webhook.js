@@ -1417,7 +1417,7 @@ function bday42JoelLine(plan, amountCents) {
   return `BIRTHDAY 42% BALANCE ${n} x ${usd(amountCents)} MONTHLY (${usd(n * amountCents)} on top of the deposit; auto-capped after the ${n}th charge).`;
 }
 
-async function sendAllInConfirmation({ email, firstName, plan, amountCents = null, agreementPdf = null, promo = null }) {
+async function sendAllInConfirmation({ email, firstName, plan, amountCents = null, agreementPdf = null, promo = null, fasttrack = false }) {
   const name = firstName ? escAllIn(firstName) : 'there';
   const unsubToken = signUnsubToken({ email });
   const unsubUrl = `${SITE_URL}/api/triangle-unsubscribe?token=${unsubToken}`;
@@ -1465,11 +1465,16 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
   const buyerPaid = Number.isFinite(amountCents) && amountCents > 0
     ? `$${(amountCents / 100).toLocaleString('en-US')}`
     : null;
-  const planLine = (promo === 'bday42' && bday42BuyerLine(plan, amountCents))
+  // 2026-10-05: Sprint deposits that landed before the Q&A cutoff earned a
+  // 1:1 Fast-Track Call. The server stamped it; this just says so.
+  const fastLine = fasttrack && plan === 'sprint-deposit'
+    ? ' You also earned the 1:1 Fast-Track Call by getting your deposit in before the Q&A ended. We will reach out to schedule it.'
+    : '';
+  const planLine = ((promo === 'bday42' && bday42BuyerLine(plan, amountCents))
     || ALLIN_BUYER_PLAN_LINES[plan]
     || (buyerPaid
       ? `Your payment of ${buyerPaid} is in and your spot is locked. I will confirm your payment schedule with you directly.`
-      : 'Your payment is in and your spot is locked. I will confirm your payment schedule with you directly.');
+      : 'Your payment is in and your spot is locked. I will confirm your payment schedule with you directly.')) + fastLine;
   // 2026-08-06 (Joel): "congratulations for prioritizing your health" welcome.
   // 2026-10-05 (Joel): the Sunday Q&A Clarity Call block was REMOVED from this
   // email. It is not in the HTML or the text any more and the subject no longer
@@ -1536,7 +1541,7 @@ BraveWorks RN / BPQuiz.com`;
 }
 
 // Alert Joel that an All-In buyer came in so he builds their assessment/onboarding.
-async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null, promo = null }) {
+async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null, promo = null, fasttrack = false }) {
   if (!process.env.RESEND_API_KEY) return;
   const to = process.env.JOEL_NOTIFY_EMAIL || REPLY_TO;
   const ALLIN_JOEL_PLAN_LINES = {
@@ -1578,7 +1583,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null
 
 Buyer:         ${name || '(no name)'} <${email || 'unknown'}>
 Charged today: ${paidToday}   (read from the Stripe session, never assumed)
-Plan:          ${planLine}
+Plan:          ${planLine}${fasttrack ? '\n🔔 FAST-TRACK CALL EARNED: deposit landed before the Q&A cutoff. Schedule her 1:1 Fast-Track Call.' : ''}
 Stripe session: ${sessionId}
 
 Next step: build their personalized assessment/intake and start their onboarding. Their automated confirmation ("You are in") has already gone out, so they are expecting their intake next.`,
@@ -1602,7 +1607,7 @@ async function processAllIn(session, plan = 'full') {
 
   if (!customerEmail) {
     console.error('stripe-webhook: all-in session has no customer email', session.id);
-    await alertJoelAllIn({ sessionId: session.id, email: null, name: customerName, plan, amountCents: allInAmountCents, promo: session.metadata?.promo || null });
+    await alertJoelAllIn({ sessionId: session.id, email: null, name: customerName, plan, amountCents: allInAmountCents, promo: session.metadata?.promo || null, fasttrack: session.metadata?.fasttrack === '1' });
     return { action: 'all_in', delivered: false, reason: 'no_email', plan };
   }
 
@@ -1758,7 +1763,7 @@ async function processAllIn(session, plan = 'full') {
       console.error('stripe-webhook: coaching agreement PDF generation failed — welcome email sent WITHOUT it; send it by hand', err.message);
     }
     try {
-      await sendAllInConfirmation({ email: customerEmail, firstName, plan, amountCents: allInAmountCents, agreementPdf, promo: session.metadata?.promo || null });
+      await sendAllInConfirmation({ email: customerEmail, firstName, plan, amountCents: allInAmountCents, agreementPdf, promo: session.metadata?.promo || null, fasttrack: session.metadata?.fasttrack === '1' });
       delivered = true;
       progress.confirmationSentAt = new Date().toISOString();
       try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
@@ -1791,7 +1796,7 @@ async function processAllIn(session, plan = 'full') {
   }
 
   // ── Alert Joel (always) ──
-  await alertJoelAllIn({ sessionId: session.id, email: customerEmail, name: customerName, plan, amountCents: allInAmountCents, promo: session.metadata?.promo || null });
+  await alertJoelAllIn({ sessionId: session.id, email: customerEmail, name: customerName, plan, amountCents: allInAmountCents, promo: session.metadata?.promo || null, fasttrack: session.metadata?.fasttrack === '1' });
 
   progress.completedAt = new Date().toISOString();
   try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }

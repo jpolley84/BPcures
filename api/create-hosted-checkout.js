@@ -26,6 +26,13 @@ const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U
 // added) or 3 x $649 EVERY 2 WEEKS, inside the 6 weeks (day 0, 14, 28;
 // the webhook caps it after the 3rd charge). Joel, 2026-09-30.
 // Prices live on prod_VL6yKZvUoq4P69, created 2026-09-27 on Joel's go.
+// 2026-10-05 (Joel): a Sprint deposit that lands before the end of the
+// masterclass Q&A earns a 1:1 Fast-Track Call. Decided HERE, at session
+// creation, and stamped on the session so the webhook can tell Joel and the
+// buyer. 9:00 pm ET on class night (Monday 7:00 pm ET class). Mirror of
+// FASTTRACK_UNTIL in src/pages/SprintPage.jsx, which only shows the timer.
+const FASTTRACK_UNTIL = Date.parse('2026-10-05T21:00:00-04:00');
+
 const TIERS = {
   'sprint-deposit': {
     price: process.env.SPRINT_DEPOSIT_PRICE_ID || 'price_1UKQxkHseZnO3rRZSOtVjcH5',
@@ -83,7 +90,8 @@ export default async function handler(req, res) {
     offer: 'all-in',
     plan: cfg.plan,
     tier,
-    source: 'allin-two-tier',
+    source: typeof body.source === 'string' && body.source.length <= 40 ? body.source : 'allin-two-tier',
+    ...(tier === 'sprint-deposit' && Date.now() <= FASTTRACK_UNTIL ? { fasttrack: '1' } : {}),
     ...(body.distinctId ? { ph_distinct_id: String(body.distinctId).slice(0, 80) } : {}),
   };
 

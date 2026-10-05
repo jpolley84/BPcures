@@ -112,6 +112,7 @@ const PaymentPage = lazy(() => import('./pages/PaymentPage'));
 const AllInThankYouPage = lazy(() => import('./pages/AllInThankYouPage'));
 const AllInWelcomePage = lazy(() => import('./pages/AllInWelcomePage'));
 const SprintBalancePage = lazy(() => import('./pages/SprintBalancePage'));
+const SprintPage = lazy(() => import('./pages/SprintPage'));
 // SVUTU Satin (hormoneteas.com) on the embedded rail — Satin-branded checkout +
 // post-purchase "double your order for a friend" one-click. hormoneteas.com
 // buy buttons link here. Focused checkout, no SiteLayout.
@@ -386,6 +387,7 @@ function App() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/allin/thank-you" element={<AllInThankYouPage />} />
           <Route path="/allin-welcome" element={<SiteLayout><AllInWelcomePage /></SiteLayout>} />
+          <Route path="/sprint" element={<SprintPage />} />
           <Route path="/sprint-balance" element={<SprintBalancePage />} />
 
           {/* SVUTU Satin embedded checkout + post-purchase double-order OTO.
