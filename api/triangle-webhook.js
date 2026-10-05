@@ -1268,7 +1268,7 @@ const ALLIN_BALANCE_3PAY_PRICE_ID = process.env.ALLIN_BALANCE_3PAY_PRICE_ID || '
 const ALLIN_BALANCE_6PAY_PRICE_ID = process.env.ALLIN_BALANCE_6PAY_PRICE_ID || 'price_1U44qFHseZnO3rRZ3doJ66wm';
 
 // Which All-In plans ride a Stripe subscription and therefore MUST be capped.
-const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-9pay', 'balance-12pay', 'balance-5pay-360', 'balance-4pay-450', 'sprint-balance-3pay']);
+const ALLIN_SUB_PLANS = new Set(['plan', '3pay', '9pay', 'balance-3pay', 'balance-6pay', 'balance-9pay', 'balance-12pay', 'balance-14pay', 'balance-5pay-360', 'balance-4pay-450', 'sprint-balance-3pay']);
 
 // Cap windows, in seconds. Each sits between the last wanted charge and the
 // first unwanted one. Cap = 6 bi-weekly charges for 'plan' (day 0, ~14, ~28,
@@ -1293,6 +1293,11 @@ const ALLIN_CANCEL_SECONDS = {
   'balance-6pay': 167 * 24 * 60 * 60,  // 6 monthly: last ~day 152, 7th ~day 183.
   'balance-9pay': 259 * 24 * 60 * 60,  // 9 monthly: last ~day 244, 10th ~day 274.
   'balance-12pay': 350 * 24 * 60 * 60, // 12 monthly: last ~day 335, 13th ~day 365.
+  // MONTHLY: negotiated for Karen Purvis 2026-10-04, who took the $7,500 tier
+  // and asked for $500/mo on her $7,000 balance; 14 x $500 lands exactly on
+  // $7,000. Charges at ~day 0, 30, 61, 91, 122, 152, 183, 213, 244, 274, 305,
+  // 335, 366, 396; a 15th would post ~day 427, so 410 days sits between them.
+  'balance-14pay': 410 * 24 * 60 * 60,
   // MONTHLY (not bi-weekly): negotiated for Brenda L Powell 2026-08-18, who
   // asked for $400/mo on her $1,800 balance; 5 x $360 monthly lands exactly on
   // $1,800 under her ceiling. Charges at ~day 0, 30, 61, 91, 122; a 6th would
@@ -1331,6 +1336,7 @@ async function resolveAllInPlan(session) {
     if (md.plan === 'balance-6pay') return 'balance-6pay';
     if (md.plan === 'balance-9pay') return 'balance-9pay';
     if (md.plan === 'balance-12pay') return 'balance-12pay';
+    if (md.plan === 'balance-14pay') return 'balance-14pay';
     if (md.plan === 'balance-5pay-360') return 'balance-5pay-360';
     if (md.plan === 'balance-4pay-450') return 'balance-4pay-450';
     // 2026-09-27: Life Change Sprint, 6 weeks, $1,997 one-time, credited on upgrade.
@@ -1434,6 +1440,7 @@ async function sendAllInConfirmation({ email, firstName, plan, amountCents = nul
     'balance-6pay': 'Your first balance payment is in. Five more payments of $1,295 run automatically each month, six in total, on top of the deposit you already paid. After the sixth payment you are done.',
     'balance-9pay': 'Your first balance payment is in. Eight more payments of $935 run automatically each month, nine in total, on top of the deposit you already paid. After the ninth payment you are done.',
     'balance-12pay': 'Your first balance payment is in. Eleven more payments of $750 run automatically each month, twelve in total, on top of the deposit you already paid. After the twelfth payment you are done.',
+    'balance-14pay': 'Your first balance payment is in. Thirteen more payments of $500 run automatically each month, fourteen in total, on top of the deposit you already paid. After the fourteenth payment you are done.',
     full: 'You are all in, paid in full. Your spot is locked.',
     'sprint-deposit': 'Your $200 Sprint deposit is in and your spot is locked. That deposit is non-refundable and it comes off the price. Settle the remaining $1,797 at bpquiz.com/sprint-balance: pay it in full and a one-on-one coaching session is added, or spread it across 3 payments of $649, one every two weeks.',
     'sprint-balance-full': 'Your Sprint balance is settled in full. With your deposit you are all paid up, your spot is locked, and your bonus one-on-one coaching session is yours. We will reach out to schedule it.',
@@ -1541,6 +1548,7 @@ async function alertJoelAllIn({ sessionId, email, name, plan, amountCents = null
     'balance-6pay': 'BALANCE 6 x $1,295 MONTHLY ($7,770 after the $500 deposit; auto-capped after the 6th charge).',
     'balance-9pay': 'BALANCE 9 x $935 MONTHLY ($8,415 after the $500 deposit; auto-capped after the 9th charge).',
     'balance-12pay': 'BALANCE 12 x $750 MONTHLY ($9,000 after the $500 deposit; auto-capped after the 12th charge).',
+    'balance-14pay': 'BALANCE 14 x $500 MONTHLY ($7,000 after the $500 deposit; auto-capped after the 14th charge).',
     full: 'Paid in full ($7,500).',
     'sprint-deposit': 'SPRINT DEPOSIT ($200, NON-REFUNDABLE). 6-week Sprint. Balance $1,797 to collect at bpquiz.com/sprint-balance ($1,797 full + bonus 1:1, or 3 x $649 EVERY 2 WEEKS). NO bonuses, NO guarantee, NO year of access. Credit everything paid if she upgrades to $7,500.',
     'sprint-balance-full': 'SPRINT BALANCE paid in full ($1,797 after the $200 deposit). Fully settled at $1,997. SHE EARNED THE BONUS 1:1 SESSION: schedule it.',
