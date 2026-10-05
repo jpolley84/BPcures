@@ -1757,6 +1757,29 @@ async function processAllIn(session, plan = 'full') {
       delivered = true;
       progress.confirmationSentAt = new Date().toISOString();
       try { await kv.set(doneKey, progress, DONE_TTL); } catch { /* non-fatal */ }
+      // 2026-10-04. Record on the buyer's own record whether an agreement
+      // actually left with the welcome email, and if not, why not.
+      //
+      // Rahab Sullivan paid $1,795 on 2026-09-01, one day before auto-attach
+      // shipped. When she filed chargebacks on 2026-10-03 the single hole in
+      // an otherwise strong evidence file was that we held no agreement from
+      // her, and nothing in the system said so. The console.error above was
+      // the only trace and nobody reads those. scripts/agreement-audit.mjs
+      // reads these two fields; without them every row says "unrecorded".
+      try {
+        const rec = await kv.get(`bwbp:allin:${emailKey}`);
+        if (rec) {
+          await kv.set(`bwbp:allin:${emailKey}`, {
+            ...rec,
+            agreementSentAt: agreementPdf ? new Date().toISOString() : null,
+            agreementMissingReason: agreementPdf
+              ? null
+              : (AGREEMENT_PLAN_FILL[plan] ? 'pdf_generation_failed' : `no_fill_for_plan:${plan}`),
+          });
+        }
+      } catch (err) {
+        console.error('stripe-webhook: could not stamp agreement status on the coaching record', emailKey, err.message);
+      }
     } catch (err) {
       console.error('stripe-webhook: all-in confirmation send failed', err.message);
     }

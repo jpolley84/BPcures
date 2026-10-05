@@ -337,6 +337,11 @@ export const AGREEMENT_PLAN_FILL = {
   // half-width column (~42 chars at 11pt) — keep these strings short.
   deposit: { paid: '$500 (deposit, credited)', balance: '$7,000 — changemylifechallenge.com/payment' },
   'balance-full': { paid: '$7,500 ($500 dep + $7,000 balance)', balance: 'None — settled in full' },
+  // 2026-10-04. Added because the agreement audit found Brenda Dancil-Jones
+  // paying on this plan since 2026-08-26 with no fill, so her welcome email
+  // went out with no agreement at all and nothing recorded it. Figures come
+  // from this plan's own buyer line in triangle-webhook.js, not invented.
+  'balance-4pay-450': { paid: '$500 dep + $450 (payment 1 of 4)', balance: '3 more monthly payments of $450' },
   'balance-6pay': { paid: '$500 dep + $1,295 (payment 1 of 6)', balance: '5 more monthly payments of $1,295' },
   'balance-9pay': { paid: '$500 dep + $935 (payment 1 of 9)', balance: '8 more monthly payments of $935' },
   'balance-12pay': { paid: '$500 dep + $750 (payment 1 of 12)', balance: '11 more monthly payments of $750' },
