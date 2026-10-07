@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your Results + Private Business Possibility Map</title>
+<style>
+:root{
+  --navy:#0b1730;--navy2:#14284f;--gold:#d1ae3d;--gold2:#b78f22;
+  --cream:#f6f1e7;--white:#fff;--black:#07090d;--ink:#182033;
+  --muted:#697281;--line:#dfe3e9;--soft:#eef2f7;--red:#b4232f;--green:#276749;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--cream);color:var(--ink);line-height:1.52}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1120px;margin:auto;padding:0 24px}
+h1,h2,h3,.serif{font-family:Georgia,serif}
+h1{font-size:clamp(2.55rem,5.8vw,4.9rem);line-height:.98;margin:.1em 0 .24em;letter-spacing:-.025em}
+h2{font-size:clamp(2rem,4.3vw,3.45rem);line-height:1.05;margin:0 0 16px}
+h3{font-size:1.34rem;line-height:1.18;margin:0 0 8px}
+p{font-size:1.06rem}
+section{padding:62px 0}
+.lead{font-size:1.18rem;max-width:870px}
+.kicker{font-size:.79rem;letter-spacing:.11em;text-transform:uppercase;font-weight:900;color:#8a6b0d}
+.btn{display:inline-block;background:var(--gold);color:#0b1320;padding:16px 24px;border-radius:10px;font-weight:900;text-align:center}
+.micro{font-size:.88rem;color:var(--muted);margin-top:9px}
+.stopbar{height:6px;background:var(--red)}
+.topline{background:#fff;border-bottom:1px solid var(--line);padding:12px 0}
+.topline .row{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.ok{color:var(--green);font-weight:800}.download{text-decoration:underline;font-weight:800;color:var(--navy)}
+
+
+
+
+.hero-copy p{font-size:1.2rem}
+.results{background:var(--cream)}
+.results .kicker{font-size:.92rem}
+.results h2{font-size:clamp(2.25rem,4.6vw,3.7rem)}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.result-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(11,23,48,.05)}
+.result-label{font-size:.76rem;text-transform:uppercase;letter-spacing:.1em;font-weight:900;color:#8a6a09;margin-bottom:8px}
+.personal{font-size:1.03rem;color:#485364}
+.personal strong{color:var(--navy)}
+.bridge{background:var(--black);color:#fff;text-align:center}
+.bridge h2{color:#fff}
+.bridge .lead{margin-left:auto;margin-right:auto;color:#dbe2eb}
+.bridge-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center;max-width:900px;margin:28px auto 0}
+.qbox{border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);border-radius:16px;padding:22px}
+.qbox span{display:block;color:#d7bd61;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;font-weight:900}
+.qbox strong{display:block;font-family:Georgia,serif;font-size:1.55rem;margin-top:5px}
+.arrow{font-size:2rem;color:var(--gold)}
+.future{background:#fff}
+.future-box{background:#fff8df;border:1px solid #e5d394;border-radius:18px;padding:28px}
+.future-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 24px;margin-top:20px}
+.future-list div{position:relative;padding-left:24px;font-size:1.02rem}
+.future-list div:before{content:"✓";position:absolute;left:0;color:var(--gold2);font-weight:900}
+.offer{background:var(--cream)}
+.offer-intro{max-width:900px}
+.offer-stack{display:grid;gap:13px;margin-top:28px}
+.stack-row{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.stack-row .value{font-weight:900;color:#7f650c;white-space:nowrap}
+.total{display:flex;justify-content:space-between;gap:20px;align-items:center;background:var(--navy);color:#fff;border-radius:14px;padding:21px 22px;margin-top:16px}
+.price-reveal{text-align:center;padding:34px 0 0}
+.strike{text-decoration:line-through;color:var(--muted);font-size:1.24rem}
+.price{font-family:Georgia,serif;font-size:4.8rem;line-height:.9;color:var(--navy);font-weight:800;margin:8px 0}
+.no-more{background:var(--soft)}
+.no-more-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+.no-more-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.no-more-item strong{color:var(--navy)}
+.evaldo{background:#fff}
+.evaldo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.evaldo-card{border:1px solid var(--line);border-radius:16px;padding:22px;background:#fff}
+.evaldo-card .tag{font-size:.76rem;letter-spacing:.1em;color:var(--gold2);font-weight:900;text-transform:uppercase;margin-bottom:7px}
+.anchor{background:var(--cream)}
+.anchor-box{max-width:900px;margin:0 auto;background:#fff;border:1px solid #e5d394;border-radius:18px;padding:28px}
+.choice{background:#fff}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:26px}
+.choice-card{border:1px solid var(--line);border-radius:16px;padding:24px;background:#fff}
+.choice-card.yes{border:2px solid var(--gold)}
+.final{background:linear-gradient(135deg,var(--navy),#071326);color:#fff;text-align:center}
+.final h2{color:#fff}.final .lead{margin-left:auto;margin-right:auto;color:#e3e9f1}
+.footer{background:#07090d;color:#aeb7c5;padding:30px 0}
+.footer .row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+.hero{
+  background:#fff;
+  padding:34px 0 48px;
+  border-bottom:1px solid var(--line);
+}
+.hero-wrap{
+  max-width:940px;
+  text-align:center;
+}
+.hero-alert{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  margin:0 auto 22px;
+}
+.stop{
+  width:72px;
+  height:72px;
+  background:var(--red);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-weight:1000;
+  font-size:1rem;
+  letter-spacing:.04em;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);
+}
+.hero-alert-copy{
+  text-align:left;
+}
+.hero-alert-line{
+  font-size:1.18rem;
+  line-height:1;
+  font-weight:1000;
+  letter-spacing:.08em;
+  color:var(--red);
+  text-transform:uppercase;
+}
+.hero h1{
+  max-width:860px;
+  margin:0 auto 18px;
+  font-size:clamp(2.55rem,5vw,4.35rem);
+  line-height:1.02;
+  letter-spacing:-.025em;
+}
+.hero-copy{
+  max-width:780px;
+  margin:0 auto;
+}
+.hero-copy p{
+  font-size:1.16rem;
+  line-height:1.55;
+  margin:0 0 10px;
+  color:#2b374b;
+}
+.hero-copy p:last-child{
+  margin-bottom:0;
+}
+
+@media(max-width:860px){
+  .hero{
+    padding:28px 0 40px;
+  }
+  .hero-alert{
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .stop{
+    width:64px;
+    height:64px;
+    font-size:.92rem;
+  }
+  .hero-alert-line{
+    font-size:1rem;
+  }
+  .hero h1{
+    font-size:clamp(2.15rem,9vw,3.2rem);
+    margin-bottom:16px;
+  }
+  .hero-copy{
+    max-width:100%;
+  }
+  .hero-copy p{
+    font-size:1.05rem;
+  }
+}
+
+@media(max-width:860px){
+  .hero-top,.result-grid,.bridge-grid,.future-list,.no-more-grid,.evaldo-grid,.choice-grid{grid-template-columns:1fr}
+  .stop{margin:0 auto}.arrow{transform:rotate(90deg)}
+  .topline .row{flex-direction:column;align-items:flex-start}
+  .stack-row{grid-template-columns:1fr}.total{flex-direction:column;align-items:flex-start}
+}
+</style>
+
+<style id="client-ready-blueprint-v1">
+.before-after{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:28px;
+  align-items:stretch;
+}
+.ba-col{
+  border-radius:18px;
+  padding:26px;
+  border:1px solid var(--line);
+}
+.before-col{
+  background:#edf1f5;
+  color:#233047;
+}
+.after-col{
+  background:#f4f8f1;
+  color:var(--ink);
+}
+.ba-label{
+  font-size:.77rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:900;
+  margin-bottom:7px;
+}
+.before-col .ba-label{color:#7a8594}
+.after-col .ba-label{color:#4f7d37}
+.ba-col h3{font-size:1.55rem;margin-bottom:18px}
+.before-col h3{color:#223047}
+.after-col h3{color:#233047}
+.ba-item{
+  display:grid;
+  grid-template-columns:26px 1fr;
+  gap:10px;
+  align-items:start;
+  padding:14px 0;
+  border-bottom:1px solid rgba(127,137,151,.22);
+}
+.ba-item:last-child{border-bottom:0}
+.xmark{
+  color:#9aa3af;
+  font-size:1.35rem;
+  font-weight:900;
+  line-height:1.1;
+}
+.checkmark{
+  color:#2f8f46;
+  font-size:1.2rem;
+  font-weight:900;
+  line-height:1.2;
+}
+.cta-support{
+  max-width:760px;
+  margin:10px auto 0;
+  color:#5f6977;
+  font-size:.92rem;
+  line-height:1.48;
+}
+.belief-callout{
+  display:grid;
+  grid-template-columns:52px 1fr;
+  gap:16px;
+  align-items:start;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:20px;
+  margin-top:12px;
+}
+.belief-number{
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid #d7ba58;
+  color:#8a6b0d;
+  font-weight:900;
+  font-size:.82rem;
+}
+.belief-callout h3{margin:0 0 5px}
+.belief-callout p{margin:0;color:#5f6876}
+@media(max-width:860px){
+  .before-after{grid-template-columns:1fr}
+}
+</style>
+
+
+<style id="final-compression-pass">
+.results-kicker{
+  font-size:1rem !important;
+  margin-bottom:10px;
+}
+.results h2{
+  margin-bottom:14px;
+}
+.outcome-groups{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  margin-top:28px;
+}
+.outcome-card{
+  display:grid;
+  grid-template-columns:46px 1fr;
+  gap:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:22px;
+}
+.outcome-number{
+  width:40px;height:40px;border-radius:50%;
+  display:grid;place-items:center;
+  border:1px solid #d8bb5a;
+  color:#86690a;
+  font-size:.8rem;
+  font-weight:900;
+}
+.outcome-label{
+  font-size:.76rem;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-weight:900;
+  color:#8a6c0e;
+  margin-bottom:5px;
+}
+.simple-value{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:20px;
+  align-items:center;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px 20px;
+}
+.simple-value > div:first-child{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px 12px;
+  color:#5f6875;
+  font-size:.92rem;
+}
+.simple-value > div:first-child span:after{
+  content:"•";
+  margin-left:12px;
+  color:#c0a64e;
+}
+.simple-value > div:first-child span:last-child:after{content:""}
+.value-summary{text-align:right;min-width:150px}
+.small-label{
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  color:#7a8491;
+  font-weight:900;
+}
+.value-total{
+  font-family:Georgia,serif;
+  font-size:2rem;
+  font-weight:800;
+  color:var(--navy);
+}
+.trust-line{
+  margin-top:22px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  color:#596371;
+  font-size:.95rem;
+  line-height:1.5;
+}
+.what-next{
+  background:#f6f1e7;
+}
+.next-steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:22px;
+}
+.next-steps > div{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+}
+.next-steps span{
+  display:inline-grid;
+  width:34px;height:34px;
+  place-items:center;
+  border-radius:50%;
+  border:1px solid #d7b956;
+  color:#876b0d;
+  font-weight:900;
+  margin-bottom:8px;
+}
+.next-steps p{margin:0}
+@media(max-width:860px){
+  .outcome-groups,.next-steps{grid-template-columns:1fr}
+  .simple-value{grid-template-columns:1fr}
+  .value-summary{text-align:left}
+}
+</style>
+
+</head>
+<body>
+
+<div class="stopbar"></div>
+
+<div class="topline">
+  <div class="wrap row">
+    <div class="ok">✓ Your Expertise Snapshot™ is ready.</div>
+    <a class="download" href="#">Download My Free Snapshot</a>
+  </div>
+</div>
+
+
+
+<header class="hero">
+  <div class="wrap hero-wrap">
+    <div class="hero-alert">
+      <div class="stop">STOP</div>
+      <div class="hero-alert-copy">
+        <div class="hero-alert-line">WAIT BEFORE YOU GO</div>
+      </div>
+    </div>
+
+    <h1>You Have Found The Value In What You Already Know.</h1>
+
+    <div class="hero-copy">
+      <p>You’ve seen the strongest clues in your experience, your results, and the way people already use you as a resource.</p>
+      <p><b>Now comes the next question:</b> what should you actually do with it?</p>
+    </div>
+  </div>
+</header>
+
+
+
+<section class="results">
+  <div class="wrap">
+    <div class="kicker results-kicker">What Your Answers Are Already Showing</div>
+    <h2>Here’s What We Found About You.</h2>
+    <p class="lead">These are the strongest patterns showing up across what you told us about your work, your life, your results, and the way people already respond to you.</p>
+
+    <div class="result-grid">
+      <div class="result-card">
+        <div class="result-label">Your Hidden Expertise</div>
+        <h3>[PERSONALIZED RESULT]</h3>
+        <p class="personal"><strong>Why we see it:</strong> [Reference 2–3 specific pieces of evidence from their answers.]</p>
+      </div>
+
+      <div class="result-card">
+        <div class="result-label">Your Strongest Pattern</div>
+        <h3>[PERSONALIZED RESULT]</h3>
+        <p class="personal"><strong>Why we see it:</strong> [Show the repeated before → help → after pattern from their answers.]</p>
+      </div>
+
+      <div class="result-card">
+        <div class="result-label">Your Unfair Advantage</div>
+        <h3>[PERSONALIZED RESULT]</h3>
+        <p class="personal"><strong>Why it matters:</strong> [Show the unique combination of lived experience, skill, results, perspective, or audience familiarity.]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="bridge">
+  <div class="wrap">
+    <div class="kicker" style="color:#d9bd62">The Next Decision</div>
+    <h2>Knowing What You Have Is Powerful. Knowing What To Do With It Is What Moves Your Life Forward.</h2>
+
+    <div class="bridge-grid">
+      <div class="qbox">
+        <span>You Just Answered</span>
+        <strong>“What do I have?”</strong>
+      </div>
+      <div class="arrow">→</div>
+      <div class="qbox">
+        <span>Now Answer</span>
+        <strong>“What should I do with it?”</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="future">
+  <div class="wrap">
+    <div class="kicker">Picture The Difference</div>
+    <h2>Thirty Days From Now, You Could Be Moving Very Differently.</h2>
+    <p class="lead">Not because you consumed more information. Because you finally made the decisions all that information was supposed to help you make.</p>
+
+    <div class="before-after">
+      <div class="ba-col before-col">
+        <div class="ba-label">BEFORE</div>
+        <h3>Still Trying To Figure It Out</h3>
+        <div class="ba-item"><span class="xmark">×</span><span>Another coaching call spent explaining all your ideas from the beginning.</span></div>
+        <div class="ba-item"><span class="xmark">×</span><span>Another masterclass, book, podcast, or saved video hoping this one finally makes your direction click.</span></div>
+        <div class="ba-item"><span class="xmark">×</span><span>Changing your niche, bio, or message again because the last version still did not feel right.</span></div>
+        <div class="ba-item"><span class="xmark">×</span><span>Making offers people ignore because they cannot quickly see who it is for or why they need it.</span></div>
+      </div>
+
+      <div class="ba-col after-col">
+        <div class="ba-label">AFTER</div>
+        <h3>A Business Direction You Can Move On</h3>
+        <div class="ba-item"><span class="checkmark">✓</span><span><b>You know exactly who you are trying to help</b> and why that person has a reason to listen to you.</span></div>
+        <div class="ba-item"><span class="checkmark">✓</span><span><b>You know the result they already care enough to pay attention to</b> so your message starts with desire instead of explanation.</span></div>
+        <div class="ba-item"><span class="checkmark">✓</span><span><b>You have a first offer direction people can understand</b> without a ten-minute explanation.</span></div>
+        <div class="ba-item"><span class="checkmark">✓</span><span><b>You can explain what you do in one clean sentence</b> without rambling, apologizing, or changing it again tomorrow.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<section class="offer">
+  <div class="wrap">
+    <div class="offer-intro">
+      <div class="kicker">Your Private One-Time Offer</div>
+      <h2>Turn What We Found Into Your Client-Ready Blueprint™.</h2>
+      <p class="lead"><b>The new opportunity is not more information.</b> We already did the discovery. Now let’s turn it into a direction.</p>
+      <p class="lead">Your answers already gave us the raw material: your experience, results, repeated requests, strengths, and the patterns that keep showing up. The Client-Ready Blueprint™ translates that evidence into the decisions that determine whether your expertise becomes a business or stays an idea.</p>
+    </div>
+
+    <div class="outcome-groups">
+      <div class="outcome-card">
+        <div class="outcome-number">01</div>
+        <div>
+          <div class="outcome-label">WHO</div>
+          <h3>Your Best-Fit Client + What They Already Want</h3>
+          <p>See the kind of person most likely to value what you know and the problem, desire, or result they already care about.</p>
+        </div>
+      </div>
+
+      <div class="outcome-card">
+        <div class="outcome-number">02</div>
+        <div>
+          <div class="outcome-label">WHAT</div>
+          <h3>Your 3 Strongest Business Directions + First Offer Direction</h3>
+          <p>Compare the clearest paths, see which deserves your energy first, and know the first result worth packaging.</p>
+        </div>
+      </div>
+
+      <div class="outcome-card">
+        <div class="outcome-number">03</div>
+        <div>
+          <div class="outcome-label">HOW</div>
+          <h3>Your Clear Message + 7-Day Validation Plan</h3>
+          <p>Get simple language for explaining what you do and know exactly what to test with real people before you overbuild.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="simple-value">
+      <div>
+        <span>Who-To-Help Profile</span>
+        <span>Problem + Desire Profile</span>
+        <span>3 Strongest Business Directions</span>
+        <span>Best Place To Start</span>
+        <span>First Offer Direction + Clear Message</span>
+        <span>7-Day Validation Plan</span>
+      </div>
+      <div class="value-summary">
+        <div class="small-label">Combined illustrative value</div>
+        <div class="value-total">$602</div>
+      </div>
+    </div>
+
+    <div class="price-reveal">
+      <div class="strike">$602 value</div>
+      <div class="price">$47</div>
+      <p><b>One payment. No subscription.</b></p>
+      <a class="btn" href="#">SHOW ME MY BEST BUSINESS DIRECTION — $47</a>
+      <div class="cta-support">Uses the answers you already gave us. No new questionnaire. No monthly bill.</div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+<section class="evaldo">
+  <div class="wrap">
+    <div class="kicker">Why This Is Different</div>
+    <h2>You Do Not Need Another Place To Learn Before You Make This Decision.</h2>
+    <p class="lead">Books, coaching calls, masterclasses, podcasts, challenges, and YouTube can all be useful. But if you are still asking <b>“Who do I help? What do I sell? What problem am I really solving?”</b>, more information alone does not settle the decision.</p>
+
+    <div class="evaldo-grid">
+      <div class="evaldo-card">
+        <div class="tag">Evidence</div>
+        <h3>Start With What Is Already True.</h3>
+        <p>Your work, lived experience, repeated requests, results, and strengths give us a stronger starting point than choosing a niche out of thin air.</p>
+      </div>
+
+      <div class="evaldo-card">
+        <div class="tag">Translation</div>
+        <h3>Turn Expertise Into Buyer Language.</h3>
+        <p>Connect what you know to a person with a problem or desire they already care enough about to act on.</p>
+      </div>
+
+      <div class="evaldo-card">
+        <div class="tag">Validation</div>
+        <h3>Test Before You Overbuild.</h3>
+        <p>Get a strong direction and a simple way to find out what real people say before you spend weeks building the whole thing.</p>
+      </div>
+    </div>
+
+    <div class="trust-line">Built from 10+ years of coaching, offer-building, and pattern recognition by the founders behind Everyday Nurse and Braveworks RN, with a combined audience of 500K+.</div>
+  </div>
+</section>
+
+
+
+
+
+<section class="anchor">
+  <div class="wrap">
+    <div class="anchor-box">
+      <h2>For $47, You Can Skip A Lot Of Circling.</h2>
+      <p class="lead">That is less than many people spend on one coaching session. Less than a small paid workshop. Less than another business tool, another stack of books, or another round of boosting content behind an unclear offer.</p>
+      <p class="lead">And it can save you hours of late-night Google searches, YouTube rabbit holes, rewriting your bio, second-guessing your niche, and building something before you know whether the direction is worth testing.</p>
+      <p class="serif" style="font-size:1.85rem;line-height:1.18;color:var(--navy);margin-bottom:0"><b>The expensive choice is another month building the wrong thing.</b></p>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="what-next">
+  <div class="wrap">
+    <div class="kicker">What Happens Next</div>
+    <h2>Simple.</h2>
+    <div class="next-steps">
+      <div><span>1</span><p><b>Complete your purchase.</b></p></div>
+      <div><span>2</span><p><b>We use the answers you already gave us.</b></p></div>
+      <div><span>3</span><p><b>Your Client-Ready Blueprint™ is built from your interview.</b></p></div>
+    </div>
+  </div>
+</section>
+
+<section class="choice">
+  <div class="wrap">
+    <div class="kicker">At This Point</div>
+    <h2>You Have Two Simple Choices.</h2>
+
+    <div class="choice-grid">
+      <div class="choice-card">
+        <h3>Keep The Insight</h3>
+        <p>Take what you learned today and work out the business side on your own.</p>
+      </div>
+
+      <div class="choice-card yes">
+        <h3>Turn The Insight Into A Path</h3>
+        <p>See who to help, what they want, which directions are strongest, what to offer first, how to say it clearly, and what to test next.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;text-align:center">
+      <p class="serif" style="font-size:1.72rem;max-width:850px;margin:0 auto 20px;color:var(--navy)"><b>Which choice gets you closer to income, freedom, and real impact faster?</b></p>
+      <a class="btn" href="#">SHOW ME MY BEST BUSINESS DIRECTION — $47</a>
+      <div class="cta-support">One payment. Uses the answers you already gave us.</div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="final">
+  <div class="wrap">
+    <div class="kicker" style="color:#d9bd62">Before You Go</div>
+    <h2>Your Expertise Snapshot™ Is Yours. This Private Upgrade Is Only Available Here.</h2>
+    <p class="lead">If you leave, you keep your result. You simply leave this Client-Ready Blueprint™ offer behind.</p>
+    <a class="btn" href="#">BUILD MY CLIENT-READY BLUEPRINT — $47</a>
+    <div class="micro" style="color:#bcc5d1">One payment. No subscription.</div>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="wrap row">
+    <div>Expertise Extraction Engine™</div>
+    <div>Everyday Nurse LLC</div>
+  </div>
+</footer>
+
+</body>
+</html>

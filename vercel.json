@@ -47,7 +47,7 @@
       "destination": "/cohort-apply/index.html"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|cleanse/|cleanse$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|cleanse/|cleanse$|engine/|engine$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
   ],
@@ -224,6 +224,118 @@
     {
       "path": "/api/challenge-live-now?mode=send",
       "schedule": "30 21 24 9 *"
+    },
+    {
+      "schedule": "0-55/5 12 5 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "*/5 13 5 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "0-55/5 12 5 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "*/5 13 5 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "0-55/5 12 6 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 12 6 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13 6 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13 6 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 12 7 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "0-55/5 12 7 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 13 7 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 13 7 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "0-55/5 12 8 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "0-55/5 12 8 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 13 8 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 13 8 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "0-55/5 12 11 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "0-55/5 12 11 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 13 11 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 13 11 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "0-55/5 12 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "0-55/5 12 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "*/5 13 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "*/5 13 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "0-55/5 16 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "0-55/5 16 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "*/5 17 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "*/5 17 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=7"
     }
   ]
 }

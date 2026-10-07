@@ -1,0 +1,1897 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Expertise Extraction Engine™</title>
+<style>
+:root{
+  --navy:#0b1730;
+  --navy2:#14284f;
+  --gold:#d8b44b;
+  --gold2:#b88f28;
+  --cream:#f7f2e8;
+  --white:#ffffff;
+  --ink:#172033;
+  --muted:#697386;
+  --line:#dde3eb;
+  --soft:#eef2f7;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  line-height:1.5;
+}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1160px;margin:auto;padding:0 24px}
+.hero{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+  padding:70px 0 66px;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.04fr .96fr;
+  gap:42px;
+  align-items:center;
+}
+.product-name{
+  font-family:Georgia,serif;
+  font-size:clamp(2.1rem,4.6vw,4.2rem);
+  line-height:.96;
+  margin:0 0 18px;
+  color:#fff;
+  letter-spacing:-.02em;
+}
+.product-name span{color:var(--gold)}
+.hero h1{
+  font-family:Georgia,serif;
+  font-size:clamp(2.3rem,5vw,4.55rem);
+  line-height:1.01;
+  margin:0 0 22px;
+  max-width:760px;
+}
+.hero p{font-size:1.14rem;color:#e9edf4;max-width:720px}
+.hero-questions{
+  font-family:Georgia,serif;
+  font-size:1.35rem;
+  line-height:1.45;
+  color:#fff;
+  margin:24px 0;
+}
+.hero-image{
+  width:100%;
+  border-radius:22px;
+  box-shadow:0 24px 48px rgba(0,0,0,.28);
+  border:1px solid rgba(255,255,255,.14);
+  display:block;
+}
+.cta{
+  display:inline-block;
+  background:linear-gradient(180deg,#e7c766,#d1a83b);
+  color:#101010;
+  padding:16px 24px;
+  border-radius:10px;
+  font-weight:900;
+  margin-top:18px;
+  box-shadow:0 9px 20px rgba(0,0,0,.14);
+}
+.hero-note{font-size:.92rem!important;color:#cbd2dd!important;margin-top:11px}
+section{padding:66px 0}
+.band{background:#fff}
+.soft{background:var(--soft)}
+h2,h3{font-family:Georgia,serif}
+h2{
+  font-size:clamp(2rem,4vw,3.25rem);
+  line-height:1.06;
+  margin:0 0 18px;
+}
+h3{font-size:1.32rem;line-height:1.2}
+.lead{font-size:1.16rem;max-width:850px}
+.quote{
+  font-family:Georgia,serif;
+  font-size:clamp(1.75rem,3vw,2.55rem);
+  line-height:1.18;
+  color:var(--navy);
+  max-width:1120px;
+}
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 8px 22px rgba(11,23,48,.045);
+}
+.card h3{margin-top:0}
+.icon{
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#f2e6bd;
+  color:#715500;
+  font-weight:900;
+  margin-bottom:14px;
+}
+.pullquotes{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:22px 0;
+}
+.pullquotes span{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:10px 14px;
+  font-family:Georgia,serif;
+  font-style:italic;
+}
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:26px;
+}
+.callout{
+  border-left:5px solid var(--gold);
+  padding:16px 18px;
+  background:#fff;
+}
+.eyebrow{
+  font-size:.78rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#8a6905;
+  margin-bottom:8px;
+}
+.result-card{
+  position:relative;
+  padding-top:52px;
+}
+.result-num{
+  position:absolute;
+  top:18px;left:20px;
+  font-family:Georgia,serif;
+  font-size:1.8rem;
+  font-weight:900;
+  color:var(--gold2);
+}
+.result-example{
+  margin-top:14px;
+  padding:14px 15px;
+  border-radius:12px;
+  background:#fbf7ec;
+  font-family:Georgia,serif;
+  color:var(--navy);
+}
+.dark{
+  background:var(--navy);
+  color:#fff;
+}
+.dark .lead{color:#e4e9f1}
+.center{text-align:center}
+.footer{background:#071022;color:#cbd3df;padding:28px 0}
+@media(max-width:900px){
+  .hero-grid,.grid3,.two{grid-template-columns:1fr}
+  .hero{padding-top:52px}
+  .hero-image{max-height:560px;object-fit:cover}
+}
+</style>
+
+<style id="hero-center-fix">
+.hero{
+  min-height:100vh !important;
+  padding:30px 20px 26px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.hero .wrap{
+  width:100% !important;
+  max-width:1240px !important;
+  margin:0 auto !important;
+  padding:0 28px !important;
+}
+.hero-grid{
+  display:block !important;
+  width:100% !important;
+}
+.hero-copy{
+  width:100% !important;
+  max-width:1160px !important;
+  margin:0 auto !important;
+  text-align:center !important;
+}
+.hero .product-name{
+  max-width:1100px !important;
+  margin:0 auto 14px !important;
+  text-align:center !important;
+  font-size:clamp(1.45rem,2.8vw,2.5rem) !important;
+  line-height:1 !important;
+}
+.hero h1{
+  max-width:1160px !important;
+  margin:0 auto 18px !important;
+  text-align:center !important;
+  font-size:clamp(2.15rem,4.6vw,4.1rem) !important;
+  line-height:1.01 !important;
+}
+.hero p{
+  max-width:1040px !important;
+  margin:11px auto !important;
+  text-align:center !important;
+  font-size:1.03rem !important;
+  line-height:1.45 !important;
+}
+.hero .hero-questions{
+  display:block !important;
+  max-width:1040px !important;
+  margin:16px auto 18px !important;
+  text-align:center !important;
+  font-family:Georgia,serif !important;
+  font-size:1.15rem !important;
+  line-height:1.45 !important;
+}
+.hero .hero-questions span{
+  display:inline !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  background:none !important;
+}
+.hero .hero-questions span:not(:last-child)::after{
+  content:"  •  ";
+  color:rgba(255,255,255,.5);
+}
+.hero .cta{
+  display:inline-block !important;
+  margin:16px auto 0 !important;
+  padding:13px 22px !important;
+}
+.hero .hero-note{
+  margin-top:8px !important;
+  font-size:.9rem !important;
+}
+@media(max-width:760px){
+  .hero{
+    min-height:auto !important;
+    padding:28px 18px 26px !important;
+  }
+  .hero .hero-questions span{
+    display:block !important;
+    margin:4px 0 !important;
+  }
+  .hero .hero-questions span:not(:last-child)::after{
+    content:"" !important;
+  }
+}
+</style>
+
+
+<style id="hero-copy-v4">
+.hero .hero-main-copy{
+  max-width:1060px !important;
+  margin:15px auto !important;
+  text-align:center !important;
+  font-size:1.22rem !important;
+  line-height:1.5 !important;
+  color:#f1f4f8 !important;
+}
+@media(max-width:760px){
+  .hero .hero-main-copy{
+    font-size:1.08rem !important;
+    line-height:1.48 !important;
+  }
+}
+</style>
+
+
+<style id="hero-design-pass">
+.hero{
+  min-height:100vh !important;
+  padding:30px 0 28px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.06), transparent 40%),
+    linear-gradient(135deg,var(--navy),var(--navy2)) !important;
+}
+.hero .wrap{
+  width:100% !important;
+  max-width:1280px !important;
+  padding:0 34px !important;
+}
+.hero-shell{
+  max-width:1160px;
+  margin:0 auto;
+  text-align:center;
+}
+.hero .product-name{
+  margin:0 auto 16px !important;
+  font-family:Georgia,serif !important;
+  font-size:clamp(1.35rem,2.5vw,2.25rem) !important;
+  line-height:1 !important;
+  letter-spacing:.01em !important;
+  color:#fff !important;
+}
+.hero .product-name span{color:var(--gold) !important;}
+.hero h1{
+  max-width:1140px !important;
+  margin:0 auto 18px !important;
+  font-family:Georgia,serif !important;
+  font-size:clamp(2.45rem,5vw,4.55rem) !important;
+  line-height:1.01 !important;
+  letter-spacing:-.025em !important;
+  color:#fff !important;
+}
+.hero-intro{
+  max-width:900px !important;
+  margin:0 auto !important;
+  font-size:1.2rem !important;
+  line-height:1.48 !important;
+  color:#eef2f7 !important;
+}
+.hero-rule{
+  width:110px;
+  height:2px;
+  margin:22px auto 20px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.hero-time{
+  max-width:980px !important;
+  margin:0 auto !important;
+  font-size:1.12rem !important;
+  line-height:1.5 !important;
+  color:#fff !important;
+}
+.hero-time b{color:#efd77e !important;}
+.hero-mechanism{
+  max-width:900px !important;
+  margin:14px auto 0 !important;
+  font-size:1rem !important;
+  line-height:1.45 !important;
+  color:#d7deea !important;
+}
+.hero-cta{
+  margin-top:20px !important;
+  padding:14px 24px !important;
+  font-size:1rem !important;
+}
+.hero-reassurance{
+  margin:9px auto 0 !important;
+  font-size:.9rem !important;
+  line-height:1.35 !important;
+  color:#c8d0db !important;
+}
+@media(max-width:800px){
+  .hero{
+    min-height:auto !important;
+    padding:34px 0 30px !important;
+  }
+  .hero .wrap{padding:0 20px !important;}
+  .hero h1{
+    font-size:clamp(2.25rem,10vw,3.6rem) !important;
+  }
+  .hero-intro{
+    font-size:1.08rem !important;
+  }
+  .hero-time{
+    font-size:1.02rem !important;
+  }
+  .hero-mechanism{
+    font-size:.95rem !important;
+  }
+}
+</style>
+
+
+<style id="hero-v2-refine">
+.hero-highlight{
+  color:#efd77e;
+}
+.hero-em{
+  color:#ffffff;
+  font-weight:700;
+}
+.hero-time{
+  max-width:980px !important;
+  margin:18px auto 0 !important;
+}
+.hero-mechanism{
+  max-width:940px !important;
+  margin:12px auto 0 !important;
+}
+.hero-reassurance{
+  max-width:820px !important;
+  margin:9px auto 0 !important;
+}
+</style>
+
+
+<style id="page1-test-refine">
+/* Keep the page to two font families: Georgia for headings, Arial for body/UI. */
+body, p, a, span, div, button { font-family: Arial, Helvetica, sans-serif; }
+h1, h2, h3, .product-name { font-family: Georgia, serif; }
+
+/* Tighten post-hero spacing to remove dead white space. */
+section { padding: 48px 0; }
+.band, .soft { padding-top: 48px; padding-bottom: 48px; }
+
+/* Section under hero */
+.band:first-of-type h2 { margin-bottom: 12px; }
+.band:first-of-type .lead { margin-top: 6px; margin-bottom: 14px; }
+
+/* Quote prompts become balanced 4-up desktop chips with one consistent font. */
+.pullquotes{
+  display:grid !important;
+  grid-template-columns:repeat(4, minmax(0,1fr)) !important;
+  gap:12px !important;
+  margin:18px 0 20px !important;
+}
+.pullquotes span{
+  font-family:Arial,Helvetica,sans-serif !important;
+  font-style:normal !important;
+  font-weight:700 !important;
+  background:#fff !important;
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+  padding:13px 14px !important;
+  text-align:center !important;
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Turn the "business buried inside..." line into a highlight instead of another font shift. */
+.first-business-highlight{
+  display:inline-block;
+  margin-top:4px;
+  padding:10px 14px;
+  background:#fff6d9;
+  border-left:4px solid var(--gold);
+  color:var(--navy);
+  font-weight:800;
+  font-size:1.12rem;
+  line-height:1.4;
+}
+
+/* Self-select cards: meaningful visual markers, same font system. */
+.selector-icon{
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border-radius:12px;
+  background:#f5edd2;
+  color:var(--navy);
+  font-size:1.25rem;
+  margin-bottom:14px;
+}
+
+/* Remove special quote-font styling lower on page and use highlight treatment instead. */
+.quote{
+  font-family:Arial,Helvetica,sans-serif !important;
+  font-size:1.22rem !important;
+  line-height:1.45 !important;
+  font-weight:800 !important;
+  color:var(--navy) !important;
+  margin-top:18px;
+  margin-bottom:18px;
+}
+
+/* Slightly tighter cards/sections. */
+.card{padding:22px}
+.grid3{gap:16px}
+.two{gap:18px}
+
+/* CTA reassurance */
+.cta-sub{
+  margin-top:8px;
+  color:#6b7280;
+  font-size:.9rem;
+}
+.dark .cta-sub{color:#cfd6e1}
+
+/* Footer */
+.site-footer{
+  background:#071022;
+  color:#cbd3df;
+  padding:34px 0 28px;
+  font-size:.92rem;
+}
+.footer-grid{
+  display:flex;
+  justify-content:space-between;
+  gap:24px;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+.footer-links{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.footer-links a{
+  color:#eef2f7;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.footer-note{
+  max-width:760px;
+  margin-top:14px;
+  color:#9da8b8;
+  font-size:.85rem;
+  line-height:1.5;
+}
+
+@media(max-width:900px){
+  .pullquotes{grid-template-columns:repeat(2, minmax(0,1fr)) !important;}
+}
+@media(max-width:600px){
+  .pullquotes{grid-template-columns:1fr !important;}
+  section{padding:40px 0;}
+}
+</style>
+
+
+<style id="hero-legibility-v2">
+.hero h1{
+  margin-bottom:28px !important;
+}
+.hero-time{
+  font-size:1.24rem !important;
+  line-height:1.55 !important;
+  max-width:1040px !important;
+  margin:0 auto 18px !important;
+  color:#ffffff !important;
+}
+.hero-mechanism{
+  font-size:1.12rem !important;
+  line-height:1.55 !important;
+  max-width:980px !important;
+  margin:0 auto 0 !important;
+  color:#e8edf4 !important;
+}
+.hero-time b,
+.hero-mechanism b{
+  font-weight:800 !important;
+}
+@media(max-width:800px){
+  .hero h1{
+    margin-bottom:22px !important;
+  }
+  .hero-time{
+    font-size:1.08rem !important;
+  }
+  .hero-mechanism{
+    font-size:1rem !important;
+  }
+}
+</style>
+
+
+<style id="hero-legibility-v3">
+/* Force the two supporting hero paragraphs to be clearly larger. */
+.hero-time{
+  font-size:1.48rem !important;
+  line-height:1.5 !important;
+  max-width:1080px !important;
+  margin:0 auto 22px !important;
+  color:#ffffff !important;
+}
+.hero-mechanism{
+  font-size:1.30rem !important;
+  line-height:1.52 !important;
+  max-width:1040px !important;
+  margin:0 auto 0 !important;
+  color:#eef2f7 !important;
+}
+.hero h1{
+  margin-bottom:34px !important;
+}
+@media(max-width:800px){
+  .hero-time{
+    font-size:1.22rem !important;
+  }
+  .hero-mechanism{
+    font-size:1.10rem !important;
+  }
+  .hero h1{
+    margin-bottom:26px !important;
+  }
+}
+</style>
+
+
+<style id="hero-size-balance-v4">
+.hero h1{
+  font-size:clamp(2.2rem,4.4vw,4.0rem) !important;
+  margin-bottom:36px !important;
+}
+.hero-time{
+  font-size:1.72rem !important;
+  line-height:1.48 !important;
+  max-width:1120px !important;
+  margin:0 auto 24px !important;
+}
+.hero-mechanism{
+  font-size:1.48rem !important;
+  line-height:1.5 !important;
+  max-width:1080px !important;
+  margin:0 auto 0 !important;
+}
+@media(max-width:800px){
+  .hero h1{
+    font-size:clamp(2rem,9vw,3.2rem) !important;
+    margin-bottom:28px !important;
+  }
+  .hero-time{
+    font-size:1.3rem !important;
+  }
+  .hero-mechanism{
+    font-size:1.16rem !important;
+  }
+}
+</style>
+
+
+<style id="eee-adaptive-quiz-css">
+#expertise-interview{
+  padding:56px 0;
+  background:#f7f4ec;
+}
+.quiz-shell{
+  max-width:900px;
+  margin:0 auto;
+  background:#fff;
+  border:1px solid rgba(11,31,59,.12);
+  border-radius:24px;
+  box-shadow:0 22px 60px rgba(10,25,45,.10);
+  overflow:hidden;
+}
+.quiz-top{
+  padding:24px 28px 18px;
+  background:#0b1f3b;
+  color:#fff;
+}
+.quiz-brand{
+  font-size:.82rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#e8cf76;
+  font-weight:800;
+}
+.quiz-progress-label{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:14px;
+  font-size:.88rem;
+  color:#d7deea;
+}
+.quiz-progress{
+  height:7px;
+  margin-top:9px;
+  background:rgba(255,255,255,.12);
+  border-radius:999px;
+  overflow:hidden;
+}
+.quiz-progress > div{
+  width:7%;
+  height:100%;
+  background:#e8cf76;
+  border-radius:999px;
+  transition:width .28s ease;
+}
+.quiz-body{
+  padding:34px 34px 32px;
+}
+.quiz-kicker{
+  color:#9b7a20;
+  font-size:.82rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+  margin-bottom:9px;
+}
+.quiz-question{
+  font-family:Georgia,serif;
+  color:#0b1f3b;
+  font-size:clamp(1.65rem,3.2vw,2.45rem);
+  line-height:1.08;
+  margin:0 0 12px;
+}
+.quiz-help{
+  font-size:1rem;
+  line-height:1.55;
+  color:#5b6470;
+  margin:0 0 22px;
+}
+.quiz-options{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+.quiz-option{
+  width:100%;
+  border:1px solid #d9dde4;
+  background:#fff;
+  border-radius:13px;
+  padding:14px 16px;
+  text-align:left;
+  font-size:1rem;
+  line-height:1.35;
+  color:#152238;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.quiz-option:hover{
+  border-color:#b79b42;
+  transform:translateY(-1px);
+}
+.quiz-option.selected{
+  border-color:#b79b42;
+  background:#fff9e9;
+  box-shadow:0 0 0 2px rgba(183,155,66,.10);
+}
+.quiz-input, .quiz-textarea{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid #d4dae2;
+  border-radius:13px;
+  padding:14px 15px;
+  font:inherit;
+  color:#16243a;
+  background:#fff;
+}
+.quiz-textarea{
+  min-height:128px;
+  resize:vertical;
+}
+.quiz-mini-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.quiz-actions{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:22px;
+}
+.quiz-primary{
+  border:0;
+  background:#cda936;
+  color:#071426;
+  padding:13px 20px;
+  border-radius:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.quiz-secondary{
+  border:0;
+  background:transparent;
+  color:#667085;
+  padding:10px 6px;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.quiz-listening{
+  margin:0 0 18px;
+  padding:13px 15px;
+  border-left:4px solid #d0af43;
+  background:#fbf7e9;
+  color:#29344a;
+  font-size:.95rem;
+  line-height:1.48;
+  display:none;
+}
+.quiz-listening.show{display:block}
+.quiz-start{
+  text-align:center;
+  padding:44px 34px;
+}
+.quiz-start h2{
+  max-width:680px;
+  margin:8px auto 14px;
+}
+.quiz-start p{
+  max-width:670px;
+  margin:0 auto 22px;
+}
+.quiz-optin{
+  max-width:610px;
+  margin:24px auto 0;
+  text-align:left;
+}
+.quiz-optin label{
+  display:block;
+  margin:0 0 6px;
+  font-size:.9rem;
+  font-weight:800;
+  color:#273246;
+}
+.quiz-optin .quiz-mini-grid{
+  margin-bottom:12px;
+}
+.quiz-micro{
+  margin-top:9px !important;
+  font-size:.86rem !important;
+  color:#78808d !important;
+}
+.quiz-thinking{
+  text-align:center;
+  padding:54px 30px;
+}
+.quiz-thinking .pulse{
+  width:54px;height:54px;border-radius:50%;
+  margin:0 auto 18px;
+  border:4px solid #eee8d5;
+  border-top-color:#cda936;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.quiz-result-preview{
+  padding:34px;
+}
+.quiz-result-preview .result-block{
+  padding:18px 0;
+  border-bottom:1px solid #e7e9ed;
+}
+.quiz-result-preview .result-block:last-child{border-bottom:0}
+.quiz-result-preview h3{margin-bottom:7px}
+.quiz-result-preview .evidence{
+  color:#5e6774;
+  line-height:1.55;
+}
+.quiz-hidden{display:none!important}
+@media(max-width:700px){
+  .quiz-body{padding:28px 20px 24px}
+  .quiz-start{padding:34px 20px}
+  .quiz-mini-grid{grid-template-columns:1fr}
+  .quiz-actions{align-items:flex-end}
+}
+</style>
+
+
+<style>
+.founders-section{padding:64px 0 58px;background:#f4f0e7;border-top:1px solid rgba(11,31,59,.10)}
+.founders-wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center}
+.founders-eyebrow{color:#9b7a20;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;font-weight:800;margin-bottom:10px}
+.founders-copy h2{margin:0 0 16px;color:#0b1f3b;font-size:clamp(2rem,4vw,3.45rem);line-height:1.04}
+.founders-copy p{color:#3e4858;font-size:1.05rem;line-height:1.65;margin:0 0 14px}
+.founders-highlight{margin:18px 0 20px;padding:16px 18px;background:#fff;border-left:4px solid #cda936;color:#152238;font-weight:800;line-height:1.5}
+.founders-proof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.founders-proof div{background:#fff;border:1px solid rgba(11,31,59,.10);border-radius:14px;padding:14px 13px;text-align:center}
+.founders-proof strong{display:block;color:#0b1f3b;font-family:Georgia,serif;font-size:1.2rem;margin-bottom:3px}
+.founders-proof span{color:#697382;font-size:.83rem;line-height:1.35}
+.founders-media{display:grid;grid-template-columns:1.25fr .75fr;grid-template-rows:1fr 1fr;gap:12px;min-height:390px}
+.founder-photo{border-radius:18px;overflow:hidden;border:1px solid rgba(11,31,59,.12);background:linear-gradient(135deg,#0b1f3b,#143159);color:#fff;display:flex;align-items:flex-end;padding:18px}
+.founder-photo.main{grid-row:1/3}
+.photo-label strong{display:block;font-family:Georgia,serif;font-size:1.15rem}
+.photo-label span{display:block;color:#d7deea;font-size:.84rem;margin-top:4px;line-height:1.35}
+@media(max-width:850px){.founders-wrap{grid-template-columns:1fr}.founders-proof{grid-template-columns:1fr}.founders-media{min-height:340px}}
+@media(max-width:560px){.founders-media{grid-template-columns:1fr;grid-template-rows:auto}.founder-photo.main{grid-row:auto;min-height:260px}.founder-photo{min-height:170px}}
+</style>
+
+
+<style id="dark-midsection-refine">
+.dark-mid{
+  background:#07090d !important;
+  color:#fff;
+  padding:58px 0 !important;
+}
+.dark-mid-head{
+  text-align:center;
+  max-width:760px;
+  margin:0 auto 28px;
+}
+.dark-mid-kicker{
+  color:#d1ae3d;
+  font-size:.8rem;
+  font-weight:800;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  margin-bottom:9px;
+}
+.dark-mid h2{
+  color:#fff;
+  margin:0;
+}
+.dark-mid-grid{
+  gap:22px !important;
+}
+.dark-mid-item{
+  padding:4px 10px 6px;
+  text-align:left;
+}
+.gold-check{
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#d1ae3d;
+  border:1px solid rgba(209,174,61,.55);
+  border-radius:50%;
+  font-size:1rem;
+  font-weight:900;
+  margin-bottom:14px;
+}
+.dark-mid-item h3{
+  color:#fff;
+  font-family:Georgia,serif;
+  font-size:1.34rem;
+  margin:0 0 10px;
+}
+.dark-mid-item p{
+  color:#cfd4dc;
+  line-height:1.58;
+  margin:0 0 8px;
+}
+.dark-mid-item p b{
+  color:#fff;
+}
+.dark-mid-cta{
+  text-align:center;
+  margin-top:28px;
+}
+.dark-mid .cta-sub{
+  color:#aeb6c2 !important;
+  max-width:680px;
+  margin:9px auto 0;
+}
+@media(max-width:800px){
+  .dark-mid{padding:46px 0 !important}
+  .dark-mid-item{text-align:left}
+}
+</style>
+
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-shell">
+      <div class="product-name">EXPERTISE <span>EXTRACTION</span> ENGINE™</div>
+
+      <h1>Turn What You Already Know Into <span class="hero-highlight">Income, Freedom, And Real Impact.</span></h1>
+
+      <p class="hero-time"><b>In less than 8 minutes</b>, find the answer to: <span class="hero-em">who can I help, what should I help them with, and what part of what I know can become a profitable business?</span></p>
+
+      <p class="hero-mechanism">The Expertise Extraction Engine looks at your <span class="hero-em">skills, life experience, and results</span> to uncover the kind of change you are built to help people make and the part of your knowledge that can become income.</p>
+
+      <a class="cta hero-cta" href="#expertise-interview">UNCOVER MY EXPERTISE — FREE</a>
+
+      <p class="hero-reassurance">Even if you are a beginner. No niche. No website. Just answer a few simple questions.</p>
+    </div>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <h2>You Already Have More Than You Think.</h2>
+    <p class="lead">People already ask you for advice. They come to you when they are stuck. They say things like:</p>
+
+    <div class="pullquotes">
+      <span>“What would you do?”</span>
+      <span>“What would you do if you were me?”</span>
+      <span>“Can I pick your brain?”</span>
+      <span>“Can you help me with this?”</span>
+    </div>
+
+    <p class="lead">You have already been helping people.</p>
+    <div class="first-business-highlight">Now let’s find the business buried inside the help you keep giving away.</div>
+
+    <div>
+      <a class="cta" href="#expertise-interview">UNCOVER MY EXPERTISE — FREE</a>
+      <div class="cta-sub">Get your free Expertise Snapshot™ in less than 8 minutes.</div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-mid">
+  <div class="wrap">
+    <div class="dark-mid-head">
+      <div class="dark-mid-kicker">Does This Sound Like You?</div>
+      <h2>This Is For You If…</h2>
+    </div>
+
+    <div class="grid3 dark-mid-grid">
+      <div class="dark-mid-item">
+        <div class="gold-check">✓</div>
+        <h3>You Feel Called To Help People</h3>
+        <p>You genuinely want to help. You want to coach, guide, teach, mentor, or support people in a way that changes a real part of their life.</p>
+        <p><b>You want your work to mean something.</b></p>
+      </div>
+
+      <div class="dark-mid-item">
+        <div class="gold-check">✓</div>
+        <h3>You Want More Freedom</h3>
+        <p>You want work that gives you more choice, more time, and more control over your day.</p>
+        <p><b>You want the freedom to take your kids to the park on a Tuesday afternoon because you can.</b></p>
+      </div>
+
+      <div class="dark-mid-item">
+        <div class="gold-check">✓</div>
+        <h3>You Feel Stuck</h3>
+        <p>You do not know who to help, what to coach on, or what people would pay you for.</p>
+        <p><b>You are not sure which part of what you know is worth building a business around.</b></p>
+      </div>
+    </div>
+
+    <div class="dark-mid-cta">
+      <a class="cta" href="#expertise-interview">UNCOVER MY EXPERTISE — FREE</a>
+      <div class="cta-sub">Start free. Answer a few simple questions. See what your experience may already be pointing toward.</div>
+    </div>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap">
+    <h2>You’ve Already Been Doing The Work For Free.</h2>
+
+    <p class="lead">You are the one people call. The one who listens. The one who explains. The one who helps people see what to do next. The one people ask:</p>
+
+    <p class="quote">“Can I pick your brain?”</p>
+
+    <p class="lead">It feels easy to you. It feels normal.</p>
+
+    <div class="callout">
+      <b>The thing that feels easy and normal to you can be life-changing for someone else.</b>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Stop Trying To Copy Someone Else’s Business.</h2>
+    <p class="lead">Their story is not your story. Their gift is not your gift. Their people are not your people.</p>
+
+    <p class="quote">Find out what you’re built for first. Then build from there.</p>
+
+    <a class="cta" href="#expertise-interview">SHOW ME WHAT I’M BUILT FOR — FREE</a><div class="cta-sub">No cost. Just a few simple questions.</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Your Best Business Clues Are Already In Your Life.</h2>
+    <p class="lead">We look at three simple places.</p>
+
+    <div class="grid3">
+      <div class="card">
+        <h3>What You’ve Done</h3>
+        <p>The work, life, training, hard seasons, wins, and lessons that shaped you.</p>
+      </div>
+      <div class="card">
+        <h3>What People Come To You For</h3>
+        <p>The questions, advice, and help people ask you for again and again.</p>
+      </div>
+      <div class="card">
+        <h3>Where You’ve Created Change</h3>
+        <p>The places where someone was better, clearer, stronger, healthier, calmer, or further ahead because you helped.</p>
+      </div>
+    </div>
+
+    <p class="quote" style="margin-top:28px">Then we connect the dots.</p>
+  </div>
+</section>
+
+<section class="soft" id="quiz">
+  <div class="wrap">
+    <div class="eyebrow">Your Free Expertise Snapshot™</div>
+    <h2>Here’s What You Get From The Free Quiz.</h2>
+    <p class="lead">Not a giant report. Not 50 business ideas. Just the first three things you need to see clearly.</p>
+
+    <div class="grid3">
+      <div class="card result-card">
+        <div class="result-num">01</div>
+        <h3>Your Hidden Expertise</h3>
+        <p>The skill you use so often that you stopped seeing it as a skill.</p>
+        <div class="result-example">“Oh. I thought everybody knew how to do that.”</div>
+      </div>
+
+      <div class="card result-card">
+        <div class="result-num">02</div>
+        <h3>Your Strongest Pattern</h3>
+        <p>The change you keep helping people make again and again.</p>
+        <div class="result-example">You do not just “give advice.” You keep helping people move from confusion to a clear next step.</div>
+      </div>
+
+      <div class="card result-card">
+        <div class="result-num">03</div>
+        <h3>Your Unfair Advantage</h3>
+        <p>The secret mix of your story, skills, experience, and results that makes your way of helping hard to copy.</p>
+        <div class="result-example">This is your secret sauce.</div>
+      </div>
+    </div>
+
+    <div class="center" style="margin-top:30px">
+      <p class="quote" style="margin:0 auto 22px">You finish knowing: “This is the value I already have.”</p>
+      <a class="cta" href="#expertise-interview">BEGIN MY FREE EXPERTISE SNAPSHOT</a>
+    </div>
+  </div>
+</section>
+
+
+<section id="expertise-interview">
+  <div class="wrap">
+    <div class="quiz-shell">
+      <div id="quiz-start" class="quiz-start">
+        <div class="eyebrow">Your Adaptive Expertise Extraction Interview™</div>
+        <h2>Let’s Find The Value You’ve Been Overlooking.</h2>
+        <p class="lead">You do not need to know what your “thing” is yet. We’ll follow the evidence in your work, your life, what comes naturally to you, and what other people already trust you for.</p>
+
+        <div class="quiz-optin">
+          <div class="quiz-mini-grid">
+            <div>
+              <label for="eee-name">First name</label>
+              <input id="eee-name" class="quiz-input" type="text" placeholder="Your first name">
+            </div>
+            <div>
+              <label for="eee-email">Where should we send your Snapshot?</label>
+              <input id="eee-email" class="quiz-input" type="email" placeholder="you@example.com">
+            </div>
+          </div>
+          <button id="eee-start-btn" class="quiz-primary" style="width:100%">START MY FREE EXPERTISE EXTRACTION</button>
+          <p class="quiz-micro">About 10 minutes. One question at a time. Nothing has to be perfect, and you can skip anything you do not know yet.</p>
+        </div>
+      </div>
+
+      <div id="quiz-app" class="quiz-hidden">
+        <div class="quiz-top">
+          <div class="quiz-brand">Expertise Extraction Engine™</div>
+          <div class="quiz-progress-label">
+            <span id="eee-phase">Your Story</span>
+            <span id="eee-progress-text">Finding the pattern</span>
+          </div>
+          <div class="quiz-progress"><div id="eee-progress-bar"></div></div>
+        </div>
+        <div class="quiz-body">
+          <div id="eee-listening" class="quiz-listening"></div>
+          <div id="eee-kicker" class="quiz-kicker"></div>
+          <h2 id="eee-question" class="quiz-question"></h2>
+          <p id="eee-help" class="quiz-help"></p>
+          <div id="eee-answer"></div>
+          <div class="quiz-actions">
+            <button id="eee-skip" class="quiz-secondary">Skip / I’m not sure</button>
+            <button id="eee-next" class="quiz-primary">CONTINUE</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="quiz-thinking" class="quiz-thinking quiz-hidden">
+        <div class="pulse"></div>
+        <div class="eyebrow">Connecting The Dots</div>
+        <h2 id="eee-thinking-title">We’re reviewing your evidence.</h2>
+        <p class="lead" id="eee-thinking-copy">Looking for repeated strengths, results, and patterns across your answers.</p>
+      </div>
+
+      <div id="quiz-preview" class="quiz-result-preview quiz-hidden">
+        <div class="eyebrow">Your Expertise Snapshot™</div>
+        <h2 id="eee-result-heading">We Found A Pattern.</h2>
+        <p class="lead">This first snapshot is based on the evidence you gave us. It is designed to show you what you may have been overlooking—not force you into a label.</p>
+
+        <div class="result-block">
+          <h3>Your Hidden Expertise</h3>
+          <p id="eee-hidden-result" class="evidence"></p>
+        </div>
+        <div class="result-block">
+          <h3>Your Strongest Pattern</h3>
+          <p id="eee-pattern-result" class="evidence"></p>
+        </div>
+        <div class="result-block">
+          <h3>Your Unfair Advantage</h3>
+          <p id="eee-advantage-result" class="evidence"></p>
+        </div>
+
+        <div style="margin-top:26px;padding:20px;border-radius:16px;background:#0b1f3b;color:#fff">
+          <div style="font-family:Georgia,serif;font-size:1.55rem;line-height:1.15;margin-bottom:8px">This is what you have.</div>
+          <div style="font-size:1.02rem;line-height:1.5;color:#e4e9f1">The next question is what to do with it.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="band">
+  <div class="wrap">
+    <h2>This Is Not Another “Pick A Niche” Quiz.</h2>
+    <p class="lead">We do not start by asking you to dream up a business.</p>
+    <p class="lead"><b>We start with what your life has already proven.</b></p>
+
+    <div class="grid3">
+      <div class="card"><h3>You’ve Done It.</h3><p>There is real experience behind the answer.</p></div>
+      <div class="card"><h3>People Ask You For It.</h3><p>Other people already see value in the way you help.</p></div>
+      <div class="card"><h3>You’ve Created Change.</h3><p>Someone has been better off because you were there.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What Could Change If You Finally Knew What To Build Around?</h2>
+    <p class="lead">You could stop watching other people build. Stop saving one more video about niches. Stop wondering if you know enough.</p>
+
+    <div class="two">
+      <div class="card">
+        <h3>Work With Purpose</h3>
+        <p>Build something that feels like it matters. Help more people with the thing you already keep giving away.</p>
+      </div>
+
+      <div class="card">
+        <h3>Build More Freedom</h3>
+        <p>Create more choice, more income, and more control of your day — including the freedom to take your child to the park in the middle of the afternoon.</p>
+      </div>
+    </div>
+
+    <p class="quote" style="margin-top:28px">The first step is not building the whole business. It is seeing what you already have.</p>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="wrap center">
+    <h2 style="color:#fff">Stop Wondering What Your Thing Is.</h2>
+    <p class="quote" style="color:#fff;margin:0 auto 14px">Uncover it.</p>
+    <p class="lead" style="margin:0 auto 22px">Take the free Expertise Extraction Quiz. See your hidden expertise, your strongest pattern, and your unfair advantage.</p>
+    <a class="cta" href="#expertise-interview">BEGIN MY FREE EXPERTISE SNAPSHOT</a><div class="cta-sub">Free to start. No website or business plan needed.</div>
+  </div>
+</section>
+
+
+<section class="founders-section">
+  <div class="wrap founders-wrap">
+    <div class="founders-copy">
+      <div class="founders-eyebrow">The Humans Behind The Engine</div>
+      <h2>Built From 10 Years Of Coaching, Testing, And Seeing Where Good People Get Stuck.</h2>
+
+      <p>We’re Joel Polley and Annie Chitate, the founders behind Everyday Nurse and Braveworks RN.</p>
+
+      <p>For the last decade, we’ve coached, taught, built offers, grown audiences, and worked with people who had real knowledge and real ability, but still struggled to turn what they knew into a clear business people could understand and buy.</p>
+
+      <p>We kept seeing the same problem: talented coaches and consultants were not short on heart, experience, or information. They were stuck on the part that comes before the marketing: <strong>what exactly do I sell, who is it for, what result am I really helping create, and how do I say it clearly?</strong></p>
+
+      <div class="founders-highlight">The Expertise Extraction Engine™ was built from the frameworks, questions, pattern recognition, and real-world lessons we used to solve that problem in our own businesses and with the people we coached.</div>
+
+      <p>Today, our brands have built a combined online audience of more than <strong>500,000 followers</strong>. We’ve been recognized inside our coaching community, built offers across health and business, and learned firsthand that the right offer starts long before the sales page. It starts with seeing clearly what you already have.</p>
+
+      <p><strong>This engine is our way of helping you get to that clarity faster.</strong></p>
+
+      <div class="founders-proof">
+        <div><strong>10+ Years</strong><span>coaching, teaching, and building offers</span></div>
+        <div><strong>500K+</strong><span>combined online audience</span></div>
+        <div><strong>2 Founders</strong><span>health, coaching, business, and education experience</span></div>
+      </div>
+    </div>
+
+    <div class="founders-media">
+      <div class="founder-photo main"><div class="photo-label"><strong>Joel + Annie</strong><span>Replace with a strong founder photo together.</span></div></div>
+      <div class="founder-photo"><div class="photo-label"><strong>Recognition</strong><span>Use the coaching-program award photo here.</span></div></div>
+      <div class="founder-photo"><div class="photo-label"><strong>In The Room</strong><span>Use Joel’s photo with Omar here.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <strong>Expertise Extraction Engine™</strong><br>
+        <span>by Everyday Nurse LLC</span>
+      </div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-note">
+      © 2026 Everyday Nurse LLC. All rights reserved. Results vary. No income or business outcome is guaranteed. This experience is designed to help you identify patterns, strengths, and possible business directions based on the information you provide.
+    </div>
+  </div>
+</footer>
+
+
+<script id="eee-adaptive-quiz-js">
+(function(){
+  const state = {
+    name:"",
+    email:"",
+    stage:"",
+    answers:{},
+    queue:[],
+    current:null,
+    turn:0,
+    signals:{paid:0,social:0,result:0,repeat:0,lived:0,energy:0,identity:0},
+    probes:0
+  };
+
+  const phases = {
+    route:"Your Story",
+    evidence:"Your Evidence",
+    pattern:"Your Pattern",
+    branch:"Your Direction",
+    finish:"Your Snapshot"
+  };
+
+  const Q = {
+    stage:{
+      id:"stage", phase:"route", type:"single",
+      kicker:"First, let’s understand where you are.",
+      q:"Which sounds most like where you are today?",
+      options:[
+        ["A","I know I want to help people, but I don’t know what kind of business I should build."],
+        ["B","People already come to me for help, but I’ve never really turned it into a business."],
+        ["C","I already coach, teach, consult, or help people, but what I offer feels too broad or unclear."],
+        ["D","I’ve sold something before, but I still struggle to explain it or sell it consistently."]
+      ]
+    },
+    tried:{
+      id:"tried", phase:"route", type:"multi",
+      kicker:"You may have already put real effort into this.",
+      q:"What have you already tried to help you figure this out?",
+      help:"Choose as many as fit. This is not about judging what worked or did not work.",
+      options:[
+        ["videos","Watched videos or listened to podcasts"],
+        ["books","Read books"],
+        ["masterclasses","Taken challenges or masterclasses"],
+        ["courses","Bought online courses"],
+        ["coaching","Joined a coaching program or mastermind"],
+        ["consultant","Hired a coach or consultant"],
+        ["built","Built a course, program, or service"],
+        ["audience","Tried posting or building an audience"],
+        ["ads","Paid for ads or marketing"],
+        ["new","I’m just getting started"]
+      ]
+    },
+    stillUnclear:{
+      id:"stillUnclear", phase:"route", type:"multi",
+      kicker:"Let’s name the part that still feels fuzzy.",
+      q:"After all of that, what still feels unclear?",
+      options:[
+        ["best","What I’m actually best at"],
+        ["who","Who I should help"],
+        ["problem","What I should help them with"],
+        ["sell","What I should sell"],
+        ["explain","How to explain what I do"],
+        ["pay","What people would actually pay for"],
+        ["price","How much to charge"],
+        ["customers","How to get customers"],
+        ["all","Honestly, most of it still feels fuzzy"]
+      ]
+    },
+    paid:{
+      id:"paid", phase:"evidence", type:"text",
+      kicker:"Follow the evidence.",
+      q:"What have you already been paid to know, do, make, fix, teach, manage, or help with?",
+      help:"Think bigger than owning a business. Jobs count. Side work counts. Freelance work counts. Selling something you make counts.",
+      placeholder:"People have paid me to..."
+    },
+    roles:{
+      id:"roles", phase:"evidence", type:"textarea",
+      kicker:"Your job titles are only the surface.",
+      q:"Think about 1–3 roles you’ve had. What did people actually depend on you for in those roles?",
+      help:"Example: “I was the receptionist, but people depended on me to calm upset customers and fix scheduling problems.”",
+      placeholder:"Role + what people depended on me for..."
+    },
+    social:{
+      id:"social", phase:"evidence", type:"multi",
+      kicker:"Now look at what people pull from you naturally.",
+      q:"When somebody says, “I knew YOU would know what to do…” what are they usually asking you about?",
+      options:[
+        ["health","Health or wellness"],["relationships","Relationships or family"],["money","Money"],
+        ["business","Business"],["career","Career or work"],["faith","Faith or spiritual life"],
+        ["confidence","Confidence or mindset"],["parenting","Parenting"],["organization","Organization"],
+        ["technology","Technology"],["creative","Creative work"],["food","Food or cooking"],
+        ["fitness","Fitness"],["leadership","Leadership"],["making","Making or fixing things"],
+        ["other","Something else"],["none","People don’t really come to me like that"]
+      ]
+    },
+    socialExample:{
+      id:"socialExample", phase:"evidence", type:"textarea",
+      kicker:"Give us one real moment.",
+      q:"Tell me about one time someone came to you because they believed you could help.",
+      help:"What were they stuck on? What did they actually ask you?",
+      placeholder:"They came to me because..."
+    },
+    compliments:{
+      id:"compliments", phase:"evidence", type:"textarea",
+      kicker:"Borrow somebody else’s eyes for a minute.",
+      q:"What do people actually tell you you’re good at?",
+      help:"Not your résumé. Think: “You explain things so well,” “You should teach this,” “You always know what to do…”",
+      placeholder:"People often tell me..."
+    },
+    easy:{
+      id:"easy", phase:"pattern", type:"textarea",
+      kicker:"This is one of the most important questions.",
+      q:"What is so easy for you that you stopped counting it as a skill?",
+      help:"Think about something other people struggle with that makes you quietly think, “Doesn’t everybody know how to do this?”",
+      placeholder:"Something that feels unusually easy to me is..."
+    },
+    tenYears:{
+      id:"tenYears", phase:"pattern", type:"textarea",
+      kicker:"Zoom out.",
+      q:"If I followed you around for the last 10 years, where would I have seen people benefiting from what you know?",
+      help:"Work, church, family, friends, customers, a hobby, volunteering, online—anywhere.",
+      placeholder:"You would have seen me..."
+    },
+    before:{
+      id:"before", phase:"pattern", type:"textarea",
+      kicker:"Let’s follow one transformation.",
+      q:"Think of one real person you helped. What was happening before they came to you?",
+      placeholder:"Before I helped, they were..."
+    },
+    did:{
+      id:"did", phase:"pattern", type:"textarea",
+      kicker:"Now your part.",
+      q:"What did you actually do that helped?",
+      placeholder:"What I did was..."
+    },
+    after:{
+      id:"after", phase:"pattern", type:"textarea",
+      kicker:"Look for the change.",
+      q:"What was different afterward?",
+      placeholder:"Afterward, they were able to..."
+    },
+    repeat:{
+      id:"repeat", phase:"pattern", type:"single",
+      kicker:"Let’s see whether this is a pattern.",
+      q:"Has something like that happened more than once?",
+      options:[["many","Yes, many times"],["few","Yes, a few times"],["once","Once"],["unsure","I’m not sure"]]
+    },
+    repeatedTheme:{
+      id:"repeatedTheme", phase:"pattern", type:"textarea",
+      kicker:"There may be a thread here.",
+      q:"What tends to be similar each time?",
+      placeholder:"The people, problem, or result usually has this in common..."
+    },
+    lived:{
+      id:"lived", phase:"pattern", type:"textarea",
+      kicker:"Your own life counts as evidence too.",
+      q:"What have you figured out in your own life that used to feel hard?",
+      help:"Health, money, parenting, faith, confidence, career, relationships, starting over, building something—anything you had to learn the hard way.",
+      placeholder:"Something I had to figure out was..."
+    },
+    livedLesson:{
+      id:"livedLesson", phase:"pattern", type:"textarea",
+      kicker:"Turn experience into a clue.",
+      q:"What did you have to learn that somebody a few steps behind you would probably love to know?",
+      placeholder:"I had to learn..."
+    },
+    energy:{
+      id:"energy", phase:"pattern", type:"textarea",
+      kicker:"Now look at energy, not just ability.",
+      q:"What can you do, talk about, make, learn about, or work on and suddenly realize hours have passed?",
+      placeholder:"I lose track of time when..."
+    },
+    problemEnergy:{
+      id:"problemEnergy", phase:"pattern", type:"textarea",
+      kicker:"Interest is good. A problem you care about is even more useful.",
+      q:"What kind of problem could you help people solve over and over without getting bored?",
+      placeholder:"I could keep helping people with..."
+    },
+    dream:{
+      id:"dream", phase:"pattern", type:"textarea",
+      kicker:"Look back before everybody else had an opinion.",
+      q:"Before work, bills, and other people’s expectations got involved, what did you imagine yourself doing?",
+      placeholder:"I used to imagine..."
+    },
+    delayed:{
+      id:"delayed", phase:"pattern", type:"textarea",
+      kicker:"Sometimes the thing we keep postponing leaves a clue.",
+      q:"What have you wanted to do for a long time but keep putting off?",
+      placeholder:"I keep thinking about..."
+    },
+    blocker:{
+      id:"blocker", phase:"pattern", type:"multi",
+      kicker:"What has made it hard to move?",
+      q:"What usually stops you?",
+      options:[
+        ["teach","I don’t know what I would teach"],["who","I don’t know who I would help"],
+        ["many","I have too many ideas"],["qualified","I don’t feel qualified enough"],
+        ["wrong","I’m afraid of choosing the wrong thing"],["pay","I don’t know if anyone would pay"],
+        ["start","I don’t know where to start"],["failed","I’ve tried things that did not work"],
+        ["judgment","I’m worried what people will think"],["time","Time"],["money","Money"],["other","Something else"]
+      ]
+    },
+
+    // Stage branches
+    A_hobby:{
+      id:"A_hobby", phase:"branch", type:"textarea",
+      kicker:"Let’s look where beginners often overlook value.",
+      q:"What have you done for years simply because you enjoy it?",
+      help:"Cooking, quilting, gardening, planning events, studying health, writing, fixing things, teaching at church—anything.",
+      placeholder:"For years I’ve enjoyed..."
+    },
+    A_asked:{
+      id:"A_asked", phase:"branch", type:"textarea",
+      kicker:"Now look for outside demand.",
+      q:"Has anyone ever asked you to teach them, show them how, make it for them, help them choose, or do it for them?",
+      placeholder:"People have asked me to..."
+    },
+    A_teach:{
+      id:"A_teach", phase:"branch", type:"textarea",
+      kicker:"One last beginner clue.",
+      q:"If you had to teach a small group something tomorrow using only what you already know, what could you teach without much research?",
+      placeholder:"I could teach..."
+    },
+    B_free:{
+      id:"B_free", phase:"branch", type:"textarea",
+      kicker:"You may already be giving away the clue.",
+      q:"What do you keep helping people with for free?",
+      placeholder:"I keep helping people with..."
+    },
+    B_heard:{
+      id:"B_heard", phase:"branch", type:"multi",
+      kicker:"What have people already been telling you?",
+      q:"Which of these have you heard?",
+      options:[
+        ["charge","You should charge for this."],["teach","You should teach this."],
+        ["brain","Can I pick your brain?"],["how","How did you do that?"],
+        ["show","Can you show me?"],["wish","I wish I knew what you know."]
+      ]
+    },
+    B_who:{
+      id:"B_who", phase:"branch", type:"textarea",
+      kicker:"Notice who keeps appearing.",
+      q:"Who seems to come to you most often?",
+      placeholder:"The people who usually come to me are..."
+    },
+    C_paid:{
+      id:"C_paid", phase:"branch", type:"textarea",
+      kicker:"Let’s get underneath the label.",
+      q:"What do people currently pay you for?",
+      placeholder:"People pay me for..."
+    },
+    C_want:{
+      id:"C_want", phase:"branch", type:"textarea",
+      kicker:"Finish the sentence.",
+      q:"People hire me because they want ______.",
+      placeholder:"They want..."
+    },
+    C_actual:{
+      id:"C_actual", phase:"branch", type:"textarea",
+      kicker:"Now forget the sales language.",
+      q:"Once somebody says yes, what do you actually help them do?",
+      placeholder:"Once they say yes, I help them..."
+    },
+    C_problem:{
+      id:"C_problem", phase:"branch", type:"multi",
+      kicker:"Where does the offer feel soft or unclear?",
+      q:"Which sounds most familiar?",
+      options:[
+        ["content","People like my content but don’t buy"],["free","People ask questions but don’t hire me"],
+        ["tooMuch","My offer includes too many things"],["tooMany","I help too many types of people"],
+        ["result","I struggle to explain the result"],["change","I keep changing the offer"],
+        ["inconsistent","People buy sometimes but not consistently"],["unsure","I’m not sure"]
+      ]
+    },
+    D_bought:{
+      id:"D_bought", phase:"branch", type:"textarea",
+      kicker:"Let’s work from real buyer behavior.",
+      q:"What have people actually bought from you?",
+      placeholder:"People have bought..."
+    },
+    D_best:{
+      id:"D_best", phase:"branch", type:"textarea",
+      kicker:"Find the strongest signal.",
+      q:"Which offer, service, or product has sold best?",
+      placeholder:"The thing that has sold best is..."
+    },
+    D_result:{
+      id:"D_result", phase:"branch", type:"textarea",
+      kicker:"Follow the buyer’s desire.",
+      q:"What result were those buyers really hoping to get?",
+      placeholder:"They were hoping to..."
+    },
+    D_praise:{
+      id:"D_praise", phase:"branch", type:"textarea",
+      kicker:"Look at what customers value after the fact.",
+      q:"What do customers praise after they work with you?",
+      placeholder:"Customers tend to say..."
+    },
+
+    clarity:{
+      id:"clarity", phase:"finish", type:"single",
+      kicker:"One last thing.",
+      q:"If this engine could give you clarity on ONE thing today, which would matter most?",
+      options:[
+        ["good","What I’m actually good at"],["who","Who I should help"],["what","What I should help them with"],
+        ["business","What business I should start"],["offer","What my offer should be"],
+        ["ideas","How to finally put all my ideas together"],["selling","Why what I have now isn’t selling"]
+      ]
+    }
+  };
+
+  const el = id => document.getElementById(id);
+  const app = el("quiz-app");
+  const start = el("quiz-start");
+  const thinking = el("quiz-thinking");
+  const preview = el("quiz-preview");
+  const answerBox = el("eee-answer");
+  const listening = el("eee-listening");
+
+  function seedQueue(){
+    state.queue = ["stage","tried","paid","roles","social","compliments","easy","tenYears","before","did","after","repeat","lived","energy","problemEnergy","dream","delayed","blocker"];
+  }
+
+  function setPhase(phase){
+    el("eee-phase").textContent = phases[phase] || "Your Pattern";
+    const pct = Math.min(94, 8 + state.turn * 5.1);
+    el("eee-progress-bar").style.width = pct + "%";
+  }
+
+  function render(){
+    if(!state.queue.length){
+      addBranchIfNeeded();
+      if(!state.queue.length){
+        finishQuiz();
+        return;
+      }
+    }
+
+    const id = state.queue.shift();
+    const q = Q[id];
+    state.current = q;
+    state.turn++;
+    listening.classList.remove("show");
+    listening.textContent = "";
+
+    el("eee-kicker").textContent = q.kicker || "";
+    el("eee-question").textContent = q.q;
+    el("eee-help").textContent = q.help || "";
+    setPhase(q.phase);
+    el("eee-progress-text").textContent = state.turn < 6 ? "Finding the clues" : state.turn < 12 ? "Connecting the evidence" : "Testing the pattern";
+
+    answerBox.innerHTML = "";
+    if(q.type === "single" || q.type === "multi"){
+      const options = document.createElement("div");
+      options.className = "quiz-options";
+      q.options.forEach(([value,label])=>{
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "quiz-option";
+        b.dataset.value = value;
+        b.textContent = label;
+        b.onclick = ()=>{
+          if(q.type === "single"){
+            options.querySelectorAll(".quiz-option").forEach(x=>x.classList.remove("selected"));
+          }
+          b.classList.toggle("selected");
+        };
+        options.appendChild(b);
+      });
+      answerBox.appendChild(options);
+    } else {
+      const input = document.createElement(q.type === "textarea" ? "textarea" : "input");
+      input.className = q.type === "textarea" ? "quiz-textarea" : "quiz-input";
+      input.placeholder = q.placeholder || "";
+      input.id = "eee-current-input";
+      answerBox.appendChild(input);
+    }
+  }
+
+  function getAnswer(){
+    const q = state.current;
+    if(q.type === "single" || q.type === "multi"){
+      return Array.from(answerBox.querySelectorAll(".quiz-option.selected")).map(x=>x.dataset.value);
+    }
+    const inp = el("eee-current-input");
+    return inp ? inp.value.trim() : "";
+  }
+
+  function selectedLabels(q, vals){
+    if(!Array.isArray(vals)) return vals;
+    return vals.map(v=>{
+      const hit = q.options?.find(x=>x[0]===v);
+      return hit ? hit[1] : v;
+    }).join("; ");
+  }
+
+  function isVague(text){
+    if(!text || typeof text !== "string") return true;
+    const short = text.trim().length < 18;
+    const vagueWords = /^(idk|i don't know|not sure|help people|business|health|mindset|coaching|anything|lots of things)$/i;
+    return short || vagueWords.test(text.trim());
+  }
+
+  function maybeProbe(q, ans){
+    if(state.probes >= 4) return false;
+    if(!["paid","roles","socialExample","compliments","easy","tenYears","before","did","after","lived","energy","problemEnergy","A_hobby","B_free","C_actual","D_result"].includes(q.id)) return false;
+    if(typeof ans !== "string" || !isVague(ans)) return false;
+
+    state.probes++;
+    const probes = {
+      paid:["Let’s make that more concrete.","What is one specific thing an employer, customer, client, friend, or family member has trusted you to do?"],
+      roles:["Job titles can hide the useful part.","In one of those roles, what problem did people bring to YOU instead of someone else?"],
+      compliments:["Let’s borrow a real person’s words.","Think of the last compliment you got about how you work, help, make, explain, organize, lead, or solve things. What did they say?"],
+      easy:["Easy things are hard to notice.","What do you watch someone else struggle with and quietly think, “I could do that in half the time”?"],
+      tenYears:["Let’s use a real scene instead of a summary.","Picture one ordinary week from the last few years. Where would someone have seen you helping, explaining, fixing, organizing, making, or guiding?"],
+      before:["Choose one person, not a category.","What was that person frustrated, confused, afraid, stuck, or unable to do before you helped?"],
+      did:["Let’s get underneath “I helped.”","What did you say, show, build, explain, change, organize, or walk them through?"],
+      after:["Look for the visible difference.","What could they do, understand, feel, decide, finish, improve, or avoid afterward that they could not before?"],
+      lived:["It does not have to be dramatic.","What is one thing that used to confuse or challenge you that feels much easier now because you figured it out?"],
+      energy:["Think about where time disappears.","What do you start doing “for a minute” and then realize an hour has passed?"],
+      problemEnergy:["Choose a frustration you care about.","What do you hate watching people struggle with because you know there is a better way?"],
+      A_hobby:["Small hobbies count.","What do you make, fix, collect, research, practice, cook, grow, plan, decorate, study, or teach for fun?"],
+      B_free:["Think about the last month.","What have you explained, reviewed, fixed, recommended, talked someone through, or helped someone decide without charging them?"],
+      C_actual:["Ignore the title of your program.","When a client is sitting in front of you, what do you actually DO with them that creates movement?"],
+      D_result:["Go past the product name.","What did the buyer hope would be different in their life or business after buying?"]
+    };
+    const [kicker,question] = probes[q.id] || ["Tell me a little more.","Can you give me one concrete example?"];
+    const probeId = "probe_"+q.id+"_"+state.probes;
+    Q[probeId] = {
+      id:probeId, phase:q.phase, type:"textarea",
+      kicker:kicker, q:question,
+      help:"A sentence or two is enough. You can skip if nothing comes to mind.",
+      placeholder:"One real example is..."
+    };
+    state.queue.unshift(probeId);
+    return true;
+  }
+
+  function learn(q, ans){
+    state.answers[q.id] = ans;
+    if(q.id==="stage" && ans[0]) state.stage = ans[0];
+
+    const text = Array.isArray(ans) ? selectedLabels(q, ans) : ans;
+    const len = (text||"").length;
+    if(q.id==="paid" && len>18) state.signals.paid++;
+    if(["social","socialExample","compliments"].includes(q.id) && len>12) state.signals.social++;
+    if(["before","did","after"].includes(q.id) && len>15) state.signals.result++;
+    if(["repeat","repeatedTheme"].includes(q.id) && len>0) state.signals.repeat++;
+    if(["lived","livedLesson"].includes(q.id) && len>15) state.signals.lived++;
+    if(["energy","problemEnergy"].includes(q.id) && len>15) state.signals.energy++;
+    if(["roles","tenYears","dream"].includes(q.id) && len>15) state.signals.identity++;
+
+    // Dynamic insertions.
+    if(q.id==="tried" && Array.isArray(ans) && ans.some(v=>v!=="new") && !state.queue.includes("stillUnclear")){
+      state.queue.unshift("stillUnclear");
+    }
+    if(q.id==="social" && Array.isArray(ans) && !ans.includes("none") && !state.queue.includes("socialExample")){
+      state.queue.unshift("socialExample");
+    }
+    if(q.id==="repeat" && Array.isArray(ans) && (ans.includes("many")||ans.includes("few"))){
+      state.queue.unshift("repeatedTheme");
+    }
+    if(q.id==="lived" && typeof ans==="string" && ans.length>18){
+      state.queue.unshift("livedLesson");
+    }
+
+    // After several evidence questions, rescue low-signal users with an optional outside-eyes prompt.
+    if(q.id==="compliments"){
+      const total = state.signals.paid+state.signals.social+state.signals.identity;
+      if(total<2){
+        const rid="outsideEyes";
+        Q[rid]={
+          id:rid, phase:"evidence", type:"textarea",
+          kicker:"You may be too close to what comes naturally to you.",
+          q:"Optional: text 3 people, “If you could come to me for help with ONE thing because you believed I was really good at it, what would it be?” Paste any answers here.",
+          help:"You can also skip this and keep moving. Your progress will not depend on it.",
+          placeholder:"They said..."
+        };
+        state.queue.unshift(rid);
+      }
+    }
+  }
+
+  function addBranchIfNeeded(){
+    if(state.answers.__branchAdded) return;
+    state.answers.__branchAdded = true;
+
+    const branchMap = {
+      A:["A_hobby","A_asked","A_teach"],
+      B:["B_free","B_heard","B_who"],
+      C:["C_paid","C_want","C_actual","C_problem"],
+      D:["D_bought","D_best","D_result","D_praise"]
+    };
+    state.queue.push(...(branchMap[state.stage] || branchMap.A));
+    state.queue.push("clarity");
+  }
+
+  function advance(skipped=false){
+    const q = state.current;
+    const ans = skipped ? "" : getAnswer();
+    learn(q, ans);
+
+    // Let the user feel heard when we have a concrete answer.
+    const readable = Array.isArray(ans) ? selectedLabels(q, ans) : ans;
+    if(readable && readable.length>24 && !skipped){
+      listening.textContent = "Got it. I’m using that as evidence—not just as a label.";
+      listening.classList.add("show");
+    }
+
+    maybeProbe(q, readable);
+    render();
+  }
+
+  function extractWords(){
+    const fields = ["paid","roles","socialExample","compliments","easy","tenYears","did","after","lived","livedLesson","energy","problemEnergy","A_hobby","A_asked","A_teach","B_free","C_actual","D_result","D_praise"];
+    return fields.map(k=>state.answers[k]).filter(x=>typeof x==="string" && x.length>10);
+  }
+
+  function finishQuiz(){
+    app.classList.add("quiz-hidden");
+    thinking.classList.remove("quiz-hidden");
+    const messages = [
+      ["We’re reviewing your evidence.","Looking across your jobs, lived experience, repeated requests, strengths, and results."],
+      ["We’re looking for repetition.","The strongest clues are the ones that show up in more than one part of your life."],
+      ["We’re separating labels from evidence.","A title like “coach” or “creative” matters less than what people actually trust you to do."],
+      ["We found a pattern.","Building your first Expertise Snapshot™ now."]
+    ];
+    let i=0;
+    const timer=setInterval(()=>{
+      i++;
+      if(i<messages.length){
+        el("eee-thinking-title").textContent=messages[i][0];
+        el("eee-thinking-copy").textContent=messages[i][1];
+      }else{
+        clearInterval(timer);
+        showPreview();
+      }
+    },1100);
+  }
+
+  function showPreview(){
+    thinking.classList.add("quiz-hidden");
+    preview.classList.remove("quiz-hidden");
+    el("eee-progress-bar") && (el("eee-progress-bar").style.width="100%");
+
+    const name = state.name ? ", "+state.name : "";
+    el("eee-result-heading").textContent = "We Found A Pattern" + name + ".";
+
+    const a=state.answers;
+    const easy = a.easy || a.compliments || a.roles || a.paid || "You repeatedly described ways you make things easier, clearer, or more workable for other people.";
+    const after = a.after || a.repeatedTheme || a.socialExample || "Across your examples, people seem to leave with more clarity or forward movement than they had before.";
+    const mix = [a.roles,a.lived,a.energy,a.tenYears].filter(x=>typeof x==="string" && x.length>15).slice(0,3);
+
+    el("eee-hidden-result").textContent =
+      "A clue that keeps standing out is this: " + easy +
+      " What feels ordinary to you may be one of the very things other people experience as valuable.";
+
+    el("eee-pattern-result").textContent =
+      after + " We would keep testing this against your other answers before treating it as a final business direction.";
+
+    el("eee-advantage-result").textContent =
+      mix.length
+      ? "Your advantage is not one isolated skill. It is the combination of these parts of your life: " + mix.join(" • ") + ". That combination is much harder to copy than a generic title."
+      : "Your advantage appears to be the combination of what you have lived, what you have practiced, and the way other people naturally use you as a resource.";
+  }
+
+  el("eee-start-btn").onclick = ()=>{
+    state.name = el("eee-name").value.trim();
+    state.email = el("eee-email").value.trim();
+    // Email is intentionally not compulsory in this prototype.
+    start.classList.add("quiz-hidden");
+    app.classList.remove("quiz-hidden");
+    seedQueue();
+    render();
+  };
+
+  el("eee-next").onclick = ()=> advance(false);
+  el("eee-skip").onclick = ()=> advance(true);
+
+  // Smooth-scroll CTA behavior and reveal interview.
+  document.querySelectorAll('a[href="#expertise-interview"]').forEach(a=>{
+    a.addEventListener("click", e=>{
+      e.preventDefault();
+      document.getElementById("expertise-interview").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
