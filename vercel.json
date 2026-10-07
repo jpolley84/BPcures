@@ -146,6 +146,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/engine-retry",
+      "schedule": "*/20 * * * *"
+    },
+    {
       "path": "/api/postiz-cron",
       "schedule": "0 13 * * *"
     },

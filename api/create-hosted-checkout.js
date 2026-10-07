@@ -58,6 +58,20 @@ const TIERS = {
     mode: 'payment',
     success: '/payment?session_id={CHECKOUT_SESSION_ID}',
   },
+  // 2026-10-07: the $47 Client-Ready Blueprint behind bpquiz.com/engine/results.
+  // Its own funnel so the BP webhook branches leave it alone. The Stripe price
+  // does not exist yet (money write, Joel's go): until EEE_BLUEPRINT_PRICE_ID
+  // is set the button answers 503 notReady and the page says so.
+  'engine-blueprint': {
+    price: process.env.EEE_BLUEPRINT_PRICE_ID || '',
+    plan: 'engine-blueprint',
+    mode: 'payment',
+    success: '/engine/results?purchased=1&session_id={CHECKOUT_SESSION_ID}',
+    cancel: '/engine/results',
+    funnel: 'everyday-nurse-engine',
+    offer: 'engine-blueprint',
+    source: 'engine-results',
+  },
 };
 
 function siteUrlFrom(req) {
@@ -72,8 +86,10 @@ export default async function handler(req, res) {
   const tier = String(body.tier || '');
   const cfg = TIERS[tier];
   if (!cfg) return res.status(400).json({ error: 'Unknown tier' });
+  if (!cfg.price) return res.status(503).json({ error: 'notReady', message: 'Checkout for this offer is not open yet.' });
 
   const siteUrl = siteUrlFrom(req);
+  const sid = String(body.sid || '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 64);
   const email = typeof body.email === 'string' && body.email.includes('@') ? body.email.trim().toLowerCase() : '';
 
   // Same guard the embedded path uses: a double click must not double charge.
@@ -85,12 +101,13 @@ export default async function handler(req, res) {
   }
 
   const metadata = {
-    funnel: 'braveworks-bp',
-    brand: 'braveworks-bp',
-    offer: 'all-in',
+    funnel: cfg.funnel || 'braveworks-bp',
+    brand: cfg.funnel || 'braveworks-bp',
+    offer: cfg.offer || 'all-in',
     plan: cfg.plan,
     tier,
-    source: typeof body.source === 'string' && body.source.length <= 40 ? body.source : 'allin-two-tier',
+    source: typeof body.source === 'string' && body.source.length <= 40 ? body.source : (cfg.source || 'allin-two-tier'),
+    ...(sid ? { sid } : {}),
     ...(tier === 'sprint-deposit' && Date.now() <= FASTTRACK_UNTIL ? { fasttrack: '1' } : {}),
     ...(body.distinctId ? { ph_distinct_id: String(body.distinctId).slice(0, 80) } : {}),
   };
@@ -105,8 +122,8 @@ export default async function handler(req, res) {
       ...(cfg.mode === 'payment' ? { customer_creation: 'always' } : {}),
       phone_number_collection: { enabled: true },
       allow_promotion_codes: false,
-      success_url: `${siteUrl}${cfg.success}`,
-      cancel_url: `${siteUrl}${tier.startsWith('sprint-balance') ? '/sprint-balance' : '/allin#tiers'}`,
+      success_url: `${siteUrl}${cfg.success}${sid && cfg.offer === 'engine-blueprint' ? `&sid=${sid}` : ''}`,
+      cancel_url: `${siteUrl}${cfg.cancel || (tier.startsWith('sprint-balance') ? '/sprint-balance' : '/allin#tiers')}${sid && cfg.offer === 'engine-blueprint' ? `?sid=${sid}` : ''}`,
       ...(email ? { customer_email: email } : {}),
     });
     return res.status(200).json({ url: session.url });
