@@ -270,6 +270,10 @@ async function handleNext({ name, stage, transcript, wantResult }) {
     };
   } catch (err) {
     console.warn('engine-interview: model turn failed, using fallback', err.code || err.message, (err.body || '').slice(0, 400));
+    // No model = no confidence signal, so the scripted path would otherwise
+    // march to the 30-turn cap (Joel hit exactly that on 2026-10-07). Stop at
+    // a sane depth; the analyst (or the retry cron) works from what we have.
+    if (turns >= MIN_TURNS_BEFORE_FINISH + 2) return { action: 'FINISH', reason: 'fallback-depth' };
     const fb = nextFallback(transcript, stage);
     if (!fb) return { action: 'FINISH', reason: 'exhausted' };
     return { ...shape(fb, { source: 'fallback' }), phase: 'deep' };
