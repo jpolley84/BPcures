@@ -20,13 +20,17 @@ const REPLY_TO = 'joel@bpquiz.com';
 const ZOOM = process.env.CHALLENGE_ZOOM_URL || 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
 const ROSTER = 'challenge:2026-10-19:vip';
 
-export const SUBJECT = "You're VIP. The challenge starts Monday, October 19";
+export const SUBJECT = "Congratulations, you took the first step (starts Monday, Oct 19)";
 
 export function welcomeText(firstName) {
   const hi = firstName ? `Hi ${firstName},` : 'Hi,';
   return `${hi}
 
-You're in. Your VIP seat for the 5-Day Blood Pressure Challenge is paid and saved.
+Congratulations. You just did the thing most people only think about: you took the first step.
+
+You've spent years showing up for everyone else. Tonight you showed up for yourself. That decision matters more than you know, and Annie and I are proud of you for making it.
+
+Your VIP seat for the 5-Day Blood Pressure Challenge is paid and saved.
 
 WHEN
 Monday, October 19 through Friday, October 23
@@ -51,7 +55,7 @@ Hit reply and tell me the one thing you most want to change about your health. A
 
 If you take blood pressure medication, keep taking it as prescribed. This challenge is education and coaching. Any change to your medication is a conversation with your prescribing clinician.
 
-See you Monday night.
+The hardest step was the first one, and you already took it. See you Monday night.
 
 Joel Polley, RN
 with Annie Chitate, RN
