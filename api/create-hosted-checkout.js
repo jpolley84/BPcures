@@ -73,6 +73,11 @@ const TIERS = {
     offer: 'challenge-vip',
     source: 'vip-97-tonight',
     until: Date.parse('2026-10-12T23:59:59-05:00'), // 11:59:59 PM CDT tonight
+    lineItem: {
+      amount: 9700,
+      name: 'Change My Life Challenge: VIP Experience',
+      description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN. VIP seat: extended coaching and Q&A room, priority questions, bonus numbers session, VIP workbook. Regularly $197.',
+    },
   },
   // 2026-10-07: the $47 Client-Ready Blueprint behind bpquiz.com/engine/results.
   // Its own funnel so the BP webhook branches leave it alone. The Stripe price
@@ -134,7 +139,12 @@ export default async function handler(req, res) {
       mode: cfg.mode,
       ...(cfg.mode === 'subscription' ? { subscription_data: { metadata } } : {}),
       payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
-      line_items: [{ price: cfg.price, quantity: 1 }],
+      // A tier may override what the buyer reads on Stripe's page. The $97 price's
+      // product still describes the Sept 22-24 three-day cohort, so the VIP sale
+      // sends its own name/description at the same amount (no Stripe object edited).
+      line_items: [cfg.lineItem
+        ? { price_data: { currency: 'usd', unit_amount: cfg.lineItem.amount, product_data: { name: cfg.lineItem.name, description: cfg.lineItem.description } }, quantity: 1 }
+        : { price: cfg.price, quantity: 1 }],
       metadata,
       ...(cfg.mode === 'payment' ? { customer_creation: 'always' } : {}),
       phone_number_collection: { enabled: true },
