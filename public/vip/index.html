@@ -107,7 +107,9 @@ form.addEventListener('submit', function(e){
 if (/[?&]paid=1/.test(location.search)) {
   var bar = document.createElement('div');
   bar.style.cssText = 'background:#1b7a69;color:#fff;text-align:center;padding:16px 18px;font-weight:800';
-  bar.textContent = 'You are in. Your VIP seat is paid. Watch your email for your receipt and the challenge details from Annie and Joel.';
+  bar.textContent = 'You are in. Your VIP seat is paid. The challenge starts Monday, October 19. Watch your email for your Zoom link and details from Annie and Joel.';
+  var sm = location.search.match(/[?&]session_id=([^&]+)/);
+  if (sm) fetch('/api/cmlc-vip-welcome', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ session_id: decodeURIComponent(sm[1]) }) }).catch(function(){});
   document.body.insertBefore(bar, document.body.firstChild);
   window.scrollTo(0,0);
 }
