@@ -1,337 +1,117 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Change My Life Challenge | VIP Checkout</title>
-<link href="https://changemylifechallenge.com/vip/" rel="canonical"/>
-<meta content="noindex" name="robots"/>
-<meta content="website" property="og:type"/>
-<meta content="The Change My Life Challenge" property="og:site_name"/>
-<meta content="https://changemylifechallenge.com/vip/" property="og:url"/>
-<meta content="Change My Life Challenge + VIP" property="og:title"/>
-<meta content="The 3-Day Change My Life Challenge plus the VIP room, one payment of $97 (regularly $297)." property="og:description"/>
-<meta content="https://changemylifechallenge.com/og-image.jpg" property="og:image"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta name="description" content="Complete your Change My Life Challenge VIP registration. Challenge plus the VIP room and both bonuses, $97 (regularly $297)." />
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Join the 5-Day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN. Stop collecting random advice. Find your Big Domino and know where to start.">
+<title>Join the 5-Day Blood Pressure Challenge | Change My Life Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --green:#082825;
-    --green2:#103a36;
-    --ink:#172321;
-    --body:#40504c;
-    --muted:#6a7773;
-    --orange:#c9513e;
-    --orange-dark:#a43b2e;
-    --cream:#fff8f3;
-    --soft:#f3f6f4;
-    --line:#dce4df;
-    --white:#ffffff;
-    --gold:#b78a39;
-    --max:1180px;
-  }
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:#fff;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
-  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--green);letter-spacing:-.03em;line-height:1.05;margin-top:0}
-  p{margin-top:0}
-  .wrap{width:min(calc(100% - 34px),var(--max));margin:0 auto}
-
-  .topbar{background:var(--green);color:#fff;text-align:center;padding:11px 14px;font-size:.86rem;font-weight:900;letter-spacing:.045em}
-  .topbar strong{color:#ffd4c9}
-
-  .hero{padding:34px 0 24px;text-align:center;background:#fff;border-bottom:1px solid var(--line)}
-  .eyebrow{font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);font-size:.82rem;margin-bottom:10px}
-  .hero h1{font-size:clamp(2.2rem,4.6vw,4.6rem);max-width:980px;margin:0 auto 12px}
-  .hero h1 .accent{color:var(--orange)}
-  .hero-copy{font-size:clamp(1.05rem,1.7vw,1.28rem);color:var(--body);max-width:850px;margin:0 auto}
-  .hero-copy strong{color:var(--ink)}
-
-  .checkout-section{padding:34px 0 50px;background:var(--soft)}
-  .checkout-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(390px,.92fr);gap:28px;align-items:start}
-
-  .offer-card,.checkout-card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 34px rgba(8,40,37,.07)}
-  .offer-card{overflow:hidden}
-  .offer-head{padding:24px 26px;background:var(--green);color:#fff}
-  .offer-head .small{font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:#ffd6cc;font-size:.78rem;margin-bottom:6px}
-  .offer-head h2{color:#fff;font-size:clamp(1.9rem,3vw,3rem);margin:0}
-  .offer-head p{margin:8px 0 0;color:rgba(255,255,255,.84);font-size:1rem}
-
-  .offer-body{padding:22px 26px 24px}
-  .line-item{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:13px 0;border-bottom:1px solid var(--line)}
-  .line-item:last-child{border-bottom:0}
-  .check{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#e7f1ed;color:var(--green);font-weight:900;font-size:.78rem;margin-top:1px}
-  .line-item strong{display:block;color:var(--ink);font-size:1.03rem;margin-bottom:2px}
-  .line-item span{color:var(--body);font-size:.93rem}
-
-  .vip-item{margin:16px -4px 2px;padding:16px 14px;border:2px solid #f0c5b9;border-radius:12px;background:var(--cream);display:grid;grid-template-columns:28px 1fr;gap:10px}
-  .vip-item .check{background:var(--orange);color:#fff}
-  .vip-item strong{display:block;color:var(--orange-dark);font-size:1.08rem;margin-bottom:3px}
-  .vip-item span{color:var(--body);font-size:.95rem}
-
-  .bonus-label{margin-top:20px;margin-bottom:5px;font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)}
-  .simple-note{margin:16px 0 0;color:var(--muted);font-size:.9rem}
-  .simple-note strong{color:var(--green)}
-
-  .checkout-card{position:sticky;top:18px;overflow:hidden;border:2px solid #ebd4cc}
-  .checkout-top{padding:20px 22px 16px;text-align:center;background:var(--cream);border-bottom:1px solid #ecd8d1}
-  .checkout-top .tag{display:inline-block;background:var(--orange);color:#fff;border-radius:999px;padding:6px 12px;font-size:.74rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
-  .checkout-top h2{font-size:2rem;margin-bottom:4px}
-  .price-row{display:flex;align-items:end;justify-content:center;gap:12px;margin:12px 0 4px}
-  .old-price{font-size:1.3rem;color:var(--muted);text-decoration:line-through;font-weight:800;padding-bottom:8px}
-  .today-price{font-family:Georgia,"Times New Roman",serif;color:var(--orange);font-size:4.7rem;line-height:.9;font-weight:700}
-  .checkout-top p{margin:8px 0 0;color:var(--body);font-size:.94rem}
-
-  .order-summary{padding:16px 20px;border-bottom:1px solid var(--line);background:#fff}
-  .order-row{display:flex;justify-content:space-between;gap:18px;padding:7px 0;color:var(--body);font-size:.91rem}
-  .order-row strong{color:var(--ink)}
-  .order-row.total{margin-top:5px;padding-top:12px;border-top:1px solid var(--line);font-size:1rem;font-weight:900;color:var(--green)}
-
-  .form-wrap{padding:20px}
-  .form-title{font-weight:900;color:var(--green);margin-bottom:12px}
-  label{display:block;font-size:.78rem;font-weight:800;color:var(--muted);margin:10px 0 5px;text-transform:uppercase;letter-spacing:.04em}
-  input{width:100%;padding:13px 12px;border:1px solid #cdd8d3;border-radius:7px;font-size:16px;background:#fff;color:var(--ink);outline:none}
-  input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(16,58,54,.08)}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .pay-btn{width:100%;margin-top:16px;border:0;background:var(--orange);color:#fff;font-weight:900;font-size:1rem;padding:16px 14px;border-radius:7px;cursor:pointer;box-shadow:0 10px 20px rgba(201,81,62,.18)}
-  .pay-btn:hover{background:var(--orange-dark)}
-  .micro{text-align:center;color:var(--muted);font-size:.77rem;line-height:1.45;margin:10px 0 0}
-  .secure{text-align:center;color:var(--green);font-size:.82rem;font-weight:900;margin-top:8px}
-
-  .bottom-note{max-width:880px;margin:24px auto 0;text-align:center;color:var(--body);font-size:.92rem}
-  .bottom-note strong{color:var(--green)}
-
-  @media(max-width:900px){
-    .checkout-grid{grid-template-columns:1fr}
-    .checkout-card{position:static;max-width:620px;width:100%;margin:0 auto}
-  }
-  @media(max-width:640px){
-    .topbar{font-size:.72rem;padding:9px 10px}
-    .hero{padding:26px 0 20px}
-    .hero h1{font-size:2.55rem}
-    .hero-copy{font-size:1.02rem}
-    .checkout-section{padding:24px 0 36px}
-    .offer-head,.offer-body{padding-left:18px;padding-right:18px}
-    .checkout-grid{gap:18px}
-    .today-price{font-size:4rem}
-    .two{grid-template-columns:1fr}
-  }
-
-  /* Super bonus + scarcity + countdown (2026-09-14 8pm, Joel). Same tokens. */
-  .super-item{margin:14px -4px 2px;padding:16px 14px;border:2px solid var(--green);border-radius:12px;background:#e7f1ed;display:grid;grid-template-columns:28px 1fr;gap:10px}
-  .super-item .check{background:var(--green);color:#fff;font-size:.7rem}
-  .super-item strong{display:block;color:var(--green);font-size:1.08rem;margin-bottom:3px}
-  .super-item span{color:var(--body);font-size:.95rem}
-  .super-item em{font-style:normal;color:var(--orange-dark);font-weight:900}
-  .seats-left{margin:12px 0 0;text-align:center;font-weight:900;color:var(--orange-dark);font-size:.95rem;letter-spacing:.02em}
-  .seats-left b{font-size:1.25rem}
-  /* Wired pieces (2026-09-14). Same tokens as the rest of the page. */
-  #checkoutStatus{font-size:.95rem;color:var(--muted);text-align:center;padding:26px 8px}
-  #checkoutStatus a{color:var(--orange-dark);font-weight:900}
-  .checkout-secure{margin:14px 0 0;text-align:center;font-size:.8rem;color:var(--muted)}
+:root{--navy:#112d4d;--deep:#0d2949;--ink:#202b36;--muted:#5b6b79;--light:#eef6fb;--mist:#e3f0f8;--pale:#f9fcfe;--blush:#faeff0;--rose:#a95364;--gold:#c39b48;--line:#dfe8ee;--white:#fff;--shadow:0 20px 60px rgba(13,41,73,.07)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:white;color:var(--ink);font-family:'DM Sans',Arial,sans-serif;line-height:1.62}h1,h2,h3,p{margin-top:0}h1,h2,h3{font-family:Manrope,Arial,sans-serif;line-height:1.12;letter-spacing:-.042em;color:var(--navy)}h1{font-size:clamp(2.85rem,5.6vw,5.3rem);font-weight:800}h2{font-size:clamp(2.25rem,4.5vw,4.3rem);font-weight:800}h3{font-size:clamp(1.4rem,2vw,2rem)}p{margin-bottom:1em}a{color:inherit}img{display:block;max-width:100%}.container{width:min(1160px,calc(100% - 48px));margin:auto}.narrow{width:min(845px,calc(100% - 48px));margin:auto}.eyebrow{font-size:.77rem;line-height:1.5;text-transform:uppercase;letter-spacing:.22em;color:var(--rose);font-weight:800}.overline{color:var(--gold);font-size:.79rem;letter-spacing:.19em;text-transform:uppercase;font-weight:800}.large{font-size:clamp(1.14rem,1.55vw,1.32rem);line-height:1.62}.muted{color:var(--muted)}.gold{color:var(--gold)}.rose{color:var(--rose)}.center{text-align:center}.section{padding:105px 0}.section-tight{padding:76px 0}.tint{background:var(--light)}.blush{background:var(--blush)}.dark{background:var(--deep);color:white}.dark h2,.dark h3,.dark p{color:inherit}.divider{height:1px;background:var(--line)}.accent{background:linear-gradient(transparent 65%,#f5dfe2 65%,#f5dfe2 96%,transparent 96%)}.anchor{scroll-margin-top:90px}
+.topbar{background:var(--navy);color:#fff;text-align:center;padding:10px 18px;font-size:.82rem;font-weight:800;letter-spacing:.055em}.topbar span{color:#f0c775}.nav{height:76px;background:rgba(255,255,255,.96);display:flex;align-items:center;border-bottom:1px solid #e4ebef;position:sticky;top:0;z-index:50;backdrop-filter:blur(14px)}.nav-in{width:min(1160px,calc(100% - 48px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;flex-direction:column;text-decoration:none;font-family:Manrope,sans-serif;font-size:1.12rem;line-height:1.05;font-weight:800;color:var(--navy);letter-spacing:-.035em}.brand small{font-size:.61rem;letter-spacing:.18em;color:var(--rose);margin-top:7px}.nav-links{display:flex;align-items:center;gap:25px;font-size:.85rem;font-weight:700}.nav-links a{text-decoration:none}.nav-links a:hover{text-decoration:underline}.btn{background:var(--navy);color:white;text-decoration:none;border:1px solid var(--navy);border-radius:5px;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:16px 29px;font:800 .92rem/1.3 'DM Sans',sans-serif;letter-spacing:.015em;text-align:center;cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}.btn:hover{transform:translateY(-2px);background:#1c4772;box-shadow:0 12px 30px #122d4d29}.btn:focus-visible,button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.btn-pink{background:var(--rose);border-color:var(--rose)}.btn-pink:hover{background:#904453}.btn-white{background:white;color:var(--navy);border-color:white}.btn-white:hover{background:#f2f6fa}.btn-outline{background:transparent;color:var(--navy);border-color:#aec5d6}.small-button{min-height:44px;padding:10px 18px;font-size:.78rem}.micro{font-size:.78rem;color:var(--muted);margin-top:10px}.hero h1 .line:first-child{font-size:clamp(2.8rem,4.8vw,4.3rem);margin-bottom:7px}.hero h1 .line:nth-child(2),.hero h1 .line:nth-child(3){font-size:clamp(1.65rem,2.9vw,2.5rem);line-height:1.25;margin-bottom:5px}.hero h1 .line.last{font-size:clamp(2rem,3.5vw,3rem);margin-top:12px}.hero{background:radial-gradient(ellipse at 10% 15%,#e9f3fa,transparent 53%),linear-gradient(140deg,#fff 20%,#fff 68%,#fbf5f5 100%);padding:57px 0 75px;overflow:hidden;position:relative}.hero:after{content:'5';position:absolute;right:-40px;bottom:-205px;font-family:Manrope,sans-serif;font-weight:800;font-size:620px;line-height:1;color:#123d6607;pointer-events:none}.hero-inner{position:relative;z-index:1;text-align:center;max-width:1130px;margin:auto}.hero h1{max-width:1100px;margin:17px auto 22px}.hero h1 .line{display:block}.hero h1 .last{color:var(--rose)}.hero-sub{font-size:clamp(1.16rem,1.8vw,1.4rem);max-width:800px;margin:0 auto 24px;color:#38536d;line-height:1.5}.hero-focus{font-size:1.25rem;color:var(--navy);font-weight:800;max-width:810px;margin:0 auto 32px;line-height:1.55}.hero-buttons{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px}.hero-foot{margin-top:22px;font-size:.87rem;color:#58718a}.hero-foot strong{color:var(--navy)}.promise-strip{border-block:1px solid var(--line);background:white}.promise-inner{display:grid;grid-template-columns:repeat(3,1fr);padding:22px 0;gap:15px}.promise-inner div{display:flex;gap:13px;align-items:center;font-size:.94rem;font-weight:700;color:var(--navy)}.promise-inner b{font-size:1.42rem;font-weight:500;color:var(--gold)}.section-head{margin-bottom:40px}.section-head h2{margin-top:14px;margin-bottom:20px}.section-head p{max-width:790px;margin-inline:auto}.starline{font-size:1.14rem;letter-spacing:.15em;color:var(--gold);line-height:1;white-space:nowrap;margin-bottom:18px}.testimonials{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.quote-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:29px;box-shadow:0 7px 32px #142c4807;display:flex;flex-direction:column;justify-content:space-between;min-height:230px}.quote-card blockquote{margin:0 0 24px;font-family:Manrope,sans-serif;font-size:1.16rem;line-height:1.5;font-weight:750;color:var(--navy);letter-spacing:-.025em}.quote-card .person{font-size:.86rem;font-weight:800;color:#6a7786}.quote-card .person small{display:block;font-weight:500;color:#87939c}.disclaimer{font-size:.77rem;color:#667b8b;margin-top:19px}.split{display:grid;grid-template-columns:1.04fr .96fr;gap:70px;align-items:center}.split.flip{grid-template-columns:.96fr 1.04fr}.callout-line{border-left:4px solid var(--gold);padding:12px 0 12px 25px;font-size:clamp(1.2rem,1.9vw,1.65rem);font-family:Manrope,sans-serif;font-weight:800;color:var(--navy);line-height:1.35;margin:30px 0}.list-clean{padding:0;list-style:none}.list-clean li{padding:10px 0 10px 32px;position:relative}.list-clean li:before{content:'✓';position:absolute;left:0;color:var(--rose);font-weight:800}.photo-block{min-height:425px;border-radius:5px;overflow:hidden;position:relative;background:linear-gradient(115deg,#aec8d5,#f0dadd);box-shadow:var(--shadow)}.photo-block img{width:100%;height:100%;min-height:425px;object-fit:cover;position:absolute;inset:0}.photo-tag{position:absolute;right:22px;bottom:22px;background:white;padding:18px 22px;border-left:4px solid var(--gold);font-family:Manrope,sans-serif;color:var(--navy);font-weight:800;max-width:260px;line-height:1.28;box-shadow:var(--shadow)}.quote-statement{background:var(--deep);color:white;padding:85px 0;text-align:center}.quote-statement h2{max-width:1000px;margin:0 auto;color:white;font-size:clamp(2.2rem,4.5vw,4.4rem)}.quote-statement h2 em{color:#ebc474;font-style:normal}.methods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:stretch}.method{padding:29px 28px 30px;background:white;border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column}.method .num{color:var(--rose);font-size:.74rem;text-transform:uppercase;letter-spacing:.18em;font-weight:800}.method h3{margin:16px 0 12px;font-size:1.7rem}.method p{font-size:.95rem}.method .problem{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}.method .problem strong{display:block;color:var(--rose);font-weight:800;text-transform:uppercase;letter-spacing:.15em;font-size:.72rem;margin-bottom:6px}.method.featured{background:var(--navy);border-color:var(--navy);box-shadow:0 20px 48px #17395527;color:white}.method.featured h3,.method.featured p{color:white}.method.featured .problem{border-top:1px solid #ffffff38}.method.featured .problem strong{color:#e7bf78}.method.featured .num{color:#e7bf78}.mechanism{margin-top:32px;text-align:center;color:var(--navy);font-size:1.18rem;font-weight:800}.mechanism span{background:var(--blush);padding:4px 8px}.without{background:var(--blush);border-top:1px solid #f2dadd;border-bottom:1px solid #f2dadd;padding:75px 0}.without-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px 45px;margin-top:30px}.without-item{display:flex;gap:16px;align-items:flex-start;font-weight:750;font-size:1.1rem;color:var(--navy)}.without-item span{width:33px;height:33px;flex-shrink:0;background:white;border:1px solid #e1bdc4;display:grid;place-items:center;border-radius:100px;color:var(--rose);font-size:1rem}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:43px}.three .takeaway{border-top:3px solid var(--gold);padding:24px;background:var(--light);min-height:190px}.takeaway b{font-size:.7rem;text-transform:uppercase;letter-spacing:.18em;color:var(--rose)}.takeaway h3{margin:12px 0;font-size:1.5rem}.days{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:43px}.day{border:1px solid #dbe6ef;border-radius:5px;background:#fff;padding:27px 18px 25px;min-height:280px}.day .daynum{font-weight:800;color:var(--rose);font-size:.8rem;letter-spacing:.16em}.day h3{font-size:1.28rem;line-height:1.23;margin:18px 0 15px}.day p{font-size:.87rem;color:#536579;line-height:1.58}.host-layout{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:58px}.hosts-intro{font-size:clamp(1.2rem,1.9vw,1.5rem);font-weight:700;color:var(--navy)}.host-names{display:grid;grid-template-columns:1fr 1fr;gap:23px;margin-top:32px}.host-names h3{font-size:1.25rem;margin:0 0 8px}.host-names p{font-size:.89rem;color:#536779}.photo-slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.photo-slot{position:relative;background:linear-gradient(150deg,#cde2ec,#eef4f8);border:1px solid #bfcfda;min-height:253px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;overflow:hidden;border-radius:4px}.photo-slot.wide{grid-column:span 2;min-height:150px;background:linear-gradient(120deg,#d1e5f1,#f1e2e4)}.photo-slot:before{content:'';width:170px;height:170px;position:absolute;border:1px solid #ffffff8c;border-radius:50%;top:-54px;right:-42px}.photo-slot strong{position:relative;z-index:2;font:800 1rem Manrope;color:var(--navy);line-height:1.3}.photo-slot small{position:relative;z-index:2;color:#4e6a7d;line-height:1.35}.proof-feature{display:grid;grid-template-columns:1fr 1fr;gap:24px}.proof-feature .quote-card{min-height:175px}.chatproof{padding:25px;border-radius:4px;border:1px solid #dce8ef;background:#f8fcfe}.chatproof strong{color:var(--navy)}.chatproof .bubble{background:#e6f4e9;border-radius:12px 12px 12px 3px;padding:15px 18px;margin:11px 0;max-width:90%;font-size:.96rem}.before-after{display:grid;grid-template-columns:1fr 1fr;gap:22px}.before-after article{border-radius:5px;padding:34px;background:#fff;border:1px solid var(--line)}.before-after .after{background:#e8f3f8;border-color:#bdd4e4}.before-after h3{font-size:2rem;margin-bottom:28px}.before-after li{margin:13px 0;font-weight:650}.before-after .before li:before{content:'—';color:var(--rose);font-weight:800;position:absolute;left:0}.before-after .after li:before{content:'✓';color:#1b7a69;font-weight:800;position:absolute;left:0}.before-after ul{list-style:none;padding:0}.before-after li{position:relative;padding-left:28px}.investment{padding:65px 0;background:var(--blush);text-align:center}.investment .price-big{font:800 clamp(3.2rem,6vw,6.5rem)/1 Manrope;color:var(--navy);letter-spacing:-.06em}.investment .price-big small{display:block;font-size:1rem;letter-spacing:0;margin-top:17px;color:var(--muted)}.pricing{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:42px;align-items:stretch}.ticket{padding:38px 34px;border:1px solid #d4e3ed;border-radius:6px;background:white;position:relative;display:flex;flex-direction:column}.ticket.vip{border:2px solid var(--gold);box-shadow:var(--shadow)}.ticket .ribbon{position:absolute;right:23px;top:-15px;background:var(--gold);padding:7px 15px;color:#172a37;font-size:.72rem;font-weight:800;letter-spacing:.09em}.ticket h3{font-size:1.72rem;margin-bottom:6px}.ticket .pricing-price{font:800 3.2rem/1.2 Manrope;color:var(--navy);letter-spacing:-.06em;margin:18px 0}.ticket .pricing-price span{font-size:.84rem;letter-spacing:0;font-weight:600;color:var(--muted)}.ticket ul{list-style:none;padding:0;margin:0 0 30px}.ticket li{padding:9px 0 9px 28px;position:relative;font-weight:600}.ticket li:before{content:'✓';position:absolute;left:0;color:var(--rose);font-weight:800}.ticket .btn{margin-top:auto}.ticker-note{color:#647582;font-size:.8rem;margin-top:23px}.order-wrap{background:white;border:1px solid #cddfeb;border-radius:8px;box-shadow:0 28px 66px rgba(9,45,78,.07);overflow:hidden;display:grid;grid-template-columns:1fr 1fr;max-width:1020px;margin:42px auto 0}.order-details{background:var(--light);padding:40px}.order-form{padding:40px}.order-form h3,.order-details h3{font-size:1.5rem}.toggle{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 22px}.ticket-radio{border:2px solid #cbdbe5;border-radius:5px;padding:17px;cursor:pointer;text-align:left;background:#fff;color:var(--navy);font:800 1rem/1.5 'DM Sans',sans-serif}.ticket-radio small{display:block;color:var(--muted);font-weight:600}.ticket-radio.active{border-color:var(--navy);background:#eaf3f9;box-shadow:inset 0 0 0 1px var(--navy)}.total-row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #d4e2e9;padding:18px 0;font-weight:800;font-size:1.15rem}.order-form label{display:block;font-size:.83rem;font-weight:800;color:var(--navy);margin:15px 0 5px}.order-form input{display:block;width:100%;height:48px;border:1px solid #cedce5;border-radius:4px;padding:10px 13px;font:500 1rem 'DM Sans',sans-serif}.order-form .btn{width:100%;margin-top:21px}.preview-note{margin-top:15px;padding:13px 14px;background:#fff8e9;color:#735928;border:1px solid #efdcae;border-radius:4px;font-size:.78rem;line-height:1.5}.confirm{display:none;padding:15px;background:#e9f4fa;border-left:4px solid var(--navy);margin-top:12px;font-size:.88rem}.confirm.open{display:block}.faq{max-width:860px;margin:0 auto}.faq details{border-bottom:1px solid #dbe6ed;padding:23px 0}.faq summary{font-family:Manrope,sans-serif;font-size:1.06rem;color:var(--navy);font-weight:800;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}.faq summary::after{content:'+';color:var(--rose);font-size:1.55rem}.faq details[open] summary::after{content:'−'}.faq details p{margin:15px 22px 0 0;color:var(--muted)}.footer{padding:30px 0;background:#f7fafc;color:#668091;text-align:center;font-size:.77rem;border-top:1px solid var(--line)}.foot-final{padding:82px 0;background:var(--navy);color:white;text-align:center}.foot-final h2{color:white}.foot-final p{color:#d5e4ed}.foot-final .btn{background:white;color:var(--navy);border-color:white}.sticky-cta{display:none}strong{font-weight:800}
+@media(max-width:1040px){.split,.split.flip{gap:38px}.days{grid-template-columns:repeat(3,1fr)}.host-layout{gap:32px}.methods{gap:12px}.method{padding:23px 20px}}
+@media(max-width:780px){.container,.narrow{width:min(100% - 32px,650px)}.nav{height:66px}.nav-in{width:calc(100% - 32px)}.nav-links a:not(.btn){display:none}.nav-links .btn{font-size:.7rem;padding:9px 13px;min-height:41px}.section{padding:70px 0}.section-tight{padding:50px 0}.hero{padding:58px 0 67px}.hero h1{font-size:clamp(2.1rem,8.6vw,3.75rem)}.hero h1 .line{display:block}.hero-sub{font-size:1.08rem}.hero-focus{font-size:1rem}.hero:after{display:none}.promise-inner{grid-template-columns:1fr;gap:8px}.split,.split.flip,.host-layout{grid-template-columns:1fr}.photo-block{min-height:345px}.photo-block img{min-height:345px}.testimonials,.three,.methods,.before-after,.proof-feature,.pricing,.order-wrap{grid-template-columns:1fr}.days{grid-template-columns:1fr 1fr}.without-grid{grid-template-columns:1fr}.host-names{grid-template-columns:1fr}.photo-slot-grid{max-width:500px}.order-details,.order-form{padding:28px}.quote-card{min-height:unset}.ticket{padding:28px}.sticky-cta{display:block;position:fixed;bottom:0;left:0;right:0;background:#ffffffed;box-shadow:0 -7px 25px #122c4821;padding:9px 15px;z-index:45;backdrop-filter:blur(10px)}.sticky-cta .btn{min-height:44px;width:100%;font-size:.8rem}.footer{padding-bottom:90px}}
+@media(max-width:480px){.days{grid-template-columns:1fr}.day{min-height:auto}.hero h1{font-size:clamp(2rem,9vw,2.8rem)}.hero h1 .line{margin-bottom:4px}.hero-buttons{flex-direction:column}.hero-buttons .btn{width:100%}h2{font-size:clamp(2rem,9vw,2.9rem)}.toggle{gap:6px}.ticket-radio{padding:12px;font-size:.81rem}.nav-links .btn{font-size:.67rem;padding-inline:11px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 </style>
-<script src="/pixels.js"></script>
 </head>
 <body>
-
-<div class="topbar"><strong>VIP SEAT:</strong> 3-DAY CHALLENGE + 6 PM ET Q&amp;A HOUR EACH DAY + BONUS DAY SUNDAY SEPT 27 + BOTH BONUSES</div>
-
-<header class="hero">
-  <div class="wrap">
-    <div class="eyebrow">The Change My Life Challenge</div>
-    <h1>Come In as <span class="accent">VIP.</span></h1>
-    <p class="hero-copy">VIP is regularly <s>$297</s>. <strong>Your VIP seat today is $97. It adds a live Q&amp;A hour at 6 PM Eastern (5 PM Central) before each challenge day, Sept 22, 23 &amp; 24, plus the Bonus Day, Sunday, September 27 at 7 PM Eastern (6 PM Central)</strong>, plus both bonuses. One payment.</p>
-  </div>
-</header>
-
-<main class="checkout-section">
-  <div class="wrap checkout-grid">
-
-    <section class="offer-card" aria-label="Your Change My Life Challenge offer">
-      <div class="offer-head">
-        <div class="small">Here’s exactly what you’re getting</div>
-        <h2>Change My Life Challenge + VIP</h2>
-        <p>Simple. Live. Focused. Three days to stop guessing and finally know where to start.</p>
-      </div>
-
-      <div class="offer-body">
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>3-Day Change My Life Challenge</strong><span>September 22, 23 &amp; 24 · Live on Zoom at 7 PM Eastern / 6 PM Central, approximately 1 core hour per day.</span></div>
-        </div>
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>Day 1 — Lower Your Numbers Naturally</strong></div>
-        </div>
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>Day 2 — Bring Sexy Back</strong></div>
-        </div>
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>Day 3 — Take Back Your Future</strong></div>
-        </div>
-
-        <div class="vip-item">
-          <div class="check">VIP</div>
-          <div><strong>VIP Q&amp;A Hour — 6 PM ET before each day, Sept 22–24</strong><span>The small room where your questions get answered, an hour before the 7 PM session. Bring the symptoms, the numbers, the labs or imaging that are not making sense, and the question you really want answered.</span></div>
-        </div>
-
-        <div class="vip-item">
-          <div class="check">VIP</div>
-          <div><strong>Bonus Day — Sunday, September 27, 7 PM ET</strong><span>A fourth live day on Zoom with Annie and Joel.</span></div>
-        </div>
-
-        <div class="bonus-label">Bonuses</div>
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>Fast Clarity Workshop™</strong><span>So you can stop feeling overwhelmed and finally figure out where to start.</span></div>
-        </div>
-        <div class="line-item">
-          <div class="check">✓</div>
-          <div><strong>Finally Stick With It Kit™</strong><span>Includes the 21-Day Consistency Tracker + Never Miss Twice Reset System™ so you can stop starting over.</span></div>
-        </div>
-
-        <p class="simple-note"><strong>Core challenge:</strong> September 22–24 at 7 PM Eastern / 6 PM Central, approximately 1 hour a day, live on Zoom. <strong>VIP:</strong> Q&amp;A hour at 6 PM Eastern / 5 PM Central before each day, plus the Bonus Day, Sunday, September 27 at 7 PM Eastern / 6 PM Central. Seats are limited so every question gets answered live. The 7 PM core sessions do not include live Q&amp;A.</p>
-      </div>
-    </section>
-
-    <aside class="checkout-card" aria-label="Checkout">
-      <div class="checkout-top">
-        <div class="tag">VIP Seat</div>
-        <h2>Complete Your Registration</h2>
-        <div class="price-row">
-          <div class="old-price">$297</div>
-          <div class="today-price">$97</div>
-        </div>
-        <p><strong>One payment. No subscription.</strong><br>The challenge, the VIP room and both bonuses are included.</p>
-        <p class="seats-left" id="vipCd" style="font-weight:800">$97 ends tonight at midnight Central: <span id="vipCdT"></span></p>
-        <p class="seats-left" id="seatsLeft" hidden>Only <b id="seatsLeftNum"></b> VIP spots left — limited so every question gets answered live</p>
-      </div>
-
-      <div class="order-summary">
-        <div class="order-row"><span>3-Day Change My Life Challenge</span><strong>Included</strong></div>
-        <div class="order-row"><span>VIP Q&amp;A hour, 6 PM ET each day</span><strong>Included</strong></div>
-        <div class="order-row"><span>Bonus Day, Sunday Sept 27</span><strong>Included</strong></div>
-        <div class="order-row"><span>Fast Clarity Workshop™</span><strong>Included</strong></div>
-        <div class="order-row"><span>Finally Stick With It Kit™</span><strong>Included</strong></div>
-        <div class="order-row total"><span>Total Due Today</span><span><s style="color:var(--muted);font-weight:700;margin-right:8px">$297</s>$97</span></div>
-      </div>
-
-      <div class="form-wrap">
-        <div class="form-title">Your Information</div>
-        <!-- LIVE CHECKOUT (2026-09-14). Stripe EMBEDDED Checkout, tier
-             'cmlc-97-vip': the same $97 price as the regular seat, but
-             metadata.seat = 'vip', so /challenge-confirmed registers her as
-             VIP and the +$100 upsell page is skipped. The server refuses the
-             tier after the fast-action cutoff (410) and when the 30-seat VIP
-             room is full (409); both cases are handled below with a real
-             next step, never a dead form. %%STRIPE_PK%% is stamped at build
-             by scripts/challenge-b-pk.mjs. -->
-        <div id="checkoutMount"></div>
-        <div id="checkoutStatus">Loading secure checkout...</div>
-        <div class="secure">SECURE CHECKOUT • ONE PAYMENT</div>
-        <p class="checkout-secure">Secure payment by Stripe. Your card details never touch this page.</p>
-      </div>
-    </aside>
-
-  </div>
-
-  <div class="wrap">
-    <p class="bottom-note"><strong>Regular VIP price: $297.</strong> Your price on this page: $97, one payment.</p>
-  </div>
+<div class="topbar">5-DAY LIVE BLOOD PRESSURE CHALLENGE · <span>VIP $97 TONIGHT ONLY</span> · REGULAR $197 · <span id="vipCdTop"></span></div>
+<nav class="nav"><div class="nav-in"><a class="brand" href="#top">CHANGE MY LIFE <small>THE BLOOD PRESSURE CHALLENGE</small></a><div class="nav-links"><a href="#method">The Big Shift</a><a href="#days">The Five Days</a><a href="#stories">Real Stories</a><a class="btn small-button" href="#tickets">JOIN THE CHALLENGE ↗</a></div></div></nav>
+<main>
+<header class="hero anchor" id="top"><div class="container hero-inner"><div class="eyebrow">JOIN THE 5-DAY LIVE BLOOD PRESSURE CHALLENGE</div><h1><span class="line">Girl, Your Health Is A Mess.</span><span class="line">Your Body And Symptoms Feel Out Of Control.</span><span class="line">Nothing You've Tried Has Worked.</span><span class="line last">It's Time To Fix It A Different Way.</span></h1><p class="hero-sub">Discover what's really behind your rising weight, mood swings, chin hair, blood pressure, blood sugar and more, so you can finally know where to start.</p><p class="hero-focus">You don't need 76 more things to change.<br>You need to know <span class="accent">what deserves your attention first.</span></p><div class="hero-buttons"><a class="btn" href="#tickets">YES! I WANT TO JOIN THE CHALLENGE ↗</a><a class="btn btn-outline" href="#method">SEE WHY THIS IS DIFFERENT ↓</a></div><p class="hero-foot"><strong>With Annie Chitate, RN &amp; Joel Polley, RN</strong> · Five live days · <strong>VIP $97 tonight only</strong> (regular $197)</p></div></header>
+<div class="promise-strip"><div class="container promise-inner"><div><b>✦</b> Stop chasing another random fix.</div><div><b>✦</b> Find the Big Domino in your health.</div><div><b>✦</b> Know what to do first — and why.</div></div></div>
+<section class="section-tight" id="topproof"><div class="container"><div class="center section-head"><div class="overline">THE WOMEN HAVE SPOKEN</div><h2>Women Are Already Seeing Changes.</h2><p class="muted">These are real words from women in our community and previous programs.</p></div><div class="testimonials">
+<article class="quote-card"><div><div class="starline" aria-label="Five gold stars">★★★★★</div><blockquote>“My blood pressure is back to normal: 124/80. Reduced salt, started little exercises.”</blockquote></div><div class="person">BraveWorks community member</div></article>
+<article class="quote-card"><div><div class="starline" aria-label="Five gold stars">★★★★★</div><blockquote>“I have done everything you said and all my meds are decreasing... My DR took me off.”</blockquote></div><div class="person">Dorothy M.</div></article>
+<article class="quote-card"><div><div class="starline" aria-label="Five gold stars">★★★★★</div><blockquote>“From my 20s to now being 67yo, being on 3 blood pressure meds, you have been the only person that has ever made any impact in my BP journey.”</blockquote></div><div class="person">Drago · 67</div></article>
+</div><p class="disclaimer center">Individual experiences are not a promise of similar results. Do not stop or change prescribed blood pressure medication without your prescribing clinician.</p></div></section>
+<section class="section tint"><div class="container split"><div><div class="eyebrow">THIS IS ABOUT MORE THAN A NUMBER</div><h2>You're Tired Of Your Health Deciding What You Get Out Of Life.</h2><p class="large"><strong>You don't just want better numbers. You want your life back.</strong></p><p>You're the woman who shows up. For your business. For your family. For your church. For your team. Maybe you've worked for decades and now you're supposed to be enjoying retirement.</p><p>But you're still wondering what your next blood pressure reading will be. And you're tired of letting that question take up so much room in your life.</p><div class="callout-line">“I want to live, not just exist.”</div><p>Enough health to do what God put you here to do. Energy for your children and grandchildren. Freedom to travel and enjoy retirement. To feel desirable, confident and alive again.</p><a class="btn" href="#tickets">YES. I'M READY FOR A DIFFERENT WAY ↗</a></div><div class="photo-block"><img alt="Lifestyle stock photo representing the freedom and confidence women want to reclaim" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&amp;fit=crop&amp;w=1100&amp;q=85" loading="lazy"><div class="photo-tag">Your health should support your life. Not shrink it.</div></div></div></section>
+<section class="section-tight"><div class="narrow center"><div class="eyebrow">SOUND FAMILIAR?</div><h2>You've Tried Everything.</h2><p class="large">The prescriptions. The supplements. The diets. The exercise routines. The herbs. The videos you've saved. The things somebody told you to stop eating. The things somebody else told you to start eating.</p><p class="large"><strong>And yet here you are.</strong></p><p class="large">Something still isn't making sense.</p><p class="large">It's not because you haven't tried hard enough.<br>It's because no one ever helped you figure out what matters first.</p></div></section>
+<section class="quote-statement"><div class="container"><div class="overline" style="margin-bottom:23px">HERE'S THE SHIFT</div><h2>You don't need more ways to lower your blood pressure.<br><em>You need to find the Big Domino that deserves your attention first.</em></h2></div></section>
+<section class="section anchor" id="method"><div class="container"><div class="center section-head"><div class="eyebrow">THE THREE WAYS PEOPLE TRY TO DEAL WITH HIGH BLOOD PRESSURE</div><h2>Three Ways to Address Blood Pressure.<br><span class="rose">(And the One That Changes Your Approach.)</span></h2><p class="large muted">Most women we meet have tried the first two. The third is where the conversation changes.</p></div><div class="methods">
+<article class="method"><div class="num">METHOD 01</div><h3>Medications &amp; Pills.</h3><p>Maybe you started on one prescription. Now there's another. Maybe the dose changed. And you're wondering, <strong>“Is this just my life now?”</strong></p><p>Medication can absolutely work. It lowers blood pressure and helps protect you from serious complications.</p><div class="problem"><strong>THE PROBLEM</strong><p>A prescription may help control the number. But it doesn't automatically show you which parts of your daily life deserve attention next. And that unanswered question keeps nagging at you.</p></div></article>
+<article class="method"><div class="num">METHOD 02</div><h3>Supplements, Herbs &amp; Diets.</h3><p>Then you start looking for the natural answer. A new tea. A new supplement. A diet someone swears by. Another bottle in the cabinet.</p><p>Some changes are useful. Some aren't right for you. And some products can interact with your medications.</p><div class="problem"><strong>THE PROBLEM</strong><p>You can spend more money, collect more advice and still be guessing about what really matters for <em>your</em> body. <strong>This isn't supposed to be another shopping list.</strong></p></div></article>
+<article class="method featured"><div class="num">METHOD 03 · THE NEW WAY</div><h3>Find Your Big Domino.</h3><p>Instead of chasing another symptom or buying another fix, start connecting the dots. Your numbers. Your symptoms. Your routines. Your patterns.</p><p><strong>What deserves MY attention first?</strong></p><div class="problem"><strong>THE PROBLEM</strong><p>Most women have never been shown how to read those signals together. That's why we created a simple nurse-led way to help you begin seeing the bigger picture: <strong>the Blood Pressure Triangle™.</strong></p></div></article>
+</div><p class="mechanism">The cuff is a snapshot. <span>It's time to look at the movie.</span></p></div></section>
+<section class="section-tight tint"><div class="narrow center"><h2>You Don't Have Ten Different Bodies With Ten Different Problems.</h2><p class="large">You have one body giving you ten different clues.</p><p class="large">Your weight. Your blood pressure. Your blood sugar. Your cholesterol. Your sleep. Your energy. Your hormones. The way your body has changed.</p><p class="large"><strong>These may not be separate conversations.</strong></p><p class="large">When everything feels important, it's hard to know what to work on first.</p><div class="callout-line" style="text-align:left">“What deserves MY attention first?”<br><span style="color:var(--rose)">That's your Big Domino.</span></div></div></section>
+<section class="section-tight"><div class="container"><div class="testimonials">
+<article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“Changed my life for good.”</blockquote></div><div class="person">Live challenge participant</div></article>
+<article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“This has been an opportunity to pause and get my life back on track as God intends.”</blockquote></div><div class="person">Live challenge participant</div></article>
+<article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“You both are tapping on crucial elements that everyone needs to experience! This is priceless!”</blockquote></div><div class="person">Live challenge participant</div></article>
+</div></div></section>
+<section class="section anchor" id="challenge"><div class="container split flip"><div class="photo-block"><img alt="Lifestyle stock photo of a woman feeling calm and confident" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&amp;fit=crop&amp;w=1100&amp;q=85" loading="lazy"><div class="photo-tag">Five days to stop guessing and finally know where to start.</div></div><div><div class="eyebrow">GIVE US JUST FIVE DAYS</div><h2>Give Us Five Days. We'll Show You How to Stop Guessing.</h2><p class="large">The <strong>Change My Life Challenge</strong> is a 5-day LIVE coaching experience with registered nurses Annie Chitate and Joel Polley.</p><p>We'll help you connect the dots between what's happening in your body, narrow down the noise and identify the place that deserves your attention first.</p><p><strong>Five focused days versus another year of guessing.</strong></p><p>So instead of leaving with another long list... <strong>you leave with clarity.</strong></p><a class="btn" href="#tickets">JOIN THE FIVE-DAY CHALLENGE ↗</a></div></div></section>
+<section class="without"><div class="container"><div class="center section-head"><div class="eyebrow">THE BEST PART?</div><h2>You're Not Signing Up for Another 76 Things to Do.</h2><p class="large muted">You're signing up to know where to begin — and to have two nurses help you make sense of it.</p></div><div class="without-grid"><div class="without-item"><span>✓</span><div>Without buying a cabinet full of new supplements.</div></div><div class="without-item"><span>✓</span><div>Without trying to overhaul your entire life overnight.</div></div><div class="without-item"><span>✓</span><div>Without needing to stop your prescribed medication to participate.</div></div><div class="without-item"><span>✓</span><div>Without another year of collecting random health advice.</div></div></div></div></section>
+<section class="section anchor" id="learn"><div class="container"><div class="center section-head"><div class="eyebrow">THE THREE BIG SHIFTS</div><h2>Here's What You'll Learn in Five Days.</h2><p class="large muted">Not fifty tips. Three shifts that can change the way you look at your health.</p></div><div class="three"><div class="takeaway"><b>01 · SEE THE STORY</b><h3>Your numbers are not random.</h3><p>Learn to connect the clues instead of treating every symptom as a separate problem.</p></div><div class="takeaway"><b>02 · FIND YOUR FOCUS</b><h3>More is not the answer.</h3><p>Understand why doing all the right things in the wrong order can leave you frustrated.</p></div><div class="takeaway"><b>03 · MAKE YOUR MOVE</b><h3>Find your Big Domino.</h3><p>Know the first place to focus and leave with practical next steps for your own life.</p></div></div><div class="center" style="margin-top:36px"><a class="btn" href="#tickets">I WANT THIS CLARITY — SAVE MY SEAT ↗</a></div></div></section>
+<section class="section tint anchor" id="days"><div class="container"><div class="center section-head"><div class="eyebrow">THE FIVE-DAY EXPERIENCE</div><h2>Five Days. One Body.<br><span class="rose">A Different Way Forward.</span></h2><p class="large muted">Each day builds on the one before it. We'll show you the journey — and save the discoveries for the live room.</p></div><div class="days">
+<article class="day"><div class="daynum">DAY 01</div><h3>Lower Your Numbers Naturally</h3><p>What if the most important thing about your blood pressure isn't just the reading on the cuff?</p></article>
+<article class="day"><div class="daynum">DAY 02</div><h3>Your Body Is Talking</h3><p>Begin seeing what your symptoms and numbers may be trying to tell you together.</p></article>
+<article class="day"><div class="daynum">DAY 03</div><h3>Bring Sexy Back</h3><p>Because you want more than good numbers. You want energy, confidence and your sense of self.</p></article>
+<article class="day"><div class="daynum">DAY 04</div><h3>Stop Fixing the Wrong Things</h3><p>Learn why the next best move is not always the next thing someone recommends.</p></article>
+<article class="day"><div class="daynum">DAY 05</div><h3>Take Back Your Future</h3><p>Bring the pieces together and get clear on what deserves your attention next.</p></article>
+</div><div class="center" style="margin-top:35px"><p class="large" style="font-weight:800;color:var(--navy)">Five days. One clear starting point.</p><a class="btn" href="#tickets">YES! I WANT TO CLAIM MY TICKET ↗</a></div></div></section>
+<section class="section anchor" id="stories"><div class="container"><div class="center section-head"><div class="eyebrow">REAL PEOPLE. REAL WORDS.</div><h2>Listen to the Women Who Were in the Room.</h2><p class="large muted">You don't have to take our word for it. Here's what women wrote during the challenge.</p></div><div class="proof-feature"><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“I've been motivated to not only walk, but enroll in a Palates class.👏🏾”</blockquote></div><div class="person">Cheryl Jacocks-Terrell · Live challenge chat</div></article><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“However, you two have given us some remarkable information, pep talks and encouragement. I've received the tea and I'm sleeping much better.”</blockquote></div><div class="person">Carolyn Royster · Live challenge chat</div></article><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“Yes! Community makes a difference.”</blockquote></div><div class="person">Sandra V. Williams · Live challenge chat</div></article><div class="chatproof"><strong>FROM OUR LIVE CHALLENGE CHAT</strong><div class="bubble">“the three lines of gratitude daily made a shift to me too.”<br><small>— Chandra Hightower</small></div><div class="bubble">“love the science!!”<br><small>— Chandra Hightower</small></div><div class="bubble">“Changed my life for good.”<br><small>— Live attendee</small></div></div></div></div></section>
+<section class="section tint"><div class="container host-layout" style="grid-template-columns:1fr;max-width:900px"><div><div class="eyebrow">YOUR GUIDES THROUGH THIS CHANGE</div><h2>Two Nurses. One Body. One Conversation.</h2><p class="hosts-intro">Then Annie and Joel realized they were talking to the same woman. So they stopped separating the conversation.</p><p class="hosts-intro" style="color:var(--rose)">Because your body isn't living in separate boxes.</p><div class="host-names"><div><h3>Annie Chitate, RN</h3><p>Annie understands the changes women notice first. The fatigue. The sleep. The belly. The chin hair. The thinning hair. The mood. The confidence. That feeling that your body changed and nobody gave you the new rules.</p></div><div><h3>Joel Polley, RN</h3><p>Joel helps women understand the numbers that can shape their future. Blood pressure. Blood sugar. Patterns. Risk. And what years in emergency and critical care taught him about waiting too long to pay attention.</p></div></div></div></div></section>
+<section class="section"><div class="container"><div class="center section-head"><div class="eyebrow">PICTURE THE DIFFERENCE</div><h2>Imagine What Your Life Could Look Like<br><span class="rose">When You Stop Guessing.</span></h2></div><div class="before-after"><article class="before"><div class="eyebrow">BEFORE THE CHALLENGE</div><h3>More questions. More guessing.</h3><ul><li>Every reading sends you down another internet rabbit hole.</li><li>You're trying things, but you're not sure which ones matter.</li><li>You're tired of wondering if your body is working against you.</li><li>You keep telling yourself, “I'll deal with it later.”</li></ul></article><article class="after"><div class="eyebrow">WHAT WE'RE WORKING TOWARD</div><h3>More clarity. A real next move.</h3><ul><li>Understand more of the story behind your health numbers.</li><li>Know the patterns and questions worth paying attention to.</li><li>Have a clearer starting point instead of 76 more things.</li><li>Make an informed plan you can keep building with your care team.</li></ul></article></div><p class="disclaimer center">Your results depend on your situation, actions and ongoing care. The five-day challenge is education and coaching, not a guarantee of blood pressure improvement.</p></div></section>
+<section class="section-tight dark"><div class="narrow center"><div class="overline">WHY NOW?</div><h2>Waiting Isn't Neutral.</h2><p class="large">You already know something has to change. The question is how many more months you want to spend collecting tips without deciding what to do first.</p><p class="large"><strong>You don't have to fix everything today. You don't have to know the whole plan.</strong></p><p class="large">But you can decide today that your health deserves five focused days.</p><a class="btn btn-white" href="#tickets">I'M READY. LET'S DO THIS ↗</a></div></section>
+<section class="investment"><div class="container"><div class="eyebrow">WHAT'S YOUR INVESTMENT?</div><h2>Five Days That Are About You.</h2><p class="large">You show up for everybody else. This time, show up for yourself.</p><div class="price-big"><s style="font-size:.45em;color:var(--muted);font-weight:700;margin-right:14px">$197</s>$97<small>VIP Experience · one payment · tonight only</small></div><p style="margin:23px auto;max-width:590px">The full VIP seat for the General Admission price. This price ends tonight at 11:59 PM Central.</p><a class="btn" href="#secure-order">CLAIM MY $97 VIP SEAT ↗</a></div></section>
+<section class="section anchor" id="tickets"><div class="container"><div class="center section-head"><div class="eyebrow">JOIN THE CHALLENGE TODAY</div><h2>Your VIP Seat.<br><span class="rose">At The General Price, Tonight.</span></h2><p class="large muted">Tonight only, the VIP Experience is $97 instead of $197.</p></div><div class="pricing" style="grid-template-columns:minmax(0,560px);justify-content:center"><article class="ticket vip"><div class="ribbon">TONIGHT ONLY · $97</div><div class="eyebrow">THE UP-CLOSE EXPERIENCE</div><h3>VIP Experience</h3><p>For the woman who wants more access to Annie and Joel.</p><div class="pricing-price"><s style="font-size:.5em;color:var(--muted);font-weight:700;margin-right:10px">$197</s>$97 <span>one payment, tonight only</span></div><ul><li>Five days of LIVE nurse-led training with Annie and Joel</li><li>Access to the challenge community</li><li>Daily action guides and live group Q&amp;A</li><li>48-hour replay access</li><li>Exclusive extended VIP Q&amp;A/coaching room</li><li>Priority question-submission opportunity</li><li>Bonus session on understanding your numbers and next steps</li><li>VIP action workbook</li></ul><a href="#secure-order" class="btn">YES — MAKE ME VIP FOR $97 ↗</a></article></div></div></section>
+<section class="section-tight tint"><div class="container"><div class="center section-head"><div class="eyebrow">THE NEXT STEP IS SIMPLE</div><h2>Imagine What Happens When You Stop Putting Yourself Last.</h2><p class="large muted">You don't need perfect circumstances. You need a place to begin.</p></div><div class="testimonials"><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“Being able to keep moving after 60.”</blockquote></div><div class="person">Words from a community member</div></article><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“I want to be in great health for my future grandchildren and to enjoy my current retirement!!”</blockquote></div><div class="person">Words from a community member</div></article><article class="quote-card"><div><div class="starline">★★★★★</div><blockquote>“I need a strong body, mind and spirit to fulfill the purpose that God gave me.”</blockquote></div><div class="person">Words from a community member</div></article></div></div></section>
+<section class="section anchor" id="secure-order"><div class="container"><div class="center section-head"><div class="eyebrow">SECURE YOUR SEAT</div><h2>Don't Miss This.<br>Join the 5-Day Blood Pressure Challenge.</h2><p class="large muted">VIP for $97, tonight only. Your next chapter starts with one decision.</p></div><div class="order-wrap"><div class="order-details"><div class="eyebrow">STEP 1 · CHOOSE YOUR TICKET</div><h3>Here's Your Challenge Pass.</h3><div id="order-name" style="font-weight:800;color:var(--navy);margin-top:14px">VIP Experience</div><p id="order-includes" class="muted" style="font-size:.9rem">Five days LIVE + community + daily guides + group Q&amp;A + replays, plus the extended VIP coaching room, priority questions, the bonus numbers session and the VIP workbook.</p><div class="total-row"><span>Total today</span><span id="order-price"><s style="color:var(--muted);font-weight:600;margin-right:8px">$197</s>$97.00</span></div><p class="micro">One payment. No subscription. $97 ends tonight at 11:59 PM Central: <strong id="vipCd"></strong></p></div><form class="order-form" id="registration"><div class="eyebrow">STEP 2 · REGISTRATION DETAILS</div><h3>Save My Spot.</h3><label for="fname">First name</label><input id="fname" type="text" name="firstname" required autocomplete="given-name" placeholder="Your first name"><label for="email">Best email</label><input id="email" type="email" name="email" required autocomplete="email" placeholder="you@example.com"><label for="phone">Mobile phone <small style="font-weight:500">(optional)</small></label><input id="phone" type="tel" name="phone" autocomplete="tel" placeholder="Your mobile number"><button class="btn" id="checkoutButton" type="submit">CONTINUE TO SECURE CHECKOUT ↗</button><p class="micro" style="text-align:center">You will finish on Stripe's secure checkout page.</p><div class="confirm" id="form-confirm" role="status"></div></form></div></div></section>
+<section class="section-tight tint"><div class="narrow"><div class="center section-head"><div class="eyebrow">LET'S CLEAR UP THE LAST QUESTIONS</div><h2>Questions? Good.</h2></div><div class="faq"><details><summary>What if I'm already on blood pressure medication?</summary><p>You're welcome. Blood pressure medications are important, and you should continue taking yours as prescribed. This challenge helps you understand patterns and everyday changes you can discuss with your clinician. We do not take people off their medication.</p></details><details><summary>What if I've tried every diet, tea and natural remedy?</summary><p>That's exactly why this is about finding your Big Domino, not buying another bottle or collecting another list of fixes. We'll help you connect the dots and decide what deserves your attention first.</p></details><details><summary>What if I don't have much time?</summary><p>Give yourself five focused days. You'll have live training, a clear theme for each day and 48-hour replay access if you miss a session. You don't have to overhaul your life this week.</p></details><details><summary>Is this for successful business owners or women enjoying retirement?</summary><p>Both. Whether you run a business, care for family, lead at work, serve your community or want more freedom in retirement, the point is the same: you need your health to support the life you're building.</p></details><details><summary>What if I'm afraid it will be another program I don't finish?</summary><p>This is live and focused, with a community and two nurses guiding you through the experience. You'll have one clear question to answer: “What deserves MY attention first?” Your participation matters more than perfection.</p></details><details><summary>What does VIP add?</summary><p>Everything in the five-day live challenge (community, group Q&amp;A, daily guides and replays), plus extended VIP coaching and Q&amp;A access, priority question submission, a bonus session on your numbers and next steps, and the VIP workbook. VIP is regularly $197. Tonight it is $97.</p></details><details><summary>Can I stop my medication if my numbers improve?</summary><p>No one should stop or change blood pressure medication based on a challenge or a single reading. Work with your prescribing clinician to review any changes; abruptly stopping some blood pressure medicines can be dangerous.</p></details></div></div></section>
+<section class="foot-final"><div class="container"><div class="overline">YOUR NEXT CHAPTER STARTS HERE</div><h2>You Know Something Has To Change.</h2><p class="large">You don't have to fix everything today.<br>You don't have to know the whole plan.<br>And you definitely don't need another 76 things to do.</p><h3 style="color:#e9c783;font-size:clamp(1.45rem,3vw,2.2rem)">Find your Big Domino. Then make your next move.</h3><a class="btn" href="#secure-order">YES! I'M JOINING THE CHALLENGE ↗</a><p class="micro" style="color:#c8dbe6">VIP $97 tonight only · regularly $197 · Five days LIVE</p></div></section>
 </main>
-
+<footer class="footer"><div class="container">CHANGE MY LIFE CHALLENGE · ANNIE CHITATE, RN + JOEL POLLEY, RN<br>Educational coaching only. Does not replace diagnosis, treatment or care from your healthcare provider. No blood pressure outcome is promised.<br><span>© <span id="year">2026</span> Change My Life Challenge</span></div></footer>
+<div class="sticky-cta"><a class="btn" href="#secure-order">VIP $97 · TONIGHT ONLY ↗</a></div>
 <script>
-/* Inline Stripe embedded checkout for the masterclass fast-action VIP seat. */
-(function () {
-  var STRIPE_PK = '%%STRIPE_PK%%';
-  var mount = document.getElementById('checkoutMount');
-  var status = document.getElementById('checkoutStatus');
-  if (!mount || !status) return;
-
-  function fail(msg) {
-    status.style.display = 'block';
-    status.textContent = msg + ' Email braveworksrn@gmail.com and we will send you a working payment link by hand.';
-  }
-  function ended(html) {
-    status.style.display = 'block';
-    status.innerHTML = html;
-  }
-  function loadStripeJs() {
-    return new Promise(function (resolve, reject) {
-      if (window.Stripe) return resolve();
-      var s = document.createElement('script');
-      s.src = 'https://js.stripe.com/v3';
-      s.onload = resolve;
-      s.onerror = function () { reject(new Error('stripe.js failed to load')); };
-      document.head.appendChild(s);
-    });
-  }
-  if (STRIPE_PK.indexOf('pk_') !== 0) { fail('Checkout is not available right now.'); return; }
-  loadStripeJs().then(function () {
-    return fetch('/api/create-embedded-checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tier: 'cmlc-97-vip' })
-    });
-  }).then(function (res) {
-    return res.json().catch(function () { return {}; }).then(function (data) {
-      if (res.status === 410) {
-        ended('<strong>VIP is not available right now.</strong><br>The regular $97 seat is still open: <a href="/">save your seat here</a>.');
-        throw new Error('ended');
-      }
-      if (res.status === 409) {
-        ended('<strong>The VIP room is full.</strong><br>The regular $97 seat is still open: <a href="/">save your seat here</a>.');
-        throw new Error('sold out');
-      }
-      if (!res.ok || !data.clientSecret) throw new Error(data.message || 'checkout unavailable');
-      return data.clientSecret;
-    });
-  }).then(function (cs) {
-    return window.Stripe(STRIPE_PK).initEmbeddedCheckout({ clientSecret: cs });
-  }).then(function (checkout) {
-    checkout.mount('#checkoutMount');
-    status.style.display = 'none';
-  }).catch(function (err) {
-    if (err && (err.message === 'ended' || err.message === 'sold out')) return;
-    fail('Checkout could not start.');
-  });
-})();
-</script>
-<script>
-/* Seats left: the same number the server enforces (api/challenge-vip-seats). */
-(function () {
-  fetch('/api/challenge-vip-seats').then(function (r) { return r.json(); }).then(function (d) {
-    if (typeof d.left !== 'number') return;
-    document.getElementById('seatsLeftNum').textContent = d.left;
-    document.getElementById('seatsLeft').hidden = false;
-  }).catch(function () {});
-})();
-</script>
-<script>
-/* 2026-09-21 (Joel): $97 ends 11:59:59 PM CT tonight; after that the page shows $197 (server switches too). */
 (function(){
-  var END=Date.parse('2026-09-22T04:59:59Z');
-  function tick(){
-    var ms=END-Date.now(), cd=document.getElementById('vipCd');
-    if(ms<=0){
-      cd.hidden=true;
-      document.querySelectorAll('.old-price').forEach(function(e){e.remove();});
-      document.querySelector('.today-price').textContent='$197';
-      var t=document.querySelector('.order-row.total span:last-child'); if(t) t.textContent='$197';
-      var h=document.querySelector('.hero-copy'); if(h) h.innerHTML=h.innerHTML.replace(/VIP is regularly <s>\$297<\/s>\. <strong>Your VIP seat today is \$97\. It adds/,'<strong>VIP is $197. It adds');
-      var b=document.querySelector('.bottom-note'); if(b) b.remove();
-      return;
-    }
-    var h=Math.floor(ms/3600000), m=Math.floor(ms%3600000/60000), s=Math.floor(ms%60000/1000);
-    document.getElementById('vipCdT').textContent=h+'h '+('0'+m).slice(-2)+'m '+('0'+s).slice(-2)+'s';
-    setTimeout(tick,1000);
-  }
-  tick();
+var END = new Date('2026-10-13T04:59:59Z'); // 11:59:59 PM CDT, Mon Oct 12 (mirror of create-hosted-checkout.js)
+var form = document.getElementById('registration');
+var btn = document.getElementById('checkoutButton');
+var note = document.getElementById('form-confirm');
+function say(html){ note.innerHTML = html; note.classList.add('open'); note.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+function ended(){
+  document.querySelectorAll('a[href="#secure-order"], a[href="#tickets"]').forEach(function(a){ a.setAttribute('href','https://changemylifechallenge.com/'); });
+  btn.disabled = true; btn.textContent = 'THE $97 VIP OFFER HAS ENDED';
+  ['vipCd','vipCdTop'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent='ended'; });
+}
+function tick(){
+  var ms = END - Date.now();
+  if (ms <= 0) { ended(); return; }
+  var h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), sec = Math.floor(ms%60000/1000);
+  var t = (h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  ['vipCd','vipCdTop'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent = id==='vipCdTop' ? 'ENDS IN '+t : t; });
+  setTimeout(tick, 1000);
+}
+tick();
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+  if (Date.now() > END) { ended(); return; }
+  var email = document.getElementById('email').value.trim();
+  if (!email || email.indexOf('@') < 1) { say('Please enter your best email.'); return; }
+  btn.disabled = true; var label = btn.textContent; btn.textContent = 'OPENING SECURE CHECKOUT…';
+  var ph = (window.posthog && window.posthog.get_distinct_id) ? window.posthog.get_distinct_id() : undefined;
+  fetch('/api/create-hosted-checkout', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ tier:'cmlc-vip-97-tonight', email: email, source:'vip-97-tonight', distinctId: ph }) })
+  .then(function(r){ return r.json().then(function(d){ return {r:r,d:d}; }); })
+  .then(function(x){
+    if (x.r.ok && x.d.url) { window.location.assign(x.d.url); return; }
+    btn.disabled = false; btn.textContent = label;
+    if (x.r.status === 410) { ended(); say('The $97 VIP offer has ended.'); }
+    else if (x.r.status === 409) say('It looks like you already completed this purchase. Check your email for your receipt.');
+    else say('We could not open checkout. Please try again in a moment.');
+  })
+  .catch(function(){ btn.disabled = false; btn.textContent = label; say('We could not open checkout. Please try again in a moment.'); });
+});
+if (/[?&]paid=1/.test(location.search)) {
+  var bar = document.createElement('div');
+  bar.style.cssText = 'background:#1b7a69;color:#fff;text-align:center;padding:16px 18px;font-weight:800';
+  bar.textContent = 'You are in. Your VIP seat is paid. Watch your email for your receipt and the challenge details from Annie and Joel.';
+  document.body.insertBefore(bar, document.body.firstChild);
+  window.scrollTo(0,0);
+}
+document.getElementById('year').textContent = new Date().getFullYear();
 })();
 </script>
-<script>window.SABBATH_SOURCE="challenge";</script><script src="/sabbath-gate.js"></script>
-<script defer src="/_vercel/insights/script.js"></script>
-</body>
-</html>
+</body></html>

@@ -58,6 +58,22 @@ const TIERS = {
     mode: 'payment',
     success: '/payment?session_id={CHECKOUT_SESSION_ID}',
   },
+  // 2026-10-12 (Joel): changemylifechallenge.com/vip, "VIP for 97 just for
+  // tonight". Existing $97 challenge price (no Stripe write). Its OWN funnel
+  // marker so triangle-webhook's amount map never reads 9700 as a BP kit, and
+  // NOT the cmlc-97-vip embedded path, which seats buyers into the Sept 22
+  // cohort and emails them those dates. Cut off server-side at `until`.
+  'cmlc-vip-97-tonight': {
+    price: process.env.CMLC_97_PRICE_ID || 'price_1U4NSeHseZnO3rRZfxzUCAjk',
+    plan: 'challenge-vip-97',
+    mode: 'payment',
+    success: '/vip/?paid=1&session_id={CHECKOUT_SESSION_ID}',
+    cancel: '/vip/#secure-order',
+    funnel: 'cmlc-vip-oct',
+    offer: 'challenge-vip',
+    source: 'vip-97-tonight',
+    until: Date.parse('2026-10-12T23:59:59-05:00'), // 11:59:59 PM CDT tonight
+  },
   // 2026-10-07: the $47 Client-Ready Blueprint behind bpquiz.com/engine/results.
   // Its own funnel so the BP webhook branches leave it alone. The Stripe price
   // does not exist yet (money write, Joel's go): until EEE_BLUEPRINT_PRICE_ID
@@ -86,6 +102,7 @@ export default async function handler(req, res) {
   const tier = String(body.tier || '');
   const cfg = TIERS[tier];
   if (!cfg) return res.status(400).json({ error: 'Unknown tier' });
+  if (cfg.until && Date.now() > cfg.until) return res.status(410).json({ error: 'ended', message: 'This offer has ended.' });
   if (!cfg.price) return res.status(503).json({ error: 'notReady', message: 'Checkout for this offer is not open yet.' });
 
   const siteUrl = siteUrlFrom(req);
