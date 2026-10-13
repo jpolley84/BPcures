@@ -13,24 +13,26 @@ import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 
+const GA_SEND_ENABLED = false; // GA text NOT yet approved by Joel (2026-10-13)
 const SEND_ENABLED = true; // Joel approved the text 2026-10-13 ("send those commands yes").
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const FROM = process.env.RESEND_FROM || 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'joel@bpquiz.com';
 const ZOOM = process.env.CHALLENGE_ZOOM_URL || 'https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1';
-const ROSTER = 'challenge:2026-10-19:vip';
+const rosterFor = (seat) => `challenge:2026-10-19:${seat}`;
 
 export const SUBJECT = "Congratulations, you took the first step (starts Monday, Oct 19)";
 
-export function welcomeText(firstName) {
+export function welcomeText(firstName, seat = 'vip') {
   const hi = firstName ? `Hi ${firstName},` : 'Hi,';
+  const vip = seat === 'vip';
   return `${hi}
 
 Congratulations. You just did the thing most people only think about: you took the first step.
 
 You've spent years showing up for everyone else. Tonight you showed up for yourself. That decision matters more than you know, and Annie and I are proud of you for making it.
 
-Your VIP seat for the 5-Day Blood Pressure Challenge is paid and saved.
+Your ${vip ? 'VIP seat' : 'seat'} for the 5-Day Blood Pressure Challenge is paid and saved.
 
 WHEN
 Monday, October 19 through Friday, October 23
@@ -41,14 +43,19 @@ One Zoom link for all five nights. Save it now:
 ${ZOOM}
 Meeting ID: 828 5171 5003 · Passcode: 027302
 
-WHAT YOU GET AS VIP
+${vip ? `WHAT YOU GET AS VIP
 - All five live nights with Annie and me
 - The extended VIP coaching and Q&A room
 - Priority on your questions
 - A bonus session on your numbers and next steps
 - The VIP workbook
 
-We'll send the VIP room times and the workbook before Monday.
+We'll send the VIP room times and the workbook before Monday.` : `WHAT YOU GET
+- All five live nights with Annie and me
+- The challenge community
+- Daily action guides
+- Live group Q&A each night
+- 48-hour replay access if you miss a night`}
 
 ONE THING TO DO BEFORE MONDAY
 Hit reply and tell me the one thing you most want to change about your health. Annie and I read every answer, and it shapes what we teach.
@@ -62,11 +69,11 @@ with Annie Chitate, RN
 Change My Life Challenge`;
 }
 
-function welcomeHtml(firstName) {
+function welcomeHtml(firstName, seat = 'vip') {
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const paras = welcomeText(firstName).split('\n\n').map((block) => {
+  const paras = welcomeText(firstName, seat).split('\n\n').map((block) => {
     const lines = block.split('\n').map(esc).map((l) => l.replace(esc(ZOOM), `<a href="${ZOOM}" style="color:#112d4d;font-weight:700">${esc(ZOOM)}</a>`));
-    if (/^(WHEN|WHERE|WHAT YOU GET AS VIP|ONE THING TO DO BEFORE MONDAY)$/.test(lines[0])) {
+    if (/^(WHEN|WHERE|WHAT YOU GET AS VIP|WHAT YOU GET|ONE THING TO DO BEFORE MONDAY)$/.test(lines[0])) {
       return `<p style="margin:22px 0 6px;font-size:12px;letter-spacing:.14em;font-weight:800;color:#a95364">${lines[0]}</p><p style="margin:0 0 14px;line-height:1.6">${lines.slice(1).join('<br>')}</p>`;
     }
     return `<p style="margin:0 0 14px;line-height:1.6">${lines.join('<br>')}</p>`;
@@ -85,15 +92,16 @@ export default async function handler(req, res) {
   if (session.metadata?.funnel !== 'cmlc-vip-oct' || session.payment_status !== 'paid') {
     return res.status(200).json({ ok: false, reason: 'not-a-paid-vip-session' });
   }
+  const seat = session.metadata?.plan === 'challenge-ga' ? 'ga' : 'vip';
   const email = (session.customer_details?.email || '').toLowerCase();
   const firstName = (session.customer_details?.name || '').trim().split(/\s+/)[0] || '';
 
   try {
-    await kv.sadd(ROSTER, email);
-    await kv.set(`challenge:2026-10-19:vip:${email}`, { email, firstName, sessionId, amount: session.amount_total, paidAt: new Date(session.created * 1000).toISOString() });
+    await kv.sadd(rosterFor(seat), email);
+    await kv.set(`challenge:2026-10-19:${seat}:${email}`, { email, firstName, seat, sessionId, amount: session.amount_total, paidAt: new Date(session.created * 1000).toISOString() });
   } catch (err) { console.error('cmlc-vip-welcome: roster write failed', err.message); }
 
-  if (!SEND_ENABLED) return res.status(200).json({ ok: true, seated: true, emailed: false, reason: 'sending-off' });
+  if (!SEND_ENABLED || (seat === 'ga' && !GA_SEND_ENABLED)) return res.status(200).json({ ok: true, seated: true, emailed: false, reason: 'sending-off' });
 
   let claimed = false;
   try { claimed = Boolean(await kv.set(`cmlc-vip-welcome:sent:${sessionId}`, new Date().toISOString(), { nx: true })); } catch { claimed = false; }
@@ -102,7 +110,7 @@ export default async function handler(req, res) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: FROM, to: email, reply_to: REPLY_TO, subject: SUBJECT,
-      text: welcomeText(firstName), html: welcomeHtml(firstName),
+      text: welcomeText(firstName, seat), html: welcomeHtml(firstName, seat),
       tags: [{ name: 'campaign', value: 'cmlc-vip-welcome-oct19' }],
     });
     return res.status(200).json({ ok: true, seated: true, emailed: true });

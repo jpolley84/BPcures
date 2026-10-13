@@ -79,6 +79,24 @@ const TIERS = {
       description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN. VIP seat: extended coaching and Q&A room, priority questions, bonus numbers session, VIP workbook. Regularly $197.',
     },
   },
+  // 2026-10-13 (Joel): changemylifechallenge.com main page = the 5-day
+  // conversion page, General $97 / VIP $197, Oct 19-23. Same funnel marker as
+  // the VIP night (restoreher's webhook skips it), amounts sent inline so no
+  // Stripe object is created or edited. Closes 11:59 PM ET Mon Oct 19.
+  'cmlc-oct-ga': {
+    price: 'inline', plan: 'challenge-ga', mode: 'payment',
+    success: '/?paid=1&ticket=general&session_id={CHECKOUT_SESSION_ID}', cancel: '/#secure-order',
+    funnel: 'cmlc-vip-oct', offer: 'challenge', source: 'cmlc-oct19-page',
+    until: Date.parse('2026-10-19T23:59:59-04:00'),
+    lineItem: { amount: 9700, name: 'Change My Life Challenge: General Admission', description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN. Monday, October 19 to Friday, October 23, 7:00 PM Eastern.' },
+  },
+  'cmlc-oct-vip': {
+    price: 'inline', plan: 'challenge-vip', mode: 'payment',
+    success: '/?paid=1&ticket=vip&session_id={CHECKOUT_SESSION_ID}', cancel: '/#secure-order',
+    funnel: 'cmlc-vip-oct', offer: 'challenge-vip', source: 'cmlc-oct19-page',
+    until: Date.parse('2026-10-19T23:59:59-04:00'),
+    lineItem: { amount: 19700, name: 'Change My Life Challenge: VIP Experience', description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN, October 19 to 23, 7:00 PM Eastern. VIP: extended coaching and Q&A room, priority questions, bonus numbers session, VIP workbook.' },
+  },
   // 2026-10-07: the $47 Client-Ready Blueprint behind bpquiz.com/engine/results.
   // Its own funnel so the BP webhook branches leave it alone. The Stripe price
   // does not exist yet (money write, Joel's go): until EEE_BLUEPRINT_PRICE_ID
