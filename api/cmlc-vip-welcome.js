@@ -45,17 +45,17 @@ Meeting ID: 828 5171 5003 · Passcode: 027302
 
 ${vip ? `WHAT YOU GET AS VIP
 - All five live nights with Annie and me
-- The extended VIP coaching and Q&A room
-- Priority on your questions
-- A bonus session on your numbers and next steps
-- The VIP workbook
+- Daily action guides and your 90-Day Personal Life Change Map
+- Live group Q&A, the challenge community, and replays through the following Monday
+- An additional hour of VIP coaching every day of the challenge
+- Instant access to bonus content
+- Instant access to the Skin and Hair Challenge, so you can glow at any age
 
-We'll send the VIP room times and the workbook before Monday.` : `WHAT YOU GET
+We'll send your VIP coaching hour times and your bonus access before Monday.` : `WHAT YOU GET
 - All five live nights with Annie and me
-- The challenge community
-- Daily action guides
-- Live group Q&A each night
-- 48-hour replay access if you miss a night`}
+- Daily action guides and your 90-Day Personal Life Change Map
+- Live group Q&A each night and the challenge community
+- Replays available through the following Monday if you miss a night`}
 
 ONE THING TO DO BEFORE MONDAY
 Hit reply and tell me the one thing you most want to change about your health. Annie and I read every answer, and it shapes what we teach.
