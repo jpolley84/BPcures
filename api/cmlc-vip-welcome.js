@@ -13,7 +13,7 @@ import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 
-const SEND_ENABLED = false; // Joel's go required. See header.
+const SEND_ENABLED = true; // Joel approved the text 2026-10-13 ("send those commands yes").
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const FROM = process.env.RESEND_FROM || 'Joel Polley, RN <joel@bpquiz.com>';
 const REPLY_TO = 'joel@bpquiz.com';
