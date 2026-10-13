@@ -13,7 +13,7 @@ import Stripe from 'stripe';
 import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 
-const GA_SEND_ENABLED = false; // GA text NOT yet approved by Joel (2026-10-13)
+const GA_SEND_ENABLED = true; // Joel approved the GA text 2026-10-13 ("send GA")
 const SEND_ENABLED = true; // Joel approved the text 2026-10-13 ("send those commands yes").
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const FROM = process.env.RESEND_FROM || 'Joel Polley, RN <joel@bpquiz.com>';
