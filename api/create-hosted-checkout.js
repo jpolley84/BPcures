@@ -73,7 +73,7 @@ const TIERS = {
     offer: 'challenge-vip',
     source: 'vip-97-tonight',
     // 2026-10-13 (Joel): reopened for the challenge waitlist, 48 hours.
-    until: Date.parse('2026-10-15T13:00:00-05:00'), // 1:00 PM CDT Thu Oct 15
+    until: Date.parse('2026-10-14T23:59:59-05:00'), // 11:59:59 PM CDT Wed Oct 14 (Joel: tomorrow at midnight)
     origin: 'https://changemylifechallenge.com',
     lineItem: {
       amount: 9700,
