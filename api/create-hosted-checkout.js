@@ -87,6 +87,7 @@ const TIERS = {
     price: 'inline', plan: 'challenge-ga', mode: 'payment',
     success: '/?paid=1&ticket=general&session_id={CHECKOUT_SESSION_ID}', cancel: '/#secure-order',
     funnel: 'cmlc-vip-oct', offer: 'challenge', source: 'cmlc-oct19-page',
+    origin: 'https://changemylifechallenge.com',
     until: Date.parse('2026-10-19T23:59:59-04:00'),
     lineItem: { amount: 9700, name: 'Change My Life Challenge: General Admission', description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN. Monday, October 19 to Friday, October 23, 7:00 PM Eastern.' },
   },
@@ -94,6 +95,7 @@ const TIERS = {
     price: 'inline', plan: 'challenge-vip', mode: 'payment',
     success: '/?paid=1&ticket=vip&session_id={CHECKOUT_SESSION_ID}', cancel: '/#secure-order',
     funnel: 'cmlc-vip-oct', offer: 'challenge-vip', source: 'cmlc-oct19-page',
+    origin: 'https://changemylifechallenge.com',
     until: Date.parse('2026-10-19T23:59:59-04:00'),
     lineItem: { amount: 19700, name: 'Change My Life Challenge: VIP Experience', description: '5-day LIVE Blood Pressure Challenge with Annie Chitate, RN and Joel Polley, RN, October 19 to 23, 7:00 PM Eastern. VIP: extended coaching and Q&A room, priority questions, bonus numbers session, VIP workbook.' },
   },
@@ -167,8 +169,8 @@ export default async function handler(req, res) {
       ...(cfg.mode === 'payment' ? { customer_creation: 'always' } : {}),
       phone_number_collection: { enabled: true },
       allow_promotion_codes: false,
-      success_url: `${siteUrl}${cfg.success}${sid && cfg.offer === 'engine-blueprint' ? `&sid=${sid}` : ''}`,
-      cancel_url: `${siteUrl}${cfg.cancel || (tier.startsWith('sprint-balance') ? '/sprint-balance' : '/allin#tiers')}${sid && cfg.offer === 'engine-blueprint' ? `?sid=${sid}` : ''}`,
+      success_url: `${cfg.origin || siteUrl}${cfg.success}${sid && cfg.offer === 'engine-blueprint' ? `&sid=${sid}` : ''}`,
+      cancel_url: `${cfg.origin || siteUrl}${cfg.cancel || (tier.startsWith('sprint-balance') ? '/sprint-balance' : '/allin#tiers')}${sid && cfg.offer === 'engine-blueprint' ? `?sid=${sid}` : ''}`,
       ...(email ? { customer_email: email } : {}),
     });
     return res.status(200).json({ url: session.url });
