@@ -57,6 +57,9 @@ function guideEmail({ firstName, unsubUrl }) {
       + 'blood pressure, blood sugar or other prescribed medication, talk with your prescribing clinician first. '
       + 'Never stop or change prescribed medication on your own.'),
     p('Joel Polley, RN<br>BraveWorks RN'),
+    // 2026-10-15 (Joel): P.S. invites to the free live masterclass.
+    p('P.S. Want to know what to do after your 10 days? Annie and I teach a free live masterclass, <strong>Life Beyond the Numbers</strong>, on the three things that drive your blood pressure and why your hormones push all three after 40. '
+      + '<a href="https://bpquiz.com/masterclass?utm_source=cleanse&utm_medium=email&utm_campaign=guide-ps">Save your free seat here</a>.'),
   ].join('');
   const bodyText = [
     `${hello} is your Complete Lemonade Detox Guide, the full 10 day protocol in one PDF.`,
@@ -65,6 +68,7 @@ function guideEmail({ firstName, unsubUrl }) {
     + 'blood pressure, blood sugar or other prescribed medication, talk with your prescribing clinician first. '
     + 'Never stop or change prescribed medication on your own.',
     'Joel Polley, RN, BraveWorks RN',
+    'P.S. Want to know what to do after your 10 days? Annie and I teach a free live masterclass, Life Beyond the Numbers, on the three things that drive your blood pressure and why your hormones push all three after 40. Save your free seat here: https://bpquiz.com/masterclass?utm_source=cleanse&utm_medium=email&utm_campaign=guide-ps',
   ].join('\n\n');
   return buildEmail({
     preheader: 'Your Complete Lemonade Detox Guide is inside.',
