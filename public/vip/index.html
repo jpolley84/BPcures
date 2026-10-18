@@ -57,7 +57,7 @@ input{width:100%;height:50px;border:1px solid var(--line);border-radius:6px;padd
 
     <div class="price"><span class="old">$197</span><span class="now">$97</span></div>
     <p class="once">One payment. No subscription.</p>
-    <p class="timer" id="timer">This price ends Wednesday, October 14 at 11:59 PM Central · <b id="cd">--:--:--</b></p>
+    <p class="timer" id="timer">This price ends tonight, Sunday, October 18 at 11:59 PM Central · <b id="cd">--:--:--</b></p>
 
     <h2>WHAT'S INCLUDED</h2>
     <ul>
@@ -84,8 +84,8 @@ input{width:100%;height:50px;border:1px solid var(--line);border-radius:6px;padd
 <script>
 (function(){
   // Joel 2026-10-14: Wed midnight first; the moment it passes, roll to Thu midnight (server cutoff = Thu).
-  var ENDS = [new Date('2026-10-15T04:59:59Z'), new Date('2026-10-16T04:59:59Z')];
-  var LABELS = ['Wednesday, October 14', 'Thursday, October 15'];
+  var ENDS = [new Date('2026-10-19T04:59:59Z')]; // 11:59:59 PM CDT Sun Oct 18 (Joel 10-18)
+  var LABELS = ['tonight, Sunday, October 18'];
   function pick(){ for (var i=0;i<ENDS.length;i++) if (Date.now() < ENDS[i]) return i; return ENDS.length-1; }
   var idx = pick(), END = ENDS[idx];
   function label(){ var t=document.getElementById('timer'); if(t) t.firstChild.nodeValue='This price ends '+LABELS[idx]+' at 11:59 PM Central · '; }
