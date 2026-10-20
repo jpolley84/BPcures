@@ -295,7 +295,7 @@ body{background:#fff;color:#18394d}
 .cmp-msg{text-align:center;color:#ffd7d7!important;min-height:1px;margin:14px 0 0!important}
 .cmp-foot{text-align:center;font-size:13px!important;color:#cfe0ea!important;margin:12px 0 0!important}
 @media(max-width:760px){.compare{grid-template-columns:1fr;gap:26px}.cmp-card.vip{order:-1}}
-</style></head><body><header class="sitebar"><a class="wordmark" href="#section-1">CHANGE MY LIFE CHALLENGE</a><a class="barlink" href="#secure-order">The 5-Day Blood Pressure Challenge</a></header><main><section class="hero section section-1" data-section-name="THE PROMISE" id="section-1"><div class="container"><span aria-hidden="true" class="section-number">01</span><p><strong>FOR THE WOMAN OVER 40 WHO'S HAD ENOUGH.</strong></p>
+</style></head><body><div id="close-bar" style="position:sticky;top:0;z-index:60;background:#aa203c;color:#fff;text-align:center;padding:11px 16px;font:800 14px/1.4 Inter,Arial,sans-serif;letter-spacing:.02em">Doors close at midnight Eastern tonight · the challenge is already live, and you can still join and catch up on the replays · <a href="#secure-order" style="color:#fff;text-decoration:underline">Closes in <span id="close-cd" style="font-variant-numeric:tabular-nums">--:--:--</span></a></div><header class="sitebar"><a class="wordmark" href="#section-1">CHANGE MY LIFE CHALLENGE</a><a class="barlink" href="#secure-order">The 5-Day Blood Pressure Challenge</a></header><main><section class="hero section section-1" data-section-name="THE PROMISE" id="section-1"><div class="container"><span aria-hidden="true" class="section-number">01</span><p><strong>FOR THE WOMAN OVER 40 WHO'S HAD ENOUGH.</strong></p>
 <h1>Give Us 5 Days. Start Taking Back Control of Your Blood Pressure.</h1>
 <p>Discover what may be keeping your numbers high, start making changes that matter, and walk away with your own <strong>simple, step-by-step 90-day action plan</strong> so you can walk into your future with purpose instead of fear.</p>
 <p>Health Is Power. Take Back Your Future.</p>
@@ -527,7 +527,7 @@ body{background:#fff;color:#18394d}
 <h1>Become the Woman Others Quietly Envy</h1>
 <p class="cta-wrap"><a class="cta" href="#secure-order">YES! I'M READY TO CHANGE MY LIFE — JOIN FOR $97</a></p>
 <div id="secure-order" class="compare-wrap">
-<p class="compare-kicker">CHOOSE YOUR SEAT</p>
+<p class="compare-kicker">DOORS CLOSE AT MIDNIGHT EASTERN TONIGHT</p>
 <h2 class="compare-title">Two ways to join. Same five live days.</h2>
 <div class="compare">
   <article class="cmp-card">
@@ -573,4 +573,11 @@ body{background:#fff;color:#18394d}
   var sm=location.search.match(/[?&]session_id=([^&]+)/);
   if(sm) fetch('/api/cmlc-vip-welcome',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:decodeURIComponent(sm[1])})}).catch(function(){});
  }
-})();</script></body></html>
+})();</script><script>
+(function(){
+ var END=Date.parse('2026-10-21T03:59:59Z'), cd=document.getElementById('close-cd'), bar=document.getElementById('close-bar');
+ function t(){var ms=END-Date.now(); if(ms<=0){bar.textContent='Registration is closed. Thank you for your interest.'; [].forEach.call(document.querySelectorAll('[data-buy]'),function(b){b.disabled=true;b.textContent='Registration closed';}); return;}
+  var h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4),s2=Math.floor(ms%6e4/1e3); cd.textContent=(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s2<10?'0':'')+s2; setTimeout(t,1000);}
+ t();
+})();
+</script></body></html>
