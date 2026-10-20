@@ -223,6 +223,7 @@
 </style>
 </head>
 <body>
+
   <div class="top-banner">
     <div class="line1">TAKE BACK CONTROL OF YOUR BODY AFTER 40.</div>
     <div class="line2">IT'S NOT GENETICS. IT'S NOT JUST AGING.</div>
@@ -413,13 +414,41 @@
     const asUtc = Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second'));
     return asUtc - atUtcMs;
   }
+  /* ===== 2026-10-15 (Joel), THIS WEEK ONLY =====================
+     "monday isnt a masterclass its the challenge. this weeks masterclass
+     is sunday night."
+
+     Two one-off facts:
+       1. The class this week is SUNDAY Oct 18, 6:00 PM Central, because
+          Oct 18 is World Menopause Day.
+       2. Monday Oct 19 is the Change My Life Challenge, NOT a masterclass,
+          so the page must never send anyone there expecting a class.
+
+     Every visible date and the countdown read from nextMondayTarget(), so
+     both facts are handled here rather than in a dozen bits of markup.
+     SELF-EXPIRING: once Oct 19 has passed, both branches stop firing and
+     the normal weekly Monday behaviour resumes untouched.
+     ============================================================ */
+  var WMD_SUNDAY_TARGET = Date.parse('2026-10-18T23:00:00Z'); // 6pm CT Sun Oct 18
+  var CHALLENGE_MONDAY_YMD = '2026-10-19';                    // never target this
+
+  function isChallengeMonday(ms){
+    try{
+      var p = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',
+        year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms));
+      return p === CHALLENGE_MONDAY_YMD;
+    }catch(e){ return false; }
+  }
+
   function nextMondayTarget(afterMs){
+    if(afterMs < WMD_SUNDAY_TARGET) return WMD_SUNDAY_TARGET;
     for(let addDays=0; addDays<8; addDays++){
       const probe = new Date(afterMs + addDays*86400000);
       const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
         year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
       const wd = parts.find(p=>p.type==='weekday').value;
       if(wd!=='Mon') continue;
+      if(isChallengeMonday(probe.getTime())) continue; /* Oct 19 is the challenge */
       const g = t => Number(parts.find(p=>p.type===t).value);
       const naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR_CT,0,0);
       const target = naive - chicagoOffsetMs(naive);
