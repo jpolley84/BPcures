@@ -50,7 +50,7 @@ const NOT_INCLUDED = [
 const FAQ = [
   ['What am I paying today?', `${DEPOSIT}. It holds your spot and comes off the ${PRICE} price.`],
   ['Is the deposit refundable?', `No. The ${DEPOSIT} deposit is non-refundable. It holds one of a small number of spots.`],
-  ['How is the rest paid?', `The ${BALANCE} balance is settled right after your deposit: pay it in full and a one-on-one coaching session is added, or spread it across 3 payments of $649, one every two weeks, all inside the 6 weeks.`],
+  ['How is the rest paid?', `The ${BALANCE} balance is settled right after your deposit: pay it in full and a one-on-one coaching session is added, or spread it across 3 payments of $649 ($1,947 total, $150 more than paying in full), one every two weeks, all inside the 6 weeks.`],
   ['What is the Fast-Track Call?', 'A one-on-one call with Annie or Joel to get you moving before the group starts. You earn it by putting your deposit down before the Q&A ends on class night. The timer on this page shows the cutoff.'],
   ['What if I decide I want the full Accelerator?', 'Everything you paid toward the Sprint is credited toward the $7,500. Nothing is lost.'],
   ['Is this medical care?', 'No. It is coaching and education alongside your medical team, never a replacement for it. Never stop or change prescribed medication on your own.'],
@@ -168,7 +168,7 @@ export default function SprintPage() {
             <p className="price-sub">6 weeks of group coaching with Annie and Joel.</p>
             <div className="steps">
               <div className="step"><b>1</b><div><strong>{`${DEPOSIT} today.`}</strong><p>Holds your spot. Non-refundable.</p></div></div>
-              <div className="step"><b>2</b><div><strong>{`Settle the ${BALANCE} balance.`}</strong><p>In full (a one-on-one coaching session is added) or 3 x $649 every two weeks.</p></div></div>
+              <div className="step"><b>2</b><div><strong>{`Settle the ${BALANCE} balance.`}</strong><p>In full (a one-on-one coaching session is added) or 3 x $649 every two weeks ($1,947 total, $150 more than paying in full).</p></div></div>
               <div className="step"><b>3</b><div><strong>Start your 6 weeks.</strong><p>{fastOpen ? 'Deposit before the Q&A ends and your Fast-Track Call comes first.' : 'We send your next steps the same day.'}</p></div></div>
             </div>
           </div>
