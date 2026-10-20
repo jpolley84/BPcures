@@ -11,6 +11,7 @@
 import { Resend } from './_resend.js';
 import { kv } from '@vercel/kv';
 import crypto from 'node:crypto';
+import { neverSendGuard } from './_never_send.js';
 
 export const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
 export const REPLY = 'braveworksrn@gmail.com';
@@ -30,11 +31,19 @@ function getResend() {
   return _resend;
 }
 
+// 2026-10-16: emit the SAME 4-field shape unsubscribe.js mints,
+// `email.ts.tag.sig` with an empty tag. The old 3-field shape misparsed in the
+// verifier and cost every recipient of these broadcasts a working unsubscribe.
+// The verifier still accepts the old shape for tokens already in inboxes.
 export function signUnsubToken(email) {
   const secret = process.env.UNSUB_SECRET || 'CHANGE-ME-IN-VERCEL-ENV';
   const ts = Date.now();
-  const sig = crypto.createHmac('sha256', secret).update(`${email}.${ts}`).digest('hex').slice(0, 16);
-  return Buffer.from(`${email}.${ts}.${sig}`).toString('base64url');
+  const payload = `${String(email).toLowerCase()}.${ts}.`;
+  const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex').slice(0, 16);
+  // Emit the empty tag field. `${payload}${sig}` produced `email.ts.sig`, which
+  // the verifier reads as the 3-field shape and signs as `email.ts`, so every
+  // token this minted failed (2026-10-19). The canonical form is `email.ts..sig`.
+  return Buffer.from(`${payload}.${sig}`).toString('base64url');
 }
 
 export function unsubUrl(email) {
@@ -142,8 +151,17 @@ export function wrap({ kicker, body, firstName, unsubUrl: u }) {
 // { sent, failed, firstFailure }. Fire-and-forget for Vercel cron use.
 export async function runBroadcast({ subject, renderText, renderHtml }) {
   const startedAt = Date.now();
-  const { recipients, stats } = await pullRecipients();
-  console.log(`broadcast: targeting ${recipients.length} (skipped ${stats.unsub + stats.paused + stats.complete + stats.noEmail})`);
+  const { recipients: pulled, stats } = await pullRecipients();
+  // NEVER-SEND EXCEPTION (2026-10-07): this helper mails the cohort on purpose,
+  // so it does NOT subtract the Accelerator roster, bwbp:allin:*, or Stripe
+  // coaching payers (includeClients: false). It still honors bwbp:neversend and
+  // Resend unsubscribes. A KV failure throws here, so the broadcast fails
+  // closed instead of sending without the list. Its only callers,
+  // cohort-saturday-cron and cohort-sunday-cron, are env-disabled one-shots.
+  const guard = await neverSendGuard({ includeClients: false });
+  const recipients = pulled.filter((r) => !guard.blocks(r.email));
+  stats.neverSend = guard.report().excludedCount;
+  console.log(`broadcast: targeting ${recipients.length} (skipped ${stats.unsub + stats.paused + stats.complete + stats.noEmail + stats.neverSend})`);
   const resend = getResend();
   let sent = 0, failed = 0, firstFailure = null;
   for (let i = 0; i < recipients.length; i++) {
@@ -178,5 +196,5 @@ export async function runBroadcast({ subject, renderText, renderHtml }) {
     }
   }
   console.log(`broadcast: done — sent=${sent} failed=${failed}`);
-  return { sent, failed, firstFailure, totalTargeted: recipients.length, elapsedMs: Date.now() - startedAt };
+  return { sent, failed, firstFailure, totalTargeted: recipients.length, ...guard.report(), elapsedMs: Date.now() - startedAt };
 }

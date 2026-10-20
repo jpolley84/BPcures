@@ -59,32 +59,75 @@ export function signUnsubToken({ email, tag = '' }) {
   return Buffer.from(`${payload}.${sig}`).toString('base64url');
 }
 
+// 2026-10-16 FIX: there are TWO token shapes in the wild and this function
+// understood only one of them.
+//   4-field  `email.ts.tag.sig`   minted here by signUnsubToken()
+//   3-field  `email.ts.sig`       minted by _cohort-broadcast.js, which never
+//                                 had a tag field
+// The old code always popped three fields, so on a 3-field token it read the
+// signature, then took the TIMESTAMP as the tag and the address's TLD as the
+// timestamp, leaving `email` short by its last dot segment. Every broadcast
+// built on _cohort-broadcast.js (both WMD endpoints, both encore endpoints,
+// masterclass, heart month, seminar, birthday, the cohort crons, restoreher
+// replay) therefore unsubscribed "person@hotmail" instead of
+// "person@hotmail.com" and then showed the recipient a confirmation page
+// saying they had been removed. That is a CAN-SPAM problem, and it is how
+// bongi269@hotmail.com kept receiving mail after unsubscribing twice.
+//
+// Rather than guess the shape from the field count, try both parses and keep
+// whichever one the signature actually validates. The HMAC decides, so a
+// malformed or forged token still fails closed.
 export function verifyUnsubToken(token) {
   try {
     const decoded = Buffer.from(token, 'base64url').toString('utf8');
     const parts = decoded.split('.');
-    if (parts.length < 4) return null;
-    // 2026-07-16 FIX: emails contain dots, so parse from the RIGHT (sig, tag,
-    // ts are the last three dot-fields; everything before is the email).
-    // The old left-destructure `[email, ts, tag] = parts` truncated every
-    // dotted address ("x@example") and read the timestamp as a tag, turning
-    // every full unsubscribe into a tag-scoped no-op.
-    const sig = parts.pop();
-    const tag = parts.pop();
-    const ts = parts.pop();
-    const email = parts.join('.');
-    const payload = `${email}.${ts}.${tag}`;
-    const tsNum = Number(ts);
-    const current = signWith(SECRET, payload);
-    // Legacy-signed tokens: honored only while the grace window is open and
-    // only for tokens minted before the deadline (timestamp is inside the
-    // signed payload, so it can't be forged forward).
-    const grace =
-      SECRET !== GRACE_SECRET && Date.now() < GRACE_DEADLINE_MS && tsNum < GRACE_DEADLINE_MS
-        ? signWith(GRACE_SECRET, payload)
-        : null;
-    if (sig !== current && sig !== grace) return null;
-    return { email, ts: tsNum, tag: tag || null };
+    if (parts.length < 3) return null;
+    const sig = parts[parts.length - 1];
+
+    // Candidate parses. Each yields the exact payload string its minter
+    // signed, so the signature check below tells us which one is real.
+    const candidates = [];
+    if (parts.length >= 4) {
+      const email = parts.slice(0, -3).join('.');
+      const ts = parts[parts.length - 3];
+      const tag = parts[parts.length - 2];
+      candidates.push({ email, ts, tag, payload: `${email}.${ts}.${tag}` });
+    }
+    {
+      const email = parts.slice(0, -2).join('.');
+      const ts = parts[parts.length - 2];
+      // Two payload shapes share this token string, so try both:
+      //   `email.ts`   the original 3-field minter
+      //   `email.ts.`  _cohort-broadcast.js signs WITH a trailing separator but
+      //                emits only `email.ts.sig`, dropping the empty tag field.
+      //                Missing this candidate 400'd every broadcast unsubscribe
+      //                link, including the 20,022 launch emails on 2026-10-19.
+      candidates.push({ email, ts, tag: '', payload: `${email}.${ts}` });
+      candidates.push({ email, ts, tag: '', payload: `${email}.${ts}.` });
+    }
+
+    for (const c of candidates) {
+      if (!c.email.includes('@')) continue;
+      // The timestamp must be digits. Without this, a 3-field token's 4-field
+      // parse yields payload `local@domain . tld . ts`, which is exactly what
+      // the 3-field minter signed, so the signature validates against an email
+      // missing its TLD. That candidate always has a non-numeric ts (the TLD),
+      // so this one check is what makes the right candidate win.
+      if (!/^\d+$/.test(String(c.ts))) continue;
+      const tsNum = Number(c.ts);
+      const current = signWith(SECRET, c.payload);
+      // Legacy-signed tokens: honored only while the grace window is open and
+      // only for tokens minted before the deadline (timestamp is inside the
+      // signed payload, so it can't be forged forward).
+      const grace =
+        SECRET !== GRACE_SECRET && Date.now() < GRACE_DEADLINE_MS && tsNum < GRACE_DEADLINE_MS
+          ? signWith(GRACE_SECRET, c.payload)
+          : null;
+      if (sig === current || sig === grace) {
+        return { email: c.email, ts: tsNum, tag: c.tag || null };
+      }
+    }
+    return null;
   } catch {
     return null;
   }
