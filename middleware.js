@@ -71,7 +71,28 @@ function readCookie(request, name) {
   return null;
 }
 
-function teaSplit(request, url) {
+// ── 100 g sell-through (2026-10-20, Joel) ───────────────────────────────
+// "reignite the 100g bag site for 12 bags left, then go back to the 150 bags."
+// KV `tea:legacy100:left` holds the 100 g pouches still on the shelf. While it
+// is above 0, /tea serves the legacy 100 g page. triangle-webhook decrements it
+// on each paid 100 g order; at 0 every visitor goes back to Shopify (150 g).
+// KV unreachable or key missing = Shopify, so a hiccup never oversells.
+async function legacyStockLeft() {
+  const base = process.env.KV_REST_API_URL, token = process.env.KV_REST_API_READ_ONLY_TOKEN || process.env.KV_REST_API_TOKEN;
+  if (!base || !token) return 0;
+  try {
+    const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 900);
+    const r = await fetch(`${base}/get/tea:legacy100:left`, { headers: { Authorization: `Bearer ${token}` }, signal: ctrl.signal });
+    clearTimeout(t);
+    const d = await r.json();
+    const n = parseInt(d && d.result, 10);
+    return Number.isFinite(n) ? n : 0;
+  } catch { return 0; }
+}
+
+async function teaSplit(request, url) {
+  const forcedArm = url.searchParams.get('tea');
+  if (!forcedArm && (await legacyStockLeft()) > 0) return serveLegacy(url, null);
   const pct = legacyPct();
 
   // Manual override for testing, mirroring the ?sabbath=force convention
@@ -122,12 +143,12 @@ function sendToShopify(url, reason, setCookie) {
   return new Response(null, { status: 307, headers });
 }
 
-export default function middleware(request) {
+export default async function middleware(request) {
   const url = new URL(request.url);
   const host = url.hostname.toLowerCase();
 
   if (url.pathname === '/tea' || url.pathname === '/tea/' || url.pathname === '/tea/index.html') {
-    return teaSplit(request, url);
+    return await teaSplit(request, url);
   }
 
   if (host === 'changemylifechallenge.com' || host === 'www.changemylifechallenge.com') {

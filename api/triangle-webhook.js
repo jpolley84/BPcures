@@ -34,7 +34,7 @@ import { capturePurchase } from './_triangle-posthog.js';
 import { markPurchase } from './_dupe-guard.js';
 import { pouchGramsOf, withPouchSize } from './_pouch-size.js';
 import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
-import { generateCoachingAgreementPDF, AGREEMENT_PLAN_FILL } from './_coaching-agreement.js';
+import { generateCoachingAgreementPDF, resolveAgreementTier, agreementFillFor } from './_coaching-agreement.js';
 
 assertLiveRoom(ZOOM_MAIN);
 // PARKED 2026-10-05 (Joel): the Q&A Clarity Call is REMOVED from the welcome
@@ -732,6 +732,18 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
     await kv.set(`tea:order:${dedupeId}`, { ...record, fulfilled: false, fulfilledAt: null });
   } catch (err) {
     console.error('recordTeaSale: tea order ledger write failed', err.message);
+  }
+
+  // 2026-10-20: 100 g sell-through counter (middleware.js routes /tea on it).
+  // Runs once per sale: the dedupe guard above returns early on a repeat.
+  if (blend === 'steady' && grams === 100 && !String(source || '').startsWith('shopify')) {
+    try {
+      const pouches = (amountCents || 0) >= 10000 ? 3 : 1;
+      const left = await kv.decrby('tea:legacy100:left', pouches);
+      if (left <= 0) console.log('tea 100g stock exhausted; /tea now sends everyone to Shopify');
+    } catch (err) {
+      console.error('recordTeaSale: 100g stock decrement failed', err.message);
+    }
   }
 
   // Send the buyer their confirmation + ingredient flyer. Best-effort: a send
@@ -1743,17 +1755,34 @@ async function processAllIn(session, plan = 'full') {
   let delivered = Boolean(progress.confirmationSentAt);
   if (!delivered) {
     // Personalized coaching agreement, attached to the welcome email. The
-    // welcome email NEVER waits on the PDF: any generation failure (or an
-    // unknown/legacy plan with no current-era fill) logs and sends without it.
+    // welcome email NEVER waits on the PDF: any generation failure (or a plan
+    // with no fill) logs and sends without it.
+    //
+    // 2026-10-07: the agreement is rendered for the TIER the plan belongs to
+    // ($7,500 Accelerator, $1,997 Accelerator, or the $1,997 Sprint), resolved
+    // from the plan name and the Stripe amount. Before this every plan got the
+    // $7,500 text: Yvonne Wint (sprint-deposit) holds a $7,500 agreement with a
+    // $200/$1,797 signature page. The $7,500 text is now used on a guess ONLY
+    // when the plan or amount is unrecognised, and that guess is logged.
     let agreementPdf = null;
+    let agreementFill = null;
     try {
-      const fill = AGREEMENT_PLAN_FILL[plan];
-      if (fill) {
+      const { tier: agreementTier, fallback: agreementFallback } = resolveAgreementTier(plan, allInAmountCents);
+      if (agreementFallback) {
+        console.warn(
+          `stripe-webhook: all-in plan '${plan}' (amount ${allInAmountCents}) has no agreement tier mapping — ` +
+          'falling back to the $7,500 Accelerator agreement; check the document before she signs',
+          session.id
+        );
+      }
+      agreementFill = agreementFillFor(plan, agreementTier, allInAmountCents);
+      if (agreementFill) {
         agreementPdf = await generateCoachingAgreementPDF({
           name: customerName || '',
           email: customerEmail,
-          paid: fill.paid,
-          balance: fill.balance,
+          paid: agreementFill.paid,
+          balance: agreementFill.balance,
+          tier: agreementTier,
         });
       } else {
         console.error(`stripe-webhook: no agreement fill for all-in plan '${plan}' — welcome email sent WITHOUT the coaching agreement; send it by hand`, session.id);
@@ -1784,7 +1813,7 @@ async function processAllIn(session, plan = 'full') {
             agreementSentAt: agreementPdf ? new Date().toISOString() : null,
             agreementMissingReason: agreementPdf
               ? null
-              : (AGREEMENT_PLAN_FILL[plan] ? 'pdf_generation_failed' : `no_fill_for_plan:${plan}`),
+              : (agreementFill ? 'pdf_generation_failed' : `no_fill_for_plan:${plan}`),
           });
         }
       } catch (err) {

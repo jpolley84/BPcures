@@ -405,6 +405,17 @@ export default async function handler(req, res) {
   }
 
   if (tier === 'tea-48' || tier === 'tea-120') {
+    // 2026-10-20: 100 g stock cap (see middleware.js legacyStockLeft).
+    try {
+      const left = parseInt(await kv.get('tea:legacy100:left'), 10) || 0;
+      const need = tier === 'tea-120' ? 3 : 1;
+      if (left < need) {
+        return res.status(410).json({ error: 'sold_out', message: 'This bag size is sold out. Our 150 g Steady is available at hormoneteas.com/products/steady.' });
+      }
+    } catch (err) {
+      console.error('tea 100g stock read failed, refusing', err.message);
+      return res.status(503).json({ error: 'stock_unavailable', message: 'Checkout is not available right now.' });
+    }
     const TEA_PRICES = {
       'tea-48': process.env.TEA_48_PRICE_ID || 'price_1TqGiaHseZnO3rRZhSCeTi1H',   // 1-Month $48
       'tea-120': process.env.TEA_120_PRICE_ID || 'price_1TqGiWHseZnO3rRZ9XnHorV0', // 90-Day $120
