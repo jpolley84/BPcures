@@ -506,6 +506,14 @@
     {
       "path": "/api/annie-glow-broadcast?cron=1&email=7",
       "schedule": "45,50,55 22 26 10 *"
+    },
+    {
+      "path": "/api/challenge-night-reminder?cron=1",
+      "schedule": "30,40 21 22 10 *"
+    },
+    {
+      "path": "/api/challenge-night-reminder?cron=1",
+      "schedule": "30,40 21 23 10 *"
     }
   ]
 }
