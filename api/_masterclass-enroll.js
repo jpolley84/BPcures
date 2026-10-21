@@ -33,8 +33,8 @@ import { kv } from '@vercel/kv';
 // back to the standing Monday wording with no further edit.
 const WMD_SUNDAY_MS = Date.parse('2026-10-18T23:00:00Z'); // 6pm CT Sun Oct 18
 const isWmdWeek = () => Date.now() < WMD_SUNDAY_MS;
-const classDay = () => (isWmdWeek() ? 'Sunday, October 18' : 'Sunday'); // 2026-10-21 Joel: class moved to Sunday 7 PM ET
-const classDayShort = () => 'Sunday';
+const classDay = () => (isWmdWeek() ? 'Sunday, October 18' : 'Monday');
+const classDayShort = () => (isWmdWeek() ? 'Sunday' : 'Monday');
 
 import { Resend } from './_resend.js';
 
@@ -95,7 +95,7 @@ function confirmationEmail({ firstName, provenance }) {
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Life Beyond the Numbers &middot; Free Live Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
-<p><strong>Life Beyond the Numbers</strong> runs live ${isWmdWeek() ? 'this <strong>Sunday, October 18</strong> for World Menopause Day' : 'this Sunday night'} at <strong>7:00 pm Eastern</strong> (6:00 pm Central &middot; 4:00 pm Pacific).</p>
+<p><strong>Life Beyond the Numbers</strong> runs live ${isWmdWeek() ? 'this <strong>Sunday, October 18</strong> for World Menopause Day' : 'every Monday night'} at <strong>7:00 pm Eastern</strong> (6:00 pm Central &middot; 4:00 pm Pacific).</p>
 <div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
   <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
   <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>

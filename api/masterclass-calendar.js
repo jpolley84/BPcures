@@ -22,7 +22,7 @@ const TZ = 'America/Chicago';
 
 const DESCRIPTION_LINES = [
   'Free live masterclass with two RNs: Joel Polley (blood pressure & numbers) and Annie Chitate (hormones).',
-  'Sundays at 7:00 PM Eastern / 6:00 PM Central, live on Zoom.',
+  'Mondays at 6:00 PM Central / 7:00 PM Eastern, live on Zoom.',
   '',
   `Join here: ${ZOOM_JOIN_URL}`,
   `Meeting ID: ${ZOOM_MEETING_ID}`,
@@ -42,7 +42,7 @@ function nextMondayCT() {
   const now = Date.now();
   for (let add = 0; add < 8; add++) {
     const p = chicagoParts(new Date(now + add * 86400000));
-    if (p.wd !== 'Sun') continue; // 2026-10-21 Joel: Sunday class
+    if (p.wd !== 'Mon') continue;
     if (add === 0 && (p.h > START_HOUR_CT || (p.h === START_HOUR_CT && p.min >= DURATION_MIN))) continue;
     return p;
   }
