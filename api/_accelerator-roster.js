@@ -28,4 +28,9 @@ export const ACCELERATOR_ROSTER = [
   // refunded in full and her plan canceled. The row stays so she keeps being
   // excluded from every bulk send; `withdrawn` is what stops the cohort mail.
   { first: 'Rahab', email: 'sullivanrahab@yahoo.com', withdrawn: '2026-10-01' },
+  // Added 2026-10-21: joined on the $7,500 tier at $350/mo, Accelerator
+  // intake submitted 2026-10-20. She was missing from this file, so the
+  // 10-21 replay send would have skipped her.
+  { first: 'Karen', email: 'kpaug19@gmail.com', note: 'joined 2026-10-20' },
+  { first: 'Yvonne', email: 'yvonnewint12@gmail.com', note: 'Sprint, joined 2026-09-30; card name reads Antonio bromfield' },
 ];
