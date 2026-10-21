@@ -26,7 +26,7 @@ import { neverSendGuard } from './_never_send.js';
 // approved 2026-10-06: Fri 10-09 and Sat 10-10 are rest days, and
 // Day 6 + Day 7 both land on class day 10-12.
 
-const FIRE_DATES = {"1": "2026-10-21"};
+const FIRE_DATES = {"1": "2026-10-21", "2": "2026-10-22", "3": "2026-10-23", "4": "2026-10-25", "5": "2026-10-25", "6": "2026-10-26", "7": "2026-10-26"};
 const CRON_FIRE_DATE = '2026-10-21';
 const FROM = 'Everyday Nurse Annie <annie@restoreherhormones.com>';
 const REPLY_TO = 'annie@restoreherhormones.com';
@@ -168,7 +168,555 @@ P.S. Sometimes the biggest change begins with one question you finally give your
 
 ${DISCLAIMER_TEXT(email)}`,
   },
+  2: {
+    subject: () => "When was the last time you loved a picture of yourself?",
+    preheader: "You do not need to be 25 again.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Can I ask you something?</p><p>When was the last time someone took a picture of you, and you actually LOVED it?</p><p>Not after finding the perfect angle.</p><p>Not after putting a filter on it.</p><p>Not after taking 15 pictures and deleting 14.</p><p>Just you.</p><p>Smiling.</p><p>Looking like a woman who's happy to be in the picture.</p><p>Girl, I know.</p><p>Sometimes you look at an old photograph and think...</p><p><em>There she is.</em></p><p><em>That's the woman I remember.</em></p><p>Maybe her hair was fuller.</p><p>Maybe she had more energy.</p><p>Maybe she loved getting dressed up.</p><p>Or maybe it wasn't even how she looked.</p><p><strong>Maybe it was how she FELT.</strong></p><p>She laughed more.</p><p>She went places.</p><p>She didn't spend so much time worrying about what people thought about her.</p><p>She had a certain spark. a light about her atmosphere</p><p>And somewhere between raising children, working, building a life, caring for everybody else, and going through all these changes in her body...</p><p>She stopped feeling like THAT girl.</p><p>But let me tell you something.</p><p><strong>You do not have to be 25 again to feel beautiful at 55, 65, or 75.</strong></p><p>You don't need somebody else's face.</p><p>You don't need somebody else's body.</p><p>You JUST want to feel good in YOURS.</p><p>That's something I've talked about for years in our Restore Her Glow and Bring Sexy Back teachings.</p><p>Because getting your glow back is about more than what you put on your skin.</p><p>But I love how we as women would almost rather restore our GLOW than fix blood sugar issues.</p><p>BOTH ARE NECESSARY.</p><p>You are not wrong for wanting your skin to have life in it again. your hair to bounce. your eyes to sparkle.</p><p>So imagine something for me.</p><p>The holidays are coming.</p><p>What if you could actually look forward to the family pictures this year?</p><p>What if, instead of finding a place behind everybody else, you felt happy stepping into the picture?</p><p>Not because you suddenly became perfect.</p><p>But because you were learning to love and care for yourself again.</p><p><strong>That's the kind of glow I want us to talk about.</strong></p><p>And before this week is over, I have something special I want to share with you.</p><p>nothing to do with coaching this time. The year is winding down and joel and I need to rest up a bit.</p><p>So look out for the next emails</p><p>I can't wait to share.</p><p>Don't Forget to Love the Girl You're In today.</p><p>Everyday Nurse Annie</p><p>P.S. You are not too old to feel like THAT girl again. And you don't need to look like anybody else to do it.</p>`, email, "You do not need to be 25 again."),
+    text: (name, email) => `Hey \${name},
+
+Can I ask you something?
+
+When was the last time someone took a picture of you, and you actually LOVED it?
+
+Not after finding the perfect angle.
+
+Not after putting a filter on it.
+
+Not after taking 15 pictures and deleting 14.
+
+Just you.
+
+Smiling.
+
+Looking like a woman who's happy to be in the picture.
+
+Girl, I know.
+
+Sometimes you look at an old photograph and think...
+
+There she is.
+
+That's the woman I remember.
+
+Maybe her hair was fuller.
+
+Maybe she had more energy.
+
+Maybe she loved getting dressed up.
+
+Or maybe it wasn't even how she looked.
+
+Maybe it was how she FELT.
+
+She laughed more.
+
+She went places.
+
+She didn't spend so much time worrying about what people thought about her.
+
+She had a certain spark. a light about her atmosphere
+
+And somewhere between raising children, working, building a life, caring for everybody else, and going through all these changes in her body...
+
+She stopped feeling like THAT girl.
+
+But let me tell you something.
+
+You do not have to be 25 again to feel beautiful at 55, 65, or 75.
+
+You don't need somebody else's face.
+
+You don't need somebody else's body.
+
+You JUST want to feel good in YOURS.
+
+That's something I've talked about for years in our Restore Her Glow and Bring Sexy Back teachings.
+
+Because getting your glow back is about more than what you put on your skin.
+
+But I love how we as women would almost rather restore our GLOW than fix blood sugar issues.
+
+BOTH ARE NECESSARY.
+
+You are not wrong for wanting your skin to have life in it again. your hair to bounce. your eyes to sparkle.
+
+So imagine something for me.
+
+The holidays are coming.
+
+What if you could actually look forward to the family pictures this year?
+
+What if, instead of finding a place behind everybody else, you felt happy stepping into the picture?
+
+Not because you suddenly became perfect.
+
+But because you were learning to love and care for yourself again.
+
+That's the kind of glow I want us to talk about.
+
+And before this week is over, I have something special I want to share with you.
+
+nothing to do with coaching this time. The year is winding down and joel and I need to rest up a bit.
+
+So look out for the next emails
+
+I can't wait to share.
+
+Don't Forget to Love the Girl You're In today.
+
+Everyday Nurse Annie
+
+P.S. You are not too old to feel like THAT girl again. And you don't need to look like anybody else to do it.
+
+${DISCLAIMER_TEXT(email)}`,
+  },
+  3: {
+    subject: () => "Should we do this? Reply YES",
+    preheader: "One time only, and I want your opinion first.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Can you feel the holidays coming?</p><p>I'm totally cheesing as I write this....</p><p>Thanksgiving...</p><p>Then Christmas.</p><p>Then the new year... a fresh start!</p><p>The family gatherings.</p><p>The pictures.</p><p>The people you haven't seen in months or years</p><p>And you know there's always that ONE relative who has something to say about everybody!</p><p>But I want you to imagine something different this year.</p><p>What if you walked into that room feeling GOOD about yourself?</p><p>Not wondering if everybody can see how tired you've been.</p><p>Just walking in with your head up.</p><p>Loving the body that has held you up... well it's held EVERYBODY up.</p><p>Your smile.</p><p>Your energy.</p><p>Your confidence.</p><p>And someone looks at you and says...</p><p><strong>"Girl, something is different about you!"</strong></p><p>Wouldn't that feel good?</p><p>But here's what would feel even better.</p><p>If You already knew.</p><p>If You noticed it when you looked in the mirror that morning.</p><p>And you didn't need anybody else to tell you.</p><p>Girl, that's what I mean when I talk about getting your GLOW back.</p><p>Not trying to be somebody else.</p><p>Not chasing the woman you were at 25.</p><p><strong>But feeling alive, beautiful, and at home in your own body again.</strong></p><p>And here's the thing.</p><p>You don't have to wait until January to start working toward that.</p><p>In fact, I have something exciting I'm thinking about doing</p><p>Literally A ONE TIME THING EVER!</p><p><strong>Monday, October 26, I am thinking about ditching all the medical talk for a second and doing a masterclass on how you can restore your glow from the inside out!</strong></p><p>So you can glow out of control</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out!</em></p><p>A No cost masterclass... well it will cost us both our time and time is infinitely more valuable than money.</p><p>But I want to step away from our usual blood pressure conversations to talk about something so many women have been quietly missing.</p><p>Their spark.</p><p>Their energy.</p><p>Their confidence.</p><p>That feeling of being beautiful and alive in their own skin.</p><p>And how to begin caring for the woman underneath all those changes.</p><p>No need to wait for another New Year's resolution.</p><p>If you think it's a good idea, or if this would be something you would be interested in let me know by responding ... just reply YES.</p><p>Because the holidays are coming, my friend.</p><p>And this year, I want YOU to enjoy being part of the celebration.</p><p>I want you to Love the Girl You're In,</p><p>Everyday Nurse Annie</p><p>P.S. What if next year's holiday pictures told a whole different story? It starts with the way you choose to care for yourself today.</p>`, email, "One time only, and I want your opinion first."),
+    text: (name, email) => `Hey \${name},
+
+Can you feel the holidays coming?
+
+I'm totally cheesing as I write this....
+
+Thanksgiving...
+
+Then Christmas.
+
+Then the new year... a fresh start!
+
+The family gatherings.
+
+The pictures.
+
+The people you haven't seen in months or years
+
+And you know there's always that ONE relative who has something to say about everybody!
+
+But I want you to imagine something different this year.
+
+What if you walked into that room feeling GOOD about yourself?
+
+Not wondering if everybody can see how tired you've been.
+
+Just walking in with your head up.
+
+Loving the body that has held you up... well it's held EVERYBODY up.
+
+Your smile.
+
+Your energy.
+
+Your confidence.
+
+And someone looks at you and says...
+
+"Girl, something is different about you!"
+
+Wouldn't that feel good?
+
+But here's what would feel even better.
+
+If You already knew.
+
+If You noticed it when you looked in the mirror that morning.
+
+And you didn't need anybody else to tell you.
+
+Girl, that's what I mean when I talk about getting your GLOW back.
+
+Not trying to be somebody else.
+
+Not chasing the woman you were at 25.
+
+But feeling alive, beautiful, and at home in your own body again.
+
+And here's the thing.
+
+You don't have to wait until January to start working toward that.
+
+In fact, I have something exciting I'm thinking about doing
+
+Literally A ONE TIME THING EVER!
+
+Monday, October 26, I am thinking about ditching all the medical talk for a second and doing a masterclass on how you can restore your glow from the inside out!
+
+So you can glow out of control
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out!
+
+A No cost masterclass... well it will cost us both our time and time is infinitely more valuable than money.
+
+But I want to step away from our usual blood pressure conversations to talk about something so many women have been quietly missing.
+
+Their spark.
+
+Their energy.
+
+Their confidence.
+
+That feeling of being beautiful and alive in their own skin.
+
+And how to begin caring for the woman underneath all those changes.
+
+No need to wait for another New Year's resolution.
+
+If you think it's a good idea, or if this would be something you would be interested in let me know by responding ... just reply YES.
+
+Because the holidays are coming, my friend.
+
+And this year, I want YOU to enjoy being part of the celebration.
+
+I want you to Love the Girl You're In,
+
+Everyday Nurse Annie
+
+P.S. What if next year's holiday pictures told a whole different story? It starts with the way you choose to care for yourself today.
+
+${DISCLAIMER_TEXT(email)}`,
+  },
+  4: {
+    subject: () => "We're doing it. Monday night.",
+    preheader: "You helped me decide.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Remember Thursday?</p><p>I asked you whether Joel and I should do something completely different for our Monday masterclass.</p><p>Something a little less about what's WRONG with your body...</p><p>And a whole lot more about what's still RIGHT with the woman living inside it.</p><p>Well...</p><p><strong>I'VE DECIDED. WE'RE DOING IT!</strong></p><p>And I have a feeling this is going to be one of my FAVORITE conversations of the year.</p><p>Because, girl, I want to talk about YOU.</p><p>Not just your blood pressure.</p><p>Not just your weight.</p><p>Not just the symptoms you've been trying to figure out.</p><p><strong>I want to talk about the woman underneath all of that.</strong></p><p>The one who still wants to feel beautiful.</p><p>Who still wants her hair to bounce and her eyes to sparkle.</p><p>Who wants to wake up with energy instead of already feeling exhausted.</p><p>Who wants to get dressed up and feel FABULOUS.</p><p>And who wants to enjoy the holidays without feeling like her own body is holding her back.</p><p>You know, there's something I've noticed.</p><p>Sometimes we get so busy trying to fix what's wrong with our bodies that we forget what we're trying to get BETTER FOR.</p><p>Think about that.</p><p>What's the point of better health if you never get around to enjoying your life?</p><p>Girl, I want BOTH for you.</p><p><strong>That's why tomorrow night we're doing:</strong></p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS!</strong></p><p><em>Glow Out of Control; From the Inside Out!</em></p><p>A special, one-time LIVE masterclass with Joel and me.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>And there's no cost to attend.</p><p>YES! SAVE MY SEAT FOR THE GLOW MASTERCLASS:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>We're going to talk about what it means to get your glow back from the inside out.</p><p>And I'm going to show you why the woman you've been missing may not be as far away as you think.</p><p>Oh, and one more thing...</p><p>Joel and I have something special we're going to reveal tomorrow night.</p><p>But I'm not telling you about that yet!</p><p>First, I want you to come and see what's possible for YOU.</p><p>Don't Forget to Love the Girl You're In!</p><p>Everyday Nurse Annie</p><p>P.S. If you replied YES to my email Friday, here's your invitation! Make sure you actually reserve your seat so you get the details for tomorrow night.</p>`, email, "You helped me decide."),
+    text: (name, email) => `Hey \${name},
+
+Remember Thursday?
+
+I asked you whether Joel and I should do something completely different for our Monday masterclass.
+
+Something a little less about what's WRONG with your body...
+
+And a whole lot more about what's still RIGHT with the woman living inside it.
+
+Well...
+
+I'VE DECIDED. WE'RE DOING IT!
+
+And I have a feeling this is going to be one of my FAVORITE conversations of the year.
+
+Because, girl, I want to talk about YOU.
+
+Not just your blood pressure.
+
+Not just your weight.
+
+Not just the symptoms you've been trying to figure out.
+
+I want to talk about the woman underneath all of that.
+
+The one who still wants to feel beautiful.
+
+Who still wants her hair to bounce and her eyes to sparkle.
+
+Who wants to wake up with energy instead of already feeling exhausted.
+
+Who wants to get dressed up and feel FABULOUS.
+
+And who wants to enjoy the holidays without feeling like her own body is holding her back.
+
+You know, there's something I've noticed.
+
+Sometimes we get so busy trying to fix what's wrong with our bodies that we forget what we're trying to get BETTER FOR.
+
+Think about that.
+
+What's the point of better health if you never get around to enjoying your life?
+
+Girl, I want BOTH for you.
+
+That's why tomorrow night we're doing:
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS!
+
+Glow Out of Control; From the Inside Out!
+
+A special, one-time LIVE masterclass with Joel and me.
+
+Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+And there's no cost to attend.
+
+YES! SAVE MY SEAT FOR THE GLOW MASTERCLASS:
+https://restoreherhormones.com/masterclass
+
+We're going to talk about what it means to get your glow back from the inside out.
+
+And I'm going to show you why the woman you've been missing may not be as far away as you think.
+
+Oh, and one more thing...
+
+Joel and I have something special we're going to reveal tomorrow night.
+
+But I'm not telling you about that yet!
+
+First, I want you to come and see what's possible for YOU.
+
+Don't Forget to Love the Girl You're In!
+
+Everyday Nurse Annie
+
+P.S. If you replied YES to my email Friday, here's your invitation! Make sure you actually reserve your seat so you get the details for tomorrow night.
+
+${DISCLAIMER_TEXT(email)}`,
+  },
+  5: {
+    subject: () => "Bring three things with you Monday",
+    preheader: "Non-registrants only.",
+    only: 'nonregistrants',
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Tomorrow night, we're doing our special Restore Your Glow masterclass.</p><p>And I want you to bring three things.</p><p><strong>1. A picture of the woman you want to be.</strong></p><p>Not somebody else's picture.</p><p>I'm talking about the YOU who wakes up with energy, feels confident in her body, and actually enjoys getting dressed in the morning.</p><p><strong>2. One thing you wish you could change.</strong></p><p>Maybe it's your hair.</p><p>Your skin.</p><p>Your weight.</p><p>Your energy.</p><p>Or maybe it's simply wanting to look in the mirror and smile again.</p><p>Whatever it is, I want you to think about it before you come.</p><p><strong>3. An open mind.</strong></p><p>Because sometimes we've told ourselves a story for so long that we start believing it's the only story possible.</p><p>"I'm too old."</p><p>"This is just menopause."</p><p>"I'll never feel like myself again."</p><p>Girl, what if there's another way to look at it?</p><p>That's what I want us to explore tomorrow.</p><p>And I have a very special announcement waiting for you too.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>YES, ANNIE! SAVE MY SEAT:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>Come with that one thing you wish could change.</p><p>I want you thinking about it throughout our time together.</p><p>Because tomorrow, we're talking about HER.</p><p>The woman you still get to become.</p><p>Love the Girl You're In,</p><p>Everyday Nurse Annie</p><p>P.S. This is a special LIVE class, not one of our regular Monday presentations. I'd love for you to be there.</p>`, email, "Non-registrants only."),
+    text: (name, email) => `Hey \${name},
+
+Tomorrow night, we're doing our special Restore Your Glow masterclass.
+
+And I want you to bring three things.
+
+1. A picture of the woman you want to be.
+
+Not somebody else's picture.
+
+I'm talking about the YOU who wakes up with energy, feels confident in her body, and actually enjoys getting dressed in the morning.
+
+2. One thing you wish you could change.
+
+Maybe it's your hair.
+
+Your skin.
+
+Your weight.
+
+Your energy.
+
+Or maybe it's simply wanting to look in the mirror and smile again.
+
+Whatever it is, I want you to think about it before you come.
+
+3. An open mind.
+
+Because sometimes we've told ourselves a story for so long that we start believing it's the only story possible.
+
+"I'm too old."
+
+"This is just menopause."
+
+"I'll never feel like myself again."
+
+Girl, what if there's another way to look at it?
+
+That's what I want us to explore tomorrow.
+
+And I have a very special announcement waiting for you too.
+
+Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+YES, ANNIE! SAVE MY SEAT:
+https://restoreherhormones.com/masterclass
+
+Come with that one thing you wish could change.
+
+I want you thinking about it throughout our time together.
+
+Because tomorrow, we're talking about HER.
+
+The woman you still get to become.
+
+Love the Girl You're In,
+
+Everyday Nurse Annie
+
+P.S. This is a special LIVE class, not one of our regular Monday presentations. I'd love for you to be there.
+
+${DISCLAIMER_TEXT(email)}`,
+  },
+  6: {
+    subject: () => "Tonight is the night",
+    preheader: "And we have something brand new to reveal.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)}!</p><p>Girl, today's the day!</p><p>And I have been looking forward to this one ALL WEEK!</p><p>You know, for the past few weeks, Joel and I have talked a lot about health.</p><p>Blood pressure.</p><p>Blood sugar.</p><p>Hormones.</p><p>Weight.</p><p>All the things that start changing in our bodies as we get older.</p><p>And you know what?</p><p>We're not stopping those conversations.</p><p>Because your health MATTERS.</p><p>But tonight...</p><p><strong>I want to talk about the woman we're trying to get healthy in the FIRST PLACE!</strong></p><p>Come on, girl!</p><p>Because you don't just want better numbers at your next doctor's appointment.</p><p>You want enough energy to enjoy your grandchildren.</p><p>You want to go on that trip.</p><p>You want to feel good when your husband looks at you.</p><p>You want beautiful, healthy-looking skin.</p><p>You want your hair to have some LIFE in it!</p><p>You want to take a picture without spending ten minutes finding the perfect filter.</p><p>And you want to walk into a room feeling like THAT girl again!</p><p>Am I right?</p><p><strong>Girl, you want your GLOW back!</strong></p><p>And I'm not talking about trying to look 25.</p><p>I'm talking about looking in the mirror and loving the woman you've become.</p><p>Feeling ALIVE.</p><p>Feeling confident.</p><p>Having the energy to enjoy the life you've worked so hard to build.</p><p>And still having a little sparkle left over for yourself!</p><p>That's what tonight is about.</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS!</strong></p><p><em>Glow Out of Control; From the Inside Out!</em></p><p>Tonight, Joel and I are going to help you look at what's been dimming your glow.</p><p>We're going to talk about the woman underneath all those symptoms.</p><p>And we're going to explore how you can begin caring for her from the inside out.</p><p>So you can stop feeling like you're watching your best years disappear...</p><p>And start looking forward to everything you still get to enjoy.</p><p>And YES...</p><p><strong>We've got something brand-new to reveal tonight!</strong></p><p>Something we've been working on behind the scenes.</p><p>Something I'm really excited about.</p><p>But you'll have to come tonight to hear about it first!</p><p><strong>TONIGHT, Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p><strong>LIVE with Annie and Joel</strong></p><p>No cost to attend.</p><p>YES! I WANT TO GLOW OUT OF CONTROL:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>And before you come, I want you to think about one question.</p><p><strong>If you woke up tomorrow feeling like THAT girl again, what would you do differently?</strong></p><p>Would you wear the dress?</p><p>Book the trip?</p><p>Take the picture?</p><p>Go on that date?</p><p>Or simply walk past the mirror and smile?</p><p>Hold on to that answer.</p><p>Because tonight, we're talking about the woman who deserves to live that life.</p><p>I cannot WAIT to see you!</p><p>Don't Forget to Love the Girl You're In!</p><p>Everyday Nurse Annie</p><p>P.S. This is our special one-time Glow masterclass. Clear a little space for yourself tonight. You've spent enough evenings taking care of everybody else!</p>`, email, "And we have something brand new to reveal."),
+    text: (name, email) => `Hey \${name}!
+
+Girl, today's the day!
+
+And I have been looking forward to this one ALL WEEK!
+
+You know, for the past few weeks, Joel and I have talked a lot about health.
+
+Blood pressure.
+
+Blood sugar.
+
+Hormones.
+
+Weight.
+
+All the things that start changing in our bodies as we get older.
+
+And you know what?
+
+We're not stopping those conversations.
+
+Because your health MATTERS.
+
+But tonight...
+
+I want to talk about the woman we're trying to get healthy in the FIRST PLACE!
+
+Come on, girl!
+
+Because you don't just want better numbers at your next doctor's appointment.
+
+You want enough energy to enjoy your grandchildren.
+
+You want to go on that trip.
+
+You want to feel good when your husband looks at you.
+
+You want beautiful, healthy-looking skin.
+
+You want your hair to have some LIFE in it!
+
+You want to take a picture without spending ten minutes finding the perfect filter.
+
+And you want to walk into a room feeling like THAT girl again!
+
+Am I right?
+
+Girl, you want your GLOW back!
+
+And I'm not talking about trying to look 25.
+
+I'm talking about looking in the mirror and loving the woman you've become.
+
+Feeling ALIVE.
+
+Feeling confident.
+
+Having the energy to enjoy the life you've worked so hard to build.
+
+And still having a little sparkle left over for yourself!
+
+That's what tonight is about.
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS!
+
+Glow Out of Control; From the Inside Out!
+
+Tonight, Joel and I are going to help you look at what's been dimming your glow.
+
+We're going to talk about the woman underneath all those symptoms.
+
+And we're going to explore how you can begin caring for her from the inside out.
+
+So you can stop feeling like you're watching your best years disappear...
+
+And start looking forward to everything you still get to enjoy.
+
+And YES...
+
+We've got something brand-new to reveal tonight!
+
+Something we've been working on behind the scenes.
+
+Something I'm really excited about.
+
+But you'll have to come tonight to hear about it first!
+
+TONIGHT, Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+LIVE with Annie and Joel
+
+No cost to attend.
+
+YES! I WANT TO GLOW OUT OF CONTROL:
+https://restoreherhormones.com/masterclass
+
+And before you come, I want you to think about one question.
+
+If you woke up tomorrow feeling like THAT girl again, what would you do differently?
+
+Would you wear the dress?
+
+Book the trip?
+
+Take the picture?
+
+Go on that date?
+
+Or simply walk past the mirror and smile?
+
+Hold on to that answer.
+
+Because tonight, we're talking about the woman who deserves to live that life.
+
+I cannot WAIT to see you!
+
+Don't Forget to Love the Girl You're In!
+
+Everyday Nurse Annie
+
+P.S. This is our special one-time Glow masterclass. Clear a little space for yourself tonight. You've spent enough evenings taking care of everybody else!
+
+${DISCLAIMER_TEXT(email)}`,
+  },
+  7: {
+    subject: () => "We're about to go live",
+    preheader: "Registrants only. Here is your room.",
+    only: 'registrants',
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)}!</p><p>Girl, are you READY?</p><p>We're about to go LIVE!</p><p>Tonight, we're setting aside all those things you've been worried about...</p><p>And giving some attention to the woman underneath them.</p><p>Your energy.</p><p>Your confidence.</p><p>Your beauty.</p><p>Your GLOW!</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out!</em></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>CLICK HERE TO JOIN US LIVE:<br><a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="color:#112d4d;font-weight:700">https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1</a></p><p>Meeting ID: 828 5171 5003<br>Passcode: 027302</p><p>Grab your notebook.</p><p>Bring that ONE thing you wish could change.</p><p>And come on in!</p><p>We've got a special evening planned, and something brand-new to reveal.</p><p>See you inside!</p><p>Annie and Joel</p>`, email, "Registrants only. Here is your room."),
+    text: (name, email) => `Hey \${name}!
+
+Girl, are you READY?
+
+We're about to go LIVE!
+
+Tonight, we're setting aside all those things you've been worried about...
+
+And giving some attention to the woman underneath them.
+
+Your energy.
+
+Your confidence.
+
+Your beauty.
+
+Your GLOW!
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out!
+
+7 PM Eastern / 6 PM Central
+
+CLICK HERE TO JOIN US LIVE:
+https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1
+
+Meeting ID: 828 5171 5003
+Passcode: 027302
+
+Grab your notebook.
+
+Bring that ONE thing you wish could change.
+
+And come on in!
+
+We've got a special evening planned, and something brand-new to reveal.
+
+See you inside!
+
+Annie and Joel
+
+${DISCLAIMER_TEXT(email)}`,
+  },
 };
+
 let _resend = null;
 function getResend() {
   if (!_resend) {
@@ -244,7 +792,7 @@ export default async function handler(req, res) {
   if (!isAuthorizedCron(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const emailNum = Number(req.query?.email);
-  if (![1].includes(emailNum)) return res.status(400).json({ error: 'pass ?email=1' });
+  if (![1, 2, 3, 4, 5, 6, 7].includes(emailNum)) return res.status(400).json({ error: 'pass ?email=1..7' });
   const template = EMAILS[emailNum];
   const SENT_SET = `${SENT_SET_PREFIX}${emailNum}`;
 
@@ -260,7 +808,32 @@ export default async function handler(req, res) {
   const coachingClients = await loadCoachingClients();
   const encoreSkip = await challengeBuyers();
   const segment = (await kv.hgetall(SEGMENT_KEY)) || {};
-  const emails = Object.keys(segment);
+  // Emails 5 and 7 split on who registered (2026-10-21). Annie's registrations
+  // live in the Resend "Joint Monday Masterclass" audience, not KV, because
+  // restoreherhormones has no KV.
+  let emails = Object.keys(segment);
+  if (template.only) {
+    let registrants = new Set();
+    try {
+      const r = await fetch('https://api.resend.com/audiences/f345f465-7a00-4d92-8f4a-9788b4feb8ff/contacts', {
+        headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}` },
+      });
+      const j = await r.json();
+      for (const c of (j.data || [])) {
+        if (c?.email && c.unsubscribed !== true) registrants.add(String(c.email).trim().toLowerCase());
+      }
+    } catch (err) {
+      return res.status(500).json({ error: 'registrant audience unavailable; refusing to send', detail: err.message });
+    }
+    const before = emails.length;
+    emails = template.only === 'registrants'
+      ? emails.filter((e) => registrants.has(String(e).trim().toLowerCase()))
+      : emails.filter((e) => !registrants.has(String(e).trim().toLowerCase()));
+    console.log(`glow email ${emailNum}: only=${template.only} registrants=${registrants.size} audience ${before} -> ${emails.length}`);
+    if (template.only === 'registrants' && emails.length === 0) {
+      return res.status(200).json({ ok: true, skipped: 'no registrants yet', emailNum });
+    }
+  }
   if (emails.length === 0) return res.status(500).json({ error: 'segment empty — run scripts/load-annie-masterclass-segment-2026-09-14.mjs' });
 
   let unsub;

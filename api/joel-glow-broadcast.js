@@ -30,7 +30,7 @@ const REGISTER_URL = 'https://bpquiz.com/masterclass/v3/';
 // approved 2026-10-06: Fri 10-09 and Sat 10-10 are rest days, and
 // Day 6 + Day 7 both land on class day 10-12.
 
-const FIRE_DATES = {"1": "2026-10-21"};
+const FIRE_DATES = {"1": "2026-10-21", "2": "2026-10-22", "3": "2026-10-23", "4": "2026-10-25", "5": "2026-10-25", "6": "2026-10-26", "7": "2026-10-26"};
 const CRON_FIRE_DATE = '2026-10-21';
 const RATE_LIMIT_MS = 70;
 const MAX_RUN_MS = 250 * 1000;
@@ -164,7 +164,415 @@ Joel Polley, RN
 
 P.S. Sometimes the biggest change starts with one question you finally give yourself permission to answer.`,
   },
+  2: {
+    subject: "The version of you that you miss",
+    preheader: "You do not have to be 25 again.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Let me ask you something.</p><p>When was the last time somebody took a picture of you and you actually liked it?</p><p>Not after finding the right angle.</p><p>Not after a filter.</p><p>Not after taking fifteen and deleting fourteen.</p><p>Just you, looking like somebody glad to be in the photo.</p><p>I know how that goes.</p><p>Sometimes you see an old picture and think, there I am. That is the person I remember.</p><p>Maybe there was more hair. Maybe more energy. Maybe you actually liked getting dressed.</p><p>Or maybe it had nothing to do with how you looked.</p><p><strong>Maybe it was how you FELT.</strong></p><p>You laughed more.</p><p>You went places.</p><p>You did not spend so much time wondering what people thought.</p><p>There was a spark there.</p><p>And somewhere between raising kids, working, building a life, carrying everybody else, and your body changing underneath you...</p><p>That person got quiet.</p><p>Here is what I want you to hear.</p><p><strong>You do not have to be 25 again to feel good at 55, 65, or 75.</strong></p><p>You do not need somebody else's body.</p><p>You want to feel good in your own.</p><p>Annie has taught this for years in her Restore Her Glow and Bring Sexy Back work, and I used to think it sat beside the real medicine.</p><p>I was wrong about that.</p><p>Because getting your spark back is not vanity. It is the reason anybody bothers getting healthy in the first place.</p><p>I have watched people fight their blood pressure for a year, win, and still not enjoy their own life. The numbers moved and nothing else did.</p><p><strong>Both matter. The numbers and the person carrying them.</strong></p><p>So picture something.</p><p>The holidays are coming.</p><p>What if you were actually looking forward to the pictures this year?</p><p>What if instead of finding a spot behind everybody else, you stepped into the frame?</p><p>Not because anything got perfect.</p><p>Because you finally started taking care of yourself again.</p><p><strong>That is the conversation I want to have with you.</strong></p><p>And before this week is out I have something to tell you about.</p><p>Nothing to do with coaching this time. The year is winding down and Annie and I need some rest ourselves.</p><p>Watch for the next email.</p><p>Joel Polley, RN</p><p>P.S. You are not too old to feel like that person again, and you do not have to look like anybody else to do it.</p>`, "You do not have to be 25 again.", email),
+    text: (name, email) => `Hey \${name},
+
+Let me ask you something.
+
+When was the last time somebody took a picture of you and you actually liked it?
+
+Not after finding the right angle.
+
+Not after a filter.
+
+Not after taking fifteen and deleting fourteen.
+
+Just you, looking like somebody glad to be in the photo.
+
+I know how that goes.
+
+Sometimes you see an old picture and think, there I am. That is the person I remember.
+
+Maybe there was more hair. Maybe more energy. Maybe you actually liked getting dressed.
+
+Or maybe it had nothing to do with how you looked.
+
+Maybe it was how you FELT.
+
+You laughed more.
+
+You went places.
+
+You did not spend so much time wondering what people thought.
+
+There was a spark there.
+
+And somewhere between raising kids, working, building a life, carrying everybody else, and your body changing underneath you...
+
+That person got quiet.
+
+Here is what I want you to hear.
+
+You do not have to be 25 again to feel good at 55, 65, or 75.
+
+You do not need somebody else's body.
+
+You want to feel good in your own.
+
+Annie has taught this for years in her Restore Her Glow and Bring Sexy Back work, and I used to think it sat beside the real medicine.
+
+I was wrong about that.
+
+Because getting your spark back is not vanity. It is the reason anybody bothers getting healthy in the first place.
+
+I have watched people fight their blood pressure for a year, win, and still not enjoy their own life. The numbers moved and nothing else did.
+
+Both matter. The numbers and the person carrying them.
+
+So picture something.
+
+The holidays are coming.
+
+What if you were actually looking forward to the pictures this year?
+
+What if instead of finding a spot behind everybody else, you stepped into the frame?
+
+Not because anything got perfect.
+
+Because you finally started taking care of yourself again.
+
+That is the conversation I want to have with you.
+
+And before this week is out I have something to tell you about.
+
+Nothing to do with coaching this time. The year is winding down and Annie and I need some rest ourselves.
+
+Watch for the next email.
+
+Joel Polley, RN
+
+P.S. You are not too old to feel like that person again, and you do not have to look like anybody else to do it.`,
+  },
+  3: {
+    subject: "I need your opinion on something",
+    preheader: "A one-time class, if you want it.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Can you feel the holidays coming?</p><p>Thanksgiving. Then Christmas. Then a new year and a fresh start.</p><p>The gatherings. The pictures. People you have not seen in months, sometimes years.</p><p>And there is always that one relative with something to say about everybody.</p><p>But picture something different this year.</p><p>What if you walked into that room feeling good about yourself?</p><p>Not wondering whether everybody can tell how tired you have been.</p><p>Just walking in with your head up.</p><p>Your energy. Your confidence. Your smile.</p><p>And somebody looks at you and says, <strong>something is different about you.</strong></p><p>That would feel good.</p><p>But here is what would feel better.</p><p>You already knew.</p><p>You noticed it in the mirror that morning, and you did not need anybody to confirm it.</p><p>That is what Annie means when she talks about getting your glow back.</p><p>Not trying to be someone else. Not chasing who you were at 25.</p><p><strong>Feeling alive and at home in your own body again.</strong></p><p>And you do not have to wait until January to start.</p><p>So here is what I am thinking about doing.</p><p>Something we have never done before and probably will not do again.</p><p><strong>Monday, October 26, putting the medical talk down for one night and letting Annie teach how you restore your glow from the inside out.</strong></p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out</em></p><p>No cost to attend. It costs us both our time, and time is worth more than money.</p><p>I want to step away from the usual blood pressure conversation and talk about what a lot of people have quietly been missing.</p><p>Their spark. Their energy. Their confidence. The feeling of being alive in their own skin.</p><p>And how to start caring for the person underneath all the changes.</p><p>No waiting for another New Year's resolution.</p><p>If you think that is a good idea, or you would want to be there, tell me. <strong>Just reply YES.</strong></p><p>The holidays are coming, friend.</p><p>This year I want you enjoying them.</p><p>Joel Polley, RN</p><p>P.S. What if next year's holiday pictures told a different story? It starts with how you choose to take care of yourself today.</p>`, "A one-time class, if you want it.", email),
+    text: (name, email) => `Hey \${name},
+
+Can you feel the holidays coming?
+
+Thanksgiving. Then Christmas. Then a new year and a fresh start.
+
+The gatherings. The pictures. People you have not seen in months, sometimes years.
+
+And there is always that one relative with something to say about everybody.
+
+But picture something different this year.
+
+What if you walked into that room feeling good about yourself?
+
+Not wondering whether everybody can tell how tired you have been.
+
+Just walking in with your head up.
+
+Your energy. Your confidence. Your smile.
+
+And somebody looks at you and says, something is different about you.
+
+That would feel good.
+
+But here is what would feel better.
+
+You already knew.
+
+You noticed it in the mirror that morning, and you did not need anybody to confirm it.
+
+That is what Annie means when she talks about getting your glow back.
+
+Not trying to be someone else. Not chasing who you were at 25.
+
+Feeling alive and at home in your own body again.
+
+And you do not have to wait until January to start.
+
+So here is what I am thinking about doing.
+
+Something we have never done before and probably will not do again.
+
+Monday, October 26, putting the medical talk down for one night and letting Annie teach how you restore your glow from the inside out.
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out
+
+No cost to attend. It costs us both our time, and time is worth more than money.
+
+I want to step away from the usual blood pressure conversation and talk about what a lot of people have quietly been missing.
+
+Their spark. Their energy. Their confidence. The feeling of being alive in their own skin.
+
+And how to start caring for the person underneath all the changes.
+
+No waiting for another New Year's resolution.
+
+If you think that is a good idea, or you would want to be there, tell me. Just reply YES.
+
+The holidays are coming, friend.
+
+This year I want you enjoying them.
+
+Joel Polley, RN
+
+P.S. What if next year's holiday pictures told a different story? It starts with how you choose to take care of yourself today.`,
+  },
+  4: {
+    subject: "It's happening Monday night",
+    preheader: "You helped decide this one.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Remember Friday?</p><p>I asked whether Annie and I should do something completely different for Monday.</p><p>A little less about what is wrong with your body.</p><p>A lot more about what is still right with the person living in it.</p><p><strong>We're doing it.</strong></p><p>And I think it is going to be one of my favorite nights of the year.</p><p>Because I want to talk about you.</p><p>Not just your blood pressure. Not just your weight. Not just the symptoms you have been trying to work out.</p><p><strong>I want to talk about the person underneath all of it.</strong></p><p>The one who still wants to feel good.</p><p>Who wants to wake up with energy instead of already tired.</p><p>Who wants to get dressed and feel like themselves.</p><p>Who wants to enjoy the holidays without their own body getting in the way.</p><p>Here is something I have noticed in twenty years of this work.</p><p>We get so busy fixing what is wrong with the body that we forget what we are trying to get better FOR.</p><p>Sit with that a second.</p><p>What is the point of better health if you never get around to enjoying your life?</p><p>I want both for you.</p><p><strong>So tomorrow night:</strong></p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out</em></p><p>A one-time live masterclass with Annie and me.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>No cost to attend.</p><p>SAVE MY SEAT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>We are going to talk about what it actually takes to get your spark back from the inside out.</p><p>And Annie is going to show you why the person you have been missing may be closer than you think.</p><p>One more thing. We have something to reveal tomorrow night that we have been working on behind the scenes.</p><p>I am not telling you what it is yet.</p><p>Come and see.</p><p>Joel Polley, RN</p><p>P.S. If you replied YES on Friday, this is your invitation. Reserve the seat so you get tomorrow night's details.</p>`, "You helped decide this one.", email),
+    text: (name, email) => `Hey \${name},
+
+Remember Friday?
+
+I asked whether Annie and I should do something completely different for Monday.
+
+A little less about what is wrong with your body.
+
+A lot more about what is still right with the person living in it.
+
+We're doing it.
+
+And I think it is going to be one of my favorite nights of the year.
+
+Because I want to talk about you.
+
+Not just your blood pressure. Not just your weight. Not just the symptoms you have been trying to work out.
+
+I want to talk about the person underneath all of it.
+
+The one who still wants to feel good.
+
+Who wants to wake up with energy instead of already tired.
+
+Who wants to get dressed and feel like themselves.
+
+Who wants to enjoy the holidays without their own body getting in the way.
+
+Here is something I have noticed in twenty years of this work.
+
+We get so busy fixing what is wrong with the body that we forget what we are trying to get better FOR.
+
+Sit with that a second.
+
+What is the point of better health if you never get around to enjoying your life?
+
+I want both for you.
+
+So tomorrow night:
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out
+
+A one-time live masterclass with Annie and me.
+
+Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+No cost to attend.
+
+SAVE MY SEAT:
+https://bpquiz.com/masterclass
+
+We are going to talk about what it actually takes to get your spark back from the inside out.
+
+And Annie is going to show you why the person you have been missing may be closer than you think.
+
+One more thing. We have something to reveal tomorrow night that we have been working on behind the scenes.
+
+I am not telling you what it is yet.
+
+Come and see.
+
+Joel Polley, RN
+
+P.S. If you replied YES on Friday, this is your invitation. Reserve the seat so you get tomorrow night's details.`,
+  },
+  5: {
+    subject: "Three things to bring Monday night",
+    preheader: "Non-registrants only.",
+    only: 'nonregistrants',
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Tomorrow night is the Restore Your Glow masterclass.</p><p>Bring three things with you.</p><p><strong>1. A picture in your head of who you want to be.</strong></p><p>Not somebody else. You, with energy, comfortable in your own body, not dreading the morning.</p><p><strong>2. One thing you wish you could change.</strong></p><p>Your weight. Your energy. Your skin. Your sleep.</p><p>Or maybe just wanting to look in the mirror and not wince.</p><p>Whatever it is, think about it before you come.</p><p><strong>3. An open mind.</strong></p><p>Because some of us have told ourselves a story so long that it starts sounding like the only one available.</p><p>"I'm too old."</p><p>"This is just what happens."</p><p>"I'll never feel like myself again."</p><p>What if there is another way to read that?</p><p>That is what we are getting into tomorrow.</p><p>And there is an announcement waiting for you too.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>SAVE MY SEAT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>Come with that one thing you wish could change. Keep it in front of you the whole hour.</p><p>Because tomorrow we are talking about the person you still get to become.</p><p>Joel Polley, RN</p><p>P.S. This is a special live class, not one of our regular Monday sessions. I want you in the room.</p>`, "Non-registrants only.", email),
+    text: (name, email) => `Hey \${name},
+
+Tomorrow night is the Restore Your Glow masterclass.
+
+Bring three things with you.
+
+1. A picture in your head of who you want to be.
+
+Not somebody else. You, with energy, comfortable in your own body, not dreading the morning.
+
+2. One thing you wish you could change.
+
+Your weight. Your energy. Your skin. Your sleep.
+
+Or maybe just wanting to look in the mirror and not wince.
+
+Whatever it is, think about it before you come.
+
+3. An open mind.
+
+Because some of us have told ourselves a story so long that it starts sounding like the only one available.
+
+"I'm too old."
+
+"This is just what happens."
+
+"I'll never feel like myself again."
+
+What if there is another way to read that?
+
+That is what we are getting into tomorrow.
+
+And there is an announcement waiting for you too.
+
+Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+SAVE MY SEAT:
+https://bpquiz.com/masterclass
+
+Come with that one thing you wish could change. Keep it in front of you the whole hour.
+
+Because tomorrow we are talking about the person you still get to become.
+
+Joel Polley, RN
+
+P.S. This is a special live class, not one of our regular Monday sessions. I want you in the room.`,
+  },
+  6: {
+    subject: "Tonight, 6 PM Central",
+    preheader: "And something brand new to reveal.",
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>Today is the day, and I have been looking forward to this one all week.</p><p>For weeks now Annie and I have talked about health with you.</p><p>Blood pressure. Blood sugar. Hormones. Weight.</p><p>Everything that starts shifting in a body as the years add up.</p><p>We are not stopping those conversations. Your health matters.</p><p>But tonight...</p><p><strong>I want to talk about the person we are trying to get healthy in the first place.</strong></p><p>Because you do not just want better numbers at your next appointment.</p><p>You want the energy to keep up with your grandkids.</p><p>You want to take the trip.</p><p>You want to feel good when somebody looks at you.</p><p>You want skin that looks alive and hair with something left in it.</p><p>You want to be in a picture without hunting for the right filter.</p><p>You want to walk into a room feeling like yourself again.</p><p><strong>You want your spark back.</strong></p><p>And I am not talking about looking 25.</p><p>I mean looking in the mirror and being glad about the person who has made it this far.</p><p>Feeling alive. Feeling confident. Having enough energy left over to enjoy the life you built.</p><p>That is what tonight is about.</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out</em></p><p>Tonight Annie and I are going to look at what has been dimming it.</p><p>We are going to talk about the person underneath the symptoms.</p><p>And how you start caring for them from the inside out.</p><p>So you can stop feeling like you are watching your best years go by, and start looking at what you still get to enjoy.</p><p><strong>And we have something brand new to reveal tonight.</strong></p><p>Something we have been building behind the scenes.</p><p>You have to be there to hear it first.</p><p><strong>TONIGHT, Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p><strong>Live with Annie and me</strong></p><p>No cost to attend.</p><p>SAVE MY SEAT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>Before you come, sit with one question.</p><p><strong>If you woke up tomorrow feeling like yourself again, what would you do differently?</strong></p><p>Wear the thing. Book the trip. Take the picture. Make the call.</p><p>Or just walk past the mirror without looking away.</p><p>Hold on to that answer.</p><p>Because tonight we are talking about the person who deserves that life.</p><p>See you at 6.</p><p>Joel Polley, RN</p><p>P.S. This is the one-time Glow masterclass. Clear a little space for yourself tonight. You have spent enough evenings on everybody else.</p>`, "And something brand new to reveal.", email),
+    text: (name, email) => `Hey \${name},
+
+Today is the day, and I have been looking forward to this one all week.
+
+For weeks now Annie and I have talked about health with you.
+
+Blood pressure. Blood sugar. Hormones. Weight.
+
+Everything that starts shifting in a body as the years add up.
+
+We are not stopping those conversations. Your health matters.
+
+But tonight...
+
+I want to talk about the person we are trying to get healthy in the first place.
+
+Because you do not just want better numbers at your next appointment.
+
+You want the energy to keep up with your grandkids.
+
+You want to take the trip.
+
+You want to feel good when somebody looks at you.
+
+You want skin that looks alive and hair with something left in it.
+
+You want to be in a picture without hunting for the right filter.
+
+You want to walk into a room feeling like yourself again.
+
+You want your spark back.
+
+And I am not talking about looking 25.
+
+I mean looking in the mirror and being glad about the person who has made it this far.
+
+Feeling alive. Feeling confident. Having enough energy left over to enjoy the life you built.
+
+That is what tonight is about.
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out
+
+Tonight Annie and I are going to look at what has been dimming it.
+
+We are going to talk about the person underneath the symptoms.
+
+And how you start caring for them from the inside out.
+
+So you can stop feeling like you are watching your best years go by, and start looking at what you still get to enjoy.
+
+And we have something brand new to reveal tonight.
+
+Something we have been building behind the scenes.
+
+You have to be there to hear it first.
+
+TONIGHT, Monday, October 26
+
+7 PM Eastern / 6 PM Central
+
+Live with Annie and me
+
+No cost to attend.
+
+SAVE MY SEAT:
+https://bpquiz.com/masterclass
+
+Before you come, sit with one question.
+
+If you woke up tomorrow feeling like yourself again, what would you do differently?
+
+Wear the thing. Book the trip. Take the picture. Make the call.
+
+Or just walk past the mirror without looking away.
+
+Hold on to that answer.
+
+Because tonight we are talking about the person who deserves that life.
+
+See you at 6.
+
+Joel Polley, RN
+
+P.S. This is the one-time Glow masterclass. Clear a little space for yourself tonight. You have spent enough evenings on everybody else.`,
+  },
+  7: {
+    subject: "We are live in 15 minutes",
+    preheader: "Registrants only. Here is your room.",
+    only: 'registrants',
+    html: (name, email) => wrapHtml(`<p>Hey \${escapeHtml(name)},</p><p>We are about to go live.</p><p>Tonight we are setting down everything you have been worried about and paying attention to the person underneath it.</p><p>Your energy. Your confidence. Your spark.</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out</em></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>JOIN US LIVE:<br><a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="color:#112d4d;font-weight:700">https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1</a></p><p>Meeting ID: 828 5171 5003<br>Passcode: 027302</p><p>Grab a notebook.</p><p>Bring that one thing you wish could change.</p><p>Come on in. We have something brand new to reveal.</p><p>See you inside.</p><p>Joel and Annie</p>`, "Registrants only. Here is your room.", email),
+    text: (name, email) => `Hey \${name},
+
+We are about to go live.
+
+Tonight we are setting down everything you have been worried about and paying attention to the person underneath it.
+
+Your energy. Your confidence. Your spark.
+
+RESTORE YOUR GLOW FOR THE HOLIDAYS
+
+Glow Out of Control; From the Inside Out
+
+7 PM Eastern / 6 PM Central
+
+JOIN US LIVE:
+https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1
+
+Meeting ID: 828 5171 5003
+Passcode: 027302
+
+Grab a notebook.
+
+Bring that one thing you wish could change.
+
+Come on in. We have something brand new to reveal.
+
+See you inside.
+
+Joel and Annie`,
+  },
 };
+
 let _resend = null;
 function getResend() {
   if (!_resend) {
@@ -234,8 +642,8 @@ export default async function handler(req, res) {
   }
 
   const emailNum = Number(req.query?.email);
-  if (![1].includes(emailNum)) {
-    return res.status(400).json({ error: 'pass ?email=1' });
+  if (![1, 2, 3, 4, 5, 6, 7].includes(emailNum)) {
+    return res.status(400).json({ error: 'pass ?email=1..7' });
   }
   const template = EMAILS[emailNum];
   const SENT_FLAG = `${SENT_FLAG_PREFIX}${emailNum}Sent`;
@@ -258,6 +666,19 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'kv scan failed', detail: err.message });
   }
 
+  // Emails 5 and 7 split on who registered for the masterclass (2026-10-21).
+  // Additive filter: the send loop below is untouched.
+  if (template.only) {
+    const regKeys = await scanKeys('masterclass:reg:*');
+    const registrants = new Set(regKeys.map((k) => k.slice(k.lastIndexOf(':') + 1).trim().toLowerCase()));
+    const before = allKeys.length;
+    const isReg = (k) => registrants.has(k.slice(k.lastIndexOf(':') + 1).trim().toLowerCase());
+    allKeys = template.only === 'registrants' ? allKeys.filter(isReg) : allKeys.filter((k) => !isReg(k));
+    console.log(`glow email ${emailNum}: only=${template.only} registrants=${registrants.size} keys ${before} -> ${allKeys.length}`);
+    if (template.only === 'registrants' && allKeys.length === 0) {
+      return res.status(200).json({ ok: true, skipped: 'no registrants yet', emailNum });
+    }
+  }
   const startedAt = Date.now();
   const coachingClients = await loadCoachingClients();
   const encoreSkip = await challengeBuyers();

@@ -458,6 +458,54 @@
     {
       "path": "/api/annie-glow-broadcast?cron=1&email=1",
       "schedule": "*/5 19-20 21 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=2",
+      "schedule": "*/5 14-15 22 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=3",
+      "schedule": "*/5 14-15 23 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=4",
+      "schedule": "*/5 14-15 25 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=5",
+      "schedule": "*/5 23 25 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=6",
+      "schedule": "*/5 14-15 26 10 *"
+    },
+    {
+      "path": "/api/joel-glow-broadcast?cron=1&email=7",
+      "schedule": "45,50,55 22 26 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=2",
+      "schedule": "*/5 14-15 22 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=3",
+      "schedule": "*/5 14-15 23 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=4",
+      "schedule": "*/5 14-15 25 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=5",
+      "schedule": "*/5 23 25 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=6",
+      "schedule": "*/5 14-15 26 10 *"
+    },
+    {
+      "path": "/api/annie-glow-broadcast?cron=1&email=7",
+      "schedule": "45,50,55 22 26 10 *"
     }
   ]
 }
