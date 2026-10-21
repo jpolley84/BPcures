@@ -25,6 +25,17 @@
 //     write itself failed). Callers decide whether that is fatal to them.
 
 import { kv } from '@vercel/kv';
+// 2026-10-15 (Joel): "monday isnt a masterclass its the challenge. this weeks
+// masterclass is sunday night." Oct 18 is World Menopause Day, so this week
+// the class is SUNDAY Oct 18, and Monday Oct 19 is the Change My Life
+// Challenge, not a class. Clock times are unchanged (6pm CT / 7pm ET), so
+// only the day word moves. SELF-EXPIRING: after the class starts these fall
+// back to the standing Monday wording with no further edit.
+const WMD_SUNDAY_MS = Date.parse('2026-10-18T23:00:00Z'); // 6pm CT Sun Oct 18
+const isWmdWeek = () => Date.now() < WMD_SUNDAY_MS;
+const classDay = () => (isWmdWeek() ? 'Sunday, October 18' : 'Sunday'); // 2026-10-21 Joel: class moved to Sunday 7 PM ET
+const classDayShort = () => 'Sunday';
+
 import { Resend } from './_resend.js';
 
 const FROM_ADDRESS = 'Joel Polley, RN <joel@bpquiz.com>';
@@ -84,17 +95,17 @@ function confirmationEmail({ firstName, provenance }) {
 <html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#1E2B2A;line-height:1.6;background:#FAF6EF;">
 <p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#B93C20;font-weight:700;margin:0 0 1rem;">Life Beyond the Numbers &middot; Free Live Masterclass</p>
 <h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
-<p><strong>Life Beyond the Numbers</strong> runs live every Monday night at <strong>7:00 pm Eastern</strong> (6:00 pm Central &middot; 4:00 pm Pacific).</p>
+<p><strong>Life Beyond the Numbers</strong> runs live ${isWmdWeek() ? 'this <strong>Sunday, October 18</strong> for World Menopause Day' : 'this Sunday night'} at <strong>7:00 pm Eastern</strong> (6:00 pm Central &middot; 4:00 pm Pacific).</p>
 <div style="background:#F4E6DE;border-radius:12px;padding:1rem 1.2rem;margin:1.2rem 0;">
   <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
   <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:999px;">Join the Masterclass on Zoom &rarr;</a></p>
   <p style="margin:0;color:#4A5A58;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
-  <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>) so Monday night finds you ready.</p>
+  <a href="${CALENDAR_ICS_URL}" style="color:#B93C20;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#B93C20;">Google Calendar</a>) so ${classDayShort()} night finds you ready.</p>
 </div>
 <p><strong>What we'll cover:</strong> the 3 hidden daily triggers quietly driving your numbers up. The habit almost nobody connects to their readings, the "healthy" trap working against you, and the one everyone blames for the wrong reason.</p>
-<p><strong>Do one thing before Monday:</strong> if you haven't taken the free BP quiz yet, it takes 2 minutes and tells you which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B93C20;">Take it here</a>.</p>
+<p><strong>Do one thing before ${classDayShort()}:</strong> if you haven't taken the free BP quiz yet, it takes 2 minutes and tells you which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#B93C20;">Take it here</a>.</p>
 <p>Questions? Just reply. I read these myself.</p>
-<p style="margin-top:1.4rem;padding:0.9rem 1rem;background:#FFFFFF;border:1px solid #E4DACE;border-radius:10px;"><strong>P.S.</strong> If you want a head start before Monday, Steady is the tea I drink every day: hibiscus, hawthorn and ten more whole botanicals, caffeine free, 60 cups a pouch, 30-day guarantee. <a href="https://hormoneteas.com/products/steady?utm_source=bpquiz&amp;utm_medium=email&amp;utm_campaign=masterclass-seat-saved" style="color:#B93C20;font-weight:700;">Get Steady here</a>. It joins your doctor's plan, it never replaces it.</p>
+<p style="margin-top:1.4rem;padding:0.9rem 1rem;background:#FFFFFF;border:1px solid #E4DACE;border-radius:10px;"><strong>P.S.</strong> If you want a head start before ${classDayShort()}, Steady is the tea I drink every day: hibiscus, hawthorn and ten more whole botanicals, caffeine free, 60 cups a pouch, 30-day guarantee. <a href="https://hormoneteas.com/products/steady?utm_source=bpquiz&amp;utm_medium=email&amp;utm_campaign=masterclass-seat-saved" style="color:#B93C20;font-weight:700;">Get Steady here</a>. It joins your doctor's plan, it never replaces it.</p>
 <p style="margin-top:2rem;">Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
 <hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #E4DACE;">
 <p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because ${why}. Educational content only, not medical advice. Never start, stop, or adjust medication without your doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
@@ -237,7 +248,7 @@ export async function registerMasterclass({
         to: normEmail,
         reply_to: REPLY_TO,
         campaign: 'masterclass-seat-saved',
-        subject: 'Your seat is saved for Life Beyond the Numbers (Monday night)',
+        subject: `Your seat is saved for Life Beyond the Numbers (${classDayShort()} night)`,
         html: confirmationEmail({ firstName, provenance }),
       });
     } catch (err) {

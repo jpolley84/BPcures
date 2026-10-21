@@ -260,7 +260,7 @@
         <p class="sub">with Joel Polley, RN + Special Guest Annie Chitate, RN</p>
         <div class="price"><span class="strike">$67</span><span>FREE</span></div>
         <p class="free-label">Save your seat now</p>
-        <p class="datebox">Next class: <span data-classdate>Monday · 6:00 PM Central</span></p>
+        <p class="datebox">Next class: <span data-classdate>Sunday · 7:00 PM Eastern</span></p>
         <p class="cd-head">Class starts in</p>
         <div class="countdown" aria-label="Time until the next class">
           <div><b class="cd-d">00</b><span>Days</span></div>
@@ -369,7 +369,7 @@
   <section class="mc2-band soft">
     <div class="mc2-wide mc2-three">
       <div><h3>What</h3><p>A free live masterclass exposing the four biggest mistakes women over 40 may be making while trying to fix rising blood pressure, weight, A1C, fatigue, thinning hair and other unwanted symptoms.</p></div>
-      <div><h3>When</h3><p><strong><span data-classdate-short>Monday</span> · 6:00 PM Central</strong><br>Register now and come live.</p></div>
+      <div><h3>When</h3><p><strong><span data-classdate-short>Sunday</span> · 7:00 PM Eastern</strong><br>Register now and come live.</p></div>
       <div><h3>Why</h3><p>So you can stop treating each symptom like a separate problem, connect the dots, and finally see more of the picture.</p></div>
     </div>
   </section>
@@ -447,7 +447,7 @@
       const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
         year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
       const wd = parts.find(p=>p.type==='weekday').value;
-      if(wd!=='Mon') continue;
+      if(wd!=='Sun') continue; /* 2026-10-21 Joel: class moved to Sunday 7 PM Eastern */
       if(isChallengeMonday(probe.getTime())) continue; /* Oct 19 is the challenge */
       const g = t => Number(parts.find(p=>p.type===t).value);
       const naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR_CT,0,0);
@@ -469,7 +469,7 @@
       try{
         const fullLabel  = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric'}).format(new Date(target));
         const shortLabel = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric'}).format(new Date(target));
-        document.querySelectorAll('[data-classdate]').forEach(function(el){ el.textContent = fullLabel + ' · 6:00 PM Central'; });
+        document.querySelectorAll('[data-classdate]').forEach(function(el){ el.textContent = fullLabel + ' · 7:00 PM Eastern'; });
         document.querySelectorAll('[data-classdate-short]').forEach(function(el){ el.textContent = shortLabel; });
       }catch(e){}
     }
