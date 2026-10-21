@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The 4 Biggest Mistakes Masterclass | Joel Polley, RN</title>
+  <meta name="description" content="Free live masterclass with Joel Polley, RN and special guest Annie Chitate: The 4 Biggest Mistakes Making Your Fatigue, Blood Pressure, Weight, A1C, Chin Hair & Other Hormone Symptoms Worse After 40." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#0b1f2d;
+      --navy-2:#12384a;
+      --blue:#2b6576;
+      --red:#b72e2e;
+      --red-dark:#8f1f1f;
+      --gold:#e5b853;
+      --cream:#f6f4ef;
+      --paper:#ffffff;
+      --soft:#eaf0f2;
+      --ink:#11171b;
+      --muted:#4e5b62;
+      --line:#cbd4d8;
+      --shadow:0 18px 42px rgba(8,28,40,.13);
+      --max:1180px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Montserrat',Arial,sans-serif;line-height:1.48;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    .wrap{width:min(var(--max),calc(100% - 40px));margin:0 auto}
+    .top-banner{background:var(--red);color:#fff;text-align:center;padding:14px 18px 15px}
+    .top-banner .line1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.55rem,2.5vw,2.7rem);font-weight:700;line-height:1.08;letter-spacing:.01em;text-transform:uppercase}
+    .top-banner .line2{font-size:clamp(.95rem,1.25vw,1.18rem);font-weight:800;margin-top:6px;letter-spacing:.05em}
+    .brand-band{background:var(--navy);color:#fff;padding:20px 0;text-align:center;border-bottom:5px solid var(--gold)}
+    .brand{font-family:'Oswald',Arial,sans-serif;font-size:2.15rem;font-weight:700;letter-spacing:.08em}
+    .brand span{color:var(--gold)}
+    .brand-sub{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:#c5d2d7;margin-top:2px}
+    .hero{background:linear-gradient(180deg,#fff 0%,#f4f6f6 100%);padding:44px 0 18px;text-align:center}
+    .hero h1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,4vw,4rem);line-height:1.08;margin:0 auto 18px;max-width:1450px;text-transform:uppercase;letter-spacing:.005em}
+    .hero .hint{font-size:clamp(1rem,1.5vw,1.18rem);font-weight:800;color:var(--red-dark);margin:0 auto 12px;max-width:1040px}
+    .hero .support{font-size:clamp(1rem,1.4vw,1.12rem);font-weight:600;color:var(--muted);margin:0 auto 24px;max-width:980px}
+    .divider{height:2px;background:#1b2f39;opacity:.55;width:min(1200px,calc(100% - 90px));margin:0 auto}
+    .main{padding:24px 0 34px}
+    .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:0;background:#eef2f3;border:1px solid rgba(11,31,45,.08)}
+    .left-panel{padding:42px 46px;background:#eef2f3}
+    .right-panel{padding:18px}
+    .tiny-top{text-align:center;font-size:.92rem;letter-spacing:.055em;text-transform:uppercase;margin:0 0 12px;color:var(--blue);font-weight:800}
+    .left-panel h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,3vw,3.25rem);line-height:1.12;text-align:center;margin:0 0 16px;text-transform:uppercase}
+    .redline{font-size:clamp(1rem,1.3vw,1.28rem);font-weight:800;color:var(--red-dark);text-align:center;max-width:720px;margin:0 auto 24px}
+    .gold-line{height:2px;background:var(--gold);max-width:90%;margin:0 auto 24px}
+    .left-panel p{font-size:1.04rem;margin:0 0 15px;color:#1a262d}
+    .left-panel strong{font-weight:800}
+    .form-card{background:var(--navy);color:#fff;border-radius:24px;padding:30px 30px 26px;min-height:100%;box-shadow:var(--shadow);border-top:5px solid var(--gold)}
+    .form-card h3{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,2.7vw,3rem);line-height:1.05;text-align:center;margin:0 0 8px;text-transform:uppercase}
+    .form-card .sub{font-size:.95rem;font-weight:700;text-align:center;color:#cbd9df;margin:0 0 20px}
+    .price{text-align:center;font-size:4rem;line-height:1;font-weight:500;margin:6px 0 14px}
+    .price .strike{color:#7e919a;text-decoration:line-through;text-decoration-thickness:5px;margin-right:8px}
+    .free-label{text-align:center;text-transform:uppercase;letter-spacing:.05em;font-size:.9rem;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;margin:0 0 14px;color:#d8e2e6}
+    .datebox{text-align:center;font-weight:800;font-size:1rem;margin:0 0 4px;color:#fff}
+    .cd-head{text-align:center;font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#a9bac1;margin:10px 0 8px}
+    .countdown{display:flex;justify-content:center;gap:8px;margin:0 0 16px}
+    .countdown div{background:var(--navy-2);border-radius:10px;padding:10px 5px;min-width:56px;text-align:center}
+    .countdown b{display:block;font-weight:800;font-size:1.5rem;color:#fff;line-height:1}
+    .countdown span{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#a9bac1;font-weight:700}
+    .field{width:100%;padding:14px 15px;border-radius:9px;border:1px solid #bdc7cb;background:#fff;font:inherit;margin:0 0 10px;color:#111}
+    .btn{display:flex;width:100%;min-height:54px;padding:15px 17px;border:none;border-radius:8px;background:var(--gold);font:900 .98rem 'Montserrat',Arial,sans-serif;color:#1c2225;cursor:pointer;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.18)}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:disabled{opacity:.7;cursor:default;transform:none}
+    .form-err{display:none;text-align:center;font-size:.82rem;font-weight:700;color:#ffb4b0;margin:0 0 10px}
+    .secure{text-align:center;font-size:.76rem;color:#bccad0;margin:10px 0 0}
+    .section{padding:44px 0}
+    .section.white{background:#fff}
+    .section.soft{background:var(--soft)}
+    .content{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
+    .box{background:#fff;border-radius:20px;padding:28px;box-shadow:var(--shadow)}
+    .box.dark{background:var(--navy);color:#fff;border-top:4px solid var(--gold)}
+    .eyebrow{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:900;margin-bottom:8px}
+    .box.dark .eyebrow{color:var(--gold)}
+    .section h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,2.75vw,3rem);line-height:1.1;margin:0 0 16px;text-transform:uppercase}
+    .body p{font-size:1.03rem;margin:0 0 15px}
+    .body strong{font-weight:800}
+    .pull{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.45rem,2vw,2.15rem);line-height:1.15;font-weight:700;margin:18px 0;text-transform:uppercase;color:var(--navy)}
+    .box.dark .pull{color:#fff}
+    .quote{border-left:5px solid var(--gold);padding:15px 18px;background:#f9f7f1;font-weight:700;margin:18px 0;color:#26353c}
+    .triple{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .triple .card{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow);border-top:4px solid var(--blue)}
+    .triple h4{font-family:'Oswald',Arial,sans-serif;font-size:1.25rem;margin:0 0 7px;text-transform:uppercase}
+    .triple p{margin:0;font-size:.96rem;line-height:1.5}
+    .final{padding:40px 0 56px}
+    .final-box{max-width:980px;margin:0 auto;background:var(--navy);color:#fff;border-radius:22px;padding:32px;box-shadow:var(--shadow);text-align:center;border-top:5px solid var(--gold)}
+    .final-box h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,2.9vw,3rem);line-height:1.1;margin:0 0 12px;text-transform:uppercase}
+    .final-box p{font-size:1rem;margin:0 0 18px;color:#d9e3e7}
+    footer{background:#07141d;color:#cbd7dc;padding:26px 0 36px;font-size:.78rem}
+    footer .wrap{display:flex;justify-content:space-between;gap:22px;align-items:flex-start}
+    footer a{text-decoration:underline;color:#e6edf0}
+    .mobile-sticky{display:none}
+    .woman-focus{display:flex;align-items:center;gap:18px;margin:18px 0 20px;padding:16px;background:#f7f9fa;border-radius:16px;border-left:4px solid var(--gold)}
+    .woman-focus img{width:128px;height:128px;object-fit:cover;object-position:center;border-radius:16px;flex:0 0 auto;box-shadow:0 10px 24px rgba(8,28,40,.12)}
+    .woman-focus p{margin:0!important;font-size:.98rem!important;line-height:1.5}
+
+    .host-visual{margin:18px 0 22px;text-align:center}
+    .host-visual img{width:min(100%,460px);height:170px;object-fit:cover;object-position:right center;border-radius:18px;box-shadow:0 10px 26px rgba(0,0,0,.10);display:block;margin:0 auto}
+    .host-visual .host-caption{font-size:.82rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:8px;opacity:.72}
+
+    @media (max-width:980px){
+      .grid,.content,.triple{grid-template-columns:1fr}
+      .right-panel{order:1;padding:10px 12px 14px}
+      .left-panel{order:2}
+      .left-panel,.form-card,.box,.final-box{padding:24px}
+      .hero{padding:30px 0 10px}
+      .main{padding:10px 0 24px}
+      .section{padding:34px 0}
+      .content{gap:18px}
+      footer .wrap{flex-direction:column}
+    }
+    @media (max-width:560px){
+      body{padding-bottom:72px}
+      .wrap{width:min(100% - 20px,var(--max))}
+      .top-banner{padding:10px 10px 11px}
+      .top-banner .line1{font-size:1.18rem}
+      .top-banner .line2{font-size:.85rem;line-height:1.2;margin-top:5px}
+      .brand-band{padding:11px 0 10px;border-bottom-width:3px}
+      .brand{font-size:1.45rem}
+      .brand-sub{font-size:.54rem;letter-spacing:.2em}
+      .hero{padding:22px 0 8px}
+      .hero h1{font-size:1.78rem;line-height:1.06;margin-bottom:13px}
+      .hero .hint{font-size:.94rem;line-height:1.35;margin-bottom:9px}
+      .hero .support{font-size:.92rem;line-height:1.42;margin-bottom:12px}
+      .divider{width:calc(100% - 34px)}
+      .main{padding:10px 0 20px}
+      .grid{background:transparent;border:0}
+      .woman-focus{align-items:flex-start;gap:12px;padding:12px;margin:14px 0 16px}
+      .woman-focus img{width:84px;height:84px;border-radius:12px}
+      .woman-focus p{font-size:.91rem!important;line-height:1.4}
+      .host-visual img{height:118px;border-radius:14px}
+      .right-panel{padding:0 0 12px}
+      .left-panel{padding:20px 16px}
+      .tiny-top{font-size:.77rem;line-height:1.35;margin-bottom:9px}
+      .left-panel h2,.form-card h3,.section h2,.final-box h2{font-size:1.62rem;line-height:1.1}
+      .redline{font-size:.97rem;line-height:1.4;margin-bottom:17px}
+      .gold-line{margin-bottom:17px}
+      .left-panel p,.body p,.triple p,.final-box p{font-size:.97rem;line-height:1.55}
+      .form-card{padding:21px 16px 18px;border-radius:16px}
+      .form-card .sub{font-size:.88rem;margin-bottom:14px}
+      .price{font-size:2.9rem;margin:2px 0 9px}
+      .free-label{font-size:.8rem;padding-top:11px;margin-bottom:11px}
+      .datebox{font-size:.93rem;margin-bottom:3px}
+      .countdown div{min-width:50px;padding:9px 4px}
+      .countdown b{font-size:1.25rem}
+      .field{font-size:16px;padding:14px 13px}
+      .btn{min-height:54px;font-size:.94rem;padding:14px 11px}
+      .section{padding:27px 0}
+      .content{gap:14px}
+      .box,.final-box{padding:20px 16px;border-radius:15px}
+      .eyebrow{font-size:.77rem;margin-bottom:6px}
+      .pull{font-size:1.35rem;line-height:1.2;margin:15px 0}
+      .quote{padding:13px 14px;margin:15px 0}
+      .triple{gap:11px}
+      .triple .card{padding:17px 15px;border-radius:13px}
+      .final{padding:24px 0 34px}
+      footer{padding:22px 0 88px}
+      .mobile-sticky{display:block;position:fixed;left:0;right:0;bottom:0;z-index:999;background:rgba(7,20,29,.98);padding:9px 10px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px rgba(0,0,0,.25)}
+      .mobile-sticky a{display:flex;align-items:center;justify-content:center;min-height:48px;background:var(--gold);color:#1c2225;border-radius:8px;font-weight:900;font-size:.92rem;text-align:center}
+    }
+  
+    /* ── 2026-09-21 challenge-style layout (.mc2-*): full-width bands, centered
+       copy, no cards. The form card inside #register keeps its own styles. ── */
+    .mc2{--mc-ink:#0b1f2d;--mc-deep:#07141d;--mc-accent:#b72e2e;--mc-gold:#e5b853;--mc-soft:#f1f4f5;--mc-cream:#f6f4ef;}
+    .mc2-band{padding:64px 0;background:#fff;color:var(--mc-ink);font-family:'Montserrat',Arial,sans-serif}
+    .mc2-band.soft{background:var(--mc-soft)}
+    .mc2-band.dark{background:var(--mc-deep);color:#fff}
+    .mc2-band.accent{background:var(--mc-accent);color:#fff}
+    .mc2-narrow{width:min(calc(100% - 36px),860px);margin:0 auto;text-align:center}
+    .mc2-wide{width:min(calc(100% - 36px),1120px);margin:0 auto}
+    .mc2-eyebrow{font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;color:var(--mc-accent);margin:0 0 12px}
+    .mc2-band.dark .mc2-eyebrow,.mc2-band.accent .mc2-eyebrow{color:var(--mc-gold)}
+    .mc2-h1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1.06;margin:0 auto 18px;max-width:1080px;text-transform:uppercase;color:var(--mc-ink)}
+    .mc2-h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.1;margin:0 0 18px;color:inherit}
+    .mc2-band p{font-size:clamp(1.05rem,1.6vw,1.2rem);line-height:1.6;margin:0 0 14px}
+    .mc2-hint{font-weight:800;color:var(--mc-accent)}
+    .mc2-list{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.25rem,2.2vw,1.7rem)!important;line-height:1.5!important;font-weight:600}
+    .mc2-big{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.6rem,3.2vw,2.6rem);line-height:1.15;margin:26px auto 0;font-weight:700;color:var(--mc-accent);text-transform:uppercase}
+    .mc2-band.dark .mc2-big,.mc2-band.accent .mc2-big{color:var(--mc-gold)}
+    .mc2-quote{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.3;margin:22px auto;max-width:760px;font-weight:600}
+    .mc2-cta{display:inline-block;margin-top:22px;background:var(--mc-accent);color:#fff;font-weight:900;letter-spacing:.03em;padding:17px 30px;border-radius:6px;text-decoration:none}
+    .mc2-band.dark .mc2-cta,.mc2-band.accent .mc2-cta{background:var(--mc-gold);color:var(--mc-deep)}
+    .mc2-register{max-width:560px;margin:0 auto}
+    .mc2-shot{width:100%;max-width:440px;height:auto;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.14);margin-top:8px}
+    .mc2-about{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center}
+    .mc2-about img{width:100%;max-width:420px;height:auto;border-radius:16px;display:block;margin:0 auto;background:#01070f}
+    .mc2-about .txt{text-align:left}
+    .mc2-three{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;text-align:left}
+    .mc2-three h3{font-family:'Oswald',Arial,sans-serif;font-size:1.6rem;margin:0 0 8px;color:var(--mc-accent);text-transform:uppercase}
+    .mc2-three p{font-size:1.02rem!important}
+    .mc2-final form{max-width:620px;margin:18px auto 0}
+    @media(max-width:800px){
+      .mc2-band{padding:46px 0}
+      .mc2-about,.mc2-three{grid-template-columns:1fr;gap:24px}
+      .mc2-about .txt{text-align:center}
+    }
+
+    /* 2026-09-21 10:54: split register band + hero sized to keep SAVE MY FREE SEAT above the fold */
+    .mc2-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center}
+    .mc2-split-text{text-align:left}
+    .mc2-split-text .mc2-big{text-align:left}
+    .mc2-hero{padding:34px 0 38px!important}
+    .mc2-hero .mc2-eyebrow{margin-bottom:8px}
+    .mc2-hero .mc2-h1{font-size:clamp(1.7rem,3.3vw,2.75rem);margin-bottom:12px}
+    .mc2-hero p{font-size:clamp(.98rem,1.3vw,1.08rem);margin-bottom:10px}
+    .mc2-hero .mc2-cta{margin-top:10px}
+    @media(max-width:880px){
+      .mc2-split{grid-template-columns:1fr;gap:28px}
+      .mc2-split-text,.mc2-split-text .mc2-big{text-align:center}
+    }
+    @media(max-width:640px){
+      .mc2-hero{padding:22px 0 26px!important}
+      .mc2-hero .mc2-h1{font-size:1.5rem;line-height:1.08}
+      .mc2-hero p{font-size:.95rem;line-height:1.45}
+      .mc2-hero .mc2-eyebrow{font-size:.75rem}
+    }
+</style>
+</head>
+<body>
+<!-- wmd-popup-2026-10-18: special one-off class for World Menopause Day.
+     Added 2026-10-15. The recurring class below is untouched.
+     TO REMOVE AFTER SUNDAY: delete this whole block. Nothing else
+     on the page depends on it. -->
+<div id="wmd-popup-2026-10-18" style="background:#FFF4F0;border-bottom:3px solid #DB4E2E;padding:18px 16px;font-family:Arial,Helvetica,sans-serif;text-align:center;color:#5A1B0E">
+  <div style="max-width:720px;margin:0 auto">
+    <div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:#DB4E2E;margin-bottom:6px">Special pop-up class &middot; World Menopause Day</div>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:23px;line-height:1.25;font-weight:700;margin:0 0 8px">Your Body Changed the Rules</div>
+    <div style="font-size:15px;line-height:1.5;margin:0 0 10px">What menopause may be doing to your blood pressure</div>
+    <div style="font-size:16px;font-weight:800;margin:0 0 4px">Sunday, October 18 &middot; 6:00 PM Central &middot; 7:00 PM Eastern</div>
+    <div style="font-size:13px;color:#5A1B0E;opacity:.8;margin:0 0 12px">October 18 is World Menopause Day, so we are opening the room one extra time. Free, live, and there is no replay.</div>
+    <a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="display:inline-block;background:#DB4E2E;color:#ffffff;text-decoration:none;font-weight:800;padding:13px 26px;border-radius:999px;font-size:15px">JOIN SUNDAY ON ZOOM &rarr;</a>
+    <div style="font-size:12px;color:#5A1B0E;opacity:.75;margin-top:9px">Meeting ID 828 5171 5003 &middot; Passcode 027302</div>
+  </div>
+</div>
+
+  <div class="top-banner">
+    <div class="line1">TAKE BACK CONTROL OF YOUR BODY AFTER 40.</div>
+    <div class="line2">IT'S NOT GENETICS. IT'S NOT JUST AGING.</div>
+  </div>
+
+  <div class="brand-band">
+    <div class="brand">BRAVEWORKS <span>RN</span></div>
+    <div class="brand-sub">Joel Polley, RN | BPQuiz.com</div>
+  </div>
+
+  <!-- 2026-09-21 COPY (Joel). Same words on bpquiz.com/masterclass and
+       restoreherhormones.com/masterclass; built by one script so they cannot
+       drift. His "Purpose:" and "Keep the current examples" lines were notes,
+       not copy. -->
+  <!-- 2026-09-21 challenge-style layout. Built by one script for both sites. -->
+  <div class="mc2">
+  <section class="mc2-band mc2-hero">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">FREE LIVE MASTERCLASS</p>
+      <h1 class="mc2-h1">THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h1>
+      <p class="mc2-hint">(Hint: It's not eating better, exercising more, taking supplements, or having more discipline.)</p>
+      <p>If you did what they told you and the numbers are still moving in the wrong direction, I want you in this room. Discover the 4 mistakes that will change your health, with this nurse-led system that can work even if you have tried everything.</p>
+      <a class="mc2-cta" href="#register">SAVE MY FREE SEAT</a>
+    </div>
+  </section>
+
+  <!-- 2026-09-21 (Joel): "you did what they told you" sits NEXT TO the
+       email-capture box on desktop; on phones the form comes first. -->
+  <section class="mc2-band soft">
+    <div class="mc2-wide mc2-split">
+      <div class="mc2-split-form">
+        <div class="form-card" id="register">
+        <h3>FREE LIVE MASTERCLASS</h3>
+        <p class="sub">with Joel Polley, RN + Special Guest Annie Chitate, RN</p>
+        <div class="price"><span class="strike">$67</span><span>FREE</span></div>
+        <p class="free-label">Save your seat now</p>
+        <p class="datebox">Next class: <span data-classdate>Monday · 6:00 PM Central</span></p>
+        <p class="cd-head">Class starts in</p>
+        <div class="countdown" aria-label="Time until the next class">
+          <div><b class="cd-d">00</b><span>Days</span></div>
+          <div><b class="cd-h">00</b><span>Hours</span></div>
+          <div><b class="cd-m">00</b><span>Min</span></div>
+          <div><b class="cd-s">00</b><span>Sec</span></div>
+        </div>
+        <form data-reg method="post" onsubmit="return handleSubmit(event)">
+            <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
+            <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
+            <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
+            <div class="form-err" data-err role="alert"></div>
+            <button class="btn" type="submit" data-btn>SAVE MY FREE SEAT</button>
+          </form>
+        <p class="secure">100% Secure. Privacy Guaranteed.</p>
+        </div>
+      </div>
+      <div class="mc2-split-text">
+      <p class="mc2-eyebrow">YOU DID WHAT THEY TOLD YOU. SO WHY ARE THE NUMBERS STILL RISING?</p>
+      <h2 class="mc2-h2">Stop chasing the number. Start looking at the pattern.</h2>
+      <p class="mc2-list">You reduced the salt. You checked the labels. You walked more. You took the medication. You kept your appointments.</p>
+      <p>And the list keeps growing:</p>
+      <p class="mc2-list">Blood pressure. Weight. A1C. Fatigue. Sleep. Thinning hair. Chin hair. Brain fog. Mood changes. Hot flashes.</p>
+      <div class="mc2-big">Same woman. Same body. Connected story.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mc2-band soft">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">FROM THE ZOOM ROOM</p>
+      <h2 class="mc2-h2">What women said in the room.</h2>
+      <img class="mc2-shot" src="/masterclass/v3/zoom-room-chat.jpg" alt="Messages from women in the live Zoom masterclass: this session is coming right on time, I came here because I wanted you guys to hear me, love the science, and more" width="900" height="1600">
+    </div>
+  </section>
+
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">THE CUFF IS A DOT. THE PATTERN IS THE STORY.</p>
+      <h2 class="mc2-h2">Your blood pressure may be the loudest number, not the whole problem.</h2>
+      <p>Blood pressure is important.</p>
+      <p>But it is one signal coming from the same body that is producing the weight changes, A1C changes, fatigue, sleep issues, hair changes and other symptoms.</p>
+      <p>Stop looking at each symptom like it belongs to a different person.</p>
+      <div class="mc2-big">Start connecting the dots.</div>
+    </div>
+  </section>
+
+  <section class="mc2-band dark">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">THE HINT</p>
+      <h2 class="mc2-h2">It is not more effort. It's doing the right things in the right order. Just 4 steps.</h2>
+      <p><strong>It is not eating better, exercising more, taking supplements, or having more discipline.</strong></p>
+      <p>You may already be doing many of the right things. The problem may be that nobody has helped you see <strong>what applies to you, what changed, and what needs attention first.</strong></p>
+      <div class="mc2-big">You may be doing all the right things in the wrong order.</div>
+      <a class="mc2-cta" href="#register">SECURE MY SEAT</a>
+    </div>
+  </section>
+
+  <section class="mc2-band">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">AFTER 20 YEARS IN ICU AND ER...</p>
+      <h2 class="mc2-h2">I stopped being impressed by the number alone.</h2>
+      <p>People came through the doors who took their medication. Who were trying. Who watched their salt, tried to lose weight, and kept going back to the doctor.</p>
+      <div class="mc2-quote">"The cuff matters. But the cuff is a snapshot. I want to understand the movie."</div>
+      <p>What other signals is your body sending? Because if we could look at your whole body, we would get the complete message of what may be wrong and what the cause could be.</p>
+      <p><strong>Address the cause. Fix the problem.</strong></p>
+      <p>That is the conversation I wish more people had before they ever ended up in my unit.</p>
+    </div>
+  </section>
+
+  <section class="mc2-band soft">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">WHY NOW?</p>
+      <h2 class="mc2-h2">A private room where he cannot be silenced.</h2>
+      <p>Joel's TikTok account, with over 260,000 followers, was recently permanently banned for teaching the public how to lower blood pressure naturally, so their doctor can lower or take them off their medication.</p>
+      <p>Join this private Zoom room, off the internet streets, where he cannot be silenced. Share this masterclass with anyone who needs to change their health.</p>
+      <div class="mc2-big">Stop living in fear of the cuff.</div>
+      <a class="mc2-cta" href="#register">SAVE MY FREE SEAT</a>
+    </div>
+  </section>
+
+  <section class="mc2-band accent">
+    <div class="mc2-narrow">
+      <p class="mc2-eyebrow">IT'S NOT YOUR FAULT</p>
+      <h2 class="mc2-h2">It's not that you failed.</h2>
+      <p>Maybe no one taught you how to understand your body's messages.</p>
+      <p>You have already proven you are willing to try. Now come learn what your symptoms and your numbers may have been trying to tell you all along.</p>
+      <div class="mc2-big">Stop fixing the wrong things.</div>
+    </div>
+  </section>
+
+  <section class="mc2-band" id="about">
+    <div class="mc2-wide mc2-about">
+      <img src="/masterclass/v3/joel-annie.jpg" alt="Annie Chitate, RN and Joel Polley, RN in navy scrubs" width="644" height="1063">
+      <div class="txt">
+        <p class="mc2-eyebrow">ABOUT US · WHY WE'RE TEACHING THIS TOGETHER</p>
+        <h2 class="mc2-h2">The numbers and the symptoms belong to the same woman.</h2>
+        <p><strong>Joel Polley, RN</strong> spent almost 20 years in ICU and emergency medicine. His work focuses on helping people look beyond the number and identify the pattern behind the pressure.</p>
+        <p><strong>Annie Chitate, RN, Everyday Nurse</strong> has built her work around helping women understand the hormone changes behind the symptoms nobody wants to talk about.</p>
+        <p>Together, we are on a mission to help change one million lives over the next five years.</p>
+        <div class="mc2-big" style="text-align:inherit">When you change your health, you change your life.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mc2-band soft">
+    <div class="mc2-wide mc2-three">
+      <div><h3>What</h3><p>A free live masterclass exposing the four biggest mistakes women over 40 may be making while trying to fix rising blood pressure, weight, A1C, fatigue, thinning hair and other unwanted symptoms.</p></div>
+      <div><h3>When</h3><p><strong><span data-classdate-short>Monday</span> · 6:00 PM Central</strong><br>Register now and come live.</p></div>
+      <div><h3>Why</h3><p>So you can stop treating each symptom like a separate problem, connect the dots, and finally see more of the picture.</p></div>
+    </div>
+  </section>
+
+  <section class="mc2-band dark mc2-final">
+    <div class="mc2-narrow">
+      <h2 class="mc2-h2">THE 4 BIGGEST MISTAKES BEHIND YOUR RISING BLOOD PRESSURE, WEIGHT, A1C, FATIGUE, THINNING HAIR &amp; OTHER UNWANTED SYMPTOMS AFTER 40.</h2>
+      <p><strong>(Hint: It's not eating better, exercising more, taking supplements, or having more discipline.)</strong></p>
+      <p>Come learn what you may have never been told to look for.</p>
+      <form data-reg method="post" onsubmit="return handleSubmit(event)">
+            <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
+            <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
+            <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
+            <div class="form-err" data-err role="alert"></div>
+            <button class="btn" type="submit" data-btn>SAVE MY FREE SEAT</button>
+          </form>
+      <p class="secure">100% Secure. Privacy Guaranteed.</p>
+    </div>
+  </section>
+  </div>
+
+  <div class="mobile-sticky"><a href="#register">SAVE MY FREE SEAT</a></div>
+
+    <footer>
+    <div class="wrap">
+      <div>Educational information only. Nothing on this page is a substitute for personal medical care. Never stop or change medication without working with your healthcare provider.</div>
+      <div><a href="https://bpquiz.com" target="_blank" rel="noopener">BPQuiz.com</a></div>
+    </div>
+  </footer>
+
+<script>
+  /* ====== CADENCE. Standing Monday 6:00 PM Central class (first one
+     2026-09-14). Always targets the next Monday 6pm CT, today included if
+     it hasn't started. Copy never says "every week" or "recurring". ====== */
+  const WEEKLY_HOUR_CT = 18; // 6pm Central, Mondays
+
+  function chicagoOffsetMs(atUtcMs){
+    const d = new Date(atUtcMs);
+    const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+      year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(d);
+    const g = t => Number(parts.find(p=>p.type===t).value);
+    const asUtc = Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second'));
+    return asUtc - atUtcMs;
+  }
+  function nextMondayTarget(afterMs){
+    for(let addDays=0; addDays<8; addDays++){
+      const probe = new Date(afterMs + addDays*86400000);
+      const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
+        year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
+      const wd = parts.find(p=>p.type==='weekday').value;
+      if(wd!=='Mon') continue;
+      const g = t => Number(parts.find(p=>p.type===t).value);
+      const naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR_CT,0,0);
+      const target = naive - chicagoOffsetMs(naive);
+      if(target > afterMs) return target;
+    }
+    return afterMs + 7*86400000;
+  }
+  function nextTarget(){ return nextMondayTarget(Date.now()); }
+  const LIVE_WINDOW_MS = 75 * 60000;
+  (function(){
+  try{
+    const d=document.querySelectorAll('.cd-d'),h=document.querySelectorAll('.cd-h'),
+          m=document.querySelectorAll('.cd-m'),s=document.querySelectorAll('.cd-s');
+    const p=n=>String(n).padStart(2,'0');
+    const set=(nodes,v)=>nodes.forEach(n=>n.textContent=v);
+    let target = nextTarget();
+    function fillDates(){
+      try{
+        const fullLabel  = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric'}).format(new Date(target));
+        const shortLabel = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric'}).format(new Date(target));
+        document.querySelectorAll('[data-classdate]').forEach(function(el){ el.textContent = fullLabel + ' · 6:00 PM Central'; });
+        document.querySelectorAll('[data-classdate-short]').forEach(function(el){ el.textContent = shortLabel; });
+      }catch(e){}
+    }
+    fillDates();
+    const setHeads = t => document.querySelectorAll('.cd-head').forEach(el=>el.textContent=t);
+    let liveShown = false;
+    function tick(){
+      let diff = target - Date.now();
+      if(diff<0){
+        if(diff > -LIVE_WINDOW_MS){
+          if(!liveShown){ setHeads('We are live right now. Register and the Zoom link comes to your inbox.'); liveShown = true; }
+          diff = 0;
+        } else {
+          target = nextMondayTarget(Date.now()); fillDates();
+          if(liveShown){ setHeads('Class starts in'); liveShown = false; }
+          diff = target - Date.now();
+        }
+      }
+      set(d,p(Math.floor(diff/86400000)));
+      set(h,p(Math.floor(diff%86400000/3600000)));
+      set(m,p(Math.floor(diff%3600000/60000)));
+      set(s,p(Math.floor(diff%60000/1000)));
+    }
+    tick(); setInterval(tick,1000);
+  }catch(e){}
+  })();
+
+  /* ====== FORM -> /api/masterclass-register (same endpoint, same Zoom room
+     as the live /masterclass page). Tagged source:'masterclass-v3' so
+     registrations from this A/B variant are easy to segment. ====== */
+  function getUtm(){
+    try{
+      const u = new URLSearchParams(location.search);
+      const utm = {};
+      ['utm_source','utm_medium','utm_campaign'].forEach(k=>{ if(u.get(k)) utm[k]=u.get(k).slice(0,60); });
+      return utm;
+    }catch(e){ return {}; }
+  }
+  async function handleSubmit(e){
+    e.preventDefault();
+    const form = e.target;
+    const btn  = form.querySelector('[data-btn]');
+    const err  = form.querySelector('[data-err]');
+    const orig = btn.textContent;
+    err.style.display='none';
+    btn.disabled = true; btn.textContent = 'Saving your seat…';
+    try{
+      const res = await fetch('/api/masterclass-register',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name:  form.name.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          source:'masterclass-v3',
+          utm: getUtm(),
+        }),
+      });
+      const data = await res.json().catch(()=>({}));
+      if(res.ok && data.ok){
+        if(window.posthog){ try{ posthog.capture('masterclass_register',{already:!!data.already, variant:'v3', ...getUtm()},{transport:'sendBeacon'}); }catch(e){} }
+        try{ window.bwPixelLead && window.bwPixelLead({ content_name: 'masterclass' }); }catch(e){}
+        window.location.href = '/masterclass/registered/';
+      }else{
+        err.textContent = (data && data.error) || 'Something went wrong. Please try again.';
+        err.style.display='block';
+        btn.disabled=false; btn.textContent=orig;
+      }
+    }catch(ex){
+      err.textContent='Connection hiccup. Please try again.';
+      err.style.display='block';
+      btn.disabled=false; btn.textContent=orig;
+    }
+    return false;
+  }
+  window.addEventListener('pageshow', function(e){
+    if(!e.persisted) return;
+    document.querySelectorAll('form[data-reg]').forEach(function(f){
+      const b = f.querySelector('[data-btn]');
+      if(b){ b.disabled = false; b.textContent = 'SAVE MY FREE SEAT'; }
+    });
+  });
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script>
+  /* PostHog (same project as the main site + control masterclass page) */
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_tyPhu6kt2jmfzhBPBjttdp3crfxNY4JdsZBoKa7SRgzS',{api_host:'https://us.i.posthog.com'});
+  posthog.register({variant:'v3'});
+</script>
+<script>
+  /* ManyChat arrival beacon (mirror of the control masterclass page, so DM
+     traffic sent into the A/B split still gets tracked correctly). */
+  (function(){
+    try{
+      var cid=(new URLSearchParams(window.location.search).get('mcp')||'').trim();
+      if(!/^[A-Za-z0-9_-]{5,64}$/.test(cid)) return;
+      try{ sessionStorage.setItem('bwbp_mcp',cid); }catch(e){}
+      try{ if(sessionStorage.getItem('bwbp_mcp_landed')===cid) return; }catch(e){}
+      fetch('/api/mc-tag',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({cid:cid,event:'landed'}),keepalive:true})
+        .then(function(r){ if(r&&r.ok){ try{ sessionStorage.setItem('bwbp_mcp_landed',cid); }catch(e){} } })
+        .catch(function(){});
+    }catch(e){}
+  })();
+</script>
+<script src="/pixels.js"></script>
+</body>
+</html>

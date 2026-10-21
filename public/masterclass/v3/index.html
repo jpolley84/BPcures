@@ -1,525 +1,242 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Restore Your Glow for the Holidays | Annie &amp; Joel, RNs</title>
-  <meta name="description" content="Free live masterclass with Joel Polley, RN and special guest Annie Chitate: The 4 Biggest Mistakes Making Your Fatigue, Blood Pressure, Weight, A1C, Chin Hair & Other Hormone Symptoms Worse After 40." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --navy:#0b1f2d;
-      --navy-2:#12384a;
-      --blue:#2b6576;
-      --red:#b72e2e;
-      --red-dark:#8f1f1f;
-      --gold:#e5b853;
-      --cream:#f6f4ef;
-      --paper:#ffffff;
-      --soft:#eaf0f2;
-      --ink:#11171b;
-      --muted:#4e5b62;
-      --line:#cbd4d8;
-      --shadow:0 18px 42px rgba(8,28,40,.13);
-      --max:1180px;
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Montserrat',Arial,sans-serif;line-height:1.48;overflow-x:hidden}
-    a{text-decoration:none;color:inherit}
-    .wrap{width:min(var(--max),calc(100% - 40px));margin:0 auto}
-    .top-banner{background:var(--red);color:#fff;text-align:center;padding:14px 18px 15px}
-    .top-banner .line1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.55rem,2.5vw,2.7rem);font-weight:700;line-height:1.08;letter-spacing:.01em;text-transform:uppercase}
-    .top-banner .line2{font-size:clamp(.95rem,1.25vw,1.18rem);font-weight:800;margin-top:6px;letter-spacing:.05em}
-    .brand-band{background:var(--navy);color:#fff;padding:20px 0;text-align:center;border-bottom:5px solid var(--gold)}
-    .brand{font-family:'Oswald',Arial,sans-serif;font-size:2.15rem;font-weight:700;letter-spacing:.08em}
-    .brand span{color:var(--gold)}
-    .brand-sub{font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:#c5d2d7;margin-top:2px}
-    .hero{background:linear-gradient(180deg,#fff 0%,#f4f6f6 100%);padding:44px 0 18px;text-align:center}
-    .hero h1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,4vw,4rem);line-height:1.08;margin:0 auto 18px;max-width:1450px;text-transform:uppercase;letter-spacing:.005em}
-    .hero .hint{font-size:clamp(1rem,1.5vw,1.18rem);font-weight:800;color:var(--red-dark);margin:0 auto 12px;max-width:1040px}
-    .hero .support{font-size:clamp(1rem,1.4vw,1.12rem);font-weight:600;color:var(--muted);margin:0 auto 24px;max-width:980px}
-    .divider{height:2px;background:#1b2f39;opacity:.55;width:min(1200px,calc(100% - 90px));margin:0 auto}
-    .main{padding:24px 0 34px}
-    .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:0;background:#eef2f3;border:1px solid rgba(11,31,45,.08)}
-    .left-panel{padding:42px 46px;background:#eef2f3}
-    .right-panel{padding:18px}
-    .tiny-top{text-align:center;font-size:.92rem;letter-spacing:.055em;text-transform:uppercase;margin:0 0 12px;color:var(--blue);font-weight:800}
-    .left-panel h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,3vw,3.25rem);line-height:1.12;text-align:center;margin:0 0 16px;text-transform:uppercase}
-    .redline{font-size:clamp(1rem,1.3vw,1.28rem);font-weight:800;color:var(--red-dark);text-align:center;max-width:720px;margin:0 auto 24px}
-    .gold-line{height:2px;background:var(--gold);max-width:90%;margin:0 auto 24px}
-    .left-panel p{font-size:1.04rem;margin:0 0 15px;color:#1a262d}
-    .left-panel strong{font-weight:800}
-    .form-card{background:var(--navy);color:#fff;border-radius:24px;padding:30px 30px 26px;min-height:100%;box-shadow:var(--shadow);border-top:5px solid var(--gold)}
-    .form-card h3{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,2.7vw,3rem);line-height:1.05;text-align:center;margin:0 0 8px;text-transform:uppercase}
-    .form-card .sub{font-size:.95rem;font-weight:700;text-align:center;color:#cbd9df;margin:0 0 20px}
-    .price{text-align:center;font-size:4rem;line-height:1;font-weight:500;margin:6px 0 14px}
-    .price .strike{color:#7e919a;text-decoration:line-through;text-decoration-thickness:5px;margin-right:8px}
-    .free-label{text-align:center;text-transform:uppercase;letter-spacing:.05em;font-size:.9rem;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;margin:0 0 14px;color:#d8e2e6}
-    .datebox{text-align:center;font-weight:800;font-size:1rem;margin:0 0 4px;color:#fff}
-    .cd-head{text-align:center;font-weight:700;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#a9bac1;margin:10px 0 8px}
-    .countdown{display:flex;justify-content:center;gap:8px;margin:0 0 16px}
-    .countdown div{background:var(--navy-2);border-radius:10px;padding:10px 5px;min-width:56px;text-align:center}
-    .countdown b{display:block;font-weight:800;font-size:1.5rem;color:#fff;line-height:1}
-    .countdown span{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#a9bac1;font-weight:700}
-    .field{width:100%;padding:14px 15px;border-radius:9px;border:1px solid #bdc7cb;background:#fff;font:inherit;margin:0 0 10px;color:#111}
-    .btn{display:flex;width:100%;min-height:54px;padding:15px 17px;border:none;border-radius:8px;background:var(--gold);font:900 .98rem 'Montserrat',Arial,sans-serif;color:#1c2225;cursor:pointer;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.18)}
-    .btn:hover{transform:translateY(-1px)}
-    .btn:disabled{opacity:.7;cursor:default;transform:none}
-    .form-err{display:none;text-align:center;font-size:.82rem;font-weight:700;color:#ffb4b0;margin:0 0 10px}
-    .secure{text-align:center;font-size:.76rem;color:#bccad0;margin:10px 0 0}
-    .section{padding:44px 0}
-    .section.white{background:#fff}
-    .section.soft{background:var(--soft)}
-    .content{display:grid;grid-template-columns:1fr 1fr;gap:38px;align-items:start}
-    .box{background:#fff;border-radius:20px;padding:28px;box-shadow:var(--shadow)}
-    .box.dark{background:var(--navy);color:#fff;border-top:4px solid var(--gold)}
-    .eyebrow{font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);font-weight:900;margin-bottom:8px}
-    .box.dark .eyebrow{color:var(--gold)}
-    .section h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,2.75vw,3rem);line-height:1.1;margin:0 0 16px;text-transform:uppercase}
-    .body p{font-size:1.03rem;margin:0 0 15px}
-    .body strong{font-weight:800}
-    .pull{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.45rem,2vw,2.15rem);line-height:1.15;font-weight:700;margin:18px 0;text-transform:uppercase;color:var(--navy)}
-    .box.dark .pull{color:#fff}
-    .quote{border-left:5px solid var(--gold);padding:15px 18px;background:#f9f7f1;font-weight:700;margin:18px 0;color:#26353c}
-    .triple{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    .triple .card{background:#fff;border-radius:16px;padding:20px;box-shadow:var(--shadow);border-top:4px solid var(--blue)}
-    .triple h4{font-family:'Oswald',Arial,sans-serif;font-size:1.25rem;margin:0 0 7px;text-transform:uppercase}
-    .triple p{margin:0;font-size:.96rem;line-height:1.5}
-    .final{padding:40px 0 56px}
-    .final-box{max-width:980px;margin:0 auto;background:var(--navy);color:#fff;border-radius:22px;padding:32px;box-shadow:var(--shadow);text-align:center;border-top:5px solid var(--gold)}
-    .final-box h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,2.9vw,3rem);line-height:1.1;margin:0 0 12px;text-transform:uppercase}
-    .final-box p{font-size:1rem;margin:0 0 18px;color:#d9e3e7}
-    footer{background:#07141d;color:#cbd7dc;padding:26px 0 36px;font-size:.78rem}
-    footer .wrap{display:flex;justify-content:space-between;gap:22px;align-items:flex-start}
-    footer a{text-decoration:underline;color:#e6edf0}
-    .mobile-sticky{display:none}
-    .woman-focus{display:flex;align-items:center;gap:18px;margin:18px 0 20px;padding:16px;background:#f7f9fa;border-radius:16px;border-left:4px solid var(--gold)}
-    .woman-focus img{width:128px;height:128px;object-fit:cover;object-position:center;border-radius:16px;flex:0 0 auto;box-shadow:0 10px 24px rgba(8,28,40,.12)}
-    .woman-focus p{margin:0!important;font-size:.98rem!important;line-height:1.5}
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#231924" name="theme-color"/>
+<title>Restore Your Glow for the Holidays | One-Time Live Masterclass with Annie &amp; Joel</title>
+<meta content="For women navigating perimenopause, menopause and life after 40: a one-time free live masterclass about energy, confidence, beautiful skin and hair, and the woman underneath the symptoms. Monday, October 26 at 6 PM Central." name="description"/>
+<meta content="Restore Your Glow for the Holidays — Live with Annie &amp; Joel" property="og:title"/>
+<meta content="Your energy. Your spark. Your confidence. This holiday season, make room for HER. A special free live masterclass October 26." property="og:description"/>
+<meta content="website" property="og:type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&amp;display=swap" rel="stylesheet"/>
+<style>
+:root{--ink:#241c27;--plum:#291c2a;--berry:#744458;--gold:#b48a48;--gold-light:#dfbd81;--ivory:#fffdf8;--cream:#fbf6ec;--blush:#f1e3df;--line:#e9dfd2;--muted:#6a5d63;--green:#293b31}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ivory);color:var(--ink);font-family:"DM Sans",Arial,sans-serif;line-height:1.55;overflow-x:hidden}a{color:inherit}button,input{font:inherit}button,a.btn{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #bd8e47;outline-offset:3px} ::selection{background:#d7b37a;color:#231a26}
+.serif,h1,h2,h3,blockquote{font-family:"Playfair Display",Georgia,serif;font-weight:500;letter-spacing:-.038em}h1,h2,h3,p{margin-top:0}p{font-size:17px}.wrap{width:min(1160px,calc(100% - 48px));margin-inline:auto}.eyebrow{text-transform:uppercase;letter-spacing:.20em;font-size:11px;font-weight:800;color:var(--berry)}.kicker{font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:700}.italic{font-style:italic}.emgold{color:#c9a66d}.btn{display:inline-flex;align-items:center;justify-content:center;gap:14px;border-radius:4px;padding:17px 25px;font-family:Manrope,sans-serif;font-size:14px;font-weight:800;letter-spacing:.015em;text-decoration:none;border:1px solid transparent;transition:transform .2s,box-shadow .2s,background .2s;white-space:normal;text-align:center}.btn:hover{transform:translateY(-2px);box-shadow:0 9px 28px #2a192038}.btn-gold{background:linear-gradient(112deg,#ecd4a4 0%,#c9a46c 46%,#e8ca8f 80%,#c69b54 100%);color:#241c26;box-shadow:0 9px 23px #3c252424}.btn-dark{background:#291c2a;color:#fff}.btn-line{border-color:#ae8970;background:transparent;color:#39242c}.arrow{font-size:18px;line-height:1;transform:translateY(-1px)}
+.announcement{padding:11px 12px;background:#281b29;color:#fcf4e4;text-align:center;font-size:11px;font-weight:750;letter-spacing:.135em;text-transform:uppercase}.announcement b{color:#f0d59c}.site-header{background:#fffaf5;border-bottom:1px solid #ede4d9;position:relative;z-index:5}.nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{display:flex;align-items:center;gap:10px;font-size:15px;line-height:1.18;font-weight:800;letter-spacing:.025em}.brandmark{width:32px;height:32px;border-radius:50%;border:1.4px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-family:Georgia;font-size:22px;line-height:1}.brand span small{display:block;font-size:10px;letter-spacing:.14em;color:#8b666a;font-weight:700}.nav-right{display:flex;align-items:center;gap:24px}.nav-right .date{font-size:12px;color:#756265;font-weight:700}.nav .btn{padding:12px 18px;font-size:12px}
+.hero{position:relative;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 66% 36%,#f8e4d8 0%,transparent 51%),linear-gradient(125deg,#fffdf8,#fbf1e6 72%,#f5e6df);padding:64px 0 56px}.hero:before{content:"";position:absolute;pointer-events:none;width:670px;height:670px;border:1px solid #dcbf8d4f;border-radius:50%;left:-390px;top:-310px}.hero:after{content:"";position:absolute;pointer-events:none;width:670px;height:670px;border:1px solid #dcbf8d7a;border-radius:50%;right:-340px;bottom:-480px}.hero-grid{display:grid;grid-template-columns:1.04fr .96fr;align-items:center;gap:40px}.hero-copy{position:relative;z-index:2;padding:18px 0 22px}.lux-line{display:flex;align-items:center;gap:13px;color:#865665;font-size:12px;font-weight:800;letter-spacing:.145em;text-transform:uppercase}.lux-line:before{content:"";width:36px;height:1px;background:#b78e60}.hero h1{font-size:clamp(53px,6.7vw,92px);line-height:1.04;letter-spacing:-.059em;margin:19px 0 22px;max-width:680px}.hero h1 em{font-weight:400;color:#a96d75;white-space:nowrap}.hero .dek{font-size:19px;line-height:1.68;color:#534750;max-width:600px;margin:0 0 26px}.hero .dek strong{color:#3e2c33}.flair{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 28px}.flair span{border:1px solid #e5d2c7;background:#fff9f1c9;padding:8px 13px;border-radius:22px;font-size:12px;font-weight:700;color:#79555f}.hero-event{display:flex;align-items:center;gap:14px;margin:0 0 28px}.cal-icon{width:53px;height:56px;border:1px solid #ccb79b;background:#fffdf7;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:5px;box-shadow:0 4px 14px #573c2b0d}.cal-icon small{font-size:10px;font-weight:800;letter-spacing:.08em;color:#946e54}.cal-icon b{font-family:Georgia;font-size:25px;line-height:1.15}.hero-event .when{font-size:15px;font-weight:800;line-height:1.5}.hero-event .when small{display:block;color:#7b6770;font-size:12px;font-weight:600}.hero-cta{display:flex;align-items:center;flex-wrap:wrap;gap:17px}.cta-note{font-size:12px;color:#796a6d;max-width:190px}.hero .micro{font-size:12px;color:#857279;margin:14px 0 0}.hero-visual{position:relative;min-height:685px;display:flex;justify-content:center;align-items:center}.hero-visual:before{content:"";position:absolute;inset:23px -1px -8px 36px;border-radius:280px 280px 22px 22px;border:1px solid #e1bd84;transform:rotate(5deg);z-index:-1}.hero-visual:after{content:"";position:absolute;width:370px;height:440px;background:radial-gradient(ellipse,#eed6a588,transparent 70%);filter:blur(26px);right:-90px;top:-5px;z-index:-1}.portrait-frame{position:relative;width:min(94%,470px);height:653px;overflow:hidden;border-radius:250px 250px 20px 20px;box-shadow:0 25px 55px #49322b29;border:8px solid #fdf8eb;background:#4c4a2c}.portrait-frame img{width:100%;height:100%;object-fit:cover;object-position:52% 14%;filter:saturate(.89) contrast(1.025)}.portrait-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,#180c1f82 100%);pointer-events:none}.portrait-caption{position:absolute;z-index:2;bottom:23px;left:30px;color:white;text-align:left}.portrait-caption strong{display:block;font-family:"Playfair Display",serif;font-weight:500;font-size:31px;line-height:1.1}.portrait-caption small{font-weight:600;letter-spacing:.14em;font-size:10px;text-transform:uppercase;color:#f8ddb8}.seal{position:absolute;z-index:3;right:-3px;top:52px;width:125px;height:125px;background:#2f2430;color:#f0d5a1;border:1px solid #d3b783;outline:5px solid #fffaee;box-shadow:0 13px 24px #4c333647;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;transform:rotate(11deg)}.seal strong{font-family:"Playfair Display",serif;font-size:22px;line-height:1.04;text-align:center}.seal small{margin-bottom:5px;font-size:9px;letter-spacing:.08em;text-transform:uppercase}.spark{position:absolute;color:#c19b67;font-size:37px;z-index:4;text-shadow:0 0 16px #ffe3ac}.spark.s1{top:30px;left:16px}.spark.s2{bottom:70px;right:-14px;font-size:44px}.spark.s3{top:235px;right:-41px;font-size:20px}
+.section{padding:105px 0}.center{text-align:center}.intro{background:#fffdf9}.section h2{font-size:clamp(38px,4.5vw,63px);line-height:1.13;margin:16px auto 22px}.intro .narrow{max-width:830px;margin:auto}.lead{font-size:20px;line-height:1.75;color:#554951}.bold-inline{color:#8a4d5d;font-weight:700}.mirror-quote{font-family:"Playfair Display",serif;font-style:italic;font-size:clamp(31px,4vw,52px);line-height:1.32;margin:36px auto 18px;max-width:825px;color:#3a2b32}.strike-line{width:66px;height:1px;background:#ba995f;margin:24px auto}.intro-foot{font-size:18px;max-width:735px;margin:0 auto;color:#63535d}
+.future{position:relative;background:linear-gradient(180deg,#f8f1e9,#fdf8f0);border-block:1px solid #eadfd4;overflow:hidden}.future:before{content:"✦";position:absolute;font-size:220px;color:#deb96e19;right:-25px;top:-30px}.future .sub{font-size:17px;color:#6b5960;max-width:680px;margin:0 auto 42px}.future-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:19px;margin-top:38px;text-align:left}.future-card{background:#fffdf9;border:1px solid #eaded4;padding:36px 30px 38px;min-height:300px;position:relative;box-shadow:0 8px 35px #4333220a}.future-card .number{font-family:Georgia,serif;font-style:italic;font-size:44px;color:#ccad74;line-height:1}.future-card h3{font-size:28px;margin:28px 0 13px}.future-card p{font-size:16px;color:#6b5b60;line-height:1.66;margin:0}
+.dark-statement{background:var(--plum);color:#fff6e8;padding:66px 20px;text-align:center;position:relative;overflow:hidden}.dark-statement:before,.dark-statement:after{content:"✧";position:absolute;top:16px;font-size:170px;color:#c5a36a20}.dark-statement:before{left:4%}.dark-statement:after{right:4%;transform:rotate(20deg)}.dark-statement p{font-family:"Playfair Display",serif;font-size:clamp(28px,3.5vw,48px);line-height:1.28;max-width:900px;margin:0 auto;position:relative;z-index:1}.dark-statement em{color:#e1bd84}
+.secrets{background:#fffdf9}.secrets h2{max-width:740px}.secrets .sub{font-size:18px;color:#655961;max-width:710px;margin:0 auto 45px}.secrets-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.secret{padding:36px 30px;border:1px solid #e9d9ca;background:#fcf8f2;position:relative}.secret:before{content:"";height:3px;position:absolute;left:0;top:0;right:0;background:linear-gradient(90deg,#bc925e,#e9c897,#8b5160)}.secret .secret-tag{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#ac825c;font-weight:800}.secret h3{font-size:27px;line-height:1.28;margin:21px 0 15px}.secret p{font-size:16px;color:#6b5c60}.secret:last-child{background:#f9eeea}.under-secrets{margin:30px 0 0;color:#79686c;font-size:14px}.secrets .btn{margin-top:30px}
+.for-her{background:linear-gradient(110deg,#f5e7e1,#fff9f1 68%)}.for-her-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}.for-her h2{margin-left:0}.thoughts{display:grid;gap:13px}.thought{background:#fffdfac7;border:1px solid #e4cfc4;padding:19px 24px;border-radius:4px;font-family:"Playfair Display",serif;font-style:italic;font-size:21px;line-height:1.5}.for-her p{color:#62535d;font-size:18px;line-height:1.7}.for-her .btn{margin-top:7px}
+.host{background:#fffdf9}.host-grid{display:grid;grid-template-columns:350px 1fr;gap:70px;align-items:center}.host-img{height:440px;overflow:hidden;border-radius:170px 170px 7px 7px;border:8px solid #f7ebdc;box-shadow:0 15px 35px #372a281b}.host-img img{width:100%;height:100%;object-fit:cover;object-position:center 12%}.host h2{margin-left:0}.host p{color:#625760;font-size:18px;line-height:1.8}.host .signature{font-family:"Playfair Display",serif;font-size:25px;color:#80515b;font-style:italic;margin-top:25px}
+.reserve{background:radial-gradient(ellipse at 70% 0,#664254 0%,transparent 46%),linear-gradient(130deg,#291b2c,#221822);color:#fff6ef;position:relative;overflow:hidden;padding:96px 0}.reserve:before{content:"";position:absolute;border:1px solid #d0ae7050;border-radius:50%;width:600px;height:600px;left:-360px;bottom:-380px}.reserve-grid{display:grid;grid-template-columns:1fr 460px;align-items:center;gap:75px}.reserve .eyebrow{color:#e9c58d}.reserve h2{margin:16px 0 22px;font-size:clamp(43px,4.2vw,61px)}.reserve h2 em{color:#eccb92}.reserve p{color:#e7d5d9;font-size:18px;line-height:1.7}.reserve .timing{display:flex;flex-direction:column;gap:10px;margin-top:25px;font-weight:700;color:#f6e9dc;font-size:15px}.reserve .timing span:before{content:"✧";color:#e2c18b;margin-right:13px}.form-card{background:#fffdf8;border:1px solid #e6c793;color:#2d2230;padding:38px 35px;box-shadow:0 20px 60px #0c060d70;border-radius:5px}.form-card .small-top{font-size:10px;letter-spacing:.2em;font-weight:800;color:#987045;text-transform:uppercase}.form-card h3{font-size:35px;line-height:1.14;margin:15px 0 12px}.form-card .form-copy{font-size:14px;color:#655860;line-height:1.6;margin:0 0 22px}.form-card label{display:block;font-size:12px;font-weight:800;margin-bottom:7px;color:#50424b}.form-card .field{margin-bottom:15px}.form-card input[type=text],.form-card input[type=email]{width:100%;border:1px solid #d9c9c4;padding:14px 14px;background:white;color:#291c2a;border-radius:3px;font-size:16px}.form-card input::placeholder{color:#a29a9d}.form-card .btn{width:100%;padding-block:17px}.form-card .privacy{font-size:11px;color:#827579;line-height:1.7;margin:15px 0 0}.form-card .privacy a{text-decoration:underline}.form-card .form-message{display:none;padding:12px 14px;margin-top:14px;background:#f4e9e1;color:#6c3736;border:1px solid #deb8a5;border-radius:3px;font-size:13px;line-height:1.6}.form-card .form-message.show{display:block}.reg-note{margin:22px 0 0;color:#d9c5c8;font-size:13px}
+.faq{background:#fcf8f2}.faq h2{margin-bottom:42px}.faq-box{max-width:855px;margin:auto}.faq details{border-bottom:1px solid #e3d6ca;padding:22px 0}.faq summary{list-style:none;cursor:pointer;font-weight:800;font-size:17px;display:flex;justify-content:space-between;gap:20px;align-items:center}.faq summary::-webkit-details-marker{display:none}.faq summary:after{content:"+";font-size:24px;color:#a66e68;font-weight:400}.faq details[open] summary:after{content:"−"}.faq details p{color:#655660;font-size:16px;line-height:1.75;max-width:760px;margin:13px 0 0}
+footer{background:#221922;color:#d9cacc;padding:38px 0 45px}.foot{display:flex;justify-content:space-between;align-items:start;gap:34px}.foot small{font-size:12px;line-height:1.8;display:block}.footer-brand{font-weight:800;letter-spacing:.07em;color:#faecd5;margin-bottom:13px}.foot p{font-size:11px;line-height:1.65;color:#bfb1b8;max-width:650px;margin-top:6px}.sticky-mobile{display:none}
+@media(max-width:1100px){.hero h1{font-size:clamp(50px,6.5vw,76px)}.hero-grid{gap:22px}.hero-visual{min-height:590px}.portrait-frame{height:570px}.host-grid{gap:42px}.reserve-grid{gap:40px;grid-template-columns:1fr 410px}}
+@media(max-width:840px){.nav-right .date{display:none}.hero{padding-top:39px}.hero-grid{grid-template-columns:1fr}.hero-copy{text-align:center}.lux-line{justify-content:center}.hero h1{margin-inline:auto;max-width:680px;font-size:clamp(49px,10vw,74px)}.hero .dek{margin-inline:auto}.flair,.hero-event,.hero-cta{justify-content:center}.hero .micro{text-align:center}.hero-visual{min-height:520px;margin-top:20px}.portrait-frame{max-width:460px;height:520px}.hero-visual:before{inset:18px 16% 0 18%}.seal{right:17%;top:30px}.spark.s1{left:17%}.spark.s2{right:14%}.future-grid,.secrets-grid{grid-template-columns:1fr}.future-card{min-height:unset}.for-her-grid{grid-template-columns:1fr;gap:30px}.host-grid{grid-template-columns:230px 1fr;gap:28px}.host-img{height:340px}.reserve-grid{grid-template-columns:1fr}.reserve .reserve-copy{text-align:center}.reserve .timing{align-items:center}.form-card{max-width:510px;width:100%;margin:auto}}
+@media(max-width:560px){.wrap{width:calc(100% - 34px)}.announcement{font-size:9px;line-height:1.5}.nav{min-height:67px}.nav .btn{padding:10px 11px;font-size:11px}.brand{font-size:12px}.brandmark{width:29px;height:29px;font-size:19px}.hero{padding-top:35px;padding-bottom:40px}.hero h1{font-size:clamp(49px,11vw,66px);letter-spacing:-.064em}.hero .dek{font-size:17px}.lux-line{font-size:10px;letter-spacing:.10em}.flair{gap:6px}.flair span{font-size:10px}.hero-visual{min-height:480px}.portrait-frame{max-width:350px;width:91%;height:462px;border-width:6px}.portrait-caption{left:20px;bottom:20px}.portrait-caption strong{font-size:25px}.seal{right:2%;width:97px;height:97px;top:28px}.seal strong{font-size:17px}.spark.s1{left:5%}.spark.s2{right:1%}.hero .micro{font-size:11px}.hero-cta .btn{width:100%}.cta-note{max-width:none}.section{padding:75px 0}.section h2{font-size:clamp(37px,10vw,47px)}.lead{font-size:18px}.future-card{padding:28px 25px}.secret{padding:30px 25px}.thought{font-size:19px}.host-grid{grid-template-columns:1fr;text-align:center;gap:30px}.host-img{max-width:270px;margin:0 auto;width:100%;height:325px}.host h2{margin-inline:auto}.host p{font-size:16px}.reserve{padding:76px 0}.reserve h2{font-size:clamp(38px,10vw,51px)}.form-card{padding:29px 23px}.form-card h3{font-size:30px}.foot{flex-direction:column;gap:12px}.sticky-mobile{display:block;position:fixed;bottom:0;left:0;width:100%;z-index:15;padding:10px 17px max(10px,env(safe-area-inset-bottom));background:#fffaf3ee;box-shadow:0 -8px 23px #2c1d1d1c;border-top:1px solid #dcc5a7}.sticky-mobile .btn{width:100%;font-size:13px;padding:13px}.site-footer{padding-bottom:102px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
 
-    .host-visual{margin:18px 0 22px;text-align:center}
-    .host-visual img{width:min(100%,460px);height:170px;object-fit:cover;object-position:right center;border-radius:18px;box-shadow:0 10px 26px rgba(0,0,0,.10);display:block;margin:0 auto}
-    .host-visual .host-caption{font-size:.82rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:8px;opacity:.72}
+/* Holiday Glow v2: polished editorial copy below the untouched hero */
+.intro .eyebrow,.future .eyebrow,.secrets .eyebrow,.for-her .eyebrow,.host .eyebrow,.reserve .eyebrow{font-size:13px;letter-spacing:.16em}
+.intro h2{max-width:1030px;font-size:clamp(43px,5.2vw,72px);line-height:1.12}
+.intro .intro-foot{max-width:760px}
+.future h2{max-width:980px;font-size:clamp(45px,5.1vw,71px);line-height:1.13}
+.future .sub{max-width:860px;font-size:20px;line-height:1.75}
+.future-card h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(26px,2.4vw,33px);line-height:1.25;letter-spacing:-.024em;margin-top:20px}
+.future-card p{font-size:17px;line-height:1.72}
+.future-card strong{color:#4b313f}
+.secrets h2{max-width:1060px;font-size:clamp(46px,5.6vw,78px);line-height:1.13}
+.secrets .sub{max-width:850px;font-size:20px;line-height:1.8}
+.not-this-grid .secret h3{font-size:clamp(25px,2.4vw,33px)}
+.not-this-grid .secret p{font-size:17px;line-height:1.67}
+.under-secrets{font-size:18px;line-height:1.6;max-width:760px;margin:32px auto 0}
+.gift-feature{max-width:960px;margin:40px auto 8px;padding:27px 24px;display:flex;align-items:center;justify-content:center;gap:27px;background:radial-gradient(ellipse at top right,#f7e6c8,#fff9ef 60%);border:1px solid #debc88;box-shadow:0 12px 34px #5a384314;position:relative}
+.gift-feature:before{content:"";position:absolute;inset:7px;border:1px solid #ead8b6;pointer-events:none}
+.gift-feature .gift-kicker{font-size:11px;letter-spacing:.22em;color:#8a5870;font-weight:800}
+.gift-feature h3{font-family:"Playfair Display",Georgia,serif;font-size:clamp(27px,3.1vw,42px);line-height:1.2;margin:6px auto 8px;color:#332231}
+.gift-feature h3 em{color:#8d5466}
+.gift-feature p{font-size:15px;line-height:1.6;color:#655660;margin:0 auto;max-width:630px}
+.gift-icon{font-size:55px;line-height:1;color:#c7a268;flex-shrink:0}
+.for-her h2{font-size:clamp(42px,4.7vw,64px);line-height:1.15}
+.for-her .thoughts-label{font-size:11px;font-weight:800;letter-spacing:.18em;color:#8a5b67;margin-bottom:1px}
+.for-her .thought{font-size:20px}
+.host h2{font-size:clamp(39px,4.5vw,61px);line-height:1.16}
+.reserve h2{font-size:clamp(45px,4.6vw,66px);line-height:1.1}
+.reserve .reserve-copy p{font-size:17px;line-height:1.69}
+.reserve .reserve-copy p strong{color:#fff4e0}
+.reserve .timing{font-size:14px;line-height:1.6}
+@media(max-width:560px){.future .sub,.secrets .sub{font-size:18px}.gift-feature{padding:28px 21px}.gift-icon{display:none}.for-her .thought{font-size:18px}.reserve .reserve-copy p{font-size:16px}}
 
-    @media (max-width:980px){
-      .grid,.content,.triple{grid-template-columns:1fr}
-      .right-panel{order:1;padding:10px 12px 14px}
-      .left-panel{order:2}
-      .left-panel,.form-card,.box,.final-box{padding:24px}
-      .hero{padding:30px 0 10px}
-      .main{padding:10px 0 24px}
-      .section{padding:34px 0}
-      .content{gap:18px}
-      footer .wrap{flex-direction:column}
-    }
-    @media (max-width:560px){
-      body{padding-bottom:72px}
-      .wrap{width:min(100% - 20px,var(--max))}
-      .top-banner{padding:10px 10px 11px}
-      .top-banner .line1{font-size:1.18rem}
-      .top-banner .line2{font-size:.85rem;line-height:1.2;margin-top:5px}
-      .brand-band{padding:11px 0 10px;border-bottom-width:3px}
-      .brand{font-size:1.45rem}
-      .brand-sub{font-size:.54rem;letter-spacing:.2em}
-      .hero{padding:22px 0 8px}
-      .hero h1{font-size:1.78rem;line-height:1.06;margin-bottom:13px}
-      .hero .hint{font-size:.94rem;line-height:1.35;margin-bottom:9px}
-      .hero .support{font-size:.92rem;line-height:1.42;margin-bottom:12px}
-      .divider{width:calc(100% - 34px)}
-      .main{padding:10px 0 20px}
-      .grid{background:transparent;border:0}
-      .woman-focus{align-items:flex-start;gap:12px;padding:12px;margin:14px 0 16px}
-      .woman-focus img{width:84px;height:84px;border-radius:12px}
-      .woman-focus p{font-size:.91rem!important;line-height:1.4}
-      .host-visual img{height:118px;border-radius:14px}
-      .right-panel{padding:0 0 12px}
-      .left-panel{padding:20px 16px}
-      .tiny-top{font-size:.77rem;line-height:1.35;margin-bottom:9px}
-      .left-panel h2,.form-card h3,.section h2,.final-box h2{font-size:1.62rem;line-height:1.1}
-      .redline{font-size:.97rem;line-height:1.4;margin-bottom:17px}
-      .gold-line{margin-bottom:17px}
-      .left-panel p,.body p,.triple p,.final-box p{font-size:.97rem;line-height:1.55}
-      .form-card{padding:21px 16px 18px;border-radius:16px}
-      .form-card .sub{font-size:.88rem;margin-bottom:14px}
-      .price{font-size:2.9rem;margin:2px 0 9px}
-      .free-label{font-size:.8rem;padding-top:11px;margin-bottom:11px}
-      .datebox{font-size:.93rem;margin-bottom:3px}
-      .countdown div{min-width:50px;padding:9px 4px}
-      .countdown b{font-size:1.25rem}
-      .field{font-size:16px;padding:14px 13px}
-      .btn{min-height:54px;font-size:.94rem;padding:14px 11px}
-      .section{padding:27px 0}
-      .content{gap:14px}
-      .box,.final-box{padding:20px 16px;border-radius:15px}
-      .eyebrow{font-size:.77rem;margin-bottom:6px}
-      .pull{font-size:1.35rem;line-height:1.2;margin:15px 0}
-      .quote{padding:13px 14px;margin:15px 0}
-      .triple{gap:11px}
-      .triple .card{padding:17px 15px;border-radius:13px}
-      .final{padding:24px 0 34px}
-      footer{padding:22px 0 88px}
-      .mobile-sticky{display:block;position:fixed;left:0;right:0;bottom:0;z-index:999;background:rgba(7,20,29,.98);padding:9px 10px calc(9px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px rgba(0,0,0,.25)}
-      .mobile-sticky a{display:flex;align-items:center;justify-content:center;min-height:48px;background:var(--gold);color:#1c2225;border-radius:8px;font-weight:900;font-size:.92rem;text-align:center}
-    }
-  
-    /* ── 2026-09-21 challenge-style layout (.mc2-*): full-width bands, centered
-       copy, no cards. The form card inside #register keeps its own styles. ── */
-    .mc2{--mc-ink:#0b1f2d;--mc-deep:#07141d;--mc-accent:#b72e2e;--mc-gold:#e5b853;--mc-soft:#f1f4f5;--mc-cream:#f6f4ef;}
-    .mc2-band{padding:64px 0;background:#fff;color:var(--mc-ink);font-family:'Montserrat',Arial,sans-serif}
-    .mc2-band.soft{background:var(--mc-soft)}
-    .mc2-band.dark{background:var(--mc-deep);color:#fff}
-    .mc2-band.accent{background:var(--mc-accent);color:#fff}
-    .mc2-narrow{width:min(calc(100% - 36px),860px);margin:0 auto;text-align:center}
-    .mc2-wide{width:min(calc(100% - 36px),1120px);margin:0 auto}
-    .mc2-eyebrow{font-weight:900;letter-spacing:.14em;text-transform:uppercase;font-size:.85rem;color:var(--mc-accent);margin:0 0 12px}
-    .mc2-band.dark .mc2-eyebrow,.mc2-band.accent .mc2-eyebrow{color:var(--mc-gold)}
-    .mc2-h1{font-family:'Oswald',Arial,sans-serif;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1.06;margin:0 auto 18px;max-width:1080px;text-transform:uppercase;color:var(--mc-ink)}
-    .mc2-h2{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.9rem,3.6vw,3rem);line-height:1.1;margin:0 0 18px;color:inherit}
-    .mc2-band p{font-size:clamp(1.05rem,1.6vw,1.2rem);line-height:1.6;margin:0 0 14px}
-    .mc2-hint{font-weight:800;color:var(--mc-accent)}
-    .mc2-list{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.25rem,2.2vw,1.7rem)!important;line-height:1.5!important;font-weight:600}
-    .mc2-big{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.6rem,3.2vw,2.6rem);line-height:1.15;margin:26px auto 0;font-weight:700;color:var(--mc-accent);text-transform:uppercase}
-    .mc2-band.dark .mc2-big,.mc2-band.accent .mc2-big{color:var(--mc-gold)}
-    .mc2-quote{font-family:'Oswald',Arial,sans-serif;font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.3;margin:22px auto;max-width:760px;font-weight:600}
-    .mc2-cta{display:inline-block;margin-top:22px;background:var(--mc-accent);color:#fff;font-weight:900;letter-spacing:.03em;padding:17px 30px;border-radius:6px;text-decoration:none}
-    .mc2-band.dark .mc2-cta,.mc2-band.accent .mc2-cta{background:var(--mc-gold);color:var(--mc-deep)}
-    .mc2-register{max-width:560px;margin:0 auto}
-    .mc2-shot{width:100%;max-width:440px;height:auto;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.14);margin-top:8px}
-    .mc2-about{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:center}
-    .mc2-about img{width:100%;max-width:420px;height:auto;border-radius:16px;display:block;margin:0 auto;background:#01070f}
-    .mc2-about .txt{text-align:left}
-    .mc2-three{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;text-align:left}
-    .mc2-three h3{font-family:'Oswald',Arial,sans-serif;font-size:1.6rem;margin:0 0 8px;color:var(--mc-accent);text-transform:uppercase}
-    .mc2-three p{font-size:1.02rem!important}
-    .mc2-final form{max-width:620px;margin:18px auto 0}
-    @media(max-width:800px){
-      .mc2-band{padding:46px 0}
-      .mc2-about,.mc2-three{grid-template-columns:1fr;gap:24px}
-      .mc2-about .txt{text-align:center}
-    }
 
-    /* 2026-09-21 10:54: split register band + hero sized to keep SAVE MY FREE SEAT above the fold */
-    .mc2-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center}
-    .mc2-split-text{text-align:left}
-    .mc2-split-text .mc2-big{text-align:left}
-    .mc2-hero{padding:34px 0 38px!important}
-    .mc2-hero .mc2-eyebrow{margin-bottom:8px}
-    .mc2-hero .mc2-h1{font-size:clamp(1.7rem,3.3vw,2.75rem);margin-bottom:12px}
-    .mc2-hero p{font-size:clamp(.98rem,1.3vw,1.08rem);margin-bottom:10px}
-    .mc2-hero .mc2-cta{margin-top:10px}
-    @media(max-width:880px){
-      .mc2-split{grid-template-columns:1fr;gap:28px}
-      .mc2-split-text,.mc2-split-text .mc2-big{text-align:center}
-    }
-    @media(max-width:640px){
-      .mc2-hero{padding:22px 0 26px!important}
-      .mc2-hero .mc2-h1{font-size:1.5rem;line-height:1.08}
-      .mc2-hero p{font-size:.95rem;line-height:1.45}
-      .mc2-hero .mc2-eyebrow{font-size:.75rem}
-    }
+/* Glow v3 — direct, large, woman-first copy. The hero stays unchanged. */
+.intro .narrow{max-width:890px}.intro .lead{max-width:830px;margin:0 auto 23px}.intro-symptoms{max-width:790px;margin:12px auto 30px;font-size:clamp(19px,2.2vw,25px);line-height:1.6;color:#4a323d}.intro-symptoms strong{color:#7e4358}.intro-hard{font-family:"Playfair Display",Georgia,serif;color:#513145;font-size:clamp(25px,2.8vw,38px);line-height:1.35;margin:34px auto 0;max-width:790px}
+.future h2{max-width:1050px;font-size:clamp(43px,5vw,68px)}.future .sub{max-width:890px;font-size:clamp(19px,2.2vw,24px);line-height:1.6;color:#4e3a45;margin-bottom:18px}.future .future-second{margin-top:0;margin-bottom:46px}.future-second strong{color:#593547}.future-grid{gap:15px}.future-card{padding:34px 27px;min-height:auto;box-shadow:0 18px 36px #3b20230b}.future-card h3{font-size:clamp(28px,2.7vw,39px);line-height:1.13;margin:23px 0}.future-card p{font-size:18px;line-height:1.57;margin-bottom:14px;color:#4d3d46}.future-card p:last-child{margin-bottom:0}.future-card strong{color:#40253b}
+.secrets .sub{font-size:clamp(19px,2vw,23px);color:#4d3c46;line-height:1.65;margin-bottom:24px}.secrets-tease{font-size:20px;font-weight:600;color:#513342;max-width:750px;margin:0 auto 36px}.not-this-stack{max-width:1040px;margin:0 auto;display:grid;gap:18px;text-align:left}.not-panel{display:grid;grid-template-columns:78px 1fr;gap:15px;align-items:start;padding:37px 45px 35px 29px;border:1px solid #e8d5c5;background:#fbf6ef;box-shadow:0 8px 30px #4028280c;position:relative}.not-panel:before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:linear-gradient(#bd9565,#925367)}.not-panel:nth-child(2){background:#f9ebea}.not-panel:nth-child(3){background:#fcf5e8}.not-number{font:italic 55px/1 Georgia,serif;color:#bb986c}.not-panel h3{font-size:clamp(29px,3.25vw,46px);line-height:1.16;letter-spacing:-.032em;margin:0 0 18px;color:#332235}.not-panel p{font-size:clamp(17px,1.8vw,21px);line-height:1.63;color:#4d3b45;margin:0 0 10px}.not-panel p:last-child{margin-bottom:0}.not-panel strong{color:#592f45}.live-details{max-width:850px;margin:52px auto 0;padding:20px 22px 33px;border-bottom:1px solid #d6b37e}.live-details .live-kicker{font-size:12px;letter-spacing:.17em;font-weight:800;color:#8e5d65}.live-details h3{font-size:clamp(32px,3.8vw,53px);line-height:1.16;margin:13px 0}.live-details p{font-size:19px;line-height:1.7;margin:0 auto 13px;color:#4d3843}.live-details .no-replay{font-size:15px;font-weight:750;color:#8b5d5e}.gift-feature h3{font-size:clamp(31px,3.6vw,50px)}.gift-feature p{font-size:17px}
+.for-her p{font-size:19px;line-height:1.67}.for-her .thought{font-size:21px}
+.social-proof{background:linear-gradient(180deg,#fffdf9 0%,#f8efe6 100%)}.social-proof h2{max-width:980px;font-size:clamp(43px,5.4vw,70px)}.social-proof h2 em{color:#925369}.social-proof .proof-sub{max-width:825px;margin:0 auto 46px;font-size:20px;line-height:1.68;color:#55434c}.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;text-align:left}.proof-card{position:relative;min-height:210px;padding:32px 31px 27px;border:1px solid #e3cdba;background:#fffdf9;box-shadow:0 9px 34px #412d3010;display:flex;flex-direction:column;justify-content:space-between}.proof-card:before{content:'“';position:absolute;right:21px;top:12px;color:#ead8bd;font:100px/1 Georgia,serif;pointer-events:none}.quote-stars{position:relative;z-index:1;color:#c19b59;font-size:17px;letter-spacing:5px;line-height:1.6;margin-bottom:14px}.proof-card blockquote{font:normal 23px/1.48 "Playfair Display",Georgia,serif;color:#342533;position:relative;z-index:1;letter-spacing:-.022em;margin:0 0 20px}.quote-byline{font:750 12px/1.5 "DM Sans",Arial,sans-serif;letter-spacing:.085em;text-transform:uppercase;color:#936a66}.original-proof{margin:34px auto 0;max-width:990px;text-align:left;border:1px solid #ddc8b9;border-radius:4px;background:#fffbf7;padding:0 20px}.original-proof summary{font-size:15px;font-weight:800;color:#654457;padding:20px 5px;cursor:pointer}.original-proof img{width:100%;height:auto;display:block;margin:0 auto 20px;border:1px solid #e4d4c8}.social-proof .source-small{font-size:12px;color:#887d81;max-width:760px;margin:17px auto 0}
+.reserve .reserve-copy p{font-size:clamp(17px,1.75vw,20px);line-height:1.65;color:#eee1e4}.reserve .reserve-copy p strong{color:#fff1d6}.reserve .reserve-copy .last-punch{margin:31px 0 20px;font-size:clamp(24px,2.6vw,34px);font-family:"Playfair Display",Georgia,serif;line-height:1.36}.reserve .reserve-copy .reg-note{font-size:13px;color:#e9dcd8}
+@media(max-width:840px){.proof-grid{grid-template-columns:1fr 1fr}.not-panel{grid-template-columns:55px 1fr;padding:30px 26px}.not-number{font-size:43px}}
+@media(max-width:650px){.proof-grid{grid-template-columns:1fr;gap:14px}.proof-card{min-height:170px;padding:26px 23px}.proof-card blockquote{font-size:21px}.not-panel{display:block;padding:29px 23px}.not-number{display:block;font-size:36px;margin:0 0 8px}.not-panel h3{font-size:clamp(29px,8vw,39px)}.not-panel p{font-size:18px}.future-card p{font-size:18px}.future .sub{font-size:19px}.intro-symptoms{font-size:20px}.live-details p{font-size:18px}}
+
+/* Holiday touch (2026-10-21, Joel: "slight feel of holidays, not over the top") */
+:root{--pine:#2f4a3c;--cranberry:#8e2f43}
+.announcement{background:linear-gradient(90deg,#2a1c2b,#3a2030 50%,#2a1c2b);border-bottom:2px solid transparent;border-image:repeating-linear-gradient(90deg,#c9a46c 0 14px,#8e2f43 14px 20px,#2f4a3c 20px 34px) 1}
+.hero .snow{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.hero .snow i{position:absolute;top:-12px;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle,#fff8e6,#e7cf9f 60%,transparent 70%);opacity:.75;animation:glowfall linear infinite}
+@keyframes glowfall{to{transform:translate3d(-30px,760px,0);opacity:0}}
+.dark-statement{background:radial-gradient(ellipse at 15% 0,#3c5546 0%,transparent 55%),var(--plum)}
+.gift-feature{border-color:#c7a268;background:radial-gradient(ellipse at top right,#f7e6c8,#fff9ef 60%)}
+.gift-feature:after{content:"";position:absolute;top:-1px;bottom:-1px;left:50%;width:14px;transform:translateX(-50%);background:linear-gradient(#8e2f43,#a33d50);opacity:.14;pointer-events:none}
+.sprig{display:block;margin:0 auto 10px;width:64px;height:18px}
+@media(prefers-reduced-motion:reduce){.hero .snow{display:none}}
+@media(max-width:560px){.hero .snow i:nth-child(n+8){display:none}}
 </style>
 </head>
 <body>
+<div class="announcement">✦ ONE-TIME LIVE EVENT  ·  <b>MONDAY, OCTOBER 26</b>  ·  FREE TO ATTEND  ·  NO REPLAY ✦</div>
+<header class="site-header"><div class="wrap nav"><div class="brand"><span aria-hidden="true" class="brandmark">✦</span><span>EVERYDAY NURSE<small>RESTORE HER GLOW · HOLIDAY EDITION</small></span></div><div class="nav-right"><span class="date">MON, OCT 26 · 6 PM CENTRAL</span><a class="btn btn-dark" href="#reserve">Reserve my seat <span aria-hidden="true">↗</span></a></div></div></header>
+<main>
+<section aria-labelledby="hero-title" class="hero"><div class="snow" aria-hidden="true"><i style="left:6%;animation-duration:19s;animation-delay:-3s;transform:scale(0.8)"></i><i style="left:14%;animation-duration:24s;animation-delay:-11s;transform:scale(1)"></i><i style="left:23%;animation-duration:21s;animation-delay:-6s;transform:scale(0.6)"></i><i style="left:37%;animation-duration:26s;animation-delay:-15s;transform:scale(0.9)"></i><i style="left:48%;animation-duration:22s;animation-delay:-2s;transform:scale(0.7)"></i><i style="left:57%;animation-duration:28s;animation-delay:-9s;transform:scale(1)"></i><i style="left:66%;animation-duration:20s;animation-delay:-14s;transform:scale(0.6)"></i><i style="left:74%;animation-duration:25s;animation-delay:-5s;transform:scale(0.9)"></i><i style="left:83%;animation-duration:23s;animation-delay:-12s;transform:scale(0.7)"></i><i style="left:92%;animation-duration:27s;animation-delay:-7s;transform:scale(0.8)"></i><i style="left:30%;animation-duration:30s;animation-delay:-20s;transform:scale(0.5)"></i><i style="left:88%;animation-duration:18s;animation-delay:-1s;transform:scale(0.6)"></i></div><div class="wrap hero-grid"><div class="hero-copy"><div class="lux-line">A very special invitation for you</div><h1 id="hero-title">Restore your <em>glow</em><br/>for the holidays.</h1><p class="dek">The woman beneath the symptoms still wants to feel <strong>beautiful. Energized. Feminine. At peace. And completely herself.</strong> Let's give HER some attention.</p><div aria-label="Masterclass themes" class="flair"><span>YOUR ENERGY</span><span>YOUR CONFIDENCE</span><span>YOUR SPARK</span><span>YOUR GLOW</span></div><div class="hero-event"><div aria-hidden="true" class="cal-icon"><small>OCT</small><b>26</b></div><div class="when">Monday, October 26 · 2026<small>Live online at 6 PM Central / 7 PM Eastern</small></div></div><div class="hero-cta"><a class="btn btn-gold" href="#reserve">YES! SAVE MY FREE SEAT <span aria-hidden="true" class="arrow">→</span></a><span class="cta-note">One time. One beautiful conversation. Just for YOU.</span></div><p class="micro">Free live masterclass with Annie Chitate, RN &amp; Joel Polley, RN · No replay</p></div><div class="hero-visual"><span aria-hidden="true" class="spark s1">✧</span><span aria-hidden="true" class="spark s2">✧</span><span aria-hidden="true" class="spark s3">✦</span><div class="portrait-frame"><img alt="Everyday Nurse Annie smiling outdoors in an elegant white dress" fetchpriority="high" loading="eager" src="/masterclass/glow/annie-hero.webp"/><div class="portrait-caption"><small>Not younger. More you.</small><strong>It's your turn<br/>to shine.</strong></div></div><div class="seal"><small>ONE-TIME</small><strong>LIVE<br/>CLASS</strong></div></div></div></section>
+<section class="section intro">
+<div class="wrap center narrow">
+<div class="eyebrow">Girl, can we talk for REAL?</div>
+<h2>Your body changed after 40.<br/><em>But your story doesn't end there.</em></h2>
+<p class="lead">Perimenopause. Menopause. Postmenopause. Maybe your body started changing before you even knew what to call it.</p>
+<p class="intro-symptoms"><strong>The chin hair you keep plucking.</strong> The belly that showed up and won't leave. Thinning hair. Skin that doesn't look or feel the same. The fatigue. The brain fog. The broken sleep. The mood changes.</p>
+<p class="lead">And everybody keeps telling you, <strong>"Well, that's just what happens after 40."</strong></p>
+<div class="strike-line"></div>
+<p class="mirror-quote">"I want to live, not just <span class="bold-inline">exist.</span>"</p>
+<p class="intro-foot">Girl, I hear you. We're not pretending those changes aren't real. And we're not going to spend another evening making you feel bad about them. <strong>We're talking about the woman underneath all those symptoms.</strong> The woman who still wants to be beautiful, feminine, steady, at peace, and excited about her life.</p>
+<p class="intro-hard"><strong>Your body changed. That doesn't mean you stop being HER.</strong></p>
+</div></section>
+<section class="section future">
+<div class="wrap center">
+<svg class="sprig" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9h60" stroke="#c9a46c" stroke-width="1"/><path d="M32 9c-6-6-12-6-16-4M32 9c6-6 12-6 16-4M32 9c-6 6-12 6-16 4M32 9c6 6 12 6 16 4" stroke="#2f4a3c" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="32" cy="9" r="3" fill="#8e2f43"/></svg><div class="eyebrow">Imagine this holiday season</div>
+<h2>What if you stopped <em>disappearing into everybody else's holiday?</em></h2>
+<p class="sub">You know how to make Thanksgiving happen. You can run the business, stand in the kitchen, set the table, make the calls, keep everybody happy, and take the family pictures.</p>
+<p class="sub future-second"><strong>But where are YOU in all of that?</strong> What if, this year, you were part of the celebration instead of spending every minute serving it? Not because everything is perfect. <strong>Because you're finally making room for yourself, too.</strong></p>
+<div class="future-grid">
+<article class="future-card"><div class="number">01</div><h3>You want to be a good mom.</h3>
+<p>You're trying to be a good mom. A good wife. A good daughter. A good grandma. You're taking care of everybody.</p>
+<p>And sometimes, taking time for yourself feels like taking something away from them.</p>
+<p><strong>But when did being a good mother start meaning there was no room left for YOU?</strong></p></article>
+<article class="future-card"><div class="number">02</div><h3>You deserve more than the leftovers.</h3>
+<p>The leftover time at the end of the day.</p>
+<p>The leftover money after the bills and everybody else's needs.</p>
+<p>The leftover energy, when you're too tired to do a single thing you wanted to do.</p>
+<p><strong>Girl, you are not the last person on your own list.</strong></p></article>
+<article class="future-card"><div class="number">03</div><h3>You're worth it.</h3>
+<p>The scale has its opinions about you. The blood pressure cuff has a number. Your labs have their red flags.</p>
+<p>Then you look in the mirror and see the belly, the chin hair, the thinning hair, the tired eyes—and wonder when you stopped feeling like yourself.</p>
+<p><strong>You are NOT your numbers. You are NOT your symptoms. And you are not a failure because your body changed.</strong></p></article>
+</div></div></section>
+<section class="dark-statement"><p>What if the best thing you brought into the holidays wasn't a new outfit...<br/><em>but a new feeling about yourself?</em></p></section>
+<section class="section secrets">
+<div class="wrap center">
+<div class="eyebrow">Inside this one-time LIVE masterclass</div>
+<h2>Three Glow Secrets<br/><em>You Can Start TODAY.</em></h2>
+<p class="sub">So you can start feeling like yourself again. Not another medical lecture. A conversation about your energy, your confidence, your beauty, your joy, and the peace that makes your life feel like <strong>YOURS.</strong></p>
+<p class="secrets-tease">I'm keeping the three secrets for the live room. But let me tell you exactly what this masterclass is <strong>NOT.</strong></p>
+<div class="not-this-stack">
+<article class="not-panel"><span aria-hidden="true" class="not-number">01</span><div><h3>This is NOT another lecture about obvious health tips.</h3><p>Drink more water. Get more exercise. Eat more greens. <strong>Girl, you already KNOW that.</strong> You don't need somebody talking at you for an hour about things you've heard a hundred times. We're going beyond that.</p></div></article>
+<article class="not-panel"><span aria-hidden="true" class="not-number">02</span><div><h3>We do NOT believe in body shaming.</h3><p>But I know you want to feel AMAZING. Fabulous. Beautiful. You want your skin to have some life again. You want your hair to bounce. You want that sparkle back in your eyes.</p><p><strong>Your beauty, your health, your peace, and your sense of self belong in the SAME conversation.</strong> This room was made especially for you.</p></div></article>
+<article class="not-panel"><span aria-hidden="true" class="not-number">03</span><div><h3>And this is NOT another "start over in January" talk.</h3><p>Another New Year's resolution. Another random diet. Another trick. Another bottle of collagen. Another shelf full of products you bought hoping THIS one would finally change something.</p><p><strong>What if you didn't wait for January to make room for yourself?</strong> What if you walked into the new year already taking your next step?</p></div></article>
+</div>
+<div class="live-details"><div class="live-kicker">THE LIVE EXPERIENCE</div><h3>We're sharing the three secrets LIVE.</h3><p>Bring your pen. Bring your questions. We're making time for <strong>live Q&amp;A</strong> at the end, too.</p><p class="no-replay">One-time class · Monday, October 26 · 6 PM Central / 7 PM Eastern · No replay</p></div>
+<div aria-label="Holiday gift announcement" class="gift-feature">
+<div aria-hidden="true" class="gift-icon">✦</div><div><div class="gift-kicker">PLUS — A HOLIDAY SURPRISE</div><h3>One woman will receive a <em>Holiday Gift Set!</em></h3><p>We're bringing a little extra joy to the live room. We'll explain how the gift recipient will be selected during the class. No purchase necessary.</p></div><div aria-hidden="true" class="gift-icon">✧</div>
+</div>
+<a class="btn btn-dark" href="#reserve">YES! SAVE MY FREE SEAT <span aria-hidden="true" class="arrow">→</span></a>
+</div></section>
+<section class="section for-her">
+<div class="wrap for-her-grid">
+<div><div class="eyebrow">Who this one-time class is for</div>
+<h2>Girl, this room <em>was made for YOU.</em></h2>
+<p>For the woman in her <strong>40s, 50s, 60s, 70s, and beyond</strong> who is navigating perimenopause, menopause, postmenopause—or all the changes that seem to come with this season of life.</p>
+<p>You're tired of feeling tired. You're tired of looking at old pictures and wondering where your sparkle went. You want to feel steady on your feet, at peace in your mind, happy in your clothes, and comfortable in your own skin.</p>
+<p><strong>You want your health back. And you want your GLOW back. Not one OR the other. BOTH.</strong></p>
+<a class="btn btn-dark" href="#reserve">THIS NIGHT IS FOR ME <span aria-hidden="true" class="arrow">→</span></a></div>
+<div aria-label="Wishes women have shared in past classes" class="thoughts"><div class="thoughts-label">THEIR WORDS. THEIR REASONS.</div>
+<div class="thought">“I want to live, not just exist.”</div>
+<div class="thought">“Being able to keep moving after 60.”</div>
+<div class="thought">“I want to be in great health for my future grandchildren and to enjoy my current retirement!!”</div>
+<div class="thought">“I need a strong body, mind and spirit to fulfill the purpose that God gave me.”</div>
+</div></div></section>
+<section class="section host">
+<div class="wrap host-grid">
+<div class="host-img"><img alt="Annie Chitate, registered nurse and Everyday Nurse educator" loading="lazy" src="/masterclass/glow/annie-host.webp"/></div>
+<div>
+<div class="eyebrow">Meet your hosts</div>
+<h2>Two nurses. One mission.<br/><em>The whole woman.</em></h2>
+<p>Hey girl, I'm <strong>Annie Chitate, RN</strong>—your Everyday Nurse. And joining me is <strong>Joel Polley, RN, BSN.</strong></p>
+<p>We've spent years helping people make sense of the numbers, the symptoms, and the changes happening in their bodies. But what I never want you to forget is the woman underneath all that.</p>
+<p>Her laughter. Her hair. Her joy. Her confidence. Her peace. The plans she's still making. We're bringing all of her into the conversation this time.</p>
+<p><strong>Because you don't rise in pieces. You get to care for the whole girl you're in.</strong></p>
+<div class="signature">Love the Girl You're In,<br/>Annie</div>
+</div>
+</div>
+</section><section aria-labelledby="proof-title" class="section social-proof">
+<div class="wrap center"><div class="eyebrow">Real words from real live classes</div>
+<h2 id="proof-title">Don't just take <em>our word for it.</em></h2>
+<p class="proof-sub">These are things women actually wrote in our classes and challenges. Not promises about what will happen to you. Their words, their experiences, their wins.</p>
+<div class="proof-grid"><article class="proof-card"><div aria-hidden="true" class="quote-stars">✦ ✦ ✦</div><blockquote>“I've been motivated to not only walk, but enroll in a Pilates class.👏🏽”</blockquote><div class="quote-byline">Live challenge chat</div></article>
+<article class="proof-card"><div aria-hidden="true" class="quote-stars">✦ ✦ ✦</div><blockquote>“the three lines of gratitude daily made a shift to me too.”</blockquote><div class="quote-byline">Live challenge chat</div></article>
+<article class="proof-card"><div aria-hidden="true" class="quote-stars">✦ ✦ ✦</div><blockquote>“Yes! Community makes a difference.”</blockquote><div class="quote-byline">Live challenge chat</div></article>
+<article class="proof-card"><div aria-hidden="true" class="quote-stars">✦ ✦ ✦</div><blockquote>“love the science!!”</blockquote><div class="quote-byline">Live challenge chat</div></article>
+<article class="proof-card"><div aria-hidden="true" class="quote-stars">✦ ✦ ✦</div><blockquote>“She understands our bodies, and she takes the time to help us understand ourselves.”</blockquote><div class="quote-byline">Challenge participant</div></article>
+</div>
 
-  <div class="top-banner">
-    <div class="line1">TAKE BACK CONTROL OF YOUR BODY AFTER 40.</div>
-    <div class="line2">IT'S NOT GENETICS. IT'S NOT JUST AGING.</div>
-  </div>
-
-  <div class="brand-band">
-    <div class="brand">BRAVEWORKS <span>RN</span></div>
-    <div class="brand-sub">Joel Polley, RN | BPQuiz.com</div>
-  </div>
-
-  <!-- 2026-09-21 COPY (Joel). Same words on bpquiz.com/masterclass and
-       restoreherhormones.com/masterclass; built by one script so they cannot
-       drift. His "Purpose:" and "Keep the current examples" lines were notes,
-       not copy. -->
-  <!-- 2026-09-21 challenge-style layout. Built by one script for both sites. -->
-  <div class="mc2">
-  <!-- 2026-10-21 (Joel): Glow masterclass copy from the 7-email prelaunch. -->
-  <section class="mc2-band mc2-hero">
-    <div class="mc2-narrow">
-      <p class="mc2-eyebrow">A SPECIAL ONE-TIME LIVE MASTERCLASS · MONDAY, OCTOBER 26</p>
-      <h1 class="mc2-h1">RESTORE YOUR GLOW FOR THE HOLIDAYS</h1>
-      <p class="mc2-hint">Glow Out of Control, From the Inside Out!</p>
-      <p>For one night, we're stepping away from our usual blood pressure conversations to talk about something so many women have been quietly missing: their spark, their energy, their confidence, and that feeling of being beautiful and alive in their own skin.</p>
-      <a class="mc2-cta" href="#register">YES! SAVE MY SEAT FOR THE GLOW MASTERCLASS</a>
-    </div>
-  </section>
-
-  <section class="mc2-band soft">
-    <div class="mc2-wide mc2-split">
-      <div class="mc2-split-form">
-        <div class="form-card" id="register">
-        <h3>RESTORE YOUR GLOW FOR THE HOLIDAYS</h3>
-        <p class="sub">with Annie Chitate, RN, the Everyday Nurse + Joel Polley, RN</p>
-        <p class="free-label">No cost to attend · Save your seat now</p>
-        <p class="datebox"><span data-classdate>Monday, October 26 · 7:00 PM Eastern</span></p>
-        <p class="cd-head">Class starts in</p>
-        <div class="countdown" aria-label="Time until the class">
-          <div><b class="cd-d">00</b><span>Days</span></div>
-          <div><b class="cd-h">00</b><span>Hours</span></div>
-          <div><b class="cd-m">00</b><span>Min</span></div>
-          <div><b class="cd-s">00</b><span>Sec</span></div>
-        </div>
-        <form data-reg method="post" onsubmit="return handleSubmit(event)">
-            <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
-            <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
-            <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
-            <div class="form-err" data-err role="alert"></div>
-            <button class="btn" type="submit" data-btn>YES! SAVE MY SEAT</button>
-          </form>
-        <p class="secure">100% Secure. Privacy Guaranteed.</p>
-        </div>
-      </div>
-      <div class="mc2-split-text">
-      <p class="mc2-eyebrow">CAN I ASK YOU SOMETHING?</p>
-      <h2 class="mc2-h2">When was the last time someone took a picture of you, and you actually LOVED it?</h2>
-      <p class="mc2-list">Not after finding the perfect angle. Not after putting a filter on it. Not after taking 15 pictures and deleting 14.</p>
-      <p>Just you. Smiling. Looking like a woman who's happy to be in the picture.</p>
-      <div class="mc2-big">Girl, I know.</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="mc2-band">
-    <div class="mc2-narrow">
-      <h2 class="mc2-h2">Sometimes you look at an old photograph and think... there she is.</h2>
-      <p>Maybe her hair was fuller. Maybe she had more energy. Maybe she loved getting dressed up.</p>
-      <p><strong>Or maybe it was how she FELT.</strong> She laughed more. She went places. She didn't spend so much time worrying about what people thought about her. She had a certain spark.</p>
-      <p>And somewhere between raising children, working, building a life, caring for everybody else, and going through all these changes in her body... she stopped feeling like THAT girl.</p>
-    </div>
-  </section>
-
-  <section class="mc2-band dark">
-    <div class="mc2-narrow">
-      <h2 class="mc2-h2">You do not have to be 25 again to feel beautiful at 55, 65, or 75.</h2>
-      <p>You don't need somebody else's face. You don't need somebody else's body. You just want to feel good in YOURS.</p>
-      <p>You are not wrong for wanting your skin to have life in it again, your hair to bounce, and your eyes to sparkle. Getting your glow back is about more than what you put on your skin.</p>
-    </div>
-  </section>
-
-  <section class="mc2-band soft">
-    <div class="mc2-narrow">
-      <p class="mc2-eyebrow">THE HOLIDAYS ARE COMING</p>
-      <h2 class="mc2-h2">"Girl, something is different about you!"</h2>
-      <p>Thanksgiving. Then Christmas. Then the new year. The family gatherings, the pictures, and the people you haven't seen in months.</p>
-      <p>What if you walked into that room feeling GOOD about yourself? Not wondering if everybody can see how tired you've been. Just walking in with your head up.</p>
-      <p>And what if you didn't need anybody else to tell you, because you already noticed it when you looked in the mirror that morning?</p>
-      <a class="mc2-cta" href="#register">YES! I WANT TO GLOW OUT OF CONTROL</a>
-    </div>
-  </section>
-
-  <section class="mc2-band">
-    <div class="mc2-narrow">
-      <h2 class="mc2-h2">What we'll talk about Monday night</h2>
-      <p class="mc2-list">What's been dimming your glow.</p>
-      <p class="mc2-list">The woman underneath all those symptoms, and what you're trying to get better FOR.</p>
-      <p class="mc2-list">How you can begin caring for her from the inside out.</p>
-      <p class="mc2-list">Why the woman you've been missing may not be as far away as you think.</p>
-      <p><strong>And yes, we've got something brand-new to reveal that night.</strong> Something we've been working on behind the scenes. You'll have to come to hear about it first.</p>
-    </div>
-  </section>
-
-  <section class="mc2-band accent">
-    <div class="mc2-narrow">
-      <h2 class="mc2-h2">Bring three things.</h2>
-      <p><strong>1. A picture of the woman you want to be.</strong> Not somebody else's picture. The YOU who wakes up with energy, feels confident in her body, and actually enjoys getting dressed in the morning.</p>
-      <p><strong>2. One thing you wish you could change.</strong> Your hair. Your skin. Your weight. Your energy. Or simply wanting to look in the mirror and smile again.</p>
-      <p><strong>3. An open mind.</strong> "I'm too old." "This is just menopause." "I'll never feel like myself again." Girl, what if there's another way to look at it?</p>
-    </div>
-  </section>
-
-  <section class="mc2-band soft">
-    <div class="mc2-wide mc2-three">
-      <div><h3>What</h3><p>Restore Your Glow for the Holidays: Glow Out of Control, From the Inside Out! A special, one-time live masterclass with Annie &amp; Joel, both registered nurses.</p></div>
-      <div><h3>When</h3><p><strong>Monday, October 26 · 7:00 PM Eastern</strong><br>6:00 PM Central. Live on Zoom, one night only.</p></div>
-      <div><h3>Why</h3><p>Because the holidays are coming, and this year we want YOU to enjoy being part of the celebration.</p></div>
-    </div>
-  </section>
-
-  <section class="mc2-band dark mc2-final">
-    <div class="mc2-narrow">
-      <h2 class="mc2-h2">If you woke up tomorrow feeling like THAT girl again, what would you do differently?</h2>
-      <p>Would you wear the dress? Book the trip? Take the picture? Or simply walk past the mirror and smile? Hold on to that answer. Monday night, we're talking about the woman who deserves to live that life.</p>
-      <form data-reg method="post" onsubmit="return handleSubmit(event)">
-            <input class="field" type="text" name="name" placeholder="Enter Full Name Here..." required maxlength="80" autocomplete="name">
-            <input class="field" type="email" name="email" placeholder="Enter Email Address Here..." required maxlength="120" autocomplete="email">
-            <input class="field" type="tel" name="phone" placeholder="Best Phone Number" autocomplete="tel" maxlength="30">
-            <div class="form-err" data-err role="alert"></div>
-            <button class="btn" type="submit" data-btn>YES! SAVE MY SEAT</button>
-          </form>
-      <p class="secure">100% Secure. Privacy Guaranteed.</p>
-      <p><strong>Love the Girl You're In. She's worth it.</strong><br>Everyday Nurse Annie</p>
-    </div>
-  </section>
-  </div>
-
-  <div class="mobile-sticky"><a href="#register">YES! SAVE MY SEAT</a></div>
-
-    <footer>
-    <div class="wrap">
-      <div>Educational information only. Nothing on this page is a substitute for personal medical care. Never stop or change medication without working with your healthcare provider.</div>
-      <div><a href="https://bpquiz.com" target="_blank" rel="noopener">BPQuiz.com</a></div>
-    </div>
-  </footer>
-
+<p class="source-small">Excerpts from live class chat. Quotes do not represent guaranteed results; decorative gold accents are not review ratings.</p>
+</div></section>
+<section aria-labelledby="reserve-title" class="reserve" id="reserve">
+<div class="wrap reserve-grid">
+<div class="reserve-copy">
+<svg class="sprig" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9h60" stroke="#c9a46c" stroke-width="1"/><path d="M32 9c-6-6-12-6-16-4M32 9c6-6 12-6 16-4M32 9c-6 6-12 6-16 4M32 9c6 6 12 6 16 4" stroke="#2f4a3c" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="32" cy="9" r="3" fill="#8e2f43"/></svg><div class="eyebrow">The woman you are still becoming</div>
+<h2 id="reserve-title">Girl, you are not done <em>LIVING.</em></h2>
+<p><strong>You didn't work this hard, raise these children, build this family, and carry everybody else just to spend the next chapter watching life pass you by.</strong></p>
+<p>You've got places to go. A country you want to see. A trip you keep putting off. Maybe a book inside you that needs to be written. Maybe a business or ministry you've prayed about starting.</p>
+<p>Maybe you're raising small children and want the energy to enjoy them instead of collapsing at the end of every day. Maybe your children are grown and still counting on you. Maybe you're looking forward to retirement, and you want to be healthy enough to <strong>actually ENJOY it.</strong></p>
+<p>You want to keep your independence. Stay steady on your feet. Be there for the people you love. Have a life that is more than appointments and numbers.</p>
+<p><strong>And YES. You want to look good and feel FABULOUS while you're living it.</strong></p>
+<p class="last-punch">You've spent enough years being there for everybody else. <strong>Give yourself ONE evening.</strong></p>
+<div class="timing"><span>Monday, October 26, 2026</span><span>6 PM Central / 7 PM Eastern</span><span>One-time live class · Free to attend · No replay</span><span>Live Q&amp;A + one Holiday Gift Set for one woman</span></div>
+<p class="reg-note">Your seat is free. No purchase is required to attend.</p>
+</div>
+<div class="form-card">
+<div class="small-top">One-time live masterclass</div>
+<h3>Yes, Annie!<br/><em>Save my seat.</em></h3>
+<p class="form-copy">Enter your name and email so we can send your joining details and class reminders.</p>
+<form id="glow-registration">
+<div class="field"><label for="first_name">First name</label><input autocomplete="given-name" id="first_name" maxlength="100" minlength="1" name="first_name" placeholder="Your first name" required="" type="text"/></div>
+<div class="field"><label for="email">Email address</label><input autocomplete="email" id="email" maxlength="200" name="email" placeholder="you@example.com" required="" type="email"/></div>
+<div class="field"><label for="phone">Mobile number <span style="font-weight:500;color:#8a7c80">(optional, for a text reminder)</span></label><input autocomplete="tel" id="phone" maxlength="30" name="phone" placeholder="(555) 555-5555" type="tel" style="width:100%;border:1px solid #d9c9c4;padding:14px;background:white;color:#291c2a;border-radius:3px;font-size:16px"/></div>
+<button class="btn btn-gold" type="submit">YES! RESERVE MY FREE SEAT <span aria-hidden="true">→</span></button>
+<p class="privacy">By registering, you agree to receive class details and related follow-up emails from Everyday Nurse and BraveWorks RN. You can unsubscribe from marketing at any time. <a href="/privacy" id="privacy-link">Privacy policy</a>.</p>
+<div aria-live="polite" class="form-message" id="form-message" role="status"></div>
+</form>
+</div>
+</div>
+</section>
+<section class="section faq"><div class="wrap center"><div class="eyebrow">Good questions</div><h2>Before you join us...</h2><div class="faq-box" style="text-align:left"><details><summary>Is this really free?</summary><p>Yes. There's no charge to attend the live masterclass, and no purchase is required. There may be an optional invitation to continue learning with us at the end.</p></details><details><summary>Is this like your usual blood-pressure class?</summary><p>No. This is not another lecture about water, greens, and exercise. Your health still matters—but we are talking about the woman underneath the blood pressure numbers and the changes of perimenopause, menopause, and postmenopause. Your energy, confidence, beauty, and the life you still want to live.</p></details><details><summary>I'm in my 60s or 70s. Is this for me?</summary><p>Absolutely. We're not chasing somebody else's age or appearance. We're talking about feeling like yourself at the age and stage you're in now.</p></details><details><summary>Will I be able to ask questions?</summary><p>Yes! We'll set aside time for live Q&amp;A at the end. Bring your notebook and your questions.</p></details><details><summary>What about the holiday gift set?</summary><p>We're giving one woman a special Holiday Gift Set during the live masterclass. We'll explain the gift details during the event. There's no purchase required to attend.</p></details><details><summary>Will there be a replay?</summary><p>No. This is a one-time live presentation, so make plans to join us Monday, October 26 at 6 PM Central / 7 PM Eastern.</p></details><details><summary>Do I need to buy products or bring anything?</summary><p>No purchases are needed. Bring a notebook, an open mind, and one thing you wish felt different in your life.</p></details></div><a class="btn btn-dark" href="#reserve" style="margin-top:34px">SAVE MY FREE SEAT <span aria-hidden="true">→</span></a></div></section>
+</main>
+<footer class="site-footer"><div class="wrap foot"><div><div class="footer-brand">EVERYDAY NURSE ✦ RESTORE HER GLOW</div><small>© 2026 Everyday Nurse · Annie Chitate, RN &amp; Joel Polley, RN, BSN</small></div><div><p>This masterclass offers general wellness education and is not medical advice, diagnosis, treatment, or a substitute for your own health-care team. Individual experiences vary; no specific cosmetic or health outcomes are guaranteed.</p></div></div></footer>
+<div class="sticky-mobile"><a class="btn btn-gold" href="#reserve">SAVE MY FREE SEAT <span aria-hidden="true">→</span></a></div>
 <script>
-  /* ====== CADENCE. Standing Monday 6:00 PM Central class (first one
-     2026-09-14). Always targets the next Monday 6pm CT, today included if
-     it hasn't started. Copy never says "every week" or "recurring". ====== */
-  const WEEKLY_HOUR_CT = 18; // 6pm Central, Mondays
-
-  function chicagoOffsetMs(atUtcMs){
-    const d = new Date(atUtcMs);
-    const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
-      year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(d);
-    const g = t => Number(parts.find(p=>p.type===t).value);
-    const asUtc = Date.UTC(g('year'),g('month')-1,g('day'),g('hour')%24,g('minute'),g('second'));
-    return asUtc - atUtcMs;
-  }
-  /* ===== 2026-10-15 (Joel), THIS WEEK ONLY =====================
-     "monday isnt a masterclass its the challenge. this weeks masterclass
-     is sunday night."
-
-     Two one-off facts:
-       1. The class this week is SUNDAY Oct 18, 6:00 PM Central, because
-          Oct 18 is World Menopause Day.
-       2. Monday Oct 19 is the Change My Life Challenge, NOT a masterclass,
-          so the page must never send anyone there expecting a class.
-
-     Every visible date and the countdown read from nextMondayTarget(), so
-     both facts are handled here rather than in a dozen bits of markup.
-     SELF-EXPIRING: once Oct 19 has passed, both branches stop firing and
-     the normal weekly Monday behaviour resumes untouched.
-     ============================================================ */
-  var WMD_SUNDAY_TARGET = Date.parse('2026-10-18T23:00:00Z'); // 6pm CT Sun Oct 18
-  var CHALLENGE_MONDAY_YMD = '2026-10-19';                    // never target this
-
-  function isChallengeMonday(ms){
+(function(){
+  var form=document.getElementById('glow-registration'), msg=document.getElementById('form-message');
+  function utm(){var p=new URLSearchParams(location.search),o={};['utm_source','utm_medium','utm_campaign','utm_content'].forEach(function(k){if(p.get(k))o[k]=p.get(k)});return o;}
+  form.addEventListener('submit', async function(e){
+    e.preventDefault(); if(!form.reportValidity()) return;
+    var btn=form.querySelector('button[type=submit]'), orig=btn.innerHTML; btn.disabled=true; btn.textContent='Saving your seat…'; msg.classList.remove('show');
     try{
-      var p = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',
-        year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms));
-      return p === CHALLENGE_MONDAY_YMD;
-    }catch(e){ return false; }
-  }
-
-  function nextMondayTarget(afterMs){
-    if(afterMs < WMD_SUNDAY_TARGET) return WMD_SUNDAY_TARGET;
-    for(let addDays=0; addDays<8; addDays++){
-      const probe = new Date(afterMs + addDays*86400000);
-      const parts = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',hour12:false,
-        year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(probe);
-      const wd = parts.find(p=>p.type==='weekday').value;
-      if(wd!=='Mon') continue; /* Glow class: Monday Oct 26, 7 PM ET */
-      if(isChallengeMonday(probe.getTime())) continue; /* Oct 19 is the challenge */
-      const g = t => Number(parts.find(p=>p.type===t).value);
-      const naive = Date.UTC(g('year'),g('month')-1,g('day'),WEEKLY_HOUR_CT,0,0);
-      const target = naive - chicagoOffsetMs(naive);
-      if(target > afterMs) return target;
-    }
-    return afterMs + 7*86400000;
-  }
-  function nextTarget(){ return nextMondayTarget(Date.now()); }
-  const LIVE_WINDOW_MS = 75 * 60000;
-  (function(){
-  try{
-    const d=document.querySelectorAll('.cd-d'),h=document.querySelectorAll('.cd-h'),
-          m=document.querySelectorAll('.cd-m'),s=document.querySelectorAll('.cd-s');
-    const p=n=>String(n).padStart(2,'0');
-    const set=(nodes,v)=>nodes.forEach(n=>n.textContent=v);
-    let target = nextTarget();
-    function fillDates(){
-      try{
-        const fullLabel  = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'long',month:'long',day:'numeric'}).format(new Date(target));
-        const shortLabel = new Intl.DateTimeFormat('en-US',{timeZone:'America/Chicago',weekday:'short',month:'short',day:'numeric'}).format(new Date(target));
-        document.querySelectorAll('[data-classdate]').forEach(function(el){ el.textContent = fullLabel + ' · 7:00 PM Eastern'; });
-        document.querySelectorAll('[data-classdate-short]').forEach(function(el){ el.textContent = shortLabel; });
-      }catch(e){}
-    }
-    fillDates();
-    const setHeads = t => document.querySelectorAll('.cd-head').forEach(el=>el.textContent=t);
-    let liveShown = false;
-    function tick(){
-      let diff = target - Date.now();
-      if(diff<0){
-        if(diff > -LIVE_WINDOW_MS){
-          if(!liveShown){ setHeads('We are live right now. Register and the Zoom link comes to your inbox.'); liveShown = true; }
-          diff = 0;
-        } else {
-          target = nextMondayTarget(Date.now()); fillDates();
-          if(liveShown){ setHeads('Class starts in'); liveShown = false; }
-          diff = target - Date.now();
-        }
-      }
-      set(d,p(Math.floor(diff/86400000)));
-      set(h,p(Math.floor(diff%86400000/3600000)));
-      set(m,p(Math.floor(diff%3600000/60000)));
-      set(s,p(Math.floor(diff%60000/1000)));
-    }
-    tick(); setInterval(tick,1000);
-  }catch(e){}
-  })();
-
-  /* ====== FORM -> /api/masterclass-register (same endpoint, same Zoom room
-     as the live /masterclass page). Tagged source:'masterclass-v3' so
-     registrations from this A/B variant are easy to segment. ====== */
-  function getUtm(){
-    try{
-      const u = new URLSearchParams(location.search);
-      const utm = {};
-      ['utm_source','utm_medium','utm_campaign'].forEach(k=>{ if(u.get(k)) utm[k]=u.get(k).slice(0,60); });
-      return utm;
-    }catch(e){ return {}; }
-  }
-  async function handleSubmit(e){
-    e.preventDefault();
-    const form = e.target;
-    const btn  = form.querySelector('[data-btn]');
-    const err  = form.querySelector('[data-err]');
-    const orig = btn.textContent;
-    err.style.display='none';
-    btn.disabled = true; btn.textContent = 'Saving your seat…';
-    try{
-      const res = await fetch('/api/masterclass-register',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          name:  form.name.value,
-          email: form.email.value,
-          phone: form.phone.value,
-          source:'masterclass-v3',
-          utm: getUtm(),
-        }),
-      });
-      const data = await res.json().catch(()=>({}));
-      if(res.ok && data.ok){
-        if(window.posthog){ try{ posthog.capture('masterclass_register',{already:!!data.already, variant:'v3', ...getUtm()},{transport:'sendBeacon'}); }catch(e){} }
-        try{ window.bwPixelLead && window.bwPixelLead({ content_name: 'masterclass' }); }catch(e){}
-        window.location.href = '/masterclass/registered/';
-      }else{
-        err.textContent = (data && data.error) || 'Something went wrong. Please try again.';
-        err.style.display='block';
-        btn.disabled=false; btn.textContent=orig;
-      }
-    }catch(ex){
-      err.textContent='Connection hiccup. Please try again.';
-      err.style.display='block';
-      btn.disabled=false; btn.textContent=orig;
-    }
-    return false;
-  }
-  window.addEventListener('pageshow', function(e){
-    if(!e.persisted) return;
-    document.querySelectorAll('form[data-reg]').forEach(function(f){
-      const b = f.querySelector('[data-btn]');
-      if(b){ b.disabled = false; b.textContent = 'SAVE MY FREE SEAT'; }
-    });
+      var res=await fetch('/api/masterclass-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:form.first_name.value,email:form.email.value,phone:form.phone.value,source:'glow-masterclass',utm:utm()})});
+      var data=await res.json().catch(function(){return {};});
+      if(res.ok&&data.ok){
+        try{window.posthog&&posthog.capture('masterclass_register',{page:'glow-bpquiz'},{transport:'sendBeacon'});}catch(_){}
+        try{window.bwPixelLead&&window.bwPixelLead({content_name:'masterclass'});}catch(_){}
+        window.location.href='/masterclass/registered/';
+      } else { msg.textContent=(data&&data.error)||'Something went wrong. Please try again.'; msg.classList.add('show'); btn.disabled=false; btn.innerHTML=orig; }
+    }catch(_){ msg.textContent='Connection hiccup. Please try again.'; msg.classList.add('show'); btn.disabled=false; btn.innerHTML=orig; }
   });
+  window.addEventListener('pageshow',function(e){if(e.persisted){var b=form.querySelector('button[type=submit]');b.disabled=false;}});
+})();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script>
@@ -545,5 +262,4 @@
   })();
 </script>
 <script src="/pixels.js"></script>
-</body>
-</html>
+</body></html>
