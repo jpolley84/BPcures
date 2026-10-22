@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Deposit received | Life Change Activated</title>
+<style>
+body{margin:0;background:#f7f3ec;color:#162b43;font:17px/1.6 "DM Sans",Arial,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+.card{max-width:560px;background:#fff;border:1px solid #e3d9c8;border-radius:12px;padding:36px 30px;box-shadow:0 14px 40px #0d29471a;text-align:center}
+h1{font:600 30px/1.2 Georgia,serif;color:#0d2947;margin:0 0 12px}p{margin:0 0 12px}.muted{color:#5a6b7d;font-size:15px}
+a{color:#0d2947;font-weight:700}
+</style></head><body><main class="card"><h1 id="t">Checking your payment…</h1><p id="m">One moment while we confirm your deposit.</p>
+<p class="muted">Questions? Email <a href="mailto:braveworksrn@gmail.com">braveworksrn@gmail.com</a></p></main>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search), id=q.get('payment_intent'), st=q.get('redirect_status');
+  var t=document.getElementById('t'), m=document.getElementById('m');
+  function ok(){t.textContent='Your spot is reserved.';m.innerHTML='Thank you. Your $200 deposit was received and counts toward your $2,000 Life Change Activated tuition. Watch your email for your receipt and the link to choose your payment plan for the remaining $1,800.';}
+  function bad(){t.textContent='Your payment was not completed.';m.innerHTML='No deposit was taken. <a href="/life-change-activated/#checkout">Please try again</a>.';}
+  if(!id){ok();return;}
+  fetch('/api/deposit-confirmed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentIntentId:id})})
+    .then(function(r){return r.json()}).then(function(d){
+      if(d.status==='succeeded'||d.status==='processing'){ok();if(d.status==='processing'){m.innerHTML+=' Klarna is finishing the approval; you will get an email once it clears.';}}
+      else bad();
+    }).catch(function(){ if(st==='succeeded') ok(); else bad(); });
+})();
+</script></body></html>
