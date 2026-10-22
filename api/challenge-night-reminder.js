@@ -203,7 +203,22 @@ export default async function handler(req, res) {
   // excludeNeverSend returns { kept, ...report }, NOT an array. Destructure it
   // or every downstream .slice()/.map() throws at send time.
   let eligible, guardReport;
-  try {
+  // The coaches group skips the roster-based client guard on purpose. That
+  // guard protects coaching clients from BULK marketing; these are 4 named
+  // people and this is the Zoom link for the session they are enrolled in.
+  // On 2026-10-22 it silently dropped Karen Purvis from her own reminder
+  // because she had just been added to the Accelerator roster. A real STOP is
+  // still honored below.
+  if (group === 'coaches') {
+    let stopped = new Set();
+    try {
+      const raw = (await kv.smembers('bwbp:neversend')) || [];
+      stopped = new Set(raw.map((x) => String(x).trim().toLowerCase()));
+    } catch { /* an unreadable STOP list must not block 4 named people */ }
+    const all = [...roster.keys()];
+    eligible = all.filter((e) => !stopped.has(e));
+    guardReport = { mode: 'coaches: STOP list only', dropped: all.filter((e) => stopped.has(e)) };
+  } else try {
     const out = await excludeNeverSend([...roster.keys()]);
     eligible = out.kept;
     guardReport = { excluded: (out.excluded ?? null), reasons: (out.reasons ?? null) };
