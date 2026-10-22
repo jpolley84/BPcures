@@ -45,6 +45,10 @@ const COACHES = [
   { first: 'Tamara', email: 'tamarabeckfordmd@gmail.com' },
   { first: 'Robert', email: 'bankablefinancial@gmail.com' },
   { first: 'Karen', email: 'kpaug19@gmail.com' },
+  // Added 2026-10-22 (Joel). She came in through the challenge as a VIP
+  // buyer and joined the coaches track mid-week, so she had her own welcome
+  // send that night; the cron covers her from night 5 on.
+  { first: 'Victory', email: 'cekebude@gmail.com' },
 ];
 
 const COACH_NIGHTS = {
