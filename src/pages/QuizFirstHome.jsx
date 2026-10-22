@@ -25,21 +25,81 @@
 //
 // The hero deliberately carries no price, no nav and no second CTA. The only
 // thing to do is answer.
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { track } from '../utils/analytics.js';
 import { QUESTIONS } from '../data/triggerQuestions';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
+// 2026-10-22 (Joel): "add a squeeze page for those interested in taking the
+// quiz ... name and email to start the quiz. lets see if this increases our
+// email list building." Run as a 50/50 test against the quiz-first hero, not a
+// replacement: quiz-first already captures ~68% of starters at the result
+// gate, so an up-front gate could shrink starts. Sticky per browser via
+// localStorage; ?sq=1 / ?sq=0 forces an arm. Compare in PostHog on the
+// `home_arm` property: home_variant_viewed -> squeeze_email_submitted /
+// quiz_email_submitted, plus revenue per visitor (kill line $0.30).
+const ARM_KEY = 'bwbp_home_arm_squeeze_2026_10';
+function pickArm() {
+  try {
+    const q = new URLSearchParams(window.location.search).get('sq');
+    if (q === '1' || q === '0') {
+      const forced = q === '1' ? 'squeeze' : 'quizfirst';
+      localStorage.setItem(ARM_KEY, forced);
+      return forced;
+    }
+    const saved = localStorage.getItem(ARM_KEY);
+    if (saved === 'squeeze' || saved === 'quizfirst') return saved;
+    const arm = Math.random() < 0.5 ? 'squeeze' : 'quizfirst';
+    localStorage.setItem(ARM_KEY, arm);
+    return arm;
+  } catch {
+    return 'quizfirst';
+  }
+}
+
 export default function QuizFirstHome() {
   const navigate = useNavigate();
   const q1 = QUESTIONS[0];
+  const [arm] = useState(pickArm);
+  const [sqName, setSqName] = useState('');
+  const [sqEmail, setSqEmail] = useState('');
+  const [sqError, setSqError] = useState('');
+  const [sqBusy, setSqBusy] = useState(false);
 
   useEffect(() => {
-    track('quizfirst_landing_viewed', { page: 'home', version: 'quizfirst-home-2026-08-27' });
-    track('home_variant_viewed', { variant: 'quizfirst', page: 'quizfirst-home' });
-  }, []);
+    track('quizfirst_landing_viewed', { page: 'home', version: 'quizfirst-home-2026-08-27', home_arm: arm });
+    track('home_variant_viewed', { variant: arm, page: 'quizfirst-home', home_arm: arm });
+  }, [arm]);
+
+  async function submitSqueeze(e) {
+    e.preventDefault();
+    const email = sqEmail.trim();
+    const name = sqName.trim();
+    if (!name) { setSqError('Please enter your first name.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setSqError('Please enter a valid email.'); return; }
+    setSqError('');
+    setSqBusy(true);
+    try { localStorage.setItem('bwbp_squeeze', JSON.stringify({ name, email })); } catch { /* private mode */ }
+    try { localStorage.setItem('bwbp_lead_email', email); } catch { /* private mode */ }
+    let tags = ['quiz-squeeze'];
+    try {
+      const utm = new URLSearchParams(window.location.search);
+      tags = tags.concat(['utm_source', 'utm_medium', 'utm_campaign']
+        .map((k) => (utm.get(k) ? `${k.replace('utm_', '')}-${utm.get(k)}` : null)).filter(Boolean));
+    } catch { /* noop */ }
+    // Saves the lead at once (bwbp:drip:<email>, state 'lead') so the email is
+    // kept even if she quits mid-quiz. Sends nothing; the results email still
+    // goes out from the quiz gate exactly as before.
+    await fetch('/api/capture-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName: name, email, source: 'quiz-squeeze', tags }),
+    }).catch(() => null);
+    track('squeeze_email_submitted', { page: 'home', home_arm: 'squeeze' });
+    navigate('/quiz?sq=1');
+  }
 
   function answer(key) {
     track('quizfirst_start_clicked', { page: 'home', answer: key });
@@ -171,6 +231,12 @@ export default function QuizFirstHome() {
 
         /* Touch targets stay tappable no matter how short the screen is. */
         @media (pointer:coarse){ .qfh-option{min-height:44px;} }
+        .qfh-input{width:100%;box-sizing:border-box;border:1.5px solid var(--line,#D8CFBD);border-radius:11px;
+          padding:calc(var(--u)*0.6) calc(var(--u)*0.7);font:inherit;font-size:1rem;background:#fff;color:var(--ink,#121110);}
+        .qfh-input:focus{outline:2px solid var(--sage-deep,#2E3A30);outline-offset:1px;}
+        .qfh-go{width:100%;border:0;border-radius:11px;padding:calc(var(--u)*0.75);font:inherit;font-weight:800;
+          font-size:1rem;background:var(--clay,#B85A36);color:#fff;cursor:pointer;min-height:46px;}
+        .qfh-go:disabled{opacity:.7;cursor:default;}
       `}</style>
 
       {/* 2026-09-25 (Joel): people are arriving here hunting the 10 day detox.
@@ -190,16 +256,33 @@ export default function QuizFirstHome() {
       </a>
 
       <section className="qfh-wrap">
-        <div className="qfh-eyebrow">Free &middot; 2 minutes &middot; No email to start</div>
+        <div className="qfh-eyebrow">
+          {arm === 'squeeze'
+            ? <>Free &middot; 2 minutes &middot; Results sent to your inbox</>
+            : <>Free &middot; 2 minutes &middot; No email to start</>}
+        </div>
 
         <h1>Find the one thing driving your blood pressure up.</h1>
 
         <p className="qfh-sub">
           {QUESTIONS.length} quick questions from a nurse who spent twenty years watching what
-          actually moves the number. Start with the first one, right here.
+          actually moves the number.{' '}
+          {arm === 'squeeze' ? 'Tell us where to send your results, then start.' : 'Start with the first one, right here.'}
         </p>
 
-        {/* ── Question one, in the hero ─────────────────────────── */}
+        {arm === 'squeeze' ? (
+          <form className="qfh-card" onSubmit={submitSqueeze} noValidate>
+            <div className="qfh-kicker">Start the free quiz</div>
+            <h2>Where should we send your results?</h2>
+            <div className="qfh-options">
+              <input className="qfh-input" type="text" name="name" autoComplete="given-name" placeholder="First name" aria-label="First name" maxLength={80} value={sqName} onChange={(e) => setSqName(e.target.value)} />
+              <input className="qfh-input" type="email" name="email" autoComplete="email" placeholder="Your best email" aria-label="Email address" maxLength={120} value={sqEmail} onChange={(e) => setSqEmail(e.target.value)} />
+              {sqError && <p role="alert" style={{ margin: 0, color: '#A3262A', fontSize: '0.85rem' }}>{sqError}</p>}
+              <button type="submit" className="qfh-go" disabled={sqBusy}>{sqBusy ? 'Starting…' : 'Start my free quiz →'}</button>
+              <p style={{ margin: 0, fontSize: 'var(--fine)', color: 'var(--muted,#7A7061)', textAlign: 'center' }}>We never share your email. Unsubscribe anytime.</p>
+            </div>
+          </form>
+        ) : (
         <div className="qfh-card">
           <div className="qfh-kicker">Question 1 of {QUESTIONS.length}</div>
           <h2>{q1.title}</h2>
@@ -212,6 +295,7 @@ export default function QuizFirstHome() {
             ))}
           </div>
         </div>
+        )}
 
         {/* ── Who is asking ─────────────────────────────────────── */}
         <div className="qfh-bio">

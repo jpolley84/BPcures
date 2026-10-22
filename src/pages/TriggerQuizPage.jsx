@@ -226,8 +226,13 @@ export default function TriggerQuizPage() {
   const [winner, setWinner] = useState(null);
   const [beliefs, setBeliefs] = useState([]); // belief-question picks
   const [spend, setSpend] = useState([]); // spend-question picks
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  // 2026-10-22 squeeze test: a name + email given on the homepage carries into
+  // the result gate, so she confirms instead of retyping.
+  const squeeze = (() => {
+    try { return JSON.parse(localStorage.getItem('bwbp_squeeze') || 'null') || {}; } catch { return {}; }
+  })();
+  const [email, setEmail] = useState(squeeze.email || '');
+  const [name, setName] = useState(squeeze.name || '');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   // true when the email capture POST failed after retry: the results page
