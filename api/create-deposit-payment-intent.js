@@ -28,7 +28,11 @@ export default async function handler(req, res) {
   const program = (req.body && req.body.program) || '';
   const p = PROGRAMS[program];
   if (!p) return res.status(400).json({ error: 'Unknown program' });
-  const publishableKey = (process.env.VITE_STRIPE_PUBLISHABLE_KEY || process.env.STRIPE_PUBLISHABLE_KEY || '').trim();
+  // The server-side copy of VITE_STRIPE_PUBLISHABLE_KEY is cut short (100 of
+  // 107 chars, Stripe answers "Invalid API Key"), so use the full public key
+  // for this account (same one restoreherhormones.com ships). Publishable keys
+  // are public by design.
+  const publishableKey = (process.env.STRIPE_PUBLISHABLE_KEY_FULL || 'pk_live_51TE9iEHseZnO3rRZ1xXgqstXEEeFIyy8m37WCHYcgRsh1hqEwD7gdK3IUo2yaKSXaiJvw9wyXez7izjv8dP0zOR300VmC8VCao').trim();
   if (!publishableKey) return res.status(500).json({ error: 'Payment service not configured' });
   try {
     const pi = await stripe.paymentIntents.create({
