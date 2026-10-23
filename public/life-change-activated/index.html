@@ -111,6 +111,9 @@
     .payment-preview-line{min-height:35px;padding:7px 11px;border:1px solid #e0e6eb;border-radius:5px;color:#a0acb7;letter-spacing:.08em;font-size:13px}
     .payment-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
     .payment-preview-hint{font-size:11px;color:#667887;line-height:1.45;margin:10px 0 0}
+    .payfull{display:flex;gap:12px;align-items:flex-start;margin:0 0 18px;padding:14px 16px;border:2px solid #a8823d;border-radius:9px;background:#fffaf0;cursor:pointer}
+    .payfull input{width:20px;height:20px;margin-top:2px;accent-color:#0d2947;flex-shrink:0}
+    .payfull strong{display:block;color:#0d2947;font-size:15px}.payfull small{display:block;color:#536779;font-size:12.5px;line-height:1.45;margin-top:2px}
     .payment-hint{font-size:12px;line-height:1.55;color:#536779;margin-top:12px;margin-bottom:0}
     .checkout-form-status{font-size:12px;line-height:1.5;color:#67798b;margin:4px 0 14px}
     .form-button{width:100%;font-size:15px;background:var(--gold);color:var(--navy);border:1px solid #b99753;box-shadow:0 6px 14px rgba(170,126,56,.12)}
@@ -212,9 +215,10 @@
 
     <aside class="checkout" id="checkout" aria-labelledby="checkout-title">
       <div class="checkout-header"><h2 id="checkout-title">Complete Your Order</h2><p>Reserve your place in Life Change Activated.</p></div>
-      <div class="pricebox"><span class="dollars">$200</span><span class="today">reserves your spot</span></div>
+      <div class="pricebox"><span class="dollars" id="pb-amt">$200</span><span class="today" id="pb-note">reserves your spot</span></div>
       <div class="price-meta"><span><span>Total program investment</span><strong>$2,000</strong></span><span><span>Deposit credited toward total</span><strong>− $200</strong></span><span><span>Remaining after deposit</span><strong>$1,800</strong></span></div>
       <div class="form-content">
+        <label class="payfull" for="pay_full"><input type="checkbox" id="pay_full"> <span><strong>Pay in full today: $2,000</strong><small>Card or Klarna (pay over time with Klarna). No balance to pay later.</small></span></label>
         <div class="form-title">Complete your details to continue</div>
         <form id="deposit-form" method="post" action="/api/create-deposit-session">
           <div class="field-row"><div class="field"><label for="first_name">First name *</label><input id="first_name" name="first_name" type="text" placeholder="First name" autocomplete="given-name" maxlength="100" required></div><div class="field"><label for="last_name">Last name *</label><input id="last_name" name="last_name" type="text" placeholder="Last name" autocomplete="family-name" maxlength="100" required></div></div>
@@ -230,7 +234,7 @@
                 <p class="payment-preview-hint">Loading secure payment form…</p>
               </div>
             </div>
-            <p class="payment-hint">Your $200 deposit is non-refundable and counts toward tuition. After payment, you'll get a link to choose from three options for the remaining $1,800. <a href="#deposit-terms">Read deposit terms.</a></p>
+            <p class="payment-hint" id="pay-hint">Your $200 deposit is non-refundable and counts toward tuition. After payment, you'll get a link to choose from three options for the remaining $1,800. <a href="#deposit-terms">Read deposit terms.</a></p>
           </div>
           <button type="submit" class="btn form-button" id="submit-button">Continue to Secure Checkout <svg aria-hidden="true"><use href="#i-arrow"></use></svg></button>
           <div id="form-error" class="form-error" role="alert" aria-live="assertive"></div>
@@ -262,13 +266,28 @@
     // Claude / Vercel: this API endpoint creates a $200 USD PaymentIntent on the server,
     // and returns { publishableKey, clientSecret, paymentIntentId }. Stripe.js renders
     // the payment fields on THIS page. Never collect raw card details in your own inputs.
+    const payFull = document.getElementById('pay_full');
+    const HINT_DEPOSIT = document.getElementById('pay-hint').innerHTML;
+    let option = 'deposit';
+    payFull.addEventListener('change', () => {
+      option = payFull.checked ? 'full' : 'deposit';
+      document.getElementById('pb-amt').textContent = payFull.checked ? '$2,000' : '$200';
+      document.getElementById('pb-note').textContent = payFull.checked ? 'tuition paid in full' : 'reserves your spot';
+      document.getElementById('pay-hint').innerHTML = payFull.checked
+        ? 'You are paying the full $2,000 Life Change Activated tuition today. Choose Klarna to split it into smaller payments through Klarna, or pay by card.'
+        : HINT_DEPOSIT;
+      errorBox.style.display = 'none';
+      initializePayment();
+    });
+
     async function initializePayment() {
       try {
+        stripe = null; elements = null; intentId = null;
         if (typeof window.Stripe !== 'function') throw new Error('Stripe.js is unavailable');
         const response = await fetch('/api/create-deposit-payment-intent', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ program: 'life-change-activated' })
+          body: JSON.stringify({ program: 'life-change-activated', option })
         });
         if (!response.ok) throw new Error('Payment service not configured');
         const config = await response.json();
@@ -280,7 +299,7 @@
           appearance: { theme: 'stripe', variables: {colorPrimary:'#0d2947',colorText:'#162b43',colorDanger:'#ae292e',borderRadius:'7px',fontFamily:'DM Sans, Arial, sans-serif'} }
         });
         paymentContainer.replaceChildren();
-        const paymentElement = elements.create('payment', { layout: 'tabs' });
+        const paymentElement = elements.create('payment', { layout: 'tabs', paymentMethodOrder: option === 'full' ? ['klarna', 'card'] : ['card', 'klarna'] });
         paymentElement.mount('#payment-element');
         paymentElement.on('loaderror', () => showError('Secure payment details could not load. Please refresh the page.'));
       } catch (error) {
@@ -330,7 +349,7 @@
         if (paymentIntent?.status === 'succeeded' || paymentIntent?.status === 'processing') {
           fetch('/api/deposit-confirmed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentIntentId: paymentIntent.id }) }).catch(() => {});
           submitButton.style.display = 'none';
-          form.innerHTML = '<div class="payment-success" role="status"><strong>Payment submitted.</strong><p>Once your deposit is verified, we’ll email your receipt.</p><p><a href="/life-change-activated/balance/" style="font-weight:800">Choose your payment plan for the $1,800 balance →</a></p></div>';
+          form.innerHTML = (option === 'full' ? '<div class="payment-success" role="status"><strong>You are all set.</strong><p>Your $2,000 tuition is paid in full. Stripe is emailing your receipt, and we will be in touch with your next steps.</p></div>' : '<div class="payment-success" role="status"><strong>Payment submitted.</strong><p>Once your deposit is verified, we’ll email your receipt.</p><p><a href="/life-change-activated/balance/" style="font-weight:800">Choose your payment plan for the $1,800 balance →</a></p></div>');
         } else {
           throw new Error('Your payment was not completed. Please try again.');
         }

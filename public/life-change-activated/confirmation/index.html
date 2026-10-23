@@ -18,6 +18,7 @@ a{color:#0d2947;font-weight:700}
   if(!id){ok();return;}
   fetch('/api/deposit-confirmed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentIntentId:id})})
     .then(function(r){return r.json()}).then(function(d){
+      if(d.kind==='full'&&(d.status==='succeeded'||d.status==='processing')){t.textContent='You are all set.';m.textContent='Your $2,000 Life Change Activated tuition is paid in full. Watch your email for your receipt and next steps.';return;}
       if(d.status==='succeeded'||d.status==='processing'){ok();if(d.status==='processing'){m.innerHTML+=' Klarna is finishing the approval; you will get an email once it clears.';}}
       else bad();
     }).catch(function(){ if(st==='succeeded') ok(); else bad(); });

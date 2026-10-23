@@ -19,9 +19,9 @@ export default async function handler(req, res) {
   try {
     const pi = await stripe.paymentIntents.retrieve(id, { expand: ['latest_charge'] });
     const md = pi.metadata || {};
-    if (!PROGRAMS[md.program] || md.kind !== 'deposit') return res.status(403).json({ error: 'Not allowed' });
-    if (pi.status !== 'succeeded') return res.status(200).json({ ok: true, status: pi.status });
-    if (md.joel_notified === '1') return res.status(200).json({ ok: true, status: pi.status, already: true });
+    if (!PROGRAMS[md.program] || !['deposit', 'full'].includes(md.kind)) return res.status(403).json({ error: 'Not allowed' });
+    if (pi.status !== 'succeeded') return res.status(200).json({ ok: true, status: pi.status, kind: md.kind });
+    if (md.joel_notified === '1') return res.status(200).json({ ok: true, status: pi.status, kind: md.kind, already: true });
     await stripe.paymentIntents.update(id, { metadata: { ...md, joel_notified: '1' } });
     const method = pi.latest_charge?.payment_method_details?.type || 'card';
     const key = process.env.RESEND_API_KEY;
@@ -33,20 +33,20 @@ export default async function handler(req, res) {
           from: 'BPQuiz Alerts <alerts@bpquiz.com>',
           to: [NOTIFY_TO],
           reply_to: md.email || undefined,
-          subject: `New Life Change Activated deposit: ${md.first_name || ''} ${md.last_name || ''} ($200)`.replace(/\s+/g, ' '),
+          subject: `New Life Change Activated ${md.kind === 'full' ? 'PAID IN FULL' : 'deposit'}: ${md.first_name || ''} ${md.last_name || ''} ($${pi.amount / 100})`.replace(/\s+/g, ' '),
           text: [
             `Program:  Life Change Activated ($2,000 tuition)`,
             `Deposit:  $${(pi.amount / 100).toFixed(2)} via ${method}`,
             `Name:     ${md.first_name || ''} ${md.last_name || ''}`,
             `Email:    ${md.email || ''}`,
             `Phone:    ${md.phone || ''}`,
-            `Balance:  $1,800 · plan page: https://bpquiz.com/life-change-activated/balance/`,
+            md.kind === 'full' ? `Balance:  $0 (paid in full)` : `Balance:  $1,800 · plan page: https://bpquiz.com/life-change-activated/balance/`,
             `Stripe:   https://dashboard.stripe.com/payments/${pi.id}`,
           ].join('\n'),
         }),
       }).catch((e) => console.error('deposit-confirmed notify failed', e.message));
     }
-    return res.status(200).json({ ok: true, status: pi.status });
+    return res.status(200).json({ ok: true, status: pi.status, kind: md.kind });
   } catch (err) {
     console.error('deposit-confirmed failed', err.message);
     return res.status(500).json({ error: 'Check failed' });

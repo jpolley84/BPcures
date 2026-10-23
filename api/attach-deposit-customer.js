@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   }
   try {
     const pi = await stripe.paymentIntents.retrieve(id);
-    if (!PROGRAMS[pi.metadata?.program] || pi.metadata?.kind !== 'deposit') {
+    if (!PROGRAMS[pi.metadata?.program] || !['deposit', 'full'].includes(pi.metadata?.kind)) {
       return res.status(403).json({ error: 'Not allowed' });
     }
     if (!['requires_payment_method', 'requires_confirmation', 'requires_action'].includes(pi.status)) {
