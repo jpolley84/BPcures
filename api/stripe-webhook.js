@@ -43,6 +43,8 @@ import {
 } from './purchase-confirmation.js';
 import { capturePurchase } from './_posthog.js';
 import { tagPurchasedByEmail } from './_manychat-tag.js';
+// 2026-10-19: $7 7-7-7 Challenge (bpquiz.com/777), its own handler + send gate.
+import { isSevenChallengeSession, processSevenChallenge } from './_seven-challenge.js';
 // Cross-webhook coordination with the braveworks-bp handler on this shared
 // Stripe account: triangle owns any session whose price id is in its
 // TIER_PRICE_IDS (this webhook defers entirely), claimSession is the shared
@@ -582,8 +584,23 @@ async function processCheckoutCompleted(event) {
     md.tier === 'recordings' ||
     /^restoreher/i.test(md.event || '') ||
     /restoreher|everydaynurse/i.test(md.source || '');
+  // 2026-10-22: Life Change Activated $1,800 balance links. Owned by
+  // triangle-webhook.js (plan cap + Joel notice); skip here so 180000 / 95000 /
+  // 49500 never fire an unmapped-amount alert.
+  const LCA_PAYMENT_LINKS = new Set(['plink_1UTVvFHseZnO3rRZrzLB4GOt', 'plink_1UTVvGHseZnO3rRZPOEBUzGI', 'plink_1UTVvHHseZnO3rRZyKkl9LQz']);
+  if (LCA_PAYMENT_LINKS.has(session.payment_link)) {
+    return { action: 'skipped', reason: 'foreign:life-change-activated' };
+  }
   if (FOREIGN_FUNNELS.has(md.funnel) || md.venture === 'svutu' || isRestoreHer) {
     return { action: 'skipped', reason: `foreign:${md.funnel || md.venture || md.brand || md.tier || 'restoreher'}` };
+  }
+
+  // 2026-10-19: the $7 7-7-7 Challenge (funnel 'seven-challenge', 700). Owned
+  // end to end by api/_seven-challenge.js and returns here, so it never reaches
+  // ManyChat tagging, resolveTierSlug, AMOUNT_TO_TIER, the unmapped-amount
+  // alert, or any kit / drip email. Its confirmation is gated by SEVEN_CONFIRM_LIVE.
+  if (isSevenChallengeSession(session)) {
+    return await processSevenChallenge(session, { getResend, from: FROM_CUSTOMER, replyTo: REPLY_TO_CUSTOMER, firstNameOf });
   }
 
   const customerEmail = session.customer_details?.email;
@@ -1295,6 +1312,10 @@ async function processCheckoutExpired(event) {
   if (!email || !email.includes('@')) {
     return { recovered: false, reason: 'no_email_captured' };
   }
+
+  // 2026-10-19: no cart-recovery email for the $7 7-7-7 Challenge. Its
+  // metadata says "challenge", which isBraveWorksBpSession would read as BP.
+  if (isSevenChallengeSession(session)) return { recovered: false, reason: 'seven_challenge_no_recovery' };
 
   // Never email another venture's abandoner from joel@bpquiz.com.
   if (!isBraveWorksBpSession(session)) {

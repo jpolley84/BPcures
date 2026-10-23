@@ -206,7 +206,7 @@
       <p class="small-note">The $200 non-refundable deposit counts toward your $2,000 program investment. The $1,800 balance is arranged after you select one of three available payment options.</p>
 
       <section class="steps" aria-labelledby="next"><div class="section-kicker">Simple next steps</div><h3 id="next">Here's what happens after you reserve</h3>
-        <div class="step-grid"><div class="step"><span class="step-num">STEP 01</span><strong>Pay $200 today</strong><p>Secure your spot with a non-refundable deposit.</p></div><div class="step"><span class="step-num">STEP 02</span><strong>Choose your payment plan</strong><p>Receive a link to pick one of three ways to pay the remaining $1,800.</p></div><div class="step"><span class="step-num">STEP 03</span><strong>Get ready to begin</strong><p>Receive next steps for your 8-week guided experience.</p></div></div>
+        <div class="step-grid"><div class="step"><span class="step-num">STEP 01</span><strong>Pay $200 today</strong><p>Secure your spot with a non-refundable deposit.</p></div><div class="step"><span class="step-num">STEP 02</span><strong>Choose your payment plan</strong><p>Pick how to pay the remaining $1,800: in full, 2 payments of $950, or 4 payments of $495.</p></div><div class="step"><span class="step-num">STEP 03</span><strong>Get ready to begin</strong><p>Receive next steps for your 8-week guided experience.</p></div></div>
       </section>
     </div>
 
@@ -330,7 +330,7 @@
         if (paymentIntent?.status === 'succeeded' || paymentIntent?.status === 'processing') {
           fetch('/api/deposit-confirmed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentIntentId: paymentIntent.id }) }).catch(() => {});
           submitButton.style.display = 'none';
-          form.innerHTML = '<div class="payment-success" role="status"><strong>Payment submitted.</strong><p>Once your deposit is verified, we’ll email your confirmation and the link to choose your remaining payment plan.</p></div>';
+          form.innerHTML = '<div class="payment-success" role="status"><strong>Payment submitted.</strong><p>Once your deposit is verified, we’ll email your receipt.</p><p><a href="/life-change-activated/balance/" style="font-weight:800">Choose your payment plan for the $1,800 balance →</a></p></div>';
         } else {
           throw new Error('Your payment was not completed. Please try again.');
         }

@@ -40,7 +40,7 @@ export default async function handler(req, res) {
             `Name:     ${md.first_name || ''} ${md.last_name || ''}`,
             `Email:    ${md.email || ''}`,
             `Phone:    ${md.phone || ''}`,
-            `Balance:  $1,800 (send her the 3-option payment plan link)`,
+            `Balance:  $1,800 · plan page: https://bpquiz.com/life-change-activated/balance/`,
             `Stripe:   https://dashboard.stripe.com/payments/${pi.id}`,
           ].join('\n'),
         }),

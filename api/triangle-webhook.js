@@ -738,7 +738,12 @@ export async function recordTeaSale({ dedupeId, email, name, items, amountCents,
   // Runs once per sale: the dedupe guard above returns early on a repeat.
   if (blend === 'steady' && grams === 100 && !String(source || '').startsWith('shopify')) {
     try {
-      const pouches = (amountCents || 0) >= 10000 ? 3 : 1;
+      // 2026-10-21: count the pouches that actually ship (line-item qty),
+      // floored at the amount rule so a $120 90-day order still takes 3. The
+      // $72 one-click upgrade (qty 2) used to take 1 while 2 pouches shipped,
+      // which left the counter high and let the guards oversell.
+      const byQty = (items || []).reduce((n, i) => n + (Number(i && i.qty) || 1), 0);
+      const pouches = Math.max(byQty, (amountCents || 0) >= 10000 ? 3 : 1);
       const left = await kv.decrby('tea:legacy100:left', pouches);
       if (left <= 0) console.log('tea 100g stock exhausted; /tea now sends everyone to Shopify');
     } catch (err) {
@@ -2305,6 +2310,53 @@ async function processCheckoutCompleted(event) {
   // is 19700 and the plan is a subscription, neither of which the amount map
   // handles, and the full 199700 is unmapped (would alert Joel). Covers all three
   // plans: 'full', 'deposit', 'plan' (subscription, capped at 6 bi-weekly charges).
+  // ── Life Change Activated $1,800 balance (2026-10-22, Joel) ──
+  // Three payment links: full $1,800, 2 x $950 every 4 weeks, 4 x $495 every
+  // 2 weeks, all inside the 8 weeks. Recognized by the payment link id, never
+  // by amount. THIS BLOCK IS WHAT STOPS THE PLANS: Stripe has no "charge N
+  // times then stop" for a recurring price, so cancel_at is written here.
+  //   2pay charges day 0, 28; a 3rd would be day 56 -> cancel day 42
+  //   4pay charges day 0, 14, 28, 42; a 5th would be day 56 -> cancel day 49
+  const LCA_LINKS = {
+    plink_1UTVvFHseZnO3rRZrzLB4GOt: { plan: 'full', cancelDays: 0 },
+    plink_1UTVvGHseZnO3rRZPOEBUzGI: { plan: '2pay', cancelDays: 42 },
+    plink_1UTVvHHseZnO3rRZyKkl9LQz: { plan: '4pay', cancelDays: 49 },
+  };
+  const lca = LCA_LINKS[session.payment_link];
+  if (lca) {
+    const stripe = getStripe();
+    if (lca.cancelDays && session.subscription) {
+      try {
+        const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription.id;
+        const sub = await stripe.subscriptions.retrieve(subId);
+        if (!sub.cancel_at) {
+          await stripe.subscriptions.update(subId, { cancel_at: Math.floor(Date.now() / 1000) + lca.cancelDays * 86400 });
+        }
+      } catch (err) {
+        console.error('triangle-webhook: LCA plan cancel_at FAILED, cap this subscription by hand', session.subscription, err.message);
+      }
+    }
+    try {
+      const key = process.env.RESEND_API_KEY;
+      if (key) {
+        const label = { full: 'paid in full ($1,800)', '2pay': '2 x $950 plan', '4pay': '4 x $495 plan' }[lca.plan];
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'BPQuiz Alerts <alerts@bpquiz.com>',
+            to: ['braveworksrn@gmail.com'],
+            subject: `Life Change Activated balance: ${customerEmail} chose ${label}`,
+            text: `${session.customer_details?.name || ''} <${customerEmail}> ${session.customer_details?.phone || ''}\nPlan: ${label}\nFirst charge: $${((session.amount_total || 0) / 100).toFixed(2)}\nSession: ${session.id}`,
+          }),
+        });
+      }
+    } catch (err) {
+      console.error('triangle-webhook: LCA notice failed', err.message);
+    }
+    return { action: 'lca-balance', plan: lca.plan };
+  }
+
   const allInPlan = await resolveAllInPlan(session);
   if (allInPlan) {
     return await processAllIn(session, allInPlan);

@@ -12,8 +12,9 @@ a{color:#0d2947;font-weight:700}
 (function(){
   var q=new URLSearchParams(location.search), id=q.get('payment_intent'), st=q.get('redirect_status');
   var t=document.getElementById('t'), m=document.getElementById('m');
-  function ok(){t.textContent='Your spot is reserved.';m.innerHTML='Thank you. Your $200 deposit was received and counts toward your $2,000 Life Change Activated tuition. Watch your email for your receipt and the link to choose your payment plan for the remaining $1,800.';}
+  function ok(){t.textContent='Your spot is reserved.';m.innerHTML='Thank you. Your $200 deposit was received and counts toward your $2,000 Life Change Activated tuition. Watch your email for your receipt.<br><br><a href="/life-change-activated/balance/" style="display:inline-block;background:#0d2947;color:#fff;padding:14px 22px;border-radius:8px;text-decoration:none">Choose your payment plan for the $1,800 balance →</a>';}
   function bad(){t.textContent='Your payment was not completed.';m.innerHTML='No deposit was taken. <a href="/life-change-activated/#checkout">Please try again</a>.';}
+  if(q.get('balance')==='1'){t.textContent='Your payment plan is set.';m.textContent='Thank you. Your balance payment went through, and Stripe is emailing your receipt. We will be in touch with your next steps for Life Change Activated.';return;}
   if(!id){ok();return;}
   fetch('/api/deposit-confirmed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentIntentId:id})})
     .then(function(r){return r.json()}).then(function(d){
