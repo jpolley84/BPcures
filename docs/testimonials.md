@@ -23,6 +23,18 @@ preference — never full name, email, or any detail they did not agree to. See 
 - **Use as:** "Margie, 62". **Required tag:** *Results not typical.*
 - **Live at:** /coaching (BeThereLandingPage TESTIMONIALS).
 
+## 2026-10-23 — Simone (private DM, Accelerator participant, on Annie)
+
+- **Quote (as relayed):** "She takes the time to help us understand ourselves."
+- **Source:** PRIVATE DM to Joel; provenance confirmed by Joel 2026-10-23 when the quote was
+  flagged for having no consent record.
+- **Permission:** PUBLISHED AT JOEL'S EXPLICIT DIRECTION 2026-10-23 (no consent reply on file —
+  recommend a retroactive "mind if I share this, first name only?"). Same basis as Gary and Orlando.
+- **Use as:** "Simone", first name only. No surname, no program details, no dates.
+- **Compliance:** this is an opinion about coaching, not a health outcome, so the *Results not
+  typical.* tag is not required here. If it is ever paired with a health claim, the tag applies.
+- **Live at:** Life Change Activated closing sequence, email 4 (2026-10-25).
+
 ## 2026-08-12 — Gary (garygould59, TikTok DM, doctor-led taper)
 
 - **Quote (lightly smoothed):** "I approached my cardiologist, and based on what I relayed to her, she stopped me on Plavix and tapered me off of Metoprolol. I owe the majority of this to you. As I tapered off, I started using the natural ingredients you describe in your videos."

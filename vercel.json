@@ -47,7 +47,7 @@
       "destination": "/cohort-apply/index.html"
     },
     {
-      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|cleanse/|cleanse$|replay/|replay$|life-change-activated/|life-change-activated$|engine/|engine$|habits/|habits$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|cleanse/|cleanse$|replay/|replay$|life-change-activated/|life-change-activated$|money-in-your-message/|money-in-your-message$|engine/|engine$|habits/|habits$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
       "destination": "/index.html"
     }
   ],
@@ -522,6 +522,22 @@
     {
       "path": "/api/challenge-night-reminder?cron=1&group=coaches",
       "schedule": "30,40 19 23 10 *"
+    },
+    {
+      "path": "/api/lca-close-sequence?cron=1&email=2",
+      "schedule": "0,10 13 25 10 *"
+    },
+    {
+      "path": "/api/lca-close-sequence?cron=1&email=3",
+      "schedule": "0,10 18 25 10 *"
+    },
+    {
+      "path": "/api/lca-close-sequence?cron=1&email=4",
+      "schedule": "0,10 23 25 10 *"
+    },
+    {
+      "path": "/api/lca-close-sequence?cron=1&email=5",
+      "schedule": "0,10 3 26 10 *"
     }
   ]
 }
