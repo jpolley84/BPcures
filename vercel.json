@@ -513,7 +513,7 @@
     },
     {
       "path": "/api/challenge-night-reminder?cron=1",
-      "schedule": "30,40 21 23 10 *"
+      "schedule": "30,40 14 23 10 *"
     },
     {
       "path": "/api/challenge-night-reminder?cron=1&group=coaches",
@@ -521,7 +521,7 @@
     },
     {
       "path": "/api/challenge-night-reminder?cron=1&group=coaches",
-      "schedule": "30,40 23 23 10 *"
+      "schedule": "30,40 19 23 10 *"
     }
   ]
 }

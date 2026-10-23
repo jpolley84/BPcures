@@ -67,7 +67,7 @@ You are welcome in all three hours. If you only have one tonight, make it this o
 Joel + Annie`,
   '2026-10-23': (first) => `${first},
 
-Last night of the week, and your coaches session starts at 8:00 PM Eastern, 7:00 PM Central.
+Last day of the week, and your coaches session is this AFTERNOON at 3:00 PM Central, 4:00 PM Eastern.
 
 Your room, the second one:
 
@@ -101,7 +101,13 @@ Joel + Annie`,
     label: 'Night 5',
     body: (first) => `${first},
 
-Last night of the challenge. The room is open right now.
+Last day of the challenge, and we are on this MORNING.
+
+10:00 AM Central, 11:00 AM Eastern - Live Q&A. Bring whatever is still unanswered.
+
+11:00 AM Central, 12:00 PM Eastern - The final class.
+
+Same room for both:
 
 ${ZOOM_MAIN}
 Meeting ID: 828 5171 5003
