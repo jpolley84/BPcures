@@ -379,89 +379,90 @@ P.S. What if next year's holiday pictures told a whole different story? It start
 ${DISCLAIMER_TEXT(email)}`,
   },
   4: {
-    subject: () => "We're doing it. Monday night.",
-    preheader: "You helped me decide.",
-    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p>Remember Thursday?</p><p>I asked you whether Joel and I should do something completely different for our Monday masterclass.</p><p>Something a little less about what's WRONG with your body...</p><p>And a whole lot more about what's still RIGHT with the woman living inside it.</p><p>Well...</p><p><strong>I'VE DECIDED. WE'RE DOING IT!</strong></p><p>And I have a feeling this is going to be one of my FAVORITE conversations of the year.</p><p>Because, girl, I want to talk about YOU.</p><p>Not just your blood pressure.</p><p>Not just your weight.</p><p>Not just the symptoms you've been trying to figure out.</p><p><strong>I want to talk about the woman underneath all of that.</strong></p><p>The one who still wants to feel beautiful.</p><p>Who still wants her hair to bounce and her eyes to sparkle.</p><p>Who wants to wake up with energy instead of already feeling exhausted.</p><p>Who wants to get dressed up and feel FABULOUS.</p><p>And who wants to enjoy the holidays without feeling like her own body is holding her back.</p><p>You know, there's something I've noticed.</p><p>Sometimes we get so busy trying to fix what's wrong with our bodies that we forget what we're trying to get BETTER FOR.</p><p>Think about that.</p><p>What's the point of better health if you never get around to enjoying your life?</p><p>Girl, I want BOTH for you.</p><p><strong>That's why tomorrow night we're doing:</strong></p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS!</strong></p><p><em>Glow Out of Control; From the Inside Out!</em></p><p>A special, one-time LIVE masterclass with Joel and me.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>And there's no cost to attend.</p><p>YES! SAVE MY SEAT FOR THE GLOW MASTERCLASS:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>We're going to talk about what it means to get your glow back from the inside out.</p><p>And I'm going to show you why the woman you've been missing may not be as far away as you think.</p><p>Oh, and one more thing...</p><p>Joel and I have something special we're going to reveal tomorrow night.</p><p>But I'm not telling you about that yet!</p><p>First, I want you to come and see what's possible for YOU.</p><p>Don't Forget to Love the Girl You're In!</p><p>Everyday Nurse Annie</p><p>P.S. If you replied YES to my email Friday, here's your invitation! Make sure you actually reserve your seat so you get the details for tomorrow night.</p>`, email, "You helped me decide."),
+    subject: () => "You spoke. We listened!",
+    preheader: "Monday, October 26. Free, live, no replay.",
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p><strong>You spoke. We listened!</strong></p><p>Friday, I asked you a simple question.</p><p><strong>Should we do a special FREE class before the holidays?</strong></p><p>One focused on your outer GLOW... reversing that speedy hormone aging and all that comes with it?</p><p>And the responses started coming in.</p><p>YES. YES. YES!</p><p>Well, most of you said YES.</p><p><strong>So we're doing it!</strong></p><p>This Monday, October 26, we're hosting a FREE LIVE masterclass:</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS!</strong></p><p>Because here's something we've learned after years of helping women take back their health.</p><p>It's not just about the blood pressure, the weight, the hormones, or the nights you can't sleep.</p><p><strong>It's about the woman underneath all those symptoms.</strong></p><p>The woman who still wants to look good, feel good, have energy, and enjoy her life.</p><p>The woman who wants to look in the mirror and recognize herself again.</p><p>And just imagine what could change if you finally understood what your body needs in this season of life.</p><p>That's exactly the conversation we're having Monday.</p><p>We'll talk about why your body has changed, what's getting in the way of feeling like yourself, and where you can begin.</p><p><strong>Monday, October 26</strong></p><p><strong>6 PM Central | 7 PM Eastern</strong></p><p>FREE. LIVE. No replay.</p><p>YES! SAVE MY FREE SEAT:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>But before you go...</p><p><strong>Hey, can you do me a favor?</strong></p><p>I'm giving you this masterclass as a gift.</p><p>And I'd love for you to give that same gift to another woman.</p><p>Maybe it's your BFF, your church family, your mother-in-law, or someone who follows you on social media.</p><p>Think of 5 women who deserve to feel good in their bodies again.</p><p><strong>Would you share this invitation with them?</strong></p><p>It's not too early to spread the cheer.</p><p>She will be super thankful you did.</p><p><strong>Just register, then copy and paste the link to your list and bam, they get to choose if they want that too.</strong></p><p>SHARE THE GIFT:<br><a href="https://restoreherhormones.com/masterclass" style="color:#112d4d;font-weight:700">https://restoreherhormones.com/masterclass</a></p><p>Let's get healthier, feel better, and <strong>GLOW TOGETHER this holiday season!</strong></p><p>You asked for it. We're making room for it.</p><p>And something tells me this is a conversation you don't want to miss.</p><p>See you Monday!</p><p>Annie &amp; Joel</p><p>Everyday Nurse</p>`, email, "Monday, October 26. Free, live, no replay."),
     text: (name, email) => `Hey ${name},
 
-Remember Thursday?
+You spoke. We listened!
 
-I asked you whether Joel and I should do something completely different for our Monday masterclass.
+Friday, I asked you a simple question.
 
-Something a little less about what's WRONG with your body...
+Should we do a special FREE class before the holidays?
 
-And a whole lot more about what's still RIGHT with the woman living inside it.
+One focused on your outer GLOW... reversing that speedy hormone aging and all that comes with it?
 
-Well...
+And the responses started coming in.
 
-I'VE DECIDED. WE'RE DOING IT!
+YES. YES. YES!
 
-And I have a feeling this is going to be one of my FAVORITE conversations of the year.
+Well, most of you said YES.
 
-Because, girl, I want to talk about YOU.
+So we're doing it!
 
-Not just your blood pressure.
-
-Not just your weight.
-
-Not just the symptoms you've been trying to figure out.
-
-I want to talk about the woman underneath all of that.
-
-The one who still wants to feel beautiful.
-
-Who still wants her hair to bounce and her eyes to sparkle.
-
-Who wants to wake up with energy instead of already feeling exhausted.
-
-Who wants to get dressed up and feel FABULOUS.
-
-And who wants to enjoy the holidays without feeling like her own body is holding her back.
-
-You know, there's something I've noticed.
-
-Sometimes we get so busy trying to fix what's wrong with our bodies that we forget what we're trying to get BETTER FOR.
-
-Think about that.
-
-What's the point of better health if you never get around to enjoying your life?
-
-Girl, I want BOTH for you.
-
-That's why tomorrow night we're doing:
+This Monday, October 26, we're hosting a FREE LIVE masterclass:
 
 RESTORE YOUR GLOW FOR THE HOLIDAYS!
 
-Glow Out of Control; From the Inside Out!
+Because here's something we've learned after years of helping women take back their health.
 
-A special, one-time LIVE masterclass with Joel and me.
+It's not just about the blood pressure, the weight, the hormones, or the nights you can't sleep.
+
+It's about the woman underneath all those symptoms.
+
+The woman who still wants to look good, feel good, have energy, and enjoy her life.
+
+The woman who wants to look in the mirror and recognize herself again.
+
+And just imagine what could change if you finally understood what your body needs in this season of life.
+
+That's exactly the conversation we're having Monday.
+
+We'll talk about why your body has changed, what's getting in the way of feeling like yourself, and where you can begin.
 
 Monday, October 26
 
-7 PM Eastern / 6 PM Central
+6 PM Central | 7 PM Eastern
 
-And there's no cost to attend.
+FREE. LIVE. No replay.
 
-YES! SAVE MY SEAT FOR THE GLOW MASTERCLASS:
+YES! SAVE MY FREE SEAT:
 https://restoreherhormones.com/masterclass
 
-We're going to talk about what it means to get your glow back from the inside out.
+But before you go...
 
-And I'm going to show you why the woman you've been missing may not be as far away as you think.
+Hey, can you do me a favor?
 
-Oh, and one more thing...
+I'm giving you this masterclass as a gift.
 
-Joel and I have something special we're going to reveal tomorrow night.
+And I'd love for you to give that same gift to another woman.
 
-But I'm not telling you about that yet!
+Maybe it's your BFF, your church family, your mother-in-law, or someone who follows you on social media.
 
-First, I want you to come and see what's possible for YOU.
+Think of 5 women who deserve to feel good in their bodies again.
 
-Don't Forget to Love the Girl You're In!
+Would you share this invitation with them?
 
-Everyday Nurse Annie
+It's not too early to spread the cheer.
 
-P.S. If you replied YES to my email Friday, here's your invitation! Make sure you actually reserve your seat so you get the details for tomorrow night.
+She will be super thankful you did.
+
+Just register, then copy and paste the link to your list and bam, they get to choose if they want that too.
+
+SHARE THE GIFT:
+https://restoreherhormones.com/masterclass
+
+Let's get healthier, feel better, and GLOW TOGETHER this holiday season!
+
+You asked for it. We're making room for it.
+
+And something tells me this is a conversation you don't want to miss.
+
+See you Monday!
+
+Annie & Joel
+
+Everyday Nurse
 
 ${DISCLAIMER_TEXT(email)}`,
   },

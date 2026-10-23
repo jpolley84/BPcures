@@ -319,77 +319,80 @@ Joel Polley, RN
 P.S. What if next year's holiday pictures told a different story? It starts with how you choose to take care of yourself today.`,
   },
   4: {
-    subject: "It's happening Monday night",
-    preheader: "You helped decide this one.",
-    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p>Remember Friday?</p><p>I asked whether Annie and I should do something completely different for Monday.</p><p>A little less about what is wrong with your body.</p><p>A lot more about what is still right with the person living in it.</p><p><strong>We're doing it.</strong></p><p>And I think it is going to be one of my favorite nights of the year.</p><p>Because I want to talk about you.</p><p>Not just your blood pressure. Not just your weight. Not just the symptoms you have been trying to work out.</p><p><strong>I want to talk about the person underneath all of it.</strong></p><p>The one who still wants to feel good.</p><p>Who wants to wake up with energy instead of already tired.</p><p>Who wants to get dressed and feel like themselves.</p><p>Who wants to enjoy the holidays without their own body getting in the way.</p><p>Here is something I have noticed in twenty years of this work.</p><p>We get so busy fixing what is wrong with the body that we forget what we are trying to get better FOR.</p><p>Sit with that a second.</p><p>What is the point of better health if you never get around to enjoying your life?</p><p>I want both for you.</p><p><strong>So tomorrow night:</strong></p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p><em>Glow Out of Control; From the Inside Out</em></p><p>A one-time live masterclass with Annie and me.</p><p><strong>Monday, October 26</strong></p><p><strong>7 PM Eastern / 6 PM Central</strong></p><p>No cost to attend.</p><p>SAVE MY SEAT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>We are going to talk about what it actually takes to get your spark back from the inside out.</p><p>And Annie is going to show you why the person you have been missing may be closer than you think.</p><p>One more thing. We have something to reveal tomorrow night that we have been working on behind the scenes.</p><p>I am not telling you what it is yet.</p><p>Come and see.</p><p>Joel Polley, RN</p><p>P.S. If you replied YES on Friday, this is your invitation. Reserve the seat so you get tomorrow night's details.</p>`, "You helped decide this one.", email),
+    subject: "You spoke. We listened.",
+    preheader: "Monday, October 26. Free, live, no replay.",
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p><strong>You spoke. We listened.</strong></p><p>Friday, I asked you a simple question.</p><p><strong>Should we do a special free class before the holidays?</strong> One about getting your spark back, and about the speedy aging nobody warns you is coming.</p><p>The replies started landing within minutes.</p><p>Yes. Yes. Yes.</p><p>Not everybody. But most of you.</p><p><strong>So we're doing it.</strong></p><p>This Monday, October 26, Annie and I are hosting a free live masterclass:</p><p><strong>RESTORE YOUR GLOW FOR THE HOLIDAYS</strong></p><p>Here is what twenty years of this work has taught me.</p><p>It is not only about the blood pressure, the weight, the hormones, or the nights you lie there awake.</p><p><strong>It is about the person living underneath all those symptoms.</strong></p><p>The one who still wants to feel good, have energy, and enjoy the life they built.</p><p>The one who wants to look in the mirror and recognize who is looking back.</p><p>Imagine what changes once you finally understand what your body needs in this season.</p><p>That is the conversation we are having Monday.</p><p>Why your body changed, what is getting in the way of feeling like yourself, and where to start.</p><p><strong>Monday, October 26</strong></p><p><strong>6 PM Central, 7 PM Eastern</strong></p><p>Free. Live. No replay.</p><p>SAVE MY FREE SEAT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>One more thing before you go.</p><p><strong>Can you do me a favor?</strong></p><p>I am giving you this class as a gift. I would like you to hand that same gift to somebody else.</p><p>Your best friend. Your church family. Your sister. Somebody who follows you and has been quietly struggling.</p><p>Think of five people who deserve to feel good in their own body again.</p><p><strong>Would you forward this to them?</strong></p><p>It is not too early to spread a little cheer, and they will thank you for it.</p><p><strong>Register first, then copy the link and send it to whoever comes to mind. They get to decide for themselves.</strong></p><p>SHARE THE GIFT:<br><a href="https://bpquiz.com/masterclass" style="color:#112d4d;font-weight:700">https://bpquiz.com/masterclass</a></p><p>Let's get healthier, feel better, and do it together this holiday season.</p><p>You asked for it. We are making room for it.</p><p>See you Monday.</p><p>Joel Polley, RN</p>`, "Monday, October 26. Free, live, no replay.", email),
     text: (name, email) => `Hey ${name},
 
-Remember Friday?
+You spoke. We listened.
 
-I asked whether Annie and I should do something completely different for Monday.
+Friday, I asked you a simple question.
 
-A little less about what is wrong with your body.
+Should we do a special free class before the holidays? One about getting your spark back, and about the speedy aging nobody warns you is coming.
 
-A lot more about what is still right with the person living in it.
+The replies started landing within minutes.
 
-We're doing it.
+Yes. Yes. Yes.
 
-And I think it is going to be one of my favorite nights of the year.
+Not everybody. But most of you.
 
-Because I want to talk about you.
+So we're doing it.
 
-Not just your blood pressure. Not just your weight. Not just the symptoms you have been trying to work out.
-
-I want to talk about the person underneath all of it.
-
-The one who still wants to feel good.
-
-Who wants to wake up with energy instead of already tired.
-
-Who wants to get dressed and feel like themselves.
-
-Who wants to enjoy the holidays without their own body getting in the way.
-
-Here is something I have noticed in twenty years of this work.
-
-We get so busy fixing what is wrong with the body that we forget what we are trying to get better FOR.
-
-Sit with that a second.
-
-What is the point of better health if you never get around to enjoying your life?
-
-I want both for you.
-
-So tomorrow night:
+This Monday, October 26, Annie and I are hosting a free live masterclass:
 
 RESTORE YOUR GLOW FOR THE HOLIDAYS
 
-Glow Out of Control; From the Inside Out
+Here is what twenty years of this work has taught me.
 
-A one-time live masterclass with Annie and me.
+It is not only about the blood pressure, the weight, the hormones, or the nights you lie there awake.
+
+It is about the person living underneath all those symptoms.
+
+The one who still wants to feel good, have energy, and enjoy the life they built.
+
+The one who wants to look in the mirror and recognize who is looking back.
+
+Imagine what changes once you finally understand what your body needs in this season.
+
+That is the conversation we are having Monday.
+
+Why your body changed, what is getting in the way of feeling like yourself, and where to start.
 
 Monday, October 26
 
-7 PM Eastern / 6 PM Central
+6 PM Central, 7 PM Eastern
 
-No cost to attend.
+Free. Live. No replay.
 
-SAVE MY SEAT:
+SAVE MY FREE SEAT:
 https://bpquiz.com/masterclass
 
-We are going to talk about what it actually takes to get your spark back from the inside out.
+One more thing before you go.
 
-And Annie is going to show you why the person you have been missing may be closer than you think.
+Can you do me a favor?
 
-One more thing. We have something to reveal tomorrow night that we have been working on behind the scenes.
+I am giving you this class as a gift. I would like you to hand that same gift to somebody else.
 
-I am not telling you what it is yet.
+Your best friend. Your church family. Your sister. Somebody who follows you and has been quietly struggling.
 
-Come and see.
+Think of five people who deserve to feel good in their own body again.
 
-Joel Polley, RN
+Would you forward this to them?
 
-P.S. If you replied YES on Friday, this is your invitation. Reserve the seat so you get tomorrow night's details.`,
+It is not too early to spread a little cheer, and they will thank you for it.
+
+Register first, then copy the link and send it to whoever comes to mind. They get to decide for themselves.
+
+SHARE THE GIFT:
+https://bpquiz.com/masterclass
+
+Let's get healthier, feel better, and do it together this holiday season.
+
+You asked for it. We are making room for it.
+
+See you Monday.
+
+Joel Polley, RN`,
   },
   5: {
     subject: "Three things to bring Monday night",
