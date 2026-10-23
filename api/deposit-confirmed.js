@@ -2,9 +2,14 @@
 //
 // Called by the page after a card payment succeeds, and by the confirmation
 // page after a Klarna redirect. It re-reads the PaymentIntent from Stripe, so
-// the notice only goes out for a real, succeeded deposit, and only once
-// (metadata.joel_notified). Internal email to Joel only; nothing goes to the
-// buyer from here (Stripe sends the buyer's receipt).
+// nothing goes out except for a real, succeeded payment, and only once
+// (metadata.joel_notified).
+//
+// Sends TWO emails: the internal notice to Joel, and the buyer's welcome.
+// 2026-10-22: the buyer's was missing. Aurelia Smith paid $200 and received a
+// Stripe card receipt and silence, with her $1,800 balance link living only in
+// a browser tab she would close. The welcome carries the balance link, the
+// assessment, and the Wednesday call.
 
 import Stripe from 'stripe';
 import { PROGRAMS } from './create-deposit-payment-intent.js';
@@ -45,6 +50,86 @@ export default async function handler(req, res) {
           ].join('\n'),
         }),
       }).catch((e) => console.error('deposit-confirmed notify failed', e.message));
+    }
+    // Buyer welcome. Wrapped on its own so a failure here cannot swallow
+    // Joel's notice above, and vice versa.
+    if (key && md.email) {
+      const first = (md.first_name || '').trim() || 'Friend';
+      const paidFull = md.kind === 'full';
+      const lines = [
+        `${first},`,
+        '',
+        'Your spot in Life Change Activated is reserved. Welcome.',
+        '',
+        paidFull
+          ? 'You paid the $2,000 tuition in full, so there is no balance to think about. That is it, you are done with the money part.'
+          : 'Your $200 deposit is in and it counts toward the $2,000 tuition. That leaves $1,800, and you choose how to handle it.',
+        '',
+      ];
+      if (!paidFull) {
+        lines.push(
+          'PICK YOUR PLAN HERE:',
+          'https://bpquiz.com/life-change-activated/balance/',
+          '',
+          'Three options, and every one finishes inside your eight weeks:',
+          '',
+          'Pay $1,800 once, the lowest total.',
+          '$950 twice, today and four weeks later, $1,900 total.',
+          '$495 four times, every two weeks, $1,980 total.',
+          '',
+        );
+      }
+      lines.push(
+        'WE START RIGHT AWAY. TWO THINGS TO DO.',
+        '',
+        '1. Fill out your assessment. This is how I learn your numbers, your history and what you are actually working with, so your plan is yours and not a template.',
+        '',
+        'https://bpquiz.com/accelerator-assessment',
+        '',
+        'Do it before Wednesday if you can.',
+        '',
+        '2. Your first coaching call is Wednesday, 11:00 AM Central, 12:00 PM Eastern.',
+        '',
+        'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1',
+        'Meeting ID: 893 5095 0543',
+        '',
+        'You will get a reminder with that link 30 minutes before every call, so you do not have to keep this email. Bring your questions and your numbers.',
+        '',
+        'One thing I want you to hear, because you just put real money on yourself. The people who get the most out of this are not the ones with the best starting numbers. They are the ones who show up and tell the truth about where they are. You already did the hard part.',
+        '',
+        'Reply straight to this email with anything at all. It comes to me.',
+        '',
+        'Joel Polley, RN',
+      );
+      if (!paidFull) {
+        lines.push('', 'P.S. Your $200 deposit is non-refundable and is credited toward your $2,000 tuition.');
+      }
+      const text = lines.join('\n');
+      const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      let body = text.split('\n\n').map((p) => {
+        let h = esc(p).replace(/\n/g, '<br>');
+        for (const u of ['https://bpquiz.com/life-change-activated/balance/',
+                         'https://bpquiz.com/accelerator-assessment',
+                         'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1']) {
+          h = h.split(esc(u)).join(`<a href="${u}" style="color:#112d4d;font-weight:700">${esc(u)}</a>`);
+        }
+        return `<p style="margin:0 0 15px;font-size:16px;line-height:1.65;color:#1b2430">${h}</p>`;
+      }).join('');
+      body = '<!doctype html><html><body style="margin:0;background:#f6f7f4">'
+        + '<div style="max-width:580px;margin:0 auto;padding:30px 22px;'
+        + 'font-family:-apple-system,Segoe UI,Arial,sans-serif">' + body + '</div></body></html>';
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: 'Joel Polley, RN <joel@bpquiz.com>',
+          to: [md.email],
+          reply_to: 'braveworksrn@gmail.com',
+          subject: "You're in. Here's what happens next.",
+          text,
+          html: body,
+        }),
+      }).catch((e) => console.error('deposit-confirmed buyer welcome failed', e.message));
     }
     return res.status(200).json({ ok: true, status: pi.status, kind: md.kind });
   } catch (err) {

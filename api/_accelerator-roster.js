@@ -32,5 +32,10 @@ export const ACCELERATOR_ROSTER = [
   // intake submitted 2026-10-20. She was missing from this file, so the
   // 10-21 replay send would have skipped her.
   { first: 'Karen', email: 'kpaug19@gmail.com', note: 'joined 2026-10-20' },
+  // Added 2026-10-22: first Life Change Activated buyer, $200 deposit paid
+  // 2026-10-22 19:00. Her welcome email promises Wednesday reminders, and
+  // accelerator-reminder.js reads this file, so she has to be here for
+  // that promise to hold.
+  { first: 'Aurelia', email: 'smit842@cs.com', note: 'Life Change Activated, joined 2026-10-22' },
   { first: 'Yvonne', email: 'yvonnewint12@gmail.com', note: 'Sprint, joined 2026-09-30; card name reads Antonio bromfield' },
 ];
