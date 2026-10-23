@@ -12,6 +12,7 @@
 // assessment, and the Wednesday call.
 
 import Stripe from 'stripe';
+import { kv } from '@vercel/kv';
 import { PROGRAMS } from './create-deposit-payment-intent.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -51,6 +52,34 @@ export default async function handler(req, res) {
         }),
       }).catch((e) => console.error('deposit-confirmed notify failed', e.message));
     }
+    // Cohort record. The assessment endpoint stamps bwbp:allin:<email> only
+    // when the row already exists, so without this an Activated buyer's
+    // assessment stamps nothing. Read-merge-write: never clobber a row that
+    // already exists for someone who bought a different program.
+    if (md.email) {
+      try {
+        const key2 = `bwbp:allin:${String(md.email).trim().toLowerCase()}`;
+        let existing = await kv.get(key2);
+        if (typeof existing === 'string') { try { existing = JSON.parse(existing); } catch { existing = null; } }
+        const row = (existing && typeof existing === 'object') ? existing : {};
+        await kv.set(key2, {
+          ...row,
+          email: String(md.email).trim().toLowerCase(),
+          firstName: row.firstName || md.first_name || '',
+          lastName: row.lastName || md.last_name || '',
+          phone: row.phone || md.phone || '',
+          program: 'life-change-activated',
+          plan: md.kind === 'full' ? 'full' : (row.plan || 'deposit-paid'),
+          depositPaymentIntent: pi.id,
+          status: row.status || 'awaiting_assessment',
+          confirmedAt: row.confirmedAt || new Date().toISOString(),
+        });
+      } catch (err) {
+        // Non-fatal: the money is taken and both emails still go out.
+        console.error('deposit-confirmed cohort stamp failed', md.email, err.message);
+      }
+    }
+
     // Buyer welcome. Wrapped on its own so a failure here cannot swallow
     // Joel's notice above, and vice versa.
     if (key && md.email) {
