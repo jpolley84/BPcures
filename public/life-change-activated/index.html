@@ -273,6 +273,7 @@
       option = payFull.checked ? 'full' : 'deposit';
       document.getElementById('pb-amt').textContent = payFull.checked ? '$2,000' : '$200';
       document.getElementById('pb-note').textContent = payFull.checked ? 'tuition paid in full' : 'reserves your spot';
+      document.querySelector('.price-meta').style.display = payFull.checked ? 'none' : '';
       document.getElementById('pay-hint').innerHTML = payFull.checked
         ? 'You are paying the full $2,000 Life Change Activated tuition today. Choose Klarna to split it into smaller payments through Klarna, or pay by card.'
         : HINT_DEPOSIT;
