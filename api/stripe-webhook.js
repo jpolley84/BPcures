@@ -577,7 +577,7 @@ async function processCheckoutCompleted(event) {
   // buyer never ordered. Delivery for it is owned end to end by
   // api/tea-oto-confirm.js, so the correct behavior here is an explicit,
   // logged skip.
-  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson', 'challenge-oto']);
+  const FOREIGN_FUNNELS = new Set(['braveworksengine', 'restoreherhormones-quiz', 'event-sales-page', 'chinhair', 'braveworks-bp', 'svutu-tea', 'coaching-deposit', 'samson', 'challenge-oto', 'life-beyond-the-cuff']); // life-beyond-the-cuff: bloodpressurerepair.com $297 course, 2026-10-25 (29700 would hit 'diagnostic')
   const md = session.metadata || {};
   const isRestoreHer =
     md.brand === 'restoreher' ||
@@ -587,7 +587,9 @@ async function processCheckoutCompleted(event) {
   // 2026-10-22: Life Change Activated $1,800 balance links. Owned by
   // triangle-webhook.js (plan cap + Joel notice); skip here so 180000 / 95000 /
   // 49500 never fire an unmapped-amount alert.
-  const LCA_PAYMENT_LINKS = new Set(['plink_1UTVvFHseZnO3rRZrzLB4GOt', 'plink_1UTVvGHseZnO3rRZPOEBUzGI', 'plink_1UTVvHHseZnO3rRZyKkl9LQz']);
+  const LCA_PAYMENT_LINKS = new Set(['plink_1UTVvFHseZnO3rRZrzLB4GOt', 'plink_1UTVvGHseZnO3rRZPOEBUzGI', 'plink_1UTVvHHseZnO3rRZyKkl9LQz',
+    // 2026-10-23 Money in Your Message balance links, owned by triangle-webhook.js too
+    'plink_1UTqhdHseZnO3rRZoAZGiPiq', 'plink_1UTqheHseZnO3rRZvXiyZq97', 'plink_1UTqhfHseZnO3rRZMEx81eAu']);
   if (LCA_PAYMENT_LINKS.has(session.payment_link)) {
     return { action: 'skipped', reason: 'foreign:life-change-activated' };
   }

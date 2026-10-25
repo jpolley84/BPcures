@@ -2326,6 +2326,42 @@ async function processCheckoutCompleted(event) {
     plink_1UTqheHseZnO3rRZvXiyZq97: { plan: '2pay', cancelDays: 42, program: 'Money in Your Message' },
     plink_1UTqhfHseZnO3rRZMEx81eAu: { plan: '4pay', cancelDays: 49, program: 'Money in Your Message' },
   };
+  // ── Life Beyond the Cuff $297 course (2026-10-25) ──
+  // bloodpressurerepair.com embedded checkout (api/cuff-checkout.js). Recognized
+  // by metadata funnel, never by amount (29700 is also the case review).
+  // Delivery is manual for now: notify Joel and stop. No buyer email is sent
+  // from here until Joel approves the welcome text.
+  if (session.metadata?.funnel === 'life-beyond-the-cuff') {
+    try {
+      const key = process.env.RESEND_API_KEY;
+      if (key) {
+        const disc = session.total_details?.amount_discount || 0;
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'BPQuiz Alerts <alerts@bpquiz.com>',
+            to: ['braveworksrn@gmail.com'],
+            reply_to: customerEmail,
+            subject: `New Life Beyond the Cuff sale: ${session.customer_details?.name || customerEmail} ($${((session.amount_total || 0) / 100).toFixed(2)})`,
+            text: [
+              `Course:   Life Beyond the Cuff ($297)`,
+              `Paid:     $${((session.amount_total || 0) / 100).toFixed(2)}${disc ? ` (code ${session.metadata?.code || '?'}, -$${(disc / 100).toFixed(2)})` : ''}`,
+              `Name:     ${session.customer_details?.name || ''}`,
+              `Email:    ${customerEmail}`,
+              `Phone:    ${session.customer_details?.phone || ''}`,
+              `Access:   manual for now; no buyer email was sent by the site`,
+              `Session:  ${session.id}`,
+            ].join('\n'),
+          }),
+        });
+      }
+    } catch (err) {
+      console.error('triangle-webhook: cuff notice failed', err.message);
+    }
+    return { action: 'cuff-course', amount: session.amount_total };
+  }
+
   const lca = LCA_LINKS[session.payment_link];
   if (lca) {
     const stripe = getStripe();

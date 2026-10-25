@@ -14,6 +14,7 @@ const ALLOWED_ORIGINS = new Set([
   'https://changemylifechallenge.com', 'https://www.changemylifechallenge.com',
   'https://hormoneteas.com', 'https://www.hormoneteas.com',
   'https://minoritypossible.com', 'https://www.minoritypossible.com',
+  'https://bloodpressurerepair.com', 'https://www.bloodpressurerepair.com',
 ]);
 
 // Where "we're open again" should send them, per gate.
@@ -23,6 +24,7 @@ const RETURN_LINKS = {
   shopify:   { label: 'Shop STEADY',                   url: 'https://hormoneteas.com/products/steady' },
   challenge: { label: 'See the Change My Life Challenge', url: 'https://changemylifechallenge.com/' },
   'mp-shop': { label: 'Back to the shop',              url: 'https://minoritypossible.com/shop' },
+  cuff:      { label: 'See Life Beyond the Cuff',      url: 'https://bloodpressurerepair.com/' },
 };
 
 function cors(req, res) {
