@@ -2321,6 +2321,10 @@ async function processCheckoutCompleted(event) {
     plink_1UTVvFHseZnO3rRZrzLB4GOt: { plan: 'full', cancelDays: 0 },
     plink_1UTVvGHseZnO3rRZPOEBUzGI: { plan: '2pay', cancelDays: 42 },
     plink_1UTVvHHseZnO3rRZyKkl9LQz: { plan: '4pay', cancelDays: 49 },
+    // 2026-10-23: Money in Your Message Accelerator balance (same shape, coaches' offer).
+    plink_1UTqhdHseZnO3rRZoAZGiPiq: { plan: 'full', cancelDays: 0, program: 'Money in Your Message' },
+    plink_1UTqheHseZnO3rRZvXiyZq97: { plan: '2pay', cancelDays: 42, program: 'Money in Your Message' },
+    plink_1UTqhfHseZnO3rRZMEx81eAu: { plan: '4pay', cancelDays: 49, program: 'Money in Your Message' },
   };
   const lca = LCA_LINKS[session.payment_link];
   if (lca) {
@@ -2346,13 +2350,88 @@ async function processCheckoutCompleted(event) {
           body: JSON.stringify({
             from: 'BPQuiz Alerts <alerts@bpquiz.com>',
             to: ['braveworksrn@gmail.com'],
-            subject: `Life Change Activated balance: ${customerEmail} chose ${label}`,
+            subject: `${lca.program || 'Life Change Activated'} balance: ${customerEmail} chose ${label}`,
             text: `${session.customer_details?.name || ''} <${customerEmail}> ${session.customer_details?.phone || ''}\nPlan: ${label}\nFirst charge: $${((session.amount_total || 0) / 100).toFixed(2)}\nSession: ${session.id}`,
           }),
         });
       }
     } catch (err) {
       console.error('triangle-webhook: LCA notice failed', err.message);
+    }
+
+    // Buyer confirmation, added 2026-10-25. Until now this path emailed only
+    // Joel, so two buyers paid off $1,800 each and heard nothing from us.
+    try {
+      const bKey = process.env.RESEND_API_KEY;
+      if (bKey && customerEmail) {
+        const first = String(customerName || '').trim().split(/\s+/)[0] || 'Friend';
+        const paidFull = lca.plan === 'full';
+        const SKOOL = 'https://www.skool.com/life-change-accelerator-6423/about';
+        const ASSESS = 'https://bpquiz.com/accelerator-assessment';
+        const ZOOM = 'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1';
+        const L = [];
+        L.push(first + ',', '');
+        if (paidFull) {
+          L.push('That is it. Your Life Change Activated tuition is paid in full, $2,000, nothing left owing.', '',
+                 'I wanted to say that plainly, because a card receipt is not the same as a person telling you it is done.', '',
+                 'PAYING IN FULL UNLOCKS THE BONUSES', '',
+                 'Restore Your Glow, the hair, skin and confidence work.', '',
+                 "Joel's Lab Hacks, so you walk into an appointment knowing which questions to ask.", '',
+                 'The Skin and Hair fast-action bonus.', '',
+                 'AND YOUR PLUS ONE', '',
+                 'You get to bring somebody with you. A full seat in the eight weeks, free. The Wednesday calls, the community, the materials, all of it, exactly what you have.', '',
+                 'So who are you bringing? Reply with her name and email and I will get her set up.', '',
+                 'Think about who comes to mind first. Usually it is the person you have been quietly worried about.', '');
+        } else {
+          const sched = lca.plan === '2pay'
+            ? 'Your plan is 2 payments of $950, today and four weeks from today.'
+            : 'Your plan is 4 payments of $495, every two weeks.';
+          L.push('Your place in Life Change Activated is secured and your balance is set up.', '',
+                 sched, '',
+                 'Stripe emails a receipt for each payment, so you will not hear from me about money again. From here it is all coaching.', '',
+                 'One thing worth knowing. Paying the $2,000 in full unlocks the bonus collection, Restore Your Glow, Lab Hacks and the Skin and Hair bonus, plus a plus one, a second full seat in the eight weeks for somebody you choose. That stays available to you the moment your balance is settled, whenever that is.', '');
+        }
+        L.push('TWO PLACES WE TALK', '',
+               'I am adding you to our Life Change Accelerator WhatsApp group, using the number you gave at checkout. That is where the day to day happens, the quick questions between calls. If that is not the best number for WhatsApp, reply and tell me which is.', '',
+               'And here is the Skool community, where the materials and replays live:', '',
+               SKOOL, '',
+               'TWO THINGS TO DO', '',
+               'Your assessment. This is how I learn your numbers, your history and what you are actually working with, so your plan is yours and not a template.', '',
+               ASSESS, '',
+               'And your coaching call is Wednesdays, 11:00 AM Central, 12:00 PM Eastern.', '',
+               ZOOM, 'Meeting ID: 893 5095 0543', '',
+               'You get a reminder with that link 30 minutes before every call, so you do not need to keep this email.', '');
+        if (paidFull) {
+          L.push('One more thing. You did not do this the easy way. You put the whole thing down at once, and that tells me something about how you intend to show up for the next eight weeks. I am going to hold you to it, kindly.', '');
+        }
+        L.push('Reply to this with anything at all. It comes straight to me.', '', 'Joel Polley, RN');
+        const bText = L.join('\n');
+        const bEsc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const bHtml = '<!doctype html><html><body style="margin:0;background:#f6f7f4">'
+          + '<div style="max-width:580px;margin:0 auto;padding:30px 22px;font-family:-apple-system,Segoe UI,Arial,sans-serif">'
+          + bText.split('\n\n').filter((p) => p.trim()).map((p) => {
+              let h = bEsc(p).replace(/\n/g, '<br>');
+              for (const u of [SKOOL, ASSESS, ZOOM]) {
+                h = h.split(bEsc(u)).join('<a href="' + u + '" style="color:#112d4d;font-weight:700">' + bEsc(u) + '</a>');
+              }
+              return '<p style="margin:0 0 15px;font-size:16px;line-height:1.65;color:#1b2430">' + h + '</p>';
+            }).join('')
+          + '</div></body></html>';
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + bKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'Joel Polley, RN <joel@bpquiz.com>',
+            to: [customerEmail],
+            reply_to: 'braveworksrn@gmail.com',
+            subject: paidFull ? 'Paid in full. Here is everything that just unlocked.' : 'Your place is secured',
+            text: bText,
+            html: bHtml,
+          }),
+        });
+      }
+    } catch (err) {
+      console.error('triangle-webhook: LCA buyer confirmation failed', err.message);
     }
     return { action: 'lca-balance', plan: lca.plan };
   }
