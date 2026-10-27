@@ -26,14 +26,14 @@ import { neverSendGuard } from './_never_send.js';
 // approved 2026-10-06: Fri 10-09 and Sat 10-10 are rest days, and
 // Day 6 + Day 7 both land on class day 10-12.
 
-const FIRE_DATES = {"1": "2026-10-21", "2": "2026-10-22", "3": "2026-10-23", "4": "2026-10-23", "5": "2026-10-25", "6": "2026-10-26", "7": "2026-10-26"};
+const FIRE_DATES = {"1": "2026-10-21", "2": "2026-10-22", "3": "2026-10-23", "4": "2026-10-23", "5": "2026-10-25", "6": "2026-10-26", "7": "2026-10-26", "8": "2026-10-26", "9": "2026-10-27", "10": "2026-10-27", "11": "2026-10-27"};
 const CRON_FIRE_DATE = '2026-10-21';
 const FROM = 'Everyday Nurse Annie <annie@restoreherhormones.com>';
 const REPLY_TO = 'annie@restoreherhormones.com';
 const REGISTER_URL = 'https://restoreherhormones.com/masterclass';
 const UNSUB_AUDIENCE_ID = process.env.RESEND_RHH_UNSUB_AUDIENCE_ID || '090e08a1-fb12-4cd7-9aa1-7ce0d8686e94';
 const RATE_LIMIT_MS = 90; // matches the local script's pace (0 failures on 8.5k); Resend latency adds ~100ms per send
-const MAX_RUN_MS = 250 * 1000;
+const MAX_RUN_MS = Number(process.env.GLOW_MAX_RUN_MS || 250 * 1000);
 const SEGMENT_KEY = 'rhhmc:segment';
 const SENT_SET_PREFIX = 'annieglow:sent:';
 
@@ -716,6 +716,332 @@ Annie and Joel
 
 ${DISCLAIMER_TEXT(email)}`,
   },
+  10: {
+    subject: () => "There is no finish line",
+    preheader: "What if you could do LESS, in the right order?",
+    only: 'nonregistrants',
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p>Something happened in our masterclass last night that I haven't stopped thinking about.</p><p>We were talking about blood pressure, hormones, weight, energy, and getting our GLOW back.</p><p>But the conversation went somewhere deeper.</p><p>And I want to share one thing with you.</p><p><strong>There is NO finish line.</strong></p><p>You know the one I'm talking about?</p><p>When the kids are settled...</p><p>When the holidays are over...</p><p>When work slows down...</p><p>When I finally have more time, more money, more energy...</p><p>THEN I'll take care of me.</p><p>Girl, WHEN?!</p><p>Because there's always going to be another responsibility. Another person who needs you. Another reason to wait.</p><p>And while you're waiting for life to settle down, life is still happening.</p><p>Here's something I want you to think about.</p><p><strong>What if getting healthier didn't mean doing MORE?</strong></p><p>What if some of the same small changes that support your heart could also support your energy, your weight, and how you feel about yourself?</p><p>What if you could do LESS, but in the RIGHT order?</p><p>Now THAT'S a conversation worth having!</p><p>Last night, I shared something that made me think about the VALUE of our health.</p><p>There's a woman offering a 90-day diabetes program for <strong>$36,000.</strong></p><p>Yes. THIRTY-SIX THOUSAND DOLLARS!</p><p>And you know what I said?</p><p><strong>Is it worth it? ABSOLUTELY. If it delivers what it promises!</strong></p><p>I've been a nurse long enough to see what uncontrolled diabetes can cost.</p><p>Your eyesight. Your kidneys. Your mobility. Your independence.</p><p>The years you want to spend traveling, dancing at your daughter's wedding, playing with your grandchildren.</p><p>When you think about what's at stake, $36,000 starts to look very different, doesn't it?</p><p>So what is the high blood pressure, the extra weight, and the hormone changes costing you?</p><p><strong>But here's a BETTER question...</strong></p><p>What if you DIDN'T have to spend $36,000 to learn how to start taking meaningful steps toward better health?</p><p>What if you could understand the things that affect your blood pressure, your blood sugar, your weight, and your energy, TOGETHER?</p><p>What if, instead of collecting another supplement, another product, another temporary solution, you could begin working on the everyday habits and patterns that support your health from the INSIDE OUT?</p><p>Not another box full of supplements.</p><p>Not another complicated routine you can't maintain.</p><p><strong>LESS. In the RIGHT order.</strong></p><p>Because that's the part so many women are missing!</p><p>And it's one of the things that made last night's masterclass so special.</p><p>We weren't just talking about healthier numbers.</p><p>We were talking about the WOMAN who gets to enjoy the life those healthier choices are helping her build.</p><p>So here's a little something for you today:</p><p><strong>Choose ONE thing you want back before this year ends.</strong></p><p>Then choose ONE small health habit you can begin practicing today.</p><p>Not seven things. Not a complete life overhaul.</p><p>ONE.</p><p>Because the seed begins to grow long before you ever see the flower.</p><p>And speaking of growing...</p><p>Tomorrow, Joel and I are sharing some exciting news with you.</p><p><strong>Watch your inbox tomorrow.</strong></p><p>Because this holiday, you get to be the girl who glows from the inside out.</p><p>The one in all of the pictures.</p><p>The centerpiece of the family.</p><p>The warm glow in the home.</p><p>Can't wait to give you your gift for the holidays.</p><p>Joel &amp; Annie</p><p>Everyday Nurse</p><p>ps. Its time to rise. Join us for the rising.</p>`, email, "What if you could do LESS, in the right order?"),
+    text: (name, email) => `Hey ${name},
+
+Something happened in our masterclass last night that I haven't stopped thinking about.
+
+We were talking about blood pressure, hormones, weight, energy, and getting our GLOW back.
+
+But the conversation went somewhere deeper.
+
+And I want to share one thing with you.
+
+There is NO finish line.
+
+You know the one I'm talking about?
+
+When the kids are settled...
+
+When the holidays are over...
+
+When work slows down...
+
+When I finally have more time, more money, more energy...
+
+THEN I'll take care of me.
+
+Girl, WHEN?!
+
+Because there's always going to be another responsibility. Another person who needs you. Another reason to wait.
+
+And while you're waiting for life to settle down, life is still happening.
+
+Here's something I want you to think about.
+
+What if getting healthier didn't mean doing MORE?
+
+What if some of the same small changes that support your heart could also support your energy, your weight, and how you feel about yourself?
+
+What if you could do LESS, but in the RIGHT order?
+
+Now THAT'S a conversation worth having!
+
+Last night, I shared something that made me think about the VALUE of our health.
+
+There's a woman offering a 90-day diabetes program for $36,000.
+
+Yes. THIRTY-SIX THOUSAND DOLLARS!
+
+And you know what I said?
+
+Is it worth it? ABSOLUTELY. If it delivers what it promises!
+
+I've been a nurse long enough to see what uncontrolled diabetes can cost.
+
+Your eyesight. Your kidneys. Your mobility. Your independence.
+
+The years you want to spend traveling, dancing at your daughter's wedding, playing with your grandchildren.
+
+When you think about what's at stake, $36,000 starts to look very different, doesn't it?
+
+So what is the high blood pressure, the extra weight, and the hormone changes costing you?
+
+But here's a BETTER question...
+
+What if you DIDN'T have to spend $36,000 to learn how to start taking meaningful steps toward better health?
+
+What if you could understand the things that affect your blood pressure, your blood sugar, your weight, and your energy, TOGETHER?
+
+What if, instead of collecting another supplement, another product, another temporary solution, you could begin working on the everyday habits and patterns that support your health from the INSIDE OUT?
+
+Not another box full of supplements.
+
+Not another complicated routine you can't maintain.
+
+LESS. In the RIGHT order.
+
+Because that's the part so many women are missing!
+
+And it's one of the things that made last night's masterclass so special.
+
+We weren't just talking about healthier numbers.
+
+We were talking about the WOMAN who gets to enjoy the life those healthier choices are helping her build.
+
+So here's a little something for you today:
+
+Choose ONE thing you want back before this year ends.
+
+Then choose ONE small health habit you can begin practicing today.
+
+Not seven things. Not a complete life overhaul.
+
+ONE.
+
+Because the seed begins to grow long before you ever see the flower.
+
+And speaking of growing...
+
+Tomorrow, Joel and I are sharing some exciting news with you.
+
+Watch your inbox tomorrow.
+
+Because this holiday, you get to be the girl who glows from the inside out.
+
+The one in all of the pictures.
+
+The centerpiece of the family.
+
+The warm glow in the home.
+
+Can't wait to give you your gift for the holidays.
+
+Joel & Annie
+
+Everyday Nurse
+
+ps. Its time to rise. Join us for the rising.`,
+  },
+  11: {
+    subject: () => "Your $250 call, free until tomorrow at 5",
+    preheader: "Two things I need from you first.",
+    only: 'registrants',
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p>Last night, I made an invitation that I don't normally make.</p><p>And I wanted to make sure you had a chance to take advantage of it.</p><p>Remember when we talked about the woman offering a $36,000 diabetes program?</p><p>And I asked whether it could be worth that investment?</p><p>Because when you're thinking about your health, your future, your independence, and the people you want to be here for...</p><p><strong>What is getting your health back worth to you?</strong></p><p>And what if your next step didn't have to begin with thousands of dollars, another supplement, or another promise?</p><p>What if it started with understanding where you are, what you want back, and what deserves your attention FIRST?</p><p>That's why I made this invitation.</p><p>For those who are serious about getting their health back and ready to RISE, Joel and I offered to waive our regular <strong>$250 consultation fee</strong>.</p><p>That's right.</p><p>A complimentary 30-minute strategy call with one of us.</p><p>Not another masterclass. Not another video.</p><p>An opportunity for us to hear where you are, understand what you want back, and talk about what your next steps could look like.</p><p><strong>This closes tomorrow at 5 PM Central.</strong></p><p>After that the fee goes back on, so if you want one of these, today or tomorrow morning is your window.</p><p>But there's something I need from you.</p><p><strong>Two things, actually.</strong></p><p><strong>FIRST: You have to be READY TO RISE.</strong></p><p>You don't need to have everything figured out. You don't even have to know exactly where to begin.</p><p>But you must be ready to take your health and your future seriously.</p><p><strong>SECOND: You have to SHOW UP.</strong></p><p>We're setting aside time from our personal coaching calendars for these conversations.</p><p>And because we're waiving the consultation fee, I'm asking you to honor that time by showing up for the appointment you choose.</p><p>That's it!</p><p>If you haven't had a chance to book yet, here's your invitation.</p><p><a href="https://calendly.com/braveworksrn/discovery-call" style="color:#112d4d;font-weight:700">https://calendly.com/braveworksrn/discovery-call</a></p><p>We have limited appointments available and the calendar closes tomorrow at 5 PM Central, so please choose a time you can genuinely commit to.</p><p>We'll talk about your goals, your biggest challenges, and whether there's a way we can help you move forward.</p><p>Because remember what I said last night?</p><p><strong>Nobody can make the decision to rise for you.</strong></p><p>But that doesn't mean you have to figure out the journey alone.</p><p>I would love to hear your story.</p><p>Annie</p><p>Everyday Nurse</p><p>ps. If you already booked your call, you are set, nothing else to do. I will see you on the call.</p>`, email, "Two things I need from you first."),
+    text: (name, email) => `Hey ${name},
+
+Last night, I made an invitation that I don't normally make.
+
+And I wanted to make sure you had a chance to take advantage of it.
+
+Remember when we talked about the woman offering a $36,000 diabetes program?
+
+And I asked whether it could be worth that investment?
+
+Because when you're thinking about your health, your future, your independence, and the people you want to be here for...
+
+What is getting your health back worth to you?
+
+And what if your next step didn't have to begin with thousands of dollars, another supplement, or another promise?
+
+What if it started with understanding where you are, what you want back, and what deserves your attention FIRST?
+
+That's why I made this invitation.
+
+For those who are serious about getting their health back and ready to RISE, Joel and I offered to waive our regular $250 consultation fee.
+
+That's right.
+
+A complimentary 30-minute strategy call with one of us.
+
+Not another masterclass. Not another video.
+
+An opportunity for us to hear where you are, understand what you want back, and talk about what your next steps could look like.
+
+This closes tomorrow at 5 PM Central.
+
+After that the fee goes back on, so if you want one of these, today or tomorrow morning is your window.
+
+But there's something I need from you.
+
+Two things, actually.
+
+FIRST: You have to be READY TO RISE.
+
+You don't need to have everything figured out. You don't even have to know exactly where to begin.
+
+But you must be ready to take your health and your future seriously.
+
+SECOND: You have to SHOW UP.
+
+We're setting aside time from our personal coaching calendars for these conversations.
+
+And because we're waiving the consultation fee, I'm asking you to honor that time by showing up for the appointment you choose.
+
+That's it!
+
+If you haven't had a chance to book yet, here's your invitation.
+
+https://calendly.com/braveworksrn/discovery-call
+
+We have limited appointments available and the calendar closes tomorrow at 5 PM Central, so please choose a time you can genuinely commit to.
+
+We'll talk about your goals, your biggest challenges, and whether there's a way we can help you move forward.
+
+Because remember what I said last night?
+
+Nobody can make the decision to rise for you.
+
+But that doesn't mean you have to figure out the journey alone.
+
+I would love to hear your story.
+
+Annie
+
+Everyday Nurse
+
+ps. If you already booked your call, you are set, nothing else to do. I will see you on the call.`,
+  },
+  9: {
+    subject: () => "I heard you last night",
+    preheader: "You don't rise in pieces.",
+    only: 'registrants',
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)},</p><p>The Masterclass was FIRE!<br>The room was safe and honest.</p><p>I heard you last night. ❤️</p><p>And I want you to know something.</p><p>When I asked what you wanted back, you didn't hold back.</p><p>Some of you said your hair.</p><p>Some said your energy. Your confidence. Your peace.</p><p>Some of you wanted to lose the weight that's been holding on for dear life.</p><p>Others wanted better blood pressure numbers, better blood sugar, or simply to stop feeling tired all the time.</p><p>But then there were the answers that went even deeper.</p><p>You wanted to travel again.</p><p>To feel beautiful again.</p><p>To be there for your children and grandchildren.</p><p>To stay strong and independent well into your 80s.</p><p>To look in the mirror and recognize that girl again.</p><p><strong>And girl, I LOVE that you still want those things for yourself!</strong></p><p>I love that you still have dreams.</p><p>I love that you're thinking about your future.</p><p>I love that after everything life has thrown at you, there's still a part of you saying, <em>"I want more life!"</em></p><p>And I heard the fears, too.</p><p>The fear of trying again.</p><p>The fear of not being consistent.</p><p>The fear of hoping for change and being disappointed one more time.</p><p>Thank you for trusting me with those things.</p><p>But remember what we talked about last night?</p><p><strong>You don't rise in pieces.</strong></p><p>You don't have to choose between caring for your heart and feeling beautiful.</p><p>Between getting healthier and getting your confidence back.</p><p>Between being there for everybody else and finally being there for YOU.</p><p>You get to want ALL of it.</p><p>And that false finish line we talked about? The one where you finally take care of yourself after everyone and everything else is settled?</p><p>girl, that finish line doesn't exist.</p><p>So today, before this day gets away from you, I want you to do one thing.</p><p>Write down ONE thing you want back before this year is over.</p><p>Not what somebody else wants for you.</p><p>What YOU want.</p><p>And if you feel like sharing it, hit reply and tell me.</p><p>Because A Declaration of the future is necessary for you</p><p><strong>Tomorrow, Joel and I have something special to share with you.</strong></p><p>check your email.</p><p>It might be the best news you have received in a while.</p><p>But today?</p><p>I just want you to know that I heard you.</p><p>And I'm rooting for the woman you're becoming.</p><p><strong>Girl, it's time to rise.</strong></p><p>With love,</p><p>Annie ❤️<br>Everyday Nurse</p>`, email, "You don't rise in pieces."),
+    text: (name, email) => `Hey ${name},
+
+The Masterclass was FIRE!
+The room was safe and honest.
+
+I heard you last night. ❤️
+
+And I want you to know something.
+
+When I asked what you wanted back, you didn't hold back.
+
+Some of you said your hair.
+
+Some said your energy. Your confidence. Your peace.
+
+Some of you wanted to lose the weight that's been holding on for dear life.
+
+Others wanted better blood pressure numbers, better blood sugar, or simply to stop feeling tired all the time.
+
+But then there were the answers that went even deeper.
+
+You wanted to travel again.
+
+To feel beautiful again.
+
+To be there for your children and grandchildren.
+
+To stay strong and independent well into your 80s.
+
+To look in the mirror and recognize that girl again.
+
+And girl, I LOVE that you still want those things for yourself!
+
+I love that you still have dreams.
+
+I love that you're thinking about your future.
+
+I love that after everything life has thrown at you, there's still a part of you saying, "I want more life!"
+
+And I heard the fears, too.
+
+The fear of trying again.
+
+The fear of not being consistent.
+
+The fear of hoping for change and being disappointed one more time.
+
+Thank you for trusting me with those things.
+
+But remember what we talked about last night?
+
+You don't rise in pieces.
+
+You don't have to choose between caring for your heart and feeling beautiful.
+
+Between getting healthier and getting your confidence back.
+
+Between being there for everybody else and finally being there for YOU.
+
+You get to want ALL of it.
+
+And that false finish line we talked about? The one where you finally take care of yourself after everyone and everything else is settled?
+
+girl, that finish line doesn't exist.
+
+So today, before this day gets away from you, I want you to do one thing.
+
+Write down ONE thing you want back before this year is over.
+
+Not what somebody else wants for you.
+
+What YOU want.
+
+And if you feel like sharing it, hit reply and tell me.
+
+Because A Declaration of the future is necessary for you
+
+Tomorrow, Joel and I have something special to share with you.
+
+check your email.
+
+It might be the best news you have received in a while.
+
+But today?
+
+I just want you to know that I heard you.
+
+And I'm rooting for the woman you're becoming.
+
+Girl, it's time to rise.
+
+With love,
+
+Annie ❤️
+Everyday Nurse`,
+  },
+  8: {
+    subject: () => "We are LIVE right now",
+    preheader: "The door is wide open. Come on in.",
+    only: 'nonregistrants',
+    html: (name, email) => wrapHtml(`<p>Hey ${escapeHtml(name)}!</p><p>We just went LIVE!</p><p><strong>Restore Your Glow for the Holidays</strong> is happening RIGHT NOW, and the door is wide open.</p><p>CLICK HERE TO JOIN US:<br><a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="color:#112d4d;font-weight:700">https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1</a></p><p>Meeting ID: 828 5171 5003<br>Passcode: 027302</p><p>You didn't register ahead of time, and that is perfectly fine. Come on in anyway. Nobody is going to make you catch up.</p><p>Grab your notebook if it's close by. Bring yourself either way.</p><p>See you inside!</p><p>Annie and Joel</p>`, email, "The door is wide open. Come on in."),
+    text: (name, email) => `Hey ${name}!
+
+We just went LIVE!
+
+Restore Your Glow for the Holidays is happening RIGHT NOW, and the door is wide open.
+
+CLICK HERE TO JOIN US:
+https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1
+
+Meeting ID: 828 5171 5003
+Passcode: 027302
+
+You didn't register ahead of time, and that is perfectly fine. Come on in anyway. Nobody is going to make you catch up.
+
+Grab your notebook if it's close by. Bring yourself either way.
+
+See you inside!
+
+Annie and Joel`,
+  },
 };
 
 let _resend = null;
@@ -793,7 +1119,7 @@ export default async function handler(req, res) {
   if (!isAuthorizedCron(req)) return res.status(401).json({ error: 'unauthorized' });
 
   const emailNum = Number(req.query?.email);
-  if (![1, 2, 3, 4, 5, 6, 7].includes(emailNum)) return res.status(400).json({ error: 'pass ?email=1..7' });
+  if (![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].includes(emailNum)) return res.status(400).json({ error: 'pass ?email=1..11' });
   const template = EMAILS[emailNum];
   const SENT_SET = `${SENT_SET_PREFIX}${emailNum}`;
 
