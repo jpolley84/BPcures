@@ -2350,7 +2350,7 @@ async function processCheckoutCompleted(event) {
               `Name:     ${session.customer_details?.name || ''}`,
               `Email:    ${customerEmail}`,
               `Phone:    ${session.customer_details?.phone || ''}`,
-              `Access:   manual for now; no buyer email was sent by the site`,
+              `Access:   buyer got the confirmation email; login instructions go out Monday, November 2`,
               `Session:  ${session.id}`,
             ].join('\n'),
           }),
@@ -2358,6 +2358,46 @@ async function processCheckoutCompleted(event) {
       }
     } catch (err) {
       console.error('triangle-webhook: cuff notice failed', err.message);
+    }
+    // Buyer confirmation. Once per session (Stripe retries), and the buyer is
+    // recorded in cuff:buyers so the Nov 2 login email has its list.
+    try {
+      const key = process.env.RESEND_API_KEY;
+      const first = String(session.customer_details?.name || '').trim().split(/\s+/)[0] || '';
+      if (customerEmail) await kv.sadd('cuff:buyers', customerEmail.toLowerCase());
+      const fresh = await kv.set(`cuff:welcome:${session.id}`, 1, { nx: true, ex: 60 * 60 * 24 * 90 }).catch(() => true);
+      if (key && customerEmail && fresh) {
+        const text = [
+          first ? `Hi ${first},` : 'Hi there,', '',
+          'You are enrolled in Life Beyond the Cuff. Thank you for trusting us with this.', '',
+          'Here is what happens next.', '',
+          'Doors open Monday, November 2. That morning you get an email from us with your login instructions. Modules 1 and 2 open that day, and two more open each Monday after that. All eight are open by Monday, November 23.', '',
+          'You do not need to do anything before then. If you want a head start, take your blood pressure a few mornings this week and write the numbers down. We will show you what to do with them.', '',
+          'Watch for our email on Monday. If you do not see it, check your promotions and spam folders.', '',
+          'Reply to this email with any question. It comes straight to us.', '',
+          'Joel Polley, RN',
+        ].join('\n');
+        const html = '<!doctype html><html><body style="margin:0;background:#f4f8fa">'
+          + '<div style="max-width:580px;margin:0 auto;padding:30px 22px;font-family:-apple-system,Segoe UI,Arial,sans-serif">'
+          + text.split('\n\n').map((p) => '<p style="margin:0 0 15px;font-size:16px;line-height:1.65;color:#163447">'
+            + p.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])).replace(/\n/g, '<br>')
+            + '</p>').join('')
+          + '</div></body></html>';
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: 'Joel Polley, RN <joel@bpquiz.com>',
+            to: [customerEmail],
+            reply_to: 'braveworksrn@gmail.com',
+            subject: 'You are in. Doors open Monday, November 2.',
+            text,
+            html,
+          }),
+        });
+      }
+    } catch (err) {
+      console.error('triangle-webhook: cuff buyer confirmation failed', err.message);
     }
     return { action: 'cuff-course', amount: session.amount_total };
   }
