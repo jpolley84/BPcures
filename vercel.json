@@ -538,6 +538,10 @@
     {
       "path": "/api/lca-close-sequence?cron=1&email=5",
       "schedule": "0,10 3 26 10 *"
+    },
+    {
+      "schedule": "30 15 * * *",
+      "path": "/api/tea-review-request-cron"
     }
   ]
 }
