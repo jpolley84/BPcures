@@ -21,10 +21,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // Friday, October 30 at 5 PM CT. The old $297 price (price_1UUVIFHseZnO3rRZM1w3vFct)
 // is no longer sold here. The 2-pay rides a monthly subscription that
 // triangle-webhook caps after the second charge (cancel_at).
-const PLANS = {
-  full: { price: 'price_1UVX8fHseZnO3rRZnONmFMgl', mode: 'payment', product: 'course-997' },
-  split: { price: 'price_1UVX8fHseZnO3rRZ6TVjx0CS', mode: 'subscription', product: 'course-2x599' },
+// After the close the course sells at the regular price, $1,997 or 2 x $1,099
+// (Joel, 2026-10-28), so the $1,997 shown on the page is a real price.
+const PHASES = {
+  founding: {
+    full: { price: 'price_1UVX8fHseZnO3rRZnONmFMgl', mode: 'payment', product: 'course-997', each: 997 },
+    split: { price: 'price_1UVX8fHseZnO3rRZ6TVjx0CS', mode: 'subscription', product: 'course-2x599', each: 599 },
+  },
+  regular: {
+    full: { price: 'price_1UVXl4HseZnO3rRZPVbvV3WW', mode: 'payment', product: 'course-1997', each: 1997 },
+    split: { price: 'price_1UVXl4HseZnO3rRZy2XY6WuM', mode: 'subscription', product: 'course-2x1099', each: 1099 },
+  },
 };
+const usd = (n) => '$' + n.toLocaleString('en-US');
 const CLOSES_AT = Date.parse('2026-10-30T17:00:00-05:00');
 const COURSE_CODES = { SUBS: 'promo_1UUVIFHseZnO3rRZ6gYQvopz' }; // 10% off, this product only
 const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U4LDUHseZnO3rRZx9nEqowD';
@@ -45,11 +54,9 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  if (Date.now() >= CLOSES_AT) {
-    return res.status(410).json({ error: 'Founding enrollment closed on Friday, October 30 at 5 PM Central.' });
-  }
+  const founding = Date.now() < CLOSES_AT;
   const planKey = req.body && req.body.plan === 'split' ? 'split' : 'full';
-  const plan = PLANS[planKey];
+  const plan = PHASES[founding ? 'founding' : 'regular'][planKey];
   const raw = String((req.body && req.body.code) || '').trim().toUpperCase();
   let discounts;
   if (raw) {
@@ -70,18 +77,18 @@ export default async function handler(req, res) {
       custom_text: {
         submit: {
           message: planKey === 'split'
-            ? 'Two payments of $599: one today and one a month from today ($1,198 total). Then the plan ends on its own. There is no third charge.'
-            : 'One payment of $997. Doors open Monday, November 2, and your login link arrives by email that morning.',
+            ? `Two payments of ${usd(plan.each)}: one today and one a month from today (${usd(plan.each * 2)} total). Then the plan ends on its own. There is no third charge.`
+            : `One payment of ${usd(plan.each)}. Your login link arrives by email when your modules open.`,
         },
       },
       metadata: { ...md, brand: FUNNEL },
       ...(plan.mode === 'payment'
         ? { customer_creation: 'always', payment_intent_data: { metadata: md } }
-        : { subscription_data: { metadata: md, description: 'Life Beyond the Cuff founding plan: 2 payments of $599, then it ends' } }),
+        : { subscription_data: { metadata: md, description: `Life Beyond the Cuff ${founding ? 'founding ' : ''}plan: 2 payments of ${usd(plan.each)}, then it ends` } }),
       return_url: `${site}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
       // Stripe keeps a session payable for 24 h by default. Near the close, end
       // it at the deadline (Stripe's floor is 30 minutes from now).
-      expires_at: Math.max(Math.floor(Date.now() / 1000) + 1860, Math.min(Math.floor(Date.now() / 1000) + 86000, Math.floor(CLOSES_AT / 1000))),
+      ...(founding ? { expires_at: Math.max(Math.floor(Date.now() / 1000) + 1860, Math.min(Math.floor(Date.now() / 1000) + 86000, Math.floor(CLOSES_AT / 1000))) } : {}),
     });
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: PUBLISHABLE_KEY, code: raw || null });
   } catch (err) {

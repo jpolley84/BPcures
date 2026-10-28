@@ -21,6 +21,9 @@ const PRODUCT = 'prod_VVWKKYkCupbPnE';
 const PRICES = [
   { lookup_key: 'cuff_founding_full_997', nickname: 'Cuff founding pay-in-full $997', unit_amount: 99700, currency: 'usd' },
   { lookup_key: 'cuff_founding_2pay_599', nickname: 'Cuff founding 2-pay $599/mo (capped at 2 by webhook)', unit_amount: 59900, currency: 'usd', recurring: { interval: 'month' } },
+  // 2026-10-28 (Joel): after the Friday close the course sells at $1,997 or 2 x $1,099.
+  { lookup_key: 'cuff_regular_full_1997', nickname: 'Cuff regular pay-in-full $1,997', unit_amount: 199700, currency: 'usd' },
+  { lookup_key: 'cuff_regular_2pay_1099', nickname: 'Cuff regular 2-pay $1,099/mo (capped at 2 by webhook)', unit_amount: 109900, currency: 'usd', recurring: { interval: 'month' } },
 ];
 
 const create = process.argv.includes('--create');

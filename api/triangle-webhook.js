@@ -2333,6 +2333,9 @@ async function processCheckoutCompleted(event) {
   // from here until Joel approves the welcome text.
   if (session.metadata?.funnel === 'life-beyond-the-cuff') {
     const cuffSplit = session.metadata?.plan === 'split';
+    // Installment size from the price sold: founding 2 x $599, regular 2 x $1,099.
+    const cuffEach = session.metadata?.product === 'course-2x1099' ? '$1,099' : '$599';
+    const cuffFull = session.metadata?.product === 'course-1997' ? '$1,997' : '$997';
     // 2026-10-28: founding 2-pay ($599 x 2) rides a monthly subscription. Cap it
     // after the second charge: bills day 0 and ~day 30, cancel_at day 40 ends it
     // before a third. Guarded: only a subscription carrying the cuff marker.
@@ -2372,13 +2375,13 @@ async function processCheckoutCompleted(event) {
             reply_to: customerEmail,
             subject: `New Life Beyond the Cuff sale: ${session.customer_details?.name || customerEmail} ($${((session.amount_total || 0) / 100).toFixed(2)})`,
             text: [
-              `Course:   Life Beyond the Cuff founding ${cuffSplit ? '2-pay ($599 now, $599 in a month, then it ends)' : 'pay-in-full ($997)'}`,
+              `Course:   Life Beyond the Cuff ${cuffSplit ? `2-pay (${cuffEach} now, ${cuffEach} in a month, then it ends)` : `pay-in-full (${cuffFull})`}`,
               `Paid:     $${((session.amount_total || 0) / 100).toFixed(2)}${disc ? ` (code ${session.metadata?.code || '?'}, -$${(disc / 100).toFixed(2)})` : ''}`,
               `Name:     ${session.customer_details?.name || ''}`,
               `Email:    ${customerEmail}`,
               `Phone:    ${session.customer_details?.phone || ''}`,
               `Access:   added to cuff:buyers; confirmation email goes out next; login instructions go out Monday, November 2`,
-              ...(cuffSplit ? [`2-pay:    capped (cancel_at set or already set); ends after the second $599`] : []),
+              ...(cuffSplit ? [`2-pay:    capped (cancel_at set or already set); ends after the second ${cuffEach}`] : []),
               `Session:  ${session.id}`,
             ].join('\n'),
           }),
@@ -2397,7 +2400,7 @@ async function processCheckoutCompleted(event) {
         const text = [
           first ? `Hi ${first},` : 'Hi there,', '',
           'You are enrolled in Life Beyond the Cuff. Thank you for trusting us with this.', '',
-          ...(cuffSplit ? ['Your plan is two payments of $599. The second one runs one month from today, and then the plan ends on its own.', ''] : []),
+          ...(cuffSplit ? [`Your plan is two payments of ${cuffEach}. The second one runs one month from today, and then the plan ends on its own.`, ''] : []),
           'Here is what happens next.', '',
           'Doors open Monday, November 2. That morning you get an email from us with your login instructions. Modules 1 and 2 open that day, and two more open each Monday after that. All eight are open by Monday, November 23.', '',
           'You do not need to do anything before then. If you want a head start, take your blood pressure a few mornings this week and write the numbers down. We will show you what to do with them.', '',
