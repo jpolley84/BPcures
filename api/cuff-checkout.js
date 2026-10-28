@@ -79,6 +79,9 @@ export default async function handler(req, res) {
         ? { customer_creation: 'always', payment_intent_data: { metadata: md } }
         : { subscription_data: { metadata: md, description: 'Life Beyond the Cuff founding plan: 2 payments of $599, then it ends' } }),
       return_url: `${site}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
+      // Stripe keeps a session payable for 24 h by default. Near the close, end
+      // it at the deadline (Stripe's floor is 30 minutes from now).
+      expires_at: Math.max(Math.floor(Date.now() / 1000) + 1860, Math.min(Math.floor(Date.now() / 1000) + 86000, Math.floor(CLOSES_AT / 1000))),
     });
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: PUBLISHABLE_KEY, code: raw || null });
   } catch (err) {

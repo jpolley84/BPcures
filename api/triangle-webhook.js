@@ -2350,9 +2350,15 @@ async function processCheckoutCompleted(event) {
           });
         }
       } catch (err) {
-        console.error('triangle-webhook: cuff 2-pay cancel_at failed (cap the subscription by hand)', err.message);
+        // 2026-10-28 red team: rethrow so the webhook 500s and Stripe retries.
+        // An uncapped 2-pay would bill $599 every month with no end.
+        console.error('triangle-webhook: cuff 2-pay cancel_at failed, retrying via Stripe', err.message);
+        throw err;
       }
     }
+    // The buyer list is the only door into the classroom. A failed write must
+    // fail the webhook so Stripe retries, not vanish inside the email try below.
+    if (customerEmail) await kv.sadd('cuff:buyers', customerEmail.toLowerCase());
     try {
       const key = process.env.RESEND_API_KEY;
       if (key) {
@@ -2371,7 +2377,8 @@ async function processCheckoutCompleted(event) {
               `Name:     ${session.customer_details?.name || ''}`,
               `Email:    ${customerEmail}`,
               `Phone:    ${session.customer_details?.phone || ''}`,
-              `Access:   buyer got the confirmation email; login instructions go out Monday, November 2`,
+              `Access:   added to cuff:buyers; confirmation email goes out next; login instructions go out Monday, November 2`,
+              ...(cuffSplit ? [`2-pay:    capped (cancel_at set or already set); ends after the second $599`] : []),
               `Session:  ${session.id}`,
             ].join('\n'),
           }),
@@ -2385,7 +2392,6 @@ async function processCheckoutCompleted(event) {
     try {
       const key = process.env.RESEND_API_KEY;
       const first = String(session.customer_details?.name || '').trim().split(/\s+/)[0] || '';
-      if (customerEmail) await kv.sadd('cuff:buyers', customerEmail.toLowerCase());
       const fresh = await kv.set(`cuff:welcome:${session.id}`, 1, { nx: true, ex: 60 * 60 * 24 * 90 }).catch(() => true);
       if (key && customerEmail && fresh) {
         const text = [
