@@ -232,7 +232,29 @@ export default function QuizFirstHome() {
 
         /* Body row under the banner: photo column + quiz. The photo shows
            only when the screen is wide enough to hold both side by side. */
-        .qfh-body{flex:1 1 auto; display:flex; align-items:stretch; width:100%;}
+        .qfh-body{flex:1 1 auto; display:flex; align-items:stretch; width:100%; position:relative;}
+        /* Black Friday corner ribbon: a 45-degree sash in the top-right
+           corner of the body, under the masterclass bar. The box clips the
+           sash so only the diagonal shows. */
+        /* Desktop: top-LEFT corner, over the photo column, so it never sits
+           on the headline. Centre of the sash is 100px in on both axes. */
+        .qfh-ribbon{position:absolute; top:0; left:0; width:210px; height:210px; overflow:hidden;
+                    z-index:3; text-decoration:none; pointer-events:none;}
+        .qfh-ribbon span{position:absolute; top:86px; left:-60px; width:320px; transform:rotate(-45deg);
+                    pointer-events:auto;
+                    background:#111; color:#FFD8A8; text-align:center; padding:7px 0;
+                    font-size:0.66rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase;
+                    line-height:1.2; box-shadow:0 4px 12px rgba(0,0,0,.28); border-block:2px solid #E87522;}
+        .qfh-ribbon:hover span{background:#000;}
+        /* Phones: a corner sash would sit on the headline, so it becomes a
+           sideways tab pinned to the right edge instead. */
+        @media (max-width:899px){
+          .qfh-ribbon{position:fixed; top:auto; left:auto; bottom:22vh; right:0; width:auto; height:auto; overflow:visible;}
+          .qfh-ribbon span{position:static; display:block; transform:rotate(180deg); writing-mode:vertical-rl;
+                    width:auto; padding:12px 6px; font-size:0.6rem; border-radius:0 8px 8px 0;
+                    border-block:0; border-right:3px solid #E87522;}
+          .qfh-body .qfh-wrap{padding-right:2.4rem;}
+        }
         .qfh-photo{display:none;}
         @media (min-width:900px){
           .qfh-photo{display:block; flex:0 0 42%; max-width:620px; position:relative; overflow:hidden;
@@ -272,6 +294,17 @@ export default function QuizFirstHome() {
       </a>
 
       <div className="qfh-body">
+      {/* 2026-10-27 (Joel): sideways sales-style ribbon, "Special Black Friday
+          event inside," to bloodpressurerepair.com. Badge only: Joel has not
+          set the event details yet, so the sales page carries no Black Friday
+          copy. Remove after Black Friday (Nov 27, 2026). */}
+      <a
+        className="qfh-ribbon"
+        href="https://bloodpressurerepair.com/?utm_source=bpquiz&utm_medium=ribbon&utm_campaign=black-friday&utm_content=home"
+        onClick={() => track('home_bf_ribbon_clicked', { page: 'home', to: 'bloodpressurerepair.com' })}
+      >
+        <span>Special Black Friday event inside</span>
+      </a>
       {/* 2026-10-27 (Joel): his newer photo, large, down one side. Desktop
           only; on a phone it would push the quiz below the fold, so phones
           get the same photo as the small avatar in the bio line instead. */}
