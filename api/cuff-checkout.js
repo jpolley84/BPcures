@@ -66,6 +66,14 @@ export default async function handler(req, res) {
       line_items: [{ price: plan.price, quantity: 1 }],
       ...(discounts ? { discounts } : {}),
       phone_number_collection: { enabled: true },
+      // Stripe labels the 2-pay "$599.00 per month"; say plainly that it stops.
+      custom_text: {
+        submit: {
+          message: planKey === 'split'
+            ? 'Two payments of $599: one today and one a month from today ($1,198 total). Then the plan ends on its own. There is no third charge.'
+            : 'One payment of $997. Doors open Monday, November 2, and your login link arrives by email that morning.',
+        },
+      },
       metadata: { ...md, brand: FUNNEL },
       ...(plan.mode === 'payment'
         ? { customer_creation: 'always', payment_intent_data: { metadata: md } }
