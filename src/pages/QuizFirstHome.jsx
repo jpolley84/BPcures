@@ -182,6 +182,7 @@ export default function QuizFirstHome() {
           width:var(--photo,48px);height:var(--photo,48px);border-radius:50%;object-fit:cover;
           border:2px solid var(--line,#D8CFBD);flex-shrink:0;
         }
+        .qfh-bio picture{flex:0 0 auto; display:block; line-height:0;}
         .qfh-bio p{font-size:calc(var(--fine)*1.08);line-height:1.45;color:var(--ink-soft,#2B2824);margin:0;}
         .qfh-fine{
           font-size:var(--fine);line-height:1.45;color:var(--muted,#7A7061);margin:0;
@@ -229,6 +230,20 @@ export default function QuizFirstHome() {
         }
         @media (pointer:coarse){ .qfh-banner{min-height:44px;} }
 
+        /* Body row under the banner: photo column + quiz. The photo shows
+           only when the screen is wide enough to hold both side by side. */
+        .qfh-body{flex:1 1 auto; display:flex; align-items:stretch; width:100%;}
+        .qfh-photo{display:none;}
+        @media (min-width:900px){
+          .qfh-photo{display:block; flex:0 0 42%; max-width:620px; position:relative; overflow:hidden;
+                     background:#E9ECF2;}
+          .qfh-photo picture, .qfh-photo img{position:absolute; inset:0; width:100%; height:100%;}
+          .qfh-photo img{object-fit:cover; object-position:50% 18%; display:block;}
+          .qfh-body .qfh-wrap{padding-left:clamp(1.5rem,4vw,3.5rem); padding-right:clamp(1.5rem,4vw,3.5rem);}
+          /* The big photo already shows his face; the bio avatar would repeat it. */
+          .qfh-bio picture{display:none;}
+        }
+
         /* Touch targets stay tappable no matter how short the screen is. */
         @media (pointer:coarse){ .qfh-option{min-height:44px;} }
         .qfh-input{width:100%;box-sizing:border-box;border:1.5px solid var(--line,#D8CFBD);border-radius:11px;
@@ -239,21 +254,33 @@ export default function QuizFirstHome() {
         .qfh-go:disabled{opacity:.7;cursor:default;}
       `}</style>
 
-      {/* 2026-09-25 (Joel): people are arriving here hunting the 10 day detox.
-          One slim bar sends them to /cleanse instead of making them guess.
-          It is a plain <a>, not a <Link>: /cleanse is a static page served
-          outside this SPA, so client-side routing would 404 it. */}
+      {/* 2026-10-27 (Joel): the bar now points at the masterclass instead of
+          the 10-day detox (/cleanse, 2026-09-25). No date on the bar on
+          purpose: Joel chose to link /masterclass as is. It is a plain <a>,
+          not a <Link>: /masterclass is a static page served outside this SPA,
+          so client-side routing would 404 it. */}
       <a
         className="qfh-banner"
-        href="/cleanse"
-        onClick={() => track('home_cleanse_banner_clicked', { page: 'home', to: '/cleanse' })}
+        href="/masterclass"
+        onClick={() => track('home_masterclass_banner_clicked', { page: 'home', to: '/masterclass' })}
       >
-        <span className="qfh-banner-tag">New</span>
+        <span className="qfh-banner-tag">Free</span>
         <span className="qfh-banner-txt">
-          Looking for the <strong>10-Day Lemonade Detox</strong>? Get the complete guide free
+          Join the <strong>free live masterclass</strong> with Joel &amp; Annie, RNs. Save your seat
         </span>
         <span aria-hidden="true" className="qfh-banner-arrow">&rarr;</span>
       </a>
+
+      <div className="qfh-body">
+      {/* 2026-10-27 (Joel): his newer photo, large, down one side. Desktop
+          only; on a phone it would push the quiz below the fold, so phones
+          get the same photo as the small avatar in the bio line instead. */}
+      <aside className="qfh-photo" aria-hidden="true">
+        <picture>
+          <source srcSet="/joel-2026-10.webp" type="image/webp" />
+          <img src="/joel-2026-10.jpg" alt="" width="960" height="1200" />
+        </picture>
+      </aside>
 
       <section className="qfh-wrap">
         <div className="qfh-eyebrow">
@@ -262,12 +289,12 @@ export default function QuizFirstHome() {
             : <>Free &middot; 2 minutes &middot; No email to start</>}
         </div>
 
-        <h1>Find the one thing driving your blood pressure up.</h1>
+        <h1>More pills. Same high numbers. Find the cause.</h1>
 
         <p className="qfh-sub">
-          {QUESTIONS.length} quick questions from a nurse who spent twenty years watching what
-          actually moves the number.{' '}
-          {arm === 'squeeze' ? 'Tell us where to send your results, then start.' : 'Start with the first one, right here.'}
+          Stop chasing your blood pressure one prescription at a time. This free quiz shows
+          you what is really driving it up.{' '}
+          {arm === 'squeeze' ? 'Tell us where to send your results, then start.' : 'Start with the first question, right here.'}
         </p>
 
         {arm === 'squeeze' ? (
@@ -284,7 +311,7 @@ export default function QuizFirstHome() {
           </form>
         ) : (
         <div className="qfh-card">
-          <div className="qfh-kicker">Question 1 of {QUESTIONS.length}</div>
+          <div className="qfh-kicker">Question 1</div>
           <h2>{q1.title}</h2>
           <div className="qfh-options">
             {q1.options.map((opt, i) => (
@@ -300,8 +327,8 @@ export default function QuizFirstHome() {
         {/* ── Who is asking ─────────────────────────────────────── */}
         <div className="qfh-bio">
           <picture>
-            <source srcSet="/headshot.webp" type="image/webp" />
-            <img src="/headshot.jpg" alt="Joel Polley, RN" width="48" height="48" />
+            <source srcSet="/joel-2026-10-avatar.webp" type="image/webp" />
+            <img src="/joel-2026-10-avatar.jpg" alt="Joel Polley, RN" width="48" height="48" />
           </picture>
           <p>
             <strong style={{ color: 'var(--ink, #121110)' }}>Joel Polley, RN.</strong> Twenty years
@@ -318,6 +345,7 @@ export default function QuizFirstHome() {
           <Link to="/terms">Terms</Link>
         </p>
       </section>
+      </div>
     </main>
   );
 }
