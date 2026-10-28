@@ -48,11 +48,14 @@ const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U
 // short; see create-deposit-payment-intent.js).
 const PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY_FULL || 'pk_live_51TE9iEHseZnO3rRZ1xXgqstXEEeFIyy8m37WCHYcgRsh1hqEwD7gdK3IUo2yaKSXaiJvw9wyXez7izjv8dP0zOR300VmC8VCao';
 const ALLOWED_ORIGINS = new Set(['https://bloodpressurerepair.com', 'https://www.bloodpressurerepair.com']);
+// 2026-10-28: Vercel preview builds of the two-page funnel, for Joel's review.
+const PREVIEW_ORIGIN = /^https:\/\/bloodpressurerepair-site-[a-z0-9]+-joels-projects-48352ae4\.vercel\.app$/;
+const isAllowed = (o) => ALLOWED_ORIGINS.has(o) || PREVIEW_ORIGIN.test(o);
 const FUNNEL = 'life-beyond-the-cuff';
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
-  if (ALLOWED_ORIGINS.has(origin)) {
+  if (isAllowed(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -81,14 +84,19 @@ export default async function handler(req, res) {
     if (!COURSE_CODES[raw]) return res.status(400).json({ error: 'That code is not valid for this course.' });
     discounts = [{ promotion_code: COURSE_CODES[raw] }];
   }
-  const site = ALLOWED_ORIGINS.has(origin) ? origin : 'https://bloodpressurerepair.com';
+  const site = isAllowed(origin) ? origin : 'https://bloodpressurerepair.com';
+  // /checkout collects name, email, and phone first; prefill Stripe with the email.
+  const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+  const prefill = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length < 200 ? email : '';
+  const fullName = String((req.body && req.body.name) || '').replace(/[^\p{L}\p{M} .'-]/gu, '').trim().slice(0, 80);
   try {
-    const md = { funnel: FUNNEL, product: plan.product, plan: plan.mode === 'subscription' ? 'split' : 'full', code: raw || '' };
+    const md = { funnel: FUNNEL, product: plan.product, plan: plan.mode === 'subscription' ? 'split' : 'full', code: raw || '', ...(fullName ? { name: fullName } : {}) };
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       mode: plan.mode,
       payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
       line_items: [{ price: plan.price, quantity: 1 }],
+      ...(prefill ? { customer_email: prefill } : {}),
       ...(discounts ? { discounts } : {}),
       phone_number_collection: { enabled: true },
       // Stripe labels the 2-pay "$599.00 per month"; say plainly that it stops.
