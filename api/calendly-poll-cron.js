@@ -34,7 +34,8 @@ import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
 import {
   ALLOWED_EVENTS, FROM as INVITEE_FROM, REPLY_TO as INVITEE_REPLY_TO,
-  buildConfirmation, buildReschedule, needsHumanReply, firstNameOf, isClientEmail,
+  buildConfirmation, buildReschedule, buildReminder, buildInRoom,
+  needsHumanReply, firstNameOf, isClientEmail, joinUrlOf,
 } from './_calendly-invitee-emails.js';
 
 const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
@@ -65,7 +66,7 @@ async function cal(path, token) {
 // Writes to the person who booked. Returns a short status string for the
 // response body so a run is auditable without reading logs. Never throws: a
 // failure here must not stop Joel's SMS or the cursor advance.
-async function emailInvitee({ resend, kind, uuid, eventName, invitee, startIso, smsJoel }) {
+async function emailInvitee({ resend, kind, uuid, eventName, invitee, startIso, joinUrl = '', smsJoel }) {
   const email = String(invitee?.email || '').trim();
   if (!email || !email.includes('@')) return 'no-email';
   if (!ALLOWED_EVENTS.includes(String(eventName || '').trim())) return 'event-not-allowed';
@@ -73,7 +74,12 @@ async function emailInvitee({ resend, kind, uuid, eventName, invitee, startIso, 
   const dedupeKey = `calendly-invitee:${kind}:${uuid}`;
   if (await kv.get(dedupeKey)) return 'already-sent';
 
-  if (await isClientEmail(email)) return 'client-skip';
+  // The client gate exists because the PROSPECT copy welcomes a stranger
+  // ("we're excited to explore what's possible"), which is wrong for someone
+  // already paying us. A reminder or an in-room note says only when the call
+  // is and where to click, so it is right for everyone and is not gated.
+  const TIMED = kind === 'reminder' || kind === 'inroom';
+  if (!TIMED && await isClientEmail(email)) return 'client-skip';
 
   // A written cancellation reason is a decision, not a scheduling conflict.
   // Hold it and put it in front of Joel instead of answering it with a form.
@@ -89,8 +95,12 @@ async function emailInvitee({ resend, kind, uuid, eventName, invitee, startIso, 
   }
 
   const msg = kind === 'confirmation'
-    ? buildConfirmation(invitee, startIso)
-    : buildReschedule(invitee);
+    ? buildConfirmation(invitee, startIso, joinUrl)
+    : kind === 'reminder'
+      ? buildReminder(invitee, startIso, joinUrl)
+      : kind === 'inroom'
+        ? buildInRoom(invitee, startIso, joinUrl)
+        : buildReschedule(invitee);
 
   try {
     await resend.emails.send({
@@ -196,9 +206,64 @@ export default async function handler(req, res) {
       if (inviteeRow) {
         invitee.push(`${name}:${await emailInvitee({
           resend, kind: 'confirmation', uuid, eventName: ev.name,
-          invitee: inviteeRow, startIso: ev.start_time, smsJoel,
+          invitee: inviteeRow, startIso: ev.start_time,
+          joinUrl: joinUrlOf(ev), smsJoel,
         })}`);
       }
+    }
+
+    // ---- timed notes: the link ahead, then "we are in the room" ----------
+    // Driven by START time, not by the booking cursor, so a call booked days
+    // ago still gets both notes. This cron runs every 15 minutes, so each
+    // window is at least 30 minutes wide and a poll always lands inside it;
+    // the per-event dedupe keys make every later poll a no-op.
+    //
+    //   reminder  15 to 45 minutes before the start
+    //   inroom    from 20 minutes before to 15 minutes after the start
+    //
+    // The upcoming `events` list is min_start_time = now, which excludes a
+    // call already in progress, so the in-room pass needs its own fetch with
+    // the window opened backwards.
+    const timed = [];
+    try {
+      const backIso = new Date(Date.now() - 20 * 60000).toISOString();
+      const tparams = new URLSearchParams({
+        organization: org,
+        status: 'active',
+        min_start_time: backIso,
+        max_start_time: new Date(Date.now() + 45 * 60000).toISOString(),
+        sort: 'start_time:asc',
+        count: '50',
+      });
+      const tevents = (await cal(`/scheduled_events?${tparams}`, token)).collection || [];
+
+      for (const ev of tevents) {
+        const mins = (new Date(ev.start_time).getTime() - Date.now()) / 60000;
+        const kind = (mins > 15 && mins <= 45) ? 'reminder'
+          : (mins >= -20 && mins <= 15) ? 'inroom'
+            : null;
+        if (!kind) continue;
+
+        const uuid = ev.uri.split('/').pop();
+        if (await kv.get(`calendly-invitee:${kind}:${uuid}`)) continue;
+
+        let row = null;
+        try {
+          const inv = (await cal(`/scheduled_events/${uuid}/invitees?count=1`, token)).collection || [];
+          row = inv[0] || null;
+        } catch (e) {
+          console.warn('calendly-poll: timed invitee fetch failed for', uuid, e.message);
+        }
+        if (!row) continue;
+
+        timed.push(`${kind}:${row.name || row.email}:${await emailInvitee({
+          resend, kind, uuid, eventName: ev.name,
+          invitee: row, startIso: ev.start_time, joinUrl: joinUrlOf(ev), smsJoel,
+        })}`);
+      }
+    } catch (e) {
+      // Non-fatal: the booking alert is the job this cron must never miss.
+      console.error('calendly-poll: timed notes failed:', e.message);
     }
 
     // ---- canceled upcoming calls ------------------------------------------
@@ -252,7 +317,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       ok: true, scanned: events.length, alerted, names,
-      canceledScanned, invitee, canceled,
+      canceledScanned, invitee, timed, canceled,
     });
   } catch (err) {
     console.error('calendly-poll-cron error:', err.message);

@@ -12,7 +12,11 @@
 //
 // To change the roster, edit this file. Nothing reads it from KV.
 export const ACCELERATOR_ROSTER = [
-  { first: 'Stella', email: 'stellapreowei38@gmail.com', note: 'international (Nigeria)' },
+  // Stella REMOVED 2026-10-28 (Joel): 'remove rahab from all coorespondance
+  // and also stella'. She is in bwbp:neversend + Resend suppressions too; the
+  // row stays and carries `withdrawn` so the intent is readable here and not
+  // only in KV, exactly as Rahab's row does.
+  { first: 'Stella', email: 'stellapreowei38@gmail.com', note: 'international (Nigeria)', withdrawn: '2026-10-28' },
   { first: 'Balinda', email: 'bwvhoney300@yahoo.com' },
   { first: 'Shirley', email: 'shirleyarow@gmail.com', note: 'on dialysis' },
   { first: 'Luvenia', email: 'luvenia.truss@aol.com' },
@@ -38,4 +42,15 @@ export const ACCELERATOR_ROSTER = [
   // that promise to hold.
   { first: 'Aurelia', email: 'smit842@cs.com', note: 'Life Change Activated, joined 2026-10-22' },
   { first: 'Yvonne', email: 'yvonnewint12@gmail.com', note: 'Sprint, joined 2026-09-30; card name reads Antonio bromfield' },
+  // Added 2026-10-28 (Joel). Six Life Change Activated buyers who paid on
+  // 10-26/10-27 and have open plans in the portal, but were never put in this
+  // file. They got the 10-28 class link only because it was sent by hand. The
+  // Wednesday reminder reads this list, so without these rows they would have
+  // silently missed every class from 11-04 on.
+  { first: 'Amanda', email: 'aphillips102@myyahoo.com', note: 'Life Change Activated, joined 2026-10-27' },
+  { first: 'Chandra', email: 'chanchans@hotmail.com', note: 'Life Change Activated, joined 2026-10-27' },
+  { first: 'Melissa', email: 'julienmelissa@yahoo.com', note: 'Life Change Activated, joined 2026-10-27' },
+  { first: 'Renea', email: 'rcrc2016@yahoo.com', note: 'Life Change Activated, joined 2026-10-27' },
+  { first: 'Sandra', email: 'sandylhazzard@verizon.net', note: 'Life Change Activated, joined 2026-10-27; second Sandra on the roster' },
+  { first: 'Odessa', email: 'o.carter716@gmail.com', note: 'Life Change Activated, paid 2026-10-26, intake 2026-10-27' },
 ];

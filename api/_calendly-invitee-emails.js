@@ -29,6 +29,27 @@ export const ALLOWED_EVENTS = ['Discovery Call'];
 export const FROM = 'Joel & Annie, BraveWorks RN <joel@bpquiz.com>';
 export const REPLY_TO = 'braveworksrn@gmail.com';
 
+// Calendly mints a NEW Zoom meeting for every single booking, so the join link
+// is per-person and must never be hardcoded. On 2026-10-28 Joel sent one
+// booking's link to paste into the template; it was Sylvia Denson's 10 AM room,
+// and baking it in would have walked every later booker straight into her
+// private call. Read it off the event instead.
+//
+// Canon for STANDING rooms is scripts/_zoom-rooms.mjs. The ids below are only a
+// tripwire, duplicated on purpose so api/ needs no cross-directory import: a
+// retired room must never reach an inbox again.
+const RETIRED_ROOM_IDS = ['81541901408', '81893444167'];
+
+export function joinUrlOf(ev) {
+  const u = String(ev?.location?.join_url || '').trim();
+  if (!/^https:\/\/[a-z0-9.-]*zoom\.us\//i.test(u)) return '';
+  if (RETIRED_ROOM_IDS.some((id) => u.includes(id))) {
+    console.error('calendly-invitee: refusing a RETIRED Zoom room:', u);
+    return '';
+  }
+  return u;
+}
+
 // Two question schemas exist on the Discovery Call: the current three-question
 // set and an older single "anything that will help prepare" field. Both carry
 // the same thing for our purposes, so we match on the question text.
@@ -150,7 +171,7 @@ function wrap(text, links = []) {
 }
 
 // ---------------------------------------------------------------- confirmation
-export function buildConfirmation(invitee, startIso) {
+export function buildConfirmation(invitee, startIso, joinUrl = '') {
   const first = firstNameOf(invitee) || 'there';
   const when = fmtWhen(startIso, invitee.timezone);
   const personal = personalLine(invitee);
@@ -170,6 +191,13 @@ export function buildConfirmation(invitee, startIso) {
       'That time is in your own timezone, the one you booked in.', '');
   }
 
+  if (joinUrl) {
+    L.push(`JOIN HERE: ${joinUrl}`, '',
+      'That link is just for your call. We will send it again about half an '
+      + 'hour before we start, and once more when we open the room, so you do '
+      + 'not have to keep this email.', '');
+  }
+
   L.push('Come with your questions. If you have recent numbers, a blood pressure '
     + 'log or a lab result, have them nearby. You do not need to prepare anything '
     + 'else.', '',
@@ -179,8 +207,55 @@ export function buildConfirmation(invitee, startIso) {
   return {
     subject: 'Your call is booked. We are looking forward to it.',
     text,
-    html: wrap(text),
+    html: wrap(text, joinUrl ? [joinUrl] : []),
   };
+}
+
+// ------------------------------------------------------- reminder / in-room
+// Two notes, because Joel asked for both on 2026-10-28: the link about half an
+// hour out so she can find it in advance, and "I'm in the room" at start time
+// so a late arrival still has one click in front of her. Sylvia Denson missed
+// her 10 AM on 2026-10-28 for exactly this reason: she emailed asking for the
+// link and we did not answer in time.
+//
+// Both are deliberately identity-neutral. They say when the call is and where
+// to click and nothing else, so they are correct for a paying client as well
+// as a prospect, which is why the cron does NOT apply the isClientEmail gate
+// to either one.
+function callNote(invitee, startIso, joinUrl, { subject, opening, closing }) {
+  const first = firstNameOf(invitee) || 'there';
+  const when = fmtWhen(startIso, invitee.timezone);
+
+  const L = [`Hey ${first},`, '', opening, ''];
+  if (when) L.push(`YOUR CALL: ${when}`, '');
+  if (joinUrl) L.push(`JOIN HERE: ${joinUrl}`, '');
+  if (joinUrl) L.push('That link is yours for this call.', '');
+
+  L.push('If you have recent numbers, a blood pressure log or a lab result, '
+    + 'have them nearby. There is nothing else to prepare.', '',
+    'If something came up and today will not work, reply to this email and we '
+    + 'will find you another time. No problem at all.', '',
+    closing, '', 'Joel & Annie');
+
+  const text = L.join('\n');
+  return { subject, text, html: wrap(text, joinUrl ? [joinUrl] : []) };
+}
+
+export function buildReminder(invitee, startIso, joinUrl = '') {
+  return callNote(invitee, startIso, joinUrl, {
+    subject: 'Your call is coming up. Here is your link.',
+    opening: 'Your call with us starts in about half an hour. Here is your '
+      + 'link so you have it ready.',
+    closing: 'See you shortly.',
+  });
+}
+
+export function buildInRoom(invitee, startIso, joinUrl = '') {
+  return callNote(invitee, startIso, joinUrl, {
+    subject: 'We are in the room. Here is your link.',
+    opening: 'We are in the room now. Join whenever you are ready.',
+    closing: 'See you in a minute.',
+  });
 }
 
 // ----------------------------------------------------------------- reschedule
