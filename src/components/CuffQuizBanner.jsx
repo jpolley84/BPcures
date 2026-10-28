@@ -6,8 +6,8 @@
 // Sept 22-24 ChallengeQuizBanner. The homepage stays one bar (masterclass) so
 // the quiz is still the only thing to do there.
 //
-// Offer facts from the live sales page: 8-module self-paced course, Joel with
-// Annie featured, $297 one time, doors open Monday, November 2 (modules
+// Offer facts from the live sales page: 8 modules plus 4 live group calls,
+// Joel with Annie, founding $997 or 2 x $599 until Fri Oct 30 5 PM CT (2026-10-28), doors open Monday, November 2 (modules
 // unlock 11:00 UTC = 5 AM CT, same as bloodpressurerepair-site/api/_modules.js).
 // After that moment the eyebrow says the doors are open instead of the date.
 import { track } from '../utils/analytics.js';
@@ -42,7 +42,7 @@ export default function CuffQuizBanner({ placement }) {
           </div>
         </div>
         <div style={{ flex: '0 0 auto', background: '#FFD8A8', color: '#0E3B36', fontWeight: 800, fontSize: '0.8rem', borderRadius: 999, padding: '11px 16px', minHeight: 44, display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
-          See the course &middot; $297 &rarr;
+          See the course &rarr;
         </div>
       </div>
     </a>

@@ -2326,12 +2326,33 @@ async function processCheckoutCompleted(event) {
     plink_1UTqheHseZnO3rRZvXiyZq97: { plan: '2pay', cancelDays: 42, program: 'Money in Your Message' },
     plink_1UTqhfHseZnO3rRZMEx81eAu: { plan: '4pay', cancelDays: 49, program: 'Money in Your Message' },
   };
-  // ── Life Beyond the Cuff $297 course (2026-10-25) ──
+  // ── Life Beyond the Cuff course (2026-10-25; founding $997 or 2 x $599 from 2026-10-28) ──
   // bloodpressurerepair.com embedded checkout (api/cuff-checkout.js). Recognized
   // by metadata funnel, never by amount (29700 is also the case review).
   // Delivery is manual for now: notify Joel and stop. No buyer email is sent
   // from here until Joel approves the welcome text.
   if (session.metadata?.funnel === 'life-beyond-the-cuff') {
+    const cuffSplit = session.metadata?.plan === 'split';
+    // 2026-10-28: founding 2-pay ($599 x 2) rides a monthly subscription. Cap it
+    // after the second charge: bills day 0 and ~day 30, cancel_at day 40 ends it
+    // before a third. Guarded: only a subscription carrying the cuff marker.
+    if (cuffSplit && session.subscription) {
+      try {
+        const stripe = getStripe();
+        const subId = typeof session.subscription === 'string' ? session.subscription : session.subscription.id;
+        const sub = await stripe.subscriptions.retrieve(subId);
+        if (sub.metadata?.funnel !== 'life-beyond-the-cuff') {
+          console.warn('triangle-webhook: cuff split subscription lacks the marker, NOT capping', subId);
+        } else if (!sub.cancel_at) {
+          await stripe.subscriptions.update(subId, {
+            cancel_at: Math.floor(Date.now() / 1000) + 40 * 24 * 60 * 60,
+            proration_behavior: 'none',
+          });
+        }
+      } catch (err) {
+        console.error('triangle-webhook: cuff 2-pay cancel_at failed (cap the subscription by hand)', err.message);
+      }
+    }
     try {
       const key = process.env.RESEND_API_KEY;
       if (key) {
@@ -2345,7 +2366,7 @@ async function processCheckoutCompleted(event) {
             reply_to: customerEmail,
             subject: `New Life Beyond the Cuff sale: ${session.customer_details?.name || customerEmail} ($${((session.amount_total || 0) / 100).toFixed(2)})`,
             text: [
-              `Course:   Life Beyond the Cuff ($297)`,
+              `Course:   Life Beyond the Cuff founding ${cuffSplit ? '2-pay ($599 now, $599 in a month, then it ends)' : 'pay-in-full ($997)'}`,
               `Paid:     $${((session.amount_total || 0) / 100).toFixed(2)}${disc ? ` (code ${session.metadata?.code || '?'}, -$${(disc / 100).toFixed(2)})` : ''}`,
               `Name:     ${session.customer_details?.name || ''}`,
               `Email:    ${customerEmail}`,
@@ -2370,6 +2391,7 @@ async function processCheckoutCompleted(event) {
         const text = [
           first ? `Hi ${first},` : 'Hi there,', '',
           'You are enrolled in Life Beyond the Cuff. Thank you for trusting us with this.', '',
+          ...(cuffSplit ? ['Your plan is two payments of $599. The second one runs one month from today, and then the plan ends on its own.', ''] : []),
           'Here is what happens next.', '',
           'Doors open Monday, November 2. That morning you get an email from us with your login instructions. Modules 1 and 2 open that day, and two more open each Monday after that. All eight are open by Monday, November 23.', '',
           'You do not need to do anything before then. If you want a head start, take your blood pressure a few mornings this week and write the numbers down. We will show you what to do with them.', '',

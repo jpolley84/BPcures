@@ -1,4 +1,4 @@
-// api/cuff-checkout.js — Life Beyond the Cuff ($297) embedded checkout for
+// api/cuff-checkout.js — Life Beyond the Cuff founding enrollment embedded checkout for
 // bloodpressurerepair.com (a static Vercel project with no API of its own, so
 // the page calls this endpoint cross-origin).
 //
@@ -17,7 +17,15 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const PRICE_ID = 'price_1UUVIFHseZnO3rRZM1w3vFct'; // $297, prod_VVWKKYkCupbPnE
+// 2026-10-28 (Joel): founding enrollment $997 pay-in-full or 2 x $599, closing
+// Friday, October 30 at 5 PM CT. The old $297 price (price_1UUVIFHseZnO3rRZM1w3vFct)
+// is no longer sold here. The 2-pay rides a monthly subscription that
+// triangle-webhook caps after the second charge (cancel_at).
+const PLANS = {
+  full: { price: 'price_1UVX8fHseZnO3rRZnONmFMgl', mode: 'payment', product: 'course-997' },
+  split: { price: 'price_1UVX8fHseZnO3rRZ6TVjx0CS', mode: 'subscription', product: 'course-2x599' },
+};
+const CLOSES_AT = Date.parse('2026-10-30T17:00:00-05:00');
 const COURSE_CODES = { SUBS: 'promo_1UUVIFHseZnO3rRZ6gYQvopz' }; // 10% off, this product only
 const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U4LDUHseZnO3rRZx9nEqowD';
 // Full publishable key (the server copy of VITE_STRIPE_PUBLISHABLE_KEY is cut
@@ -37,6 +45,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  if (Date.now() >= CLOSES_AT) {
+    return res.status(410).json({ error: 'Founding enrollment closed on Friday, October 30 at 5 PM Central.' });
+  }
+  const planKey = req.body && req.body.plan === 'split' ? 'split' : 'full';
+  const plan = PLANS[planKey];
   const raw = String((req.body && req.body.code) || '').trim().toUpperCase();
   let discounts;
   if (raw) {
@@ -45,16 +58,18 @@ export default async function handler(req, res) {
   }
   const site = ALLOWED_ORIGINS.has(origin) ? origin : 'https://bloodpressurerepair.com';
   try {
+    const md = { funnel: FUNNEL, product: plan.product, plan: planKey, code: raw || '' };
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
-      mode: 'payment',
+      mode: plan.mode,
       payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
-      line_items: [{ price: PRICE_ID, quantity: 1 }],
+      line_items: [{ price: plan.price, quantity: 1 }],
       ...(discounts ? { discounts } : {}),
-      customer_creation: 'always',
       phone_number_collection: { enabled: true },
-      metadata: { funnel: FUNNEL, brand: FUNNEL, product: 'course-297', code: raw || '' },
-      payment_intent_data: { metadata: { funnel: FUNNEL, product: 'course-297', code: raw || '' } },
+      metadata: { ...md, brand: FUNNEL },
+      ...(plan.mode === 'payment'
+        ? { customer_creation: 'always', payment_intent_data: { metadata: md } }
+        : { subscription_data: { metadata: md, description: 'Life Beyond the Cuff founding plan: 2 payments of $599, then it ends' } }),
       return_url: `${site}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
     });
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: PUBLISHABLE_KEY, code: raw || null });
