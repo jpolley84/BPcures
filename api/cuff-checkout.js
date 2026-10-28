@@ -36,7 +36,9 @@ const PHASES = {
     split: { price: 'price_1UVXl4HseZnO3rRZy2XY6WuM', mode: 'subscription', product: 'course-2x1099', each: 1099 },
   },
 };
-const BANK_ERROR_ENDS = Date.parse('2026-10-29T00:00:00-05:00');
+// 2026-10-28 10:35 (Joel): the $297 honored price runs until the Friday close,
+// then enrollment CLOSES (410). Do not restore $997 without Joel's approval.
+const BANK_ERROR_ENDS = Date.parse('2026-10-30T17:00:00-05:00');
 const usd = (n) => '$' + n.toLocaleString('en-US');
 const CLOSES_AT = Date.parse('2026-10-30T17:00:00-05:00');
 const MODULE1_OPENS = Date.parse('2026-11-02T11:00:00Z');
@@ -60,6 +62,9 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const now = Date.now();
+  if (now >= BANK_ERROR_ENDS) {
+    return res.status(410).json({ error: 'Enrollment closed on Friday, October 30 at 5 PM Central.' });
+  }
   const phase = now < BANK_ERROR_ENDS ? 'bankerror' : now < CLOSES_AT ? 'founding' : 'regular';
   const founding = phase !== 'regular';
   const phaseEnds = phase === 'bankerror' ? BANK_ERROR_ENDS : CLOSES_AT;
