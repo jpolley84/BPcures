@@ -2335,7 +2335,7 @@ async function processCheckoutCompleted(event) {
     const cuffSplit = session.metadata?.plan === 'split';
     // Installment size from the price sold: founding 2 x $599, regular 2 x $1,099.
     const cuffEach = session.metadata?.product === 'course-2x1099' ? '$1,099' : '$599';
-    const cuffFull = session.metadata?.product === 'course-1997' ? '$1,997' : '$997';
+    const cuffFull = ({ 'course-297': '$297', 'course-1997': '$1,997' })[session.metadata?.product] || '$997';
     // 2026-10-28: founding 2-pay ($599 x 2) rides a monthly subscription. Cap it
     // after the second charge: bills day 0 and ~day 30, cancel_at day 40 ends it
     // before a third. Guarded: only a subscription carrying the cuff marker.

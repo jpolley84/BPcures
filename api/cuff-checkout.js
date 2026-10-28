@@ -17,13 +17,16 @@ import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-// 2026-10-28 (Joel): founding enrollment $997 pay-in-full or 2 x $599, closing
-// Friday, October 30 at 5 PM CT. The old $297 price (price_1UUVIFHseZnO3rRZM1w3vFct)
-// is no longer sold here. The 2-pay rides a monthly subscription that
-// triangle-webhook caps after the second charge (cancel_at).
-// After the close the course sells at the regular price, $1,997 or 2 x $1,099
-// (Joel, 2026-10-28), so the $1,997 shown on the page is a real price.
+// The 2-pay rides a monthly subscription that triangle-webhook caps after the
+// second charge (cancel_at).
+// 2026-10-28 (Joel), three phases:
+//   now .. Wed Oct 28 midnight CT   "Bank error in your favor": $297, one payment
+//   .. Fri Oct 30 5 PM CT           Black Friday: $997 or 2 x $599
+//   after                           regular: $1,997 or 2 x $1,099
 const PHASES = {
+  bankerror: {
+    full: { price: 'price_1UUVIFHseZnO3rRZM1w3vFct', mode: 'payment', product: 'course-297', each: 297 },
+  },
   founding: {
     full: { price: 'price_1UVX8fHseZnO3rRZnONmFMgl', mode: 'payment', product: 'course-997', each: 997 },
     split: { price: 'price_1UVX8fHseZnO3rRZ6TVjx0CS', mode: 'subscription', product: 'course-2x599', each: 599 },
@@ -33,6 +36,7 @@ const PHASES = {
     split: { price: 'price_1UVXl4HseZnO3rRZy2XY6WuM', mode: 'subscription', product: 'course-2x1099', each: 1099 },
   },
 };
+const BANK_ERROR_ENDS = Date.parse('2026-10-29T00:00:00-05:00');
 const usd = (n) => '$' + n.toLocaleString('en-US');
 const CLOSES_AT = Date.parse('2026-10-30T17:00:00-05:00');
 const MODULE1_OPENS = Date.parse('2026-11-02T11:00:00Z');
@@ -55,13 +59,17 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const founding = Date.now() < CLOSES_AT;
+  const now = Date.now();
+  const phase = now < BANK_ERROR_ENDS ? 'bankerror' : now < CLOSES_AT ? 'founding' : 'regular';
+  const founding = phase !== 'regular';
+  const phaseEnds = phase === 'bankerror' ? BANK_ERROR_ENDS : CLOSES_AT;
   // 2026-10-28 (Joel): full refund until Module 1 opens, then all sales final.
   const refundLine = Date.now() < MODULE1_OPENS
     ? 'Full refund if you ask before Monday, November 2, when Module 1 opens. After that, all sales are final.'
     : 'All sales are final.';
   const planKey = req.body && req.body.plan === 'split' ? 'split' : 'full';
-  const plan = PHASES[founding ? 'founding' : 'regular'][planKey];
+  // A split request during the $297 window falls back to the one payment.
+  const plan = PHASES[phase][planKey] || PHASES[phase].full;
   const raw = String((req.body && req.body.code) || '').trim().toUpperCase();
   let discounts;
   if (raw) {
@@ -70,7 +78,7 @@ export default async function handler(req, res) {
   }
   const site = ALLOWED_ORIGINS.has(origin) ? origin : 'https://bloodpressurerepair.com';
   try {
-    const md = { funnel: FUNNEL, product: plan.product, plan: planKey, code: raw || '' };
+    const md = { funnel: FUNNEL, product: plan.product, plan: plan.mode === 'subscription' ? 'split' : 'full', code: raw || '' };
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       mode: plan.mode,
@@ -81,7 +89,7 @@ export default async function handler(req, res) {
       // Stripe labels the 2-pay "$599.00 per month"; say plainly that it stops.
       custom_text: {
         submit: {
-          message: planKey === 'split'
+          message: plan.mode === 'subscription'
             ? `Two payments of ${usd(plan.each)}: one today and one a month from today (${usd(plan.each * 2)} total). Then the plan ends on its own. There is no third charge. ${refundLine}`
             : `One payment of ${usd(plan.each)}. Your login link arrives by email when your modules open. ${refundLine}`,
         },
@@ -93,7 +101,7 @@ export default async function handler(req, res) {
       return_url: `${site}/thanks/?session_id={CHECKOUT_SESSION_ID}`,
       // Stripe keeps a session payable for 24 h by default. Near the close, end
       // it at the deadline (Stripe's floor is 30 minutes from now).
-      ...(founding ? { expires_at: Math.max(Math.floor(Date.now() / 1000) + 1860, Math.min(Math.floor(Date.now() / 1000) + 86000, Math.floor(CLOSES_AT / 1000))) } : {}),
+      ...(founding ? { expires_at: Math.max(Math.floor(Date.now() / 1000) + 1860, Math.min(Math.floor(Date.now() / 1000) + 86000, Math.floor(phaseEnds / 1000))) } : {}),
     });
     return res.status(200).json({ clientSecret: session.client_secret, publishableKey: PUBLISHABLE_KEY, code: raw || null });
   } catch (err) {
