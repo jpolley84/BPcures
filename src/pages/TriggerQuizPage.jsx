@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
 import { tagQuizTaken } from '../utils/manychat.js';
-import ChallengeQuizBanner from '../components/ChallengeQuizBanner.jsx';
+import CuffQuizBanner from '../components/CuffQuizBanner.jsx';
 
 // ---- The 5 triggers -------------------------------------------------------
 export const TRIGGERS = {
@@ -667,7 +667,7 @@ export default function TriggerQuizPage() {
             5-trigger Blueprint) go out by email via lead-magnet.js the
             moment the gate form posts, so she still gets them, just not
             on-page and not before the offer. */}
-        {phase === 'offer' && t && <ChallengeQuizBanner placement="results" />}
+        {phase === 'offer' && t && <CuffQuizBanner placement="results" />}
         {phase === 'offer' && t && (
           <div style={cardStyle}>
             <div
