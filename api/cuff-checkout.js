@@ -35,6 +35,7 @@ const PHASES = {
 };
 const usd = (n) => '$' + n.toLocaleString('en-US');
 const CLOSES_AT = Date.parse('2026-10-30T17:00:00-05:00');
+const MODULE1_OPENS = Date.parse('2026-11-02T11:00:00Z');
 const COURSE_CODES = { SUBS: 'promo_1UUVIFHseZnO3rRZ6gYQvopz' }; // 10% off, this product only
 const PM_CONFIG_CARD_NO_LINK = process.env.STRIPE_PM_CONFIG_CARD_ONLY || 'pmc_1U4LDUHseZnO3rRZx9nEqowD';
 // Full publishable key (the server copy of VITE_STRIPE_PUBLISHABLE_KEY is cut
@@ -55,6 +56,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const founding = Date.now() < CLOSES_AT;
+  // 2026-10-28 (Joel): full refund until Module 1 opens, then all sales final.
+  const refundLine = Date.now() < MODULE1_OPENS
+    ? 'Full refund if you ask before Monday, November 2, when Module 1 opens. After that, all sales are final.'
+    : 'All sales are final.';
   const planKey = req.body && req.body.plan === 'split' ? 'split' : 'full';
   const plan = PHASES[founding ? 'founding' : 'regular'][planKey];
   const raw = String((req.body && req.body.code) || '').trim().toUpperCase();
@@ -77,8 +82,8 @@ export default async function handler(req, res) {
       custom_text: {
         submit: {
           message: planKey === 'split'
-            ? `Two payments of ${usd(plan.each)}: one today and one a month from today (${usd(plan.each * 2)} total). Then the plan ends on its own. There is no third charge.`
-            : `One payment of ${usd(plan.each)}. Your login link arrives by email when your modules open.`,
+            ? `Two payments of ${usd(plan.each)}: one today and one a month from today (${usd(plan.each * 2)} total). Then the plan ends on its own. There is no third charge. ${refundLine}`
+            : `One payment of ${usd(plan.each)}. Your login link arrives by email when your modules open. ${refundLine}`,
         },
       },
       metadata: { ...md, brand: FUNNEL },
