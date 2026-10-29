@@ -55,9 +55,8 @@ const SPOTS = 4; // Joel, 2026-09-27: 4 open spots in EACH tier
 const LCA_PRICE = '$2,000';
 const LCA_URL = '/life-change-activated';
 // 2026-10-29: both tiers pay through the embedded form (AllInEnrollForm) with a
-// pay-in-full checkbox. The Accelerator's switch stays OFF until Joel approves
-// its welcome email; while off, its card keeps the old $500 deposit checkout.
-const ACCEL_EMBED = false;
+// pay-in-full checkbox.
+const ACCEL_EMBED = true; // Joel approved the Accelerator welcome email, 2026-10-29 12:50 CT
 
 // "Two ways you can work with us" (Joel, 2026-09-27). What each tier includes
 // and, just as loudly, what it does not.
