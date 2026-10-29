@@ -31,9 +31,9 @@ export const ENROLL_PROGRAMS = {
     deposit: '$500',
     full: '$7,500',
     remaining: '$7,000',
-    depositHint: 'Your $500 deposit is non-refundable and counts toward tuition. We will reach out within one business day to set up the $7,000 balance on a schedule that works for you, up to 12 months.',
+    depositHint: "Your $500 deposit is non-refundable and counts toward tuition. After payment, you'll choose how to pay the remaining $7,000: once (card or Klarna), or 6, 9, or 12 monthly payments.",
     fullPerk: '',
-    balanceLink: '',
+    balanceLink: '/payment',
   },
 };
 

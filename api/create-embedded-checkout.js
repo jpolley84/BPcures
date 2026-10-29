@@ -84,6 +84,9 @@ const PM_CONFIG_CARD_NO_LINK =
 // buyable inline at /pay?tier=complete. The $30 corner->complete difference
 // upgrade + the $97 1:1 call are post-purchase payment links (see
 // upgradeOffers.js + the webhook). top2 is RETIRED from sale.
+// 2026-10-21 (Joel): the $47 COMPLETE kit is KILLED too. ?tier=complete folds
+// to corner in the handler below; the complete price ids stay listed only so
+// knownOtherPriceIds() keeps recognizing them.
 const TIER_PRICES = {
   corner: {
     sale: process.env.STRIPE_CORNER_SALE_PRICE_ID || 'price_1ToBlWHseZnO3rRZtv4lbw2m', // $17 permanent
@@ -223,7 +226,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid request body, expected JSON' });
   }
 
-  const tier = typeof req.body.tier === 'string' ? req.body.tier : 'corner';
+  // 2026-10-21 (Joel): the $47 complete kit is KILLED. The $17 kit has
+  // delivered the complete kit since 2026-08-29 (api/_kit-manifest.js
+  // normalizeTier), so a stale ?tier=complete link folds to the $17 corner
+  // checkout instead of charging $30 more for the same files.
+  const rawTier = typeof req.body.tier === 'string' ? req.body.tier : 'corner';
+  const tier = rawTier === 'complete' ? 'corner' : rawTier;
   const email =
     typeof req.body.email === 'string' && req.body.email.includes('@')
       ? req.body.email.trim().slice(0, 200)
@@ -638,9 +646,14 @@ export default async function handler(req, res) {
       ...utmMeta,
     };
     try {
+      // 2026-10-29 (Joel): "I do want Klarna enabled." Klarna financing covers
+      // one-time payments up to $10,000, so the one-time balance offers card or
+      // Klarna. The monthly plans stay card-only (Klarna cannot spread a
+      // subscription charge).
+      const klarnaOk = tier === 'allin-balance-full';
       const session = await stripe.checkout.sessions.create({
         ui_mode: 'embedded',
-        payment_method_configuration: PM_CONFIG_CARD_NO_LINK,
+        ...(klarnaOk ? { payment_method_types: ['card', 'klarna'] } : { payment_method_configuration: PM_CONFIG_CARD_NO_LINK }),
         mode: isSub ? 'subscription' : 'payment',
         line_items: [allinLineItem],
         metadata,

@@ -70,7 +70,7 @@ const OPTIONS = [
     headline: '$7,000',
     cadence: 'One payment today.',
     total: 'Total $7,000 · with your deposit, $7,500 all settled',
-    note: 'The lowest total. Nothing recurring, nothing to remember. You are fully paid.',
+    note: 'The lowest total. Card, or Klarna to pay over time. Nothing recurring, nothing to remember.',
     best: true,
   },
   {
