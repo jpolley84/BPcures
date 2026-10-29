@@ -34,6 +34,7 @@
 
 import { useEffect, useState } from 'react';
 import { track, getDistinctId, getAbHomeVariant } from '../utils/analytics';
+import AllInEnrollForm from '../components/AllInEnrollForm';
 import scrubsImg from '../assets/annie-joel-scrubs-real.jpg';
 import teachingImg from '../assets/annie-joel-teaching-crop.jpg';
 
@@ -53,13 +54,17 @@ const SPOTS = 4; // Joel, 2026-09-27: 4 open spots in EACH tier
 // deposit checkout and balance plans already work. Replaces the $1,997 Sprint.
 const LCA_PRICE = '$2,000';
 const LCA_URL = '/life-change-activated';
+// 2026-10-29: both tiers pay through the embedded form (AllInEnrollForm) with a
+// pay-in-full checkbox. The Accelerator's switch stays OFF until Joel approves
+// its welcome email; while off, its card keeps the old $500 deposit checkout.
+const ACCEL_EMBED = false;
 
 // "Two ways you can work with us" (Joel, 2026-09-27). What each tier includes
 // and, just as loudly, what it does not.
 const TIERS = [
   {
     key: 'lca',
-    href: LCA_URL,
+    enroll: 'life-change-activated',
     name: 'Life Change Activated',
     price: LCA_PRICE,
     priceNote: 'Start today for $200. Then $1,800 in full, 2 payments of $950, or 4 payments of $495.',
@@ -82,6 +87,7 @@ const TIERS = [
   },
   {
     key: 'accelerator',
+    enroll: ACCEL_EMBED ? 'life-change-accelerator' : undefined,
     tier: 'allin-deposit',
     name: 'The Life Change Accelerator™',
     price: '$7,500',
@@ -449,6 +455,26 @@ const CSS = `
 .lca .tier-list li.out > span:last-child{text-decoration:line-through;text-decoration-color:rgba(83,101,96,.5)}
 .lca .tier-fine{margin-top:10px;font-size:.82rem;color:var(--muted);text-align:center;line-height:1.45}
 @media (max-width:820px){ .lca .tiers{grid-template-columns:1fr} }
+.lca .enroll-card{max-width:620px;margin:34px auto 0;background:#fff;border:2px solid var(--teal);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);scroll-margin-top:20px}
+.lca .enroll-head h3{font-size:1.4rem;margin:0}.lca .enroll-head p{margin:4px 0 0;color:var(--ink-soft)}
+.lca .enroll-switch{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.lca .enroll-switch button{flex:1 1 200px;border:2px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;font-weight:800;font-size:.9rem;cursor:pointer;color:var(--ink)}
+.lca .enroll-switch button.on{border-color:var(--teal);background:var(--teal-soft)}
+.lca .enroll-price{display:flex;align-items:baseline;gap:10px;margin:18px 0 6px}
+.lca .enroll-amt{font-family:Georgia,"Times New Roman",serif;font-size:2.6rem;color:var(--navy-2);line-height:1}
+.lca .enroll-note{color:var(--ink-soft);font-weight:700}
+.lca .enroll-meta{display:grid;gap:4px;font-size:.9rem;color:var(--ink-soft);margin-bottom:12px}
+.lca .enroll-meta > span{display:flex;justify-content:space-between;gap:10px}
+.lca .enroll-payfull{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--teal);background:var(--teal-soft);border-radius:10px;padding:12px 14px;margin:8px 0 16px;cursor:pointer}
+.lca .enroll-payfull input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--teal)}
+.lca .enroll-payfull strong{display:block}.lca .enroll-payfull small{display:block;color:var(--ink-soft);font-size:.85rem;line-height:1.45}
+.lca .enroll-card form > label,.lca .enroll-row label{display:block;font-size:.85rem;font-weight:800;margin-bottom:12px}
+.lca .enroll-card input[name]{display:block;width:100%;margin-top:5px;height:46px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:16px}
+.lca .enroll-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lca .enroll-pay-head{display:flex;justify-content:space-between;font-weight:800;margin:6px 0 10px}.lca .enroll-pay-head span{font-size:.8rem;color:var(--muted)}
+.lca .enroll-element{min-height:20px;margin-bottom:10px}.lca .enroll-loading{color:var(--muted);font-size:.9rem}
+.lca .enroll-hint{font-size:.85rem;color:var(--ink-soft);margin:6px 0 14px}
+@media (max-width:560px){ .lca .enroll-row{grid-template-columns:1fr;gap:0} .lca .enroll-card{padding:18px} }
 .lca .mobile-cta{display:none}
 
 @media (max-width:1024px){
@@ -484,6 +510,13 @@ const CSS = `
 export default function AllInPage() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
+  const [enrollProgram, setEnrollProgram] = useState('life-change-activated');
+  const enrollPrograms = ACCEL_EMBED ? ['life-change-activated', 'life-change-accelerator'] : ['life-change-activated'];
+  function chooseEnroll(p) {
+    setEnrollProgram(p);
+    track('allin_checkout_click', { tier: p });
+    setTimeout(() => document.getElementById('enroll-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
 
   useEffect(() => {
     track('allin_view', { page: 'allin', mode: 'two-tier', design: 'v7' });
@@ -750,10 +783,10 @@ export default function AllInPage() {
                   ))}
                 </ul>
 
-                {t.href ? (
-                  <a className="btn gold full" href={t.href} onClick={() => track('allin_checkout_click', { tier: t.key })}>
+                {t.enroll ? (
+                  <button type="button" className="btn gold full" onClick={() => chooseEnroll(t.enroll)}>
                     {t.cta}
-                  </a>
+                  </button>
                 ) : (
                   <button
                     type="button"
@@ -777,6 +810,7 @@ export default function AllInPage() {
             </div>
           )}
           <div className="secure">🔒 Secure checkout by Stripe. Your card details never touch this page.</div>
+          <AllInEnrollForm program={enrollProgram} onProgramChange={setEnrollProgram} programs={enrollPrograms} />
         </div>
       </section>
 

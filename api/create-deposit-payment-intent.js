@@ -23,6 +23,21 @@ export const PROGRAMS = {
     fullAmount: 200000,
     fullDescription: 'Life Change Activated: $2,000 tuition paid in full',
   },
+  // 2026-10-29 (Joel): the $7,500 Accelerator on bpquiz.com/allin, same embedded
+  // form as LCA: $500 deposit or $7,500 in full, card or Klarna.
+  'life-change-accelerator': {
+    amount: 50000, // $500 non-refundable deposit toward the $7,500 tuition
+    description: 'Life Change Accelerator: $500 non-refundable deposit (credited toward $7,500 tuition)',
+    fullAmount: 750000,
+    fullDescription: 'Life Change Accelerator: $7,500 tuition paid in full',
+  },
+  // 2026-10-23 (Joel): the coaches' offer, same $2,000 / $200 shape, page at /money-in-your-message.
+  'money-in-your-message': {
+    amount: 20000,
+    description: 'Money in Your Message Accelerator: $200 non-refundable deposit (credited toward $2,000 tuition)',
+    fullAmount: 200000,
+    fullDescription: 'Money in Your Message Accelerator: $2,000 tuition paid in full',
+  },
 };
 
 export default async function handler(req, res) {
@@ -47,7 +62,7 @@ export default async function handler(req, res) {
       currency: 'usd',
       payment_method_types: ['card', 'klarna'],
       description: full ? p.fullDescription : p.description,
-      metadata: { funnel: program, program, kind, tuition_cents: '200000' },
+      metadata: { funnel: program, program, kind, tuition_cents: String(p.fullAmount) },
     });
     return res.status(200).json({ publishableKey, clientSecret: pi.client_secret, paymentIntentId: pi.id });
   } catch (err) {

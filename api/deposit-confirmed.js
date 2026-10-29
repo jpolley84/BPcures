@@ -18,6 +18,64 @@ import { PROGRAMS } from './create-deposit-payment-intent.js';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const NOTIFY_TO = 'braveworksrn@gmail.com';
 
+// 2026-10-23: per-program copy. LCA = health clients; MIYM = the coaches' accelerator.
+const LCA_PLAN_LINES = [
+  'Three options, and every one finishes inside your eight weeks:',
+  '',
+  'Pay $1,800 once, the lowest total.',
+  '$950 twice, today and four weeks later, $1,900 total.',
+  '$495 four times, every two weeks, $1,980 total.',
+  '',
+];
+const COPY = {
+  'life-change-activated': {
+    name: 'Life Change Activated',
+    tuition: '$2,000', deposit: '$200', remaining: '$1,800', planLines: LCA_PLAN_LINES,
+    balance: 'https://bpquiz.com/life-change-activated/balance/',
+    kvPrefix: 'bwbp:allin:',
+    nextSteps: [
+      'WE START RIGHT AWAY. TWO THINGS TO DO.', '',
+      '1. Fill out your assessment. This is how I learn your numbers, your history and what you are actually working with, so your plan is yours and not a template.', '',
+      'https://bpquiz.com/accelerator-assessment', '',
+      'Do it before Wednesday if you can.', '',
+      '2. Your first coaching call is Wednesday, 11:00 AM Central, 12:00 PM Eastern.', '',
+      'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1',
+      'Meeting ID: 893 5095 0543', '',
+      'You will get a reminder with that link 30 minutes before every call, so you do not have to keep this email. Bring your questions and your numbers.', '',
+      'One thing I want you to hear, because you just put real money on yourself. The people who get the most out of this are not the ones with the best starting numbers. They are the ones who show up and tell the truth about where they are. You already did the hard part.',
+    ],
+    links: ['https://bpquiz.com/accelerator-assessment', 'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1'],
+  },
+  'money-in-your-message': {
+    name: 'Money in Your Message Accelerator',
+    tuition: '$2,000', deposit: '$200', remaining: '$1,800', planLines: LCA_PLAN_LINES,
+    balance: 'https://bpquiz.com/money-in-your-message/balance/',
+    kvPrefix: 'miym:client:',
+    nextSteps: [
+      'WE START RIGHT AWAY. TWO THINGS TO DO.', '',
+      '1. Book your kickoff call. This is where we lock your avatar and your offer and map your eight weeks.', '',
+      'https://calendly.com/braveworksrn/discovery-call', '',
+      '2. Reply to this email with two lines: who you help, in their words, and the transformation you deliver. Rough is fine. We fix it together on the call.', '',
+      'You will get the weekly call link and the WhatsApp group invite after the kickoff. Bring your offer, your numbers, and your questions.', '',
+      'One thing I want you to hear, because you just put real money on yourself. We made our first $16,000 running a play we were still learning. You already have the gift. Now we build the play around it.',
+    ],
+    links: ['https://calendly.com/braveworksrn/discovery-call'],
+  },
+};
+// 2026-10-29: the $7,500 Accelerator, sold through the same embedded form on
+// /allin. Same cohort, assessment, and Wednesday call as LCA. No self-serve
+// balance page yet: Joel sets up the $7,000 balance with the buyer by hand.
+COPY['life-change-accelerator'] = {
+  ...COPY['life-change-activated'],
+  name: 'The Life Change Accelerator',
+  tuition: '$7,500', deposit: '$500', remaining: '$7,000',
+  balance: null,
+  planLines: [
+    'We will reach out within one business day to set up the $7,000 balance on a schedule that works for you, up to 12 months.',
+    '',
+  ],
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const id = String((req.body && req.body.paymentIntentId) || '').trim();
@@ -26,6 +84,7 @@ export default async function handler(req, res) {
     const pi = await stripe.paymentIntents.retrieve(id, { expand: ['latest_charge'] });
     const md = pi.metadata || {};
     if (!PROGRAMS[md.program] || !['deposit', 'full'].includes(md.kind)) return res.status(403).json({ error: 'Not allowed' });
+    const C = COPY[md.program] || COPY['life-change-activated'];
     if (pi.status !== 'succeeded') return res.status(200).json({ ok: true, status: pi.status, kind: md.kind });
     if (md.joel_notified === '1') return res.status(200).json({ ok: true, status: pi.status, kind: md.kind, already: true });
     await stripe.paymentIntents.update(id, { metadata: { ...md, joel_notified: '1' } });
@@ -39,14 +98,14 @@ export default async function handler(req, res) {
           from: 'BPQuiz Alerts <alerts@bpquiz.com>',
           to: [NOTIFY_TO],
           reply_to: md.email || undefined,
-          subject: `New Life Change Activated ${md.kind === 'full' ? 'PAID IN FULL' : 'deposit'}: ${md.first_name || ''} ${md.last_name || ''} ($${pi.amount / 100})`.replace(/\s+/g, ' '),
+          subject: `New ${C.name} ${md.kind === 'full' ? 'PAID IN FULL' : 'deposit'}: ${md.first_name || ''} ${md.last_name || ''} ($${pi.amount / 100})`.replace(/\s+/g, ' '),
           text: [
-            `Program:  Life Change Activated ($2,000 tuition)`,
+            `Program:  ${C.name} (${C.tuition} tuition)`,
             `Deposit:  $${(pi.amount / 100).toFixed(2)} via ${method}`,
             `Name:     ${md.first_name || ''} ${md.last_name || ''}`,
             `Email:    ${md.email || ''}`,
             `Phone:    ${md.phone || ''}`,
-            md.kind === 'full' ? `Balance:  $0 (paid in full)` : `Balance:  $1,800 · plan page: https://bpquiz.com/life-change-activated/balance/`,
+            md.kind === 'full' ? `Balance:  $0 (paid in full)` : `Balance:  ${C.remaining} · ${C.balance ? `plan page: ${C.balance}` : 'set up the plan with the buyer by hand'}`,
             `Stripe:   https://dashboard.stripe.com/payments/${pi.id}`,
           ].join('\n'),
         }),
@@ -58,7 +117,7 @@ export default async function handler(req, res) {
     // already exists for someone who bought a different program.
     if (md.email) {
       try {
-        const key2 = `bwbp:allin:${String(md.email).trim().toLowerCase()}`;
+        const key2 = `${C.kvPrefix}${String(md.email).trim().toLowerCase()}`;
         let existing = await kv.get(key2);
         if (typeof existing === 'string') { try { existing = JSON.parse(existing); } catch { existing = null; } }
         const row = (existing && typeof existing === 'object') ? existing : {};
@@ -68,7 +127,7 @@ export default async function handler(req, res) {
           firstName: row.firstName || md.first_name || '',
           lastName: row.lastName || md.last_name || '',
           phone: row.phone || md.phone || '',
-          program: 'life-change-activated',
+          program: md.program,
           plan: md.kind === 'full' ? 'full' : (row.plan || 'deposit-paid'),
           depositPaymentIntent: pi.id,
           status: row.status || 'awaiting_assessment',
@@ -88,58 +147,32 @@ export default async function handler(req, res) {
       const lines = [
         `${first},`,
         '',
-        'Your spot in Life Change Activated is reserved. Welcome.',
+        `Your spot in ${C.name} is reserved. Welcome.`,
         '',
         paidFull
-          ? 'You paid the $2,000 tuition in full, so there is no balance to think about. That is it, you are done with the money part.'
-          : 'Your $200 deposit is in and it counts toward the $2,000 tuition. That leaves $1,800, and you choose how to handle it.',
+          ? `You paid the ${C.tuition} tuition in full, so there is no balance to think about. That is it, you are done with the money part.`
+          : `Your ${C.deposit} deposit is in and it counts toward the ${C.tuition} tuition. That leaves ${C.remaining}, and you choose how to handle it.`,
         '',
       ];
       if (!paidFull) {
-        lines.push(
-          'PICK YOUR PLAN HERE:',
-          'https://bpquiz.com/life-change-activated/balance/',
-          '',
-          'Three options, and every one finishes inside your eight weeks:',
-          '',
-          'Pay $1,800 once, the lowest total.',
-          '$950 twice, today and four weeks later, $1,900 total.',
-          '$495 four times, every two weeks, $1,980 total.',
-          '',
-        );
+        if (C.balance) lines.push('PICK YOUR PLAN HERE:', C.balance, '');
+        lines.push(...C.planLines);
       }
       lines.push(
-        'WE START RIGHT AWAY. TWO THINGS TO DO.',
-        '',
-        '1. Fill out your assessment. This is how I learn your numbers, your history and what you are actually working with, so your plan is yours and not a template.',
-        '',
-        'https://bpquiz.com/accelerator-assessment',
-        '',
-        'Do it before Wednesday if you can.',
-        '',
-        '2. Your first coaching call is Wednesday, 11:00 AM Central, 12:00 PM Eastern.',
-        '',
-        'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1',
-        'Meeting ID: 893 5095 0543',
-        '',
-        'You will get a reminder with that link 30 minutes before every call, so you do not have to keep this email. Bring your questions and your numbers.',
-        '',
-        'One thing I want you to hear, because you just put real money on yourself. The people who get the most out of this are not the ones with the best starting numbers. They are the ones who show up and tell the truth about where they are. You already did the hard part.',
+        ...C.nextSteps,
         '',
         'Reply straight to this email with anything at all. It comes to me.',
         '',
         'Joel Polley, RN',
       );
       if (!paidFull) {
-        lines.push('', 'P.S. Your $200 deposit is non-refundable and is credited toward your $2,000 tuition.');
+        lines.push('', `P.S. Your ${C.deposit} deposit is non-refundable and is credited toward your ${C.tuition} tuition.`);
       }
       const text = lines.join('\n');
       const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       let body = text.split('\n\n').map((p) => {
         let h = esc(p).replace(/\n/g, '<br>');
-        for (const u of ['https://bpquiz.com/life-change-activated/balance/',
-                         'https://bpquiz.com/accelerator-assessment',
-                         'https://us06web.zoom.us/j/89350950543?pwd=toPU7vNDWN5Hgib57aZ4EyxrIH1cB2.1']) {
+        for (const u of [C.balance, ...C.links].filter(Boolean)) {
           h = h.split(esc(u)).join(`<a href="${u}" style="color:#112d4d;font-weight:700">${esc(u)}</a>`);
         }
         return `<p style="margin:0 0 15px;font-size:16px;line-height:1.65;color:#1b2430">${h}</p>`;
@@ -160,7 +193,7 @@ export default async function handler(req, res) {
         }),
       }).catch((e) => console.error('deposit-confirmed buyer welcome failed', e.message));
     }
-    return res.status(200).json({ ok: true, status: pi.status, kind: md.kind });
+    return res.status(200).json({ ok: true, status: pi.status, kind: md.kind, program: md.program });
   } catch (err) {
     console.error('deposit-confirmed failed', err.message);
     return res.status(500).json({ error: 'Check failed' });
