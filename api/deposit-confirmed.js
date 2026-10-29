@@ -64,14 +64,19 @@ const COPY = {
 };
 // 2026-10-29: the $7,500 Accelerator, sold through the same embedded form on
 // /allin. Same cohort, assessment, and Wednesday call as LCA. No self-serve
-// balance page yet: Joel sets up the $7,000 balance with the buyer by hand.
+// 2026-10-29: the $7,000 balance is picked on bpquiz.com/payment (4 plans).
 COPY['life-change-accelerator'] = {
   ...COPY['life-change-activated'],
   name: 'The Life Change Accelerator',
   tuition: '$7,500', deposit: '$500', remaining: '$7,000',
-  balance: null,
+  balance: 'https://bpquiz.com/payment',
   planLines: [
-    'We will reach out within one business day to set up the $7,000 balance on a schedule that works for you, up to 12 months.',
+    'Four options:',
+    '',
+    'Pay $7,000 once, the lowest total. Card or Klarna.',
+    '6 monthly payments of $1,295, $7,770 total.',
+    '9 monthly payments of $935, $8,415 total.',
+    '12 monthly payments of $750, $9,000 total.',
     '',
   ],
 };
