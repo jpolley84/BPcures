@@ -47,36 +47,38 @@ const TOTAL_VALUE = '$35,197';  // CORE_VALUE + the bonuses
 
 // ⚠️ Live scarcity claim, rendered to customers three times. Keep it true.
 const SPOTS = 4; // Joel, 2026-09-27: 4 open spots in EACH tier
-const SPRINT_PRICE = '$1,997';
+// 2026-10-29 (Joel): the first tier IS Life Change Activated, the same offer as
+// bpquiz.com/life-change-activated ($2,000, $200 deposit, 8 weeks, pay-in-full
+// bonuses incl. the plus-one seat). Its button goes to that page, whose
+// deposit checkout and balance plans already work. Replaces the $1,997 Sprint.
+const LCA_PRICE = '$2,000';
+const LCA_URL = '/life-change-activated';
 
 // "Two ways you can work with us" (Joel, 2026-09-27). What each tier includes
-// and, just as loudly, what it does not. The Sprint is deliberately bare:
-// no bonuses, no guarantee, no one-on-one, six weeks, credited on upgrade.
+// and, just as loudly, what it does not.
 const TIERS = [
   {
-    key: 'sprint',
-    tier: 'sprint-deposit',
-    name: 'The Life Change Sprint',
-    price: SPRINT_PRICE,
-    priceNote: 'Start today for $200. Then $1,797 in full (with a bonus one-on-one) or 3 x $649 every 2 weeks.',
-    tag: '6-week sprint',
-    blurb: 'Six focused weeks with Annie and Joel to get moving on your numbers.',
+    key: 'lca',
+    href: LCA_URL,
+    name: 'Life Change Activated',
+    price: LCA_PRICE,
+    priceNote: 'Start today for $200. Then $1,800 in full, 2 payments of $950, or 4 payments of $495.',
+    tag: '8-week guided experience',
+    blurb: 'Eight weeks of coaching, clarity, and guidance with Annie and Joel.',
     yes: [
-      '6 weeks of weekly coaching + live Q&A',
-      'Your health review',
-      'Your plan and your starting priorities',
-      'Step-by-step help through the 6 weeks',
-      'Community access during the sprint',
-      'Every dollar credited if you upgrade to the $7,500 Accelerator',
+      'Feel Like Yourself Again: the Back-to-Normal-Numbers Blueprint',
+      'The Fast Lane: food, movement, herbs, and guest experts',
+      'Your personalized, age-appropriate pathway',
+      'Live coaching and a community for accountability',
+      'Pay in full: Restore Your Glow, Joel\'s Lab Hacks, and a Skin & Hair bonus',
+      'Pay in full: bring a plus one, a second full seat free',
     ],
     no: [
-      'The bonuses (Healing Circle, Know Your Labs, Two For One, Skin + Hair)',
-      'One-on-one coaching session (unless you pay the Sprint balance in full)',
       'One year of access',
       'The 90-day money-back guarantee',
     ],
-    cta: 'Start the Sprint · $200',
-    fine: 'The $200 deposit is non-refundable. Everything you pay is credited toward the Accelerator if you move up at any point.',
+    cta: 'Reserve My Spot · $200',
+    fine: 'The $200 deposit is non-refundable and counts toward the $2,000. Pay-in-full bonuses unlock once your balance is settled.',
   },
   {
     key: 'accelerator',
@@ -247,10 +249,10 @@ const BONUSES = [
 ];
 
 const FAQ = [
-  ['What am I paying today?', `For the Sprint, a $200 deposit. For the Accelerator, a ${DEPOSIT} deposit. Each is credited toward your total.`],
-  ['How is the Sprint balance paid?', 'The $1,797 balance can be paid in full, which adds a bonus one-on-one coaching session, or in 3 payments of $649, one every two weeks inside the 6-week Sprint, that stop on their own after the third.'],
+  ['What am I paying today?', `For Life Change Activated, a $200 deposit. For the Accelerator, a ${DEPOSIT} deposit. Each is credited toward your total.`],
+  ['How is the Life Change Activated balance paid?', 'After the $200 deposit, the $1,800 balance is paid in full, in 2 payments of $950, or in 4 payments of $495. Paying in full unlocks the bonuses, including a free second seat for a plus one.'],
   ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
-  ['Is the deposit refundable?', 'No. Both deposits, the $200 for the Sprint and the $500 for the Accelerator, are non-refundable. Each one holds a limited spot and comes off your price.'],
+  ['Is the deposit refundable?', 'No. Both deposits, the $200 for Life Change Activated and the $500 for the Accelerator, are non-refundable. Each one holds a limited spot and comes off your price.'],
   ['Do I have to fill out the application first?', 'No. You can go straight to checkout and secure your spot. The application is really more for you than for us: it puts you in the mindset of deciding whether you want this and why.'],
   ['Is this a video course?', 'No. There is no video library to work through. Between Joel and Annie there are about a thousand videos online already, and the point of this program is that you do not have to watch them. You get coaching that works at your pace and gives you what you need, when you need it.'],
   ['Does it include all four phases?', 'Yes. All four phases, the 90 days of coaching, and a full year of access to the community and the weekly Q&A.'],
@@ -748,14 +750,20 @@ export default function AllInPage() {
                   ))}
                 </ul>
 
-                <button
-                  type="button"
-                  className="btn gold full"
-                  disabled={busy === t.tier}
-                  onClick={() => startCheckout(t.tier)}
-                >
-                  {busy === t.tier ? 'Opening secure checkout...' : t.cta}
-                </button>
+                {t.href ? (
+                  <a className="btn gold full" href={t.href} onClick={() => track('allin_checkout_click', { tier: t.key })}>
+                    {t.cta}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn gold full"
+                    disabled={busy === t.tier}
+                    onClick={() => startCheckout(t.tier)}
+                  >
+                    {busy === t.tier ? 'Opening secure checkout...' : t.cta}
+                  </button>
+                )}
                 <div className="tier-fine">{t.fine}</div>
               </article>
             ))}
