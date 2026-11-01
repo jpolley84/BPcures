@@ -25,6 +25,7 @@ const RETURN_LINKS = {
   challenge: { label: 'See the Change My Life Challenge', url: 'https://changemylifechallenge.com/' },
   'mp-shop': { label: 'Back to the shop',              url: 'https://minoritypossible.com/shop' },
   cuff:      { label: 'See Life Beyond the Cuff',      url: 'https://bloodpressurerepair.com/' },
+  prep:      { label: 'Get your free 90-Day Health Prep Checklist', url: 'https://bpquiz.com/prep' },
 };
 
 function cors(req, res) {
