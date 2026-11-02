@@ -3,20 +3,14 @@ import { useLocation } from 'react-router-dom';
 import { sabbathStatus, reopenLabel } from '../utils/sabbath';
 
 // =====================================================================
-// SabbathGate — closes the BPQuiz storefront from sundown Friday to
+// SabbathGate — closes the BPQuiz selling pages from sundown Friday to
 // sundown Saturday (Fordsville, KY local sunset, recomputed every week).
 //
-// WHAT GETS CLOSED: the public storefront + funnel — the homepage,
-// the quiz (/quiz, /start), and the other commerce/offer pages.
+// WHAT GETS CLOSED: only pages that sell (SELLING_PATHS below). The quiz
+// results link to /pay, so the register still closes while the quiz stays open.
 //
-// WHAT STAYS OPEN (exempt prefixes below):
-//   • Content/SEO   — /blog, /about, /privacy, /terms, /disclaimer
-//                     (so Googlebot never sees a "closed" page → no SEO hit)
-//   • Fulfillment   — /success, /upsell*, /library, /downloads, *-welcome
-//                     (a paying customer can still reach what they bought)
-//   • Ops + clients — /ops, /wakita, /luvenia, /intake, /apply
-//                     (Joel's dashboard + white-label client intakes — their
-//                      businesses don't observe Joel's Sabbath)
+// WHAT STAYS OPEN: everything else, including the homepage, the quiz, every
+// opt-in, content/SEO, fulfillment, and ops + client intakes.
 //
 // HOST SCOPE: only the apex storefront (bpquiz.com / www.bpquiz.com).
 // Vanity client subdomains are never gated.
@@ -29,19 +23,19 @@ import { sabbathStatus, reopenLabel } from '../utils/sabbath';
 // calculation bug can never black out the store for a week.
 // =====================================================================
 
-const EXEMPT_PREFIXES = [
-  '/blog', '/learn', '/articles', '/about',
-  '/privacy', '/terms', '/disclaimer',
-  '/success', '/upsell', '/oto', '/library', '/downloads',
-  '/coaching-welcome', '/sprint-welcome', '/seminar-welcome',
-  // Tea fulfillment: post-purchase confirmation only. /pay stays GATED (Joel
-  // 2026-07-12: tea rests with the store; the static /tea page carries its
-  // own matching gate since it lives outside this React tree).
-  '/tea-thanks',
-  '/ops', '/wakita', '/luvenia', '/intake', '/apply',
-  // App waitlist — email capture, not commerce. Nothing is sold there.
-  '/waitlist', '/app',
+// 2026-11-02 (Joel): "ONLY gate sites that sell something. All my opt-ins need
+// to stay open, even the bpquiz.com site." This is now an allow-list of pages
+// that sell. Everything else stays open: home, quiz, opt-ins, content,
+// fulfillment, ops. A new route is OPEN until it is added here, so add every
+// new checkout or sales page to this list.
+const SELLING_PATHS = [
+  '/offer', '/pay', '/payment',
+  '/allin', '/sprint', '/sprint-balance', '/satin', '/tea-oto',
+  '/challenge', '/777', '/case-review',
+  '/coaching', '/coaching-vip', '/coaching-offers', '/cohort2',
 ];
+// Post-purchase pages under a selling path stay open.
+const OPEN_UNDER_SELLING = ['/allin/thank-you', '/777/thanks'];
 
 function isStoreHost(hostname) {
   // 2026-08-21 (Joel): changemylifechallenge.com added — its SPA routes
@@ -52,7 +46,8 @@ function isStoreHost(hostname) {
 }
 
 function isGatedPath(pathname) {
-  return !EXEMPT_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/') || pathname.startsWith(p));
+  if (OPEN_UNDER_SELLING.some((p) => pathname === p || pathname.startsWith(p + '/'))) return false;
+  return SELLING_PATHS.some((p) => pathname === p || pathname.startsWith(p + '/'));
 }
 
 export default function SabbathGate() {
