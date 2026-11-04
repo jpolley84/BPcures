@@ -176,10 +176,6 @@
       "schedule": "0 13 * * *"
     },
     {
-      "path": "/api/reply-agent",
-      "schedule": "0 1 * * *"
-    },
-    {
       "path": "/api/daily-digest",
       "schedule": "0 13 * * *"
     },
