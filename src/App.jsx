@@ -37,6 +37,9 @@ const AskPage = lazy(() => import('./pages/AskPage'));
 const FoodsGuideLanding = lazy(() => import('./pages/FoodsGuideLanding'));
 const FoodsGuideThanks = lazy(() => import('./pages/FoodsGuideThanks'));
 const ChallengePage = lazy(() => import('./pages/ChallengePage'));
+// 2026-10-19: the $7 7-7-7 Challenge (Oct 21 to 27) and its checkout return page.
+const SevenChallengePage = lazy(() => import('./pages/SevenChallengePage'));
+const SevenChallengeThanksPage = lazy(() => import('./pages/SevenChallengeThanksPage'));
 // The challenge checkout's return_url. Without this route a paying buyer lands
 // on the SPA catch-all and sees nothing at the exact moment they have just paid.
 const ChallengeConfirmedPage = lazy(() => import('./pages/ChallengeConfirmedPage'));
@@ -49,7 +52,6 @@ const LauncherPage = lazy(() => import('./pages/LauncherPage'));
 const LauncherQuizPage = lazy(() => import('./pages/LauncherQuizPage'));
 const LauncherResultsPage = lazy(() => import('./pages/LauncherResultsPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
-const UpsellBpResetKitPage = lazy(() => import('./pages/UpsellBpResetKitPage'));
 const OtoCompletePage = lazy(() => import('./pages/OtoCompletePage'));
 const SprintAssessmentPage = lazy(() => import('./pages/SprintAssessmentPage'));
 const AcceleratorAssessmentPage = lazy(() => import('./pages/AcceleratorAssessmentPage'));
@@ -287,6 +289,8 @@ function App() {
               page was deleted the first time. */}
           <Route path="/challenge" element={<ChallengePage />} />
           <Route path="/challenge-confirmed" element={<ChallengeConfirmedPage />} />
+          <Route path="/777" element={<SevenChallengePage />} />
+          <Route path="/777/thanks" element={<SevenChallengeThanksPage />} />
 
           {/* $67 Challenge OTO on paid tea orders (2026-08-13). /tea-oto is
               reached only from the signed link in the tea welcome email;
@@ -354,7 +358,10 @@ function App() {
 
           {/* Post-purchase — standalone (no nav/footer) */}
           <Route path="/success" element={<SuccessPage />} />
-          <Route path="/upsell-bp-reset-kit" element={<UpsellBpResetKitPage />} />
+          {/* 2026-10-21 (Joel): the $47 / $30 BP Reset Kit is KILLED. This legacy
+              bpcures-port upsell page sold it one-click off the $12.99 book flow.
+              Decliners already landed on /library, so that is where it goes. */}
+          <Route path="/upsell-bp-reset-kit" element={<Navigate to="/library" replace />} />
           {/* $12.99 BP Cures ebook upsell — inserted BETWEEN $17 Kit success
               and the $47 Reset Kit upsell. Ported from bpcures' $17+$12
               upsell mechanic (26% take rate vs 14.6% order-bump alone). */}

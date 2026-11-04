@@ -23,6 +23,7 @@ import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 import { signUnsubToken, escapeHtml, FROM as JOEL_FROM, REPLY as JOEL_REPLY } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { neverSendGuard } from './_never_send.js';
 import { BIRTHDAY_EMAILS } from './_birthday-emails.js';
 
 const REGISTER_URL = 'https://bpquiz.com/birthday';
@@ -312,7 +313,14 @@ export default async function handler(req, res) {
     }
   }
 
-  const stats = { ...audience.stats, excluded: 0, alreadySent: 0, eligible: 0 };
+  // Never-send guard (2026-10-07): Accelerator roster + bwbp:allin:* + Stripe
+  // coaching payers + bwbp:neversend + Resend unsubscribes, built fresh per run.
+  // Fails closed: if the list cannot be built, nothing sends.
+  let guard;
+  try { guard = await neverSendGuard(); }
+  catch (err) { return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message }); }
+
+  const stats = { ...audience.stats, excluded: 0, neverSend: 0, alreadySent: 0, eligible: 0 };
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
   const samples = [];
   const resend = sendMode ? getResend() : null;
@@ -320,6 +328,7 @@ export default async function handler(req, res) {
 
   for (const p of audience.people) {
     if (excludeSet && excludeSet.has(p.email)) { stats.excluded++; continue; }
+    if (guard.blocks(p.email)) { stats.neverSend++; continue; }
     if (alreadySent.has(p.email)) { stats.alreadySent++; continue; }
     stats.eligible++;
     // Joel list keys sometimes hold full names ("Yulonda Vickers"); greet by first word only.
@@ -358,6 +367,7 @@ export default async function handler(req, res) {
     ok: true, list, emailNum,
     mode: sendMode ? 'SEND' : 'DRY-RUN',
     from, stats,
+    ...guard.report(),
     ...(sendMode ? { results } : { samples }),
     runtimeMs: Date.now() - startedAt,
   });

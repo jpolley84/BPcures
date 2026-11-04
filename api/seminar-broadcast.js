@@ -16,6 +16,7 @@ import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 import { pullRecipients, signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { neverSendGuard } from './_never_send.js';
 
 const SUBJECT = "Sorry — last link was broken. Annie's on in 5 minutes.";
 // Direct Zoom link this time. Existing list members already gave us their
@@ -171,7 +172,13 @@ export default async function handler(req, res) {
   const resend = getResend();
   const startedAt = Date.now();
   const MAX_RUN_MS = 270 * 1000; // bail out before the 300s function cap
-  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, complete: 0, noEmail: 0, duplicate: 0 };
+  // Never-send guard (2026-10-07): Accelerator roster + bwbp:allin:* + Stripe
+  // coaching payers + bwbp:neversend + Resend unsubscribes, built fresh per run.
+  // Fails closed: if the list cannot be built, nothing sends.
+  let guard;
+  try { guard = await neverSendGuard(); }
+  catch (err) { return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message }); }
+  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, neverSend: 0, complete: 0, noEmail: 0, duplicate: 0 };
   const seen = new Set();
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
 
@@ -195,6 +202,7 @@ export default async function handler(req, res) {
     if (!rec || !rec.email) { stats.noEmail++; continue; }
     if (rec.unsubscribed) { stats.unsub++; continue; }
     if (rec.paused) { stats.paused++; continue; }
+    if (guard.blocks(rec.email)) { stats.neverSend++; continue; }
     if (rec.complete) { stats.complete++; continue; }
     if (rec.seminarInviteSentV2) { stats.alreadySent++; continue; }
 
@@ -241,5 +249,5 @@ export default async function handler(req, res) {
     }
   }
 
-  return res.status(200).json({ ok: true, stats, results, runtimeMs: Date.now() - startedAt });
+  return res.status(200).json({ ok: true, stats, ...guard.report(), results, runtimeMs: Date.now() - startedAt });
 }

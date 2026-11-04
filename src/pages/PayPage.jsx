@@ -22,7 +22,7 @@
 //
 // Contract (shared with api/create-embedded-checkout.js):
 //   POST { tier?='corner', corner?, email? } -> { clientSecret }
-// tier is read from ?tier= (corner|complete|tea-48|tea-120). corner is read
+// tier is read from ?tier= (corner|tea-48|tea-120). corner is read
 // from ?corner= (URL wins), else the quiz result in sessionStorage bp_quiz,
 // else null. On completion Stripe returns the top frame to return_url
 // (/welcome or /tea-thanks), configured server-side. ZERO em-dashes.
@@ -59,7 +59,10 @@ const stripePromise = pk ? loadStripe(pk) : null;
 // accepting it here rendered a $17 order card and then looped 400 -> retry
 // forever. Stale top2 links now degrade to the $17 corner offer instead of a
 // dead register.
-const VALID_TIERS = new Set(['corner', 'complete', 'tea-48', 'tea-120']);
+// 2026-10-21 (Joel): 'complete' REMOVED, the $47 kit is killed. A stale
+// ?tier=complete link degrades to the $17 corner register here, and
+// api/create-embedded-checkout.js folds it the same way server-side.
+const VALID_TIERS = new Set(['corner', 'tea-48', 'tea-120']);
 // 2026-07-16: all 5 quiz triggers are valid corners. Keep in sync with
 // api/create-embedded-checkout.js VALID_CORNERS and api/_kit-manifest.js
 // ALL_CORNERS.
@@ -152,13 +155,8 @@ function isStoreHost() {
 // the CheckoutPage stack change with it, or buyers hit the not-received gap
 // at the exact point of payment.
 function orderSummary(tier, corner) {
-  if (tier === 'complete') {
-    return {
-      title: 'The Complete BP Reset Kit',
-      price: '$47',
-      body: 'All three corners of the Triangle (Stress, Sugar, and Sodium), each with its 10-day protocol, herb formulary, and doctor sheet, plus the Freedom Finale and the full library: the Master Blood Pressure Document, Top 10 Herbs Deep Dive, Cook For Life Cookbook, White Coat Syndrome Guide, BP FAQ, the Overmedicated Boomers book, your BP Tracker, the Triangle Meal Plan, and doctor visit templates. 19 downloads in all.',
-    };
-  }
+  // 2026-10-21: the $47 complete branch is gone with the kit; every
+  // non-tea tier renders the $17 corner summary.
   const meta = TRIGGER_META[corner];
   const forTrigger = meta ? `all made for your ${meta.label} trigger` : 'all made for your loudest trigger';
   return {

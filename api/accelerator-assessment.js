@@ -9,6 +9,10 @@
 //   bwbp:accel:intake:byemail:<em>  latest id for that member
 //   bwbp:accel:intake:index         SET of ids
 //
+// After a successful save it also stamps the buyer's cohort record,
+//   bwbp:allin:<em>                 status -> 'assessment_received', assessmentId, assessmentAt
+// but only if that record already exists (read-merge-write, never created here).
+//
 // Returns { ok, assessmentId } so the thank-you screen can offer a download at
 // /api/accelerator-assessment-pdf?id=<assessmentId>.
 
@@ -75,6 +79,42 @@ function renderEmailHtml(answers, submittedAt) {
 </td></tr></table></td></tr></table></body></html>`;
 }
 
+// ── Stamp the buyer's cohort record ─────────────────────────────────────────
+// processAllIn (triangle-webhook.js) writes bwbp:allin:<email> with
+// status 'awaiting_assessment' and nothing ever moved it off that value, so
+// every All-In buyer read as "no assessment yet" forever and anything keyed on
+// that status was blind. Rules:
+//   - read-merge-write: hand-stamped fields (agreementSignedAt, agreementSentAt)
+//     survive untouched
+//   - never create the record: a non-buyer can submit this form
+//   - only move from 'awaiting_assessment'. A later re-submission refreshes
+//     assessmentId/assessmentAt on an 'assessment_received' record so it keeps
+//     agreeing with bwbp:accel:intake:byemail:<email>. 'withdrawn', 'active',
+//     or any other status is left exactly as it is.
+//   - non-fatal: a KV failure here must never fail the intake response
+const ALLIN_STAMPABLE = new Set(['awaiting_assessment', 'assessment_received']);
+
+// Pure. Returns { next } with the merged record to write, or { skip } with why not.
+export function planAllInAssessmentUpdate(rec, assessmentId, assessmentAt) {
+  if (!rec || typeof rec !== 'object' || Array.isArray(rec)) return { skip: 'no_record' };
+  if (!ALLIN_STAMPABLE.has(rec.status)) return { skip: `status:${rec.status ?? 'missing'}` };
+  return { next: { ...rec, status: 'assessment_received', assessmentId, assessmentAt } };
+}
+
+async function markAllInAssessmentReceived(email, assessmentId, assessmentAt) {
+  const key = `bwbp:allin:${email}`;
+  try {
+    const rec = await kv.get(key);
+    const plan = planAllInAssessmentUpdate(rec, assessmentId, assessmentAt);
+    if (plan.skip) return { updated: false, reason: plan.skip };
+    await kv.set(key, plan.next);
+    return { updated: true };
+  } catch (err) {
+    console.error('accelerator-assessment: could not stamp assessment on the coaching record (non-fatal)', email, err.message);
+    return { updated: false, reason: 'kv_error' };
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -108,13 +148,19 @@ export default async function handler(req, res) {
     const record = { assessmentId, email, name, answers, submittedAt };
 
     // Persist first. If email fails we still have the intake.
+    let saved = false;
     try {
       await kv.set(`bwbp:accel:intake:${assessmentId}`, record);
       await kv.set(`bwbp:accel:intake:byemail:${email}`, assessmentId);
       await kv.sadd('bwbp:accel:intake:index', assessmentId);
+      saved = true;
     } catch (err) {
       console.error('accelerator-assessment: KV write failed', err.message);
     }
+
+    // Only after the intake itself is on disk. assessmentAt = submittedAt so the
+    // cohort record and the intake record carry the same timestamp.
+    if (saved) await markAllInAssessmentReceived(email, assessmentId, submittedAt);
 
     let pdf = null;
     try {

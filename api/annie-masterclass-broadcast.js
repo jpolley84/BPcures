@@ -22,6 +22,7 @@ import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 import { escapeHtml } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { neverSendGuard } from './_never_send.js';
 
 const CRON_FIRE_DATE = '2026-09-14';
 const FROM = 'Everyday Nurse Annie <annie@restoreherhormones.com>';
@@ -276,16 +277,24 @@ export default async function handler(req, res) {
   try { unsub = await loadUnsubSet(); }
   catch (err) { return res.status(500).json({ error: err.message }); } // never send without the suppression list
 
+  // Never-send guard (2026-10-07): Accelerator roster + bwbp:allin:* + Stripe
+  // coaching payers + bwbp:neversend + Resend unsubscribes, built fresh per run.
+  // Fails closed: if the list cannot be built, nothing sends.
+  let guard;
+  try { guard = await neverSendGuard(); }
+  catch (err) { return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message }); }
+
   const alreadySentList = await kv.smembers(SENT_SET);
   const alreadySent = new Set((alreadySentList || []).map((e) => String(e).toLowerCase()));
 
-  const stats = { segment: emails.length, unsub: 0, alreadySent: 0, eligible: 0 };
+  const stats = { segment: emails.length, unsub: 0, neverSend: 0, alreadySent: 0, eligible: 0 };
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
   const samples = [];
   const resend = sendMode ? getResend() : null;
 
   for (const email of emails) {
     if (unsub.has(email)) { stats.unsub++; continue; }
+    if (guard.blocks(email)) { stats.neverSend++; continue; }
     if (alreadySent.has(email)) { stats.alreadySent++; continue; }
     stats.eligible++;
     const name = (segment[email] || '').trim() || 'there';
@@ -316,6 +325,7 @@ export default async function handler(req, res) {
     ok: true, emailNum,
     mode: sendMode ? (cronMode ? 'CRON-SEND' : 'SEND') : 'DRY-RUN',
     from: FROM, stats,
+    ...guard.report(),
     ...(sendMode ? { results } : { samples }),
     runtimeMs: Date.now() - startedAt,
   });

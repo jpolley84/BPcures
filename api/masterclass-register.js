@@ -32,6 +32,14 @@
 import { looksLikeValidEmail } from './_email-validation.js';
 import { registerMasterclass } from './_masterclass-enroll.js';
 
+// 2026-10-21: the consent line in the confirmation footer must describe what
+// the person actually did. Keyed on the source label this server recognizes;
+// a body-supplied provenance is never read (see _masterclass-enroll.js). Any
+// other source keeps the default wording for the /masterclass form.
+const PROVENANCE_BY_SOURCE = {
+  'kit-oto': 'you saved a free seat right after your BP kit order at bpquiz.com',
+};
+
 async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) return req.body;
   if (req.body && typeof req.body === 'string') {
@@ -79,6 +87,7 @@ async function handleRegister(req, res) {
     phone: body.phone,
     source: body.source,
     utm: body.utm,
+    provenance: PROVENANCE_BY_SOURCE[String(body.source || '')],
     sendConfirmation: true,
   });
 

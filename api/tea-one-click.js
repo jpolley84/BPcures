@@ -1,5 +1,6 @@
 // api/tea-one-click.js — true one-click upsell charge for SVUTU Steady tea,
-// billed to the saved card from the buyer's $17/$47 kit purchase.
+// billed to the saved card from the buyer's $17 kit purchase. (The $47 kit
+// was killed 2026-10-21; /oto now leads with this tea.)
 //
 // Unlike the digital kit upsells (api/charge-saved-card.js), tea is a
 // physical product and the kit checkout never collects a shipping address
@@ -211,6 +212,27 @@ export default async function handler(req, res) {
       error: 'no_saved_card',
       message: 'This session has no saved payment method. Use fallback.',
     });
+  }
+
+  // 2026-10-21: 100 g stock cap, the same KV counter create-embedded-checkout.js
+  // refuses on (middleware.js routes /tea on it). recordTeaSale below
+  // decrements tea:legacy100:left for every non-Shopify Steady sale, so
+  // charging past zero would sell pouches that are not on the shelf. Sits
+  // AFTER the idempotency check so a double-click on an already-charged
+  // session still gets its cached ok. Satin is a Shopify product and never
+  // touches this counter. Clients: TeaOneClickOffer flips to the 150 g bag
+  // on 410.
+  if ((tierConfig.blend || 'steady') === 'steady') {
+    try {
+      const left = parseInt(await kv.get('tea:legacy100:left'), 10) || 0;
+      const need = Math.max(tierConfig.qty || 1, tierConfig.amount >= 10000 ? 3 : 1);
+      if (left < need) {
+        return res.status(410).json({ error: 'sold_out', message: 'This bag size is sold out. Our 150 g Steady is available at hormoneteas.com/products/steady.' });
+      }
+    } catch (err) {
+      console.error('tea-one-click: 100g stock read failed, refusing', err.message);
+      return res.status(503).json({ error: 'stock_unavailable', message: 'Checkout is not available right now.' });
+    }
   }
 
   // Create the off_session PaymentIntent. confirm:true charges immediately.

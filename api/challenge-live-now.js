@@ -16,6 +16,7 @@
 import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { excludeNeverSend } from './_never_send.js';
 import { ZOOM_MAIN, assertLiveRoom } from '../scripts/_zoom-rooms.mjs';
 
 const FROM = 'Joel Polley, RN <joel@bpquiz.com>';
@@ -150,12 +151,21 @@ export default async function handler(req, res) {
   }
   if (!night) return res.status(200).json({ skipped: 'no copy for this date', centralTime: ct, sent: 0 });
 
-  const { people, registered, optedOut } = await audience();
+  const { people: registrants, registered, optedOut } = await audience();
+  // Never-send guard (2026-10-07): subtracts the Accelerator roster,
+  // bwbp:allin:*, Stripe coaching payers, bwbp:neversend, and Resend
+  // unsubscribes. Fails closed: if the list cannot be built, nothing sends.
+  let people, excludedCount, excludedSample;
+  try {
+    ({ kept: people, excludedCount, excludedSample } = await excludeNeverSend(registrants));
+  } catch (err) {
+    return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message });
+  }
 
   if (!send) {
     return res.status(200).json({
       dryRun: true, centralTime: ct, onSchedule,
-      registered, optedOut, wouldSend: people.length,
+      registered, optedOut, excludedCount, excludedSample, wouldSend: people.length,
       subject: night.subject,
       sample: night.lines(people[0] ? people[0].first : 'Friend'),
     });
@@ -184,5 +194,5 @@ export default async function handler(req, res) {
       failed.push({ email: person.email, error: String(err && err.message ? err.message : err) });
     }
   }
-  return res.status(200).json({ sent, failed: failed.length, failures: failed.slice(0, 10), total: people.length, date: ct.date });
+  return res.status(200).json({ sent, failed: failed.length, failures: failed.slice(0, 10), total: people.length, excludedCount, excludedSample, date: ct.date });
 }

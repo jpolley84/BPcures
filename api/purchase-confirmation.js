@@ -193,15 +193,17 @@ export const TIER_CONFIG = {
     ],
     includesCoaching: false,
     includesChallenge: true,
-    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
-    upgradeLabel: 'Upgrade to The BP Reset Kit ($47), the complete clinical system',
-    upgradeDesc: 'You have the starter and the bonus library. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
-    upgradeCta: 'Upgrade to BP Reset Kit ($47) →',
+    // 2026-10-21 (Joel): the $47 BP Reset Kit is KILLED. Next step is the tea,
+    // the same block the $17 kit emails carry.
+    upgradeUrl: 'https://bpquiz.com/tea',
+    upgradeLabel: 'Your next step: SVUTU Steady, the tea we drink',
+    upgradeDesc: 'You have the kit. This is the part that happens every night. SVUTU Steady is the tea Joel and Annie actually reach for when the day is over and the pressure of it is still sitting in their chest. Caffeine free, no animal products, nothing artificial. It is the one thing readers write back about most. Education only, alongside your doctor.',
+    upgradeCta: 'See the tea →',
   },
   // 2026-05-20: BP Cures ebook upsell ($12.99 post-purchase, between Kit
   // and Reset Kit). Standalone deliverable — full 10-day reset PDF with
   // master protocol + herbs + checklists. Buyer already owns the Kit so
-  // upgradeUrl points to Reset Kit (the natural next rung).
+  // upgradeUrl pointed to the Reset Kit; since 2026-10-21 it is the tea.
   // 2026-06-09 compliance: "Cures" is banned in visible copy — product +
   // subject renamed to the Companion framing. File path unchanged.
   'bp-cure-book': {
@@ -210,10 +212,12 @@ export const TIER_CONFIG = {
     downloads: [DOWNLOADS.bp_cures_book],
     includesCoaching: false,
     includesChallenge: false,
-    upgradeUrl: 'https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k',
-    upgradeLabel: 'Add The BP Reset Kit ($47), the 8-PDF clinical stack',
-    upgradeDesc: 'You now have the master document. The full BP Reset Kit adds Joel\'s 8-PDF clinical kit (hypertension guide, supplement protocol, meal plan, BP tracker, doctor templates, quick-start, cheat sheet). One-time price.',
-    upgradeCta: 'Add the BP Reset Kit ($47) →',
+    // 2026-10-21 (Joel): the $47 BP Reset Kit is KILLED. Next step is the tea,
+    // the same block the $17 kit emails carry.
+    upgradeUrl: 'https://bpquiz.com/tea',
+    upgradeLabel: 'Your next step: SVUTU Steady, the tea we drink',
+    upgradeDesc: 'You have the kit. This is the part that happens every night. SVUTU Steady is the tea Joel and Annie actually reach for when the day is over and the pressure of it is still sitting in their chest. Caffeine free, no animal products, nothing artificial. It is the one thing readers write back about most. Education only, alongside your doctor.',
+    upgradeCta: 'See the tea →',
   },
   2: {
     product: 'The BP Reset Kit',

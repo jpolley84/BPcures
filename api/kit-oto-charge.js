@@ -51,6 +51,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid session_id' });
   }
 
+  // 2026-10-21 (Joel): the complete-kit upgrade is KILLED along with the $47
+  // kit. The $17 kit already delivers the complete kit (api/_kit-manifest.js
+  // normalizeTier, 2026-08-29), so this would bill $27 for files the buyer
+  // already owns. No UI has called it since /oto was rebuilt; this closes the
+  // API side for cached tabs and replays. Flip to true only after undoing the
+  // entitlement change in _kit-manifest.js, or there is nothing to sell.
+  const UPGRADE_LIVE = false;
+  if (!UPGRADE_LIVE) {
+    return res.status(410).json({ error: 'retired', message: 'This upgrade is no longer sold. Your kit already includes everything.' });
+  }
+
   // Idempotency: one OTO charge per originating session, ever.
   const idemKey = `kit-oto:${session_id}`;
   try {

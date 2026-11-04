@@ -634,7 +634,7 @@ function renderHtml(data) {
       </td></tr>
 
       <tr><td style="padding:20px 28px 0;">
-        <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin:0 0 10px;color:#2C3E50;">🩹 Case-Review SLA ($297)</h2>
+        <h2 style="font-family:Georgia,serif;font-size:20px;font-weight:500;margin:0 0 10px;color:#2C3E50;">🩹 Case-Review SLA</h2>
         ${caseReviewBlock}
       </td></tr>
 

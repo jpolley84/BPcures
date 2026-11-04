@@ -33,6 +33,7 @@ import { kv } from '@vercel/kv';
 import { Resend } from './_resend.js';
 import { signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js';
 import { isAuthorizedCron } from './_cron-auth.js';
+import { neverSendGuard } from './_never_send.js';
 
 const REGISTER_URL = 'https://bpquiz.com/masterclass/v3/';
 const CRON_FIRE_DATE = '2026-09-14';
@@ -266,7 +267,13 @@ export default async function handler(req, res) {
   }
 
   const startedAt = Date.now();
-  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, coachingClient: 0, noEmail: 0, duplicate: 0, invalidEmail: 0, dupSuppressed: 0 };
+  // Never-send guard (2026-10-07): Accelerator roster + bwbp:allin:* + Stripe
+  // coaching payers + bwbp:neversend + Resend unsubscribes, built fresh per run.
+  // Fails closed: if the list cannot be built, nothing sends.
+  let guard;
+  try { guard = await neverSendGuard(); }
+  catch (err) { return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message }); }
+  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, neverSend: 0, coachingClient: 0, noEmail: 0, duplicate: 0, invalidEmail: 0, dupSuppressed: 0 };
   const seen = new Set();
   const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
   const samples = [];
@@ -291,6 +298,7 @@ export default async function handler(req, res) {
     if (!rec || !rec.email) { stats.noEmail++; continue; }
     if (rec.unsubscribed) { stats.unsub++; continue; }
     if (rec.paused) { stats.paused++; continue; }
+    if (guard.blocks(rec.email)) { stats.neverSend++; continue; }
     if (rec.state === 'tier-4') { stats.coachingClient++; continue; } // current coaching clients — excluded per Joel
 
     const emailKey = String(rec.email).toLowerCase().trim();
@@ -347,6 +355,7 @@ export default async function handler(req, res) {
     mode: sendMode ? (cronMode ? 'CRON-SEND' : 'SEND') : 'DRY-RUN',
     from: FROM,
     stats,
+    ...guard.report(),
     ...(sendMode ? { results } : { samples }),
     runtimeMs: Date.now() - startedAt,
   });

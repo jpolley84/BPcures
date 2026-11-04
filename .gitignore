@@ -41,3 +41,7 @@ tmp/
 bpquiz_full_sweep_*.pdf
 build_report.py
 .env.vercel-prod
+
+# Stray email template that would otherwise publish at
+# bpquiz.com/cmlc-e5.html on a CLI deploy. Marketing copy, not a page.
+cmlc-e5.html

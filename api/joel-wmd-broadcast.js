@@ -1,0 +1,640 @@
+// api/joel-heart-month-broadcast.js - October heart-health opener, Joel's list.
+//
+// One email, no offer and no lead magnet, on Joel's explicit instruction
+// 2026-10-04: the whole ask is a one-letter reply (A/B/C/D) that decides what
+// he teaches first. A link would compete with the vote, and a pure reply-ask
+// lifts deliverability for everything sent after it.
+//
+// Audience: drip:* + bwbp:drip:* minus unsubscribed, paused, and current
+// coaching clients (state === 'tier-4'). Joel confirmed clients are excluded.
+//
+// Cloned from api/joel-masterclass-broadcast.js. Everything below the EMAILS
+// block is that file byte for byte, because that scan/resume/cron-guard code
+// moved 10,999 emails with zero failures on 2026-09-14. Only the constants
+// and the copy changed.
+//
+// Scheduled: 2026-10-05 08:00 America/New_York = 12:00 UTC.
+
+import { kv } from '@vercel/kv';
+import { Resend } from './_resend.js';
+import { signUnsubToken, escapeHtml, FROM, REPLY } from './_cohort-broadcast.js';
+import { isAuthorizedCron } from './_cron-auth.js';
+import { neverSendGuard } from './_never_send.js';
+
+const REGISTER_URL = 'https://bpquiz.com/masterclass/v3/';
+// ARMED 2026-10-05 on Joel's go after he read both dry runs.
+// Guard compares this to today's date in America/Chicago. Fires at
+// 12:00 UTC = 08:00 America/New_York = 07:00 America/Chicago, so the
+// date matches on every window in vercel.json and on no other day.
+// Per-email fire dates, America/Chicago. Option 1 schedule Joel
+// approved 2026-10-06: Fri 10-09 and Sat 10-10 are rest days, and
+// Day 6 + Day 7 both land on class day 10-12.
+
+const FIRE_DATES = { '1': '2026-10-15', '2': '2026-10-16', '3': '2026-10-18', '4': '2026-10-18', '5': '2026-10-18' };
+const CRON_FIRE_DATE = '2026-10-18';
+const RATE_LIMIT_MS = 70;
+const MAX_RUN_MS = 250 * 1000;
+const SENT_FLAG_PREFIX = 'joelWmdOct18'; // + emailNum, e.g. joelMcInvite1Sent
+const SENT_SET_PREFIX = 'joelwmd:sent:'; // + emailNum
+
+function unsubUrl(email) {
+  return `https://bpquiz.com/api/unsubscribe?token=${signUnsubToken(email)}`;
+}
+
+function disclaimerHtml(email) {
+  const safeUnsub = unsubUrl(email);
+  return `<p style="font-size:11px;color:#9A9A9A;line-height:1.5;margin:24px 0 0;">
+    BraveWorks RN &middot; Joel Polley, RN &middot; <a href="https://bpquiz.com" style="color:#9A9A9A;">bpquiz.com</a><br />
+    Educational content only. Not medical advice. Always complement &mdash; never replace &mdash; care from your physician.<br />
+    <a href="${safeUnsub}" style="color:#9A9A9A;">Unsubscribe</a> &middot; You're on the BraveWorks RN list at ${escapeHtml(email)}.
+  </p>`;
+}
+
+function disclaimerText(email) {
+  return `---
+BraveWorks RN · Joel Polley, RN · bpquiz.com
+Educational content only. Not medical advice. Always complement — never replace — care from your physician.
+Unsubscribe: ${unsubUrl(email)}
+You're on the BraveWorks RN list at ${email}.`;
+}
+
+function wrapHtml(bodyHtml, preheader, email) {
+  return `<!doctype html><html><body style="margin:0;padding:0;background:#FBF8F1;">
+<div style="display:none;max-height:0;overflow:hidden;">${escapeHtml(preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBF8F1;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:18px;border:1px solid rgba(0,0,0,0.06);"><tr><td style="padding:30px 28px;font-size:15px;line-height:1.65;color:#2C3E50;">
+${bodyHtml}
+${disclaimerHtml(email)}
+</td></tr></table>
+</td></tr></table>
+</body></html>`;
+}
+
+const EMAILS = {
+  1: {
+    subject: "Mommy, you're not a cow",
+    preheader: "Your body is changing. That does not mean your best days are behind you.",
+    html: (name, email) => wrapHtml(`<p>${escapeHtml(name)},</p><p>Years ago, I was standing in front of the mirror, pinching my belly.</p><p>And I said something about my body that I wish I could take back.</p><p>"I look like a cow."</p><p>I didn't realize my little girls were listening.</p><p>Until one of them looked up at me and said:</p><p>"Mommy, you're not a cow."</p><p>Girl.</p><p>That stopped me.</p><p>Because I realized my daughters were learning how to see their bodies by watching how I talked about mine.</p><p>And somewhere along the way, I had started treating every change in my body like something was wrong with ME.</p><p>The belly.</p><p>The skin.</p><p>The hair.</p><p>The woman looking back at me in the mirror.</p><p>Maybe you've had moments like that, too.</p><p>You remember how you used to look.</p><p>How you used to feel.</p><p>How much energy you used to have.</p><p>And you wonder where that woman went.</p><p>But here's something I want you to remember.</p><p>Your body is changing. That doesn't mean your best days are behind you.</p><p>And your symptoms are not your identity.</p><p>You're still the woman with dreams to fulfill, people to love, places to go, and a purpose to live out.</p><p>Your body deserves your attention.</p><p>But it also deserves your kindness.</p><p>So here's something small I want you to do today.</p><p>Instead of listing everything you wish you could change about your body, write down three things you're grateful your body still allows you to DO.</p><p>Walk.</p><p>Hug your children.</p><p>Laugh.</p><p>Build.</p><p>Love.</p><p>Live.</p><p>Because we're not just working toward looking better.</p><p>We're working toward living better.</p><p>And that starts with loving the woman you're in.</p><p>I'm cheering for you, girl!</p><p>Everyday Nurse Annie</p><p>P.S. You don't have to become the woman you were at 25. There's still a beautiful, powerful woman to become right where you are.</p>`, "Your body is changing. That does not mean your best days are behind you.", email),
+    text: (name, email) => `${name},
+
+Years ago, I was standing in front of the mirror, pinching my belly.
+
+And I said something about my body that I wish I could take back.
+
+"I look like a cow."
+
+I didn't realize my little girls were listening.
+
+Until one of them looked up at me and said:
+
+"Mommy, you're not a cow."
+
+Girl.
+
+That stopped me.
+
+Because I realized my daughters were learning how to see their bodies by watching how I talked about mine.
+
+And somewhere along the way, I had started treating every change in my body like something was wrong with ME.
+
+The belly.
+
+The skin.
+
+The hair.
+
+The woman looking back at me in the mirror.
+
+Maybe you've had moments like that, too.
+
+You remember how you used to look.
+
+How you used to feel.
+
+How much energy you used to have.
+
+And you wonder where that woman went.
+
+But here's something I want you to remember.
+
+Your body is changing. That doesn't mean your best days are behind you.
+
+And your symptoms are not your identity.
+
+You're still the woman with dreams to fulfill, people to love, places to go, and a purpose to live out.
+
+Your body deserves your attention.
+
+But it also deserves your kindness.
+
+So here's something small I want you to do today.
+
+Instead of listing everything you wish you could change about your body, write down three things you're grateful your body still allows you to DO.
+
+Walk.
+
+Hug your children.
+
+Laugh.
+
+Build.
+
+Love.
+
+Live.
+
+Because we're not just working toward looking better.
+
+We're working toward living better.
+
+And that starts with loving the woman you're in.
+
+I'm cheering for you, girl!
+
+Everyday Nurse Annie
+
+P.S. You don't have to become the woman you were at 25. There's still a beautiful, powerful woman to become right where you are.
+
+${disclaimerText(email)}`,
+  },
+  2: {
+    subject: "Sunday is World Menopause Day, and we are doing something special",
+    preheader: "A free live class on what menopause may be doing to your blood pressure.",
+    html: (name, email) => wrapHtml(`<p>${escapeHtml(name)},</p><p>When women talk about menopause, what usually comes up first?</p><p>Hot flashes.</p><p>Belly fat.</p><p>Mood swings.</p><p>Thinning hair.</p><p>And that annoying thing where you wake up at 3 AM for absolutely no reason.</p><p>But there's something we don't talk about nearly enough.</p><p>What menopause may be doing to your HEART.</p><p>And your blood pressure.</p><p>And your blood sugar.</p><p>And the way your body handles stress.</p><p>You see, the hormone changes happening after 40 don't necessarily stay in one little corner of your body.</p><p>They can affect systems you may not even realize are connected.</p><p>And here's the surprising part.</p><p>You could be so busy fighting the belly fat, chin hair, and sleepless nights that you haven't even noticed your blood pressure beginning to change.</p><p>That's why this Sunday is special.</p><p>Sunday, October 18, is World Menopause Day.</p><p>And my husband Joel and I are doing a special FREE live masterclass.</p><p>YOUR BODY CHANGED THE RULES</p><p>What Menopause May Be Doing to Your Blood Pressure</p><p>We're going to connect the dots between your hormones, your heart, your metabolism, and the symptoms you've been trying to figure out.</p><p>And we're going to help you understand what deserves your attention FIRST.</p><table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0;border:2px solid #DB4E2E;border-radius:12px;border-collapse:separate;overflow:hidden;"><tr><td colspan="2" style="background:#DB4E2E;color:#fff;padding:10px 14px;font-weight:800;letter-spacing:.06em;font-size:13px;">WHEN AND WHERE</td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;width:104px;">When</td><td style="padding:9px 14px;font-size:16px;"><strong>Sunday, October 18</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Time</td><td style="padding:9px 14px;font-size:16px;"><strong>6:00 PM Central &middot; 7:00 PM Eastern</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Where</td><td style="padding:9px 14px;font-size:16px;"><strong>Live on Zoom</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Meeting ID</td><td style="padding:9px 14px;font-size:16px;"><strong>828 5171 5003</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Passcode</td><td style="padding:9px 14px;font-size:16px;"><strong>027302</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Replay</td><td style="padding:9px 14px;font-size:16px;"><strong>None</strong></td></tr></table><p>BUT THAT'S NOT ALL.</p><p>We've been putting together something special for the women who join us LIVE this Sunday.</p><p>And girl, I'm so excited about this one.</p><p>I'm not going to tell you what it is just yet.</p><p>But I WILL tell you this.</p><p>It's something I want every woman navigating menopause to have access to.</p><p>We've been working on something that will help you take what you're learning about your changing body and put that knowledge to good use.</p><p>And we're giving it to you as our gift for showing up and investing time in your health.</p><p>No purchase necessary.</p><p>Just come live.</p><p>FREE MASTERCLASS. SPECIAL SURPRISE GIFT. NO REPLAY.</p><p style="text-align:center;margin:26px 0;"><a href="https://bpquiz.com/masterclass/v3/" style="display:inline-block;background:#DB4E2E;color:#fff;text-decoration:none;font-weight:800;padding:16px 32px;border-radius:999px;font-size:17px;">YES! SAVE MY WORLD MENOPAUSE DAY SEAT &rarr;</a></p><p>You may not have come from a healthy family.</p><p>But a healthy family can come from you.</p><p>Let's start changing that story.</p><p>Love The Girl You're In,</p><p>Everyday Nurse Annie</p><p>P.S. Your symptoms and your numbers are not ten separate failures. They're clues worth understanding. Come Sunday and let us help you put the pieces together. And yes, we're keeping your gift a surprise until the masterclass.</p>`, "A free live class on what menopause may be doing to your blood pressure.", email),
+    text: (name, email) => `${name},
+
+When women talk about menopause, what usually comes up first?
+
+Hot flashes.
+
+Belly fat.
+
+Mood swings.
+
+Thinning hair.
+
+And that annoying thing where you wake up at 3 AM for absolutely no reason.
+
+But there's something we don't talk about nearly enough.
+
+What menopause may be doing to your HEART.
+
+And your blood pressure.
+
+And your blood sugar.
+
+And the way your body handles stress.
+
+You see, the hormone changes happening after 40 don't necessarily stay in one little corner of your body.
+
+They can affect systems you may not even realize are connected.
+
+And here's the surprising part.
+
+You could be so busy fighting the belly fat, chin hair, and sleepless nights that you haven't even noticed your blood pressure beginning to change.
+
+That's why this Sunday is special.
+
+Sunday, October 18, is World Menopause Day.
+
+And my husband Joel and I are doing a special FREE live masterclass.
+
+YOUR BODY CHANGED THE RULES
+
+What Menopause May Be Doing to Your Blood Pressure
+
+We're going to connect the dots between your hormones, your heart, your metabolism, and the symptoms you've been trying to figure out.
+
+And we're going to help you understand what deserves your attention FIRST.
+
+WHEN AND WHERE
+When:       Sunday, October 18
+Time:       6:00 PM Central / 7:00 PM Eastern
+Where:      Live on Zoom
+Meeting ID: 828 5171 5003
+Passcode:   027302
+Replay:     None
+
+BUT THAT'S NOT ALL.
+
+We've been putting together something special for the women who join us LIVE this Sunday.
+
+And girl, I'm so excited about this one.
+
+I'm not going to tell you what it is just yet.
+
+But I WILL tell you this.
+
+It's something I want every woman navigating menopause to have access to.
+
+We've been working on something that will help you take what you're learning about your changing body and put that knowledge to good use.
+
+And we're giving it to you as our gift for showing up and investing time in your health.
+
+No purchase necessary.
+
+Just come live.
+
+FREE MASTERCLASS. SPECIAL SURPRISE GIFT. NO REPLAY.
+
+SAVE YOUR SEAT: https://bpquiz.com/masterclass/v3/
+
+You may not have come from a healthy family.
+
+But a healthy family can come from you.
+
+Let's start changing that story.
+
+Love The Girl You're In,
+
+Everyday Nurse Annie
+
+P.S. Your symptoms and your numbers are not ten separate failures. They're clues worth understanding. Come Sunday and let us help you put the pieces together. And yes, we're keeping your gift a surprise until the masterclass.
+
+${disclaimerText(email)}`,
+  },
+  3: {
+    subject: "Happy World Menopause Day. Tonight we connect the dots.",
+    preheader: "Tonight, 6:00 PM Central. Free, live, and there is no replay.",
+    html: (name, email) => wrapHtml(`<p>${escapeHtml(name)},</p><p>Happy World Menopause Day.</p><p>Today, I want to celebrate YOU.</p><p>The woman who has raised children.</p><p>Built a career.</p><p>Supported a family.</p><p>Started businesses.</p><p>Survived things nobody else even knows about.</p><p>And still has so much life ahead of her.</p><p>But I want to ask you something.</p><p>When was the last time you took your changing health as seriously as you take everyone else's needs?</p><p>Because here's something many women don't realize.</p><p>As we move through menopause, changes in estrogen, sleep, body composition, and metabolism can influence our cardiovascular health.</p><p>That means your hormones and your blood pressure deserve to be part of the SAME conversation.</p><p>Not two separate conversations.</p><p>And tonight, we're having that conversation.</p><p>OUR FREE WORLD MENOPAUSE DAY MASTERCLASS</p><p>Your Body Changed the Rules: What Menopause May Be Doing to Your Blood Pressure.</p><p>Joel and I are going to show you how to look at the bigger picture.</p><p>Why the things you've been trying may not be giving you the results you want.</p><p>And what you can begin doing about it.</p><p>Because what if you don't need to do MORE things?</p><p>What if you simply need to do the RIGHT things in the RIGHT ORDER?</p><p>That's the conversation we're having tonight.</p><p>And remember that special surprise I mentioned Friday?</p><p>I'm STILL not telling.</p><p>But we've prepared a gift for the women who join us live.</p><p>Something special to help you on your journey toward better health.</p><p>And we can't wait to share it with you.</p><table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0;border:2px solid #DB4E2E;border-radius:12px;border-collapse:separate;overflow:hidden;"><tr><td colspan="2" style="background:#DB4E2E;color:#fff;padding:10px 14px;font-weight:800;letter-spacing:.06em;font-size:13px;">WHEN AND WHERE</td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;width:104px;">When</td><td style="padding:9px 14px;font-size:16px;"><strong>Sunday, October 18</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Time</td><td style="padding:9px 14px;font-size:16px;"><strong>6:00 PM Central &middot; 7:00 PM Eastern</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Where</td><td style="padding:9px 14px;font-size:16px;"><strong>Live on Zoom</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Meeting ID</td><td style="padding:9px 14px;font-size:16px;"><strong>828 5171 5003</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Passcode</td><td style="padding:9px 14px;font-size:16px;"><strong>027302</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Replay</td><td style="padding:9px 14px;font-size:16px;"><strong>None</strong></td></tr></table><p style="text-align:center;margin:26px 0;"><a href="https://bpquiz.com/masterclass/v3/" style="display:inline-block;background:#DB4E2E;color:#fff;text-decoration:none;font-weight:800;padding:16px 32px;border-radius:999px;font-size:17px;">YES! SAVE MY FREE SEAT FOR TONIGHT &rarr;</a></p><p>Please bring something to write with.</p><p>Because this isn't just a presentation about menopause.</p><p>It's a conversation about the rest of your life.</p><p>The trips you still want to take.</p><p>The business you still want to build.</p><p>The grandchildren you still want to play with.</p><p>The woman you still want to become.</p><p>Your numbers are information.</p><p>They're not your identity.</p><p>And your changing body doesn't mean your best days are behind you.</p><p>Take Charge of Your Health. I'm Cheering for You!</p><p>Everyday Nurse Annie & Joel</p><p>P.S. We're also going to share an opportunity to continue working with us beginning Monday. We don't know when our next live challenge will be, so if you've been waiting to take that step, you'll want to hear what we have planned.</p>`, "Tonight, 6:00 PM Central. Free, live, and there is no replay.", email),
+    text: (name, email) => `${name},
+
+Happy World Menopause Day.
+
+Today, I want to celebrate YOU.
+
+The woman who has raised children.
+
+Built a career.
+
+Supported a family.
+
+Started businesses.
+
+Survived things nobody else even knows about.
+
+And still has so much life ahead of her.
+
+But I want to ask you something.
+
+When was the last time you took your changing health as seriously as you take everyone else's needs?
+
+Because here's something many women don't realize.
+
+As we move through menopause, changes in estrogen, sleep, body composition, and metabolism can influence our cardiovascular health.
+
+That means your hormones and your blood pressure deserve to be part of the SAME conversation.
+
+Not two separate conversations.
+
+And tonight, we're having that conversation.
+
+OUR FREE WORLD MENOPAUSE DAY MASTERCLASS
+
+Your Body Changed the Rules: What Menopause May Be Doing to Your Blood Pressure.
+
+Joel and I are going to show you how to look at the bigger picture.
+
+Why the things you've been trying may not be giving you the results you want.
+
+And what you can begin doing about it.
+
+Because what if you don't need to do MORE things?
+
+What if you simply need to do the RIGHT things in the RIGHT ORDER?
+
+That's the conversation we're having tonight.
+
+And remember that special surprise I mentioned Friday?
+
+I'm STILL not telling.
+
+But we've prepared a gift for the women who join us live.
+
+Something special to help you on your journey toward better health.
+
+And we can't wait to share it with you.
+
+WHEN AND WHERE
+When:       Sunday, October 18
+Time:       6:00 PM Central / 7:00 PM Eastern
+Where:      Live on Zoom
+Meeting ID: 828 5171 5003
+Passcode:   027302
+Replay:     None
+
+SAVE YOUR SEAT: https://bpquiz.com/masterclass/v3/
+
+Please bring something to write with.
+
+Because this isn't just a presentation about menopause.
+
+It's a conversation about the rest of your life.
+
+The trips you still want to take.
+
+The business you still want to build.
+
+The grandchildren you still want to play with.
+
+The woman you still want to become.
+
+Your numbers are information.
+
+They're not your identity.
+
+And your changing body doesn't mean your best days are behind you.
+
+Take Charge of Your Health. I'm Cheering for You!
+
+Everyday Nurse Annie & Joel
+
+P.S. We're also going to share an opportunity to continue working with us beginning Monday. We don't know when our next live challenge will be, so if you've been waiting to take that step, you'll want to hear what we have planned.
+
+${disclaimerText(email)}`,
+  },
+  4: {
+    subject: "One hour away",
+    preheader: "We start at 6:00 PM Central. Bring a notebook.",
+    html: (name, email) => wrapHtml(`<p>${escapeHtml(name)},</p><p>We're just ONE HOUR away.</p><p>Our special World Menopause Day masterclass begins shortly.</p><p>And girl, I don't want you to miss this.</p><p>We're connecting the dots between menopause, your blood pressure, your hormones, your heart, and the changes happening in your body.</p><p>Plus, remember that special gift I promised you?</p><p>We're finally revealing it tonight.</p><p>Here's all you need to do:</p><p>Grab your notebook.</p><p>Find a comfortable place.</p><p>Bring your questions.</p><p>And show up exactly as you are.</p><table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0;border:2px solid #DB4E2E;border-radius:12px;border-collapse:separate;overflow:hidden;"><tr><td colspan="2" style="background:#DB4E2E;color:#fff;padding:10px 14px;font-weight:800;letter-spacing:.06em;font-size:13px;">WHEN AND WHERE</td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;width:104px;">When</td><td style="padding:9px 14px;font-size:16px;"><strong>Sunday, October 18</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Time</td><td style="padding:9px 14px;font-size:16px;"><strong>6:00 PM Central &middot; 7:00 PM Eastern</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Where</td><td style="padding:9px 14px;font-size:16px;"><strong>Live on Zoom</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Meeting ID</td><td style="padding:9px 14px;font-size:16px;"><strong>828 5171 5003</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Passcode</td><td style="padding:9px 14px;font-size:16px;"><strong>027302</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Replay</td><td style="padding:9px 14px;font-size:16px;"><strong>None</strong></td></tr></table><p style="text-align:center;margin:26px 0;"><a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="display:inline-block;background:#DB4E2E;color:#fff;text-decoration:none;font-weight:800;padding:16px 32px;border-radius:999px;font-size:17px;">JOIN THE LIVE MASTERCLASS &rarr;</a></p><p>We start at 6:00 PM Central, 7:00 PM Eastern.</p><p>And please don't plan on catching a replay tomorrow.</p><p>There won't be one.</p><p>See you soon.</p><p>Everyday Nurse Annie & Joel</p><p>P.S. You don't have to have your health figured out before coming. That's exactly why we're having this class.</p>`, "We start at 6:00 PM Central. Bring a notebook.", email),
+    text: (name, email) => `${name},
+
+We're just ONE HOUR away.
+
+Our special World Menopause Day masterclass begins shortly.
+
+And girl, I don't want you to miss this.
+
+We're connecting the dots between menopause, your blood pressure, your hormones, your heart, and the changes happening in your body.
+
+Plus, remember that special gift I promised you?
+
+We're finally revealing it tonight.
+
+Here's all you need to do:
+
+Grab your notebook.
+
+Find a comfortable place.
+
+Bring your questions.
+
+And show up exactly as you are.
+
+WHEN AND WHERE
+When:       Sunday, October 18
+Time:       6:00 PM Central / 7:00 PM Eastern
+Where:      Live on Zoom
+Meeting ID: 828 5171 5003
+Passcode:   027302
+Replay:     None
+
+JOIN ON ZOOM: https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1
+
+We start at 6:00 PM Central, 7:00 PM Eastern.
+
+And please don't plan on catching a replay tomorrow.
+
+There won't be one.
+
+See you soon.
+
+Everyday Nurse Annie & Joel
+
+P.S. You don't have to have your health figured out before coming. That's exactly why we're having this class.
+
+${disclaimerText(email)}`,
+  },
+  5: {
+    subject: "We are live right now",
+    preheader: "The room is open. Come as you are.",
+    html: (name, email) => wrapHtml(`<p>${escapeHtml(name)},</p><p>WE'RE LIVE RIGHT NOW.</p><p>Our special World Menopause Day masterclass has started.</p><p>We're talking about the connection between your changing hormones, your blood pressure, and the health you want for the years ahead.</p><p>And yes, we're revealing your surprise gift during the presentation.</p><table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0;border:2px solid #DB4E2E;border-radius:12px;border-collapse:separate;overflow:hidden;"><tr><td colspan="2" style="background:#DB4E2E;color:#fff;padding:10px 14px;font-weight:800;letter-spacing:.06em;font-size:13px;">WHEN AND WHERE</td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;width:104px;">When</td><td style="padding:9px 14px;font-size:16px;"><strong>Sunday, October 18</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Time</td><td style="padding:9px 14px;font-size:16px;"><strong>6:00 PM Central &middot; 7:00 PM Eastern</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Where</td><td style="padding:9px 14px;font-size:16px;"><strong>Live on Zoom</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Meeting ID</td><td style="padding:9px 14px;font-size:16px;"><strong>828 5171 5003</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Passcode</td><td style="padding:9px 14px;font-size:16px;"><strong>027302</strong></td></tr><tr><td style="padding:9px 14px;color:#6b6b6b;font-size:14px;">Replay</td><td style="padding:9px 14px;font-size:16px;"><strong>None</strong></td></tr></table><p style="text-align:center;margin:26px 0;"><a href="https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1" style="display:inline-block;background:#DB4E2E;color:#fff;text-decoration:none;font-weight:800;padding:16px 32px;border-radius:999px;font-size:17px;">ENTER THE LIVE MASTERCLASS NOW &rarr;</a></p><p>If you're making dinner, come listen.</p><p>If you're just getting home, come anyway.</p><p>If you can only listen with your camera off, that's perfectly fine.</p><p>You don't have to be dressed up.</p><p>You don't need to have everything figured out.</p><p>You just need to be in the room.</p><p>Come on in.</p><p>Everyday Nurse Annie & Joel</p><p>P.S. No replay. No need to wait until you're perfectly ready. Just come as you are.</p>`, "The room is open. Come as you are.", email),
+    text: (name, email) => `${name},
+
+WE'RE LIVE RIGHT NOW.
+
+Our special World Menopause Day masterclass has started.
+
+We're talking about the connection between your changing hormones, your blood pressure, and the health you want for the years ahead.
+
+And yes, we're revealing your surprise gift during the presentation.
+
+WHEN AND WHERE
+When:       Sunday, October 18
+Time:       6:00 PM Central / 7:00 PM Eastern
+Where:      Live on Zoom
+Meeting ID: 828 5171 5003
+Passcode:   027302
+Replay:     None
+
+JOIN ON ZOOM: https://us06web.zoom.us/j/82851715003?pwd=lIUouxtODo0AbyAf9MV7fFYtr1XKwL.1
+
+If you're making dinner, come listen.
+
+If you're just getting home, come anyway.
+
+If you can only listen with your camera off, that's perfectly fine.
+
+You don't have to be dressed up.
+
+You don't need to have everything figured out.
+
+You just need to be in the room.
+
+Come on in.
+
+Everyday Nurse Annie & Joel
+
+P.S. No replay. No need to wait until you're perfectly ready. Just come as you are.
+
+${disclaimerText(email)}`,
+  },
+};
+let _resend = null;
+function getResend() {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY missing');
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+
+async function scanKeys(pattern) {
+  const keys = [];
+  let cursor = 0;
+  do {
+    const [next, batch] = await kv.scan(cursor, { match: pattern, count: 500 });
+    keys.push(...batch);
+    cursor = next;
+  } while (String(cursor) !== '0');
+  return keys;
+}
+
+
+// Current coaching clients never receive a bulk send. Do not rely on
+// state === 'tier-4' for this: an /allin purchase writes state:'buyer', so
+// the tier check silently matches nobody. On 2026-09-28 that is how 13
+// clients were emailed an offer for the program they were already paying
+// for. The bwbp:allin:* key space is the roster, and this load fails closed.
+async function loadCoachingClients() {
+  const emails = new Set();
+  let cursor = 0;
+  do {
+    const [next, batch] = await kv.scan(cursor, { match: 'bwbp:allin:*', count: 500 });
+    cursor = next;
+    for (const k of batch) {
+      if (k.startsWith('bwbp:allindone:')) continue;
+      emails.add(k.slice('bwbp:allin:'.length).trim().toLowerCase());
+    }
+  } while (String(cursor) !== '0');
+  if (!emails.size) throw new Error('coaching-client exclusion list came back empty; refusing to send');
+  return emails;
+}
+
+
+// Tonight's encore adds two exclusions the heart runway did not have:
+// the challenge waitlist (they get their own $97 VIP sequence) and anyone
+// who typed their email into last night's Zoom chat. Both were loaded into
+// KV from Joel's local files, because a serverless function cannot read
+// his Zoom recording folder.
+async function challengeBuyers() {
+  // Suppress anyone who already bought the Oct 19 challenge. Both seat
+  // types. Empty is allowed here (unlike the coaching roster) because a
+  // zero-buyer state is legitimate before a cohort sells.
+  const out = new Set();
+  for (const key of ['challenge:2026-10-19:vip', 'challenge:2026-10-19:ga']) {
+    try {
+      const members = await kv.smembers(key);
+      for (const m of members || []) out.add(String(m).trim().toLowerCase());
+    } catch { /* non-fatal */ }
+  }
+  return out;
+}
+
+export default async function handler(req, res) {
+  if (!isAuthorizedCron(req)) {
+    return res.status(401).json({ error: 'unauthorized' });
+  }
+
+  const emailNum = Number(req.query?.email);
+  if (![1, 2, 3, 4, 5].includes(emailNum)) {
+    return res.status(400).json({ error: 'pass ?email=1..5' });
+  }
+  const template = EMAILS[emailNum];
+  const SENT_FLAG = `${SENT_FLAG_PREFIX}${emailNum}Sent`;
+  const SENT_SET = `${SENT_SET_PREFIX}${emailNum}`;
+
+  const cronMode = req.query?.cron === '1';
+  if (cronMode) {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const fireDate = FIRE_DATES[String(emailNum)] || CRON_FIRE_DATE;
+    if (today !== fireDate) return res.status(200).json({ ok: true, skipped: 'cron date guard', today, fireDate, emailNum });
+  }
+  const manualSend =
+    req.query?.mode === 'send' && req.headers['x-confirm'] === `SEND-WMD-${emailNum}`;
+  const sendMode = cronMode || manualSend;
+
+  let allKeys = [];
+  try {
+    allKeys = [...(await scanKeys('drip:*')), ...(await scanKeys('bwbp:drip:*'))];
+  } catch (err) {
+    return res.status(500).json({ error: 'kv scan failed', detail: err.message });
+  }
+
+  const startedAt = Date.now();
+  const coachingClients = await loadCoachingClients();
+  const encoreSkip = await challengeBuyers();
+  // Never-send guard (2026-10-07): Accelerator roster + bwbp:allin:* + Stripe
+  // coaching payers + bwbp:neversend + Resend unsubscribes, built fresh per run.
+  // Fails closed: if the list cannot be built, nothing sends.
+  let guard;
+  try { guard = await neverSendGuard(); }
+  catch (err) { return res.status(500).json({ error: 'never-send list unavailable; refusing to send', detail: err.message }); }
+  const stats = { total: 0, eligible: 0, alreadySent: 0, unsub: 0, paused: 0, neverSend: 0, coachingClient: 0, noEmail: 0, duplicate: 0, invalidEmail: 0, dupSuppressed: 0 };
+  const seen = new Set();
+  const results = { sent: 0, failed: 0, errors: [], bailedOnTimeout: false };
+  const samples = [];
+  const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+  const resend = sendMode ? getResend() : null;
+
+  // Read records in mget batches (one KV round trip per 500 keys) instead of
+  // one kv.get per key — per-key reads capped a 250s fire at ~1,300 sends.
+  const CHUNK = 500;
+  outer:
+  for (let ci = 0; ci < allKeys.length; ci += CHUNK) {
+    const keyChunk = allKeys.slice(ci, ci + CHUNK);
+    let recs;
+    try { recs = await kv.mget(...keyChunk); } catch { continue; }
+    for (let ri = 0; ri < keyChunk.length; ri++) {
+    const k = keyChunk[ri];
+    const rec = recs[ri];
+    stats.total++;
+    if (sendMode && Date.now() - startedAt > MAX_RUN_MS) { results.bailedOnTimeout = true; break outer; }
+
+    if (!rec || !rec.email) { stats.noEmail++; continue; }
+    if (rec.unsubscribed) { stats.unsub++; continue; }
+    if (rec.paused) { stats.paused++; continue; }
+    if (guard.blocks(rec.email)) { stats.neverSend++; continue; }
+    if (rec.state === 'tier-4' || coachingClients.has(String(rec.email || '').trim().toLowerCase())) { stats.coachingClient++; continue; }
+    if (encoreSkip.has(String(rec.email || '').trim().toLowerCase())) { stats.encoreSkip = (stats.encoreSkip || 0) + 1; continue; }
+
+    const emailKey = String(rec.email).toLowerCase().trim();
+    if (rec[SENT_FLAG]) { stats.alreadySent++; continue; }
+    if (!EMAIL_RE.test(emailKey)) { stats.invalidEmail++; continue; }
+    if (seen.has(emailKey)) { stats.duplicate++; continue; }
+    seen.add(emailKey);
+
+    if (sendMode) {
+      let inSet = 0;
+      try { inSet = await kv.sismember(SENT_SET, emailKey); } catch { /* treat as not-sent */ }
+      if (inSet) {
+        stats.dupSuppressed++;
+        try { await kv.set(k, { ...rec, [SENT_FLAG]: true }); } catch { /* next fire re-checks */ }
+        continue;
+      }
+    }
+    stats.eligible++;
+
+    if (!sendMode) {
+      if (samples.length < 3) {
+        const name = (rec.firstName || '').trim() || 'there';
+        const subject = typeof template.subject === 'function' ? template.subject(name) : template.subject;
+        samples.push({ email: rec.email, firstName: rec.firstName || null, subject, text: template.text(name, rec.email) });
+      }
+      continue;
+    }
+
+    const name = (rec.firstName || '').trim() || 'there';
+    const subject = typeof template.subject === 'function' ? template.subject(name) : template.subject;
+    try {
+      await resend.emails.send({
+        from: FROM,
+        to: rec.email,
+        replyTo: REPLY,
+        subject,
+        html: template.html(name, rec.email),
+        text: template.text(name, rec.email),
+      });
+      results.sent++;
+      try { await kv.sadd(SENT_SET, emailKey); } catch (err) { console.warn('joelmc-blast: sadd failed', err.message); }
+      try { await kv.set(k, { ...rec, [SENT_FLAG]: true }); } catch (err) { console.warn('joelmc-blast: flag write failed', err.message); }
+    } catch (err) {
+      results.failed++;
+      if (results.errors.length < 10) results.errors.push({ email: rec.email, error: err.message });
+    }
+    await new Promise((r) => setTimeout(r, RATE_LIMIT_MS));
+    }
+  }
+
+  return res.status(200).json({
+    ok: true,
+    emailNum,
+    mode: sendMode ? (cronMode ? 'CRON-SEND' : 'SEND') : 'DRY-RUN',
+    from: FROM,
+    stats,
+    ...guard.report(),
+    ...(sendMode ? { results } : { samples }),
+    runtimeMs: Date.now() - startedAt,
+  });
+}

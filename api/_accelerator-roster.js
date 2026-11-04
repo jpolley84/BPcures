@@ -53,4 +53,10 @@ export const ACCELERATOR_ROSTER = [
   { first: 'Renea', email: 'rcrc2016@yahoo.com', note: 'Life Change Activated, joined 2026-10-27' },
   { first: 'Sandra', email: 'sandylhazzard@verizon.net', note: 'Life Change Activated, joined 2026-10-27; second Sandra on the roster' },
   { first: 'Odessa', email: 'o.carter716@gmail.com', note: 'Life Change Activated, paid 2026-10-26, intake 2026-10-27' },
+  // Added 2026-11-04 (Joel). Life Beyond the Cuff course buyer, $297 paid
+  // 2026-10-30. Her purchase owes her four Wednesday 11:00 AM CT calls on
+  // Nov 4, 11, 18 and 25, and she was never put in this file, so she would
+  // have silently missed every one of them. SECOND Janie on the roster:
+  // 'Janie' at kyquiltergirl@icloud.com is Janie Osborne, a different client.
+  { first: 'Janie', email: 'jtmitche_1999@yahoo.com', note: 'Life Beyond the Cuff course, paid 2026-10-30; owed 4 Wednesday calls Nov 4/11/18/25; second Janie on the roster' },
 ];

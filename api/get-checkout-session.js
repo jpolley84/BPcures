@@ -3,8 +3,10 @@
 // one-click charge endpoint will bill on the next page.
 //
 // Used by:
+//   /oto + /welcome (src/components/TeaOneClickOffer.jsx) — saved card for the
+//     Steady one-click, plus legacy_tea_left (2026-10-21) so the offer hides
+//     itself and points at the 150 g bag when the 100 g pouches are gone
 //   /upsell-bp-cure-book?session_id=cs_xxx — checks for saved PM
-//   /upsell-bp-reset-kit?session_id=cs_xxx — same
 //
 // If session has no saved PM (e.g. customer arrived via Stripe Payment
 // Link instead of /api/checkout with saveCard:true), the page falls
@@ -13,6 +15,7 @@
 // 2026-05-20: built as part of bpcures one-click mechanic port.
 
 import Stripe from 'stripe';
+import { kv } from '@vercel/kv';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -59,6 +62,23 @@ export default async function handler(req, res) {
         || null;
     }
 
+    // 2026-10-21: 100 g Steady pouches left (KV tea:legacy100:left, the same
+    // counter create-embedded-checkout.js and tea-one-click.js refuse on). The
+    // /oto one-click hides itself at 0 and sends buyers to the 150 g bag on
+    // hormoneteas.com. Mirrors the server guards: a missing key reads as 0, and
+    // a FAILED read reads as 0 too (fail closed, like middleware.js), so a KV
+    // outage sends buyers to the 150 g bag instead of an unguarded $48 Payment
+    // Link for pouches nobody can confirm are on the shelf. tea-one-click.js
+    // stays the real guard (410 sold_out / 503 stock_unavailable).
+    let legacyTeaLeft = 0;
+    try {
+      const n = parseInt(await kv.get('tea:legacy100:left'), 10);
+      legacyTeaLeft = Number.isFinite(n) ? n : 0;
+    } catch (err) {
+      console.warn('get-checkout-session: tea stock read failed, reporting 0', err.message);
+      legacyTeaLeft = 0;
+    }
+
     return res.status(200).json({
       ok: true,
       customer_id: customerId,
@@ -68,6 +88,7 @@ export default async function handler(req, res) {
       has_saved_card: !!(customerId && savedPaymentMethodId),
       amount_paid: session.amount_total,
       session_status: session.status,
+      legacy_tea_left: legacyTeaLeft,
     });
   } catch (err) {
     console.error('get-checkout-session error:', err.message);

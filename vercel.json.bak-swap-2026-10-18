@@ -1,0 +1,417 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/go/:product",
+      "destination": "/api/go?product=:product"
+    },
+    {
+      "source": "/next",
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/next/",
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/apply",
+      "has": [
+        {
+          "type": "host",
+          "value": "changemylifechallenge.com"
+        }
+      ],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/apply/",
+      "has": [
+        {
+          "type": "host",
+          "value": "changemylifechallenge.com"
+        }
+      ],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/apply",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.changemylifechallenge.com"
+        }
+      ],
+      "destination": "/cohort-apply/index.html"
+    },
+    {
+      "source": "/((?!assets|downloads|headshot|favicon|tea/|tea$|tea-review/|tea-review$|challenge-b/|challenge-b$|day1/|day1$|cohort-apply/|cohort-apply$|next/|next$|coaching/|masterclass/|masterclass$|birthday/|birthday$|cleanse/|cleanse$|engine/|engine$|habits/|habits$|privacy-app/|privacy-app$|support-app/|support-app$).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/challenge",
+      "has": [
+        {
+          "type": "host",
+          "value": "bpquiz.com"
+        }
+      ],
+      "destination": "https://changemylifechallenge.com/",
+      "permanent": false
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.changemylifechallenge.com"
+        }
+      ],
+      "destination": "https://changemylifechallenge.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/tt",
+      "destination": "/?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/ig",
+      "destination": "/?utm_source=instagram&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/fb",
+      "destination": "/?utm_source=facebook&utm_medium=profile&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/tt-c",
+      "destination": "/coaching?utm_source=tiktok&utm_medium=bio&utm_campaign=cohort1",
+      "permanent": false
+    },
+    {
+      "source": "/igdm",
+      "destination": "/quiz?utm_source=instagram&utm_medium=comment-dm&utm_campaign=manychat",
+      "permanent": false
+    },
+    {
+      "source": "/fbdm",
+      "destination": "/quiz?utm_source=facebook&utm_medium=comment-dm&utm_campaign=bpquiz",
+      "permanent": false
+    },
+    {
+      "source": "/magnesium",
+      "destination": "https://www.tiktok.com/t/ZP9Mo41fRtHnU-pux7n/",
+      "permanent": false
+    },
+    {
+      "source": "/maxcalm",
+      "destination": "/magnesium",
+      "permanent": false
+    },
+    {
+      "source": "/juicing",
+      "destination": "https://www.tiktok.com/t/ZP9BtHF1PTnYV-4tNoD/",
+      "permanent": false
+    },
+    {
+      "source": "/saffron",
+      "destination": "https://www.tiktok.com/t/ZP9rebBAGVd8G-duWOM/",
+      "permanent": false
+    },
+    {
+      "source": "/downloads",
+      "destination": "/library",
+      "permanent": false
+    },
+    {
+      "source": "/podcast",
+      "destination": "/quiz?utm_source=podcast&utm_medium=spoken",
+      "permanent": false
+    },
+    {
+      "source": "/seminar",
+      "destination": "/quiz?utm_source=seminar-legacy",
+      "permanent": false
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/calendly-poll-cron",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/engine-retry",
+      "schedule": "*/20 * * * *"
+    },
+    {
+      "path": "/api/postiz-cron",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/reply-agent",
+      "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/daily-digest",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/tea-daily-cron",
+      "schedule": "30 4 * * *"
+    },
+    {
+      "path": "/api/reconcile-purchases",
+      "schedule": "30 8 * * *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=14",
+      "schedule": "15 4 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=19",
+      "schedule": "30-55/5 17 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=19",
+      "schedule": "*/5 18 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=annie&email=19",
+      "schedule": "30-55/5 17 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=annie&email=19",
+      "schedule": "*/5 18 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=20",
+      "schedule": "30-55/5 20 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=20",
+      "schedule": "*/5 21 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=annie&email=20",
+      "schedule": "30-55/5 20 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=annie&email=20",
+      "schedule": "*/5 21 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=joel&email=21",
+      "schedule": "20-55/5 22 22 9 *"
+    },
+    {
+      "path": "/api/birthday-broadcast?cron=1&list=annie&email=21",
+      "schedule": "20-55/5 22 22 9 *"
+    },
+    {
+      "path": "/api/accelerator-reminder?mode=send",
+      "schedule": "30 15 * * 3"
+    },
+    {
+      "path": "/api/accelerator-reminder?mode=send",
+      "schedule": "30 16 * * 3"
+    },
+    {
+      "path": "/api/challenge-live-now?mode=send",
+      "schedule": "30 21 23 9 *"
+    },
+    {
+      "path": "/api/challenge-live-now?mode=send",
+      "schedule": "30 21 24 9 *"
+    },
+    {
+      "schedule": "0-55/5 12 5 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "*/5 13 5 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "0-55/5 12 5 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "*/5 13 5 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=1"
+    },
+    {
+      "schedule": "0-55/5 12 6 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 12 6 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13 6 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13 6 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 12 7 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "0-55/5 12 7 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 13 7 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 13 7 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "0-55/5 12 8 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "0-55/5 12 8 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 13 8 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 13 8 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "0-55/5 12 11 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "0-55/5 12 11 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 13 11 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 13 11 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "0-55/5 12 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "0-55/5 12 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "*/5 13 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "*/5 13 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=6"
+    },
+    {
+      "schedule": "0-55/5 16 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "0-55/5 16 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "*/5 17 12 10 *",
+      "path": "/api/joel-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "*/5 17 12 10 *",
+      "path": "/api/annie-heart-month-broadcast?cron=1&email=7"
+    },
+    {
+      "schedule": "45-55/5 21 13 10 *",
+      "path": "/api/joel-encore-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 22 13 10 *",
+      "path": "/api/joel-encore-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 23 13 10 *",
+      "path": "/api/joel-encore-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "45-55/5 21 13 10 *",
+      "path": "/api/annie-encore-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 22 13 10 *",
+      "path": "/api/annie-encore-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "0-55/5 23 13 10 *",
+      "path": "/api/annie-encore-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 13-14 16 10 *",
+      "path": "/api/joel-wmd-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13-14 18 10 *",
+      "path": "/api/joel-wmd-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 21-22 18 10 *",
+      "path": "/api/joel-wmd-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 23 18 10 *",
+      "path": "/api/joel-wmd-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 0 19 10 *",
+      "path": "/api/joel-wmd-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 13-14 16 10 *",
+      "path": "/api/annie-wmd-broadcast?cron=1&email=2"
+    },
+    {
+      "schedule": "*/5 13-14 18 10 *",
+      "path": "/api/annie-wmd-broadcast?cron=1&email=3"
+    },
+    {
+      "schedule": "*/5 21-22 18 10 *",
+      "path": "/api/annie-wmd-broadcast?cron=1&email=4"
+    },
+    {
+      "schedule": "*/5 23 18 10 *",
+      "path": "/api/annie-wmd-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 0 19 10 *",
+      "path": "/api/annie-wmd-broadcast?cron=1&email=5"
+    },
+    {
+      "schedule": "*/5 11-13 19 10 *",
+      "path": "/api/joel-challenge-launch?cron=1&email=1"
+    },
+    {
+      "schedule": "*/5 11-13 19 10 *",
+      "path": "/api/annie-challenge-launch?cron=1&email=1"
+    }
+  ]
+}

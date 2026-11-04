@@ -48,7 +48,7 @@
     "price": "$47",
     "price_cents": 4700,
     "original_price": "$87",
-    "stripe_payment_link": "https://buy.stripe.com/cNieVdeIrca2fDR1sZfnO0k",
+    "stripe_payment_link": "https://bpquiz.com/pay?tier=corner&corner=stress",
     "gumroad_link": null,
     "cover_image": "/products/blood-pressure__full-stack-bp-activation/cover.png",
     "badge": "Most Popular",
@@ -407,7 +407,7 @@
     "price": "$47",
     "price_cents": 4700,
     "stripe_price_id": "price_1TpqZHHseZnO3rRZWtW0s1L8",
-    "stripe_payment_link": "https://buy.stripe.com/cNiaEX7fZb5YgHVb3zfnO1g",
+    "stripe_payment_link": "https://bpquiz.com/pay?tier=corner&corner=stress",
     "env_var": "VITE_STRIPE_COMPLETE_PRICE_ID",
     "delivers": [
       "all-corner-sets",

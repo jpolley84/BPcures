@@ -321,6 +321,11 @@ export default function WelcomePage() {
   // quiz result in sessionStorage, then null (safe manifest default).
   const urlCorner = params.get('corner');
   const sessionId = params.get('session_id') || '';
+  // 2026-10-21: /oto passes ?tea=taken after a one-click Steady charge so this
+  // page does not offer the same pouch again seconds later (and, once the 24 h
+  // idempotency key in api/tea-one-click.js expires, charge it twice on a
+  // revisit). ?tea=declined keeps the second-chance block below.
+  const teaOutcome = params.get('tea') || '';
   const { corner: quizCorner, scores } = useMemo(readQuiz, []);
   const corner = VALID_CORNERS_SET.has(urlCorner) ? urlCorner : quizCorner;
   const knewCorner = Boolean(corner);
@@ -438,8 +443,9 @@ export default function WelcomePage() {
         </div>
       )}
 
-      {/* ---- SVUTU Steady tea: true one-click upsell off the kit's saved card ---- */}
-      <TeaOneClickOffer sessionId={sessionId} />
+      {/* ---- SVUTU Steady tea: true one-click upsell off the kit's saved card.
+           Hidden when /oto already took the order (?tea=taken). ---- */}
+      {teaOutcome !== 'taken' && <TeaOneClickOffer sessionId={sessionId} />}
 
       {/* ---- The three stacked tier levels: owned = unlocked, higher = locked ---- */}
       {levels.map((lvl) => {

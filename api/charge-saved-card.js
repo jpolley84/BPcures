@@ -66,6 +66,15 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: `Unknown tier: ${tier}` });
   }
 
+  // 2026-10-21 (Joel): the BP Reset Kit is KILLED. The UI that sold this $30
+  // one-click (/upsell-bp-reset-kit) now redirects to /library; this guard
+  // closes the API side so a cached page or a replayed request cannot charge
+  // it either. The tier stays declared so the config above still documents
+  // the retired price id.
+  if (tier === 'bp-reset-kit-oto') {
+    return res.status(410).json({ error: 'retired', message: 'The BP Reset Kit is no longer sold.' });
+  }
+
   // Idempotency: check KV for a prior successful charge against this
   // session+tier. Prevents double-charge on double-click.
   const idemKey = `upsell-charge:${session_id}:${tier}`;
