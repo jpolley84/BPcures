@@ -1,5 +1,5 @@
 // api/_calendly-invitee-emails.js — the two warm notes that go to the person
-// who booked, not to Joel. The SMS alert in calendly-webhook.js and
+// who booked, not to Joel. The alert to Joel in
 // calendly-poll-cron.js tells Joel; this tells her.
 //
 // 2026-10-27 (Joel): "I need these wired up." Two emails, both signed Joel &

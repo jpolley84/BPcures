@@ -11,7 +11,9 @@
 //     upcoming event whose created_at is newer than the cursor.
 //   - Per-event KV dedupe `calendly-alerted:<uuid>` (30-day TTL) as a
 //     belt-and-suspenders guard against double-texting on overlap.
-//   - SMS via Resend → Verizon email-to-SMS gateway (7175859505@vtext.com).
+//   - Alert to Joel via Resend → JOEL_SMS. Was the Verizon email-to-SMS
+//     gateway (7175859505@vtext.com) until Verizon decommissioned it; since
+//     2026-11-04 it is braveworksrn@gmail.com with a self-describing subject.
 //
 // 2026-10-27 (Joel): "I need these wired up." The same poll now also writes to
 // the PERSON who booked, not only to Joel:
@@ -38,7 +40,8 @@ import {
   needsHumanReply, firstNameOf, isClientEmail, joinUrlOf,
 } from './_calendly-invitee-emails.js';
 
-const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
+// Was 7175859505@vtext.com until Verizon killed the gateway (2026-11-04).
+const JOEL_SMS = process.env.JOEL_SMS || 'braveworksrn@gmail.com';
 const FROM = 'BraveWorks <noreply@bpquiz.com>';
 const CURSOR_KEY = 'calendly-poll:last-check';
 
@@ -86,7 +89,10 @@ async function emailInvitee({ resend, kind, uuid, eventName, invitee, startIso, 
   if (kind === 'reschedule' && needsHumanReply(invitee)) {
     const reason = String(invitee?.cancellation?.reason || '').replace(/\s+/g, ' ').trim();
     try {
-      await smsJoel(`${firstNameOf(invitee) || email} canceled and left a note. No auto-email sent, she needs you: "${reason.slice(0, 220)}"`);
+      await smsJoel(
+        `${firstNameOf(invitee) || email} canceled and left a note. No auto-email sent, she needs you: "${reason.slice(0, 220)}"`,
+        `Canceled with a note: ${firstNameOf(invitee) || email}`,
+      );
       await kv.set(dedupeKey, { heldAt: new Date().toISOString(), reason }, { ex: 90 * 86400 });
     } catch (e) {
       console.error('calendly-invitee: hold notice failed for', email, e.message);
@@ -133,8 +139,11 @@ export default async function handler(req, res) {
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const nowIso = new Date().toISOString();
-  const smsJoel = (text) => resend.emails.send({
-    from: FROM, to: JOEL_SMS, subject: 'New call booked', text,
+  // 2026-11-04: Verizon shut the vtext.com email-to-SMS gateway (550 5.1.0
+  // "Decommission of Email to Text"), so JOEL_SMS is now Joel's inbox. The
+  // subject carries the whole story so the inbox line is enough on a phone.
+  const smsJoel = (text, subject = 'New call booked') => resend.emails.send({
+    from: FROM, to: JOEL_SMS, subject, text,
   });
 
   try {
@@ -192,7 +201,7 @@ export default async function handler(req, res) {
       const text = `New BraveWorks booking: ${name} (${email})${phone} — ${fmtCentral(ev.start_time)} · ${ev.name || 'call'}`;
 
       try {
-        await smsJoel(text);
+        await smsJoel(text, `Booked: ${name}, ${fmtCentral(ev.start_time)} CT`);
         await kv.set(dedupeKey, { sentAt: nowIso, name }, { ex: 30 * 86400 });
         alerted++;
         names.push(name);

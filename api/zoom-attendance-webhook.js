@@ -1,5 +1,5 @@
 // /api/zoom-attendance-webhook — real-time SMS the instant a guest actually
-// joins a 1:1 Zoom room. Companion to calendly-webhook.js, which alerts on
+// joins a 1:1 Zoom room. Companion to calendly-poll-cron.js, which alerts on
 // BOOKING; this alerts on ATTENDANCE, which nothing in the stack tracked
 // before 2026-08-12.
 //
@@ -38,14 +38,14 @@
 //
 // NOT built as part of this pass, on purpose: the "10 minutes past start,
 // nobody joined" no-show alert. That needs the expected roster (today's
-// Calendly bookings, already captured by calendly-webhook.js /
+// Calendly bookings, already captured by
 // calendly-poll-cron.js) cross-referenced on a timer, which is a second,
 // separable piece — this endpoint only does live join/leave confirmation.
 
 import crypto from 'node:crypto';
 import { Resend } from './_resend.js';
 
-const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
+const JOEL_SMS = process.env.JOEL_SMS || 'braveworksrn@gmail.com'; // vtext gateway dead 2026-11-04
 const FROM = 'BraveWorks <noreply@bpquiz.com>';
 const SECRET = process.env.ZOOM_WEBHOOK_SECRET_TOKEN;
 

@@ -53,9 +53,10 @@ function getResend() {
 // This route belongs to BraveWorks, not to Launcher, so it no longer reads a
 // LAUNCHER_* variable at all. Overriding is still possible via BW_NOTIFY_EMAIL.
 const NOTIFY_EMAIL = process.env.BW_NOTIFY_EMAIL || 'braveworksrn@gmail.com';
-// 2026-08-12: Joel also gets a text on every completed Be There application
-// (same Resend → Verizon email-to-SMS gateway the Calendly webhook uses).
-const JOEL_SMS = process.env.JOEL_SMS || '7175859505@vtext.com';
+// 2026-08-12: Joel also gets an alert on every completed Be There application.
+// 2026-11-04: was the Verizon email-to-SMS gateway (7175859505@vtext.com);
+// Verizon decommissioned it, so JOEL_SMS is now Joel's inbox.
+const JOEL_SMS = process.env.JOEL_SMS || 'braveworksrn@gmail.com';
 // 2026-07-17: was 'coaching@bpquiz.com' — that address had ZERO successful
 // sends ever in Resend's log (bpquiz.com domain shows status
 // 'partially_failed' in Resend's /domains API, SPF/DKIM/DMARC not fully

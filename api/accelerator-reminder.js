@@ -170,7 +170,7 @@ export default async function handler(req, res) {
     try {
       await resend.emails.send({
         from: FROM,
-        to: [process.env.JOEL_SMS || '7175859505@vtext.com'],
+        to: [process.env.JOEL_SMS || 'braveworksrn@gmail.com'], // vtext gateway dead 2026-11-04
         subject: 'Cohort reminder failed',
         text: `Wednesday reminder did NOT reach ${failed.length} of ${roster.length}: `
           + failed.map((f) => f.email).join(', '),
