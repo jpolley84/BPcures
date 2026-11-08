@@ -114,6 +114,47 @@ ${postal}
 }
 
 /**
+ * The seat-saved email for the dated "4 Hidden Health Mistakes" class
+ * (Monday, November 9, 2026). Joel approved this text verbatim 2026-11-08.
+ * Same Zoom room, calendar links, and consent footer as the weekly email.
+ */
+export const HIDDEN_MISTAKES_SUBJECT = 'Your seat is saved: 4 Hidden Health Mistakes (Monday, Nov 9, 7 PM ET)';
+
+function hiddenMistakesEmail({ firstName, provenance }) {
+  const name = firstName ? escapeHtml(firstName) : 'friend';
+  const why = escapeHtml(clean(provenance, 160) || DEFAULT_PROVENANCE);
+  const postal = process.env.BUSINESS_POSTAL_ADDRESS
+    ? `<p style="color:#9A9A9A;font-size:0.78rem;margin-top:0.4rem;">BraveWorks RN &middot; ${escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS)}</p>`
+    : '';
+  return `<!doctype html>
+<html><body style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;margin:0 auto;padding:1.5rem;color:#102b47;line-height:1.6;background:#FFFFFF;">
+<p style="font-size:0.8rem;letter-spacing:0.14em;text-transform:uppercase;color:#a4772d;font-weight:700;margin:0 0 1rem;">4 Hidden Health Mistakes &middot; Free Live Masterclass</p>
+<h2 style="margin:0 0 1rem;font-weight:600;">Your seat is saved, ${name}.</h2>
+<p>The 4 Hidden Health Mistakes masterclass is live this <strong>Monday, November 9, at 7:00 PM Eastern</strong> (6:00 PM Central &middot; 5:00 PM Mountain &middot; 4:00 PM Pacific). It runs 90 minutes. It is live only. There is no replay.</p>
+<div style="background:#edf5fa;border-top:3px solid #d7b579;padding:1rem 1.2rem;margin:1.2rem 0;">
+  <p style="margin:0 0 0.6rem;"><strong>Your join link (save this email):</strong></p>
+  <p style="margin:0 0 0.6rem;"><a href="${ZOOM_JOIN_URL}" style="display:inline-block;background:#102b47;color:#ffffff;text-decoration:none;font-weight:700;padding:0.7rem 1.4rem;border-radius:2px;">Join the Masterclass on Zoom &rarr;</a></p>
+  <p style="margin:0;color:#334e65;font-size:0.9rem;">Meeting ID: <strong>${ZOOM_MEETING_ID}</strong> &middot; Passcode: <strong>${ZOOM_PASSCODE}</strong><br/>
+  <a href="${CALENDAR_ICS_URL}" style="color:#a4772d;">Add it to your calendar</a> (or <a href="${CALENDAR_GOOGLE_URL}" style="color:#a4772d;">Google Calendar</a>) so Monday night finds you ready.</p>
+</div>
+<p><strong>What we'll cover:</strong> the four hidden mistakes keeping blood pressure, blood sugar, and weight climbing after 40, and how to:</p>
+<ul style="padding-left:1.2rem;margin:0 0 1rem;">
+  <li>spot where your health may be leaking</li>
+  <li>connect the dots between your numbers, hormones, and daily life</li>
+  <li>see why more effort hasn't been enough</li>
+  <li>stop the cycles that keep you starting over</li>
+</ul>
+<p><strong>Do one thing before Monday:</strong> take the free 2-minute BP quiz. It shows which trigger is loudest for you. <a href="https://bpquiz.com/quiz" style="color:#a4772d;">Take it here</a>.</p>
+<p>Questions? Just reply. I read these myself.</p>
+<p style="margin-top:1.4rem;padding:0.9rem 1rem;background:#FFFFFF;border:1px solid #d9e5ed;"><strong>P.S.</strong> If you want a head start before Monday, Steady is the tea I drink every day: hibiscus, hawthorn, and ten more whole botanicals, caffeine free, 60 cups a pouch, 30-day guarantee. <a href="https://hormoneteas.com/products/steady?utm_source=bpquiz&amp;utm_medium=email&amp;utm_campaign=masterclass-hidden-mistakes" style="color:#a4772d;font-weight:700;">Get Steady here</a>. It joins your doctor's plan, it never replaces it.</p>
+<p style="margin-top:2rem;">Joel Polley, RN<br/><span style="color:#9A9A9A;font-size:0.88rem;">BraveWorks RN &middot; BPQuiz.com</span></p>
+<hr style="margin:1.6rem 0 0.8rem;border:none;border-top:1px solid #d9e5ed;">
+<p style="color:#9A9A9A;font-size:0.78rem;margin:0;">You're getting this because ${why}. Educational content only, not medical advice. Never start, stop, or adjust medication without your doctor. Don't want class emails? Reply "remove" and I'll take you off.</p>
+${postal}
+</body></html>`;
+}
+
+/**
  * Enroll into the lead-nurture drip (bwbp:drip:*), the same machine the
  * quiz EmailGate feeds via capture-lead.js. Rules mirrored from there:
  * enrich-only if a record exists (never reset state/timer, never demote a
@@ -269,8 +310,12 @@ export async function registerMasterclass({
         to: normEmail,
         reply_to: REPLY_TO,
         campaign: 'masterclass-seat-saved',
-        subject: `Your seat is saved for Life Beyond the Numbers (${classDayShort()} night)`,
-        html: confirmationEmail({ firstName, provenance }),
+        subject: normEvent === '2026-11-09'
+          ? HIDDEN_MISTAKES_SUBJECT
+          : `Your seat is saved for Life Beyond the Numbers (${classDayShort()} night)`,
+        html: normEvent === '2026-11-09'
+          ? hiddenMistakesEmail({ firstName, provenance })
+          : confirmationEmail({ firstName, provenance }),
       });
     } catch (err) {
       console.warn('masterclass-enroll: confirmation send failed (non-fatal)', err.message);

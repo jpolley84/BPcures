@@ -158,6 +158,13 @@
       .why-portrait img{max-height:320px}
       .host-photo{max-width:510px;margin-inline:auto}
     }
+
+    /* Real stories (consent records in testimonials/records, Joel approved 2026-11-08) */
+    .story-video{display:block;width:100%;aspect-ratio:5/4;object-fit:cover;background:#0d2238}
+    .story-quote{padding:28px 26px 8px;margin:0;font-family:var(--serif);font-size:19px;line-height:1.5;color:var(--navy)}
+    .story-who{display:block;padding:12px 26px 0;font-style:normal;font-weight:800;font-size:14px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase}
+    .story-note{display:block;padding:6px 26px 22px;font-size:13px;line-height:1.5;color:var(--muted)}
+    .stories-disclaimer{margin-top:22px;font-size:13px;color:var(--muted)!important}
   </style>
 </head>
 <body>
@@ -288,14 +295,27 @@
 </div>
 </div>
 </section>
-<section class="section sky" id="stories" hidden>
+<section class="section sky" id="stories">
 <div class="wrap">
 <div class="testimonials-heading"><h2>Real Stories. Real Women.</h2></div>
-<div aria-label="Spaces reserved for approved client testimonial photos and stories" class="testimonials">
-<article class="testimonial"><div class="testimonial-photo"><div class="placeholder"><span aria-hidden="true" class="placeholder-symbol">“</span><span>TESTIMONIAL PHOTO 01</span></div></div><div class="testimonial-label">Reserved for your approved testimonial</div></article>
-<article class="testimonial"><div class="testimonial-photo"><div class="placeholder"><span aria-hidden="true" class="placeholder-symbol">“</span><span>TESTIMONIAL PHOTO 02</span></div></div><div class="testimonial-label">Reserved for your approved testimonial</div></article>
-<article class="testimonial"><div class="testimonial-photo"><div class="placeholder"><span aria-hidden="true" class="placeholder-symbol">“</span><span>TESTIMONIAL PHOTO 03</span></div></div><div class="testimonial-label">Reserved for your approved testimonial</div></article>
+<div class="testimonials">
+<article class="testimonial">
+<video class="story-video" controls playsinline preload="none" poster="/video/brenda-bp-win-poster.jpg"><source src="/video/brenda-bp-win.mp4" type="video/mp4"/></video>
+<span class="story-who">Brenda</span>
+<span class="story-note">Her blood pressure story, in her own words. She takes her readings before her morning blood pressure medication, and she remains on it.</span>
+</article>
+<article class="testimonial">
+<blockquote class="story-quote">&ldquo;I am so grateful for your contributions to making lives much better and healthy thru Truth and a life style change as well learning to help ourselves heal along with meds!! &hellip; discovering making some changes for my BP is working for me.&rdquo;</blockquote>
+<span class="story-who">GT</span>
+<span class="story-note">In her own words.</span>
+</article>
+<article class="testimonial">
+<blockquote class="story-quote">&ldquo;I'm reducing my BP meds, my cholesterol meds and my Diabetes medications too My DR took me off. This young man cares about all of us and he's got empathy. Listen to him&rdquo;</blockquote>
+<span class="story-who">Dorothy M.</span>
+<span class="story-note">In her own words. Her doctor made her medication changes.</span>
+</article>
 </div>
+<p class="stories-disclaimer">Each story is one woman's experience, in her own words. Health outcomes differ by person. Medication decisions belong with your prescribing clinician. Never stop or change a medication on your own.</p>
 </div>
 </section>
 <section class="section" id="host">
