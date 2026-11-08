@@ -38,7 +38,35 @@ import { registerMasterclass } from './_masterclass-enroll.js';
 // other source keeps the default wording for the /masterclass form.
 const PROVENANCE_BY_SOURCE = {
   'kit-oto': 'you saved a free seat right after your BP kit order at bpquiz.com',
+  'masterclass-4-hidden-mistakes': 'you saved a free seat for the 4 Hidden Health Mistakes masterclass',
 };
+
+// 2026-11-08: a dated class. Its seats are counted per class, so someone who
+// registered for an earlier Monday still gets a Zoom email for this one
+// instead of a silent "already". Keyed on the source this server recognizes.
+const EVENT_BY_SOURCE = {
+  'masterclass-4-hidden-mistakes': '2026-11-09',
+};
+
+// The v10 page is served on three hosts and posts here from each.
+const ALLOWED_ORIGINS = new Set([
+  'https://bpquiz.com',
+  'https://www.bpquiz.com',
+  'https://changemylifechallenge.com',
+  'https://www.changemylifechallenge.com',
+  'https://restoreherhormones.com',
+  'https://www.restoreherhormones.com',
+]);
+
+function cors(req, res) {
+  const origin = req.headers?.origin;
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+}
 
 async function readJsonBody(req) {
   if (req.body && typeof req.body === 'object' && !Array.isArray(req.body)) return req.body;
@@ -70,6 +98,8 @@ export default async function handler(req, res) {
 }
 
 async function handleRegister(req, res) {
+  cors(req, res);
+  if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
   }
@@ -88,6 +118,9 @@ async function handleRegister(req, res) {
     source: body.source,
     utm: body.utm,
     provenance: PROVENANCE_BY_SOURCE[String(body.source || '')],
+    eventKey: EVENT_BY_SOURCE[String(body.source || '')],
+    marketingConsent: body.marketing_consent === true,
+    site: body.site,
     sendConfirmation: true,
   });
 

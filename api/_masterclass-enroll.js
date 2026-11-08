@@ -180,6 +180,9 @@ export async function registerMasterclass({
   source,
   utm,
   provenance,
+  eventKey,
+  marketingConsent,
+  site,
   sendConfirmation = true,
 } = {}) {
   if (!process.env.KV_REST_API_URL) {
@@ -194,7 +197,10 @@ export async function registerMasterclass({
   const normPhone = clean(phone, 30);
   const normSource = clean(source, 40) || 'masterclass-page';
   const normUtm = cleanUtm(utm);
-  const recordKey = `masterclass:reg:${normEmail}`;
+  // A dated class (eventKey) counts seats per class, so a past registrant
+  // still gets this class's Zoom email. No eventKey = the standing weekly key.
+  const normEvent = clean(eventKey, 20);
+  const recordKey = normEvent ? `masterclass:event:${normEvent}:reg:${normEmail}` : `masterclass:reg:${normEmail}`;
 
   // Idempotent path, already registered. No second confirmation, no second
   // INCR, no record reset.
@@ -210,7 +216,22 @@ export async function registerMasterclass({
     joinedAt: new Date().toISOString(),
     source: normSource,
     ...(normUtm ? { utm: normUtm } : {}),
+    ...(normEvent ? { event: normEvent } : {}),
+    ...(typeof marketingConsent === 'boolean' ? { marketingConsent } : {}),
+    ...(site ? { site: clean(site, 60) } : {}),
   });
+  if (normEvent) {
+    try {
+      await kv.sadd(`masterclass:event:${normEvent}:members`, normEmail);
+      // Keep the standing record too, so every class list still finds her.
+      const standing = await kv.get(`masterclass:reg:${normEmail}`);
+      if (!standing) {
+        await kv.set(`masterclass:reg:${normEmail}`, { email: normEmail, name: normName, phone: normPhone, joinedAt: new Date().toISOString(), source: normSource });
+      }
+    } catch (err) {
+      console.warn('masterclass-enroll: event set failed (non-fatal)', err.message);
+    }
+  }
 
   try {
     await kv.sadd('masterclass:members', normEmail);
