@@ -538,6 +538,22 @@
     {
       "schedule": "30 15 * * *",
       "path": "/api/tea-review-request-cron"
+    },
+    {
+      "schedule": "0,6,12,18,24,30,36 1 9 11 *",
+      "path": "/api/joel-hidden-mistakes-sequence?cron=1&email=3"
+    },
+    {
+      "schedule": "0,6,12,18,24,30,36 14 9 11 *",
+      "path": "/api/joel-hidden-mistakes-sequence?cron=1&email=4"
+    },
+    {
+      "schedule": "0,6,12,18,24,30 23 9 11 *",
+      "path": "/api/joel-hidden-mistakes-sequence?cron=1&email=5"
+    },
+    {
+      "schedule": "0,5,10,15,20,25 0 10 11 *",
+      "path": "/api/joel-hidden-mistakes-sequence?cron=1&email=6"
     }
   ]
 }
