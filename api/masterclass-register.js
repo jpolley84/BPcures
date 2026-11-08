@@ -31,6 +31,7 @@
 
 import { looksLikeValidEmail } from './_email-validation.js';
 import { registerMasterclass } from './_masterclass-enroll.js';
+import { kv } from '@vercel/kv';
 
 // 2026-10-21: the consent line in the confirmation footer must describe what
 // the person actually did. Keyed on the source label this server recognizes;
@@ -47,6 +48,16 @@ const PROVENANCE_BY_SOURCE = {
 const EVENT_BY_SOURCE = {
   'masterclass-4-hidden-mistakes': '2026-11-09',
 };
+
+// 2026-11-08 (Joel): "every thank you page should have a join the masterclass
+// next one button, one click signup." The button (src/components/
+// MasterclassNextButton.jsx) posts source 'next-masterclass-oneclick' and this
+// server decides what "next" means. Keep in step with src/lib/nextMasterclass.js.
+// Before endsAt: a seat in that class, with its Zoom email. After: the
+// waitlist, which sends nothing until Joel announces the next date.
+const NEXT_MASTERCLASS = { eventKey: '2026-11-09', endsAt: Date.parse('2026-11-10T01:30:00Z') };
+const NEXT_SOURCES = new Set(['next-masterclass-oneclick']);
+PROVENANCE_BY_SOURCE['next-masterclass-oneclick'] = 'you saved a free seat for the 4 Hidden Health Mistakes masterclass';
 
 // The v10 page is served on three hosts and posts here from each.
 const ALLOWED_ORIGINS = new Set([
@@ -111,6 +122,24 @@ async function handleRegister(req, res) {
     return res.status(400).json({ ok: false, error: 'That email doesn’t look right. Check it and try again.' });
   }
 
+  const source = String(body.source || '');
+  let eventKey = EVENT_BY_SOURCE[source];
+  if (NEXT_SOURCES.has(source)) {
+    if (Date.now() < NEXT_MASTERCLASS.endsAt) {
+      eventKey = NEXT_MASTERCLASS.eventKey;
+    } else {
+      // Class is over and no new date is set: save her to the waitlist.
+      const email = String(body.email).trim().toLowerCase();
+      const recordKey = `waitlist:masterclass:rec:${email}`;
+      const existing = await kv.get(recordKey);
+      if (!existing) {
+        await kv.set(recordKey, { email, name: String(body.name || '').slice(0, 80), joinedAt: new Date().toISOString(), source: `${source}:${String(body.site || '').slice(0, 40)}` });
+        await kv.sadd('waitlist:masterclass', email);
+      }
+      return res.status(200).json({ ok: true, waitlisted: true, already: Boolean(existing) });
+    }
+  }
+
   const { already } = await registerMasterclass({
     email: body.email,
     name: body.name,
@@ -118,7 +147,7 @@ async function handleRegister(req, res) {
     source: body.source,
     utm: body.utm,
     provenance: PROVENANCE_BY_SOURCE[String(body.source || '')],
-    eventKey: EVENT_BY_SOURCE[String(body.source || '')],
+    eventKey,
     marketingConsent: body.marketing_consent === true,
     site: body.site,
     sendConfirmation: true,

@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Check, AlertCircle } from 'lucide-react';
 import { track } from '../utils/analytics.js';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const serif = { fontFamily: "'Fraunces', Georgia, serif", fontWeight: 550 };
 const WINE = '#5a1725';
 const GOLD = '#c6a05e';
@@ -85,6 +86,8 @@ export default function TeaOtoConfirmedPage() {
         <h1 style={{ ...serif, fontSize: 'clamp(1.9rem, 6vw, 2.7rem)', color: WINE, margin: '0 0 1rem', lineHeight: 1.15 }}>
           {ok ? 'Your seat is saved.' : 'We are finishing this by hand.'}
         </h1>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="tea-oto-confirmed" />
 
         {ok ? (
           <>

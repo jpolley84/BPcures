@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { CheckCircle2, Calendar, Mail, ArrowRight } from 'lucide-react';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const ZOOM_URL = 'https://tinyurl.com/2p3b449n';
 
 export default function SeminarWelcomePage() {
@@ -32,6 +33,8 @@ export default function SeminarWelcomePage() {
           <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(1.85rem, 5vw, 2.5rem)', fontWeight: 400, lineHeight: 1.15, margin: '0 0 1rem' }}>
             See you in the room.
           </h1>
+          {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+          <MasterclassNextButton page="seminar-welcome" />
           <p style={{ fontSize: '1.05rem', lineHeight: 1.55, color: 'var(--ink-soft)', margin: 0 }}>
             {email ? (
               <>

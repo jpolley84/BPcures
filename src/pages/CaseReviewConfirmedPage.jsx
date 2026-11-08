@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2, Mail, Users, Stethoscope } from 'lucide-react';
 import { CASE_REVIEW } from '../data/caseReviewOffer';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const SKOOL_TRIAL_URL =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_SKOOL_TRIAL_URL) ||
   'https://www.skool.com/braveworksrn/about';
@@ -85,6 +86,8 @@ export default function CaseReviewConfirmedPage() {
           2 business days of Joel receiving your details below. Plain language, your exact next moves,
           ready to bring to your doctor.
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="case-review-confirmed" />
       </div>
 
       {/* ---- What to send (the one action) ---- */}

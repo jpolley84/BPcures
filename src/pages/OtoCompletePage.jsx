@@ -43,6 +43,7 @@ import { ArrowRight, Check, Lock, Loader2 } from 'lucide-react';
 import { track, getFirstTouchUtm } from '../utils/analytics.js';
 import TeaOneClickOffer from '../components/TeaOneClickOffer.jsx';
 
+import { NEXT_MASTERCLASS, nextClassIsSet } from '../lib/nextMasterclass';
 const TRIGGER_NAMES = {
   stress: 'The Stress Spike',
   sugar: 'The Sugar Surge',
@@ -199,14 +200,17 @@ export default function OtoCompletePage() {
         body: JSON.stringify({
           email: seatEmail,
           name: (session && session.first_name) || undefined,
-          source: 'kit-oto',
+          // 2026-11-08: the next dated class, or the waitlist once it is over
+          // (api/masterclass-register.js NEXT_MASTERCLASS).
+          source: 'next-masterclass-oneclick',
+          site: 'kit-oto',
           utm: getFirstTouchUtm(),
         }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || `http_${res.status}`);
       track('oto_accepted', { ...baseProps, offer: 'masterclass', placement, already: Boolean(data.already) });
-      setSeat(data.already ? 'already' : 'saved');
+      setSeat(data.waitlisted ? 'waitlisted' : data.already ? 'already' : 'saved');
     } catch (err) {
       track('oto_register_failed', { ...baseProps, offer: 'masterclass', placement, reason: String(err && err.message) });
       setSeat('failed');
@@ -230,7 +234,7 @@ export default function OtoCompletePage() {
   // post-accept version is the smaller block.
   function classBlock(placement) {
     const small = placement === 'post-accept';
-    const settled = seat === 'saved' || seat === 'already';
+    const settled = seat === 'saved' || seat === 'already' || seat === 'waitlisted';
     const saving = seat === 'saving';
     return (
       <>
@@ -238,10 +242,9 @@ export default function OtoCompletePage() {
           <div style={CARD_KICKER}>{small ? 'One more thing, and it is free' : 'What you get'}</div>
           {small ? (
             <p style={{ fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--ink-soft, #2B2824)', margin: 0 }}>
-              Joel and Annie, both RNs, teach live on Zoom every Monday at 7 PM
-              Eastern, 6 PM Central. Bring your numbers and your questions. One
-              tap saves your seat and the Zoom link comes to your inbox. Nothing
-              to buy.
+              {nextClassIsSet()
+                ? `Joel and Annie, both RNs, teach "${NEXT_MASTERCLASS.title}" live on Zoom ${NEXT_MASTERCLASS.when}. One tap saves your seat and the Zoom link comes to your inbox. Nothing to buy.`
+                : 'Joel and Annie, both RNs, teach a free live class on Zoom. One tap saves your spot and we email you the next date. Nothing to buy.'}
             </p>
           ) : (
             <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
@@ -274,7 +277,9 @@ export default function OtoCompletePage() {
         {settled ? (
           <>
             <p role="status" style={STATUS}>
-              {seat === 'already'
+              {seat === 'waitlisted'
+                ? 'You are on the list. We will email you the date of the next free class.'
+                : seat === 'already'
                 ? 'You already have a seat. The Zoom link is in your inbox from before.'
                 : `Your seat is saved. The Zoom link is on its way to ${seatEmail}.`}
             </p>
@@ -364,11 +369,12 @@ export default function OtoCompletePage() {
           <>
             <p style={KICKER}>No problem · One free thing before your downloads</p>
             <h1 style={H1}>
-              Keep your downloads. Add a <em style={EM}>free seat</em> at the Monday night live class.
+              Keep your downloads. Add a <em style={EM}>free seat</em> at the next live class.
             </h1>
             <p style={INTRO}>
-              Joel and Annie, both RNs, teach live on Zoom every Monday at 7 PM
-              Eastern, 6 PM Central. Bring your numbers and your questions.{' '}
+              {nextClassIsSet()
+                ? `Joel and Annie, both RNs, teach "${NEXT_MASTERCLASS.title}" live on Zoom ${NEXT_MASTERCLASS.when}. Bring your numbers and your questions. `
+                : 'Joel and Annie, both RNs, teach a free live class on Zoom. Save your spot and we will email you the next date. '}
               {orderEmail
                 ? 'One tap saves your seat with the email from your order, and the Zoom link lands in your inbox.'
                 : 'Type your email, tap once, and the Zoom link lands in your inbox.'}

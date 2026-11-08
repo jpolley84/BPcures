@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { track, identify } from '../utils/analytics.js';
 import { tagQuizTaken } from '../utils/manychat.js';
-import CuffQuizBanner from '../components/CuffQuizBanner.jsx';
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 
 // ---- The 5 triggers -------------------------------------------------------
 export const TRIGGERS = {
@@ -151,6 +151,59 @@ const labelStyle = {
   marginBottom: '0.6rem',
 };
 
+// 2026-11-08 (Joel): "immediate sell post quiz should be the tea. if no then
+// downsell the kit. if no then the masterclass." Steady sells on Shopify
+// (hormoneteas.com), $60 for the 1-month pouch; the legacy one-click 100 g
+// stock is gone, so this is a plain link out.
+function teaUrl(trigger, placement) {
+  return `https://hormoneteas.com/products/steady?utm_source=bpquiz&utm_medium=quiz&utm_campaign=quiz-results-tea&utm_content=${encodeURIComponent(`${trigger}-${placement}`)}`;
+}
+
+function TeaFirstOffer({ trigger, onDecline }) {
+  return (
+    <div
+      style={{
+        background: 'var(--paper-warm, #EFE8DB)',
+        border: '1.5px solid var(--clay, #B85A36)',
+        borderRadius: 14,
+        padding: '1.3rem 1.2rem',
+        marginBottom: '1rem',
+      }}
+    >
+      <div style={{ ...labelStyle, marginBottom: '0.7rem' }}>While that lands in your inbox</div>
+      <h3 style={{ ...serif, fontSize: '1.35rem', margin: '0 0 0.55rem', color: 'var(--ink, #121110)' }}>
+        Start tonight with the tea Joel drinks every day.
+      </h3>
+      <p style={{ fontSize: '0.95rem', lineHeight: 1.6, color: 'var(--ink-soft, #2B2824)', margin: '0 0 0.9rem' }}>
+        Steady is our caffeine-free blend: hibiscus, hawthorn, and ten more whole botanicals.
+        One warm cup a day is the easiest first step from your plan. 30-day guarantee.
+      </p>
+      <a
+        href={teaUrl(trigger, 'card')}
+        onClick={() => track('quiz_tea_clicked', { trigger, placement: 'card', funnel_version: 'annie-v2' })}
+        style={{ ...primaryBtn, textDecoration: 'none', boxSizing: 'border-box' }}
+      >
+        Get Steady tea, $60 <ArrowRight size={18} />
+      </a>
+      <p style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--muted, #7A7061)', margin: '0.65rem 0 0' }}>
+        A 1-month pouch. It joins your doctor's plan, it never replaces it. Hibiscus and
+        hawthorn can lower blood pressure more, so tell your doctor you drink it.
+      </p>
+      <button
+        type="button"
+        onClick={onDecline}
+        style={{
+          display: 'block', width: '100%', textAlign: 'center', background: 'none', border: 'none',
+          color: 'var(--muted, #7A7061)', fontSize: '0.78rem', textDecoration: 'underline', textUnderlineOffset: 3,
+          cursor: 'pointer', fontFamily: 'inherit', margin: '0.9rem 0 0', padding: '0.4rem',
+        }}
+      >
+        No thanks, not the tea. Show me the plan instead.
+      </button>
+    </div>
+  );
+}
+
 function MiniHeader() {
   return (
     <div
@@ -209,6 +262,9 @@ function readPrefill() {
 export default function TriggerQuizPage() {
   const navigate = useNavigate();
   const [phase, setPhase] = useState('quiz'); // quiz | gate | offer | declined
+  // 2026-11-08 (Joel): after the quiz, tea first; on no, the $17 kit; on no,
+  // the free masterclass (the 'declined' phase carries the one-click seat).
+  const [offerStep, setOfferStep] = useState('tea'); // tea | kit
   // Pending tap-to-advance timer, so unmount/rapid taps cannot fire it twice.
   const advanceRef = useRef(null);
   // 2026-08-27: with tap-to-advance, a ?p= prefill is a REAL answer to Q1 (she
@@ -405,6 +461,7 @@ export default function TriggerQuizPage() {
       // she gets her actual results by email while the page goes straight to
       // the $17 offer, before any of that content, per Joel's direction.
       setPhase('offer');
+      setOfferStep('tea');
       track('quiz_offer_viewed', { quiz: 'triggers', trigger: t.slug, funnel_version: 'annie-v2' });
     }
   }
@@ -667,7 +724,6 @@ export default function TriggerQuizPage() {
             5-trigger Blueprint) go out by email via lead-magnet.js the
             moment the gate form posts, so she still gets them, just not
             on-page and not before the offer. */}
-        {phase === 'offer' && t && <CuffQuizBanner placement="results" />}
         {phase === 'offer' && t && (
           <div style={cardStyle}>
             <div
@@ -718,6 +774,18 @@ export default function TriggerQuizPage() {
               landing in your inbox right now.
             </p>
 
+            {offerStep === 'tea' && (
+              <TeaFirstOffer
+                trigger={t.slug}
+                onDecline={() => {
+                  track('quiz_tea_declined', { trigger: t.slug, funnel_version: 'annie-v2' });
+                  setOfferStep('kit');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
+
+            {offerStep === 'kit' && (<>
             <div
               style={{
                 background: 'var(--paper-warm, #EFE8DB)',
@@ -821,6 +889,7 @@ export default function TriggerQuizPage() {
             >
               No thanks, I don&rsquo;t want the whole plan that could turn this around
             </button>
+            </>)}
 
             <p style={{ textAlign: 'center', fontSize: '0.74rem', color: 'var(--muted, #7A7061)', margin: '1.2rem 0 0' }}>
               *Results vary from person to person. This is education, not medical or
@@ -833,8 +902,9 @@ export default function TriggerQuizPage() {
         {phase === 'declined' && t && (
           <div style={cardStyle}>
             <h2 style={{ ...serif, fontSize: 'clamp(1.4rem, 5vw, 1.8rem)', margin: '0 0 0.8rem' }}>
-              No problem at all.
+              No problem at all. One more free thing.
             </h2>
+            <MasterclassNextButton page="quiz-results" email={email} name={name} style={{ margin: '0 0 1.2rem' }} />
             <p style={{ fontSize: '0.95rem', lineHeight: 1.65, color: 'var(--ink-soft, #2B2824)', margin: '0 0 1.3rem' }}>
               {captureFailed
                 ? 'Your results and the full Blueprint are ready right here since our email system hit a snag just now.'
@@ -860,7 +930,7 @@ export default function TriggerQuizPage() {
             )}
             <button
               type="button"
-              onClick={() => setPhase('offer')}
+              onClick={() => { setOfferStep('kit'); setPhase('offer'); }}
               style={{
                 display: 'block',
                 width: '100%',
@@ -912,6 +982,15 @@ export default function TriggerQuizPage() {
             zIndex: 20,
           }}
         >
+          {offerStep === 'tea' ? (
+            <a
+              href={teaUrl(t.slug, 'sticky')}
+              onClick={() => track('quiz_tea_clicked', { trigger: t.slug, placement: 'sticky', funnel_version: 'annie-v2' })}
+              style={{ ...primaryBtn, maxWidth: 620, margin: '0 auto', textDecoration: 'none', boxSizing: 'border-box' }}
+            >
+              Get Steady tea, $60 <ArrowRight size={18} />
+            </a>
+          ) : (
           <button
             type="button"
             style={{ ...primaryBtn, maxWidth: 620, margin: '0 auto' }}
@@ -919,6 +998,7 @@ export default function TriggerQuizPage() {
           >
             Get the Complete Kit, $17 <ArrowRight size={18} />
           </button>
+          )}
         </div>
       )}
     </div>

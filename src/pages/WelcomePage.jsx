@@ -53,6 +53,7 @@ import { SITE_URL } from '../lib/loadEnv';
 import { upgradeFor } from '../data/upgradeOffers';
 import { track } from '../utils/analytics';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 // The three valid tier keys this page understands. Anything else normalizes to a
 // safe default inside modulesForTier, so a junk ?tier= never breaks the page.
 const VALID_TIERS = new Set(['corner', 'top2', 'complete']);
@@ -375,6 +376,8 @@ export default function WelcomePage() {
             ? 'The rest of your kit is open. Everything new is unlocked below, and it is on its way to your email too.'
             : heroLine}
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="kit-welcome" />
         <p style={{ ...SMALL, maxWidth: '58ch', margin: '0.75rem auto 0' }}>
           First, thank you. You did the thing most people never do, you went after the cause instead of
           just the number. Everything unlocked below is yours to keep.

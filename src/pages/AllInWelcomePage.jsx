@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { CheckCircle2, Mail, Stethoscope } from 'lucide-react';
 import { track } from '../utils/analytics';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 function planLine(plan) {
   // 2026-09-01: rewritten for the live $7,500 / $500-deposit offer. The old
   // version told a $500 depositor "Your $197 deposit is in" (retired $1,997
@@ -51,6 +52,8 @@ export default function AllInWelcomePage() {
       <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: C.inkSoft, maxWidth: '46ch', margin: '0 auto' }}>
         {planLine(plan)}
       </p>
+      {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+      <MasterclassNextButton page="allin-welcome" />
 
       <div style={{ background: C.cream, border: `1px solid ${C.line}`, borderRadius: 14, padding: '1.3rem 1.4rem', margin: '1.6rem 0 0', textAlign: 'left' }}>
         <div style={{ display: 'flex', gap: '0.7rem', alignItems: 'flex-start' }}>

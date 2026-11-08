@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const TIER_LABEL = { 'tea-satin-48': '1-Month Supply', 'tea-satin-120': '90-Day Supply' };
 const DOUBLE_PRICE = { 'tea-satin-48': 48, 'tea-satin-120': 120 };
 
@@ -84,6 +85,8 @@ export default function SatinThanksPage() {
           {TIER_LABEL[tier] ? `Your ${TIER_LABEL[tier]} is confirmed. ` : ''}
           Annie blends every batch by hand, so your pouch ships in 5 to 7 business days. A confirmation email is on its way.
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="satin-thanks" />
 
         {canOneClick && !gone && (
           <div style={{ background: C.rubySoft, border: `1.5px solid ${C.ruby}`, borderRadius: 14, padding: '1.5rem', margin: '2rem auto 0', maxWidth: 500, textAlign: 'left' }}>

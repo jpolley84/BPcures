@@ -6,6 +6,7 @@ import DownloadsSection from '../components/DownloadsSection';
 import TeaOffer from '../components/TeaOffer';
 import { track, trackPixels } from '../utils/analytics.js';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 export default function SuccessPage() {
   const [searchParams] = useSearchParams();
 
@@ -56,6 +57,8 @@ export default function SuccessPage() {
         <p className="lede" style={{ color: 'var(--ink-soft)', margin: '0 auto 1rem', maxWidth: '52ch' }}>
           You took your health into your own hands. That matters more than any single herb or protocol.
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="success" />
 
         {/* 2026-06-09 honesty fix: this promised "Skool community access" to
             every buyer, but the $17 welcome email grants none — Skool is the

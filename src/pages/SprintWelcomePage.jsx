@@ -14,6 +14,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Phone, Calendar, Users, ClipboardList } from 'lucide-react';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const CALENDLY_URL = import.meta.env.VITE_CALENDLY_DIAGNOSTIC_URL
   || 'https://bpquiz.com';
 
@@ -37,6 +38,8 @@ export default function SprintWelcomePage() {
           <p className="text-base sm:text-lg" style={{ color: 'var(--ink-soft)', lineHeight: 1.55 }}>
             You just bought yourself a 30-day relationship with a 20-year ICU/ER nurse and his hormone-corner co-coach. Below is everything you need to do in the next 48 hours to kick this off right.
           </p>
+          {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+          <MasterclassNextButton page="sprint-welcome" />
         </div>
       </section>
 

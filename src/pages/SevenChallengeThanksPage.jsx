@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { track } from '../utils/analytics';
 import { CSS } from './SevenChallengePage';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const GROUP_URL = (import.meta.env.VITE_SEVEN_GROUP_URL || '').trim();
 
 export default function SevenChallengeThanksPage() {
@@ -22,6 +23,8 @@ export default function SevenChallengeThanksPage() {
           <span className="kicker">Payment received · 7-7-7 Challenge</span>
           <h1>You're in. Lemonade day 1 is Wednesday, October 21.</h1>
           <p className="lead" style={{ margin: '0 auto' }}>Thank you for joining Annie and Joel for 7 days. Your confirmation email with the recipe and your full plan is on its way. Check your inbox, and your spam or promotions folder if you don't see it.</p>
+          {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+          <MasterclassNextButton page="777-thanks" />
         </div>
       </header>
 

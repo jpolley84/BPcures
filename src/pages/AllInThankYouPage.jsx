@@ -26,6 +26,7 @@
 import { useEffect } from 'react';
 import { track } from '../utils/analytics';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const C = {
   cream: '#FFFFFF',
   paper: '#FAFAFA',
@@ -78,6 +79,8 @@ export default function AllInThankYouPage() {
           Thank you for writing it out honestly. We read these ourselves, so give us a little time and
           watch your inbox for your next steps.
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="allin-thank-you" />
         <p style={{ fontSize: 17.5, lineHeight: 1.7, color: C.inkSoft, margin: '0 0 36px' }}>
           Nothing has been charged and no place has been reserved. That is exactly how it should be at
           this stage.

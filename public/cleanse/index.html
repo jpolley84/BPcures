@@ -147,6 +147,7 @@
           <h2>Your guide is ready.</h2>
           <p id="doneNote">We emailed you a copy too. Check your inbox.</p>
           <a id="dl" href="/downloads/lemonade-detox-guide.pdf" download>Download The Guide</a>
+          <div data-masterclass-next data-page="cleanse"></div>
           <div class="tea-up">
             <p class="tea-kicker">ONE MORE THING BEFORE YOU START</p>
             <h3>Pair your detox with Steady tea.</h3>
@@ -250,5 +251,6 @@ document.addEventListener('click', function (e) {
   if (e.target.closest && e.target.closest('[data-tea]') && window.posthog) { try { window.posthog.capture('cleanse_tea_upsell_clicked'); } catch (err) {} }
 });
 </script>
+<script src="/masterclass-next.js" defer></script>
 </body>
 </html>

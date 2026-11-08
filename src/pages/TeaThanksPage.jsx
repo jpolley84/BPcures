@@ -17,6 +17,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Leaf, ArrowRight, Loader2 } from 'lucide-react';
 import { track } from '../utils/analytics';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const TIER_LABEL = {
   'tea-48': '1-Month Supply',
   'tea-120': '90-Day Supply',
@@ -157,6 +158,8 @@ export default function TeaThanksPage() {
           {TIER_LABEL[tier] ? `Your ${TIER_LABEL[tier]} is confirmed. ` : ''}
           Annie blends every batch by hand, so your pouch ships in 5 to 7 business days. A confirmation email with everything you need is on its way to your inbox.
         </p>
+        {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+        <MasterclassNextButton page="tea-thanks" />
 
         {/* One-click +1 pouch: renders only when the session really has a saved card. */}
         {canOneClick && !upsellGone && (

@@ -26,6 +26,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { track, trackPixels } from '../utils/analytics.js';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 const CLAY = 'var(--clay, #B85A36)';
 const INK = 'var(--ink, #1E2B2A)';
 const CREAM = 'var(--cream, #FAF6EF)';
@@ -158,6 +159,8 @@ export default function ChallengeConfirmedPage() {
                 ? <>Your confirmation is on its way to <strong>{email}</strong>.</>
                 : 'Your confirmation is on its way to the address you paid with.'}
             </p>
+            {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+            <MasterclassNextButton page="challenge-confirmed" email={email || undefined} />
 
             <div style={{ background: '#EEF4F0', border: '1px solid #C8DCD0', borderRadius: 12, padding: '0.9rem 1.1rem', margin: '1.2rem 0' }}>
               <p style={{ margin: '0 0 0.35rem', fontWeight: 700 }}>Your receipt</p>

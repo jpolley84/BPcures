@@ -11,6 +11,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Calendar, ClipboardList, Clock, Phone } from 'lucide-react';
 
+import MasterclassNextButton from '../components/MasterclassNextButton.jsx';
 // 2026-06-09: only treat the env var as a real booking URL if it's actually
 // set to a Calendly link. The old `|| 'https://bpquiz.com'` fallback rendered
 // a broken, recursive bpquiz.com iframe whenever the env var was unset.
@@ -41,6 +42,8 @@ export default function CoachingWelcomePage() {
               ? 'Step 1: book your kickoff call below. Step 2: join the group where your 4 live coaching sessions a month happen.'
               : 'Your welcome email is on its way with your kickoff-call booking link. Step 2: join the group where your 4 live coaching sessions a month happen.'}
           </p>
+          {/* 2026-11-08 (Joel): every thank-you page gets the one-click "join the next masterclass" button. */}
+          <MasterclassNextButton page="coaching-welcome" />
           <a href={SKOOL_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-sm font-semibold" style={{ color: 'var(--sage-deep)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
             Join the group at skool.com/braveworksrn →
           </a>
