@@ -59,4 +59,7 @@ export const ACCELERATOR_ROSTER = [
   // have silently missed every one of them. SECOND Janie on the roster:
   // 'Janie' at kyquiltergirl@icloud.com is Janie Osborne, a different client.
   { first: 'Janie', email: 'jtmitche_1999@yahoo.com', note: 'Life Beyond the Cuff course, paid 2026-10-30; owed 4 Wednesday calls Nov 4/11/18/25; second Janie on the roster' },
+  // Added 2026-11-09 (Joel). Chandra Sawyer's free plus one (Two For One, paid in
+  // full 2026-10-24). Named on Chandra's intake; welcome email sent 2026-11-09.
+  { first: 'Youlander', email: 'youlander@hotmail.com', note: "Chandra Sawyer's plus one, welcomed 2026-11-09" },
 ];
