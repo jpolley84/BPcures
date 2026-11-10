@@ -54,7 +54,7 @@ const SPOTS = 4; // Joel, 2026-09-27: 4 open spots
 // The Accelerator pays through the embedded form (AllInEnrollForm).
 const ACCEL_EMBED = true; // Joel approved the Accelerator welcome email, 2026-10-29 12:50 CT
 
-// One offer only since 2026-11-09. Kept as a list so the card markup is unchanged.
+// Two offers since 2026-11-10: the $7,500 Accelerator and the $21,000 Healcation.
 const TIERS = [
   {
     key: 'accelerator',
@@ -78,6 +78,33 @@ const TIERS = [
     no: [],
     cta: 'Save My Spot · $500',
     fine: 'The $500 deposit is non-refundable and comes off the price. The $7,000 balance goes on a plan you pick next, up to 12 months.',
+    spots: true,
+  },
+  // 2026-11-10 (Joel): "only the 7500 and our 21k offer. the 21k offer includes
+  // the in person healcation ... 3 days at a retreat with in person healing and
+  // spa-like treatments to rejuvenate the body with teaching that doesn't
+  // overwhelm." Price shown as the anchor; no checkout, the call closes it
+  // (Joel chose "show price + book a call"). Dates, place, and inclusions are
+  // not set yet, so the card promises only what Joel described.
+  {
+    key: 'healcation',
+    book: 'https://calendly.com/braveworksrn/coaching-fit-call?utm_source=bpquiz&utm_medium=allin&utm_content=healcation',
+    name: 'The Healcation',
+    price: '$21,000',
+    priceNote: 'By application. Book a call to see if it fits you.',
+    tag: 'In person, with us',
+    featured: false,
+    blurb: 'Everything in the Accelerator, plus 3 days in person with Joel and Annie at a healing retreat.',
+    yes: [
+      'Everything in the Life Change Accelerator',
+      '3 days in person at a retreat with Joel and Annie',
+      'Hands-on natural healing and spa-like treatments to rest and restore your body',
+      'Teaching in small, simple pieces, never too much at once',
+      'Time to slow down, reset, and go home with a plan you can keep',
+    ],
+    no: [],
+    cta: 'Book a call to apply',
+    fine: 'No payment today. We share the dates, the place, and everything included on your call.',
   },
 ];
 
@@ -731,11 +758,11 @@ export default function AllInPage() {
         <div className="wrap" id="tiers">
           <div className="center">
             <div className="eyebrow">How you can work with us</div>
-            <h2>The full 90 days, with both of us.</h2>
-            <p className="lead">{`${SPOTS} open spots. Annie and Joel coach you the whole way.`}</p>
+            <h2>Two ways to work with us.</h2>
+            <p className="lead">Both are the full 90 days with Annie and Joel coaching you the whole way. The Healcation adds 3 days in person.</p>
           </div>
 
-          <div className="tiers single">
+          <div className={`tiers${TIERS.length === 1 ? ' single' : ''}`}>
             {TIERS.map((t) => (
               <article className={`tier${t.featured ? ' featured' : ''}`} key={t.key}>
                 <div className="tier-tag">{t.tag}</div>
@@ -743,7 +770,7 @@ export default function AllInPage() {
                 <p className="tier-blurb">{t.blurb}</p>
                 <div className="tier-price">{t.price}</div>
                 <div className="tier-price-note">{t.priceNote}</div>
-                <div className="tier-spots">{`${SPOTS} open spots`}</div>
+                {t.spots && <div className="tier-spots">{`${SPOTS} open spots`}</div>}
 
                 <ul className="tier-list">
                   {t.yes.map((line) => (
@@ -754,7 +781,17 @@ export default function AllInPage() {
                   ))}
                 </ul>
 
-                {t.enroll ? (
+                {t.book ? (
+                  <a
+                    className="btn gold full"
+                    href={t.book}
+                    target="_blank"
+                    rel="noopener"
+                    onClick={() => track('allin_book_call_click', { tier: t.key })}
+                  >
+                    {t.cta}
+                  </a>
+                ) : t.enroll ? (
                   <button type="button" className="btn gold full" onClick={() => chooseEnroll(t.enroll)}>
                     {t.cta}
                   </button>
