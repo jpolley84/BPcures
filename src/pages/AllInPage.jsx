@@ -70,7 +70,7 @@ const TIERS = [
       '90 days of weekly coaching + live Q&A',
       'All three phases and the Easy-Fit System',
       'Exclusive access to the expert team',
-      'One-on-one coaching session',
+      'Monthly one-on-one check-up sessions', // Joel, 2026-11-10: was a single 1:1 session
       'One year of access',
       'Every bonus: Healing Circle, Know Your Labs, Two For One, Skin + Hair',
       'The 90-day money-back guarantee',
