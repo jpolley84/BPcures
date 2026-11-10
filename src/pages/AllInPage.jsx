@@ -47,43 +47,15 @@ const CORE_VALUE = '$23,197';   // sum of STACK
 const TOTAL_VALUE = '$35,197';  // CORE_VALUE + the bonuses
 
 // ⚠️ Live scarcity claim, rendered to customers three times. Keep it true.
-const SPOTS = 4; // Joel, 2026-09-27: 4 open spots in EACH tier
-// 2026-10-29 (Joel): the first tier IS Life Change Activated, the same offer as
-// bpquiz.com/life-change-activated ($2,000, $200 deposit, 8 weeks, pay-in-full
-// bonuses incl. the plus-one seat). Its button goes to that page, whose
-// deposit checkout and balance plans already work. Replaces the $1,997 Sprint.
-const LCA_PRICE = '$2,000';
-const LCA_URL = '/life-change-activated';
-// 2026-10-29: both tiers pay through the embedded form (AllInEnrollForm) with a
-// pay-in-full checkbox.
+const SPOTS = 4; // Joel, 2026-09-27: 4 open spots
+// 2026-11-09 (Joel): "i want the 2k offer removed. only the 7500 offer there."
+// The $2,000 Life Change Activated tier is gone from /allin. Its own page,
+// bpquiz.com/life-change-activated, and its Stripe prices are untouched.
+// The Accelerator pays through the embedded form (AllInEnrollForm).
 const ACCEL_EMBED = true; // Joel approved the Accelerator welcome email, 2026-10-29 12:50 CT
 
-// "Two ways you can work with us" (Joel, 2026-09-27). What each tier includes
-// and, just as loudly, what it does not.
+// One offer only since 2026-11-09. Kept as a list so the card markup is unchanged.
 const TIERS = [
-  {
-    key: 'lca',
-    enroll: 'life-change-activated',
-    name: 'Life Change Activated',
-    price: LCA_PRICE,
-    priceNote: 'Start today for $200. Then $1,800 in full, 2 payments of $950, or 4 payments of $495.',
-    tag: '8-week guided experience',
-    blurb: 'Eight weeks of coaching, clarity, and guidance with Annie and Joel.',
-    yes: [
-      'Feel Like Yourself Again: the Back-to-Normal-Numbers Blueprint',
-      'The Fast Lane: food, movement, herbs, and guest experts',
-      'Your personalized, age-appropriate pathway',
-      'Live coaching and a community for accountability',
-      'Pay in full: Restore Your Glow, Joel\'s Lab Hacks, and a Skin & Hair bonus',
-      'Pay in full: bring a plus one, a second full seat free',
-    ],
-    no: [
-      'One year of access',
-      'The 90-day money-back guarantee',
-    ],
-    cta: 'Reserve My Spot · $200',
-    fine: 'The $200 deposit is non-refundable and counts toward the $2,000. Pay-in-full bonuses unlock once your balance is settled.',
-  },
   {
     key: 'accelerator',
     enroll: ACCEL_EMBED ? 'life-change-accelerator' : undefined,
@@ -254,10 +226,9 @@ const BONUSES = [
 ];
 
 const FAQ = [
-  ['What am I paying today?', `For Life Change Activated, a $200 deposit. For the Accelerator, a ${DEPOSIT} deposit. Each is credited toward your total.`],
-  ['How is the Life Change Activated balance paid?', 'After the $200 deposit, the $1,800 balance is paid in full, in 2 payments of $950, or in 4 payments of $495. Paying in full unlocks the bonuses, including a free second seat for a plus one.'],
+  ['What am I paying today?', `A ${DEPOSIT} deposit. It is credited toward your total.`],
   ['What happens with the remaining balance?', `After your ${DEPOSIT} deposit, the remaining ${BALANCE} goes on the payment schedule you choose. Terms are available up to 12 months, and you pick yours on the next page. Paying in full is the cheapest route, and third-party financing counts as paying in full.`],
-  ['Is the deposit refundable?', 'No. Both deposits, the $200 for Life Change Activated and the $500 for the Accelerator, are non-refundable. Each one holds a limited spot and comes off your price.'],
+  ['Is the deposit refundable?', `No. The ${DEPOSIT} deposit is non-refundable. It holds a limited spot and comes off your price.`],
   ['Do I have to fill out the application first?', 'No. You can go straight to checkout and secure your spot. The application is really more for you than for us: it puts you in the mindset of deciding whether you want this and why.'],
   ['Is this a video course?', 'No. There is no video library to work through. Between Joel and Annie there are about a thousand videos online already, and the point of this program is that you do not have to watch them. You get coaching that works at your pace and gives you what you need, when you need it.'],
   ['Does it include all four phases?', 'Yes. All four phases, the 90 days of coaching, and a full year of access to the community and the weekly Q&A.'],
@@ -434,6 +405,7 @@ const CSS = `
 .lca .footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
 .lca .footer-links a{text-decoration:underline}
 .lca .tiers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:36px;align-items:stretch}
+.lca .tiers.single{grid-template-columns:minmax(0,560px);justify-content:center}
 .lca .tier{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
 .lca .tier.featured{border:2px solid var(--teal);position:relative}
 .lca .tier-tag{display:inline-block;align-self:flex-start;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
@@ -509,8 +481,8 @@ const CSS = `
 export default function AllInPage() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
-  const [enrollProgram, setEnrollProgram] = useState('life-change-activated');
-  const enrollPrograms = ACCEL_EMBED ? ['life-change-activated', 'life-change-accelerator'] : ['life-change-activated'];
+  const [enrollProgram, setEnrollProgram] = useState('life-change-accelerator');
+  const enrollPrograms = ['life-change-accelerator'];
   function chooseEnroll(p) {
     setEnrollProgram(p);
     track('allin_checkout_click', { tier: p });
@@ -520,7 +492,7 @@ export default function AllInPage() {
   useEffect(() => {
     track('allin_view', { page: 'allin', mode: 'two-tier', design: 'v7' });
     const prev = document.title;
-    document.title = 'The Life Change Accelerator | Two Ways To Work With Us';
+    document.title = 'The Life Change Accelerator | 90-Day Coaching with Annie and Joel, RNs';
     const root = document.documentElement;
     const prevScroll = root.style.scrollBehavior;
     root.style.scrollBehavior = 'smooth';
@@ -555,7 +527,7 @@ export default function AllInPage() {
     <div className="lca">
       <style>{CSS}</style>
 
-      <div className="topbar">{`${SPOTS} spots open in each tier`}</div>
+      <div className="topbar">{`${SPOTS} spots open`}</div>
 
       <header className="hero">
         <div className="wrap hero-grid">
@@ -578,7 +550,7 @@ export default function AllInPage() {
             </div>
 
             <div className="hero-actions">
-              <a href="#tiers" className="btn gold">See the two ways to join ↓</a>
+              <a href="#tiers" className="btn gold">See how to join ↓</a>
               <a href="#journey" className="btn ghost">See how it works ↓</a>
             </div>
           </div>
@@ -758,12 +730,12 @@ export default function AllInPage() {
       <section id="checkout" className="white">
         <div className="wrap" id="tiers">
           <div className="center">
-            <div className="eyebrow">Two ways you can work with us</div>
-            <h2>Pick the pace that fits your life.</h2>
-            <p className="lead">{`${SPOTS} open spots in each. Both start with the same two nurses.`}</p>
+            <div className="eyebrow">How you can work with us</div>
+            <h2>The full 90 days, with both of us.</h2>
+            <p className="lead">{`${SPOTS} open spots. Annie and Joel coach you the whole way.`}</p>
           </div>
 
-          <div className="tiers">
+          <div className="tiers single">
             {TIERS.map((t) => (
               <article className={`tier${t.featured ? ' featured' : ''}`} key={t.key}>
                 <div className="tier-tag">{t.tag}</div>
@@ -865,12 +837,12 @@ export default function AllInPage() {
           <p style={{ marginTop: 24, color: '#F4F2EC', fontWeight: 700 }}>
             Be there. Enjoy your family. Take the trip. Do the work you love. Live your life.
           </p>
-          <a href="#tiers" className="btn gold">See the two ways to join ↓</a>
+          <a href="#tiers" className="btn gold">See how to join ↓</a>
         </div>
       </section>
 
       <div className="mobile-cta">
-        <a href="#tiers">Two ways to join · from $200 down</a>
+        <a href="#tiers">{`Save your spot · ${DEPOSIT} down`}</a>
       </div>
 
       <footer>
